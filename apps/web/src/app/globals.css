@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F4F6FA;
+  --foreground: #1E293B;
 }
 
 @theme inline {
@@ -12,15 +12,54 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+/**
+ * Khung nội dung chuẩn của trang.
+ *
+ * Trần 1600px (thay cho max-w-7xl = 1280px) để màn hình lớn còn giãn tiếp,
+ * và padding hai bên tự nở theo viewport thay vì cố định 24/32px:
+ *   ~375px  → 24px (giá trị sàn)
+ *   ~1280px → 51px
+ *   ≥1600px → 64px (giá trị trần)
+ *
+ * Đổi bố cục toàn trang chỉ cần sửa ở đây.
+ */
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 100rem;
+  padding-inline: clamp(1.5rem, 4vw, 4rem);
+}
+
+/* Hiệu ứng mở popup: trôi lên nhẹ kèm mờ dần. */
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+dialog.modal-enter[open] {
+  animation: modal-enter 180ms ease-out;
+}
+
+dialog.modal-enter[open]::backdrop {
+  animation: modal-enter 180ms ease-out;
+}
+
+/* Tôn trọng thiết lập giảm chuyển động của hệ điều hành. */
+@media (prefers-reduced-motion: reduce) {
+  dialog.modal-enter[open],
+  dialog.modal-enter[open]::backdrop {
+    animation: none;
+  }
 }
