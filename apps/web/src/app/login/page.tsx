@@ -3,6 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,19 +31,24 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // Call Supabase Auth API directly from client
+      const res = await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
         setError(
-          data.error_description || data.error || "Login failed. Please check your credentials."
+          data.error_description || data.error || data.msg || "Login failed. Please check your credentials."
         );
       } else {
         setSuccess("Login successful!");
