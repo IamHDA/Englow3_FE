@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
 
 const BFF_URL = process.env.BFF_URL || "http://localhost:4000/api/auth/login";
-const SUPABASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL ||
-  "https://jwqiedfdcjqbyyyemicb.supabase.co";
-const SUPABASE_API_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "sb_publishable_4yLc0Hg6y5Rn6_bYTLNfTw_RAST63Zc";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const SUPABASE_API_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
 
 export async function POST(request: Request) {
   try {
