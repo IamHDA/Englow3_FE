@@ -81,12 +81,8 @@ Search Lucide before drawing anything. It covers the ordinary vocabulary - play,
 
 When Lucide genuinely has nothing - a brand mark, a product-specific badge, an illustration - draw it, but as its own component file placed where it is used:
 
-<<<<<<< Updated upstream
-- used by one feature → that feature's `components/`
-=======
 - used by one block only → beside that block, following the same folder-when-it-earns-one rule as any other block sub-component
 - used across several blocks in one feature → that feature's `parts/`
->>>>>>> Stashed changes
 - used across features → `components/ui/`
 
 Accept standard SVG props, keep `currentColor` so it inherits text colour, and avoid hard-coded dimensions unless the artwork needs a fixed viewBox.
@@ -117,19 +113,6 @@ Never paste raw SVG markup into a page, form, card, or unrelated component. Inli
 
 ## Testing
 
-<<<<<<< Updated upstream
-Prioritize behavior:
-
-- test Zod schemas for boundary values and conditional/cross-field rules;
-- test forms for successful submit, client validation, server field errors, duplicate-submit prevention, and disabled and pending states;
-- test components through accessible roles and names rather than class names or internal state;
-- mock the generated hook or use Apollo's testing provider, not global `fetch`;
-- test GraphQL operations with a mocked Apollo provider: variables sent, partial data rendering, and each error code mapped to its UI outcome;
-- test route-level authentication redirects and critical page states;
-- add end-to-end coverage for the highest-value flows such as onboarding completion, starting/submitting an exam, and speaking upload.
-
-Do not duplicate the same invariant at every layer. Test Zod rules at the schema, UI reactions at the component, operation behaviour at the Apollo boundary, and the full happy path end to end.
-=======
 **Unit-test UI only where there is a form.** A component with no form gets no unit test. This is a deliberate scope decision, not an oversight - forms are where logic, validation, and error mapping actually live, and everything else is markup that a test would only restate.
 
 So do not write unit tests for: presentational blocks, skeletons, layouts, views that only compose, cards, lists, badges, or anything whose test would assert that props were rendered.
@@ -149,4 +132,3 @@ Query by accessible role and name, not class names or internal state. Mock the g
 Beyond forms, rely on end-to-end coverage for the highest-value flows: onboarding completion, starting and submitting an exam, and speaking upload. One end-to-end test through a real flow catches more than a wall of component tests, and it survives refactoring that would break them.
 
 Do not duplicate the same invariant at every layer. Test Zod rules at the schema, form behaviour at the component, and the full happy path end to end.
->>>>>>> Stashed changes
