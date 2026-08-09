@@ -33,15 +33,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # --- Quality gate ---
-      - name: Lint
-        run: pnpm --filter web --if-present run lint
+      # --- Quality gate (Monorepo: web, bff, mobile) ---
+      - name: Lint All Apps
+        run: pnpm --recursive --if-present run lint
 
-      - name: Typecheck
-        run: pnpm --filter web exec tsc --noEmit
+      - name: Typecheck All Apps
+        run: pnpm --recursive exec tsc --noEmit
 
-      - name: Test
-        run: pnpm --filter web --if-present run test
+      - name: Test All Apps
+        run: pnpm --recursive --if-present run test
 
       # --- Xác định target ---
       - name: Resolve target
