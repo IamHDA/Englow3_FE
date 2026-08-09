@@ -86,7 +86,9 @@ jobs:
           echo "### Web Deployed: $URL" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Vercel Pull, Build & Deploy BFF
-        if: secrets.VERCEL_PROJECT_ID_BFF != ''
+        if: env.VERCEL_PROJECT_ID_BFF != ''
+        env:
+          VERCEL_PROJECT_ID_BFF: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
         id: deploy_bff
         run: |
           CLI="pnpm dlx vercel@latest"
