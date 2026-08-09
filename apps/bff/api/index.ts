@@ -18,7 +18,7 @@ app.use(async (req, res, next) => {
     await server.start();
     isStarted = true;
   }
-  expressMiddleware(server)(req, res, next);
+  return (expressMiddleware(server) as any)(req, res, next);
 });
 
 export default app;
