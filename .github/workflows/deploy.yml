@@ -2,9 +2,9 @@ name: Deploy web
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 concurrency:
   group: web-${{ github.event.pull_request.number || github.ref }}
@@ -46,7 +46,7 @@ jobs:
       # --- Xác định target ---
       - name: Resolve target
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref_name }}" = "main" ]; then
             echo "TARGET_ENV=production" >> "$GITHUB_ENV"
             echo "PROD_FLAG=--prod"       >> "$GITHUB_ENV"
           else
