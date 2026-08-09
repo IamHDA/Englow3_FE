@@ -3,6 +3,7 @@
   "git": {
     "deploymentEnabled": false
   },
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/api/index.ts" }
   ]
