@@ -33,15 +33,35 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # --- Quality gate ---
-      - name: Lint
-        run: pnpm lint
+      # --- Quality gate: Web ---
+      - name: Lint (web)
+        run: pnpm --filter web --if-present run lint
 
-      - name: Typecheck
-        run: pnpm typecheck
+      - name: Typecheck (web)
+        run: pnpm --filter web exec tsc --noEmit
 
-      - name: Test
-        run: pnpm test
+      - name: Test (web)
+        run: pnpm --filter web --if-present run test
+
+      # --- Quality gate: BFF ---
+      - name: Lint (bff)
+        run: pnpm --filter bff --if-present run lint
+
+      - name: Typecheck (bff)
+        run: pnpm --filter bff exec tsc --noEmit
+
+      - name: Test (bff)
+        run: pnpm --filter bff --if-present run test
+
+      # --- Quality gate: Mobile ---
+      - name: Lint (mobile)
+        run: pnpm --filter mobile --if-present run lint
+
+      - name: Typecheck (mobile)
+        run: pnpm --filter mobile exec tsc --noEmit
+
+      - name: Test (mobile)
+        run: pnpm --filter mobile --if-present run test
 
       # --- Xác định target ---
       - name: Resolve target

@@ -6,6 +6,12 @@
     "dev:web": "pnpm --filter web dev",
     "dev:bff": "pnpm --filter bff dev",
     "dev:mobile": "pnpm --filter mobile start",
+    "typecheck:web": "pnpm --filter web exec tsc --noEmit",
+    "typecheck:bff": "pnpm --filter bff exec tsc --noEmit",
+    "typecheck:mobile": "pnpm --filter mobile exec tsc --noEmit",
+    "lint:web": "pnpm --filter web --if-present run lint",
+    "lint:bff": "pnpm --filter bff --if-present run lint",
+    "lint:mobile": "pnpm --filter mobile --if-present run lint",
     "lint": "pnpm --recursive --if-present run lint",
     "typecheck": "pnpm --recursive exec tsc --noEmit",
     "test": "pnpm --recursive --if-present run test"
