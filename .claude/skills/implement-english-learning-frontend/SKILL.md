@@ -26,7 +26,11 @@ Read [architecture.md](references/architecture.md) before adding or moving pages
 - **Form** - React Hook Form with a Zod schema and the Zod resolver. Validation independent from rendering.
 - **Data** - a GraphQL operation in the owning feature, typed by codegen. Never a hand-written type for a response, never a raw `fetch` to the BFF.
 - **Third-party** - browser-safe clients only. Anything needing a secret, costing money, or changing business state goes through the BFF.
+<<<<<<< Updated upstream
 - **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component in whatever owns it.
+=======
+- **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component, placed with what it belongs to - a block, a feature's `parts/`, or `components/ui` if shared across features.
+>>>>>>> Stashed changes
 
 ## Loading states
 
@@ -63,7 +67,11 @@ State briefly:
 5. Component inputs, callbacks, and what is reusable.
 6. Zod validation and server-error mapping when a form is involved.
 7. Auth, secret exposure, and idempotency concerns.
+<<<<<<< Updated upstream
 8. Which tests are worth writing.
+=======
+8. Whether this slice has a form - if not, it gets no unit test.
+>>>>>>> Stashed changes
 
 ## Implement the smallest complete slice
 
@@ -72,7 +80,11 @@ State briefly:
 3. Implement reusable components, then compose them in the route.
 4. Represent loading, empty, error, validation, disabled, and success states explicitly.
 5. Keep secrets and permanent provider credentials out of the browser.
+<<<<<<< Updated upstream
 6. Add focused tests for behaviour and boundaries.
+=======
+6. Add unit tests only if the slice contains a form; otherwise rely on end-to-end coverage.
+>>>>>>> Stashed changes
 7. Run the formatter, linter, type checker, codegen, and relevant tests.
 
 ## Preserve boundaries
@@ -89,6 +101,10 @@ State briefly:
 - No duplicated Zod rules inside event handlers.
 - No global state for local component or form state.
 - No `utils` or `helpers` dumping grounds.
+<<<<<<< Updated upstream
+=======
+- No unit test for a component without a form.
+>>>>>>> Stashed changes
 
 ## Verify before handing off
 

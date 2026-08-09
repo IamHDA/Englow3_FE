@@ -81,7 +81,12 @@ Search Lucide before drawing anything. It covers the ordinary vocabulary - play,
 
 When Lucide genuinely has nothing - a brand mark, a product-specific badge, an illustration - draw it, but as its own component file placed where it is used:
 
+<<<<<<< Updated upstream
 - used by one feature → that feature's `components/`
+=======
+- used by one block only → beside that block, following the same folder-when-it-earns-one rule as any other block sub-component
+- used across several blocks in one feature → that feature's `parts/`
+>>>>>>> Stashed changes
 - used across features → `components/ui/`
 
 Accept standard SVG props, keep `currentColor` so it inherits text colour, and avoid hard-coded dimensions unless the artwork needs a fixed viewBox.
@@ -112,6 +117,7 @@ Never paste raw SVG markup into a page, form, card, or unrelated component. Inli
 
 ## Testing
 
+<<<<<<< Updated upstream
 Prioritize behavior:
 
 - test Zod schemas for boundary values and conditional/cross-field rules;
@@ -123,3 +129,24 @@ Prioritize behavior:
 - add end-to-end coverage for the highest-value flows such as onboarding completion, starting/submitting an exam, and speaking upload.
 
 Do not duplicate the same invariant at every layer. Test Zod rules at the schema, UI reactions at the component, operation behaviour at the Apollo boundary, and the full happy path end to end.
+=======
+**Unit-test UI only where there is a form.** A component with no form gets no unit test. This is a deliberate scope decision, not an oversight - forms are where logic, validation, and error mapping actually live, and everything else is markup that a test would only restate.
+
+So do not write unit tests for: presentational blocks, skeletons, layouts, views that only compose, cards, lists, badges, or anything whose test would assert that props were rendered.
+
+For a form-bearing component, cover:
+
+- successful submit with valid values;
+- client-side validation - each rule that can fail, and the message the user sees;
+- server field errors mapped onto the right fields;
+- duplicate-submit prevention;
+- disabled and pending states.
+
+Test Zod schemas directly for boundary values and conditional or cross-field rules. That is cheaper than driving them through the UI, and it is where the rules belong.
+
+Query by accessible role and name, not class names or internal state. Mock the generated hook or use Apollo's testing provider - never global `fetch`. When a form submits through GraphQL, assert the variables sent and that each error code maps to its intended outcome.
+
+Beyond forms, rely on end-to-end coverage for the highest-value flows: onboarding completion, starting and submitting an exam, and speaking upload. One end-to-end test through a real flow catches more than a wall of component tests, and it survives refactoring that would break them.
+
+Do not duplicate the same invariant at every layer. Test Zod rules at the schema, form behaviour at the component, and the full happy path end to end.
+>>>>>>> Stashed changes

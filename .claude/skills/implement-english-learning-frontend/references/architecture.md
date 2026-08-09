@@ -4,10 +4,20 @@
 
 1. Baseline structure
 2. Page and component ownership
+<<<<<<< Updated upstream
 3. Server and client boundaries
 4. Loading, skeletons, and Suspense
 5. Types, schemas, hooks, and state
 6. Feature examples
+=======
+3. Views, blocks, and parts
+4. Splitting a component
+5. File naming
+6. Server and client boundaries
+7. Loading, skeletons, and Suspense
+8. Types, schemas, hooks, and state
+9. Feature examples
+>>>>>>> Stashed changes
 
 ## Baseline structure
 
@@ -43,12 +53,15 @@ The division is **feature first, file kind second**. Everything about exams live
 
 `src/app` holds route files only. A route composes a view; it never holds the implementation.
 
+<<<<<<< Updated upstream
 
 The division is **feature first, file kind second**. Everything about exams lives under `features/exam`, so changing that feature means opening one folder and removing it means deleting one folder. This mirrors how the backend is divided, and the reasoning is the same: ownership matters more than file kind.
 
 `src/app` holds route files only. A route composes feature components; it never holds the implementation.
 
 
+=======
+>>>>>>> Stashed changes
 If the repository uses Pages Router, preserve it and apply the same separation. Do not create both routers without an explicit migration plan.
 
 ## Page and component ownership

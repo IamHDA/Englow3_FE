@@ -39,15 +39,27 @@ query ExamDetail($id: ID!) {
 "use client";
 import { useExamDetailQuery } from "@/lib/graphql/generated";
 
+<<<<<<< Updated upstream
 export function ExamDetail({ examId }: { examId: string }) {
+=======
+export function ExamDetailView({ examId }: { examId: string }) {
+>>>>>>> Stashed changes
   const { data, loading, error } = useExamDetailQuery({ variables: { id: examId } });
   ...
 }
 ```
 
+<<<<<<< Updated upstream
 Never hand-write a type for a GraphQL response, and never call the BFF with `fetch`. If a type feels missing, the schema or the document is missing a field.
 
 For Server Components, query through the server-side Apollo client rather than a hook. `useSuspenseQuery` is the client-side counterpart when the component should participate in a Suspense boundary.
+=======
+This is the client-side shape. Fetching belongs to a view - never a block - so name it accordingly; a component fetching under a bare feature-noun name is easy to mistake for a block later. For a Server Component view, query through the server-side Apollo client instead of this hook.
+
+Never hand-write a type for a GraphQL response, and never call the BFF with `fetch`. If a type feels missing, the schema or the document is missing a field.
+
+`useSuspenseQuery` is the client-side counterpart when a view should participate in a Suspense boundary.
+>>>>>>> Stashed changes
 
 ## Fragments
 
