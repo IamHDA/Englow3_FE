@@ -5,6 +5,9 @@
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "dev:bff": "pnpm --filter bff dev",
-    "dev:mobile": "pnpm --filter mobile start"
+    "dev:mobile": "pnpm --filter mobile start",
+    "lint": "pnpm --recursive --if-present run lint",
+    "typecheck": "pnpm --recursive exec tsc --noEmit",
+    "test": "pnpm --recursive --if-present run test"
   }
 }
