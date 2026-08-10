@@ -1,0 +1,95 @@
+name: Vercel deploy
+description: Pull project settings, build locally, and deploy the prebuilt output to Vercel.
+
+inputs:
+  project-id:
+    description: Vercel project id to deploy into.
+    required: true
+  org-id:
+    description: Vercel organisation id.
+    required: true
+  token:
+    description: Vercel API token.
+    required: true
+  target:
+    description: Either "production" or "preview".
+    required: true
+  alias:
+    description: >-
+      Optional stable domain to point at this deployment once it succeeds.
+      Production deploys already claim their domain via --prod, so this is for
+      giving a long-lived branch (dev) a fixed URL instead of a random one.
+    required: false
+    default: ""
+  scope:
+    description: Vercel team slug. `alias set` needs it on team accounts.
+    required: false
+    default: ""
+
+outputs:
+  url:
+    description: URL of the resulting deployment.
+    value: ${{ steps.deploy.outputs.url }}
+  alias-url:
+    description: Stable domain pointed at this deployment, empty if none.
+    value: ${{ steps.deploy.outputs.alias_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Pull, build and deploy
+      id: deploy
+      shell: bash
+      # The CLI reads all three of these from the environment, so the token
+      # never appears in a command line (and never in `ps` output).
+      env:
+        VERCEL_ORG_ID: ${{ inputs.org-id }}
+        VERCEL_PROJECT_ID: ${{ inputs.project-id }}
+        VERCEL_TOKEN: ${{ inputs.token }}
+        TARGET: ${{ inputs.target }}
+        ALIAS: ${{ inputs.alias }}
+        SCOPE: ${{ inputs.scope }}
+      run: |
+        set -euo pipefail
+
+        if [ "$TARGET" != "production" ] && [ "$TARGET" != "preview" ]; then
+          echo "::error::Unknown deployment target '$TARGET'"
+          exit 1
+        fi
+
+        # Pinned: `vercel@latest` makes a green build today no guarantee of a
+        # green build tomorrow, and re-downloads the CLI on every run.
+        cli=(pnpm dlx vercel@58.9.0)
+
+        prod=()
+        if [ "$TARGET" = "production" ]; then
+          prod=(--prod)
+        fi
+
+        # ${a[@]+"${a[@]}"} rather than "${a[@]}": under `set -u`, expanding an
+        # empty array is an "unbound variable" error before bash 4.4, and every
+        # preview deploy has an empty one.
+        "${cli[@]}" pull --yes --environment="$TARGET"
+        "${cli[@]}" build ${prod[@]+"${prod[@]}"}
+
+        # The CLI writes progress to stderr and the URL to stdout, but pnpm dlx
+        # can add a line of its own on a cold store, so take the last one only.
+        url=$("${cli[@]}" deploy --prebuilt ${prod[@]+"${prod[@]}"} | tail -n1)
+
+        if [ -z "$url" ]; then
+          echo "::error::Deploy produced no URL"
+          exit 1
+        fi
+
+        alias_url=""
+        if [ -n "$ALIAS" ]; then
+          scope=()
+          [ -n "$SCOPE" ] && scope=(--scope "$SCOPE")
+          "${cli[@]}" alias set "$url" "$ALIAS" ${scope[@]+"${scope[@]}"}
+          alias_url="https://$ALIAS"
+        fi
+
+        {
+          echo "url=$url"
+          echo "alias_url=$alias_url"
+        } >> "$GITHUB_OUTPUT"

@@ -1,0 +1,51 @@
+name: Quality gate
+description: Lint, typecheck and test one workspace app, then record which of those actually ran.
+
+inputs:
+  app:
+    description: Workspace package name. Must match the directory name under apps/.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Lint
+      shell: bash
+      env:
+        APP: ${{ inputs.app }}
+      run: pnpm --filter "$APP" --if-present run lint
+
+    - name: Typecheck
+      shell: bash
+      env:
+        APP: ${{ inputs.app }}
+      run: pnpm --filter "$APP" exec tsc --noEmit
+
+    - name: Test
+      shell: bash
+      env:
+        APP: ${{ inputs.app }}
+      run: pnpm --filter "$APP" --if-present run test
+
+    # `--if-present` turns a missing script into a silent pass, so a green check
+    # can mean "clean" or "never ran". Spell out which.
+    - name: Summarise
+      if: always()
+      shell: bash
+      env:
+        APP: ${{ inputs.app }}
+      run: |
+        set -euo pipefail
+        {
+          echo "### Quality gate: \`$APP\`"
+          echo "- \`typecheck\` — ran"
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync(`apps/${process.env.APP}/package.json`, "utf8"));
+            for (const s of ["lint", "test"]) {
+              console.log(pkg.scripts?.[s]
+                ? `- \`${s}\` — ran`
+                : `- \`${s}\` — :warning: no script defined, **skipped**`);
+            }
+          '
+        } >> "$GITHUB_STEP_SUMMARY"

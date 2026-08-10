@@ -1,141 +1,248 @@
-name: Deploy web
+name: Deploy
 
+# Note: the two paths-ignore lists must stay in sync by hand.
+# GitHub Actions does not support YAML anchors.
 on:
   push:
     branches: [main, dev]
+    paths-ignore:
+      - "**/*.md"
+      - ".idea/**"
+      - ".claude/**"
+      - ".gitignore"
   pull_request:
     branches: [main, dev]
+    paths-ignore:
+      - "**/*.md"
+      - ".idea/**"
+      - ".claude/**"
+      - ".gitignore"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Deployment target
+        type: choice
+        options: [preview, production]
+        default: preview
 
 concurrency:
-  group: web-${{ github.event.pull_request.number || github.ref }}
+  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  # Superseded previews are worthless; superseded production deploys are a race.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+permissions:
+  contents: read
+
 env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  # Vercel team slug, needed by `vercel alias set`.
+  VERCEL_SCOPE: englow3
+  # Pushes to `dev` are preview deploys, so they land on a random URL. These
+  # aliases give the staging environment the fixed hostnames in the README.
+  # `main` needs none: --prod claims the production domain by itself.
+  DEV_ALIAS_WEB: englow3-web-dev.vercel.app
+  DEV_ALIAS_BFF: englow3-bff-dev.vercel.app
 
 jobs:
-  deploy:
+  # Secrets are not readable from a job-level `if:`, and a step-level `env:` is
+  # not readable from that same step's `if:` either. So presence checks happen
+  # here, once, and the rest of the workflow gates on these outputs.
+  setup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-
+    outputs:
+      target: ${{ steps.resolve.outputs.target }}
+      has_web: ${{ steps.resolve.outputs.has_web }}
+      has_bff: ${{ steps.resolve.outputs.has_bff }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      # --- Quality gate: Web ---
-      - name: Lint (web)
-        run: pnpm --filter web --if-present run lint
-
-      - name: Typecheck (web)
-        run: pnpm --filter web exec tsc --noEmit
-
-      - name: Test (web)
-        run: pnpm --filter web --if-present run test
-
-      # --- Quality gate: BFF ---
-      - name: Lint (bff)
-        run: pnpm --filter bff --if-present run lint
-
-      - name: Typecheck (bff)
-        run: pnpm --filter bff exec tsc --noEmit
-
-      - name: Test (bff)
-        run: pnpm --filter bff --if-present run test
-
-      # --- Quality gate: Mobile ---
-      - name: Lint (mobile)
-        run: pnpm --filter mobile --if-present run lint
-
-      - name: Typecheck (mobile)
-        run: pnpm --filter mobile exec tsc --noEmit
-
-      - name: Test (mobile)
-        run: pnpm --filter mobile --if-present run test
-
-      # --- Xác định target ---
-      - name: Resolve target
+      - name: Resolve target and available projects
+        id: resolve
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          DISPATCH_TARGET: ${{ inputs.target }}
+          WEB_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB || secrets.VERCEL_PROJECT_ID }}
+          BFF_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref_name }}" = "main" ]; then
-            echo "TARGET_ENV=production" >> "$GITHUB_ENV"
-            echo "PROD_FLAG=--prod"       >> "$GITHUB_ENV"
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            target="$DISPATCH_TARGET"
+          elif [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" = "main" ]; then
+            target="production"
           else
-            echo "TARGET_ENV=preview"     >> "$GITHUB_ENV"
-            echo "PROD_FLAG="             >> "$GITHUB_ENV"
+            target="preview"
           fi
 
-      - name: Vercel Pull, Build & Deploy Web
-        id: deploy
-        run: |
-          CLI="pnpm dlx vercel@latest"
-          export VERCEL_PROJECT_ID="${{ secrets.VERCEL_PROJECT_ID_WEB || secrets.VERCEL_PROJECT_ID }}"
-          $CLI pull --yes --environment=$TARGET_ENV --token=${{ secrets.VERCEL_TOKEN }}
-          $CLI build $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }}
-          URL=$($CLI deploy --prebuilt $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }})
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "### Web Deployed: $URL" >> "$GITHUB_STEP_SUMMARY"
+          # Emit only whether an id exists, never the id itself.
+          has_web=false; [ -n "$WEB_PROJECT_ID" ] && has_web=true
+          has_bff=false; [ -n "$BFF_PROJECT_ID" ] && has_bff=true
 
-      - name: Vercel Pull, Build & Deploy BFF
-        if: env.VERCEL_PROJECT_ID_BFF != ''
+          {
+            echo "target=$target"
+            echo "has_web=$has_web"
+            echo "has_bff=$has_bff"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "### Target: \`$target\` (web: $has_web, bff: $has_bff)" >> "$GITHUB_STEP_SUMMARY"
+
+  # One job per app rather than a matrix. A matrix would run the three in
+  # parallel, but its result is a single pass/fail: one failing leg fails the
+  # whole job and every deploy that needs it. `fail-fast: false` does not change
+  # that — it only keeps the other legs running. Web, bff and mobile ship
+  # independently, so each deploy waits on its own app's gate and nothing else.
+  quality-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/quality-gate
+        with:
+          app: web
+
+  quality-bff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/quality-gate
+        with:
+          app: bff
+
+  # Mobile has no deploy job, so this gates nothing. It still reports a check on
+  # the PR, which is what a branch protection rule would hang off.
+  quality-mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/quality-gate
+        with:
+          app: mobile
+
+  # Web and BFF deploy in separate jobs on separate runners. They used to share
+  # one working directory, where the second `vercel pull` overwrote the first
+  # project's .vercel/project.json while .vercel/output still held the first
+  # build — one failed build away from deploying web's output as the BFF.
+  deploy-web:
+    needs: [setup, quality-web]
+    if: >-
+      needs.setup.outputs.has_web == 'true' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.setup.outputs.target }}
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      # `vercel build` runs locally and so cannot reach Vercel's remote cache.
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: apps/web/.next/cache
+          key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ hashFiles('pnpm-lock.yaml') }}-
+            next-
+
+      - id: deploy
+        uses: ./.github/actions/vercel-deploy
+        with:
+          project-id: ${{ secrets.VERCEL_PROJECT_ID_WEB || secrets.VERCEL_PROJECT_ID }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          token: ${{ secrets.VERCEL_TOKEN }}
+          target: ${{ needs.setup.outputs.target }}
+          scope: ${{ env.VERCEL_SCOPE }}
+          alias: ${{ (github.event_name == 'push' && github.ref_name == 'dev') && env.DEV_ALIAS_WEB || '' }}
+
+      - name: Summary
         env:
-          VERCEL_PROJECT_ID_BFF: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
-        id: deploy_bff
+          URL: ${{ steps.deploy.outputs.url }}
+          ALIAS_URL: ${{ steps.deploy.outputs.alias-url }}
+          TARGET: ${{ needs.setup.outputs.target }}
         run: |
-          CLI="pnpm dlx vercel@latest"
-          export VERCEL_PROJECT_ID="${{ secrets.VERCEL_PROJECT_ID_BFF }}"
-          $CLI pull --yes --environment=$TARGET_ENV --token=${{ secrets.VERCEL_TOKEN }}
-          $CLI build $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }}
-          URL=$($CLI deploy --prebuilt $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }})
-          echo "url_bff=$URL" >> "$GITHUB_OUTPUT"
-          echo "### BFF Deployed: $URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Web ($TARGET): $URL" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$ALIAS_URL" ]; then
+            echo "Aliased to: $ALIAS_URL" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
-      - name: Alias Web domain for dev
-        if: github.event_name == 'push' && github.ref_name == 'dev'
-        run: |
-          CLI="pnpm dlx vercel@latest"
-          $CLI alias set "${{ steps.deploy.outputs.url }}" englow3-web-dev.vercel.app --token=${{ secrets.VERCEL_TOKEN }} --scope englow3
+  deploy-bff:
+    needs: [setup, quality-bff]
+    if: >-
+      needs.setup.outputs.has_bff == 'true' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.setup.outputs.target }}
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
 
-      - name: Alias BFF domain for dev
-        if: env.VERCEL_PROJECT_ID_BFF != '' && github.event_name == 'push' && github.ref_name == 'dev'
+      - id: deploy
+        uses: ./.github/actions/vercel-deploy
+        with:
+          project-id: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          token: ${{ secrets.VERCEL_TOKEN }}
+          target: ${{ needs.setup.outputs.target }}
+          scope: ${{ env.VERCEL_SCOPE }}
+          alias: ${{ (github.event_name == 'push' && github.ref_name == 'dev') && env.DEV_ALIAS_BFF || '' }}
+
+      - name: Summary
         env:
-          VERCEL_PROJECT_ID_BFF: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
+          URL: ${{ steps.deploy.outputs.url }}
+          ALIAS_URL: ${{ steps.deploy.outputs.alias-url }}
+          TARGET: ${{ needs.setup.outputs.target }}
         run: |
-          CLI="pnpm dlx vercel@latest"
-          $CLI alias set "${{ steps.deploy_bff.outputs.url_bff }}" englow3-bff-dev.vercel.app --token=${{ secrets.VERCEL_TOKEN }} --scope englow3
+          echo "### BFF ($TARGET): $URL" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$ALIAS_URL" ]; then
+            echo "Aliased to: $ALIAS_URL/graphql" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
-      - name: Comment preview URL on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+  comment:
+    needs: [setup, deploy-web, deploy-bff]
+    if: always() && github.event_name == 'pull_request' && needs.deploy-web.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v7
         env:
-          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
-          BFF_URL: ${{ steps.deploy_bff.outputs.url_bff }}
+          WEB_URL: ${{ needs.deploy-web.outputs.url }}
+          BFF_URL: ${{ needs.deploy-bff.outputs.url }}
+          BFF_RESULT: ${{ needs.deploy-bff.result }}
+          HAS_BFF: ${{ needs.setup.outputs.has_bff }}
         with:
           script: |
-            const webUrl = process.env.PREVIEW_URL;
-            const bffUrl = process.env.BFF_URL;
             const marker = '<!-- vercel-preview -->';
-            let body = `${marker}\n**Web Preview:** ${webUrl}`;
-            if (bffUrl) {
-              body += `\n**BFF GraphQL Preview:** ${bffUrl}/graphql`;
-            }
-            body += `\n\nCommit: \`${context.sha.slice(0,7)}\``;
+            const lines = [marker, `**Web preview:** ${process.env.WEB_URL}`];
 
-            const { data: comments } = await github.rest.issues.listComments({
+            if (process.env.HAS_BFF !== 'true') {
+              lines.push('_BFF not deployed: `VERCEL_PROJECT_ID_BFF` is not configured._');
+            } else if (process.env.BFF_RESULT === 'success' && process.env.BFF_URL) {
+              lines.push(`**BFF GraphQL preview:** ${process.env.BFF_URL}/graphql`);
+            } else {
+              // Previously an empty BFF URL was silently dropped from the comment,
+              // which is how a permanently skipped deploy went unnoticed.
+              lines.push(`**BFF preview:** :x: deploy \`${process.env.BFF_RESULT}\``);
+            }
+
+            lines.push('', `Commit: \`${context.sha.slice(0, 7)}\``);
+            const body = lines.join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            const existing = comments.find(c => c.body?.includes(marker));
+            const existing = comments.find((c) => c.body?.includes(marker));
 
             if (existing) {
               await github.rest.issues.updateComment({
@@ -152,4 +259,3 @@ jobs:
                 body,
               });
             }
-
