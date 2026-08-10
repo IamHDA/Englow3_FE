@@ -1,0 +1,60 @@
+/*
+ * No frame and no avatar — just the greeting, sitting in the nav row on the
+ * same type scale and hover treatment as the links beside it.
+ */
+.trigger,
+.triggerFullWidth {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--mantine-color-navy-9);
+  background-color: transparent;
+  border: 0;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 150ms ease;
+}
+
+.trigger {
+  max-width: 260px;
+}
+
+.triggerFullWidth {
+  width: 100%;
+}
+
+.trigger:hover,
+.triggerFullWidth:hover,
+.trigger:focus-visible,
+.triggerFullWidth:focus-visible {
+  background-color: var(--mantine-color-slate-1);
+}
+
+/* "Hi" stays put while only a long name truncates. */
+.greeting {
+  display: flex;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger,
+  .triggerFullWidth {
+    transition: none;
+  }
+}

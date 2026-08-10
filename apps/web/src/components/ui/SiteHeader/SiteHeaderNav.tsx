@@ -5,13 +5,22 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
+import { AuthControl, LoginModal } from "@/features/auth";
+
 import { primaryLinks, studyIcon as StudyIcon, studyLinks } from "./navigation";
-import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
 import { StudyMenuDropdown } from "./StudyMenuDropdown";
 
 export function SiteHeaderNav() {
   const [drawerOpened, drawer] = useDisclosure(false);
+  const [loginOpened, loginDialog] = useDisclosure(false);
+
+  // The dialog is rendered below, outside the drawer, so closing the drawer
+  // does not unmount it mid-open.
+  const openLogin = () => {
+    drawer.close();
+    loginDialog.open();
+  };
 
   return (
     <>
@@ -47,7 +56,7 @@ export function SiteHeaderNav() {
           </Link>
         ))}
 
-        <SiteHeaderLoginButton />
+        <AuthControl onLogin={openLogin} />
       </Group>
 
       <Burger
@@ -99,9 +108,11 @@ export function SiteHeaderNav() {
             </Link>
           ))}
 
-          <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
+          <AuthControl onLogin={openLogin} fullWidth />
         </Stack>
       </Drawer>
+
+      <LoginModal opened={loginOpened} onClose={loginDialog.close} />
     </>
   );
 }

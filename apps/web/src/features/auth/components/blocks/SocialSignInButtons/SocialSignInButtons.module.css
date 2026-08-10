@@ -1,0 +1,29 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-slate-2);
+  border-radius: 12px;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--mantine-color-slate-0);
+  border-color: var(--mantine-color-slate-3);
+}
+
+.button:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}

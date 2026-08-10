@@ -1,0 +1,48 @@
+.label {
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mantine-color-slate-8);
+}
+
+/*
+ * Element-qualified so these beat Mantine's own input rules regardless of
+ * stylesheet order. The design shows the resting field on a slate surface and
+ * the focused one on white with a 2px amber ring.
+ */
+input.input {
+  height: 48px;
+  padding-inline: 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mantine-color-slate-8);
+  background-color: var(--mantine-color-slate-0);
+  border: 1px solid var(--mantine-color-slate-3);
+  border-radius: 12px;
+}
+
+input.input::placeholder {
+  font-weight: 500;
+  color: var(--mantine-color-slate-4);
+}
+
+input.input:focus,
+input.input:focus-within {
+  background-color: var(--mantine-color-white);
+  border: 2px solid var(--mantine-color-amber-5);
+}
+
+input.input[data-error] {
+  border-color: var(--mantine-color-red-6);
+}
+
+.submit {
+  height: 48px;
+  margin-top: 4px;
+  border-radius: 12px;
+}
+
+.submitLabel {
+  font-size: 16px;
+  font-weight: 700;
+}
