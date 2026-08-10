@@ -84,6 +84,7 @@ State briefly:
 - No importing another feature's internal files - go through its `index.ts`, or lift the shared piece out.
 - No fetching inside a block; the view owns the data boundary.
 - No component split you cannot name with a business noun.
+- No component file used in one place that holds no state and is not a client boundary worth paying for - write it where it is used.
 - No file name that differs from its export, apart from a block folder's `index.tsx`, which takes the folder's name.
 - No raw `fetch` to the BFF, and no hand-written response types where codegen produces them.
 - No comparing a schema enum against a bare string or number - use the generated enum, and `switch` on it exhaustively.

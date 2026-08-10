@@ -44,6 +44,19 @@
   margin-top: 40px;
 }
 
+.cta {
+  height: 64px;
+  width: 100%;
+  max-width: 320px;
+  padding-inline: 33px;
+  border-radius: 20px;
+}
+
+.ctaLabel {
+  font-size: 18px;
+  font-weight: 700;
+}
+
 .illustration {
   width: 100%;
   max-width: 533px;
@@ -74,6 +87,14 @@
 
   .ctaRow {
     margin-top: 72px;
+  }
+
+  .cta {
+    height: 75px;
+  }
+
+  .ctaLabel {
+    font-size: 20px;
   }
 
   .illustration {

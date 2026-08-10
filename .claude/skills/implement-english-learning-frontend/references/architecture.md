@@ -151,6 +151,24 @@ Split a component when it does two jobs, when a piece is reused, or when a piece
 
 The naming test: a business noun means it is a real component - `ExamTimer`, `QuestionNav`, `SaveIndicator`. `ExamDetailSection2` is not a concept, it is a cut.
 
+### When not to split
+
+A component file has to answer what it buys. These count:
+
+- it is used in more than one place;
+- it owns state, an effect, or a handler nothing else touches;
+- it is a distinct section of the page with its own CSS Module, so its class names stay short and cannot collide;
+- it is one of several interchangeable variants chosen at runtime - one renderer per question type;
+- it is the `"use client"` boundary that keeps a parent on the server, *and* that parent has a real reason to stay there - it fetches, it reads server-only configuration, or the subtree it would drag across is large.
+
+None of them apply? Write it where it is used. A wrapper whose whole body is one Mantine component with props is not a component, it is a variable that took a folder.
+
+The last one is the trap, and it needs measuring rather than assuming. Mantine components carry their own `"use client"`, so rendering one from a Server Component already works - but passing `component={Link}` to it does not, because a component reference is a function and functions do not cross the server-client boundary. That failure is what usually produces the one-line client wrapper. Before keeping the wrapper for that reason, check what absorbing the boundary into the parent actually costs: for a static marketing section whose children are Mantine components anyway, it was measured at under 2 KB of extra client JavaScript with the page still fully prerendered. For a view that fetches, the same move costs the whole data boundary and is not on the table.
+
+Under about 50 lines with none of the benefits above is the familiar shape of a file that should not exist - but 50 is a prompt to look, not a rule. A 29-line block that is a real page section with 57 lines of its own CSS earns its place; a 22-line wrapper around one `<Button>` does not.
+
+Splitting is not free. Every split adds a folder to open, an import to follow, and a name to invent. One 60-line component is easier to read than three 20-line files pointing at each other.
+
 A sub-flow with four or five components that serve only it - for example an exam-taking flow with a runner, a timer, a navigator, a save indicator, and one renderer per answer format - can be grouped under a shared subfolder inside `blocks/`, each still its own block folder: `blocks/exam-taking/ExamRunner/`, `blocks/exam-taking/ExamTimer/`. This is about grouping related blocks together, not about whether any single block is a folder - every block is a folder regardless of group size.
 
 ## File naming

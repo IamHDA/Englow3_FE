@@ -1,7 +1,9 @@
-import { Text, Title } from "@mantine/core";
-import Image from "next/image";
+"use client";
 
-import { StartLearningButton } from "@/features/home/components/blocks/StartLearningButton";
+import { Button, Text, Title } from "@mantine/core";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 import classes from "./HomeHero.module.css";
 
@@ -26,7 +28,18 @@ export function HomeHero() {
         </Text>
 
         <div className={classes.ctaRow}>
-          <StartLearningButton />
+          <Button
+            component={Link}
+            href="/onboarding"
+            variant="gradient"
+            gradient={{ from: "amber.5", to: "amber.6", deg: 90 }}
+            rightSection={
+              <ArrowRight aria-hidden="true" size={26} strokeWidth={2.5} />
+            }
+            classNames={{ root: classes.cta, label: classes.ctaLabel }}
+          >
+            Start Learning now
+          </Button>
         </div>
       </div>
 
