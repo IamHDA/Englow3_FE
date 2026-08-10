@@ -1,3 +1,5 @@
+import { Flex, Stack } from "@mantine/core";
+
 import type { HomeStat } from "@/features/home/constants/homeStats";
 
 import classes from "./HomeStats.module.css";
@@ -14,16 +16,21 @@ export function HomeStats({ stats }: HomeStatsProps) {
   return (
     <section className={classes.stats} aria-label="Englow3 in numbers">
       <hr className={classes.separator} />
-      <dl className={classes.list}>
+      <Flex
+        component="dl"
+        wrap={{ base: "wrap", md: "nowrap" }}
+        gap={{ base: 32, md: 120 }}
+        className={classes.list}
+      >
         {stats.map((stat) => (
-          <div key={stat.label} className={classes.item}>
+          <Stack key={stat.label} gap={2}>
             <dt className={stat.accent ? classes.valueAccent : classes.value}>
               {stat.value}
             </dt>
             <dd className={classes.label}>{stat.label}</dd>
-          </div>
+          </Stack>
         ))}
-      </dl>
+      </Flex>
     </section>
   );
 }

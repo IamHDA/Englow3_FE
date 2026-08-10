@@ -12,17 +12,8 @@
 }
 
 .list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
   margin: 0;
   padding: 24px 0 0;
-}
-
-.item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .value,
@@ -50,8 +41,6 @@
 
 @media (min-width: $mantine-breakpoint-md) {
   .list {
-    flex-wrap: nowrap;
-    gap: 120px;
     padding: 22px 44px 0;
   }
 }

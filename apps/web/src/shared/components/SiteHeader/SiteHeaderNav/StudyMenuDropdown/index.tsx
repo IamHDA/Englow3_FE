@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "@mantine/core";
+import { Center, Menu, SimpleGrid } from "@mantine/core";
 import Link from "next/link";
 
 import { studyLinks } from "@/shared/constants/navigation";
@@ -10,16 +10,16 @@ import classes from "./StudyMenuDropdown.module.css";
 export function StudyMenuDropdown() {
   return (
     <Menu.Dropdown className={classes.dropdown}>
-      <div className={classes.grid}>
+      <SimpleGrid cols={2} spacing={4}>
         {studyLinks.map(({ icon: Icon, ...link }) => (
           <Menu.Item
             key={link.href}
             component={Link}
             href={link.href}
             leftSection={
-              <span className={classes.iconTile}>
+              <Center component="span" className={classes.iconTile}>
                 <Icon aria-hidden="true" size={20} />
-              </span>
+              </Center>
             }
             classNames={{
               item: classes.item,
@@ -31,7 +31,7 @@ export function StudyMenuDropdown() {
             <span className={classes.description}>{link.description}</span>
           </Menu.Item>
         ))}
-      </div>
+      </SimpleGrid>
     </Menu.Dropdown>
   );
 }

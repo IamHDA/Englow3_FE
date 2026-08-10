@@ -56,22 +56,12 @@
 }
 
 .drawerIconTile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex: 0 0 auto;
   width: 34px;
   height: 34px;
   border-radius: 10px;
   color: var(--mantine-color-navy-9);
   background-color: var(--mantine-color-slate-1);
-}
-
-.drawerLinkText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
 }
 
 .drawerLinkLabel {

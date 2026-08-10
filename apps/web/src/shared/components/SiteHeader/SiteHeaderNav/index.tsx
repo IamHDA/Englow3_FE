@@ -1,6 +1,15 @@
 "use client";
 
-import { Burger, Drawer, Group, Menu, Stack, UnstyledButton } from "@mantine/core";
+import {
+  Burger,
+  Center,
+  Drawer,
+  Flex,
+  Group,
+  Menu,
+  Stack,
+  UnstyledButton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -78,15 +87,15 @@ export function SiteHeaderNav() {
               className={classes.drawerLink}
               onClick={drawer.close}
             >
-              <span className={classes.drawerIconTile}>
+              <Center component="span" className={classes.drawerIconTile}>
                 <Icon aria-hidden="true" size={18} />
-              </span>
-              <span className={classes.drawerLinkText}>
+              </Center>
+              <Flex component="span" direction="column" gap={2} miw={0}>
                 <span className={classes.drawerLinkLabel}>{link.label}</span>
                 <span className={classes.drawerLinkDescription}>
                   {link.description}
                 </span>
-              </span>
+              </Flex>
             </Link>
           ))}
 
@@ -97,9 +106,9 @@ export function SiteHeaderNav() {
               className={classes.drawerLink}
               onClick={drawer.close}
             >
-              <span className={classes.drawerIconTile}>
+              <Center component="span" className={classes.drawerIconTile}>
                 <Icon aria-hidden="true" size={18} />
-              </span>
+              </Center>
               <span className={classes.drawerLinkLabel}>{link.label}</span>
             </Link>
           ))}

@@ -7,10 +7,6 @@
 }
 
 .inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--mantine-spacing-md);
   height: 60px;
   max-width: 1440px;
   margin-inline: auto;

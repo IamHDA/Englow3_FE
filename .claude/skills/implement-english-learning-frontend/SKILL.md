@@ -7,7 +7,7 @@ description: Implement, extend, refactor, or review the English Learning web fro
 
 Next.js App Router, TypeScript, Mantine, React Hook Form with Zod, Apollo Client against a GraphQL BFF. The BFF is the only application backend the browser talks to.
 
-Mantine is the styling system: its components, style props, and CSS Modules. No Tailwind utility classes, and no second component library alongside it.
+Mantine is the styling system: its components, style props, and CSS Modules. No Tailwind utility classes, and no second component library alongside it. Reach for a Mantine component before writing a CSS rule - a `<div>` carrying `display: flex`, a hand-styled scrollbar, or a hand-built tab strip is a component that was not used.
 
 Build one complete user-facing slice at a time: the route, its components, its GraphQL operations, its loading and error states, its tests. Do not scaffold folders that hold nothing.
 
@@ -29,6 +29,7 @@ Read [architecture.md](references/architecture.md) before adding or moving pages
 - **Form** - React Hook Form with a Zod schema and the Zod resolver. Validation independent from rendering.
 - **Data** - a GraphQL operation in the owning feature, typed by codegen. Never a hand-written type for a response, never a raw `fetch` to the BFF.
 - **Third-party** - browser-safe clients only. Anything needing a secret, costing money, or changing business state goes through the BFF.
+- **Layout** - a Mantine layout component (`Stack`, `Group`, `Flex`, `Center`, `SimpleGrid`, `Grid`, `Container`), never a `<div>` with flex or grid CSS. Only `Flex` accepts responsive values and a `component` prop.
 - **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component, placed with what it belongs to - a block, a feature's `parts/`, or `shared/components` if shared across features.
 
 ## Loading states
@@ -93,7 +94,8 @@ State briefly:
 - No direct call to PostgreSQL, to object storage with permanent credentials, or to an AI provider with a permanent key.
 - No hand-drawn SVG where Lucide has the icon, and no SVG markup pasted inline into a page or feature component.
 - No Tailwind utility classes and no CSS-in-JS - style with Mantine props for one-off spacing and colocated CSS Modules for anything reused.
-- No rebuilding a primitive Mantine already ships (Button, Skeleton, Modal, TextInput) in `shared/components` - wrap or theme it instead.
+- No `<div>` carrying `display: flex` or `display: grid` - that is `Stack`, `Group`, `Flex`, `Center`, `SimpleGrid`, or `Grid`. Nest two of them for uneven rhythm rather than putting margins back on the children.
+- No rebuilding what Mantine already ships, in `shared/components` or inline - `Button`, `Skeleton`, `Modal`, `TextInput`, and equally `ScrollArea` for a styled scrollbar, `Tabs`, `Accordion`, `Tooltip`, `Popover`, `Drawer`, `Stepper`, `Pagination`, `Table`, `Divider`, `Paper`. Wrap or theme it instead; a hand-rolled one is the keyboard handling and ARIA you now own.
 - No sub-component sitting beside its parent instead of inside it, and no empty `shared/` subfolder waiting for its first file.
 - No duplicated Zod rules inside event handlers.
 - No global state for local component or form state.
@@ -103,6 +105,6 @@ State briefly:
 
 ## Verify before handing off
 
-Formatting, linting, type checking, codegen output committed, Zod and form behaviour, component roles and accessible names, GraphQL operation and error handling, server/client boundaries, every loading and error state rendered, production build and affected end-to-end flows.
+Formatting, linting, type checking, codegen output committed, Zod and form behaviour, component roles and accessible names, no remaining CSS that a Mantine component already expresses, GraphQL operation and error handling, server/client boundaries, every loading and error state rendered, production build and affected end-to-end flows.
 
 Report the behaviour implemented, the boundary decisions made, the checks actually run, and any remaining risk. Do not claim validation that was skipped or failed.

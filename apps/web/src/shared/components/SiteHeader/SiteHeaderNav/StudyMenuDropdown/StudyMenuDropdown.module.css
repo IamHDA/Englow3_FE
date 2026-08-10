@@ -9,12 +9,6 @@ div.dropdown {
   box-shadow: var(--mantine-shadow-md);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
-}
-
 .item:is(a, button) {
   /* Mantine's own hover token, so no specificity fight with its base rule. */
   --menu-item-hover: var(--mantine-color-slate-1);
@@ -29,9 +23,6 @@ div.dropdown {
 }
 
 .iconTile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 38px;
   height: 38px;
   border-radius: 10px;

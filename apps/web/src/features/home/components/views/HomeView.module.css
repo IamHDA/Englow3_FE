@@ -1,16 +1,8 @@
+/*
+ * A plain div: this is a full-bleed background behind the Container, and
+ * background colour is a CSS concern. Box would add nothing over a div here.
+ */
 .page {
   flex: 1;
   background-color: #f5f5f5;
-}
-
-.container {
-  max-width: 1440px;
-  margin-inline: auto;
-  padding-inline: var(--mantine-spacing-md);
-}
-
-@media (min-width: $mantine-breakpoint-md) {
-  .container {
-    padding-inline: 60px;
-  }
 }

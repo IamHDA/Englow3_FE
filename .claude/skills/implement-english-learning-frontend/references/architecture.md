@@ -7,7 +7,7 @@
 3. Views, blocks, and parts
 4. Splitting a component
 5. File naming
-6. Styling with Mantine
+6. Styling and layout with Mantine
 7. Server and client boundaries
 8. Loading, skeletons, and Suspense
 9. Types, schemas, hooks, and state
@@ -180,16 +180,62 @@ A sub-flow with four or five components that serve only it - for example an exam
 - Next.js reserved files keep their required lowercase names: `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `middleware.ts`.
 - Everything else follows the convention already in the repository.
 
-## Styling with Mantine
+## Styling and layout with Mantine
 
 Mantine is the only styling system. No Tailwind, no second component library, no ad hoc inline `style` objects except for values computed at runtime that cannot be expressed any other way.
 
 - **Theme** lives in `src/lib/mantine/theme.ts` and is passed to a single `MantineProvider` in the root layout, alongside Mantine's colour-scheme script. Do not create a second provider or a second theme object anywhere else in the tree.
-- **One-off spacing and layout** use Mantine's style props - `p`, `m`, `gap`, `w`, `c`, `bg` - directly on the component. Reach for these first.
+- **One-off spacing** uses Mantine's style props - `p`, `m`, `gap`, `w`, `c`, `bg` - directly on the component.
 - **Anything reused, or a real selector** - hover states, pseudo-elements, media queries - goes in a colocated CSS Module: `ExamHeader.module.css` beside `index.tsx` in that block's folder. Import it as `classes` and apply with `className={classes.header}`.
-- **Do not reimplement what Mantine ships.** A loading placeholder is Mantine's `Skeleton`, a dialog is `Modal`, a form field is `TextInput` or `Select` - not a hand-rolled div styled to look like one.
 
-Mantine hooks - `useDisclosure`, `useMantineTheme`, and similar - only work in a Client Component, same as any other hook. This is an ordinary instance of the Server/Client boundary rule below, not a special case.
+### Reach for the component before writing the rule
+
+A `<div>` whose CSS is `display: flex` or `display: grid` is a Mantine layout component that was not used. Before writing a rule, check whether a component already expresses it:
+
+| Writing this CSS | Use this instead |
+|---|---|
+| `display: flex; flex-direction: column; gap` | `<Stack gap>` |
+| `display: flex; align-items: center; gap` in a row | `<Group>` |
+| flex whose direction, wrap, or gap changes per breakpoint | `<Flex>` |
+| `display: flex` to centre one child both ways | `<Center>` |
+| `display: grid; grid-template-columns: repeat(n, minmax(0, 1fr))` | `<SimpleGrid cols={n}>` |
+| a 12-column responsive layout | `<Grid>` with `<Grid.Col span={{ base, md }}>` |
+| `max-width` plus `margin-inline: auto` page shell | `<Container>` |
+| `overflow: auto` plus scrollbar styling | `<ScrollArea>` |
+| an `<hr>`, or a border standing in for one | `<Divider>` |
+| a bordered or elevated surface | `<Paper>` or `<Card>` |
+| a hand-styled `<table>` | `<Table>` |
+
+The same holds for behaviour, not just layout. A hand-built tab strip, accordion, tooltip, popover, modal, drawer, stepper, pagination control, or notification is a Mantine component plus the keyboard handling, focus management, and ARIA wiring you have just taken ownership of. Check Mantine's component list before building any of them; the repository has no second component library to fall back on, so "Mantine does not have it" needs to be true.
+
+What stays in CSS: typography, colour, radius, border, background, sizing, and anything with a real selector - `:hover`, `:focus-visible`, `[data-expanded]`, `::before`, or a specificity override against Mantine's own class. When flex is entangled with those on the same element - an anchor that is both a flex row and carries hover styling - keep the whole rule in the CSS Module rather than splitting one element's definition across a component and a class.
+
+### What each layout component can and cannot do
+
+Checked against Mantine 9.5.1; confirm against the installed version before relying on it.
+
+- **`Flex` is the only one of the four that takes responsive values** - `direction={{ base: "column", md: "row" }}`, `gap={{ base: "xl", md: 64 }}`, and the same for `align`, `justify`, `wrap` - **and the only one that is polymorphic**, so `component="section"` or `component="dl"` works.
+- **`Stack` and `Group` take single values only.** Their `gap`, `align`, `justify`, and `wrap` do not accept `{ base, md }` objects, and neither accepts `component`.
+- **Style props do take responsive objects** on every Box-based component: `pt={{ base: 48, md: 92 }}`, `maw`, `miw`, `flex`, `pos`. Numbers convert to rem.
+- **`SimpleGrid`** takes responsive `cols` and `spacing`; `verticalSpacing` falls back to `spacing`.
+
+So a layout that changes at a breakpoint is `Flex` or a CSS Module media query - never `Stack` with a conditional value.
+
+Uneven vertical rhythm is not a reason to fall back on margins. Nest two containers, an outer gap and an inner gap, so each number means one thing:
+
+```tsx
+<Flex direction="column" gap={{ base: 40, md: 72 }}>   {/* text block, then CTA */}
+  <Flex direction="column" gap={{ base: 28, md: 42 }}>  {/* rhythm within the text */}
+    <Title />
+    <Text />
+  </Flex>
+  <Button />
+</Flex>
+```
+
+Gaps compose; margins collapse into each other and into the gap. Once a container owns the spacing, its children carry none.
+
+Mantine hooks - `useDisclosure`, `useMantineTheme`, and similar - only work in a Client Component, same as any other hook. This is an ordinary instance of the Server/Client boundary rule below, not a special case. So is the polymorphic trap: `component={Link}` passes a function, so it fails from a Server Component - see the measurement note under "When not to split" before adding a client wrapper to work around it. In a Server Component, a plain `<Link className={classes.x}>` with the flex rule in CSS is the correct answer, and deserves a comment saying why.
 
 ## Server and client boundaries
 
