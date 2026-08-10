@@ -3,10 +3,11 @@
 ## Contents
 
 1. React Hook Form and Zod
-2. Server validation errors
-3. Icons
-4. Accessibility and interaction
-5. Testing
+2. Wiring Mantine inputs to React Hook Form
+3. Server validation errors
+4. Icons
+5. Accessibility and interaction
+6. Testing
 
 ## React Hook Form and Zod
 
@@ -36,11 +37,53 @@ Rules:
 - Infer form values from the schema; do not manually duplicate the type.
 - Use controlled adapters only for components that require them; prefer `register` for native inputs.
 - Provide stable `defaultValues` to avoid uncontrolled/controlled transitions.
+- Load initial values through props from the view, or through the `values` option when the data is fetched client-side. Do not reset the form from inside a `useEffect`: it renders once empty and then jumps, it overwrites anything the user typed before the data arrived, and it re-runs whenever the query returns a new object reference.
 - Keep cross-field rules in `superRefine` and attach issues to the relevant field.
 - Use `valueAsNumber`, `z.coerce`, or explicit preprocessing deliberately for HTML input strings.
-- Plain Mantine inputs - `TextInput`, `Textarea`, `PasswordInput`, `Checkbox` - forward a ref and work directly with `register`. Inputs whose `onChange` receives a value instead of an event - `Select`, `NumberInput`, `DatePickerInput` - go through RHF's `Controller` instead; `register` on these silently gets the wrong shape.
 - Disable or guard submission while pending, but still rely on backend idempotency for critical mutations.
 - Keep backend validation authoritative; client validation improves feedback but is not a security boundary.
+
+## Wiring Mantine inputs to React Hook Form
+
+Mantine and React Hook Form know nothing about each other, so each field is connected by hand. Nothing about RHF is lost - it still validates, holds state, blocks submit, and focuses the first invalid field. Only the wiring is yours.
+
+**Which inputs take `register`.** Anything backed by a real `<input>` that forwards a ref and calls `onChange` with an event: `TextInput`, `Textarea`, `PasswordInput`, `NativeSelect`, `Checkbox`, `Switch`, `Radio`.
+
+**Which need `Controller`.** Anything whose `onChange` receives the value directly: `Select`, `MultiSelect`, `Autocomplete`, `NumberInput`, `Slider`, `Rating`, `SegmentedControl`, `FileInput`, `PinInput`, `DatePickerInput`. Using `register` on these silently produces `undefined` rather than an error, because it reads `.target` off a value that has none. When in doubt, check the component's `onChange` signature in the Mantine docs: `(event)` means `register`, `(value)` means `Controller`.
+
+```tsx
+<TextInput
+  {...register("displayName")}
+  label="Display name"
+  error={errors.displayName?.message}
+/>
+
+<Controller
+  name="targetLevel"
+  control={control}
+  render={({ field, fieldState }) => (
+    <Select {...field} data={levels} label="Target level" error={fieldState.error?.message} />
+  )}
+/>
+```
+
+**Always pass `error`.** Mantine renders the message, the invalid styling, and the accessibility attributes - but only from the `error` prop. Omitting it fails silently: validation still blocks submit, and the user sees nothing explaining why. Nothing in TypeScript catches this, so the form's own test is what catches it - assert the message is visible after an invalid submit, not just that submit was blocked.
+
+Write `Controller` inline at each field. A wrapper component that folds it away is worth it only for a form long enough that the repetition genuinely hurts; below that it is indirection for its own sake.
+
+**Value shapes to match in the schema.** Mantine inputs use `null` for "nothing selected", never `undefined`, and passing `undefined` as `value` makes React treat the field as uncontrolled. So for an optional field, use `.nullish()` - it accepts both, and nothing has to be converted at the `Controller`:
+
+```ts
+targetLevel: z.string().nullish(),
+```
+
+For a required field there is nothing to clear, so `""` with `.min(1, "…")` is simpler than a nullable string. `NumberInput` yields `number | string` - an empty string once cleared - so coerce deliberately. Give every `Controller` field a concrete `defaultValue`, `null` or `""`, never `undefined`.
+
+One consequence to know rather than solve now: in GraphQL, `null` means "clear this" while an absent field means "leave it alone". A `.nullish()` field can produce either, so on an update mutation that distinguishes the two, strip or normalize the value before sending rather than passing the form output straight through.
+
+Date components have changed their value type between Mantine major versions. Check the docs for the version in `package.json` before writing `z.date()` for a date field.
+
+**Do not mix in `@mantine/form`.** This project validates with Zod through React Hook Form. Two form libraries on one page is a source of confusion with no upside.
 
 ## Server validation errors
 

@@ -11,7 +11,8 @@
 7. Server and client boundaries
 8. Loading, skeletons, and Suspense
 9. Types, schemas, hooks, and state
-10. Feature examples
+10. Effects
+11. Feature examples
 
 ## Baseline structure
 
@@ -63,7 +64,7 @@ export default function OnboardingPage() {
 }
 ```
 
-Use `src/components/ui` for what Mantine does not already provide: thin wrappers or compositions built from Mantine primitives - a `ConfirmDialog` built from Mantine's `Modal`, a form field that pairs a Mantine input with the app's error-display convention. Do not rebuild `Button`, `Skeleton`, `Modal`, or `TextInput` from scratch here; Mantine already ships them. `ExamTimer`, `SpeakingRecorder`, and `SkillProgressChart` belong to their own features regardless.
+Use `src/components/ui` for what Mantine does not already provide: thin wrappers or compositions built from Mantine primitives - a `ConfirmDialog` built from Mantine's `Modal`, or an empty-state block used on several screens. Do not rebuild `Button`, `Skeleton`, `Modal`, or `TextInput` from scratch here; Mantine already ships them. `ExamTimer`, `SpeakingRecorder`, and `SkillProgressChart` belong to their own features regardless.
 
 A feature may import `components/ui`, `lib`, `config`, and another feature's `index.ts`. Reaching into another feature's internal files is the frontend version of writing to another module's tables - if two features need the same piece, lift it into `components/ui` or its own feature rather than importing across.
 
@@ -197,6 +198,26 @@ Note what this does and does not split. Suspense boundaries follow *which compon
 - Keep hooks under the feature's `hooks/`, named by behaviour - `useSpeakingRecorder`. A hook used by several features moves to `lib/`.
 - Local state for local UI; React Hook Form for form state; the Apollo cache for server state. Do not add TanStack Query, SWR, Redux, or Zustand speculatively - Apollo already holds server state.
 - Do not mirror backend entities in global frontend types. Define only the view shapes the UI needs.
+
+## Effects
+
+`useEffect` is for synchronizing with something outside React - a media device, a browser event, a timer, a subscription. It is not a general-purpose "run some code" hook, and most effects in a codebase like this one are a sign that data is being fetched or derived in the wrong place.
+
+Legitimate here: recording audio, listening for `focus` or `visibilitychange` to recompute a deadline, debounced autosave timers, a polling loop with a terminal condition. Each of these talks to something React does not own, and each belongs in a hook rather than inline in a component.
+
+Not an effect - each of these has a direct replacement:
+
+| Reaching for an effect to... | Do this instead |
+|---|---|
+| Fetch data on mount | Fetch in the view - a Server Component, or `useSuspenseQuery` |
+| Reset a form once data arrives | Pass values as props from the view, or use React Hook Form's `values` option |
+| Derive state from props | Compute it during render; memoize only if profiling says so |
+| Copy a prop into state to keep them in sync | Use the prop; if it must be resettable, key the component instead |
+| React to a user action | Do it in the event handler |
+
+The rule of thumb: if an effect's dependency array is made of props or state and its body sets state, it is derived data and belongs in the render path.
+
+Cleanup is part of the contract, not an optional extra. Every listener, timer, interval, subscription, and media stream started in an effect is torn down in its cleanup function - an exam page that leaves a recorder or an interval running behind it is a bug that only shows up after navigating a few times.
 
 ## Feature examples
 

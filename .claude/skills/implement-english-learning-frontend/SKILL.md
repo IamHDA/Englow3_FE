@@ -92,6 +92,7 @@ State briefly:
 - No rebuilding a primitive Mantine already ships (Button, Skeleton, Modal, TextInput) in `components/ui` - wrap or theme it instead.
 - No duplicated Zod rules inside event handlers.
 - No global state for local component or form state.
+- No `useEffect` for fetching, deriving state, or resetting a form - effects are for synchronizing with something outside React, and each one started must be cleaned up.
 - No `utils` or `helpers` dumping grounds.
 - No unit test for a component without a form, and none for a hook that only wraps a query or returns a flag.
 
