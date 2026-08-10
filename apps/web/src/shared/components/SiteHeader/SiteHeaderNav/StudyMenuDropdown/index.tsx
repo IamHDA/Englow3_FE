@@ -3,7 +3,8 @@
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 
-import { studyLinks } from "./navigation";
+import { studyLinks } from "@/shared/constants/navigation";
+
 import classes from "./StudyMenuDropdown.module.css";
 
 export function StudyMenuDropdown() {

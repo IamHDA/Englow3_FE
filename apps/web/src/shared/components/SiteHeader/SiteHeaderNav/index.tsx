@@ -5,7 +5,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-import { primaryLinks, studyIcon as StudyIcon, studyLinks } from "./navigation";
+import {
+  primaryLinks,
+  studyIcon as StudyIcon,
+  studyLinks,
+} from "@/shared/constants/navigation";
+
 import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
 import { StudyMenuDropdown } from "./StudyMenuDropdown";

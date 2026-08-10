@@ -30,12 +30,15 @@ src/
 │       │   │   └── <BlockName>/     Every block is a folder, even a single file
 │       │   └── parts/               UI shared between this feature's blocks
 │       ├── hooks/                   Behaviour extracted out of components
+│       ├── constants/               Display types and static values
 │       ├── schemas/                 Zod schemas
 │       ├── graphql/                 Documents and fragments
 │       ├── types.ts
 │       └── index.ts                 What other features may import
-├── components/
-│   └── ui/                          Wrappers and compositions Mantine does not ship
+├── shared/                          The same shape, owned by no feature
+│   ├── components/                  Wrappers and compositions Mantine does not ship
+│   ├── hooks/
+│   └── constants/
 ├── lib/
 │   ├── apollo/                      Client setup, links, cache policies
 │   ├── graphql/generated/           Codegen output - never edited by hand
@@ -64,9 +67,11 @@ export default function OnboardingPage() {
 }
 ```
 
-Use `src/components/ui` for what Mantine does not already provide: thin wrappers or compositions built from Mantine primitives - a `ConfirmDialog` built from Mantine's `Modal`, or an empty-state block used on several screens. Do not rebuild `Button`, `Skeleton`, `Modal`, or `TextInput` from scratch here; Mantine already ships them. `ExamTimer`, `SpeakingRecorder`, and `SkillProgressChart` belong to their own features regardless.
+`src/shared` is a module like any feature - `components/`, `hooks/`, `constants/` - it just belongs to no feature. Put in `shared/components` what Mantine does not already provide and no single feature owns: thin wrappers or compositions built from Mantine primitives - a `ConfirmDialog` built from Mantine's `Modal`, an empty-state block used on several screens, the site header. Do not rebuild `Button`, `Skeleton`, `Modal`, or `TextInput` from scratch here; Mantine already ships them. `ExamTimer`, `SpeakingRecorder`, and `SkillProgressChart` belong to their own features regardless.
 
-A feature may import `components/ui`, `lib`, `config`, and another feature's `index.ts`. Reaching into another feature's internal files is the frontend version of writing to another module's tables - if two features need the same piece, lift it into `components/ui` or its own feature rather than importing across.
+Create only the `shared` subfolders that hold something. An empty `hooks/` waiting for its first hook is noise.
+
+A feature may import `shared`, `lib`, `config`, and another feature's `index.ts`. Reaching into another feature's internal files is the frontend version of writing to another module's tables - if two features need the same piece, lift it into `shared` or its own feature rather than importing across.
 
 Route protection belongs in middleware, not in each page. A per-page redirect check is one forgotten file away from an unprotected route. Page-level checks remain useful for role-specific redirects, but they are not the boundary - and neither is hiding a button.
 
@@ -88,17 +93,43 @@ blocks/ExamStartButton/
 
 blocks/ExamHeader/
 ├── index.tsx                        the block itself, exports ExamHeader
+├── ExamHeader.module.css
 ├── ExamHeaderSkeleton.tsx
-└── ExamStatusBadge.tsx
+└── ExamStatusBadge/
+    ├── index.tsx
+    └── ExamStatusBadge.module.css
 ```
 
 The folder is the block's name, so imports stay short and constant whether the block has one file or five: `blocks/ExamStartButton`, `blocks/ExamHeader`. Adding a skeleton or a sub-component later never changes the import path or requires moving the block's own file - there is no promotion step from file to folder to get right or forget.
 
 The folder gives room for sub-components without cluttering `blocks/` or being promoted to `parts/` they do not belong in. Anything in a block folder is private to that block; the moment a second block needs it, move it to `parts/`.
 
+**A sub-component nests inside whatever uses it, and it is a folder too.** The same rule applies at every depth, so the folder tree is the component tree - open a folder and you see what that component is made of, without reading its imports. Something used by exactly one sub-component sits inside *that* sub-component, not beside it:
+
+```text
+shared/components/SiteHeader/
+├── index.tsx                        SiteHeader - renders the logo and the nav
+├── SiteHeader.module.css
+└── SiteHeaderNav/                   the only thing SiteHeader composes
+    ├── index.tsx
+    ├── SiteHeaderNav.module.css
+    ├── SiteHeaderLoginButton/       used by the nav, so it lives under the nav
+    │   ├── index.tsx
+    │   └── SiteHeaderLoginButton.module.css
+    └── StudyMenuDropdown/
+        ├── index.tsx
+        └── StudyMenuDropdown.module.css
+```
+
+Flattening those four into one folder loses the fact that the login button and the dropdown belong to the nav rather than to the header, and it is the first step towards someone importing one of them from elsewhere.
+
+The one thing that stays a flat file beside its component is its skeleton: `ExamHeaderSkeleton.tsx` is not a component in its own right, it is the same component's placeholder.
+
+Deep nesting is a symptom, not a goal. Four levels means the top component does too much - the fix is a smaller component, not a shallower folder.
+
 A small feature - one view, two blocks - can stay flat in `components/` and grow into the three tiers later. Three folders holding one file each help nobody.
 
-Shared beyond one feature goes to `components/ui` if it is domain-neutral, or to its own feature if it is not. Never import another feature's blocks directly.
+Shared beyond one feature goes to `shared/components` if it is domain-neutral, or to its own feature if it is not. Never import another feature's blocks directly.
 
 ## Splitting a component
 
@@ -184,7 +215,7 @@ Note what this does and does not split. Suspense boundaries follow *which compon
 
 **The fallback is always a skeleton.** Never a spinner, never a "Loading..." string, never an empty fragment.
 
-- A fallback is always a named feature skeleton - `<ExamListSkeleton />` - not a bare `<Skeleton />`. That named component is built *from* Mantine's `Skeleton`, which needs no wrapper of its own in `components/ui`.
+- A fallback is always a named feature skeleton - `<ExamListSkeleton />` - not a bare `<Skeleton />`. That named component is built *from* Mantine's `Skeleton`, which needs no wrapper of its own in `shared/components`.
 - A feature skeleton lives beside the component it stands in for - `ExamList.tsx` and `ExamListSkeleton.tsx`.
 - The skeleton mirrors the real layout - same rough box sizes, same number of rows, same spacing - so nothing shifts when content arrives. A wrongly sized skeleton is worse than none.
 - Skeletons are for content not yet present. A submitting button or a saving indicator is not a skeleton case: disable the control and show its own pending state.
@@ -194,7 +225,35 @@ Note what this does and does not split. Suspense boundaries follow *which compon
 ## Types, schemas, hooks, and state
 
 - Response types come from GraphQL codegen. Do not hand-write a type for something the schema already describes.
+- Keep display types and static values under the feature's `constants/`, one file per subject - navigation links, tab definitions, level labels, editorial copy the design ships with, and the view-shape type each of them is declared against. `shared/constants/navigation.ts` holds `NavLink` next to the links themselves, because the type exists to describe that data and nothing else.
+- `types.ts` is for the few types a feature uses across several of its files and that are not tied to one constant. If a feature's `types.ts` holds one type used by one constant, they belong in the same `constants/` file.
+- A `constants/` file is fixed content the design owns. The moment a value comes from the BFF it is a query result, not a constant, no matter how rarely it changes.
 - Keep Zod schemas under the feature's `schemas/`; colocate a one-off schema with its form if repository convention prefers that.
+
+### No magic numbers
+
+A bare literal in a condition or a calculation is a value whose meaning lives only in the head of whoever typed it. Give it a name.
+
+```tsx
+if (remainingMs < 60_000) { ... }                  // no - 60000 what, and why?
+if (remainingMs < TIMER_WARNING_MS) { ... }        // yes
+
+const WORD_LIMIT = 250;
+const AUTOSAVE_DEBOUNCE_MS = 800;
+const MAX_LISTENING_PLAYS = 2;
+```
+
+Where the name goes follows the same rule as any other code:
+
+- Used once, inside one file → a `const` at the top of that file. Do not create a `constants/` file for it.
+- Used by more than one file in a feature, or part of the product's rules rather than one component's layout → the feature's `constants/`.
+- Coming from the backend - a deadline, a word limit the exam defines, a play count - it is not a constant at all. Read it from the query result. A hard-coded copy of a backend rule is worse than a magic number, because it goes stale without anything failing.
+
+The same applies to strings that act as identifiers: a status, a question type, a role, a storage key. If it comes from the schema, use the generated enum; if it is ours, name it.
+
+Not every literal needs a name. `0`, `1`, and `-1` in ordinary arithmetic, an array index, and a value whose meaning is complete in the line it appears on - `items.length > 0`, `gap={4}` on a Mantine component - stay as they are. Naming those adds a lookup without adding meaning. The test is whether a reader has to ask *why that number*.
+
+Sizes, spacing, colours, and breakpoints are not this problem - they belong in the theme or a CSS Module, not in a named JavaScript constant.
 - Keep hooks under the feature's `hooks/`, named by behaviour - `useSpeakingRecorder`. A hook used by several features moves to `lib/`.
 - Local state for local UI; React Hook Form for form state; the Apollo cache for server state. Do not add TanStack Query, SWR, Redux, or Zustand speculatively - Apollo already holds server state.
 - Do not mirror backend entities in global frontend types. Define only the view shapes the UI needs.
@@ -229,8 +288,16 @@ src/features/exam/components/blocks/ExamHeader/index.tsx
 src/features/exam/components/blocks/ExamHeader/ExamHeaderSkeleton.tsx
 src/features/exam/components/blocks/ExamHeader/ExamStatusBadge.tsx
 src/features/exam/components/blocks/ExamStartButton/index.tsx
+src/features/exam/constants/examStatusLabels.ts
 src/features/exam/graphql/examDetail.graphql
 src/features/exam/index.ts
+```
+
+```text
+src/shared/components/SiteHeader/index.tsx
+src/shared/components/SiteHeader/SiteHeaderNav/index.tsx
+src/shared/components/SiteHeader/SiteHeaderNav/StudyMenuDropdown/index.tsx
+src/shared/constants/navigation.ts
 ```
 
 ```text

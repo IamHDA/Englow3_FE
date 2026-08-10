@@ -1,4 +1,4 @@
-import type { HomeStat } from "@/features/home/types";
+import type { HomeStat } from "@/features/home/constants/homeStats";
 
 import classes from "./HomeStats.module.css";
 

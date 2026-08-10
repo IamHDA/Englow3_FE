@@ -1,4 +1,4 @@
-import { SiteHeader } from "@/components/ui/SiteHeader";
+import { SiteHeader } from "@/shared/components/SiteHeader";
 
 export default function MarketingLayout({
   children,

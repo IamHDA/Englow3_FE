@@ -4,13 +4,14 @@
 
 1. Decision rule
 2. GraphQL operations and codegen
-3. Fragments
-4. Partial data
-5. Errors
-6. Authentication
-7. Uploads
-8. Async AI work
-9. Third-party calls
+3. Enums
+4. Fragments
+5. Partial data
+6. Errors
+7. Authentication
+8. Uploads
+9. Async AI work
+10. Third-party calls
 
 ## Decision rule
 
@@ -50,6 +51,44 @@ This is the client-side shape. Fetching belongs to a view - never a block - so n
 Never hand-write a type for a GraphQL response, and never call the BFF with `fetch`. If a type feels missing, the schema or the document is missing a field.
 
 `useSuspenseQuery` is the client-side counterpart when a view should participate in a Suspense boundary.
+
+## Enums
+
+A schema enum arrives through codegen as a named type. Compare against that type, never against a bare literal:
+
+```tsx
+import { AttemptStatus } from "@/lib/graphql/generated";
+
+if (attempt.status === AttemptStatus.Completed) { ... }   // yes
+if (attempt.status === "COMPLETED") { ... }               // no
+if (attempt.status === 2) { ... }                         // never
+```
+
+A literal compiles today and rots silently: rename the value in the schema and the string still type-checks against a widened type or fails only at runtime, while a number carries no meaning at all and encodes an ordering the schema never promised.
+
+Branch on an enum with an exhaustive `switch`, so a new schema value becomes a compile error instead of a silently missing case:
+
+```tsx
+switch (attempt.status) {
+  case AttemptStatus.InProgress:
+    return <ExamRunner attempt={attempt} />;
+  case AttemptStatus.Scoring:
+    return <ResultSkeleton />;
+  case AttemptStatus.Completed:
+    return <ResultView attempt={attempt} />;
+  default: {
+    const unreachable: never = attempt.status;
+    return unreachable;
+  }
+}
+```
+
+Rules:
+
+- Never re-declare a schema enum in frontend code. Two definitions drift, and codegen already owns the one that matters.
+- Never map an enum to a number to compare it. If order or ranking genuinely matters, that is a lookup table in `constants/` keyed by the generated enum - `Record<AttemptStatus, number>` - so a new value is a type error rather than a wrong comparison.
+- Anything the enum is *displayed* as - a label, a colour, an icon - is a `Record` in the owning feature's `constants/`, keyed by the generated enum. Do not build that mapping with a chain of ternaries inside a component.
+- Whether codegen emits a TS `enum` or a union of string literals is a codegen config decision. Follow whichever the repository already produces; the rule above holds either way, because in both cases the name comes from the generated module.
 
 ## Fragments
 

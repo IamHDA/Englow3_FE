@@ -129,7 +129,7 @@ When Lucide genuinely has nothing - a brand mark, a product-specific badge, an i
 
 - used by one block only → beside that block, following the same folder-when-it-earns-one rule as any other block sub-component
 - used across several blocks in one feature → that feature's `parts/`
-- used across features → `components/ui/`
+- used across features → `shared/components/`
 
 Accept standard SVG props, keep `currentColor` so it inherits text colour, and avoid hard-coded dimensions unless the artwork needs a fixed viewBox.
 

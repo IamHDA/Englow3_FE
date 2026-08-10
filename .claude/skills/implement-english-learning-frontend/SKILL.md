@@ -23,12 +23,13 @@ Read [architecture.md](references/architecture.md) before adding or moving pages
 ## Classify the work first
 
 - **Route/page** - the route file reads params, loads data, redirects, sets metadata, composes components. Nothing else.
-- **Reusable UI** - inside the feature's `components/`: a `views/` file per route that fetches and composes, `blocks/` that render from props and never fetch - every block is its own folder with an `index.tsx`, even a one-file block - and `parts/` only when blocks actually share something. Wrappers Mantine does not ship go to `src/components/ui`.
+- **Reusable UI** - inside the feature's `components/`: a `views/` file per route that fetches and composes, `blocks/` that render from props and never fetch - every block is its own folder with an `index.tsx`, even a one-file block, and a sub-component is a folder nested inside whatever uses it - and `parts/` only when blocks actually share something. What Mantine does not ship and no feature owns goes to `src/shared`, itself organised as `components/`, `hooks/`, `constants/`.
+- **Display constant** - navigation links, tab definitions, labels, editorial copy: a file under the owning feature's `constants/`, or `shared/constants/`, holding the values and the view-shape type declared for them. Never inside a component file.
 - **Interactive UI** - add `"use client"` at the smallest boundary that needs state, effects, browser APIs, or handlers.
 - **Form** - React Hook Form with a Zod schema and the Zod resolver. Validation independent from rendering.
 - **Data** - a GraphQL operation in the owning feature, typed by codegen. Never a hand-written type for a response, never a raw `fetch` to the BFF.
 - **Third-party** - browser-safe clients only. Anything needing a secret, costing money, or changing business state goes through the BFF.
-- **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component, placed with what it belongs to - a block, a feature's `parts/`, or `components/ui` if shared across features.
+- **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component, placed with what it belongs to - a block, a feature's `parts/`, or `shared/components` if shared across features.
 
 ## Loading states
 
@@ -85,11 +86,14 @@ State briefly:
 - No component split you cannot name with a business noun.
 - No file name that differs from its export, apart from a block folder's `index.tsx`, which takes the folder's name.
 - No raw `fetch` to the BFF, and no hand-written response types where codegen produces them.
+- No comparing a schema enum against a bare string or number - use the generated enum, and `switch` on it exhaustively.
+- No magic number or identifier string in a condition or calculation - name it, in the file if it is used once, in `constants/` if it is shared. A rule the backend owns is read from the query, not copied.
 - No `NEXT_PUBLIC_*` variable holding a secret.
 - No direct call to PostgreSQL, to object storage with permanent credentials, or to an AI provider with a permanent key.
 - No hand-drawn SVG where Lucide has the icon, and no SVG markup pasted inline into a page or feature component.
 - No Tailwind utility classes and no CSS-in-JS - style with Mantine props for one-off spacing and colocated CSS Modules for anything reused.
-- No rebuilding a primitive Mantine already ships (Button, Skeleton, Modal, TextInput) in `components/ui` - wrap or theme it instead.
+- No rebuilding a primitive Mantine already ships (Button, Skeleton, Modal, TextInput) in `shared/components` - wrap or theme it instead.
+- No sub-component sitting beside its parent instead of inside it, and no empty `shared/` subfolder waiting for its first file.
 - No duplicated Zod rules inside event handlers.
 - No global state for local component or form state.
 - No `useEffect` for fetching, deriving state, or resetting a form - effects are for synchronizing with something outside React, and each one started must be cleaned up.
