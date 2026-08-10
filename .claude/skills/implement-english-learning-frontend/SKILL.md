@@ -21,7 +21,7 @@ Read [architecture.md](references/architecture.md) before adding or moving pages
 ## Classify the work first
 
 - **Route/page** - the route file reads params, loads data, redirects, sets metadata, composes components. Nothing else.
-- **Reusable UI** - inside the feature's `components/`: a `views/` file per route that fetches and composes, `blocks/` that render from props and never fetch, `parts/` only when blocks actually share something. Domain-neutral primitives go to `src/components/ui`.
+- **Reusable UI** - inside the feature's `components/`: a `views/` file per route that fetches and composes, `blocks/` that render from props and never fetch - every block is its own folder with an `index.tsx`, even a one-file block - and `parts/` only when blocks actually share something. Domain-neutral primitives go to `src/components/ui`.
 - **Interactive UI** - add `"use client"` at the smallest boundary that needs state, effects, browser APIs, or handlers.
 - **Form** - React Hook Form with a Zod schema and the Zod resolver. Validation independent from rendering.
 - **Data** - a GraphQL operation in the owning feature, typed by codegen. Never a hand-written type for a response, never a raw `fetch` to the BFF.

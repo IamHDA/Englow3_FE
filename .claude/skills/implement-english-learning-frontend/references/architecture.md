@@ -25,7 +25,7 @@ src/
 │       ├── components/
 │       │   ├── views/               Fetch data, compose blocks
 │       │   ├── blocks/              Render from props, never fetch
-│       │   │   └── <BlockName>/     Folder once it has a skeleton or sub-components
+│       │   │   └── <BlockName>/     Every block is a folder, even a single file
 │       │   └── parts/               UI shared between this feature's blocks
 │       ├── hooks/                   Behaviour extracted out of components
 │       ├── schemas/                 Zod schemas
@@ -77,20 +77,21 @@ Inside a feature, `components/` has three tiers, and the split is about **who fe
 
 The rule that carries the weight is **blocks do not fetch**. It keeps the data boundary in one place per route, and it makes blocks testable without Apollo or a mocked schema. It also lines up with Server and Client Components: the view is usually a Server Component, and only the blocks that need interaction carry `"use client"`.
 
-**A block starts as a single file and becomes a folder when it earns one** - when it gains a skeleton, or sub-components that only it uses:
+**Every block is a folder, always** - even one with a single file inside. This is not a threshold to cross; it is the shape from the start:
 
 ```text
-blocks/ExamStartButton.tsx           still one file
+blocks/ExamStartButton/
+└── index.tsx                        the block itself, exports ExamStartButton
 
-blocks/ExamHeader/                   grew a skeleton and a sub-component
+blocks/ExamHeader/
 ├── index.tsx                        the block itself, exports ExamHeader
 ├── ExamHeaderSkeleton.tsx
 └── ExamStatusBadge.tsx
 ```
 
-The folder is the block's name, so imports stay short: `blocks/ExamHeader`. The skeleton and sub-components are imported by their own path.
+The folder is the block's name, so imports stay short and constant whether the block has one file or five: `blocks/ExamStartButton`, `blocks/ExamHeader`. Adding a skeleton or a sub-component later never changes the import path or requires moving the block's own file - there is no promotion step from file to folder to get right or forget.
 
-The folder gives those sub-components somewhere to live without cluttering `blocks/` or being promoted to `parts/` they do not belong in. Anything in a block folder is private to that block; the moment a second block needs it, move it to `parts/`.
+The folder gives room for sub-components without cluttering `blocks/` or being promoted to `parts/` they do not belong in. Anything in a block folder is private to that block; the moment a second block needs it, move it to `parts/`.
 
 A small feature - one view, two blocks - can stay flat in `components/` and grow into the three tiers later. Three folders holding one file each help nobody.
 
@@ -116,7 +117,7 @@ Split a component when it does two jobs, when a piece is reused, or when a piece
 
 The naming test: a business noun means it is a real component - `ExamTimer`, `QuestionNav`, `SaveIndicator`. `ExamDetailSection2` is not a concept, it is a cut.
 
-Create a subfolder under `blocks/` when a sub-flow reaches four or five components that serve only it - for example an exam-taking flow with a runner, a timer, a navigator, a save indicator, and one renderer per answer format. Below that, keep it flat.
+A sub-flow with four or five components that serve only it - for example an exam-taking flow with a runner, a timer, a navigator, a save indicator, and one renderer per answer format - can be grouped under a shared subfolder inside `blocks/`, each still its own block folder: `blocks/exam-taking/ExamRunner/`, `blocks/exam-taking/ExamTimer/`. This is about grouping related blocks together, not about whether any single block is a folder - every block is a folder regardless of group size.
 
 ## File naming
 
@@ -193,7 +194,7 @@ src/features/exam/components/views/ExamDetailView.tsx
 src/features/exam/components/blocks/ExamHeader/index.tsx
 src/features/exam/components/blocks/ExamHeader/ExamHeaderSkeleton.tsx
 src/features/exam/components/blocks/ExamHeader/ExamStatusBadge.tsx
-src/features/exam/components/blocks/ExamStartButton.tsx
+src/features/exam/components/blocks/ExamStartButton/index.tsx
 src/features/exam/graphql/examDetail.graphql
 src/features/exam/index.ts
 ```
