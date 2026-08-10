@@ -7,7 +7,7 @@ description: Implement, extend, refactor, or review the English Learning web fro
 
 Next.js App Router, TypeScript, Mantine, React Hook Form with Zod, Apollo Client against a GraphQL BFF. The BFF is the only application backend the browser talks to.
 
-Mantine is the styling system: its components, style props, and CSS Modules. No Tailwind utility classes, and no second component library alongside it.
+Mantine is the styling system: its components, style props, and CSS Modules. No Tailwind utility classes, and no second component library alongside it. Reach for a Mantine component before writing a CSS rule - a `<div>` carrying `display: flex`, a hand-styled scrollbar, or a hand-built tab strip is a component that was not used.
 
 Build one complete user-facing slice at a time: the route, its components, its GraphQL operations, its loading and error states, its tests. Do not scaffold folders that hold nothing.
 
@@ -23,12 +23,14 @@ Read [architecture.md](references/architecture.md) before adding or moving pages
 ## Classify the work first
 
 - **Route/page** - the route file reads params, loads data, redirects, sets metadata, composes components. Nothing else.
-- **Reusable UI** - inside the feature's `components/`: a `views/` file per route that fetches and composes, `blocks/` that render from props and never fetch - every block is its own folder with an `index.tsx`, even a one-file block - and `parts/` only when blocks actually share something. Wrappers Mantine does not ship go to `src/components/ui`.
+- **Reusable UI** - inside the feature's `components/`: a `views/` file per route that fetches and composes, `blocks/` that render from props and never fetch - every block is its own folder with an `index.tsx`, even a one-file block, and a sub-component is a folder nested inside whatever uses it - and `parts/` only when blocks actually share something. What Mantine does not ship and no feature owns goes to `src/shared`, itself organised as `components/`, `hooks/`, `constants/`.
+- **Display constant** - navigation links, tab definitions, labels, editorial copy: a file under the owning feature's `constants/`, or `shared/constants/`, holding the values and the view-shape type declared for them. Never inside a component file.
 - **Interactive UI** - add `"use client"` at the smallest boundary that needs state, effects, browser APIs, or handlers.
 - **Form** - React Hook Form with a Zod schema and the Zod resolver. Validation independent from rendering.
 - **Data** - a GraphQL operation in the owning feature, typed by codegen. Never a hand-written type for a response, never a raw `fetch` to the BFF.
 - **Third-party** - browser-safe clients only. Anything needing a secret, costing money, or changing business state goes through the BFF.
-- **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component, placed with what it belongs to - a block, a feature's `parts/`, or `components/ui` if shared across features.
+- **Layout** - a Mantine layout component (`Stack`, `Group`, `Flex`, `Center`, `SimpleGrid`, `Grid`, `Container`), never a `<div>` with flex or grid CSS. Only `Flex` accepts responsive values and a `component` prop.
+- **Icon** - `lucide-react`. Only draw an SVG when Lucide has nothing that fits, and then it becomes its own component, placed with what it belongs to - a block, a feature's `parts/`, or `shared/components` if shared across features.
 
 ## Loading states
 
@@ -83,13 +85,18 @@ State briefly:
 - No importing another feature's internal files - go through its `index.ts`, or lift the shared piece out.
 - No fetching inside a block; the view owns the data boundary.
 - No component split you cannot name with a business noun.
+- No component file used in one place that holds no state and is not a client boundary worth paying for - write it where it is used.
 - No file name that differs from its export, apart from a block folder's `index.tsx`, which takes the folder's name.
 - No raw `fetch` to the BFF, and no hand-written response types where codegen produces them.
+- No comparing a schema enum against a bare string or number - use the generated enum, and `switch` on it exhaustively.
+- No magic number or identifier string in a condition or calculation - name it, in the file if it is used once, in `constants/` if it is shared. A rule the backend owns is read from the query, not copied.
 - No `NEXT_PUBLIC_*` variable holding a secret.
 - No direct call to PostgreSQL, to object storage with permanent credentials, or to an AI provider with a permanent key.
 - No hand-drawn SVG where Lucide has the icon, and no SVG markup pasted inline into a page or feature component.
 - No Tailwind utility classes and no CSS-in-JS - style with Mantine props for one-off spacing and colocated CSS Modules for anything reused.
-- No rebuilding a primitive Mantine already ships (Button, Skeleton, Modal, TextInput) in `components/ui` - wrap or theme it instead.
+- No `<div>` carrying `display: flex` or `display: grid` - that is `Stack`, `Group`, `Flex`, `Center`, `SimpleGrid`, or `Grid`. Nest two of them for uneven rhythm rather than putting margins back on the children.
+- No rebuilding what Mantine already ships, in `shared/components` or inline - `Button`, `Skeleton`, `Modal`, `TextInput`, and equally `ScrollArea` for a styled scrollbar, `Tabs`, `Accordion`, `Tooltip`, `Popover`, `Drawer`, `Stepper`, `Pagination`, `Table`, `Divider`, `Paper`. Wrap or theme it instead; a hand-rolled one is the keyboard handling and ARIA you now own.
+- No sub-component sitting beside its parent instead of inside it, and no empty `shared/` subfolder waiting for its first file.
 - No duplicated Zod rules inside event handlers.
 - No global state for local component or form state.
 - No `useEffect` for fetching, deriving state, or resetting a form - effects are for synchronizing with something outside React, and each one started must be cleaned up.
@@ -98,6 +105,6 @@ State briefly:
 
 ## Verify before handing off
 
-Formatting, linting, type checking, codegen output committed, Zod and form behaviour, component roles and accessible names, GraphQL operation and error handling, server/client boundaries, every loading and error state rendered, production build and affected end-to-end flows.
+Formatting, linting, type checking, codegen output committed, Zod and form behaviour, component roles and accessible names, no remaining CSS that a Mantine component already expresses, GraphQL operation and error handling, server/client boundaries, every loading and error state rendered, production build and affected end-to-end flows.
 
 Report the behaviour implemented, the boundary decisions made, the checks actually run, and any remaining risk. Do not claim validation that was skipped or failed.
