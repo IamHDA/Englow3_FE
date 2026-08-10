@@ -4,7 +4,7 @@
 
 1. React Hook Form and Zod
 2. Server validation errors
-3. Lucide and custom icons
+3. Icons
 4. Accessibility and interaction
 5. Testing
 
@@ -38,6 +38,7 @@ Rules:
 - Provide stable `defaultValues` to avoid uncontrolled/controlled transitions.
 - Keep cross-field rules in `superRefine` and attach issues to the relevant field.
 - Use `valueAsNumber`, `z.coerce`, or explicit preprocessing deliberately for HTML input strings.
+- Plain Mantine inputs - `TextInput`, `Textarea`, `PasswordInput`, `Checkbox` - forward a ref and work directly with `register`. Inputs whose `onChange` receives a value instead of an event - `Select`, `NumberInput`, `DatePickerInput` - go through RHF's `Controller` instead; `register` on these silently gets the wrong shape.
 - Disable or guard submission while pending, but still rely on backend idempotency for critical mutations.
 - Keep backend validation authoritative; client validation improves feedback but is not a security boundary.
 
@@ -66,8 +67,10 @@ Icons come from `lucide-react`. There is no icons folder, because there is almos
 ```tsx
 import { Volume2 } from "lucide-react";
 
-<Volume2 aria-hidden="true" className="size-4" />
+<Volume2 aria-hidden="true" size={16} />
 ```
+
+Size the icon with the `size` prop, not a utility class - there is no Tailwind in this project. For an icon inside a Mantine `Button` or `ActionIcon`, pass it through `leftSection` or as the `ActionIcon` child rather than positioning it by hand.
 
 Decorative icons get `aria-hidden="true"`. An icon-only control needs an accessible name on the control, not on the icon:
 
@@ -113,9 +116,13 @@ Never paste raw SVG markup into a page, form, card, or unrelated component. Inli
 
 ## Testing
 
-**Unit-test UI only where there is a form.** A component with no form gets no unit test. This is a deliberate scope decision, not an oversight - forms are where logic, validation, and error mapping actually live, and everything else is markup that a test would only restate.
+Two things get unit tests: **forms**, and **hooks that hold logic**. Nothing else.
+
+**Unit-test UI only where there is a form.** A component with no form gets no unit test. This is a deliberate scope decision, not an oversight - forms are where validation and error mapping actually live, and everything else is markup that a test would only restate.
 
 So do not write unit tests for: presentational blocks, skeletons, layouts, views that only compose, cards, lists, badges, or anything whose test would assert that props were rendered.
+
+**Unit-test a hook when it holds real logic** - time, persistence, retries, or multi-step state. A hook that only wraps a generated query or returns a boolean does not need one. This is where the risky code lives once logic has been extracted out of components, and testing it costs nothing because nothing has to render.
 
 For a form-bearing component, cover:
 
@@ -126,6 +133,19 @@ For a form-bearing component, cover:
 - disabled and pending states.
 
 Test Zod schemas directly for boundary values and conditional or cross-field rules. That is cheaper than driving them through the UI, and it is where the rules belong.
+
+### Hooks
+
+Use `renderHook`, and wrap anything that changes state in `act` - including timer advances, or `result.current` reads stale.
+
+Cover what the hook is actually responsible for:
+
+- **Time** - fake both the timers and the system clock. The case that matters is the clock jumping while timers did not run, which is what a sleeping laptop does: set the system time forward, dispatch `focus`, and assert the hook recomputed from the server expiry rather than continuing its own countdown. A hook that counts down from a duration fails this test, which is the point of writing it.
+- **Debounce** - several rapid updates produce one call, carrying the last value.
+- **Failure** - a rejected save leaves a visible failed state rather than passing silently.
+- **Terminal states** - polling stops on both success and failure, and a countdown clamps at zero instead of going negative.
+
+Inject collaborators through the hook's arguments rather than letting it reach for Apollo internally. It keeps the test free of transport setup, and it is part of why the logic was extracted into a hook in the first place. When a hook genuinely needs providers, pass a `wrapper` to `renderHook`.
 
 Query by accessible role and name, not class names or internal state. Mock the generated hook or use Apollo's testing provider - never global `fetch`. When a form submits through GraphQL, assert the variables sent and that each error code maps to its intended outcome.
 

@@ -7,10 +7,11 @@
 3. Views, blocks, and parts
 4. Splitting a component
 5. File naming
-6. Server and client boundaries
-7. Loading, skeletons, and Suspense
-8. Types, schemas, hooks, and state
-9. Feature examples
+6. Styling with Mantine
+7. Server and client boundaries
+8. Loading, skeletons, and Suspense
+9. Types, schemas, hooks, and state
+10. Feature examples
 
 ## Baseline structure
 
@@ -33,10 +34,11 @@ src/
 │       ├── types.ts
 │       └── index.ts                 What other features may import
 ├── components/
-│   └── ui/                          Domain-neutral primitives, including Skeleton
+│   └── ui/                          Wrappers and compositions Mantine does not ship
 ├── lib/
 │   ├── apollo/                      Client setup, links, cache policies
 │   ├── graphql/generated/           Codegen output - never edited by hand
+│   ├── mantine/                     Theme and provider setup
 │   └── auth/                        Session access, token retrieval
 ├── config/                          Typed public runtime configuration
 └── types/                           Cross-feature types only - keep nearly empty
@@ -61,7 +63,7 @@ export default function OnboardingPage() {
 }
 ```
 
-Use `src/components/ui` only for domain-neutral primitives - button, field, dialog, skeleton. `ExamTimer`, `SpeakingRecorder`, and `SkillProgressChart` belong to their own features.
+Use `src/components/ui` for what Mantine does not already provide: thin wrappers or compositions built from Mantine primitives - a `ConfirmDialog` built from Mantine's `Modal`, a form field that pairs a Mantine input with the app's error-display convention. Do not rebuild `Button`, `Skeleton`, `Modal`, or `TextInput` from scratch here; Mantine already ships them. `ExamTimer`, `SpeakingRecorder`, and `SkillProgressChart` belong to their own features regardless.
 
 A feature may import `components/ui`, `lib`, `config`, and another feature's `index.ts`. Reaching into another feature's internal files is the frontend version of writing to another module's tables - if two features need the same piece, lift it into `components/ui` or its own feature rather than importing across.
 
@@ -128,6 +130,17 @@ A sub-flow with four or five components that serve only it - for example an exam
 - Next.js reserved files keep their required lowercase names: `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `middleware.ts`.
 - Everything else follows the convention already in the repository.
 
+## Styling with Mantine
+
+Mantine is the only styling system. No Tailwind, no second component library, no ad hoc inline `style` objects except for values computed at runtime that cannot be expressed any other way.
+
+- **Theme** lives in `src/lib/mantine/theme.ts` and is passed to a single `MantineProvider` in the root layout, alongside Mantine's colour-scheme script. Do not create a second provider or a second theme object anywhere else in the tree.
+- **One-off spacing and layout** use Mantine's style props - `p`, `m`, `gap`, `w`, `c`, `bg` - directly on the component. Reach for these first.
+- **Anything reused, or a real selector** - hover states, pseudo-elements, media queries - goes in a colocated CSS Module: `ExamHeader.module.css` beside `index.tsx` in that block's folder. Import it as `classes` and apply with `className={classes.header}`.
+- **Do not reimplement what Mantine ships.** A loading placeholder is Mantine's `Skeleton`, a dialog is `Modal`, a form field is `TextInput` or `Select` - not a hand-rolled div styled to look like one.
+
+Mantine hooks - `useDisclosure`, `useMantineTheme`, and similar - only work in a Client Component, same as any other hook. This is an ordinary instance of the Server/Client boundary rule below, not a special case.
+
 ## Server and client boundaries
 
 Server Components by default. Add `"use client"` only when a component needs state or effects, event handlers, React Hook Form, browser storage, media devices or recording, WebSocket, or a browser-only SDK.
@@ -170,7 +183,7 @@ Note what this does and does not split. Suspense boundaries follow *which compon
 
 **The fallback is always a skeleton.** Never a spinner, never a "Loading..." string, never an empty fragment.
 
-- The `Skeleton` primitive lives in `src/components/ui/skeleton.tsx`.
+- A fallback is always a named feature skeleton - `<ExamListSkeleton />` - not a bare `<Skeleton />`. That named component is built *from* Mantine's `Skeleton`, which needs no wrapper of its own in `components/ui`.
 - A feature skeleton lives beside the component it stands in for - `ExamList.tsx` and `ExamListSkeleton.tsx`.
 - The skeleton mirrors the real layout - same rough box sizes, same number of rows, same spacing - so nothing shifts when content arrives. A wrongly sized skeleton is worse than none.
 - Skeletons are for content not yet present. A submitting button or a saving indicator is not a skeleton case: disable the control and show its own pending state.
