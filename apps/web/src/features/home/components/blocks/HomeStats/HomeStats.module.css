@@ -1,0 +1,57 @@
+.stats {
+  max-width: 750px;
+  padding-bottom: 56px;
+}
+
+.separator {
+  height: 5px;
+  margin: 0;
+  border: 0;
+  border-radius: 2px;
+  background-color: rgba(226, 232, 240, 0.95);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin: 0;
+  padding: 24px 0 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.value,
+.valueAccent {
+  font-size: 35px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.value {
+  color: var(--mantine-color-black);
+}
+
+.valueAccent {
+  color: var(--mantine-color-amber-6);
+}
+
+.label {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--mantine-color-black);
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .list {
+    flex-wrap: nowrap;
+    gap: 120px;
+    padding: 22px 44px 0;
+  }
+}

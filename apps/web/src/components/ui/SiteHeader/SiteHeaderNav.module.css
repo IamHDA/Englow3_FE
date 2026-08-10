@@ -1,0 +1,96 @@
+/*
+ * `:is(a, button)` raises specificity to (0,1,1). Without it Mantine's
+ * UnstyledButton rule `color: inherit` — same specificity, loaded later —
+ * wins on the Study trigger and leaves it a different shade to the plain links.
+ */
+.link:is(a, button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--mantine-color-slate-6);
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--mantine-radius-md);
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.link:is(a, button):hover,
+.link:is(a, button):focus-visible,
+.link:is(a, button)[data-expanded] {
+  color: var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-slate-2);
+}
+
+.chevron {
+  transition: transform 150ms ease;
+}
+
+.link[data-expanded] .chevron {
+  transform: rotate(180deg);
+}
+
+.drawerLink:is(a) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px var(--mantine-spacing-xs);
+  color: var(--mantine-color-slate-6);
+  text-decoration: none;
+  border-radius: var(--mantine-radius-md);
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.drawerLink:is(a):hover,
+.drawerLink:is(a):focus-visible {
+  color: var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-slate-2);
+}
+
+.drawerIconTile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-slate-1);
+}
+
+.drawerLinkText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.drawerLinkLabel {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--mantine-color-slate-8);
+}
+
+.drawerLinkDescription {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--mantine-color-slate-5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link:is(a, button),
+  .drawerLink:is(a),
+  .chevron {
+    transition: none;
+  }
+}
