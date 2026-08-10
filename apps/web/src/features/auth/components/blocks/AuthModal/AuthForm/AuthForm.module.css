@@ -1,0 +1,71 @@
+.label {
+  --input-label-size: 14px;
+
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: var(--mantine-color-black);
+}
+
+/*
+ * Mantine reads every one of these from the input element itself, so setting
+ * the variables here beats overriding its rules and keeps the error and focus
+ * states it already ships working.
+ */
+.input {
+  --input-height: 44px;
+  --input-size: 44px;
+  --input-radius: 12px;
+  --input-padding-inline-start: 16px;
+  --input-padding-inline-end: 16px;
+  --input-fz: 14px;
+  --input-bg: var(--mantine-color-slate-0);
+  --input-bd: var(--mantine-color-slate-3);
+  --input-bd-focus: var(--mantine-color-amber-5);
+  --input-color: var(--mantine-color-black);
+  --input-placeholder-color: var(--mantine-color-slate-4);
+
+  font-weight: 700;
+}
+
+.input[data-error] {
+  --input-bd: var(--mantine-color-error);
+}
+
+/*
+ * The design draws the focused field with a 2px amber border. A ring on top of
+ * the 1px border rather than a thicker border, so focusing does not shift the
+ * text by a pixel. It follows --input-bd, so an errored field rings red.
+ */
+.input:focus,
+.input:focus-within {
+  --input-bg: var(--mantine-color-white);
+
+  box-shadow: 0 0 0 1px var(--input-bd);
+}
+
+/* PasswordInput puts the border on a wrapper and the text on this element. */
+.innerInput {
+  font-weight: 700;
+}
+
+.error {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.alertMessage {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.submit {
+  height: 44px;
+  border-radius: 10px;
+}
+
+.submitLabel {
+  font-size: 15px;
+  font-weight: 700;
+}

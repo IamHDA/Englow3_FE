@@ -1,25 +1,23 @@
 "use client";
 
 import { Button } from "@mantine/core";
-import Link from "next/link";
 
-import classes from "./SiteHeaderLoginButton.module.css";
+import classes from "./LoginButton.module.css";
 
-type SiteHeaderLoginButtonProps = {
-  /** Called after the link is followed, so the mobile drawer can close itself. */
-  onNavigate?: () => void;
+type LoginButtonProps = {
+  onClick: () => void;
   fullWidth?: boolean;
 };
 
-export function SiteHeaderLoginButton({
-  onNavigate,
-  fullWidth,
-}: SiteHeaderLoginButtonProps) {
+/**
+ * Trigger only. The dialog itself is deliberately not rendered here: this
+ * button also sits inside the mobile drawer, and the drawer unmounts its
+ * children when it closes, which would take an owned modal down with it.
+ */
+export function LoginButton({ onClick, fullWidth }: LoginButtonProps) {
   return (
     <Button
-      component={Link}
-      href="/login"
-      onClick={onNavigate}
+      onClick={onClick}
       fullWidth={fullWidth}
       // An explicit variant is required: without one Mantine falls back to the
       // filled primary colour, which paints the button amber on hover.

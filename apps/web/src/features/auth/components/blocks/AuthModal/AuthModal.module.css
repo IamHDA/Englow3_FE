@@ -1,0 +1,35 @@
+.content {
+  border: 1px solid var(--mantine-color-slate-2);
+}
+
+.mark {
+  width: 48px;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--mantine-color-black);
+}
+
+.tagline {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--mantine-color-black);
+}
+
+.dividerLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mantine-color-black);
+}
+
+@media (min-width: $mantine-breakpoint-sm) {
+  .title {
+    font-size: 23px;
+  }
+}

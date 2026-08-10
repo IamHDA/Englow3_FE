@@ -14,18 +14,25 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
+import { AuthControl, AuthModal } from "@/features/auth";
 import {
   primaryLinks,
   studyIcon as StudyIcon,
   studyLinks,
 } from "@/shared/constants/navigation";
 
-import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
 import { StudyMenuDropdown } from "./StudyMenuDropdown";
 
 export function SiteHeaderNav() {
   const [drawerOpened, drawer] = useDisclosure(false);
+  const [authOpened, auth] = useDisclosure(false);
+
+  /** Both login buttons share one modal, so the drawer must close with it. */
+  function openAuth() {
+    drawer.close();
+    auth.open();
+  }
 
   return (
     <>
@@ -61,7 +68,7 @@ export function SiteHeaderNav() {
           </Link>
         ))}
 
-        <SiteHeaderLoginButton />
+        <AuthControl onLogin={openAuth} />
       </Group>
 
       <Burger
@@ -113,9 +120,11 @@ export function SiteHeaderNav() {
             </Link>
           ))}
 
-          <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
+          <AuthControl onLogin={openAuth} fullWidth />
         </Stack>
       </Drawer>
+
+      <AuthModal opened={authOpened} onClose={auth.close} />
     </>
   );
 }
