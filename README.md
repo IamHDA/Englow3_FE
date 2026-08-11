@@ -43,3 +43,88 @@ Englow3_FE/
   - Web: `pnpm lint:web` | `pnpm typecheck:web`
   - BFF: `pnpm lint:bff` | `pnpm typecheck:bff`
   - Mobile: `pnpm lint:mobile` | `pnpm typecheck:mobile`
+
+> ⚠️ Hiện chỉ `web` có script `lint`, và **chưa app nào có script `test`**. CI dùng
+> `--if-present` nên các bước đó được bỏ qua chứ không fail — xem mục "Quality gate"
+> trong Job Summary của mỗi lần chạy để biết bước nào thực sự đã chạy.
+
+---
+
+## 🚀 CI/CD
+
+Hai workflow **độc lập**, không cái nào chờ cái nào:
+
+| Workflow | File | Chạy khi | Nhiệm vụ |
+|---|---|---|---|
+| **CI** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | `pull_request` **và** `push` vào `main`/`dev` | lint + typecheck + test |
+| **Deploy** | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | `push`, `pull_request`, `workflow_dispatch` | build & deploy lên Vercel |
+
+```text
+ci.yml:      quality (matrix: web | bff | mobile, chạy song song)
+
+deploy.yml:  setup ─┬─> deploy-web ─┐
+                    └─> deploy-bff ─┴─> comment (chỉ trên PR)
+```
+
+Mỗi PR vì vậy chạy **2 workflow song song**: `CI` để validate, `Deploy` để dựng
+preview. Deploy **không** phụ thuộc CI — một PR vẫn có preview xanh dù CI đang đỏ.
+Cổng chặn nằm ở bước **merge** (branch protection), không nằm ở bước deploy.
+
+CI chạy **cả sau khi merge**, không chỉ trên PR. Lý do: một lượt CI trên PR chỉ
+chứng minh bản merge thử tại thời điểm đó là xanh. Hai PR độc lập cùng xanh vẫn
+có thể làm hỏng `dev` khi cả hai cùng vào — và nếu CI không chạy trên `push` thì
+không ai phát hiện. Bật "Require branches to be up to date before merging" thu hẹp
+khe hở này, nhưng đó là setting của repo, không phải thứ được đảm bảo trong code.
+
+| Sự kiện | Target | URL |
+|---|---|---|
+| `push` vào `main` | `production` | domain production (do `--prod` tự gán) |
+| `push` vào `dev` | `preview` | alias sang `englow3-{web,bff}-dev.vercel.app` |
+| `pull_request` vào `main`/`dev` | `preview` | URL ngẫu nhiên, post vào PR comment |
+| `workflow_dispatch` | do người chạy chọn | — |
+
+Alias cho `dev` khai báo ở block `env` đầu file workflow (`DEV_ALIAS_WEB`,
+`DEV_ALIAS_BFF`, `VERCEL_SCOPE`) — đổi domain staging thì sửa ở đúng một chỗ đó.
+
+Web và BFF deploy ở **hai job riêng trên hai runner riêng**, để mỗi project có thư
+mục `.vercel/` độc lập. Không gộp chung lại.
+
+### Secrets bắt buộc
+
+| Secret | Bắt buộc | Ghi chú |
+|---|---|---|
+| `VERCEL_TOKEN` | ✅ | |
+| `VERCEL_ORG_ID` | ✅ | |
+| `VERCEL_PROJECT_ID_WEB` | ✅ | fallback về `VERCEL_PROJECT_ID` |
+| `VERCEL_PROJECT_ID_BFF` | — | thiếu thì job `deploy-bff` được bỏ qua, và PR comment sẽ nói rõ |
+
+### Cấu hình phía Vercel
+
+CLI chạy từ **gốc repo**, nên mỗi Vercel project phải tự khai báo thư mục nguồn
+trong dashboard — workflow không truyền đường dẫn:
+
+- Project Web → **Root Directory** = `apps/web`
+- Project BFF → **Root Directory** = `apps/bff`
+
+Sai setting này thì CI fail mà log không nói rõ nguyên nhân.
+
+Cả hai `vercel.json` đều đặt `git.deploymentEnabled: false` để Vercel không tự deploy
+song song với GitHub Actions. Đừng bật lại.
+
+### Ghi chú vận hành
+
+- Muốn chặn deploy production bằng approval: vào **Settings → Environments →
+  `production`** thêm required reviewers. Job `deploy-web`/`deploy-bff` sẽ chờ duyệt.
+- Vercel CLI được **pin cứng version** trong
+  [`.github/actions/vercel-deploy/action.yml`](.github/actions/vercel-deploy/action.yml).
+  Nâng version là một thay đổi có chủ đích, không dùng `@latest`.
+- ⚠️ **Cần bật `CI / quality (web|bff|mobile)` làm required check** cho `dev` và `main`
+  trong Settings → Branches. Chưa bật thì deploy không chờ CI, mà merge cũng không
+  chờ CI — tức là **không có cổng chặn tự động nào**. Đây là việc duy nhất còn lại
+  phải làm trên giao diện GitHub.
+- `ci.yml` **cố ý không có `paths-ignore`**: workflow bị skip thì không báo check nào,
+  nên PR docs-only sẽ treo vĩnh viễn ở "Expected — Waiting for status to be reported"
+  một khi `quality` là required check. Đừng thêm `paths-ignore` vào `ci.yml`.
+- `paths-ignore` chỉ còn ở **2 chỗ**, cả hai trong `deploy.yml`, và phải sửa đồng bộ
+  bằng tay — GitHub Actions không hỗ trợ YAML anchor.
+- PR từ fork không được deploy (không có secrets) — đây là chủ ý.

@@ -1,0 +1,48 @@
+name: CI
+
+# Validate only — no secrets, no environments, so this also runs on PRs from
+# forks. Deploying is a separate concern: see `deploy.yml`, which does not wait
+# on this workflow. The merge gate is branch protection.
+#
+# Runs on push to main/dev as well as on pull_request. A PR run only proves the
+# merge preview was green at that moment: two PRs that each pass on their own
+# can still break main once both land, and nothing would notice. Post-merge
+# runs are what catch that. "Require branches to be up to date before merging"
+# narrows the window but is a repo setting, not something enforced in code.
+#
+# No paths-ignore on purpose, unlike deploy.yml. A skipped workflow reports no
+# check at all, so once `quality` is a required check a docs-only PR would sit
+# forever on "Expected — Waiting for status to be reported". Skipping docs pays
+# off for deploys, not for a two-minute validation run.
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  # `pull_request.number` is empty on push events, so fall back to the ref —
+  # otherwise every push would share one group and cancel the others.
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  # A validation run superseded by a newer commit is worthless.
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      # A broken mobile typecheck should not hide the state of web and bff.
+      # Each app is a separate check, so branch protection can require them
+      # individually.
+      fail-fast: false
+      matrix:
+        app: [web, bff, mobile]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/quality-gate
+        with:
+          app: ${{ matrix.app }}
