@@ -4,8 +4,9 @@ name: Deploy
 # wait on them: the merge gate is branch protection, not the deploy step. A PR
 # can therefore get a green preview while its CI run is red.
 #
-# Note: the two paths-ignore lists below, plus the one in `ci.yml`, must stay in
-# sync by hand. GitHub Actions does not support YAML anchors.
+# Note: the two paths-ignore lists below must stay in sync by hand. GitHub
+# Actions does not support YAML anchors. `ci.yml` deliberately has none — a
+# skipped workflow reports no check, which would hang a required check.
 on:
   push:
     branches: [main, dev]
