@@ -1,0 +1,37 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--mantine-color-white);
+  border-bottom: 1px solid var(--mantine-color-slate-2);
+}
+
+.inner {
+  height: 60px;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--mantine-spacing-md);
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo {
+  width: auto;
+  height: 36px;
+  object-fit: contain;
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .inner {
+    height: 76px;
+    padding-inline: 40px;
+  }
+
+  .logo {
+    height: 48px;
+  }
+}
