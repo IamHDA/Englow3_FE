@@ -1,7 +1,11 @@
 name: Deploy
 
-# Note: the two paths-ignore lists must stay in sync by hand.
-# GitHub Actions does not support YAML anchors.
+# Deploy only. Lint/typecheck/test live in `ci.yml` and this workflow does not
+# wait on them: the merge gate is branch protection, not the deploy step. A PR
+# can therefore get a green preview while its CI run is red.
+#
+# Note: the two paths-ignore lists below, plus the one in `ci.yml`, must stay in
+# sync by hand. GitHub Actions does not support YAML anchors.
 on:
   push:
     branches: [main, dev]
@@ -84,46 +88,12 @@ jobs:
 
           echo "### Target: \`$target\` (web: $has_web, bff: $has_bff)" >> "$GITHUB_STEP_SUMMARY"
 
-  # One job per app rather than a matrix. A matrix would run the three in
-  # parallel, but its result is a single pass/fail: one failing leg fails the
-  # whole job and every deploy that needs it. `fail-fast: false` does not change
-  # that — it only keeps the other legs running. Web, bff and mobile ship
-  # independently, so each deploy waits on its own app's gate and nothing else.
-  quality-web:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/quality-gate
-        with:
-          app: web
-
-  quality-bff:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/quality-gate
-        with:
-          app: bff
-
-  # Mobile has no deploy job, so this gates nothing. It still reports a check on
-  # the PR, which is what a branch protection rule would hang off.
-  quality-mobile:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/quality-gate
-        with:
-          app: mobile
-
   # Web and BFF deploy in separate jobs on separate runners. They used to share
   # one working directory, where the second `vercel pull` overwrote the first
   # project's .vercel/project.json while .vercel/output still held the first
   # build — one failed build away from deploying web's output as the BFF.
   deploy-web:
-    needs: [setup, quality-web]
+    needs: [setup]
     if: >-
       needs.setup.outputs.has_web == 'true' &&
       (github.event_name != 'pull_request' ||
@@ -170,7 +140,7 @@ jobs:
           fi
 
   deploy-bff:
-    needs: [setup, quality-bff]
+    needs: [setup]
     if: >-
       needs.setup.outputs.has_bff == 'true' &&
       (github.event_name != 'pull_request' ||

@@ -52,19 +52,26 @@ Englow3_FE/
 
 ## 🚀 CI/CD
 
-Workflow: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+Hai workflow **độc lập**, không cái nào chờ cái nào:
+
+| Workflow | File | Chạy khi | Nhiệm vụ |
+|---|---|---|---|
+| **CI** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | `pull_request` vào `main`/`dev` | lint + typecheck + test |
+| **Deploy** | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | `push`, `pull_request`, `workflow_dispatch` | build & deploy lên Vercel |
 
 ```text
-setup ─┬─> quality-web ────> deploy-web ─┐
-       │                                 ├─> comment (chỉ trên PR)
-       ├─> quality-bff ────> deploy-bff ─┘
-       │
-       └─> quality-mobile   (không chặn deploy nào — mobile chưa có CD)
+ci.yml:      quality (matrix: web | bff | mobile, chạy song song)
+
+deploy.yml:  setup ─┬─> deploy-web ─┐
+                    └─> deploy-bff ─┴─> comment (chỉ trên PR)
 ```
 
-Mỗi app có gate riêng, nên `mobile` typecheck hỏng **không** chặn web lên bản vá.
-Đây là lý do dùng 3 job thay vì một matrix: matrix chạy song song nhưng kết quả
-là một pass/fail chung, một nhánh hỏng là chặn hết mọi deploy phụ thuộc vào nó.
+Mỗi PR vì vậy chạy **2 workflow song song**: `CI` để validate, `Deploy` để dựng
+preview. Deploy **không** phụ thuộc CI — một PR vẫn có preview xanh dù CI đang đỏ.
+Cổng chặn nằm ở bước **merge** (branch protection), không nằm ở bước deploy.
+
+`ci.yml` không có trigger `push` vì `main`/`dev` đã cấm push thẳng — mọi commit
+vào hai branch đó đều đi qua PR và đã được CI kiểm tra rồi.
 
 | Sự kiện | Target | URL |
 |---|---|---|
@@ -108,7 +115,11 @@ song song với GitHub Actions. Đừng bật lại.
 - Vercel CLI được **pin cứng version** trong
   [`.github/actions/vercel-deploy/action.yml`](.github/actions/vercel-deploy/action.yml).
   Nâng version là một thay đổi có chủ đích, không dùng `@latest`.
-- Workflow bỏ qua thay đổi chỉ chạm `*.md`, `.idea/`, `.claude/`, `.gitignore`
-  (`paths-ignore`). Nếu bật branch protection yêu cầu check này, PR chỉ sửa docs sẽ
-  không có check để pass — khi đó cần bỏ `paths-ignore` hoặc thêm một job no-op.
+- ⚠️ **Chưa được đặt `CI / quality` làm required check.** Cả hai workflow đều bỏ qua
+  thay đổi chỉ chạm `*.md`, `.idea/`, `.claude/`, `.gitignore` (`paths-ignore`), nên PR
+  docs-only **không sinh ra check nào** và sẽ treo vĩnh viễn ở trạng thái "Expected —
+  Waiting for status to be reported". Muốn bật required check thì trước đó phải bỏ
+  `paths-ignore` khỏi `ci.yml`, hoặc thêm một job no-op làm check thay thế.
+- `paths-ignore` xuất hiện ở **3 chỗ** (1 trong `ci.yml`, 2 trong `deploy.yml`) và phải
+  sửa đồng bộ bằng tay — GitHub Actions không hỗ trợ YAML anchor.
 - PR từ fork không được deploy (không có secrets) — đây là chủ ý.
