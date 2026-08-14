@@ -48,9 +48,7 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Login" }));
 
     expect(await screen.findByText("Email is required")).toBeInTheDocument();
-    expect(
-      screen.getByText("Password must be at least 10 characters"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Password is required")).toBeInTheDocument();
     expect(signInWithPassword).not.toHaveBeenCalled();
   });
 
