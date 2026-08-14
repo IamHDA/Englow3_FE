@@ -17,8 +17,7 @@ const signInWithOAuth = vi.fn();
 vi.mock("@/lib/supabase/client", () => ({
   supabase: {
     auth: {
-      signInWithPassword: (...args: unknown[]) =>
-        signInWithPassword(...args),
+      signInWithPassword: (...args: unknown[]) => signInWithPassword(...args),
       signInWithOAuth: (...args: unknown[]) => signInWithOAuth(...args),
     },
   },

@@ -49,7 +49,7 @@ export default function Loading() {
 // section level
 <Suspense fallback={<ProgressPanelSkeleton />}>
   <ProgressPanel />
-</Suspense>
+</Suspense>;
 ```
 
 A skeleton mirrors the shape of the content it stands in for, so nothing shifts when the real content arrives. A skeleton that is the wrong size is worse than no skeleton.

@@ -87,7 +87,7 @@ Rules:
 
 - Never re-declare a schema enum in frontend code. Two definitions drift, and codegen already owns the one that matters.
 - Never map an enum to a number to compare it. If order or ranking genuinely matters, that is a lookup table in `constants/` keyed by the generated enum - `Record<AttemptStatus, number>` - so a new value is a type error rather than a wrong comparison.
-- Anything the enum is *displayed* as - a label, a colour, an icon - is a `Record` in the owning feature's `constants/`, keyed by the generated enum. Do not build that mapping with a chain of ternaries inside a component.
+- Anything the enum is _displayed_ as - a label, a colour, an icon - is a `Record` in the owning feature's `constants/`, keyed by the generated enum. Do not build that mapping with a chain of ternaries inside a component.
 - Whether codegen emits a TS `enum` or a union of string literals is a codegen config decision. Follow whichever the repository already produces; the rule above holds either way, because in both cases the name comes from the generated module.
 
 ## Fragments
@@ -107,7 +107,9 @@ fragment ExamCardFields on Exam {
 ```graphql
 query ExamList($page: Int) {
   exams(page: $page) {
-    items { ...ExamCardFields }
+    items {
+      ...ExamCardFields
+    }
   }
 }
 ```
@@ -127,9 +129,11 @@ if (!data) return <DashboardSkeleton />;
 return (
   <>
     <ProfilePanel profile={data.dashboard.profile} />
-    {data.dashboard.progress
-      ? <ProgressPanel progress={data.dashboard.progress} />
-      : <PanelUnavailable label="Progress" />}
+    {data.dashboard.progress ? (
+      <ProgressPanel progress={data.dashboard.progress} />
+    ) : (
+      <PanelUnavailable label="Progress" />
+    )}
   </>
 );
 ```

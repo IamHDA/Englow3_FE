@@ -92,7 +92,8 @@ Field errors arrive on a `BAD_USER_INPUT` GraphQL error, in its `extensions`. Ma
 ```ts
 const gqlError = error?.graphQLErrors[0];
 if (gqlError?.extensions?.code === "BAD_USER_INPUT") {
-  const fieldErrors = gqlError.extensions.fieldErrors as Record<string, string> | undefined;
+  const fieldErrors = gqlError.extensions.fieldErrors as
+    Record<string, string> | undefined;
   for (const [field, message] of Object.entries(fieldErrors ?? {})) {
     form.setError(field as keyof FormValues, { type: "server", message });
   }
@@ -110,7 +111,7 @@ Icons come from `lucide-react`. There is no icons folder, because there is almos
 ```tsx
 import { Volume2 } from "lucide-react";
 
-<Volume2 aria-hidden="true" size={16} />
+<Volume2 aria-hidden="true" size={16} />;
 ```
 
 Size the icon with the `size` prop, not a utility class - there is no Tailwind in this project. For an icon inside a Mantine `Button` or `ActionIcon`, pass it through `leftSection` or as the `ActionIcon` child rather than positioning it by hand.

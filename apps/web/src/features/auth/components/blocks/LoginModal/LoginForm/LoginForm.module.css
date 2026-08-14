@@ -24,7 +24,6 @@
 }
 
 .dividerLabel {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--mantine-color-black);
+  composes: label;
+  margin-bottom: 0;
 }

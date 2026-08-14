@@ -29,18 +29,18 @@ export function LoginModal({ opened, onClose }: LoginModalProps) {
         className={classes.closeButton}
       />
       <Stack gap={48} py={{ base: 32, sm: 62 }} px={{ base: 24, sm: 59 }}>
-        <Group wrap="nowrap" gap={6} justify="center">
-          <Image
-            src="/englow3-mark.png"
-            alt="Englow3"
-            width={52}
-            height={56}
-          />
-          <Stack gap={6} flex={1} miw={0}>
+        <Group
+          wrap="nowrap"
+          gap={6}
+          w="fit-content"
+          mx="auto"
+        >
+          <Image src="/englow3-mark.png" alt="Englow3" width={52} height={56} />
+          <Stack gap={4} flex={1} miw={0}>
             <Title order={1} fz={22} fw={700} c="black">
               Welcome to Englow3
             </Title>
-            <Text fz={14} fw={700} c="black">
+            <Text fz={12} fw={700} c="black">
               Your Personal Path, Your Future in Hand
             </Text>
           </Stack>
