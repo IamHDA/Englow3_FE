@@ -1,0 +1,6 @@
+@media (min-width: $mantine-breakpoint-md) {
+  .root {
+    min-width: 104px;
+    margin-left: 12px;
+  }
+}

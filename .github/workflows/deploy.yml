@@ -1,0 +1,232 @@
+name: Deploy
+
+# Deploy only. Lint/typecheck/test live in `ci.yml` and this workflow does not
+# wait on them: the merge gate is branch protection, not the deploy step. A PR
+# can therefore get a green preview while its CI run is red.
+#
+# Note: the two paths-ignore lists below must stay in sync by hand. GitHub
+# Actions does not support YAML anchors. `ci.yml` deliberately has none — a
+# skipped workflow reports no check, which would hang a required check.
+on:
+  push:
+    branches: [main, dev]
+    paths-ignore:
+      - "**/*.md"
+      - ".idea/**"
+      - ".claude/**"
+      - ".gitignore"
+  pull_request:
+    branches: [main, dev]
+    paths-ignore:
+      - "**/*.md"
+      - ".idea/**"
+      - ".claude/**"
+      - ".gitignore"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Deployment target
+        type: choice
+        options: [preview, production]
+        default: preview
+
+concurrency:
+  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  # Superseded previews are worthless; superseded production deploys are a race.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # Vercel team slug, needed by `vercel alias set`.
+  VERCEL_SCOPE: englow3
+  # Pushes to `dev` are preview deploys, so they land on a random URL. These
+  # aliases give the staging environment the fixed hostnames in the README.
+  # `main` needs none: --prod claims the production domain by itself.
+  DEV_ALIAS_WEB: englow3-web-dev.vercel.app
+  DEV_ALIAS_BFF: englow3-bff-dev.vercel.app
+
+jobs:
+  # Secrets are not readable from a job-level `if:`, and a step-level `env:` is
+  # not readable from that same step's `if:` either. So presence checks happen
+  # here, once, and the rest of the workflow gates on these outputs.
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      target: ${{ steps.resolve.outputs.target }}
+      has_web: ${{ steps.resolve.outputs.has_web }}
+      has_bff: ${{ steps.resolve.outputs.has_bff }}
+    steps:
+      - name: Resolve target and available projects
+        id: resolve
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          DISPATCH_TARGET: ${{ inputs.target }}
+          WEB_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB || secrets.VERCEL_PROJECT_ID }}
+          BFF_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            target="$DISPATCH_TARGET"
+          elif [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" = "main" ]; then
+            target="production"
+          else
+            target="preview"
+          fi
+
+          # Emit only whether an id exists, never the id itself.
+          has_web=false; [ -n "$WEB_PROJECT_ID" ] && has_web=true
+          has_bff=false; [ -n "$BFF_PROJECT_ID" ] && has_bff=true
+
+          {
+            echo "target=$target"
+            echo "has_web=$has_web"
+            echo "has_bff=$has_bff"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "### Target: \`$target\` (web: $has_web, bff: $has_bff)" >> "$GITHUB_STEP_SUMMARY"
+
+  # Web and BFF deploy in separate jobs on separate runners. They used to share
+  # one working directory, where the second `vercel pull` overwrote the first
+  # project's .vercel/project.json while .vercel/output still held the first
+  # build — one failed build away from deploying web's output as the BFF.
+  deploy-web:
+    needs: [setup]
+    if: >-
+      needs.setup.outputs.has_web == 'true' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.setup.outputs.target }}
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      # `vercel build` runs locally and so cannot reach Vercel's remote cache.
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: apps/web/.next/cache
+          key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ hashFiles('pnpm-lock.yaml') }}-
+            next-
+
+      - id: deploy
+        uses: ./.github/actions/vercel-deploy
+        with:
+          project-id: ${{ secrets.VERCEL_PROJECT_ID_WEB || secrets.VERCEL_PROJECT_ID }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          token: ${{ secrets.VERCEL_TOKEN }}
+          target: ${{ needs.setup.outputs.target }}
+          scope: ${{ env.VERCEL_SCOPE }}
+          alias: ${{ (github.event_name == 'push' && github.ref_name == 'dev') && env.DEV_ALIAS_WEB || '' }}
+
+      - name: Summary
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+          ALIAS_URL: ${{ steps.deploy.outputs.alias-url }}
+          TARGET: ${{ needs.setup.outputs.target }}
+        run: |
+          echo "### Web ($TARGET): $URL" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$ALIAS_URL" ]; then
+            echo "Aliased to: $ALIAS_URL" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  deploy-bff:
+    needs: [setup]
+    if: >-
+      needs.setup.outputs.has_bff == 'true' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.setup.outputs.target }}
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - id: deploy
+        uses: ./.github/actions/vercel-deploy
+        with:
+          project-id: ${{ secrets.VERCEL_PROJECT_ID_BFF }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          token: ${{ secrets.VERCEL_TOKEN }}
+          target: ${{ needs.setup.outputs.target }}
+          scope: ${{ env.VERCEL_SCOPE }}
+          alias: ${{ (github.event_name == 'push' && github.ref_name == 'dev') && env.DEV_ALIAS_BFF || '' }}
+
+      - name: Summary
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+          ALIAS_URL: ${{ steps.deploy.outputs.alias-url }}
+          TARGET: ${{ needs.setup.outputs.target }}
+        run: |
+          echo "### BFF ($TARGET): $URL" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$ALIAS_URL" ]; then
+            echo "Aliased to: $ALIAS_URL/graphql" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  comment:
+    needs: [setup, deploy-web, deploy-bff]
+    if: always() && github.event_name == 'pull_request' && needs.deploy-web.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          WEB_URL: ${{ needs.deploy-web.outputs.url }}
+          BFF_URL: ${{ needs.deploy-bff.outputs.url }}
+          BFF_RESULT: ${{ needs.deploy-bff.result }}
+          HAS_BFF: ${{ needs.setup.outputs.has_bff }}
+        with:
+          script: |
+            const marker = '<!-- vercel-preview -->';
+            const lines = [marker, `**Web preview:** ${process.env.WEB_URL}`];
+
+            if (process.env.HAS_BFF !== 'true') {
+              lines.push('_BFF not deployed: `VERCEL_PROJECT_ID_BFF` is not configured._');
+            } else if (process.env.BFF_RESULT === 'success' && process.env.BFF_URL) {
+              lines.push(`**BFF GraphQL preview:** ${process.env.BFF_URL}/graphql`);
+            } else {
+              // Previously an empty BFF URL was silently dropped from the comment,
+              // which is how a permanently skipped deploy went unnoticed.
+              lines.push(`**BFF preview:** :x: deploy \`${process.env.BFF_RESULT}\``);
+            }
+
+            lines.push('', `Commit: \`${context.sha.slice(0, 7)}\``);
+            const body = lines.join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) => c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

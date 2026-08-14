@@ -1,0 +1,66 @@
+.title {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--mantine-color-slate-7);
+}
+
+.quote {
+  font-family: var(--font-instrument-serif), serif;
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--mantine-color-slate-6);
+}
+
+.quote em {
+  font-style: italic;
+}
+
+.description {
+  max-width: 689px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--mantine-color-slate-7);
+}
+
+.cta {
+  height: 64px;
+  width: 100%;
+  max-width: 320px;
+  padding-inline: 33px;
+  border-radius: 20px;
+}
+
+.ctaLabel {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.illustration {
+  width: 100%;
+  max-width: 533px;
+  height: auto;
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .title {
+    font-size: 60px;
+  }
+
+  .quote {
+    font-size: 40px;
+  }
+
+  .cta {
+    height: 75px;
+  }
+
+  .ctaLabel {
+    font-size: 20px;
+  }
+
+  .illustration {
+    flex: 0 0 auto;
+  }
+}
