@@ -19,7 +19,11 @@ export function SiteHeader() {
           Server Component, and passing Link into a Mantine client component
           would send a function across the boundary.
         */}
-        <Link href="/" className={classes.logoLink} aria-label="Englow3 home">
+        <Link
+          href="/"
+          className={classes.logoLink}
+          aria-label="Trang chủ Englow3"
+        >
           <Image
             src="/englow3-logo.png"
             alt="Englow3"

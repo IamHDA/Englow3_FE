@@ -26,15 +26,15 @@ The contract the user supplied becomes the module's REST types. Everything else 
 export type ExamApiResponse = {
   id: string;
   title: string;
-  status: 'DRAFT' | 'PENDING_REVIEW' | 'PUBLISHED' | 'ARCHIVED';
+  status: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
   questionCount: number;
   creatorId: string;
-  publishedAt: string | null;   // null while not published
+  publishedAt: string | null; // null while not published
   createdAt: string;
 };
 
 export type ExamPageApiResponse = {
-  content: ExamApiResponse[];    // whatever the backend actually calls it
+  content: ExamApiResponse[]; // whatever the backend actually calls it
   page: number;
   size: number;
   totalElements: number;
@@ -92,7 +92,11 @@ export const examResolvers = {
   },
 
   Mutation: {
-    publishExam: async (_: unknown, { id }: { id: string }, ctx: GraphQLContext) => {
+    publishExam: async (
+      _: unknown,
+      { id }: { id: string },
+      ctx: GraphQLContext,
+    ) => {
       ctx.requireUser();
       return mapExam(await ctx.apis.examApi.publishExam(id));
     },
@@ -104,7 +108,7 @@ Never do this - it duplicates a backend rule, and the two copies will drift:
 
 ```typescript
 if (exam.questionCount === 0) {
-  throw new Error('Exam cannot be published');   // wrong layer
+  throw new Error("Exam cannot be published"); // wrong layer
 }
 ```
 
@@ -142,16 +146,24 @@ export class BackendClient {
     private readonly requestId?: string,
   ) {}
 
-  get<T>(path: string) { return this.request<T>('GET', path); }
-  post<T>(path: string, body?: unknown) { return this.request<T>('POST', path, body); }
+  get<T>(path: string) {
+    return this.request<T>("GET", path);
+  }
+  post<T>(path: string, body?: unknown) {
+    return this.request<T>("POST", path, body);
+  }
 
-  private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  private async request<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+  ): Promise<T> {
     const response = await fetch(`${this.baseUrl}${path}`, {
       method,
       headers: {
-        'content-type': 'application/json',
+        "content-type": "application/json",
         ...(this.token ? { authorization: `Bearer ${this.token}` } : {}),
-        ...(this.requestId ? { 'x-request-id': this.requestId } : {}),
+        ...(this.requestId ? { "x-request-id": this.requestId } : {}),
       },
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(env.BACKEND_TIMEOUT_MS),
@@ -174,9 +186,13 @@ Built per request. Everything token-scoped lives here and nowhere else.
 ```typescript
 export const createContext = async ({ req }): Promise<GraphQLContext> => {
   const token = extractBearerToken(req.headers.authorization);
-  const currentUser = token ? await authenticate(token) : null;   // cached JWKS
+  const currentUser = token ? await authenticate(token) : null; // cached JWKS
 
-  const client = new BackendClient(env.BACKEND_BASE_URL, token, req.headers['x-request-id']);
+  const client = new BackendClient(
+    env.BACKEND_BASE_URL,
+    token,
+    req.headers["x-request-id"],
+  );
 
   return {
     currentUser,
@@ -208,8 +224,8 @@ export const mapExam = (r: ExamApiResponse): Exam => ({
   status: r.status,
   questionCount: r.questionCount,
   publishedAt: r.publishedAt,
-  creatorId: r.creatorId,                                  // for the creator field resolver
-  displayTitle: `${r.title} (${r.questionCount})`,         // presentation only
+  creatorId: r.creatorId, // for the creator field resolver
+  displayTitle: `${r.title} (${r.questionCount})`, // presentation only
 });
 ```
 
@@ -221,13 +237,13 @@ Only after a real N+1. A field resolver that fires one call per parent row over 
 
 ```typescript
 export const createLearnerLoader = (client: BackendClient) =>
-  new DataLoader<string, LearnerApiResponse | null>(async ids => {
+  new DataLoader<string, LearnerApiResponse | null>(async (ids) => {
     const learners = await client.post<LearnerApiResponse[]>(
-      '/api/learners/batch',
+      "/api/learners/batch",
       { ids: [...ids] },
     );
-    const byId = new Map(learners.map(l => [l.id, l]));
-    return ids.map(id => byId.get(id) ?? null);            // same order, same length
+    const byId = new Map(learners.map((l) => [l.id, l]));
+    return ids.map((id) => byId.get(id) ?? null); // same order, same length
   });
 ```
 
@@ -262,14 +278,16 @@ export const dashboardResolvers = {
         ctx.apis.speakingApi.getRecentResult(),
       ]);
 
-      if (profile.status === 'rejected') {
-        throw profile.reason;                    // screen cannot render without it
+      if (profile.status === "rejected") {
+        throw profile.reason; // screen cannot render without it
       }
 
       return {
         profile: mapProfile(profile.value),
-        progress: progress.status === 'fulfilled' ? mapProgress(progress.value) : null,
-        recentSpeaking: recent.status === 'fulfilled' ? mapSpeaking(recent.value) : null,
+        progress:
+          progress.status === "fulfilled" ? mapProgress(progress.value) : null,
+        recentSpeaking:
+          recent.status === "fulfilled" ? mapSpeaking(recent.value) : null,
       };
     },
   },
@@ -285,13 +303,17 @@ When the backend queues work, the mutation returns the pending record, never the
 ```graphql
 type SpeakingSubmission {
   id: ID!
-  status: JobStatus!              # PENDING RUNNING COMPLETED FAILED
-  result: SpeakingResult          # null until COMPLETED
-  failureReason: String           # set when FAILED
+  status: JobStatus! # PENDING RUNNING COMPLETED FAILED
+  result: SpeakingResult # null until COMPLETED
+  failureReason: String # set when FAILED
 }
 
-type Mutation { submitSpeaking(input: SubmitSpeakingInput!): SpeakingSubmission! }
-type Query    { speakingSubmission(id: ID!): SpeakingSubmission! }
+type Mutation {
+  submitSpeaking(input: SubmitSpeakingInput!): SpeakingSubmission!
+}
+type Query {
+  speakingSubmission(id: ID!): SpeakingSubmission!
+}
 ```
 
 The frontend polls `speakingSubmission` until the status is terminal. `FAILED` must be reachable and must carry a reason, otherwise the client polls forever on failure.
@@ -304,7 +326,7 @@ Do not raise the shared HTTP timeout for these calls. The timeout covers startin
 export const toGraphQLError = (error: BackendError) =>
   new GraphQLError(safeMessage(error), {
     extensions: {
-      code: mapBackendCode(error.code),       // unknown code -> INTERNAL_SERVER_ERROR
+      code: mapBackendCode(error.code), // unknown code -> INTERNAL_SERVER_ERROR
       requestId: error.requestId,
     },
   });

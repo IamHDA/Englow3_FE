@@ -7,6 +7,12 @@ name: Deploy
 # Note: the two paths-ignore lists below must stay in sync by hand. GitHub
 # Actions does not support YAML anchors. `ci.yml` deliberately has none — a
 # skipped workflow reports no check, which would hang a required check.
+#
+# `pull_request` covers base `dev` only. A `dev -> main` PR carries the exact
+# code already on `dev`, which is deployed and aliased to the fixed staging
+# hostnames below — a second identical preview is just a duplicate deploy of
+# the same commit. `ci.yml` still runs on those PRs, since it feeds the merge
+# gate; a deploy does not.
 on:
   push:
     branches: [main, dev]
@@ -16,7 +22,7 @@ on:
       - ".claude/**"
       - ".gitignore"
   pull_request:
-    branches: [main, dev]
+    branches: [dev]
     paths-ignore:
       - "**/*.md"
       - ".idea/**"
@@ -31,7 +37,9 @@ on:
         default: preview
 
 concurrency:
-  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  # Branch-keyed, same reasoning as `ci.yml`: one group per branch regardless of
+  # which event started the run.
+  group: deploy-${{ github.head_ref || github.ref_name }}
   # Superseded previews are worthless; superseded production deploys are a race.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 

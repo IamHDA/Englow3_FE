@@ -12,7 +12,7 @@
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
-  color: var(--mantine-color-slate-6);
+  color: var(--mantine-color-ink-6);
   text-align: center;
   text-decoration: none;
   border-radius: var(--mantine-radius-md);
@@ -25,7 +25,7 @@
 .link:is(a, button):focus-visible,
 .link:is(a, button)[data-expanded] {
   color: var(--mantine-color-navy-9);
-  background-color: var(--mantine-color-slate-2);
+  background-color: var(--mantine-color-ink-2);
 }
 
 .chevron {
@@ -41,7 +41,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px var(--mantine-spacing-xs);
-  color: var(--mantine-color-slate-6);
+  color: var(--mantine-color-ink-6);
   text-decoration: none;
   border-radius: var(--mantine-radius-md);
   transition:
@@ -52,7 +52,7 @@
 .drawerLink:is(a):hover,
 .drawerLink:is(a):focus-visible {
   color: var(--mantine-color-navy-9);
-  background-color: var(--mantine-color-slate-2);
+  background-color: var(--mantine-color-ink-2);
 }
 
 .drawerIconTile {
@@ -61,20 +61,20 @@
   height: 34px;
   border-radius: 10px;
   color: var(--mantine-color-navy-9);
-  background-color: var(--mantine-color-slate-1);
+  background-color: var(--mantine-color-ink-1);
 }
 
 .drawerLinkLabel {
   font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--mantine-color-slate-8);
+  color: var(--mantine-color-ink-8);
 }
 
 .drawerLinkDescription {
   font-size: 12.5px;
   line-height: 1.35;
-  color: var(--mantine-color-slate-5);
+  color: var(--mantine-color-ink-5);
 }
 
 @media (prefers-reduced-motion: reduce) {

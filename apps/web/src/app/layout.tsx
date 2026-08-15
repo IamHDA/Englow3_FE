@@ -1,4 +1,5 @@
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import "./globals.css";
 
 import {
@@ -6,27 +7,26 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Lora, Work_Sans } from "next/font/google";
 
 import { theme } from "@/lib/mantine/theme";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+const lora = Lora({
+  variable: "--font-lora",
+  subsets: ["latin", "vietnamese"],
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
+  subsets: ["latin", "vietnamese"],
 });
 
 export const metadata: Metadata = {
-  title: "Englow3 — Master English with AI Intelligence",
+  title: "Englow3 — Chinh phục tiếng Anh cùng Trí tuệ AI",
   description:
-    "Real-time AI pronunciation scoring, adaptive daily learning paths, 3D flashcards, dictation challenges and full IELTS/TOEIC mock exam simulations.",
+    "Chấm điểm phát âm AI theo thời gian thực, lộ trình học hàng ngày thích ứng, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
 };
 
 export default function RootLayout({
@@ -36,15 +36,16 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="vi"
       {...mantineHtmlProps}
-      className={`${inter.variable} ${instrumentSerif.variable}`}
+      className={`${lora.variable} ${workSans.variable}`}
     >
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
       <body suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light">
+          <Notifications position="top-center" zIndex={1000} />
           {children}
         </MantineProvider>
       </body>

@@ -5,13 +5,13 @@
  */
 div.dropdown {
   padding: 8px;
-  border-color: var(--mantine-color-slate-2);
+  border-color: var(--mantine-color-ink-2);
   box-shadow: var(--mantine-shadow-md);
 }
 
 .item:is(a, button) {
   /* Mantine's own hover token, so no specificity fight with its base rule. */
-  --menu-item-hover: var(--mantine-color-slate-1);
+  --menu-item-hover: var(--mantine-color-ink-1);
 
   align-items: flex-start;
   padding: 10px;
@@ -27,7 +27,7 @@ div.dropdown {
   height: 38px;
   border-radius: 10px;
   color: var(--mantine-color-navy-9);
-  background-color: var(--mantine-color-slate-1);
+  background-color: var(--mantine-color-ink-1);
   transition: background-color 150ms ease;
 }
 
@@ -47,13 +47,13 @@ div.dropdown {
   font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--mantine-color-slate-8);
+  color: var(--mantine-color-ink-8);
 }
 
 .description {
   font-size: 12.5px;
   line-height: 1.35;
-  color: var(--mantine-color-slate-5);
+  color: var(--mantine-color-ink-5);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -88,7 +88,7 @@ The mutation returns the record with its current status, not the result. Complet
 
 Whatever is chosen, the schema must expose enough to drive it: a status, an identifier to poll with, and a terminal failure state that the frontend can stop on. A contract that only has "pending" and "done" leaves the frontend polling forever on failure.
 
-The HTTP timeout for these calls is the timeout for *starting* the work, not for completing it. Do not raise the global client timeout to accommodate a slow provider - that hides real failures on every other call.
+The HTTP timeout for these calls is the timeout for _starting_ the work, not for completing it. Do not raise the global client timeout to accommodate a slow provider - that hides real failures on every other call.
 
 ## Errors
 

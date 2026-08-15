@@ -1,0 +1,80 @@
+.content {
+  position: relative;
+  box-shadow: 0 30px 80px rgba(15, 27, 58, 0.35);
+}
+
+.closeButton {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: var(--mantine-color-ink-5);
+}
+
+.closeButton:hover {
+  background-color: var(--mantine-color-ink-0);
+  color: var(--mantine-color-ink-9);
+}
+
+.title {
+  font-family: var(--font-lora), serif;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--mantine-color-navy-9);
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--mantine-color-ink-7);
+  text-align: center;
+}
+
+.dividerLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mantine-color-ink-7);
+  white-space: nowrap;
+}
+
+.footer {
+  background-color: var(--mantine-color-ink-0);
+  border-top: 1px solid var(--mantine-color-ink-2);
+  border-radius: 0 0 20px 20px;
+}
+
+.footerAction {
+  color: var(--mantine-color-navy-9);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Shared by every field in LoginForm and RegisterForm. */
+.label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mantine-color-ink-9);
+  margin-bottom: 8px;
+}
+
+.labelHint {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mantine-color-ink-5);
+  margin-left: 6px;
+}
+
+.input {
+  height: 48px;
+  padding-inline: 16px;
+  border: 1px solid var(--mantine-color-ink-2);
+  border-radius: 12px;
+  background-color: var(--mantine-color-ink-0);
+}
+
+.input:focus {
+  border-color: var(--mantine-color-navy-5);
+  background-color: var(--mantine-color-white);
+}

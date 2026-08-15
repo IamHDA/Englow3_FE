@@ -11,7 +11,7 @@ export type HomeStat = {
  * than live metrics, so they are held here instead of behind a BFF query.
  */
 export const homeStats: HomeStat[] = [
-  { value: "150K+", label: "Active Learners", accent: true },
-  { value: "98.4%", label: "Band Score Gain", accent: false },
-  { value: "4.9 / 5", label: "User Rating", accent: true },
+  { value: "150K+", label: "Học viên hoạt động", accent: true },
+  { value: "98.4%", label: "Cải thiện điểm số", accent: false },
+  { value: "4.9 / 5", label: "Đánh giá người dùng", accent: true },
 ];

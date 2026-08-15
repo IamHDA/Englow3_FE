@@ -14,7 +14,7 @@ export function HomeStats({ stats }: HomeStatsProps) {
   }
 
   return (
-    <section className={classes.stats} aria-label="Englow3 in numbers">
+    <section className={classes.stats} aria-label="Englow3 qua những con số">
       <hr className={classes.separator} />
       <Flex
         component="dl"
