@@ -28,7 +28,7 @@ export function LoginModal({ opened, onClose }: LoginModalProps) {
         aria-label="Close"
         className={classes.closeButton}
       />
-      <Stack gap={48} py={{ base: 32, sm: 62 }} px={{ base: 24, sm: 59 }}>
+      <Stack gap={36} py={{ base: 32, sm: 62 }} px={{ base: 24, sm: 59 }}>
         <Group
           wrap="nowrap"
           gap={6}
