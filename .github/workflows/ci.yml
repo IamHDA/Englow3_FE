@@ -21,9 +21,12 @@ on:
     branches: [main, dev]
 
 concurrency:
-  # `pull_request.number` is empty on push events, so fall back to the ref —
-  # otherwise every push would share one group and cancel the others.
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  # Keyed on the branch name, not on the PR number: `head_ref` is set only on
+  # pull_request and holds the source branch, `ref_name` on push is that same
+  # branch name. So the push-to-dev run and the `dev -> main` PR run — same
+  # commit, two events — land in one group and the newer cancels the older,
+  # instead of both running to completion side by side.
+  group: ci-${{ github.head_ref || github.ref_name }}
   # A validation run superseded by a newer commit is worthless.
   cancel-in-progress: true
 
