@@ -3,7 +3,7 @@
   top: 0;
   z-index: 100;
   background-color: var(--mantine-color-white);
-  border-bottom: 1px solid var(--mantine-color-slate-2);
+  border-bottom: 1px solid var(--mantine-color-ink-2);
 }
 
 .inner {
