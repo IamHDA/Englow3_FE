@@ -1,0 +1,35 @@
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 6px;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 150ms ease;
+}
+
+.trigger:hover,
+.trigger[data-expanded] {
+  background-color: var(--mantine-color-ink-2);
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mantine-color-ink-9);
+}
+
+.chevron {
+  color: var(--mantine-color-ink-5);
+  transition: transform 150ms ease;
+}
+
+.trigger[data-expanded] .chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger,
+  .chevron {
+    transition: none;
+  }
+}
