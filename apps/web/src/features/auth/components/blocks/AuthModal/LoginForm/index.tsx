@@ -74,18 +74,33 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       });
       return;
     }
+    const notificationId = notifications.show({
+      loading: true,
+      autoClose: false,
+      withCloseButton: false,
+      title: "Đang gửi email",
+      message: "Vui lòng đợi trong giây láts...",
+    });
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
     });
     if (error) {
-      notifications.show({
+      notifications.update({
+        id: notificationId,
+        loading: false,
+        autoClose: true,
+        withCloseButton: true,
         color: "warn",
         title: "Không thể gửi email",
         message: error.message,
       });
       return;
     }
-    notifications.show({
+    notifications.update({
+      id: notificationId,
+      loading: false,
+      autoClose: true,
+      withCloseButton: true,
       color: "green",
       title: "Đã gửi email",
       message: "Kiểm tra hộp thư để đặt lại mật khẩu.",

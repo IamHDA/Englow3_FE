@@ -22,9 +22,17 @@ import {
 
 import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
+import { SiteHeaderUserMenu } from "./SiteHeaderUserMenu";
 import { StudyMenuDropdown } from "./StudyMenuDropdown";
 
-export function SiteHeaderNav() {
+type SiteHeaderNavProps = {
+  currentUser: {
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+};
+
+export function SiteHeaderNav({ currentUser }: SiteHeaderNavProps) {
   const [drawerOpened, drawer] = useDisclosure(false);
 
   return (
@@ -61,7 +69,11 @@ export function SiteHeaderNav() {
           </Link>
         ))}
 
-        <SiteHeaderLoginButton />
+        {currentUser ? (
+          <SiteHeaderUserMenu currentUser={currentUser} />
+        ) : (
+          <SiteHeaderLoginButton />
+        )}
       </Group>
 
       <Burger
@@ -113,7 +125,11 @@ export function SiteHeaderNav() {
             </Link>
           ))}
 
-          <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
+          {currentUser ? (
+            <SiteHeaderUserMenu currentUser={currentUser} />
+          ) : (
+            <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
+          )}
         </Stack>
       </Drawer>
     </>

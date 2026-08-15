@@ -11,6 +11,7 @@ import { Notifications } from "@mantine/notifications";
 import type { Metadata } from "next";
 import { Lora, Work_Sans } from "next/font/google";
 
+import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { theme } from "@/lib/mantine/theme";
 
 const lora = Lora({
@@ -45,8 +46,8 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light">
-          <Notifications position="top-center" zIndex={1000} />
-          {children}
+          <Notifications position="top-right" zIndex={1000} />
+          <ApolloWrapper>{children}</ApolloWrapper>
         </MantineProvider>
       </body>
     </html>
