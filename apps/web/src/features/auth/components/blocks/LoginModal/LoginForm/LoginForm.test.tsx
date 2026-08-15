@@ -44,10 +44,10 @@ describe("LoginForm", () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.click(screen.getByRole("button", { name: "Login" }));
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
-    expect(await screen.findByText("Email is required")).toBeInTheDocument();
-    expect(screen.getByText("Password is required")).toBeInTheDocument();
+    expect(await screen.findByText("Vui lòng nhập email")).toBeInTheDocument();
+    expect(screen.getByText("Vui lòng nhập mật khẩu")).toBeInTheDocument();
     expect(signInWithPassword).not.toHaveBeenCalled();
   });
 
@@ -55,13 +55,11 @@ describe("LoginForm", () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.type(screen.getByLabelText("Username"), "not-an-email");
-    await user.type(screen.getByLabelText("Password"), "password123");
-    await user.click(screen.getByRole("button", { name: "Login" }));
+    await user.type(screen.getByLabelText("Email"), "not-an-email");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password123");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
-    expect(
-      await screen.findByText("Enter a valid email address"),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Email không hợp lệ")).toBeInTheDocument();
     expect(signInWithPassword).not.toHaveBeenCalled();
   });
 
@@ -70,9 +68,9 @@ describe("LoginForm", () => {
     const user = userEvent.setup();
     const { onSuccess } = renderForm();
 
-    await user.type(screen.getByLabelText("Username"), "learner@example.com");
-    await user.type(screen.getByLabelText("Password"), "password123");
-    await user.click(screen.getByRole("button", { name: "Login" }));
+    await user.type(screen.getByLabelText("Email"), "learner@example.com");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password123");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
     await waitFor(() =>
       expect(signInWithPassword).toHaveBeenCalledWith({
@@ -91,9 +89,9 @@ describe("LoginForm", () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.type(screen.getByLabelText("Username"), "learner@example.com");
-    await user.type(screen.getByLabelText("Password"), "wrongpassword");
-    await user.click(screen.getByRole("button", { name: "Login" }));
+    await user.type(screen.getByLabelText("Email"), "learner@example.com");
+    await user.type(screen.getByLabelText("Mật khẩu"), "wrongpassword");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
     expect(
       await screen.findByText("Invalid login credentials"),

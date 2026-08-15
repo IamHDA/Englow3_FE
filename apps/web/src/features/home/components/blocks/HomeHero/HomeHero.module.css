@@ -6,7 +6,6 @@
 }
 
 .quote {
-  font-family: var(--font-instrument-serif), serif;
   font-size: 28px;
   line-height: 1.2;
   color: var(--mantine-color-slate-6);

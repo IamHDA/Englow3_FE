@@ -36,7 +36,7 @@ export function SiteHeaderLoginButton({
         fw={700}
         className={classes.root}
       >
-        Login
+        Đăng nhập
       </Button>
       <LoginModal opened={opened} onClose={close} />
     </>

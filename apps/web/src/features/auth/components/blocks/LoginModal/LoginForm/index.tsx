@@ -23,11 +23,8 @@ import { supabase } from "@/lib/supabase/client";
 import classes from "./LoginForm.module.css";
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
+  password: z.string().min(1, "Vui lòng nhập mật khẩu"),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -83,7 +80,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
         <TextInput
           {...register("email")}
-          label="Username"
+          label="Email"
           placeholder="example@example.com"
           error={errors.email?.message}
           classNames={{ label: classes.label, input: classes.input }}
@@ -91,8 +88,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
         <PasswordInput
           {...register("password")}
-          label="Password"
-          placeholder="Enter your password"
+          label="Mật khẩu"
+          placeholder="Nhập mật khẩu của bạn"
           error={errors.password?.message}
           classNames={{
             label: classes.passwordLabel,
@@ -110,11 +107,11 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           fz={14}
           fw={700}
         >
-          Login
+          Đăng nhập
         </Button>
 
         <Divider
-          label="Or continue with"
+          label="Hoặc đăng nhập bằng"
           labelPosition="center"
           classNames={{ label: classes.dividerLabel }}
         />
@@ -125,7 +122,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             color="gray"
             size={44}
             radius="xl"
-            aria-label="Continue with Google"
+            aria-label="Tiếp tục với Google"
             onClick={() => void handleOAuthClick("google")}
           >
             <FcGoogle aria-hidden="true" size={24} />
@@ -135,7 +132,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             color="gray"
             size={44}
             radius="xl"
-            aria-label="Continue with Facebook"
+            aria-label="Tiếp tục với Facebook"
             onClick={() => void handleOAuthClick("facebook")}
           >
             <FaFacebook aria-hidden="true" size={24} color="#1877F2" />

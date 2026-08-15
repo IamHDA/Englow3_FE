@@ -25,23 +25,18 @@ export function LoginModal({ opened, onClose }: LoginModalProps) {
     >
       <CloseButton
         onClick={onClose}
-        aria-label="Close"
+        aria-label="Đóng"
         className={classes.closeButton}
       />
       <Stack gap={36} py={{ base: 32, sm: 62 }} px={{ base: 24, sm: 59 }}>
-        <Group
-          wrap="nowrap"
-          gap={6}
-          w="fit-content"
-          mx="auto"
-        >
+        <Group wrap="nowrap" gap={6} w="fit-content" mx="auto">
           <Image src="/englow3-mark.png" alt="Englow3" width={52} height={56} />
-          <Stack gap={4} flex={1} miw={0}>
+          <Stack gap={2} flex={1} miw={0}>
             <Title order={1} fz={22} fw={700} c="black">
-              Welcome to Englow3
+              Chào mừng đến với Englow3
             </Title>
-            <Text fz={12} fw={700} c="black">
-              Your Personal Path, Your Future in Hand
+            <Text fz={12} fw={700} c="gray" ta="center">
+              Con đường của riêng bạn, tương lai trong tay bạn
             </Text>
           </Stack>
         </Group>
