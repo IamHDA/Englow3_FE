@@ -1,3 +1,19 @@
+/*
+ * Matches the specificity of Mantine's own `:root[data-mantine-color-scheme]`
+ * rule (see @mantine/core/styles.css) - a bare `:root` selector loses that
+ * cascade fight regardless of import order, since Mantine's is more specific.
+ * `--mantine-color-default*` drives `variant="default"` Button/ActionIcon
+ * (used by the auth social buttons); `--mantine-color-error` drives every
+ * input's invalid state. Text input backgrounds are not here - those go
+ * through `--input-bg`/`--input-bd`, set per-field via classNames instead,
+ * since that pair is scoped to `[data-variant]` and wins the same fight.
+ */
+:root[data-mantine-color-scheme="light"] {
+  --mantine-color-default-hover: var(--mantine-color-ink-0);
+  --mantine-color-default-border: var(--mantine-color-ink-2);
+  --mantine-color-error: var(--mantine-color-warn-6);
+}
+
 html,
 body {
   height: 100%;
@@ -8,7 +24,7 @@ body {
   flex-direction: column;
   margin: 0;
   background-color: var(--mantine-color-white);
-  color: var(--mantine-color-slate-7);
+  color: var(--mantine-color-ink-7);
   -webkit-font-smoothing: antialiased;
 }
 

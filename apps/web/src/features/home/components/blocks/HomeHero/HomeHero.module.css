@@ -2,13 +2,13 @@
   font-size: 40px;
   font-weight: 700;
   line-height: 1.15;
-  color: var(--mantine-color-slate-7);
+  color: var(--mantine-color-ink-7);
 }
 
 .quote {
-  font-size: 28px;
-  line-height: 1.2;
-  color: var(--mantine-color-slate-6);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--mantine-color-ink-6);
 }
 
 .quote em {
@@ -20,13 +20,13 @@
   font-size: 15px;
   font-weight: 500;
   line-height: 1.6;
-  color: var(--mantine-color-slate-7);
+  color: var(--mantine-color-ink-7);
 }
 
 .cta {
   height: 64px;
   width: 100%;
-  max-width: 320px;
+  max-width: 300px;
   padding-inline: 33px;
   border-radius: 20px;
 }
@@ -52,7 +52,7 @@
   }
 
   .cta {
-    height: 75px;
+    height: 70px;
   }
 
   .ctaLabel {

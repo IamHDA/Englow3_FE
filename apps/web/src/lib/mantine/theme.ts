@@ -1,52 +1,68 @@
 import { createTheme, type MantineColorsTuple } from "@mantine/core";
 
-/** Warm accent used for the primary call to action and highlighted figures. */
-const amber: MantineColorsTuple = [
-  "#fffbeb",
-  "#fef3c7",
-  "#fde68a",
-  "#fcd34d",
-  "#fbbf24",
-  "#f59e0b",
-  "#d97706",
-  "#b45309",
-  "#92400e",
-  "#78350f",
+/** Deep blue used as the site's primary colour — brand, links, secondary actions. */
+const navy: MantineColorsTuple = [
+  "#E9EEFB",
+  "#C9D5F2",
+  "#A8BBE8",
+  "#84A2E1",
+  "#5F88DB",
+  "#3B6FD4",
+  "#335EBE",
+  "#2A4CA8",
+  "#244399",
+  "#1E3A8A",
 ];
 
-/** Deep blue used for secondary actions such as the login button. */
-const navy: MantineColorsTuple = [
-  "#eff6ff",
-  "#dbeafe",
-  "#bfdbfe",
-  "#93c5fd",
-  "#60a5fa",
-  "#3b82f6",
-  "#2563eb",
-  "#1d4ed8",
-  "#1e40af",
-  "#1e3a8a",
+/** Warm accent reserved for CTAs, progress and highlighted figures. */
+const orange: MantineColorsTuple = [
+  "#FFF7EA",
+  "#FDEFDC",
+  "#FAD79E",
+  "#F8BE61",
+  "#F5A623",
+  "#F08A0C",
+  "#D97706",
+  "#C26400",
+  "#9C5000",
+  "#7A3F00",
+];
+
+/** Error/warning red used for form validation states. */
+const warn: MantineColorsTuple = [
+  "#FDF2F1",
+  "#FAE0DD",
+  "#F3BEB8",
+  "#EA9A91",
+  "#E0776A",
+  "#DA5C4C",
+  "#D9483B",
+  "#B93A2F",
+  "#922E26",
+  "#6E231D",
 ];
 
 /** Neutral scale carrying body copy, borders and surfaces. */
-const slate: MantineColorsTuple = [
-  "#f8fafc",
-  "#f1f5f9",
-  "#e2e8f0",
-  "#cbd5e1",
-  "#94a3b8",
-  "#64748b",
-  "#475569",
-  "#334155",
-  "#1e293b",
-  "#0f172a",
+const ink: MantineColorsTuple = [
+  "#F4F6FA",
+  "#ECEFF5",
+  "#E3E8F0",
+  "#C5CBD7",
+  "#A6AFBF",
+  "#8892A6",
+  "#6E7990",
+  "#54607A",
+  "#384359",
+  "#1B2540",
 ];
 
 export const theme = createTheme({
-  colors: { amber, navy, slate },
-  primaryColor: "amber",
-  primaryShade: 6,
-  fontFamily: "var(--font-inter), sans-serif",
-  headings: { fontFamily: "var(--font-inter), sans-serif" },
+  colors: { navy, ink, orange, warn },
+  primaryColor: "navy",
+  primaryShade: 9,
+  fontFamily: "var(--font-work-sans), sans-serif",
+  headings: { fontFamily: "var(--font-work-sans), sans-serif" },
+  fontSizes: { md: "14px" },
+  radius: { md: "12px" },
   defaultRadius: "md",
 });

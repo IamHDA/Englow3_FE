@@ -10,3 +10,21 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+
+/**
+ * @supabase/ssr always writes the auth cookie with a 400-day max-age (see
+ * DEFAULT_COOKIE_OPTIONS in its cookies.js) - `cookieOptions.maxAge` passed to
+ * createBrowserClient is silently overridden on every write, so persistence
+ * can't be configured at client-creation time. To make an unchecked "remember
+ * me" actually expire the session at browser close, rewrite the cookie right
+ * after sign-in with no max-age.
+ */
+export function forgetSessionOnBrowserClose() {
+  document.cookie
+    .split("; ")
+    .filter((entry) => entry.includes("-auth-token"))
+    .forEach((entry) => {
+      const [name, ...rest] = entry.split("=");
+      document.cookie = `${name}=${rest.join("=")}; path=/; samesite=lax`;
+    });
+}

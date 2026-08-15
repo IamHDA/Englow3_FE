@@ -1,1 +1,2 @@
-export { LoginModal } from "./components/blocks/LoginModal";
+export { AuthModal } from "./components/blocks/AuthModal";
+export { ResetPasswordView } from "./components/views/ResetPasswordView";

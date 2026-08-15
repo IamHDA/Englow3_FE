@@ -27,9 +27,7 @@ export function HomeHero() {
       >
         <Flex direction="column" gap={{ base: 28, md: 42 }}>
           <Title order={1} className={classes.title}>
-            Chinh phục tiếng Anh cùng
-            <br />
-            Trí tuệ AI Englow3
+            Chinh phục tiếng Anh cùng Englow3
           </Title>
 
           <Text className={classes.quote}>
@@ -47,8 +45,7 @@ export function HomeHero() {
         <Button
           component={Link}
           href="/onboarding"
-          variant="gradient"
-          gradient={{ from: "amber.5", to: "amber.6", deg: 90 }}
+          color="orange.5"
           rightSection={
             <ArrowRight aria-hidden="true" size={26} strokeWidth={2.5} />
           }

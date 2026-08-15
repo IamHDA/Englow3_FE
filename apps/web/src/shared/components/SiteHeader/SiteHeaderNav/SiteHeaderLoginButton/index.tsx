@@ -3,7 +3,7 @@
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-import { LoginModal } from "@/features/auth";
+import { AuthModal } from "@/features/auth";
 
 import classes from "./SiteHeaderLoginButton.module.css";
 
@@ -27,8 +27,6 @@ export function SiteHeaderLoginButton({
           onNavigate?.();
         }}
         fullWidth={fullWidth}
-        // An explicit variant is required: without one Mantine falls back to the
-        // filled primary colour, which paints the button amber on hover.
         variant="outline"
         color="navy.9"
         size="md"
@@ -38,7 +36,7 @@ export function SiteHeaderLoginButton({
       >
         Đăng nhập
       </Button>
-      <LoginModal opened={opened} onClose={close} />
+      <AuthModal opened={opened} onClose={close} />
     </>
   );
 }
