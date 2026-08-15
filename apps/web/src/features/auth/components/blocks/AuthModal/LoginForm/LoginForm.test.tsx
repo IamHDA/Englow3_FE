@@ -28,8 +28,12 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 const notificationsShow = vi.fn();
+const notificationsUpdate = vi.fn();
 vi.mock("@mantine/notifications", () => ({
-  notifications: { show: (...args: unknown[]) => notificationsShow(...args) },
+  notifications: {
+    show: (...args: unknown[]) => notificationsShow(...args),
+    update: (...args: unknown[]) => notificationsUpdate(...args),
+  },
 }));
 
 function renderForm() {
@@ -47,6 +51,7 @@ beforeEach(() => {
   resetPasswordForEmail.mockReset();
   forgetSessionOnBrowserClose.mockReset();
   notificationsShow.mockReset();
+  notificationsUpdate.mockReset();
   refresh.mockReset();
 });
 
@@ -158,8 +163,10 @@ describe("LoginForm", () => {
         }),
       ),
     );
-    expect(notificationsShow).toHaveBeenCalledWith(
-      expect.objectContaining({ color: "green" }),
+    await waitFor(() =>
+      expect(notificationsUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ color: "green" }),
+      ),
     );
   });
 
