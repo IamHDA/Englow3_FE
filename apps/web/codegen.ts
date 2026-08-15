@@ -16,7 +16,8 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 // purpose (see index.ts) and is the one file in this folder codegen does not
 // own.
 const config: CodegenConfig = {
-  schema: process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ?? "http://localhost:4000/graphql",
+  schema:
+    process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ?? "http://localhost:4000/graphql",
   // features/<feature>/graphql for feature-owned operations, shared/graphql
   // for operations consumed by cross-cutting components (e.g. SiteHeader)
   // that don't belong to any one feature.
