@@ -1,0 +1,29 @@
+.label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mantine-color-black);
+  margin-bottom: 12px;
+}
+
+.passwordLabel {
+  composes: label;
+  color: var(--mantine-color-slate-8);
+}
+
+.input {
+  height: 48px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  background-color: var(--mantine-color-slate-0);
+  border: 2px solid var(--mantine-color-slate-3);
+}
+
+.input:focus {
+  border-color: var(--mantine-color-amber-5);
+}
+
+.dividerLabel {
+  composes: label;
+  margin-bottom: 0;
+}

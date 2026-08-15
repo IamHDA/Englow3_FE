@@ -27,19 +27,20 @@ export function HomeHero() {
       >
         <Flex direction="column" gap={{ base: 28, md: 42 }}>
           <Title order={1} className={classes.title}>
-            Master English with
+            Chinh phục tiếng Anh cùng
             <br />
-            Englow3 AI Intelligence
+            Trí tuệ AI Englow3
           </Title>
 
           <Text className={classes.quote}>
-            &ldquo;<em>Your Personal Path, Your Future in Hand</em>&rdquo;
+            &ldquo;<em>Con đường của riêng bạn, tương lai trong tay bạn</em>
+            &rdquo;
           </Text>
 
           <Text className={classes.description}>
-            Transform your fluency with real-time AI speech pronunciation
-            scoring, adaptive daily learning paths, 3D flashcards, dictation
-            challenges, and full IELTS/TOEIC mock exam simulations.
+            Nâng tầm khả năng nói lưu loát với chấm điểm phát âm AI theo thời
+            gian thực, chat bot cá nhân hóa, thẻ ghi nhớ 3D, thử thách chính tả
+            và các bài thi thử IELTS/TOEIC đầy đủ.
           </Text>
         </Flex>
 
@@ -53,13 +54,13 @@ export function HomeHero() {
           }
           classNames={{ root: classes.cta, label: classes.ctaLabel }}
         >
-          Start Learning now
+          Bắt đầu học ngay
         </Button>
       </Flex>
 
       <Image
         src="/englow3_hero.png"
-        alt="Englow3 learning workspace showing pronunciation analysis, a flashcard deck and a daily progress tracker"
+        alt="Không gian học tập Englow3 với phân tích phát âm, bộ thẻ ghi nhớ và trình theo dõi tiến độ hàng ngày"
         width={533}
         height={490}
         className={classes.illustration}

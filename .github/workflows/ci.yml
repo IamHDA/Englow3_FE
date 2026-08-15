@@ -34,6 +34,16 @@ permissions:
   contents: read
 
 jobs:
+  format:
+    # Prettier covers the whole repo in one pass, unlike quality-gate which is
+    # scoped per app - running it inside the matrix below would just repeat
+    # the same whole-repo check three times.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm format:check
+
   quality:
     runs-on: ubuntu-latest
     strategy:

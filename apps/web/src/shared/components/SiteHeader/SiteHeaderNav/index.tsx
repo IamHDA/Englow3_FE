@@ -42,7 +42,7 @@ export function SiteHeaderNav() {
           <Menu.Target>
             <UnstyledButton className={classes.link}>
               <StudyIcon aria-hidden="true" size={16} strokeWidth={2.5} />
-              Study
+              Học tập
               <ChevronDown
                 aria-hidden="true"
                 size={16}
@@ -68,7 +68,7 @@ export function SiteHeaderNav() {
         opened={drawerOpened}
         onClick={drawer.toggle}
         hiddenFrom="md"
-        aria-label="Toggle navigation"
+        aria-label="Chuyển đổi menu điều hướng"
       />
 
       <Drawer

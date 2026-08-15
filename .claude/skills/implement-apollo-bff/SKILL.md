@@ -66,15 +66,15 @@ Derive the module list from the repository, not from assumption. If a new capabi
 
 ## Responsibilities
 
-| Part | Holds | Never holds |
-|---|---|---|
-| `typeDefs` | The frontend contract | REST paths, business rules |
-| `resolver` | Args, auth check, call, map | Business rules, retries, orchestration logic that belongs to the backend |
-| `api` | One module's REST calls | GraphQL shaping |
-| `mapper` | REST response to GraphQL model | Calls, mutation of data |
-| `loader` | Batching within one request | Cache shared across users or requests |
-| `context` | Current user, token, clients, loaders | Workflow |
-| `shared/http` | Base URL, headers, timeout, error parsing | Anything module-specific |
+| Part          | Holds                                     | Never holds                                                              |
+| ------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
+| `typeDefs`    | The frontend contract                     | REST paths, business rules                                               |
+| `resolver`    | Args, auth check, call, map               | Business rules, retries, orchestration logic that belongs to the backend |
+| `api`         | One module's REST calls                   | GraphQL shaping                                                          |
+| `mapper`      | REST response to GraphQL model            | Calls, mutation of data                                                  |
+| `loader`      | Batching within one request               | Cache shared across users or requests                                    |
+| `context`     | Current user, token, clients, loaders     | Workflow                                                                 |
+| `shared/http` | Base URL, headers, timeout, error parsing | Anything module-specific                                                 |
 
 ## Rules that always hold
 

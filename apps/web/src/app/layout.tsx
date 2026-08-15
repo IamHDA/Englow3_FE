@@ -7,26 +7,19 @@ import {
   mantineHtmlProps,
 } from "@mantine/core";
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { theme } from "@/lib/mantine/theme";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
 });
 
 export const metadata: Metadata = {
-  title: "Englow3 — Master English with AI Intelligence",
+  title: "Englow3 — Chinh phục tiếng Anh cùng Trí tuệ AI",
   description:
-    "Real-time AI pronunciation scoring, adaptive daily learning paths, 3D flashcards, dictation challenges and full IELTS/TOEIC mock exam simulations.",
+    "Chấm điểm phát âm AI theo thời gian thực, lộ trình học hàng ngày thích ứng, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
 };
 
 export default function RootLayout({
@@ -35,11 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      {...mantineHtmlProps}
-      className={`${inter.variable} ${instrumentSerif.variable}`}
-    >
+    <html lang="vi" {...mantineHtmlProps} className={inter.variable}>
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
       </head>

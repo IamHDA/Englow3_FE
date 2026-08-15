@@ -24,32 +24,32 @@ export const studyIcon: LucideIcon = GraduationCap;
 
 export const studyLinks: StudyLink[] = [
   {
-    label: "Pronunciation",
-    description: "Real-time AI speech scoring",
+    label: "Phát âm",
+    description: "Chấm điểm phát âm AI theo thời gian thực",
     href: "/study/pronunciation",
     icon: Mic,
   },
   {
-    label: "Flashcards",
-    description: "3D decks tuned to your recall",
+    label: "Thẻ ghi nhớ",
+    description: "Bộ thẻ 3D tối ưu theo khả năng ghi nhớ của bạn",
     href: "/study/flashcards",
     icon: Layers,
   },
   {
-    label: "Dictation",
-    description: "Listen-and-type challenges",
+    label: "Chính tả",
+    description: "Thử thách nghe và gõ lại",
     href: "/study/dictation",
     icon: Headphones,
   },
   {
-    label: "Daily Path",
-    description: "Adaptive lessons picked for you",
+    label: "Lộ trình hàng ngày",
+    description: "Bài học thích ứng dành riêng cho bạn",
     href: "/study/daily-path",
     icon: Route,
   },
 ];
 
 export const primaryLinks: NavLink[] = [
-  { label: "Mock Test", href: "/mock-test", icon: ClipboardCheck },
-  { label: "AI Tutor", href: "/ai-tutor", icon: Bot },
+  { label: "Thi thử", href: "/mock-test", icon: ClipboardCheck },
+  { label: "Gia sư AI", href: "/ai-tutor", icon: Bot },
 ];

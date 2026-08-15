@@ -6,10 +6,10 @@ Dự án Frontend cho hệ thống học tiếng Anh **Englow3**, được quả
 
 ## 🌐 Live Environments & Deployment Links
 
-| Environment | Branch | Web App (Next.js) | BFF GraphQL Server |
-|---|---|---|---|
-| **Production** | `main` | [https://englow3-web.vercel.app](https://englow3-web.vercel.app) | [https://englow3-bff.vercel.app/graphql](https://englow3-bff.vercel.app/graphql) |
-| **Staging** | `dev` | [https://englow3-web-dev.vercel.app](https://englow3-web-dev.vercel.app) | [https://englow3-bff-dev.vercel.app/graphql](https://englow3-bff-dev.vercel.app/graphql) |
+| Environment    | Branch | Web App (Next.js)                                                        | BFF GraphQL Server                                                                       |
+| -------------- | ------ | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| **Production** | `main` | [https://englow3-web.vercel.app](https://englow3-web.vercel.app)         | [https://englow3-bff.vercel.app/graphql](https://englow3-bff.vercel.app/graphql)         |
+| **Staging**    | `dev`  | [https://englow3-web-dev.vercel.app](https://englow3-web-dev.vercel.app) | [https://englow3-bff-dev.vercel.app/graphql](https://englow3-bff-dev.vercel.app/graphql) |
 
 ---
 
@@ -30,11 +30,13 @@ Englow3_FE/
 ## 🛠️ Lệnh khởi chạy & Kiểm thử (Local Commands)
 
 ### 1. Khởi chạy ứng dụng
+
 - **Web App**: `pnpm dev:web`
 - **BFF Server**: `pnpm dev:bff`
 - **Mobile App**: `pnpm dev:mobile`
 
 ### 2. Validate Code & Typecheck
+
 - **Toàn bộ Monorepo**:
   - `pnpm lint`
   - `pnpm typecheck`
@@ -54,10 +56,10 @@ Englow3_FE/
 
 Hai workflow **độc lập**, không cái nào chờ cái nào:
 
-| Workflow | File | Chạy khi | Nhiệm vụ |
-|---|---|---|---|
-| **CI** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | `pull_request` **và** `push` vào `main`/`dev` | lint + typecheck + test |
-| **Deploy** | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | `push`, `pull_request`, `workflow_dispatch` | build & deploy lên Vercel |
+| Workflow   | File                                                           | Chạy khi                                      | Nhiệm vụ                  |
+| ---------- | -------------------------------------------------------------- | --------------------------------------------- | ------------------------- |
+| **CI**     | [`.github/workflows/ci.yml`](.github/workflows/ci.yml)         | `pull_request` **và** `push` vào `main`/`dev` | lint + typecheck + test   |
+| **Deploy** | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | `push`, `pull_request`, `workflow_dispatch`   | build & deploy lên Vercel |
 
 ```text
 ci.yml:      quality (matrix: web | bff | mobile, chạy song song)
@@ -76,12 +78,12 @@ có thể làm hỏng `dev` khi cả hai cùng vào — và nếu CI không ch�
 không ai phát hiện. Bật "Require branches to be up to date before merging" thu hẹp
 khe hở này, nhưng đó là setting của repo, không phải thứ được đảm bảo trong code.
 
-| Sự kiện | Target | URL |
-|---|---|---|
-| `push` vào `main` | `production` | domain production (do `--prod` tự gán) |
-| `push` vào `dev` | `preview` | alias sang `englow3-{web,bff}-dev.vercel.app` |
-| `pull_request` vào `main`/`dev` | `preview` | URL ngẫu nhiên, post vào PR comment |
-| `workflow_dispatch` | do người chạy chọn | — |
+| Sự kiện                         | Target             | URL                                           |
+| ------------------------------- | ------------------ | --------------------------------------------- |
+| `push` vào `main`               | `production`       | domain production (do `--prod` tự gán)        |
+| `push` vào `dev`                | `preview`          | alias sang `englow3-{web,bff}-dev.vercel.app` |
+| `pull_request` vào `main`/`dev` | `preview`          | URL ngẫu nhiên, post vào PR comment           |
+| `workflow_dispatch`             | do người chạy chọn | —                                             |
 
 Alias cho `dev` khai báo ở block `env` đầu file workflow (`DEV_ALIAS_WEB`,
 `DEV_ALIAS_BFF`, `VERCEL_SCOPE`) — đổi domain staging thì sửa ở đúng một chỗ đó.
@@ -91,12 +93,12 @@ mục `.vercel/` độc lập. Không gộp chung lại.
 
 ### Secrets bắt buộc
 
-| Secret | Bắt buộc | Ghi chú |
-|---|---|---|
-| `VERCEL_TOKEN` | ✅ | |
-| `VERCEL_ORG_ID` | ✅ | |
-| `VERCEL_PROJECT_ID_WEB` | ✅ | fallback về `VERCEL_PROJECT_ID` |
-| `VERCEL_PROJECT_ID_BFF` | — | thiếu thì job `deploy-bff` được bỏ qua, và PR comment sẽ nói rõ |
+| Secret                  | Bắt buộc | Ghi chú                                                         |
+| ----------------------- | -------- | --------------------------------------------------------------- |
+| `VERCEL_TOKEN`          | ✅       |                                                                 |
+| `VERCEL_ORG_ID`         | ✅       |                                                                 |
+| `VERCEL_PROJECT_ID_WEB` | ✅       | fallback về `VERCEL_PROJECT_ID`                                 |
+| `VERCEL_PROJECT_ID_BFF` | —        | thiếu thì job `deploy-bff` được bỏ qua, và PR comment sẽ nói rõ |
 
 ### Cấu hình phía Vercel
 
