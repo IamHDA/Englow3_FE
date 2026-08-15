@@ -28,7 +28,7 @@ export const AUTH_MODE_COPY: Record<AuthMode, AuthModeCopy> = {
   },
   [AuthMode.REGISTER]: {
     title: "Tạo tài khoản Englow3",
-    subtitle: "Vài thông tin để cá nhân hoá lộ trình của bạn",
+    subtitle: "Tham gia vào con đường chinh phục tiếng anh cùng Englow3",
     socialLabel: "Hoặc đăng ký bằng",
     footerPrompt: "Đã có tài khoản?",
     footerAction: "Đăng nhập",
