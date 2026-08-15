@@ -49,5 +49,14 @@ export const BIRTH_YEAR_OPTIONS: string[] = Array.from({ length: 60 }, (_, i) =>
   String(2010 - i),
 );
 
-export const GENDERS = ["Nam", "Nữ", "Khác"] as const;
-export type Gender = (typeof GENDERS)[number];
+export const GENDER_VALUES = ["MALE", "FEMALE", "OTHER"] as const;
+export type Gender = (typeof GENDER_VALUES)[number];
+
+const GENDER_LABELS: Record<Gender, string> = {
+  MALE: "Nam",
+  FEMALE: "Nữ",
+  OTHER: "Khác",
+};
+
+export const GENDER_OPTIONS: { value: Gender; label: string }[] =
+  GENDER_VALUES.map((value) => ({ value, label: GENDER_LABELS[value] }));

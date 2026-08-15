@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
   Checkbox,
+  Flex,
   NativeSelect,
   PasswordInput,
   SimpleGrid,
@@ -21,9 +22,9 @@ import {
   BIRTH_DAY_OPTIONS,
   BIRTH_MONTH_OPTIONS,
   BIRTH_YEAR_OPTIONS,
-  GENDERS,
+  GENDER_OPTIONS,
+  GENDER_VALUES,
 } from "@/features/auth/constants/authOptions";
-import { passwordSchema } from "@/features/auth/schemas/password";
 import { supabase } from "@/lib/supabase/client";
 
 import classes from "../AuthModal.module.css";
@@ -46,15 +47,20 @@ const registerSchema = z
     nickname: z
       .string()
       .regex(
-        /^[a-z0-9_]{3,20}$/,
-        "Nickname chỉ gồm chữ thường, số, dấu gạch dưới, 3–20 ký tự",
+        /^[a-zA-Z0-9_]{3,20}$/,
+        "Nickname chỉ gồm chữ cái, số, dấu gạch dưới, 3–20 ký tự",
       ),
     email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
-    password: passwordSchema,
+    password: z
+      .string()
+      .min(8, "Mật khẩu tối thiểu 8 ký tự")
+      .regex(/[A-Z]/, "Mật khẩu cần ít nhất 1 chữ hoa")
+      .regex(/[a-z]/, "Mật khẩu cần ít nhất 1 chữ thường")
+      .regex(/[^A-Za-z0-9]/, "Mật khẩu cần ít nhất 1 ký tự đặc biệt"),
     birthDay: z.string().min(1, "Vui lòng chọn ngày sinh"),
     birthMonth: z.string().min(1, "Vui lòng chọn tháng sinh"),
     birthYear: z.string().min(1, "Vui lòng chọn năm sinh"),
-    gender: z.enum(GENDERS),
+    gender: z.enum(GENDER_VALUES),
     acceptedTerms: z
       .boolean()
       .refine((v) => v, "Bạn cần đồng ý với điều khoản để tiếp tục"),
@@ -87,7 +93,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       birthDay: "",
       birthMonth: "",
       birthYear: "",
-      gender: "Nam",
+      gender: "MALE",
       acceptedTerms: true,
     },
   });
@@ -100,7 +106,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: values.fullName,
-          nickname: values.nickname,
+          display_name: values.nickname,
           birth_date: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
           gender: values.gender,
         },
@@ -124,132 +130,136 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Stack gap={18}>
-        <SimpleGrid cols={2} spacing={14}>
-          <TextInput
-            {...register("fullName")}
-            label="Họ và tên"
-            placeholder="Nguyễn Văn A"
-            error={errors.fullName?.message}
-            classNames={{ label: classes.label, input: classes.input }}
-          />
-          <TextInput
-            {...register("nickname")}
-            label={
-              <>
-                Nickname
-                <span className={classes.labelHint}>hiển thị công khai</span>
-              </>
-            }
-            placeholder="vana"
-            error={errors.nickname?.message}
-            classNames={{ label: classes.label, input: classes.input }}
-          />
-        </SimpleGrid>
-
+    <Flex
+      component="form"
+      direction="column"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      gap={18}
+    >
+      <SimpleGrid cols={2} spacing={14}>
         <TextInput
-          {...register("email")}
-          label="Email"
-          placeholder="example@example.com"
-          error={errors.email?.message}
+          {...register("fullName")}
+          label="Họ và tên"
+          placeholder="Nguyễn Văn A"
+          error={errors.fullName?.message}
           classNames={{ label: classes.label, input: classes.input }}
         />
-
-        <PasswordInput
-          {...register("password")}
+        <TextInput
+          {...register("nickname")}
           label={
             <>
-              Mật khẩu
-              <span className={classes.labelHint}>
-                8+ ký tự, hoa, thường, ký tự đặc biệt
-              </span>
+              Nickname
+              <span className={classes.labelHint}>hiển thị công khai</span>
             </>
           }
-          placeholder="Tạo mật khẩu"
-          error={errors.password?.message}
-          visibilityToggleIcon={({ reveal }) =>
-            reveal ? (
-              <EyeOff aria-hidden="true" size={20} />
-            ) : (
-              <Eye aria-hidden="true" size={20} />
-            )
-          }
+          placeholder="vana"
+          error={errors.nickname?.message}
           classNames={{ label: classes.label, input: classes.input }}
         />
+      </SimpleGrid>
 
-        <Stack gap={8}>
-          <Text className={classes.label} component="span">
-            Ngày sinh
+      <TextInput
+        {...register("email")}
+        label="Email"
+        placeholder="example@example.com"
+        error={errors.email?.message}
+        classNames={{ label: classes.label, input: classes.input }}
+      />
+
+      <PasswordInput
+        {...register("password")}
+        label={
+          <>
+            Mật khẩu
+            <span className={classes.labelHint}>
+              8+ ký tự, hoa, thường, ký tự đặc biệt
+            </span>
+          </>
+        }
+        placeholder="Tạo mật khẩu"
+        error={errors.password?.message}
+        visibilityToggleIcon={({ reveal }) =>
+          reveal ? (
+            <EyeOff aria-hidden="true" size={20} />
+          ) : (
+            <Eye aria-hidden="true" size={20} />
+          )
+        }
+        classNames={{ label: classes.label, input: classes.input }}
+      />
+
+      <Stack gap={8}>
+        <Text className={classes.label} component="span">
+          Ngày sinh
+        </Text>
+        <SimpleGrid cols={3} spacing={10}>
+          <NativeSelect
+            {...register("birthDay")}
+            aria-label="Ngày sinh - ngày"
+            data={[{ value: "", label: "Ngày" }, ...BIRTH_DAY_OPTIONS]}
+            error={!!errors.birthDay}
+            classNames={{ input: classes.input }}
+          />
+          <NativeSelect
+            {...register("birthMonth")}
+            aria-label="Ngày sinh - tháng"
+            data={[{ value: "", label: "Tháng" }, ...BIRTH_MONTH_OPTIONS]}
+            error={!!errors.birthMonth}
+            classNames={{ input: classes.input }}
+          />
+          <NativeSelect
+            {...register("birthYear")}
+            aria-label="Ngày sinh - năm"
+            data={[{ value: "", label: "Năm" }, ...BIRTH_YEAR_OPTIONS]}
+            error={!!errors.birthYear}
+            classNames={{ input: classes.input }}
+          />
+        </SimpleGrid>
+        {errors.birthDay ? (
+          <Text size="xs" c="warn.6">
+            {errors.birthDay.message}
           </Text>
-          <SimpleGrid cols={3} spacing={10}>
-            <NativeSelect
-              {...register("birthDay")}
-              aria-label="Ngày sinh - ngày"
-              data={[{ value: "", label: "Ngày" }, ...BIRTH_DAY_OPTIONS]}
-              error={!!errors.birthDay}
-              classNames={{ input: classes.input }}
-            />
-            <NativeSelect
-              {...register("birthMonth")}
-              aria-label="Ngày sinh - tháng"
-              data={[{ value: "", label: "Tháng" }, ...BIRTH_MONTH_OPTIONS]}
-              error={!!errors.birthMonth}
-              classNames={{ input: classes.input }}
-            />
-            <NativeSelect
-              {...register("birthYear")}
-              aria-label="Ngày sinh - năm"
-              data={[{ value: "", label: "Năm" }, ...BIRTH_YEAR_OPTIONS]}
-              error={!!errors.birthYear}
-              classNames={{ input: classes.input }}
-            />
-          </SimpleGrid>
-          {errors.birthDay ? (
-            <Text size="xs" c="warn.6">
-              {errors.birthDay.message}
-            </Text>
-          ) : null}
-        </Stack>
-
-        <NativeSelect
-          {...register("gender")}
-          label="Giới tính"
-          data={[...GENDERS]}
-          classNames={{ label: classes.label, input: classes.input }}
-        />
-
-        <Checkbox
-          {...register("acceptedTerms")}
-          color="navy.9"
-          error={errors.acceptedTerms?.message}
-          label={
-            <Text size="sm" c="ink.7" component="span">
-              Tôi đồng ý với{" "}
-              <Text component="span" fw={600} c="navy.9">
-                Điều khoản sử dụng
-              </Text>{" "}
-              và{" "}
-              <Text component="span" fw={600} c="navy.9">
-                Chính sách bảo mật
-              </Text>{" "}
-              của Englow3.
-            </Text>
-          }
-        />
-
-        <Button
-          type="submit"
-          loading={isSubmitting}
-          color="orange.5"
-          radius={12}
-          h={48}
-          fz={16}
-          fw={700}
-        >
-          Tạo tài khoản
-        </Button>
+        ) : null}
       </Stack>
-    </form>
+
+      <NativeSelect
+        {...register("gender")}
+        label="Giới tính"
+        data={GENDER_OPTIONS}
+        classNames={{ label: classes.label, input: classes.input }}
+      />
+
+      <Checkbox
+        {...register("acceptedTerms")}
+        color="navy.9"
+        error={errors.acceptedTerms?.message}
+        label={
+          <Text size="sm" c="ink.7" component="span">
+            Tôi đồng ý với{" "}
+            <Text component="span" fw={600} c="navy.9">
+              Điều khoản sử dụng
+            </Text>{" "}
+            và{" "}
+            <Text component="span" fw={600} c="navy.9">
+              Chính sách bảo mật
+            </Text>{" "}
+            của Englow3.
+          </Text>
+        }
+      />
+
+      <Button
+        type="submit"
+        loading={isSubmitting}
+        color="orange.5"
+        radius={12}
+        h={48}
+        fz={16}
+        fw={700}
+      >
+        Tạo tài khoản
+      </Button>
+    </Flex>
   );
 }

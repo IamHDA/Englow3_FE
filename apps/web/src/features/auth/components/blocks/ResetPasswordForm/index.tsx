@@ -1,18 +1,21 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, PasswordInput, Stack } from "@mantine/core";
+import { Button, Flex, PasswordInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { passwordSchema } from "@/features/auth/schemas/password";
 import { supabase } from "@/lib/supabase/client";
 
 const resetPasswordSchema = z.object({
-  password: passwordSchema,
+  password: z
+    .string()
+    .min(8, "Mật khẩu tối thiểu 8 ký tự")
+    .regex(/[A-Z]/, "Mật khẩu cần ít nhất 1 chữ hoa")
+    .regex(/[a-z]/, "Mật khẩu cần ít nhất 1 chữ thường")
+    .regex(/[^A-Za-z0-9]/, "Mật khẩu cần ít nhất 1 ký tự đặc biệt"),
 });
 
 type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
@@ -47,34 +50,38 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Stack gap={18}>
-        <PasswordInput
-          {...register("password")}
-          label="Mật khẩu mới"
-          placeholder="Nhập mật khẩu mới"
-          error={errors.password?.message}
-          visibilityToggleIcon={({ reveal }) =>
-            reveal ? (
-              <EyeOff aria-hidden="true" size={20} />
-            ) : (
-              <Eye aria-hidden="true" size={20} />
-            )
-          }
-        />
+    <Flex
+      component="form"
+      direction="column"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      gap={18}
+    >
+      <PasswordInput
+        {...register("password")}
+        label="Mật khẩu mới"
+        placeholder="Nhập mật khẩu mới"
+        error={errors.password?.message}
+        visibilityToggleIcon={({ reveal }) =>
+          reveal ? (
+            <EyeOff aria-hidden="true" size={20} />
+          ) : (
+            <Eye aria-hidden="true" size={20} />
+          )
+        }
+      />
 
-        <Button
-          type="submit"
-          loading={isSubmitting}
-          color="orange.5"
-          radius={12}
-          h={48}
-          fz={16}
-          fw={700}
-        >
-          Đặt lại mật khẩu
-        </Button>
-      </Stack>
-    </form>
+      <Button
+        type="submit"
+        loading={isSubmitting}
+        color="orange.5"
+        radius={12}
+        h={48}
+        fz={16}
+        fw={700}
+      >
+        Đặt lại mật khẩu
+      </Button>
+    </Flex>
   );
 }

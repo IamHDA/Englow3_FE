@@ -4,9 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
   Checkbox,
+  Flex,
   Group,
   PasswordInput,
-  Stack,
   TextInput,
   UnstyledButton,
 } from "@mantine/core";
@@ -93,61 +93,65 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Stack gap={18}>
-        <TextInput
-          {...register("email")}
-          label="Email"
-          placeholder="example@example.com"
-          error={errors.email?.message}
-          classNames={{ label: classes.label, input: classes.input }}
+    <Flex
+      component="form"
+      direction="column"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      gap={18}
+    >
+      <TextInput
+        {...register("email")}
+        label="Email"
+        placeholder="example@example.com"
+        error={errors.email?.message}
+        classNames={{ label: classes.label, input: classes.input }}
+      />
+
+      <PasswordInput
+        {...register("password")}
+        label="Mật khẩu"
+        placeholder="Nhập mật khẩu của bạn"
+        error={errors.password?.message}
+        visibilityToggleIcon={({ reveal }) =>
+          reveal ? (
+            <EyeOff aria-hidden="true" size={20} />
+          ) : (
+            <Eye aria-hidden="true" size={20} />
+          )
+        }
+        classNames={{ label: classes.label, input: classes.input }}
+      />
+
+      <Group justify="space-between" wrap="nowrap">
+        <Checkbox
+          {...register("rememberMe")}
+          label="Ghi nhớ đăng nhập"
+          color="navy.9"
+          size="xs"
         />
-
-        <PasswordInput
-          {...register("password")}
-          label="Mật khẩu"
-          placeholder="Nhập mật khẩu của bạn"
-          error={errors.password?.message}
-          visibilityToggleIcon={({ reveal }) =>
-            reveal ? (
-              <EyeOff aria-hidden="true" size={20} />
-            ) : (
-              <Eye aria-hidden="true" size={20} />
-            )
-          }
-          classNames={{ label: classes.label, input: classes.input }}
-        />
-
-        <Group justify="space-between" wrap="nowrap">
-          <Checkbox
-            {...register("rememberMe")}
-            label="Ghi nhớ đăng nhập"
-            color="navy.9"
-            size="xs"
-          />
-          <UnstyledButton
-            type="button"
-            fz={14}
-            fw={600}
-            c="navy.9"
-            onClick={() => void handleForgotPassword()}
-          >
-            Quên mật khẩu?
-          </UnstyledButton>
-        </Group>
-
-        <Button
-          type="submit"
-          loading={isSubmitting}
-          color="orange.5"
-          radius={12}
-          h={48}
-          fz={16}
-          fw={700}
+        <UnstyledButton
+          type="button"
+          fz={14}
+          fw={600}
+          c="navy.9"
+          onClick={() => void handleForgotPassword()}
         >
-          Đăng nhập
-        </Button>
-      </Stack>
-    </form>
+          Quên mật khẩu?
+        </UnstyledButton>
+      </Group>
+
+      <Button
+        type="submit"
+        loading={isSubmitting}
+        color="orange.5"
+        radius={12}
+        h={48}
+        fz={16}
+        fw={700}
+      >
+        Đăng nhập
+      </Button>
+    </Flex>
   );
 }

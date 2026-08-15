@@ -67,7 +67,7 @@ describe("RegisterForm", () => {
     expect(
       await screen.findByText("Họ và tên phải có ít nhất 2 ký tự"),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Nickname chỉ gồm chữ thường/)).toBeInTheDocument();
+    expect(screen.getByText(/Nickname chỉ gồm chữ cái/)).toBeInTheDocument();
     expect(screen.getByText("Vui lòng nhập email")).toBeInTheDocument();
     expect(screen.getByText("Mật khẩu tối thiểu 8 ký tự")).toBeInTheDocument();
     expect(screen.getByText("Vui lòng chọn ngày sinh")).toBeInTheDocument();
@@ -141,9 +141,9 @@ describe("RegisterForm", () => {
         options: expect.objectContaining({
           data: {
             full_name: "Nguyễn Văn A",
-            nickname: "vana",
+            display_name: "vana",
             birth_date: "2000-06-15",
-            gender: "Nam",
+            gender: "MALE",
           },
         }),
       }),
