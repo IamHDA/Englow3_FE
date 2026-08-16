@@ -11,8 +11,10 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import {
   primaryLinks,
@@ -30,10 +32,20 @@ type SiteHeaderNavProps = {
     displayName: string;
     avatarUrl: string | null;
   } | null;
+  hasError: boolean;
 };
 
-export function SiteHeaderNav({ currentUser }: SiteHeaderNavProps) {
+export function SiteHeaderNav({ currentUser, hasError }: SiteHeaderNavProps) {
   const [drawerOpened, drawer] = useDisclosure(false);
+
+  useEffect(() => {
+    if (!hasError) return;
+    notifications.show({
+      color: "warn",
+      title: "Lỗi lấy thông tin người dùng",
+      message: "Vui lòng đăng nhập lại",
+    });
+  }, [hasError]);
 
   return (
     <>

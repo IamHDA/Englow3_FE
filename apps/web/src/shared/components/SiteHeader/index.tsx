@@ -8,13 +8,17 @@ import type {
 } from "@/lib/graphql/generated";
 import { CurrentUserDocument } from "@/lib/graphql/generated";
 import { query } from "@/lib/apollo/rscClient";
-import { notifications } from "@mantine/notifications";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 import classes from "./SiteHeader.module.css";
 import { SiteHeaderNav } from "./SiteHeaderNav";
 
-async function getCurrentUser(): Promise<CurrentUserQuery["me"] | null> {
+type CurrentUserResult = {
+  currentUser: CurrentUserQuery["me"] | null;
+  hasError: boolean;
+};
+
+async function getCurrentUser(): Promise<CurrentUserResult> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { session },
@@ -22,28 +26,25 @@ async function getCurrentUser(): Promise<CurrentUserQuery["me"] | null> {
 
   // No session -> skip the BFF call entirely, anonymous visitors never pay
   // for a request that would only come back UNAUTHENTICATED.
-  if (!session) return null;
+  if (!session) return { currentUser: null, hasError: false };
 
   try {
     const { data } = await query<CurrentUserQuery, CurrentUserQueryVariables>({
       query: CurrentUserDocument,
     });
-    return data?.me ?? null;
+    return { currentUser: data?.me ?? null, hasError: false };
   } catch (error) {
     // BFF/backend down, or the token expired between the check above and
-    // now - degrade to the logged-out header rather than breaking the page.
+    // now - degrade to the logged-out header rather than breaking the page,
+    // but let SiteHeaderNav (client) surface a toast since this is a Server
+    // Component and can't call Mantine's notification store itself.
     console.error("Failed to load current user for the header", error);
-    notifications.show({
-      color: "warn",
-      title: "Lỗi lấy thông tin người dùng",
-      message: "Vui lòng đăng nhập lại",
-    });
-    return null;
+    return { currentUser: null, hasError: true };
   }
 }
 
 export async function SiteHeader() {
-  const currentUser = await getCurrentUser();
+  const { currentUser, hasError } = await getCurrentUser();
 
   return (
     <header className={classes.header}>
@@ -73,7 +74,7 @@ export async function SiteHeader() {
             priority
           />
         </Link>
-        <SiteHeaderNav currentUser={currentUser} />
+        <SiteHeaderNav currentUser={currentUser} hasError={hasError} />
       </Group>
     </header>
   );
