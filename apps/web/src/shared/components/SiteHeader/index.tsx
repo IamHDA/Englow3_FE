@@ -1,4 +1,3 @@
-import { Group } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -48,16 +47,12 @@ export async function SiteHeader() {
 
   return (
     <header className={classes.header}>
-      <Group
-        justify="space-between"
-        wrap="nowrap"
-        gap="md"
-        className={classes.inner}
-      >
+      <SiteHeaderNav currentUser={currentUser} hasError={hasError}>
         {/*
           A plain Link rather than `<Center component={Link}>`: this header is a
-          Server Component, and passing Link into a Mantine client component
-          would send a function across the boundary.
+          Server Component, and passing an already-rendered element as
+          children is fine - it's passing the Link *component reference*
+          across the boundary that isn't.
         */}
         <Link
           href="/"
@@ -74,8 +69,7 @@ export async function SiteHeader() {
             priority
           />
         </Link>
-        <SiteHeaderNav currentUser={currentUser} hasError={hasError} />
-      </Group>
+      </SiteHeaderNav>
     </header>
   );
 }
