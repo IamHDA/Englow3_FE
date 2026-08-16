@@ -34,7 +34,9 @@ async function getCurrentUser(): Promise<CurrentUserResult> {
     return { currentUser: data?.me ?? null, hasError: false };
   } catch (error) {
     // BFF/backend down, or the token expired between the check above and
-    // now - degrade to the logged-out header rather than breaking the page.
+    // now - degrade to the logged-out header rather than breaking the page,
+    // but let SiteHeaderNav (client) surface a toast since this is a Server
+    // Component and can't call Mantine's notification store itself.
     console.error("Failed to load current user for the header", error);
     return { currentUser: null, hasError: true };
   }
