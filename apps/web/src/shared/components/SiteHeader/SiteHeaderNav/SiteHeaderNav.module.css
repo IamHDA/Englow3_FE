@@ -1,3 +1,17 @@
+.inner {
+  height: 60px;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--mantine-spacing-md);
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .inner {
+    height: 76px;
+    padding-inline: 40px;
+  }
+}
+
 /*
  * `:is(a, button)` raises specificity to (0,1,1). Without it Mantine's
  * UnstyledButton rule `color: inherit` — same specificity, loaded later —
@@ -8,24 +22,28 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 8px 14px 6px;
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
   color: var(--mantine-color-ink-6);
   text-align: center;
   text-decoration: none;
-  border-radius: var(--mantine-radius-md);
+  border-bottom: 2px solid transparent;
   transition:
     color 150ms ease,
-    background-color 150ms ease;
+    border-color 150ms ease;
 }
 
 .link:is(a, button):hover,
 .link:is(a, button):focus-visible,
 .link:is(a, button)[data-expanded] {
   color: var(--mantine-color-navy-9);
-  background-color: var(--mantine-color-ink-2);
+}
+
+.link:is(a, button)[data-active] {
+  color: var(--mantine-color-navy-9);
+  border-bottom-color: var(--mantine-color-orange-5);
 }
 
 .chevron {
@@ -81,6 +99,70 @@
   .link:is(a, button),
   .drawerLink:is(a),
   .chevron {
+    transition: none;
+  }
+}
+
+/*
+ * Element-qualified so these beat Mantine's own `.m_dc9b7c9f { padding: 4px }`
+ * and `.m_99ac2aa1 { padding: ... }` regardless of stylesheet order — the
+ * trigger alignment above depends on these exact paddings holding.
+ */
+div.studyDropdown {
+  padding: 8px;
+  border-color: var(--mantine-color-ink-2);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.studyItem:is(a, button) {
+  /* Mantine's own hover token, so no specificity fight with its base rule. */
+  --menu-item-hover: var(--mantine-color-ink-1);
+
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: var(--mantine-radius-md);
+}
+
+.studyItemSection {
+  margin-inline-end: 12px;
+}
+
+.studyIconTile {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-ink-1);
+  transition: background-color 150ms ease;
+}
+
+.studyItem:hover .studyIconTile,
+.studyItem:focus .studyIconTile {
+  background-color: var(--mantine-color-navy-0);
+}
+
+.studyItemLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.studyLabel {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--mantine-color-ink-8);
+}
+
+.studyDescription {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--mantine-color-ink-5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studyIconTile {
     transition: none;
   }
 }

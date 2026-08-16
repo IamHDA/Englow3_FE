@@ -6,13 +6,6 @@
   border-bottom: 1px solid var(--mantine-color-ink-2);
 }
 
-.inner {
-  height: 60px;
-  max-width: 1440px;
-  margin-inline: auto;
-  padding-inline: var(--mantine-spacing-md);
-}
-
 .logoLink {
   display: flex;
   align-items: center;
@@ -26,11 +19,6 @@
 }
 
 @media (min-width: $mantine-breakpoint-md) {
-  .inner {
-    height: 76px;
-    padding-inline: 40px;
-  }
-
   .logo {
     height: 48px;
   }
