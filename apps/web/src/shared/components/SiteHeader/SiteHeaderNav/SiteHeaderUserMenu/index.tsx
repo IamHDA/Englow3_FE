@@ -2,38 +2,31 @@
 
 import { Avatar, Menu, UnstyledButton } from "@mantine/core";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-import { supabase } from "@/lib/supabase/client";
+import { useAuth } from "@/features/auth";
 
 import classes from "./SiteHeaderUserMenu.module.css";
 
 type SiteHeaderUserMenuProps = {
-  currentUser: {
-    displayName: string;
-    avatarUrl: string | null;
-  };
+  displayName: string;
+  avatarUrl: string | null;
 };
 
-export function SiteHeaderUserMenu({ currentUser }: SiteHeaderUserMenuProps) {
-  const router = useRouter();
-
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    router.refresh();
-  }
+export function SiteHeaderUserMenu({
+  displayName,
+  avatarUrl,
+}: SiteHeaderUserMenuProps) {
+  // Đăng xuất đi qua AuthProvider chứ không gọi thẳng supabase ở đây: nếu gọi
+  // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
+  // là chuẩn.
+  const { signOut } = useAuth();
 
   return (
     <Menu position="bottom-end" width={220} withinPortal>
       <Menu.Target>
         <UnstyledButton className={classes.trigger}>
-          <Avatar
-            src={currentUser.avatarUrl}
-            name={currentUser.displayName}
-            radius="xl"
-            size={32}
-          />
-          <span className={classes.name}>{currentUser.displayName}</span>
+          <Avatar src={avatarUrl} name={displayName} radius="xl" size={32} />
+          <span className={classes.name}>{displayName}</span>
           <ChevronDown
             aria-hidden="true"
             size={16}
@@ -54,7 +47,7 @@ export function SiteHeaderUserMenu({ currentUser }: SiteHeaderUserMenuProps) {
         <Menu.Divider />
         <Menu.Item
           leftSection={<LogOut aria-hidden="true" size={16} />}
-          onClick={() => void handleSignOut()}
+          onClick={() => void signOut()}
         >
           Đăng xuất
         </Menu.Item>
