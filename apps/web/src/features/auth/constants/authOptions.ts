@@ -58,7 +58,7 @@ export const BIRTH_YEAR_OPTIONS: string[] = Array.from({ length: 60 }, (_, i) =>
  * trước đây lệch âm thầm cho tới khi BFF từ chối dữ liệu lúc chạy.
  */
 export const GENDER_OPTIONS = [
-  { value: Gender.OTHER, label: 'Khác' },
-  { value: Gender.MALE, label: 'Nam' },
-  { value: Gender.FEMALE, label: 'Nữ' },
+  { value: Gender.OTHER, label: "Khác" },
+  { value: Gender.MALE, label: "Nam" },
+  { value: Gender.FEMALE, label: "Nữ" },
 ];
