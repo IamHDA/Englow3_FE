@@ -64,7 +64,7 @@ export function AccountProvider({
 
     let active = true;
 
-    void loadProfile().then(({ data, error }) => {
+    loadProfile().then(({ data, error }) => {
       if (!active) return;
 
       if (error) {

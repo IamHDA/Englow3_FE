@@ -49,7 +49,7 @@ export function SiteHeaderUserMenu({
         <Menu.Divider />
         <Menu.Item
           leftSection={<LogOut aria-hidden="true" size={16} />}
-          onClick={() => void signOut()}
+          onClick={() => signOut()}
         >
           Đăng xuất
         </Menu.Item>
