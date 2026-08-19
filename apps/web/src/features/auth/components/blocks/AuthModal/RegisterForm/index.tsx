@@ -93,7 +93,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       birthDay: "",
       birthMonth: "",
       birthYear: "",
-      gender: Gender.Male,
+      gender: Gender.MALE,
       acceptedTerms: true,
     },
   });
