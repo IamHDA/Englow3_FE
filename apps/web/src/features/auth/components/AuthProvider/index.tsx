@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase/client";
 
 import { toAuthSession, type AuthSession } from "@/features/auth/types";
 
-export type AuthContextValue = {
+type AuthContextValue = {
   session: AuthSession | null;
   signOut: () => Promise<void>;
 };
