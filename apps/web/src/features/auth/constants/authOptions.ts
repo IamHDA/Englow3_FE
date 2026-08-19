@@ -1,3 +1,5 @@
+import { Gender } from "@/lib/graphql/generated";
+
 export const AuthMode = {
   LOGIN: "login",
   REGISTER: "register",
@@ -49,14 +51,24 @@ export const BIRTH_YEAR_OPTIONS: string[] = Array.from({ length: 60 }, (_, i) =>
   String(2010 - i),
 );
 
-export const GENDER_VALUES = ["MALE", "FEMALE", "OTHER"] as const;
-export type Gender = (typeof GENDER_VALUES)[number];
-
+/**
+ * Chỉ có nhãn tiếng Việt ở đây - danh sách giá trị thuộc về schema BFF, lấy từ
+ * enum `Gender` do codegen sinh. BFF thêm hoặc đổi tên một giá trị thì
+ * `Record<Gender, string>` báo thiếu nhãn ngay lúc biên dịch; bản chép tay
+ * trước đây lệch âm thầm cho tới khi BFF từ chối dữ liệu lúc chạy.
+ */
 const GENDER_LABELS: Record<Gender, string> = {
-  MALE: "Nam",
-  FEMALE: "Nữ",
-  OTHER: "Khác",
+  [Gender.Male]: "Nam",
+  [Gender.Female]: "Nữ",
+  [Gender.Other]: "Khác",
 };
 
+// Duyệt theo `GENDER_LABELS` chứ không phải `Object.values(Gender)`: codegen
+// xếp enum theo thứ tự chữ cái (Female trước Male), còn thứ tự hiển thị trong
+// dropdown do thiết kế quyết định. Khoá của một `Record<Gender, ...>` luôn là
+// `Gender`, chỗ `as` chỉ để bù việc `Object.entries` làm mất kiểu đó.
 export const GENDER_OPTIONS: { value: Gender; label: string }[] =
-  GENDER_VALUES.map((value) => ({ value, label: GENDER_LABELS[value] }));
+  Object.entries(GENDER_LABELS).map(([value, label]) => ({
+    value: value as Gender,
+    label,
+  }));
