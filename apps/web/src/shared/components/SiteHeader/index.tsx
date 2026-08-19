@@ -14,7 +14,11 @@ export function SiteHeader() {
           children is fine - it's passing the Link *component reference*
           across the boundary that isn't.
         */}
-        <Link href="/" className={classes.logoLink} aria-label="Trang chủ Englow3">
+        <Link
+          href="/"
+          className={classes.logoLink}
+          aria-label="Trang chủ Englow3"
+        >
           <Image
             src="/englow3-logo.png"
             alt="Englow3"

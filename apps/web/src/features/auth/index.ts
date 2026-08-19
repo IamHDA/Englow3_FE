@@ -1,6 +1,8 @@
-// Chỉ những gì Client Component dùng được. `getServerSession` nằm ở
-// "@/features/auth/server" - để chung đây thì mọi client import barrel này đều
-// kéo theo next/headers và build sẽ vỡ (server-only chặn).
+// Chỉ những gì Client Component dùng được.
+//
+// KHÔNG export `getServerSession` ở đây: mọi Client Component import barrel này
+// sẽ kéo theo next/headers và build vỡ (server-only chặn). Gọi thẳng
+// "@/features/auth/server/getServerSession" từ phía server.
 export { AuthModal } from "./components/blocks/AuthModal";
 export { AuthProvider } from "./components/AuthProvider";
 export { ResetPasswordView } from "./components/views/ResetPasswordView";

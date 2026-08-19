@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Menu, UnstyledButton } from "@mantine/core";
+import { Avatar, Menu, Text, UnstyledButton } from "@mantine/core";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 
 import { useAuth } from "@/features/auth";
@@ -26,7 +26,9 @@ export function SiteHeaderUserMenu({
       <Menu.Target>
         <UnstyledButton className={classes.trigger}>
           <Avatar src={avatarUrl} name={displayName} radius="xl" size={32} />
-          <span className={classes.name}>{displayName}</span>
+          <Text span fw={700} size="sm" c="ink.9">
+            {displayName}
+          </Text>
           <ChevronDown
             aria-hidden="true"
             size={16}

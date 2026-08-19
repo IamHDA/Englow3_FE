@@ -14,7 +14,9 @@ export function useAccountProfile() {
   const value = useContext(AccountContext);
 
   if (!value) {
-    throw new Error("useAccountProfile phải được gọi bên trong <AccountProvider>");
+    throw new Error(
+      "useAccountProfile phải được gọi bên trong <AccountProvider>",
+    );
   }
 
   return value;

@@ -12,9 +12,9 @@ import type { Metadata } from "next";
 import { Lora, Work_Sans } from "next/font/google";
 
 import { AccountProvider } from "@/features/account";
-import { getAccountProfile } from "@/features/account/server";
+import { getAccountProfile } from "@/features/account/server/getAccountProfile";
 import { AuthProvider } from "@/features/auth";
-import { getServerSession } from "@/features/auth/server";
+import { getServerSession } from "@/features/auth/server/getServerSession";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { theme } from "@/lib/mantine/theme";
 import { SiteHeader } from "@/shared/components/SiteHeader";
