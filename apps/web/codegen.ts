@@ -25,6 +25,7 @@ const config: CodegenConfig = {
   generates: {
     "src/lib/graphql/generated/schemaTypes.ts": {
       plugins: ["typescript"],
+      config: { namingConvention: { enumValues: "keep" } },
     },
     "src/lib/graphql/generated/documents.ts": {
       plugins: ["typescript-operations", "typed-document-node"],
