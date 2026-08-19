@@ -2,7 +2,7 @@ import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import { toAuthSession, type AuthSession } from "../types";
+import { toAuthSession, type AuthSession } from "@/features/auth/types";
 
 /**
  * Ai đang đăng nhập, đọc từ phía server.

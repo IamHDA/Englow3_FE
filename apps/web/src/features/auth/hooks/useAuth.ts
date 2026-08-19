@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 
-import { AuthContext } from "../components/AuthProvider";
+import { AuthContext } from "@/features/auth/components/AuthProvider";
 
 /**
  * Ai đang đăng nhập, dùng trong Client Component.

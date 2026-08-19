@@ -15,7 +15,7 @@ import { useAuth } from "@/features/auth";
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useCurrentUserLazyQuery } from "@/lib/graphql/generated/hooks";
 
-import type { AccountProfileResult } from "../../types";
+import type { AccountProfileResult } from "@/features/account/types";
 
 export type AccountContextValue = AccountProfileResult & {
   /** Đang gọi BFF lấy hồ sơ (sau khi đăng nhập, hoặc thử lại sau lỗi). */

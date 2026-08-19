@@ -7,7 +7,7 @@ import {
   type CurrentUserQueryVariables,
 } from "@/lib/graphql/generated";
 
-import type { AccountProfileResult } from "../types";
+import type { AccountProfileResult } from "@/features/account/types";
 
 /**
  * Hồ sơ người dùng, lấy từ BFF phía server.

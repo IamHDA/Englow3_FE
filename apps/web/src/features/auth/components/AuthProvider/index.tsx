@@ -12,7 +12,7 @@ import {
 
 import { supabase } from "@/lib/supabase/client";
 
-import { toAuthSession, type AuthSession } from "../../types";
+import { toAuthSession, type AuthSession } from "@/features/auth/types";
 
 export type AuthContextValue = {
   session: AuthSession | null;

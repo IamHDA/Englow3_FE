@@ -63,9 +63,10 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         gap="md"
         className={classes.inner}
       >
-        <Group gap={16} wrap="nowrap">
-          {children}
+        {children}
 
+        {/* Nav đứng chung cụm với nút đăng nhập, dồn về phải cạnh logo. */}
+        <Group gap={16} wrap="nowrap">
           <Group gap={4} visibleFrom="md" wrap="nowrap">
             <Menu
               position="bottom-start"
@@ -134,26 +135,26 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               </Link>
             ))}
           </Group>
-        </Group>
 
-        <Group gap={4} wrap="nowrap">
-          <Group visibleFrom="md">
-            {session ? (
-              <SiteHeaderUserMenu
-                displayName={accountName}
-                avatarUrl={profile?.avatarUrl ?? null}
-              />
-            ) : (
-              <SiteHeaderLoginButton />
-            )}
+          <Group gap={4} wrap="nowrap">
+            <Group visibleFrom="md">
+              {session ? (
+                <SiteHeaderUserMenu
+                  displayName={accountName}
+                  avatarUrl={profile?.avatarUrl ?? null}
+                />
+              ) : (
+                <SiteHeaderLoginButton />
+              )}
+            </Group>
+
+            <Burger
+              opened={drawerOpened}
+              onClick={drawer.toggle}
+              hiddenFrom="md"
+              aria-label="Chuyển đổi menu điều hướng"
+            />
           </Group>
-
-          <Burger
-            opened={drawerOpened}
-            onClick={drawer.toggle}
-            hiddenFrom="md"
-            aria-label="Chuyển đổi menu điều hướng"
-          />
         </Group>
       </Group>
 
