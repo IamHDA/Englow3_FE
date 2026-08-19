@@ -20,19 +20,19 @@ export enum CefrLevel {
 }
 
 export enum Gender {
-  Female = "FEMALE",
-  Male = "MALE",
-  Other = "OTHER",
+  FEMALE = "FEMALE",
+  MALE = "MALE",
+  OTHER = "OTHER",
 }
 
 export enum LearningSkill {
-  Grammar = "GRAMMAR",
-  Listening = "LISTENING",
-  Pronunciation = "PRONUNCIATION",
-  Reading = "READING",
-  Speaking = "SPEAKING",
-  Vocabulary = "VOCABULARY",
-  Writing = "WRITING",
+  GRAMMAR = "GRAMMAR",
+  LISTENING = "LISTENING",
+  PRONUNCIATION = "PRONUNCIATION",
+  READING = "READING",
+  SPEAKING = "SPEAKING",
+  VOCABULARY = "VOCABULARY",
+  WRITING = "WRITING",
 }
 
 export type Me = {
@@ -61,12 +61,12 @@ export type OnboardingState = {
 };
 
 export enum OnboardingStep {
-  CertificateTarget = "CERTIFICATE_TARGET",
-  Completed = "COMPLETED",
-  CurrentLevel = "CURRENT_LEVEL",
-  LearningGoal = "LEARNING_GOAL",
-  LearningPurposes = "LEARNING_PURPOSES",
-  TargetSkills = "TARGET_SKILLS",
+  CERTIFICATE_TARGET = "CERTIFICATE_TARGET",
+  COMPLETED = "COMPLETED",
+  CURRENT_LEVEL = "CURRENT_LEVEL",
+  LEARNING_GOAL = "LEARNING_GOAL",
+  LEARNING_PURPOSES = "LEARNING_PURPOSES",
+  TARGET_SKILLS = "TARGET_SKILLS",
 }
 
 export type Query = {
