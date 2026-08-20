@@ -111,10 +111,10 @@ vars**.
 Để tách ra, khai báo biến trong Vercel dashboard với Environment = **Preview** và
 chọn **branch cụ thể**:
 
-| Key                          | Branch    | Value                                        |
-| ---------------------------- | --------- | -------------------------------------------- |
-| `NEXT_PUBLIC_BFF_GRAPHQL_URL`| `dev`     | `https://englow3-bff-dev.vercel.app/graphql` |
-| `NEXT_PUBLIC_BFF_GRAPHQL_URL`| `testing` | `https://englow3-bff-test.vercel.app/graphql`|
+| Key                           | Branch    | Value                                         |
+| ----------------------------- | --------- | --------------------------------------------- |
+| `NEXT_PUBLIC_BFF_GRAPHQL_URL` | `dev`     | `https://englow3-bff-dev.vercel.app/graphql`  |
+| `NEXT_PUBLIC_BFF_GRAPHQL_URL` | `testing` | `https://englow3-bff-test.vercel.app/graphql` |
 
 Biến Preview **không** gắn branch vẫn là fallback, nên chỉ cần override đúng những
 key khác nhau giữa hai môi trường. `vercel pull` chỉ trả về bộ đã scope khi được
