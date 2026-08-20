@@ -1,12 +1,24 @@
-/**
- * Tổng số bước onboarding, theo enum `OnboardingStep` của backend: bốn bước
- * người dùng phải đi qua trước khi `COMPLETED`. Badge "Bước 1 / 4" đọc từ đây
- * chứ không ghi cứng số 4 trong component.
- */
-export const ONBOARDING_TOTAL_STEPS = 4;
+import { OnboardingStep } from "@/lib/graphql/generated";
 
-/** Thứ tự hiển thị của bước chọn mục đích học - bước đầu tiên. */
-export const LEARNING_PURPOSE_STEP_NUMBER = 1;
+/**
+ * Thứ tự hiển thị thật của các bước onboarding. Codegen xếp enum theo chữ cái
+ * (`CERTIFICATE_TARGET` trước `LEARNING_PURPOSES`) nên thứ tự khai báo trong
+ * enum không mang nghĩa gì - thứ tự đúng chỉ có ở đây, lấy từ thiết kế.
+ */
+export const ONBOARDING_STEP_ORDER: readonly OnboardingStep[] = [
+  OnboardingStep.LEARNING_PURPOSES,
+  OnboardingStep.CERTIFICATE_TARGET,
+  OnboardingStep.CURRENT_LEVEL,
+  OnboardingStep.LEARNING_GOAL,
+  OnboardingStep.TARGET_SKILLS,
+];
+
+export const ONBOARDING_TOTAL_STEPS = ONBOARDING_STEP_ORDER.length;
+
+/** Số hiệu 1-based để hiện badge "Bước n / tổng" - không ghi cứng số. */
+export function getOnboardingStepNumber(step: OnboardingStep): number {
+  return ONBOARDING_STEP_ORDER.indexOf(step) + 1;
+}
 
 /** Dùng chung cho bước thật và skeleton nên chỉ sửa một chỗ khi đổi lời. */
 export const LEARNING_PURPOSE_COPY = {

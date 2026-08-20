@@ -6,12 +6,10 @@ import { LEARNING_PURPOSE_COPY } from "@/features/onboarding/constants/onboardin
 
 import { OnboardingStepShell } from "./OnboardingStepShell";
 
+import { OnboardingStep } from "@/lib/graphql/generated";
+
 /** Số ô giả trong lúc chờ - khớp số mục đích backend đang trả về. */
 const PLACEHOLDER_COUNT = 6;
-
-type LearningPurposeStepSkeletonProps = {
-  onBack: () => void;
-};
 
 /**
  * Đứng thay cho bước chọn mục đích lúc đang tải. Dựng đúng khung thật, chỉ lưới
@@ -20,14 +18,12 @@ type LearningPurposeStepSkeletonProps = {
  *
  * Chưa có nút "Tiếp tục": chưa có gì để chọn thì cũng chưa có gì để tiếp tục.
  */
-export function LearningPurposeStepSkeleton({
-  onBack,
-}: LearningPurposeStepSkeletonProps) {
+export function LearningPurposeStepSkeleton() {
   return (
     <OnboardingStepShell
+      step={OnboardingStep.LEARNING_PURPOSES}
       title={LEARNING_PURPOSE_COPY.title}
       subtitle={LEARNING_PURPOSE_COPY.subtitle}
-      onBack={onBack}
     >
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={20}>
         {Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => (
