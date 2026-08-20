@@ -9,6 +9,16 @@ export type Incremental<T> =
 import type * as Types from "./schemaTypes";
 
 import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LearningPurposesQuery = {
+  learningPurposes: Array<{
+    id: number;
+    purposeCode: string;
+    displayName: string;
+  }>;
+};
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -20,6 +30,36 @@ export type CurrentUserQuery = {
   };
 };
 
+export const LearningPurposesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "LearningPurposes" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "learningPurposes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  LearningPurposesQuery,
+  LearningPurposesQueryVariables
+>;
 export const CurrentUserDocument = {
   kind: "Document",
   definitions: [

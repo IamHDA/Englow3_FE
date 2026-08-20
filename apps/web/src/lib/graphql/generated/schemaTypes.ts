@@ -25,6 +25,13 @@ export enum Gender {
   OTHER = "OTHER",
 }
 
+export type LearningPurpose = {
+  __typename?: "LearningPurpose";
+  displayName: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  purposeCode: Scalars["String"]["output"];
+};
+
 export enum LearningSkill {
   GRAMMAR = "GRAMMAR",
   LISTENING = "LISTENING",
@@ -72,5 +79,6 @@ export enum OnboardingStep {
 export type Query = {
   __typename?: "Query";
   health: Scalars["String"]["output"];
+  learningPurposes: Array<LearningPurpose>;
   me: Me;
 };
