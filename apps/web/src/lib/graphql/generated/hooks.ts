@@ -12,6 +12,16 @@ import { gql } from "@apollo/client";
 import * as ApolloReactCommon from "@apollo/client/react";
 import * as ApolloReactHooks from "@apollo/client/react";
 const defaultOptions = {} as const;
+export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LearningPurposesQuery = {
+  learningPurposes: Array<{
+    id: number;
+    purposeCode: string;
+    displayName: string;
+  }>;
+};
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -23,6 +33,106 @@ export type CurrentUserQuery = {
   };
 };
 
+export const LearningPurposesDocument = gql`
+  query LearningPurposes {
+    learningPurposes {
+      id
+      purposeCode
+      displayName
+    }
+  }
+`;
+
+/**
+ * __useLearningPurposesQuery__
+ *
+ * To run a query within a React component, call `useLearningPurposesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLearningPurposesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLearningPurposesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLearningPurposesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >(LearningPurposesDocument, options);
+}
+export function useLearningPurposesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >(LearningPurposesDocument, options);
+}
+export function useLearningPurposesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LearningPurposesQuery,
+  LearningPurposesQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useLearningPurposesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LearningPurposesQuery,
+        LearningPurposesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LearningPurposesQuery | undefined,
+  LearningPurposesQueryVariables
+>;
+export function useLearningPurposesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LearningPurposesQuery,
+        LearningPurposesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >(LearningPurposesDocument, options);
+}
+export type LearningPurposesQueryHookResult = ReturnType<
+  typeof useLearningPurposesQuery
+>;
+export type LearningPurposesLazyQueryHookResult = ReturnType<
+  typeof useLearningPurposesLazyQuery
+>;
+export type LearningPurposesSuspenseQueryHookResult = ReturnType<
+  typeof useLearningPurposesSuspenseQuery
+>;
+export type LearningPurposesQueryResult = ApolloReactCommon.QueryResult<
+  LearningPurposesQuery,
+  LearningPurposesQueryVariables
+>;
 export const CurrentUserDocument = gql`
   query CurrentUser {
     me {
