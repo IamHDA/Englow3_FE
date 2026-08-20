@@ -6,11 +6,11 @@ Dự án Frontend cho hệ thống học tiếng Anh **Englow3**, được quả
 
 ## 🌐 Live Environments & Deployment Links
 
-| Environment    | Branch    | Web App (Next.js)                                                          | BFF GraphQL Server                                                                          |
-| -------------- | --------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Production** | `main`    | [https://englow3-web.vercel.app](https://englow3-web.vercel.app)            | [https://englow3-bff.vercel.app/graphql](https://englow3-bff.vercel.app/graphql)            |
-| **Staging**    | `dev`     | [https://englow3-web-dev.vercel.app](https://englow3-web-dev.vercel.app)    | [https://englow3-bff-dev.vercel.app/graphql](https://englow3-bff-dev.vercel.app/graphql)    |
-| **Testing**    | `testing` | [https://englow3-web-test.vercel.app](https://englow3-web-test.vercel.app)  | [https://englow3-bff-test.vercel.app/graphql](https://englow3-bff-test.vercel.app/graphql)  |
+| Environment    | Branch    | Web App (Next.js)                                                          | BFF GraphQL Server                                                                         |
+| -------------- | --------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Production** | `main`    | [https://englow3-web.vercel.app](https://englow3-web.vercel.app)           | [https://englow3-bff.vercel.app/graphql](https://englow3-bff.vercel.app/graphql)           |
+| **Staging**    | `dev`     | [https://englow3-web-dev.vercel.app](https://englow3-web-dev.vercel.app)   | [https://englow3-bff-dev.vercel.app/graphql](https://englow3-bff-dev.vercel.app/graphql)   |
+| **Testing**    | `testing` | [https://englow3-web-test.vercel.app](https://englow3-web-test.vercel.app) | [https://englow3-bff-test.vercel.app/graphql](https://englow3-bff-test.vercel.app/graphql) |
 
 ---
 
@@ -82,12 +82,12 @@ khe hở này, nhưng đó là setting của repo, không phải thứ được 
 
 Có **3 môi trường độc lập**, mỗi cái một branch, một domain cố định:
 
-| Sự kiện              | Target              | URL                                            |
-| --------------------- | ------------------- | ----------------------------------------------- |
-| `push` vào `main`    | `production`        | domain production (do `--prod` tự gán)         |
-| `push` vào `dev`     | `preview`           | alias sang `englow3-{web,bff}-dev.vercel.app`  |
-| `push` vào `testing` | `preview`           | alias sang `englow3-{web,bff}-test.vercel.app` |
-| `workflow_dispatch`  | do người chạy chọn  | —                                               |
+| Sự kiện              | Target             | URL                                            |
+| -------------------- | ------------------ | ---------------------------------------------- |
+| `push` vào `main`    | `production`       | domain production (do `--prod` tự gán)         |
+| `push` vào `dev`     | `preview`          | alias sang `englow3-{web,bff}-dev.vercel.app`  |
+| `push` vào `testing` | `preview`          | alias sang `englow3-{web,bff}-test.vercel.app` |
+| `workflow_dispatch`  | do người chạy chọn | —                                              |
 
 `testing` **không có branch protection, không đi qua PR** — push hoặc merge thẳng vào
 đó để lấy domain cố định test nhanh, tách biệt với `dev`. Vì không qua PR, code lên
@@ -106,11 +106,11 @@ mục `.vercel/` độc lập. Không gộp chung lại.
 
 ### Secrets bắt buộc
 
-| Secret                  | Bắt buộc | Ghi chú                                                         |
-| ----------------------- | -------- | --------------------------------------------------------------- |
-| `VERCEL_TOKEN`          | ✅       |                                                                 |
-| `VERCEL_ORG_ID`         | ✅       |                                                                 |
-| `VERCEL_PROJECT_ID_WEB` | ✅       | fallback về `VERCEL_PROJECT_ID`                                 |
+| Secret                  | Bắt buộc | Ghi chú                                                                  |
+| ----------------------- | -------- | ------------------------------------------------------------------------ |
+| `VERCEL_TOKEN`          | ✅       |                                                                          |
+| `VERCEL_ORG_ID`         | ✅       |                                                                          |
+| `VERCEL_PROJECT_ID_WEB` | ✅       | fallback về `VERCEL_PROJECT_ID`                                          |
 | `VERCEL_PROJECT_ID_BFF` | —        | thiếu thì job `deploy-bff` được bỏ qua (xem `has_bff` trong Job Summary) |
 
 ### Cấu hình phía Vercel
