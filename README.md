@@ -96,9 +96,10 @@ nhất, và `testing` không bật nó) — đánh đổi có chủ ý để `te
 
 Alias khai báo ở block `env` đầu file workflow (`DEV_ALIAS_WEB`, `DEV_ALIAS_BFF`,
 `TEST_ALIAS_WEB`, `TEST_ALIAS_BFF`, `VERCEL_SCOPE`) — đổi domain staging/testing thì sửa
-ở đúng một chỗ đó. Domain `englow3-{web,bff}-test.vercel.app` cần được tạo trước trong
-Vercel dashboard (project Web/BFF tương ứng) — `vercel alias set` chỉ gán domain đã tồn
-tại, không tự tạo domain mới.
+ở đúng một chỗ đó. Domain `englow3-{web,bff}-test.vercel.app` **không cần tạo trước**
+trong Vercel dashboard: đây là subdomain `*.vercel.app` (không phải domain ngoài), nên
+`vercel alias set` tự claim ngay ở lần chạy đầu tiên — giống hệt cách
+`englow3-{web,bff}-dev.vercel.app` đã có, không ai add tay trong dashboard cả.
 
 Web và BFF deploy ở **hai job riêng trên hai runner riêng**, để mỗi project có thư
 mục `.vercel/` độc lập. Không gộp chung lại.
