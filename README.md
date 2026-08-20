@@ -101,6 +101,26 @@ trong Vercel dashboard: đây là subdomain `*.vercel.app` (không phải domain
 `vercel alias set` tự claim ngay ở lần chạy đầu tiên — giống hệt cách
 `englow3-{web,bff}-dev.vercel.app` đã có, không ai add tay trong dashboard cả.
 
+### Env vars cho `dev` vs `testing`
+
+Vercel chỉ có 3 environment: Production, Preview, Development — và **Development
+không deploy được**, nó chỉ dùng cho `vercel dev` / `vercel env pull` ở máy local.
+Nên `dev` và `testing` đều là `preview`, và mặc định chúng **dùng chung một bộ env
+vars**.
+
+Để tách ra, khai báo biến trong Vercel dashboard với Environment = **Preview** và
+chọn **branch cụ thể**:
+
+| Key                           | Branch    | Value                                         |
+| ----------------------------- | --------- | --------------------------------------------- |
+| `NEXT_PUBLIC_BFF_GRAPHQL_URL` | `dev`     | `https://englow3-bff-dev.vercel.app/graphql`  |
+| `NEXT_PUBLIC_BFF_GRAPHQL_URL` | `testing` | `https://englow3-bff-test.vercel.app/graphql` |
+
+Biến Preview **không** gắn branch vẫn là fallback, nên chỉ cần override đúng những
+key khác nhau giữa hai môi trường. `vercel pull` chỉ trả về bộ đã scope khi được
+truyền `--git-branch` — flag đó nằm trong `.github/actions/vercel-deploy/action.yml`,
+đừng bỏ đi.
+
 Web và BFF deploy ở **hai job riêng trên hai runner riêng**, để mỗi project có thư
 mục `.vercel/` độc lập. Không gộp chung lại.
 
