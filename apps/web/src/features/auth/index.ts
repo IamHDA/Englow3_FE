@@ -4,7 +4,7 @@
 // sẽ kéo theo next/headers và build vỡ (server-only chặn). Gọi thẳng
 // "@/features/auth/server/getServerSession" từ phía server.
 export { AuthModal } from "./components/blocks/AuthModal";
-export { AuthProvider } from "./components/AuthProvider";
+export { AuthProvider } from "./provider";
 export { ResetPasswordView } from "./components/views/ResetPasswordView";
 export { useAuth } from "./hooks/useAuth";
 export type { AuthSession } from "./types";
