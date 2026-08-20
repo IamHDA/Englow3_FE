@@ -12,12 +12,13 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, useEffect, type ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
+import { useAccountProfile } from "@/features/account";
+import { useAuth } from "@/features/auth";
 import {
   primaryLinks,
   studyIcon as StudyIcon,
@@ -33,33 +34,26 @@ function isLinkActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/** Đang đăng nhập nhưng BFF không trả về tên, và tài khoản cũng không có email. */
+const ACCOUNT_FALLBACK_NAME = "Tài khoản";
+
 type SiteHeaderNavProps = {
-  currentUser: {
-    displayName: string;
-    avatarUrl: string | null;
-  } | null;
-  hasError: boolean;
   /** The logo, rendered by the Server Component parent (SiteHeader). */
   children: ReactNode;
 };
 
-export function SiteHeaderNav({
-  currentUser,
-  hasError,
-  children,
-}: SiteHeaderNavProps) {
+export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const [drawerOpened, drawer] = useDisclosure(false);
   const pathname = usePathname();
   const isStudyActive = isLinkActive(pathname, "/study");
 
-  useEffect(() => {
-    if (!hasError) return;
-    notifications.show({
-      color: "warn",
-      title: "Lỗi lấy thông tin người dùng",
-      message: "Vui lòng đăng nhập lại",
-    });
-  }, [hasError]);
+  // Hai nguồn tách biệt: `session` quyết định hiện nút đăng nhập hay menu tài
+  // khoản, `profile` chỉ lo tên và avatar. BFF hỏng thì mất tên chứ không đá
+  // người dùng về trạng thái khách.
+  const { session } = useAuth();
+  const { profile } = useAccountProfile();
+  const accountName =
+    profile?.displayName ?? session?.email ?? ACCOUNT_FALLBACK_NAME;
 
   return (
     <Fragment>
@@ -144,8 +138,11 @@ export function SiteHeaderNav({
 
         <Group gap={4} wrap="nowrap">
           <Group visibleFrom="md">
-            {currentUser ? (
-              <SiteHeaderUserMenu currentUser={currentUser} />
+            {session ? (
+              <SiteHeaderUserMenu
+                displayName={accountName}
+                avatarUrl={profile?.avatarUrl ?? null}
+              />
             ) : (
               <SiteHeaderLoginButton />
             )}
@@ -202,8 +199,11 @@ export function SiteHeaderNav({
             </Link>
           ))}
 
-          {currentUser ? (
-            <SiteHeaderUserMenu currentUser={currentUser} />
+          {session ? (
+            <SiteHeaderUserMenu
+              displayName={accountName}
+              avatarUrl={profile?.avatarUrl ?? null}
+            />
           ) : (
             <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
           )}
