@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 
-import { AccountContext } from "@/features/account/components/AccountProvider";
+import { AccountContext } from "@/features/account/provider";
 
 /**
  * Hồ sơ người dùng (tên, avatar, bước onboarding) trong Client Component.
