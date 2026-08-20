@@ -150,7 +150,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           fz={14}
           fw={600}
           c="navy.9"
-          onClick={() => void handleForgotPassword()}
+          onClick={() => handleForgotPassword()}
         >
           Quên mật khẩu?
         </UnstyledButton>

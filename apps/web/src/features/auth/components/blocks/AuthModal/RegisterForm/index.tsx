@@ -23,8 +23,8 @@ import {
   BIRTH_MONTH_OPTIONS,
   BIRTH_YEAR_OPTIONS,
   GENDER_OPTIONS,
-  GENDER_VALUES,
 } from "@/features/auth/constants/authOptions";
+import { Gender } from "@/lib/graphql/generated";
 import { supabase } from "@/lib/supabase/client";
 
 import classes from "../AuthModal.module.css";
@@ -60,7 +60,7 @@ const registerSchema = z
     birthDay: z.string().min(1, "Vui lòng chọn ngày sinh"),
     birthMonth: z.string().min(1, "Vui lòng chọn tháng sinh"),
     birthYear: z.string().min(1, "Vui lòng chọn năm sinh"),
-    gender: z.enum(GENDER_VALUES),
+    gender: z.enum(Gender),
     acceptedTerms: z
       .boolean()
       .refine((v) => v, "Bạn cần đồng ý với điều khoản để tiếp tục"),
@@ -93,7 +93,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       birthDay: "",
       birthMonth: "",
       birthYear: "",
-      gender: "MALE",
+      gender: Gender.MALE,
       acceptedTerms: true,
     },
   });

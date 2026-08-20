@@ -31,7 +31,7 @@ export function AuthSocialButtons() {
         fz={15}
         fw={600}
         leftSection={<FcGoogle aria-hidden="true" size={20} />}
-        onClick={() => void handleOAuthClick(AuthProvider.GOOGLE)}
+        onClick={() => handleOAuthClick(AuthProvider.GOOGLE)}
       >
         Google
       </Button>
@@ -43,7 +43,7 @@ export function AuthSocialButtons() {
         leftSection={
           <FaFacebook aria-hidden="true" size={20} color="#1877F2" />
         }
-        onClick={() => void handleOAuthClick(AuthProvider.FACEBOOK)}
+        onClick={() => handleOAuthClick(AuthProvider.FACEBOOK)}
       >
         Facebook
       </Button>
