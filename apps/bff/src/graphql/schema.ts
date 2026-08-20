@@ -19,6 +19,7 @@ export const resolvers = {
   Query: {
     health: () => "ok",
     ...userResolvers.Query,
+    ...onboardingResolvers.Query,
   },
   Me: {
     ...onboardingResolvers.Me,

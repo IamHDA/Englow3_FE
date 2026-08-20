@@ -28,7 +28,17 @@ export const onboardingTypeDefs = `#graphql
     targetSkills: [LearningSkill!]!
   }
 
+  type LearningPurpose {
+    id: Int!
+    purposeCode: String!
+    displayName: String!
+  }
+
   extend type Me {
     onboardingState: OnboardingState
+  }
+
+  extend type Query {
+    learningPurposes: [LearningPurpose!]!
   }
 `;
