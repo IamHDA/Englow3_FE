@@ -8,3 +8,20 @@
   padding: 0;
   min-height: 0;
 }
+
+/* Neo cho nút đóng định vị tuyệt đối - không có header thật để đặt nút vào. */
+.content {
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: var(--mantine-color-ink-5);
+}
+
+.closeButton:hover {
+  background-color: var(--mantine-color-ink-0);
+  color: var(--mantine-color-ink-9);
+}

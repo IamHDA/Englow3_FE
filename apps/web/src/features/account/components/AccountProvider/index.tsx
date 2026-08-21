@@ -3,6 +3,7 @@
 import { notifications } from "@mantine/notifications";
 import {
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -20,6 +21,11 @@ import type { AccountProfileResult } from "@/features/account/types";
 type AccountContextValue = AccountProfileResult & {
   /** Đang gọi BFF lấy hồ sơ (sau khi đăng nhập, hoặc thử lại sau lỗi). */
   loading: boolean;
+  /**
+   * Đọc lại hồ sơ từ BFF theo yêu cầu - dùng khi một hành động ở nơi khác (ví
+   * dụ đóng popup onboarding) có thể đã đổi `onboardingStep` phía server.
+   */
+  refresh: () => Promise<void>;
 };
 
 export const AccountContext = createContext<AccountContextValue | null>(null);
@@ -51,6 +57,20 @@ export function AccountProvider({
    * client thử lại một lần - đúng ý đồ, lỗi tạm thời tự phục hồi.
    */
   const loadedUserId = useRef(initialProfile.profile?.id ?? null);
+
+  // Dùng chung một nhánh lỗi với effect dưới: gọi lại `loadProfile()` rồi ghi
+  // kết quả vào state, không phân biệt "lần đầu" hay "gọi lại theo yêu cầu".
+  const refresh = useCallback(async () => {
+    const { data, error } = await loadProfile();
+
+    if (error) {
+      console.error("Không lấy được hồ sơ người dùng từ BFF", error);
+      setFetched({ profile: null, hasError: true });
+      return;
+    }
+
+    setFetched({ profile: data?.me ?? null, hasError: false });
+  }, [loadProfile]);
 
   useEffect(() => {
     const userId = session?.userId ?? null;
@@ -85,8 +105,8 @@ export function AccountProvider({
   // Chưa đăng nhập thì không có hồ sơ - suy ra chứ không lưu, nên không bao giờ
   // sót lại tên của người vừa đăng xuất.
   const value = useMemo<AccountContextValue>(
-    () => ({ ...(session ? fetched : NO_PROFILE), loading }),
-    [session, fetched, loading],
+    () => ({ ...(session ? fetched : NO_PROFILE), loading, refresh }),
+    [session, fetched, loading, refresh],
   );
 
   useEffect(() => {

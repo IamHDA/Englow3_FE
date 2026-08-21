@@ -3,17 +3,18 @@
 import {
   Alert,
   Button,
+  CloseButton,
   Modal,
   Stack,
   Text,
   VisuallyHidden,
 } from "@mantine/core";
-import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { LearningPurposeStep } from "@/features/onboarding/components/blocks/LearningPurposeStep";
 import { LearningPurposeStepSkeleton } from "@/features/onboarding/components/blocks/LearningPurposeStep/LearningPurposeStepSkeleton";
+import { useOnboarding } from "@/features/onboarding/hooks/useOnboarding";
 import { OnboardingStep } from "@/lib/graphql/generated";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -22,17 +23,10 @@ import { useLearningPurposesQuery } from "@/lib/graphql/generated/hooks";
 import classes from "./OnboardingGate.module.css";
 
 /**
- * Luồng xác thực (login, callback, đặt lại mật khẩu). Link đặt lại mật khẩu
- * của Supabase tạo sẵn phiên đăng nhập, nên không trừ nhóm này thì popup sẽ đè
- * lên form đặt mật khẩu mới giữa chừng.
- */
-const AUTH_PATH_PREFIX = "/auth";
-
-/**
- * Bước nào đã có giao diện dựng xong. Bốn bước còn lại của
- * `ONBOARDING_STEP_ORDER` chưa có component nên trả `null` - popup không mở
- * cho các bước đó, vì mở một popup bắt buộc mà rỗng thì người dùng kẹt cứng
- * không lối ra.
+ * Bước nào đã có giao diện dựng xong. `OnboardingProvider` đã lọc bằng
+ * `hasOnboardingStepUi` trước khi cho `opened` bật, nên tới đây `step` chắc
+ * chắn khớp một case có giao diện thật - `switch` vẫn vét cạn để không quên
+ * khi thêm bước mới.
  */
 function renderOnboardingStep(step: OnboardingStep): ReactNode | null {
   switch (step) {
@@ -86,44 +80,38 @@ function LearningPurposeStepContent() {
 }
 
 /**
- * Mở popup onboarding ở mọi trang cho người đã đăng nhập mà chưa đi hết luồng.
- *
- * `onboardingStep` đã nằm sẵn trong query `CurrentUser` nên không phải hỏi BFF
- * thêm lần nào chỉ để biết có cần mở hay không.
+ * Popup onboarding, bật ở mọi trang. Điều kiện mở/đóng do
+ * `OnboardingProvider` quyết định - Gate chỉ đọc và dựng đúng bước hiện tại.
  */
 export function OnboardingGate() {
   const { profile } = useAccountProfile();
-  const pathname = usePathname();
+  const { opened, close } = useOnboarding();
 
-  const isAuthRoute = pathname.startsWith(AUTH_PATH_PREFIX);
-  const step = profile?.onboardingStep ?? null;
   const stepContent =
-    profile != null &&
-    !isAuthRoute &&
-    step != null &&
-    step !== OnboardingStep.COMPLETED
-      ? renderOnboardingStep(step)
+    opened && profile != null
+      ? renderOnboardingStep(profile.onboardingStep)
       : null;
-  const opened = stepContent != null;
 
   return (
     <Modal
       opened={opened}
-      onClose={() => {
-        // Bắt buộc: không có lối đóng nào ở luồng bình thường. Nhánh lỗi bên
-        // trong từng bước tự có nút riêng để thoát khi BFF sập.
-      }}
-      closeOnEscape={false}
-      closeOnClickOutside={false}
-      withCloseButton={false}
+      onClose={close}
       size={720}
       radius={20}
       centered
       padding={40}
+      withCloseButton={false}
       overlayProps={{ color: "#0F1B3A", backgroundOpacity: 0.5 }}
       title={<VisuallyHidden>Thiết lập lộ trình học</VisuallyHidden>}
-      classNames={{ header: classes.header }}
+      classNames={{ header: classes.header, content: classes.content }}
     >
+      <CloseButton
+        onClick={close}
+        aria-label="Đóng"
+        radius={10}
+        size={36}
+        className={classes.closeButton}
+      />
       {stepContent}
     </Modal>
   );

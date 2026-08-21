@@ -15,7 +15,7 @@ import { AccountProvider } from "@/features/account";
 import { getAccountProfile } from "@/features/account/server/getAccountProfile";
 import { AuthProvider } from "@/features/auth";
 import { getServerSession } from "@/features/auth/server/getServerSession";
-import { OnboardingGate } from "@/features/onboarding";
+import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { theme } from "@/lib/mantine/theme";
 import { SiteHeader } from "@/shared/components/SiteHeader";
@@ -64,9 +64,11 @@ export default async function RootLayout({
           <ApolloWrapper>
             <AuthProvider initialSession={session}>
               <AccountProvider initialProfile={initialProfile}>
-                <SiteHeader />
-                <main>{children}</main>
-                <OnboardingGate />
+                <OnboardingProvider>
+                  <SiteHeader />
+                  <main>{children}</main>
+                  <OnboardingGate />
+                </OnboardingProvider>
               </AccountProvider>
             </AuthProvider>
           </ApolloWrapper>
