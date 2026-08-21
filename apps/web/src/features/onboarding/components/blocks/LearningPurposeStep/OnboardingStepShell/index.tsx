@@ -47,7 +47,7 @@ export function OnboardingStepShell({
 }: OnboardingStepShellProps) {
   return (
     <Stack gap={0}>
-      {onBack ? (
+      {onBack && (
         <Group justify="flex-start">
           <UnstyledButton
             type="button"
@@ -60,7 +60,7 @@ export function OnboardingStepShell({
             </Group>
           </UnstyledButton>
         </Group>
-      ) : null}
+      )}
 
       <Group justify="center" gap={16} mt={18} wrap="nowrap">
         <Image src="/englow3-mark.png" alt="Englow3" width={52} height={56} />
@@ -80,11 +80,11 @@ export function OnboardingStepShell({
         {children}
       </Stack>
 
-      {footer ? (
+      {footer && (
         <Group justify="flex-end" mt={30}>
           {footer}
         </Group>
-      ) : null}
+      )}
     </Stack>
   );
 }

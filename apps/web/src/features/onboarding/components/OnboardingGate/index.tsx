@@ -28,7 +28,7 @@ import classes from "./OnboardingGate.module.css";
  * chắn khớp một case có giao diện thật - `switch` vẫn vét cạn để không quên
  * khi thêm bước mới.
  */
-function renderOnboardingStep(step: OnboardingStep): ReactNode | null {
+function renderOnboardingStep(step: OnboardingStep): ReactNode | undefined {
   switch (step) {
     case OnboardingStep.LEARNING_PURPOSES:
       return <LearningPurposeStepContent />;
@@ -37,7 +37,7 @@ function renderOnboardingStep(step: OnboardingStep): ReactNode | null {
     case OnboardingStep.LEARNING_GOAL:
     case OnboardingStep.TARGET_SKILLS:
     case OnboardingStep.COMPLETED:
-      return null;
+      return undefined;
   }
 }
 
@@ -90,7 +90,7 @@ export function OnboardingGate() {
   const stepContent =
     opened && profile != null
       ? renderOnboardingStep(profile.onboardingStep)
-      : null;
+      : undefined;
 
   return (
     <Modal

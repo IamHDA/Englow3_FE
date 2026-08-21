@@ -10,7 +10,7 @@ type HomeStatsProps = {
 
 export function HomeStats({ stats }: HomeStatsProps) {
   if (stats.length === 0) {
-    return null;
+    return undefined;
   }
 
   return (
