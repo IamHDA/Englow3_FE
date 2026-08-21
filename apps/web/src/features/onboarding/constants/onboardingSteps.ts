@@ -20,9 +20,21 @@ export function getOnboardingStepNumber(step: OnboardingStep): number {
   return ONBOARDING_STEP_ORDER.indexOf(step) + 1;
 }
 
+/**
+ * Bước nào đã có giao diện dựng xong. Chỉ `LEARNING_PURPOSES` có component -
+ * bốn bước còn lại của `ONBOARDING_STEP_ORDER` chưa có, nên popup không mở cho
+ * chúng và guard cũng không chặn nếu người dùng đang kẹt ở một bước rỗng.
+ */
+export function hasOnboardingStepUi(step: OnboardingStep): boolean {
+  return step === OnboardingStep.LEARNING_PURPOSES;
+}
+
 /** Dùng chung cho bước thật và skeleton nên chỉ sửa một chỗ khi đổi lời. */
 export const LEARNING_PURPOSE_COPY = {
   title: "Mục tiêu học tiếng Anh của bạn là gì?",
   subtitle:
     "Điều này giúp chúng tôi cá nhân hoá lộ trình học hằng ngày cho bạn.",
 } as const;
+
+/** Id cố định cho toast "cần onboarding" - bấm nhiều link liền không xếp chồng. */
+export const ONBOARDING_REQUIRED_NOTIFICATION_ID = "onboarding-required";

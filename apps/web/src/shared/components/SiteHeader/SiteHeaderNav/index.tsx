@@ -19,6 +19,7 @@ import { Fragment, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { useAuth } from "@/features/auth";
+import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
 import {
   primaryLinks,
   studyIcon as StudyIcon,
@@ -27,6 +28,7 @@ import {
 
 import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
+import { SiteHeaderOnboardingButton } from "./SiteHeaderOnboardingButton";
 import { SiteHeaderUserMenu } from "./SiteHeaderUserMenu";
 
 /** Active tab matches the link itself or any of its sub-routes. */
@@ -54,6 +56,11 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const { profile } = useAccountProfile();
   const accountName =
     profile?.displayName ?? session?.email ?? ACCOUNT_FALLBACK_NAME;
+
+  // Chặn điều hướng tới các trang chức năng khi chưa onboarding xong; nút nhắc
+  // ở header dùng `requiresOnboarding` trực tiếp để quyết định có hiện không.
+  const { requiresOnboarding } = useOnboarding();
+  const guardNavigation = useOnboardingGuard();
 
   return (
     <Fragment>
@@ -98,6 +105,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                       key={link.href}
                       component={Link}
                       href={link.href}
+                      onClick={guardNavigation}
                       leftSection={
                         <Center
                           component="span"
@@ -128,6 +136,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                 href={link.href}
                 className={classes.link}
                 data-active={isLinkActive(pathname, link.href) || undefined}
+                onClick={guardNavigation}
               >
                 <Icon aria-hidden="true" size={16} strokeWidth={2.5} />
                 {link.label}
@@ -137,12 +146,15 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         </Group>
 
         <Group gap={4} wrap="nowrap">
-          <Group visibleFrom="md">
+          <Group visibleFrom="md" gap={12}>
             {session ? (
-              <SiteHeaderUserMenu
-                displayName={accountName}
-                avatarUrl={profile?.avatarUrl ?? null}
-              />
+              <>
+                {requiresOnboarding ? <SiteHeaderOnboardingButton /> : null}
+                <SiteHeaderUserMenu
+                  displayName={accountName}
+                  avatarUrl={profile?.avatarUrl ?? null}
+                />
+              </>
             ) : (
               <SiteHeaderLoginButton />
             )}
@@ -171,7 +183,10 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               key={link.href}
               href={link.href}
               className={classes.drawerLink}
-              onClick={drawer.close}
+              onClick={(event) => {
+                guardNavigation(event);
+                drawer.close();
+              }}
             >
               <Center component="span" className={classes.drawerIconTile}>
                 <Icon aria-hidden="true" size={18} />
@@ -190,7 +205,10 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               key={link.href}
               href={link.href}
               className={classes.drawerLink}
-              onClick={drawer.close}
+              onClick={(event) => {
+                guardNavigation(event);
+                drawer.close();
+              }}
             >
               <Center component="span" className={classes.drawerIconTile}>
                 <Icon aria-hidden="true" size={18} />
@@ -198,6 +216,10 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               <span className={classes.drawerLinkLabel}>{link.label}</span>
             </Link>
           ))}
+
+          {session && requiresOnboarding ? (
+            <SiteHeaderOnboardingButton onNavigate={drawer.close} fullWidth />
+          ) : null}
 
           {session ? (
             <SiteHeaderUserMenu

@@ -4,6 +4,7 @@ import { Avatar, Menu, Text, UnstyledButton } from "@mantine/core";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 
 import { useAuth } from "@/features/auth";
+import { useOnboardingGuard } from "@/features/onboarding";
 
 import classes from "./SiteHeaderUserMenu.module.css";
 
@@ -20,6 +21,11 @@ export function SiteHeaderUserMenu({
   // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
   // là chuẩn.
   const { signOut } = useAuth();
+
+  // "Hồ sơ của tôi" và "Cài đặt" chặn khi chưa onboarding; "Đăng xuất" thì
+  // không - đó là lối thoát cuối cùng, chặn nốt thì người dùng kẹt hẳn trong
+  // tài khoản dở dang không cách nào ra.
+  const guardNavigation = useOnboardingGuard();
 
   return (
     <Menu position="bottom-end" width={220} withinPortal>
@@ -40,10 +46,16 @@ export function SiteHeaderUserMenu({
 
       {/* "Hồ sơ của tôi" và "Cài đặt" là placeholder - chưa có trang đích. */}
       <Menu.Dropdown>
-        <Menu.Item leftSection={<User aria-hidden="true" size={16} />}>
+        <Menu.Item
+          leftSection={<User aria-hidden="true" size={16} />}
+          onClick={guardNavigation}
+        >
           Hồ sơ của tôi
         </Menu.Item>
-        <Menu.Item leftSection={<Settings aria-hidden="true" size={16} />}>
+        <Menu.Item
+          leftSection={<Settings aria-hidden="true" size={16} />}
+          onClick={guardNavigation}
+        >
           Cài đặt
         </Menu.Item>
         <Menu.Divider />
