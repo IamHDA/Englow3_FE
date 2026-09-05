@@ -1,0 +1,62 @@
+/*
+ * Ô chọn mục đích học. Figma: cao 70px, bo 20px, viền ink-3 khi chưa chọn và
+ * cam khi đã chọn. Dùng CSS Module chứ không style prop vì có :hover, :focus và
+ * biến thể theo trạng thái - style prop không diễn đạt được.
+ */
+.purpose {
+  height: 70px;
+  padding-inline: 16px;
+  border: 1px solid var(--mantine-color-ink-3);
+  border-radius: 20px;
+  background-color: var(--mantine-color-white);
+  color: var(--mantine-color-ink-9);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.purpose:hover {
+  border-color: var(--mantine-color-orange-4);
+}
+
+/* Ô đang được chọn - nền kem, viền và chữ cam, đổ bóng như Figma. */
+.purpose[aria-pressed="true"] {
+  border-color: var(--mantine-color-orange-4);
+  background-color: var(--mantine-color-orange-0);
+  color: var(--mantine-color-orange-6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Bàn phím: Mantine chỉ vẽ viền focus khi điều hướng bằng Tab, không khi click. */
+.purpose:focus-visible {
+  outline: 2px solid var(--mantine-color-navy-5);
+  outline-offset: 2px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--mantine-color-ink-9);
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mantine-color-ink-9);
+  text-align: center;
+}
+
+.backButton {
+  color: var(--mantine-color-ink-6);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.backButton:hover {
+  color: var(--mantine-color-ink-9);
+}

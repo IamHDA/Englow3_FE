@@ -24,3 +24,12 @@ export type OnboardingStateResponse = {
   targetDate: string | null; // "YYYY-MM-DD"
   targetSkills: LearningSkill[] | null;
 };
+
+// mirrors GET /api/onboarding/learning-purposes exactly as the backend
+// returns it. `purposeCode` is a table row, not a closed set (ids are
+// non-contiguous - 1..5, 11), so it stays a string rather than a GraphQL enum.
+export type LearningPurposeResponse = {
+  id: number;
+  purposeCode: string;
+  displayName: string;
+};

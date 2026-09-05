@@ -2,6 +2,12 @@ import type { GraphQLContext } from "../../graphql/context.js";
 import type { UserInformationResponse } from "../user/user.types.js";
 
 export const onboardingResolvers = {
+  Query: {
+    learningPurposes: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.onboardingApi.getLearningPurposes();
+    },
+  },
   Me: {
     // Nullable in the schema: if this call fails, graphql-js resolves the
     // field to null and adds an entry to the `errors` array rather than

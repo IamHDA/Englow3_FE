@@ -1,0 +1,27 @@
+/*
+ * Mantine dựng header ngay khi có `title` (hasHeader = !!title || withCloseButton),
+ * mà thiết kế không có header. Vẫn phải truyền title vì đó là thứ duy nhất nối
+ * được `aria-labelledby` vào đúng phần tử role="dialog" - đặt aria-label thẳng
+ * trên <Modal> chỉ rơi vào wrapper bên ngoài. Nên: giữ title, thu ô header về 0.
+ */
+.header {
+  padding: 0;
+  min-height: 0;
+}
+
+/* Neo cho nút đóng định vị tuyệt đối - không có header thật để đặt nút vào. */
+.content {
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: var(--mantine-color-ink-5);
+}
+
+.closeButton:hover {
+  background-color: var(--mantine-color-ink-0);
+  color: var(--mantine-color-ink-9);
+}
