@@ -171,7 +171,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
     const response = await server.executeOperation(
       {
         query:
-          "mutation { publishExam(id: \"exam-1\") { id status publishedAt } }",
+          'mutation { publishExam(id: "exam-1") { id status publishedAt } }',
       },
       { contextValue: ctx },
     );

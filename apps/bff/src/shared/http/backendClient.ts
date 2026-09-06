@@ -29,9 +29,7 @@ export class BackendClient {
         headers: {
           ...(this.token ? { authorization: `Bearer ${this.token}` } : {}),
           ...(this.requestId ? { "x-request-id": this.requestId } : {}),
-          ...(body !== undefined
-            ? { "content-type": "application/json" }
-            : {}),
+          ...(body !== undefined ? { "content-type": "application/json" } : {}),
         },
         body: body !== undefined ? JSON.stringify(body) : undefined,
         signal: AbortSignal.timeout(this.timeoutMs),
