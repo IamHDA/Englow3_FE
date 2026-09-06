@@ -15,6 +15,7 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
     apis: {
       userApi: { getMe: vi.fn() } as any,
       onboardingApi: { getCurrentState: vi.fn() } as any,
+      examApi: { searchAsAdmin: vi.fn() } as any,
     },
     ...overrides,
   };
@@ -45,6 +46,7 @@ describe("me query - schema wiring and partial failure", () => {
       apis: {
         userApi: { getMe } as any,
         onboardingApi: { getCurrentState } as any,
+        examApi: {} as any,
       },
     });
 
@@ -71,6 +73,7 @@ describe("me query - schema wiring and partial failure", () => {
       apis: {
         userApi: { getMe } as any,
         onboardingApi: { getCurrentState } as any,
+        examApi: {} as any,
       },
     });
 
@@ -111,6 +114,7 @@ describe("me query - schema wiring and partial failure", () => {
       apis: {
         userApi: { getMe } as any,
         onboardingApi: { getCurrentState: vi.fn() } as any,
+        examApi: {} as any,
       },
     });
 

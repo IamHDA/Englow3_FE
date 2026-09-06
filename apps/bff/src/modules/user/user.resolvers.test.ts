@@ -12,6 +12,7 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
     apis: {
       userApi: { getMe: vi.fn() } as any,
       onboardingApi: {} as any,
+      examApi: {} as any,
     },
     ...overrides,
   };
@@ -47,7 +48,11 @@ describe("Query.me", () => {
     };
     const getMe = vi.fn().mockResolvedValue(me);
     const ctx = makeContext({
-      apis: { userApi: { getMe } as any, onboardingApi: {} as any },
+      apis: {
+        userApi: { getMe } as any,
+        onboardingApi: {} as any,
+        examApi: {} as any,
+      },
     });
 
     const result = await userResolvers.Query.me({}, {}, ctx);

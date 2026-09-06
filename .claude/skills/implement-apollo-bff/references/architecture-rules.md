@@ -48,6 +48,19 @@ Modules are business capabilities, matching how the backend divides them unless 
 
 Keep one vocabulary. If the backend calls it `exam`, the GraphQL type, the API client, the module folder, and the file prefix all say `exam`. Splitting a concept across two names is the most common source of confusion in a BFF, because the same entity then appears under different labels in the schema and in the client code.
 
+**Modules are named for the entity, not for who calls them.** A backend `AdminExamController` does not make a BFF module called `adminExam`; it makes admin-scoped operations inside the `exam` module. Put the audience on the operation - `Query.adminExams` - where the difference is real, and leave the entity's types and enums audience-free.
+
+The reason is mechanical, not aesthetic. GraphQL type names are global across the merged `typeDefs` array: two modules that each declare `enum ExamStatus` produce a schema build error, not a warning. Audience-scoped modules guarantee that collision the moment a second audience appears, and the fix is a cross-module move of every shared enum plus its imports.
+
+So each domain enum lives in exactly one module - the bounded context it describes - and any module that needs it references it from there.
+
+**Look-alike enums in different contexts stay separate.** Before adding an enum, check whether a similar one already exists and whether it is genuinely the same concept. If the backend deliberately kept two apart, keep two apart:
+
+- `com.englow3.exam.entity.CertificateType` (half of what identifies a paper) is not `com.englow3.user.entity.CertificateType` (a learner's goal) - the backend translates at the call boundary rather than sharing one enum, and the BFF mirrors that.
+- The exam module's `TargetLevel` (the band a paper is aimed at) is not onboarding's `CefrLevel` (the band a learner is at), despite both being `A1`..`C2`.
+
+Sharing an enum across two contexts couples them: the day one side gains a value, the other side's schema silently gains it too, and the frontend now handles a value that context cannot produce. Same value set is not the same concept.
+
 **Screen-oriented queries that span modules** - a dashboard, a home feed - belong to no single capability module. Do not silently attach them to whichever module supplied the most fields. Either give them their own module, declared as composing several others and depended on by none, or ask the user where they should live. State the choice; an unnamed exception becomes a habit.
 
 ## Authentication
