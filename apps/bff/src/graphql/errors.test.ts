@@ -25,7 +25,35 @@ describe("formatError", () => {
     expect(result.message).not.toContain("Spring Boot");
     expect(result.extensions).toEqual({
       code: "UNAUTHENTICATED",
+      backendCode: "AUTH_MISSING",
       traceId: "trace-1",
+    });
+  });
+
+  it("passes the backend's domain code through as backendCode without its message", () => {
+    const backendError = new BackendError(
+      "Section scores total 195 but the paper declares 200",
+      409,
+      "EXAM_SCORE_MISMATCH",
+      "trace-2",
+    );
+    const original = new GraphQLError("wrapped", {
+      originalError: backendError,
+    });
+
+    const result = formatError(
+      { message: "wrapped", extensions: {} },
+      original,
+    );
+
+    expect(result.message).toBe(
+      "The request could not be completed due to a conflict",
+    );
+    expect(result.message).not.toContain("195");
+    expect(result.extensions).toEqual({
+      code: "CONFLICT",
+      backendCode: "EXAM_SCORE_MISMATCH",
+      traceId: "trace-2",
     });
   });
 

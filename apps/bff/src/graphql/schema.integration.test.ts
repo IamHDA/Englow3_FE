@@ -15,7 +15,11 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
     apis: {
       userApi: { getMe: vi.fn() } as any,
       onboardingApi: { getCurrentState: vi.fn() } as any,
-      examApi: { searchAsAdmin: vi.fn() } as any,
+      examApi: {
+        searchAsAdmin: vi.fn(),
+        publishAsAdmin: vi.fn(),
+        archiveAsAdmin: vi.fn(),
+      } as any,
     },
     ...overrides,
   };
@@ -130,5 +134,90 @@ describe("me query - schema wiring and partial failure", () => {
       "UNAUTHENTICATED",
     );
     expect(getMe).not.toHaveBeenCalled();
+  });
+});
+
+describe("publishExam mutation - schema wiring and error mapping", () => {
+  const server = new ApolloServer({ typeDefs, resolvers, formatError });
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  it("returns the published exam on success", async () => {
+    const publishAsAdmin = vi.fn().mockResolvedValue({
+      id: "exam-1",
+      title: "TOEIC Mock 1",
+      description: "desc",
+      examType: "MOCK",
+      certificateType: "TOEIC",
+      certificateVariant: "LR",
+      targetLevel: "B1",
+      durationSeconds: 7200,
+      maxRawScore: 200,
+      passScore: null,
+      status: "PUBLISHED",
+      versionNumber: 1,
+      createdByUserId: "admin-1",
+      publishedAt: "2026-09-06T00:00:00Z",
+    });
+    const ctx = makeContext({
+      apis: {
+        userApi: {} as any,
+        onboardingApi: {} as any,
+        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
+      },
+    });
+
+    const response = await server.executeOperation(
+      {
+        query:
+          'mutation { publishExam(id: "exam-1") { id status publishedAt } }',
+      },
+      { contextValue: ctx },
+    );
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
+      publishExam: {
+        id: "exam-1",
+        status: "PUBLISHED",
+        publishedAt: "2026-09-06T00:00:00Z",
+      },
+    });
+    expect(publishAsAdmin).toHaveBeenCalledWith("exam-1");
+  });
+
+  it("surfaces the backend's domain code when publish is refused", async () => {
+    const publishAsAdmin = vi
+      .fn()
+      .mockRejectedValue(
+        new BackendError(
+          "Section scores total 195 but the paper declares 200",
+          409,
+          "EXAM_SCORE_MISMATCH",
+          "trace-9",
+        ),
+      );
+    const ctx = makeContext({
+      apis: {
+        userApi: {} as any,
+        onboardingApi: {} as any,
+        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
+      },
+    });
+
+    const response = await server.executeOperation(
+      { query: 'mutation { publishExam(id: "exam-1") { id } }' },
+      { contextValue: ctx },
+    );
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+
+    const error = response.body.singleResult.errors?.[0];
+    expect(error?.extensions?.code).toBe("CONFLICT");
+    expect(error?.extensions?.backendCode).toBe("EXAM_SCORE_MISMATCH");
+    expect(error?.message).not.toContain("195");
   });
 });

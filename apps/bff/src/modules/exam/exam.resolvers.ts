@@ -14,4 +14,14 @@ export const examResolvers = {
       });
     },
   },
+  Mutation: {
+    publishExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.publishAsAdmin(args.id);
+    },
+    archiveExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.archiveAsAdmin(args.id);
+    },
+  },
 };

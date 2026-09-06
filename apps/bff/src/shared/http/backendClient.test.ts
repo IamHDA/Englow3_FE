@@ -89,4 +89,37 @@ describe("BackendClient", () => {
       status: 0,
     });
   });
+
+  it("posts with no body and no content-type header", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse(200, { ok: true }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const client = new BackendClient("http://backend.internal", 5000);
+    const result = await client.post("/api/admin/exams/e1/publish");
+
+    expect(result).toEqual({ ok: true });
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("http://backend.internal/api/admin/exams/e1/publish");
+    expect(init.method).toBe("POST");
+    expect(init.body).toBeUndefined();
+    expect(init.headers).not.toHaveProperty("content-type");
+  });
+
+  it("posts a JSON body with a content-type header", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse(201, { id: "e1" }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const client = new BackendClient("http://backend.internal", 5000);
+    await client.post("/api/admin/exams", { title: "Mock TOEIC" });
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.body).toBe(JSON.stringify({ title: "Mock TOEIC" }));
+    expect(init.headers).toMatchObject({
+      "content-type": "application/json",
+    });
+  });
 });

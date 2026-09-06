@@ -7,6 +7,7 @@ import type { GraphQLContext } from "../../graphql/context.js";
 function makeContext(
   searchAsAdmin = vi.fn(),
   overrides: Partial<GraphQLContext> = {},
+  examApiOverrides: Record<string, unknown> = {},
 ): GraphQLContext {
   return {
     token: "token",
@@ -14,7 +15,7 @@ function makeContext(
     apis: {
       userApi: {} as any,
       onboardingApi: {} as any,
-      examApi: { searchAsAdmin } as any,
+      examApi: { searchAsAdmin, ...examApiOverrides } as any,
     },
     ...overrides,
   };
@@ -63,5 +64,67 @@ describe("Query.adminExams", () => {
     await examResolvers.Query.adminExams({}, { size: 5000 }, ctx);
 
     expect(searchAsAdmin).toHaveBeenCalledWith({ size: 100 });
+  });
+});
+
+describe("Mutation.publishExam", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const publishAsAdmin = vi.fn();
+    const ctx = makeContext(
+      vi.fn(),
+      {
+        requireToken: () => {
+          throw new GraphQLError("Missing or invalid access token", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        },
+      },
+      { publishAsAdmin },
+    );
+
+    expect(() =>
+      examResolvers.Mutation.publishExam({}, { id: "exam-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(publishAsAdmin).not.toHaveBeenCalled();
+  });
+
+  it("forwards the id to the backend", async () => {
+    const publishAsAdmin = vi.fn().mockResolvedValue({ id: "exam-1" });
+    const ctx = makeContext(vi.fn(), {}, { publishAsAdmin });
+
+    await examResolvers.Mutation.publishExam({}, { id: "exam-1" }, ctx);
+
+    expect(publishAsAdmin).toHaveBeenCalledWith("exam-1");
+  });
+});
+
+describe("Mutation.archiveExam", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const archiveAsAdmin = vi.fn();
+    const ctx = makeContext(
+      vi.fn(),
+      {
+        requireToken: () => {
+          throw new GraphQLError("Missing or invalid access token", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        },
+      },
+      { archiveAsAdmin },
+    );
+
+    expect(() =>
+      examResolvers.Mutation.archiveExam({}, { id: "exam-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(archiveAsAdmin).not.toHaveBeenCalled();
+  });
+
+  it("forwards the id to the backend", async () => {
+    const archiveAsAdmin = vi.fn().mockResolvedValue({ id: "exam-1" });
+    const ctx = makeContext(vi.fn(), {}, { archiveAsAdmin });
+
+    await examResolvers.Mutation.archiveExam({}, { id: "exam-1" }, ctx);
+
+    expect(archiveAsAdmin).toHaveBeenCalledWith("exam-1");
   });
 });

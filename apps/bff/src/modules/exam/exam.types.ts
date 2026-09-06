@@ -13,14 +13,34 @@ export type ExamListItemResponse = {
   id: string;
   title: string;
   examType: ExamType;
-  certificateType: CertificateType;
-  certificateVariant: CertificateVariant;
-  targetLevel: TargetLevel;
+  // null on a paper with no certificate (e.g. a PLACEMENT exam) - the
+  // backend's own Exam.requireCoherentCertificate allows that combination.
+  certificateType: CertificateType | null;
+  certificateVariant: CertificateVariant | null;
+  targetLevel: TargetLevel | null;
   status: ExamStatus;
   versionNumber: number;
   createdByUserId: string;
   publishedAt: string | null; // ISO-8601 instant, null until published
   createdAt: string; // ISO-8601 instant
+};
+
+// mirrors ExamResponse (POST create/publish/archive, PUT update) exactly as the backend returns it
+export type ExamResponse = {
+  id: string;
+  title: string;
+  description: string;
+  examType: ExamType;
+  certificateType: CertificateType | null;
+  certificateVariant: CertificateVariant | null;
+  targetLevel: TargetLevel | null;
+  durationSeconds: number;
+  maxRawScore: number;
+  passScore: number | null;
+  status: ExamStatus;
+  versionNumber: number;
+  createdByUserId: string;
+  publishedAt: string | null; // ISO-8601 instant, null until published
 };
 
 // mirrors com.englow3.shared.page.PageResponse exactly as the backend returns it
