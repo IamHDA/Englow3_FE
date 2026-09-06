@@ -338,9 +338,13 @@ An unrecognized backend code maps to a generic internal error rather than passin
 
 ## Tests
 
-- **Resolver** - mock the API client. Assert argument passing, the auth check, mapping, and error translation.
-- **API client** - mock the HTTP layer. Assert method, path, body, headers, timeout, error parsing.
-- **Loader** - assert one call for many keys, and that results come back in key order including nulls.
-- **Integration** - run real operations against the server with the backend mocked. Assert schema wiring, context, and the error contract.
+**A new module gets a resolver test and nothing else.** That is the convention in this repository, and it is deliberate: the resolver test already covers what a module can get wrong on its own - the auth check firing before any call, the arguments that reach the API client, the caps and defaults applied to them, and the mapping.
+
+- **Resolver** - mock the API client. Assert the auth check, argument passing, mapping, and error translation. This is the one file to write per module.
+- **API client** - no per-module test. `shared/http` is covered once by the `BackendClient` test; a module client that builds a path and delegates adds nothing a resolver test and the compiler do not already catch.
+- **Loader** - only where a loader exists: assert one call for many keys, and that results come back in key order including nulls.
+- **Integration** - shared, not per module. `graphql/schema.integration.test.ts` runs real operations against the server with the backend mocked, covering schema wiring, context, and the error contract for everything assembled into the schema.
 
 Test the mapping and the failure paths. Testing that a pass-through resolver passes through is not worth the maintenance.
+
+Adding a client to `GraphQLContext["apis"]` breaks every existing test that builds a context literal. Update those stubs (`examApi: {} as any`) rather than loosening the context type.

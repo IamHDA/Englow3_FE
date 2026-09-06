@@ -64,6 +64,10 @@ src/
 
 Derive the module list from the repository, not from assumption. If a new capability fits no existing module, ask which module owns it rather than inventing one. Keep one name per concept across `typeDefs`, `api`, and file names - a type called `Exam` living in a module called `assessment` with a client called `ExamApi` will confuse every later reader.
 
+**Name the module after the entity, not the audience.** A module is `exam`, never `adminExam` - even when the only endpoint wired today is an admin one. The audience belongs on the operation (`Query.adminExams`), because that is what actually differs; the entity's types and enums are the same paper whoever is reading it. Getting this wrong is expensive rather than untidy: GraphQL rejects a schema that declares `enum ExamStatus` twice, so the day a learner-facing exam query arrives, the enums have to move modules and every import moves with them.
+
+A domain enum therefore has exactly one home: the module of the bounded context it describes. Two contexts that happen to share values do **not** share an enum - mirror whatever split the backend already made, and check for one before adding a look-alike (Englow3 keeps `exam.entity.CertificateType` apart from `user.entity.CertificateType`, and onboarding's `CefrLevel` apart from the exam module's `TargetLevel`, on purpose). Same values is not the same concept.
+
 ## Responsibilities
 
 | Part          | Holds                                     | Never holds                                                              |

@@ -24,3 +24,26 @@ export const dateScalar = new GraphQLScalarType({
     return assertDateString(ast.value);
   },
 });
+
+function assertDateTimeString(value: unknown): string {
+  if (typeof value !== "string" || Number.isNaN(Date.parse(value))) {
+    throw new TypeError(
+      `DateTime scalar expects an ISO-8601 timestamp, got: ${String(value)}`,
+    );
+  }
+  return value;
+}
+
+/** Instant with a time component - what Jackson serialises a java.time.Instant to. */
+export const dateTimeScalar = new GraphQLScalarType({
+  name: "DateTime",
+  description: "ISO-8601 timestamp, e.g. 2026-09-06T10:15:30Z.",
+  serialize: assertDateTimeString,
+  parseValue: assertDateTimeString,
+  parseLiteral: (ast) => {
+    if (ast.kind !== Kind.STRING) {
+      throw new TypeError("DateTime scalar literal must be a string");
+    }
+    return assertDateTimeString(ast.value);
+  },
+});

@@ -2,6 +2,7 @@ import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import { GraphQLError } from "graphql";
 
 import { env } from "../config/env.js";
+import { ExamApi } from "../modules/exam/exam.api.js";
 import { OnboardingApi } from "../modules/onboarding/onboarding.api.js";
 import { UserApi } from "../modules/user/user.api.js";
 import { BackendClient } from "../shared/http/backendClient.js";
@@ -13,6 +14,7 @@ export type GraphQLContext = {
   apis: {
     userApi: UserApi;
     onboardingApi: OnboardingApi;
+    examApi: ExamApi;
   };
 };
 
@@ -53,6 +55,7 @@ export async function createContext({
     apis: {
       userApi: new UserApi(client),
       onboardingApi: new OnboardingApi(client),
+      examApi: new ExamApi(client),
     },
   };
 }
