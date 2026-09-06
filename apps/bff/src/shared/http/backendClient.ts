@@ -13,7 +13,15 @@ export class BackendClient {
     return this.request<T>("GET", path);
   }
 
-  private async request<T>(method: string, path: string): Promise<T> {
+  post<T>(path: string, body?: unknown): Promise<T> {
+    return this.request<T>("POST", path, body);
+  }
+
+  private async request<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+  ): Promise<T> {
     let response: Response;
     try {
       response = await fetch(`${this.baseUrl}${path}`, {
@@ -21,7 +29,11 @@ export class BackendClient {
         headers: {
           ...(this.token ? { authorization: `Bearer ${this.token}` } : {}),
           ...(this.requestId ? { "x-request-id": this.requestId } : {}),
+          ...(body !== undefined
+            ? { "content-type": "application/json" }
+            : {}),
         },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
         signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch {

@@ -39,9 +39,13 @@ export const examTypeDefs = `#graphql
     id: ID!
     title: String!
     examType: ExamType!
-    certificateType: CertificateType!
-    certificateVariant: CertificateVariant!
-    targetLevel: TargetLevel!
+    """
+    Null on a paper with no certificate (e.g. a PLACEMENT exam) - the backend
+    allows that combination, so this cannot be non-null.
+    """
+    certificateType: CertificateType
+    certificateVariant: CertificateVariant
+    targetLevel: TargetLevel
     status: ExamStatus!
     versionNumber: Int!
     createdByUserId: ID!
@@ -57,6 +61,24 @@ export const examTypeDefs = `#graphql
     totalPages: Int!
   }
 
+  """The full paper shell returned by create, update, publish and archive."""
+  type Exam {
+    id: ID!
+    title: String!
+    description: String!
+    examType: ExamType!
+    certificateType: CertificateType
+    certificateVariant: CertificateVariant
+    targetLevel: TargetLevel
+    durationSeconds: Int!
+    maxRawScore: Float!
+    passScore: Float
+    status: ExamStatus!
+    versionNumber: Int!
+    createdByUserId: ID!
+    publishedAt: DateTime
+  }
+
   extend type Query {
     """
     Admin catalogue search - returns drafts and archived papers too, so the
@@ -69,5 +91,22 @@ export const examTypeDefs = `#graphql
       page: Int = 0
       size: Int = 20
     ): ExamPage!
+  }
+
+  extend type Mutation {
+    """
+    DRAFT -> PUBLISHED. The backend refuses a paper that is not a draft, has
+    no section or question, whose section scores do not total maxRawScore, or
+    that has an ungradeable question - the reason arrives as
+    extensions.backendCode on the error (e.g. EXAM_SCORE_MISMATCH).
+    """
+    publishExam(id: ID!): Exam!
+
+    """
+    DRAFT or PUBLISHED -> ARCHIVED. There is no delete; archiving is the
+    retirement path. Archiving an already-archived paper fails with
+    extensions.backendCode: EXAM_ALREADY_ARCHIVED.
+    """
+    archiveExam(id: ID!): Exam!
   }
 `;

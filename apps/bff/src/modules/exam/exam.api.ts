@@ -1,5 +1,9 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
-import type { ExamPageResponse, SearchExamsParams } from "./exam.types.js";
+import type {
+  ExamPageResponse,
+  ExamResponse,
+  SearchExamsParams,
+} from "./exam.types.js";
 
 const ADMIN_EXAM_BASE_PATH = "/api/admin/exams";
 
@@ -16,5 +20,19 @@ export class ExamApi {
     query.set("size", String(params.size ?? 20));
 
     return this.client.get(`${ADMIN_EXAM_BASE_PATH}?${query.toString()}`);
+  }
+
+  /** Admin-only on the backend. Refuses a non-draft or an incomplete paper - see Exam.publish(). */
+  publishAsAdmin(id: string): Promise<ExamResponse> {
+    return this.client.post(
+      `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/publish`,
+    );
+  }
+
+  /** Admin-only on the backend. Refuses a paper that is already archived. */
+  archiveAsAdmin(id: string): Promise<ExamResponse> {
+    return this.client.post(
+      `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/archive`,
+    );
   }
 }

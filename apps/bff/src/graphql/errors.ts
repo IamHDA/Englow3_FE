@@ -29,11 +29,14 @@ function codeForStatus(status: number): string {
 
 /**
  * Apollo's `formatError` hook, wired once in server.ts and api/index.ts. A
- * BackendError's `.message` and `.code` come straight from Spring Boot's
- * response body, so they never reach the client as-is - only the mapped
- * code, a fixed safe message, and the trace id for cross-system lookup.
- * Anything that isn't a BackendError (e.g. the UNAUTHENTICATED GraphQLError
- * thrown by ctx.requireToken()) is already safe and passes through unchanged.
+ * BackendError's `.message` comes straight from Spring Boot's response body,
+ * so it never reaches the client as-is - only the mapped code, a fixed safe
+ * message, and the trace id for cross-system lookup. `.code` (e.g.
+ * EXAM_SCORE_MISMATCH) is a stable domain identifier, not free text, so it is
+ * forwarded as `backendCode` for a client to key off - the message it might
+ * have come with is still suppressed. Anything that isn't a BackendError
+ * (e.g. the UNAUTHENTICATED GraphQLError thrown by ctx.requireToken()) is
+ * already safe and passes through unchanged.
  */
 export function formatError(
   formattedError: GraphQLFormattedError,
@@ -51,6 +54,6 @@ export function formatError(
   const code = codeForStatus(original.status);
   return {
     message: SAFE_MESSAGES[code],
-    extensions: { code, traceId: original.traceId },
+    extensions: { code, backendCode: original.code, traceId: original.traceId },
   };
 }

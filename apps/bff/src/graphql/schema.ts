@@ -13,6 +13,10 @@ const rootTypeDefs = `#graphql
   type Query {
     health: String!
   }
+
+  type Mutation {
+    _empty: Boolean
+  }
 `;
 
 export const typeDefs = [
@@ -30,6 +34,9 @@ export const resolvers = {
     ...userResolvers.Query,
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
+  },
+  Mutation: {
+    ...examResolvers.Mutation,
   },
   Me: {
     ...onboardingResolvers.Me,
