@@ -1,0 +1,41 @@
+query ExamLibrary(
+  $examType: ExamType
+  $certificateType: CertificateType
+  $certificateVariant: CertificateVariant
+  $targetLevel: TargetLevel
+  $title: String
+  $page: Int
+  $size: Int
+) {
+  exams(
+    examType: $examType
+    certificateType: $certificateType
+    certificateVariant: $certificateVariant
+    targetLevel: $targetLevel
+    title: $title
+    page: $page
+    size: $size
+  ) {
+    items {
+      id
+      title
+      description
+      examType
+      certificateType
+      certificateVariant
+      targetLevel
+      durationSeconds
+      maxRawScore
+      passScore
+      questionCount
+      status
+      publishedAt
+      bestScore
+      attemptStatus
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}

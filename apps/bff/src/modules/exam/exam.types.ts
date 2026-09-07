@@ -60,3 +60,38 @@ export type SearchExamsParams = {
   page?: number;
   size?: number;
 };
+
+// mirrors LearnerExamCardResponse from GET /api/exams
+export type LearnerExamItemResponse = {
+  id: string;
+  title: string;
+  description: string;
+  examType: ExamType;
+  certificateType: CertificateType | null;
+  certificateVariant: CertificateVariant | null;
+  targetLevel: TargetLevel | null;
+  durationSeconds: number;
+  maxRawScore: number;
+  passScore: number | null;
+  questionCount: number;
+  status: ExamStatus;
+  publishedAt: string | null;
+};
+
+export type LearnerExamPageResponse = {
+  items: LearnerExamItemResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type SearchLearnerExamsParams = {
+  examType?: ExamType;
+  certificateType?: CertificateType;
+  certificateVariant?: CertificateVariant;
+  targetLevel?: TargetLevel;
+  title?: string;
+  page?: number;
+  size?: number;
+};

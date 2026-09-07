@@ -79,6 +79,32 @@ export const examTypeDefs = `#graphql
     publishedAt: DateTime
   }
 
+  type LearnerExamItem {
+    id: ID!
+    title: String!
+    description: String!
+    examType: ExamType!
+    certificateType: CertificateType
+    certificateVariant: CertificateVariant
+    targetLevel: TargetLevel
+    durationSeconds: Int!
+    maxRawScore: Float!
+    passScore: Float
+    questionCount: Int!
+    status: ExamStatus!
+    publishedAt: DateTime
+    bestScore: Float
+    attemptStatus: String
+  }
+
+  type LearnerExamPage {
+    items: [LearnerExamItem!]!
+    page: Int!
+    size: Int!
+    totalItems: Int!
+    totalPages: Int!
+  }
+
   extend type Query {
     """
     Admin catalogue search - returns drafts and archived papers too, so the
@@ -91,6 +117,19 @@ export const examTypeDefs = `#graphql
       page: Int = 0
       size: Int = 20
     ): ExamPage!
+
+    """
+    Learner exam catalogue search - returns published exams.
+    """
+    exams(
+      examType: ExamType
+      certificateType: CertificateType
+      certificateVariant: CertificateVariant
+      targetLevel: TargetLevel
+      title: String
+      page: Int = 0
+      size: Int = 20
+    ): LearnerExamPage!
   }
 
   extend type Mutation {

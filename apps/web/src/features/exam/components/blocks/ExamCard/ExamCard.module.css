@@ -1,0 +1,146 @@
+.card {
+  box-sizing: border-box;
+  min-height: 270px;
+  background: #ffffff;
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.04);
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--mantine-color-blue-3);
+  box-shadow: 0 14px 32px rgba(30, 58, 138, 0.1);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.levelBadge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+}
+
+.statusIndicator {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.seriesTag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mantine-color-dimmed);
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #0f172a;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.skillsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.skillBadge {
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-8);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--mantine-color-gray-6);
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.scoreGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.scoreLabel {
+  font-size: 11px;
+  color: var(--mantine-color-dimmed);
+}
+
+.scoreValue {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
+.ctaButton {
+  margin-left: auto;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 18px;
+  transition: all 0.15s ease;
+}

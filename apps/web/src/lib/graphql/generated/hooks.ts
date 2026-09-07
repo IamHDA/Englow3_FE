@@ -12,6 +12,42 @@ import { gql } from "@apollo/client";
 import * as ApolloReactCommon from "@apollo/client/react";
 import * as ApolloReactHooks from "@apollo/client/react";
 const defaultOptions = {} as const;
+export type ExamLibraryQueryVariables = Exact<{
+  examType?: Types.ExamType | null | undefined;
+  certificateType?: Types.CertificateType | null | undefined;
+  certificateVariant?: Types.CertificateVariant | null | undefined;
+  targetLevel?: Types.TargetLevel | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type ExamLibraryQuery = {
+  exams: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      description: string;
+      examType: Types.ExamType;
+      certificateType: Types.CertificateType | null;
+      certificateVariant: Types.CertificateVariant | null;
+      targetLevel: Types.TargetLevel | null;
+      durationSeconds: number;
+      maxRawScore: number;
+      passScore: number | null;
+      questionCount: number;
+      status: Types.ExamStatus;
+      publishedAt: unknown;
+      bestScore: number | null;
+      attemptStatus: string | null;
+    }>;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -33,6 +69,145 @@ export type CurrentUserQuery = {
   };
 };
 
+export const ExamLibraryDocument = gql`
+  query ExamLibrary(
+    $examType: ExamType
+    $certificateType: CertificateType
+    $certificateVariant: CertificateVariant
+    $targetLevel: TargetLevel
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    exams(
+      examType: $examType
+      certificateType: $certificateType
+      certificateVariant: $certificateVariant
+      targetLevel: $targetLevel
+      title: $title
+      page: $page
+      size: $size
+    ) {
+      items {
+        id
+        title
+        description
+        examType
+        certificateType
+        certificateVariant
+        targetLevel
+        durationSeconds
+        maxRawScore
+        passScore
+        questionCount
+        status
+        publishedAt
+        bestScore
+        attemptStatus
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+`;
+
+/**
+ * __useExamLibraryQuery__
+ *
+ * To run a query within a React component, call `useExamLibraryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExamLibraryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExamLibraryQuery({
+ *   variables: {
+ *      examType: // value for 'examType'
+ *      certificateType: // value for 'certificateType'
+ *      certificateVariant: // value for 'certificateVariant'
+ *      targetLevel: // value for 'targetLevel'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useExamLibraryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<ExamLibraryQuery, ExamLibraryQueryVariables>(
+    ExamLibraryDocument,
+    options,
+  );
+}
+export function useExamLibraryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >(ExamLibraryDocument, options);
+}
+export function useExamLibrarySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamLibraryQuery,
+  ExamLibraryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamLibrarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamLibraryQuery,
+        ExamLibraryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamLibraryQuery | undefined,
+  ExamLibraryQueryVariables
+>;
+export function useExamLibrarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamLibraryQuery,
+        ExamLibraryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >(ExamLibraryDocument, options);
+}
+export type ExamLibraryQueryHookResult = ReturnType<typeof useExamLibraryQuery>;
+export type ExamLibraryLazyQueryHookResult = ReturnType<
+  typeof useExamLibraryLazyQuery
+>;
+export type ExamLibrarySuspenseQueryHookResult = ReturnType<
+  typeof useExamLibrarySuspenseQuery
+>;
+export type ExamLibraryQueryResult = ApolloReactCommon.QueryResult<
+  ExamLibraryQuery,
+  ExamLibraryQueryVariables
+>;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
     learningPurposes {
