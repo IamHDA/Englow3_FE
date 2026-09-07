@@ -1,14 +1,10 @@
 /** Internal type. DO NOT USE DIRECTLY. */
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
-export type Incremental<T> =
-  | T
-  | {
-      [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
-    };
-import type * as Types from "./schemaTypes";
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+import type * as Types from './schemaTypes';
 
-import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type ExamLibraryQueryVariables = Exact<{
   examType?: Types.ExamType | null | undefined;
   certificateType?: Types.CertificateType | null | undefined;
@@ -19,324 +15,36 @@ export type ExamLibraryQueryVariables = Exact<{
   size?: number | null | undefined;
 }>;
 
-export type ExamLibraryQuery = {
-  exams: {
-    page: number;
-    size: number;
-    totalItems: number;
-    totalPages: number;
-    items: Array<{
-      id: string;
-      title: string;
-      description: string;
-      examType: Types.ExamType;
-      certificateType: Types.CertificateType | null;
-      certificateVariant: Types.CertificateVariant | null;
-      targetLevel: Types.TargetLevel | null;
-      durationSeconds: number;
-      maxRawScore: number;
-      passScore: number | null;
-      questionCount: number;
-      status: Types.ExamStatus;
-      publishedAt: unknown;
-      bestScore: number | null;
-      attemptStatus: string | null;
-    }>;
-  };
-};
 
-export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
+export type ExamLibraryQuery = { exams: { page: number, size: number, totalItems: number, totalPages: number, items: Array<{ id: string, title: string, description: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, durationSeconds: number, maxRawScore: number, passScore: number | null, questionCount: number, status: Types.ExamStatus, publishedAt: unknown, bestScore: number | null, attemptStatus: string | null }> } };
 
-export type LearningPurposesQuery = {
-  learningPurposes: Array<{
-    id: number;
-    purposeCode: string;
-    displayName: string;
-  }>;
-};
+export type ExamDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
 
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
-export type CurrentUserQuery = {
-  me: {
-    id: string;
-    displayName: string;
-    avatarUrl: string | null;
-    onboardingStep: Types.OnboardingStep;
-  };
-};
+export type ExamDetailQuery = { exam: { id: string, title: string, description: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, durationSeconds: number, maxRawScore: number, passScore: number | null, questionCount: number, status: Types.ExamStatus, publishedAt: unknown, bestScore: number | null, attemptStatus: string | null } | null };
 
-export const ExamLibraryDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "ExamLibrary" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "examType" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "ExamType" },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "certificateType" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "CertificateType" },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "certificateVariant" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "CertificateVariant" },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "targetLevel" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "TargetLevel" },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "title" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "exams" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "examType" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "examType" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "certificateType" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "certificateType" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "certificateVariant" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "certificateVariant" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "targetLevel" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "targetLevel" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "title" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "title" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "page" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "page" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "size" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "size" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "items" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      { kind: "Field", name: { kind: "Name", value: "id" } },
-                      { kind: "Field", name: { kind: "Name", value: "title" } },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "examType" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "certificateType" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "certificateVariant" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "targetLevel" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "durationSeconds" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "maxRawScore" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "passScore" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "questionCount" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "status" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "publishedAt" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "bestScore" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "attemptStatus" },
-                      },
-                    ],
-                  },
-                },
-                { kind: "Field", name: { kind: "Name", value: "page" } },
-                { kind: "Field", name: { kind: "Name", value: "size" } },
-                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
-                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<ExamLibraryQuery, ExamLibraryQueryVariables>;
-export const LearningPurposesDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "LearningPurposes" },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "learningPurposes" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
-                { kind: "Field", name: { kind: "Name", value: "displayName" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  LearningPurposesQuery,
-  LearningPurposesQueryVariables
->;
-export const CurrentUserDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "CurrentUser" },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "me" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "displayName" } },
-                { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "onboardingStep" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<CurrentUserQuery, CurrentUserQueryVariables>;
+export type ExamPaperQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+
+export type ExamPaperQuery = { examPaper: { id: string, title: string, description: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, durationSeconds: number, maxRawScore: number, passScore: number | null, status: Types.ExamStatus, versionNumber: number, sections: Array<{ id: string, sectionType: string, orderNo: number, maxRawScore: number, scoredByCriteria: boolean, timeLimitSeconds: number | null, parts: Array<{ id: string, orderNo: number, title: string, instruction: string | null, content: string | null, audioObjectKey: string | null, imageObjectKey: string | null, questionSets: Array<{ id: string, title: string | null, instruction: string | null, orderNo: number, content: string | null, audioObjectKey: string | null, imageObjectKey: string | null, questions: Array<{ id: string, questionType: string, content: string, difficultyLevel: string, skillType: string, questionCategory: string | null, orderNo: number, maxRawScore: number, explanation: string | null, options: Array<{ id: string, content: string, orderNo: number, correct: boolean, explanation: string | null }> }> }> }> }> } | null };
+
+export type LearningPurposesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LearningPurposesQuery = { learningPurposes: Array<{ id: number, purposeCode: string, displayName: string }> };
+
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentUserQuery = { me: { id: string, displayName: string, avatarUrl: string | null, onboardingStep: Types.OnboardingStep } };
+
+
+export const ExamLibraryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ExamLibrary"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"examType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ExamType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certificateType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CertificateType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certificateVariant"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CertificateVariant"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"targetLevel"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"TargetLevel"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"size"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exams"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"examType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"examType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certificateType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certificateType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certificateVariant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certificateVariant"}}},{"kind":"Argument","name":{"kind":"Name","value":"targetLevel"},"value":{"kind":"Variable","name":{"kind":"Name","value":"targetLevel"}}},{"kind":"Argument","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"size"},"value":{"kind":"Variable","name":{"kind":"Name","value":"size"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"examType"}},{"kind":"Field","name":{"kind":"Name","value":"certificateType"}},{"kind":"Field","name":{"kind":"Name","value":"certificateVariant"}},{"kind":"Field","name":{"kind":"Name","value":"targetLevel"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"maxRawScore"}},{"kind":"Field","name":{"kind":"Name","value":"passScore"}},{"kind":"Field","name":{"kind":"Name","value":"questionCount"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"publishedAt"}},{"kind":"Field","name":{"kind":"Name","value":"bestScore"}},{"kind":"Field","name":{"kind":"Name","value":"attemptStatus"}}]}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"totalItems"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}}]}}]}}]} as unknown as DocumentNode<ExamLibraryQuery, ExamLibraryQueryVariables>;
+export const ExamDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ExamDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exam"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"examType"}},{"kind":"Field","name":{"kind":"Name","value":"certificateType"}},{"kind":"Field","name":{"kind":"Name","value":"certificateVariant"}},{"kind":"Field","name":{"kind":"Name","value":"targetLevel"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"maxRawScore"}},{"kind":"Field","name":{"kind":"Name","value":"passScore"}},{"kind":"Field","name":{"kind":"Name","value":"questionCount"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"publishedAt"}},{"kind":"Field","name":{"kind":"Name","value":"bestScore"}},{"kind":"Field","name":{"kind":"Name","value":"attemptStatus"}}]}}]}}]} as unknown as DocumentNode<ExamDetailQuery, ExamDetailQueryVariables>;
+export const ExamPaperDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ExamPaper"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"examPaper"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"examType"}},{"kind":"Field","name":{"kind":"Name","value":"certificateType"}},{"kind":"Field","name":{"kind":"Name","value":"certificateVariant"}},{"kind":"Field","name":{"kind":"Name","value":"targetLevel"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"maxRawScore"}},{"kind":"Field","name":{"kind":"Name","value":"passScore"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"versionNumber"}},{"kind":"Field","name":{"kind":"Name","value":"sections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sectionType"}},{"kind":"Field","name":{"kind":"Name","value":"orderNo"}},{"kind":"Field","name":{"kind":"Name","value":"maxRawScore"}},{"kind":"Field","name":{"kind":"Name","value":"scoredByCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"timeLimitSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"parts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"orderNo"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"instruction"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"audioObjectKey"}},{"kind":"Field","name":{"kind":"Name","value":"imageObjectKey"}},{"kind":"Field","name":{"kind":"Name","value":"questionSets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"instruction"}},{"kind":"Field","name":{"kind":"Name","value":"orderNo"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"audioObjectKey"}},{"kind":"Field","name":{"kind":"Name","value":"imageObjectKey"}},{"kind":"Field","name":{"kind":"Name","value":"questions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"difficultyLevel"}},{"kind":"Field","name":{"kind":"Name","value":"skillType"}},{"kind":"Field","name":{"kind":"Name","value":"questionCategory"}},{"kind":"Field","name":{"kind":"Name","value":"orderNo"}},{"kind":"Field","name":{"kind":"Name","value":"maxRawScore"}},{"kind":"Field","name":{"kind":"Name","value":"explanation"}},{"kind":"Field","name":{"kind":"Name","value":"options"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"orderNo"}},{"kind":"Field","name":{"kind":"Name","value":"correct"}},{"kind":"Field","name":{"kind":"Name","value":"explanation"}}]}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ExamPaperQuery, ExamPaperQueryVariables>;
+export const LearningPurposesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LearningPurposes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"learningPurposes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"purposeCode"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}}]}}]} as unknown as DocumentNode<LearningPurposesQuery, LearningPurposesQueryVariables>;
+export const CurrentUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"onboardingStep"}}]}}]}}]} as unknown as DocumentNode<CurrentUserQuery, CurrentUserQueryVariables>;

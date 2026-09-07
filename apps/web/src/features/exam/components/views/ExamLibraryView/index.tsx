@@ -75,15 +75,15 @@ export function ExamLibraryView() {
   };
 
   const examPage = data?.exams;
-  const items = examPage?.items ?? [];
   const totalItems = examPage?.totalItems ?? 0;
   const totalPages = Math.max(examPage?.totalPages ?? 1, 1);
   const currentPage = filters.page;
 
   // Sorting items client-side if needed (e.g. by targetLevel or title)
   const sortedItems = useMemo(() => {
-    if (!items.length) return [];
-    const list = [...items];
+    const rawItems = examPage?.items;
+    if (!rawItems || !rawItems.length) return [];
+    const list = [...rawItems];
 
     if (filters.sortBy === "LEVEL_ASC") {
       list.sort((a, b) =>
@@ -97,7 +97,7 @@ export function ExamLibraryView() {
       list.sort((a, b) => (b.maxRawScore ?? 0) - (a.maxRawScore ?? 0));
     }
     return list;
-  }, [items, filters.sortBy]);
+  }, [examPage?.items, filters.sortBy]);
 
   // Pagination calculation
   const startItem = totalItems > 0 ? currentPage * PAGE_SIZE + 1 : 0;

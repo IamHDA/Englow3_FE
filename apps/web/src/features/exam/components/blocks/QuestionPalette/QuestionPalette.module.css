@@ -1,0 +1,63 @@
+.paletteRoot {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-ink-2);
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.legendContainer {
+  background-color: var(--mantine-color-ink-0);
+  border-radius: 10px;
+}
+
+.legendDotAnswered {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background-color: var(--mantine-color-navy-9);
+}
+
+.legendDotFlagged {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background-color: #F59E0B;
+}
+
+.legendDotUnanswered {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background-color: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-ink-3);
+}
+
+.paletteBtn {
+  position: relative;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.paletteBtn:hover {
+  transform: scale(1.04);
+}
+
+.paletteBtnCurrent {
+  box-shadow: 0 0 0 2px var(--mantine-color-navy-4);
+  border-color: var(--mantine-color-navy-9) !important;
+}
+
+.flagIconPin {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}

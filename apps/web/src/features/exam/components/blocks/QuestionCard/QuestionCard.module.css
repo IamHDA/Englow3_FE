@@ -1,0 +1,95 @@
+.cardRoot {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-ink-2);
+  box-shadow: 0 4px 16px rgba(30, 58, 138, 0.05);
+}
+
+.partHeader {
+  background-color: var(--mantine-color-ink-0);
+  border-radius: 12px;
+  border-left: 4px solid var(--mantine-color-navy-9);
+}
+
+.stimulusCard {
+  background-color: #F8FAFC;
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.audioWidget {
+  background-color: var(--mantine-color-white);
+  border-radius: 8px;
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.questionNumberBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--mantine-color-navy-9);
+  color: var(--mantine-color-white);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.optionItem {
+  border-radius: 12px;
+  border: 1.5px solid var(--mantine-color-ink-2);
+  background-color: var(--mantine-color-white);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.optionItem:hover {
+  border-color: var(--mantine-color-navy-5);
+  background-color: #FAFCFF;
+}
+
+.optionItemSelected {
+  border-radius: 12px;
+  border: 1.5px solid var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-navy-0);
+  cursor: pointer;
+}
+
+.optionLetter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--mantine-color-ink-3);
+  background-color: var(--mantine-color-white);
+  color: var(--mantine-color-ink-7);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.optionLetterSelected {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-navy-9);
+  color: var(--mantine-color-white);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.nextBtn {
+  background-color: var(--mantine-color-navy-9);
+  color: var(--mantine-color-white);
+  transition: background-color 0.15s ease;
+}
+
+.nextBtn:hover {
+  background-color: var(--mantine-color-navy-8);
+}

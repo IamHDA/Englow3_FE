@@ -36,6 +36,14 @@ export const examResolvers = {
         size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
       });
     },
+    exam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getByIdAsLearner(args.id);
+    },
+    examPaper: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getPaperAsLearner(args.id);
+    },
   },
   Mutation: {
     publishExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {

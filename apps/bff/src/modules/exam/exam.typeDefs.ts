@@ -130,6 +130,81 @@ export const examTypeDefs = `#graphql
       page: Int = 0
       size: Int = 20
     ): LearnerExamPage!
+
+    """Learner exam detail by id"""
+    exam(id: ID!): LearnerExamItem
+
+    """Full exam paper for sitting the test"""
+    examPaper(id: ID!): ExamPaper
+  }
+
+  type QuestionOption {
+    id: ID!
+    content: String!
+    orderNo: Int!
+    correct: Boolean!
+    explanation: String
+  }
+
+  type ExamQuestion {
+    id: ID!
+    questionType: String!
+    content: String!
+    difficultyLevel: String!
+    skillType: String!
+    questionCategory: String
+    orderNo: Int!
+    maxRawScore: Float!
+    explanation: String
+    options: [QuestionOption!]!
+  }
+
+  type ExamQuestionSet {
+    id: ID!
+    title: String
+    instruction: String
+    orderNo: Int!
+    content: String
+    audioObjectKey: String
+    imageObjectKey: String
+    questions: [ExamQuestion!]!
+  }
+
+  type ExamSectionPart {
+    id: ID!
+    orderNo: Int!
+    title: String!
+    instruction: String
+    content: String
+    audioObjectKey: String
+    imageObjectKey: String
+    questionSets: [ExamQuestionSet!]!
+  }
+
+  type ExamSectionDetail {
+    id: ID!
+    sectionType: String!
+    orderNo: Int!
+    maxRawScore: Float!
+    scoredByCriteria: Boolean!
+    timeLimitSeconds: Int
+    parts: [ExamSectionPart!]!
+  }
+
+  type ExamPaper {
+    id: ID!
+    title: String!
+    description: String!
+    examType: ExamType!
+    certificateType: CertificateType
+    certificateVariant: CertificateVariant
+    targetLevel: TargetLevel
+    durationSeconds: Int!
+    maxRawScore: Float!
+    passScore: Float
+    status: ExamStatus!
+    versionNumber: Int!
+    sections: [ExamSectionDetail!]!
   }
 
   extend type Mutation {

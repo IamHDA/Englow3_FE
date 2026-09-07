@@ -1,0 +1,61 @@
+.breadcrumbLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mantine-color-ink-5);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbLink:hover {
+  color: var(--mantine-color-navy-9);
+}
+
+.bannerCard {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-ink-2);
+  box-shadow: 0 8px 30px rgba(30, 58, 138, 0.08);
+}
+
+.libraryBtn {
+  background-color: var(--mantine-color-navy-9);
+  color: var(--mantine-color-white);
+  transition: background-color 0.15s ease;
+}
+
+.libraryBtn:hover {
+  background-color: var(--mantine-color-navy-8);
+}
+
+.scoreCardEstimated {
+  background-color: var(--mantine-color-navy-0);
+  border: 1px solid var(--mantine-color-navy-2);
+}
+
+.scoreCardCorrect {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+}
+
+.scoreCardIncorrect {
+  background-color: var(--mantine-color-warn-0);
+  border: 1px solid var(--mantine-color-warn-2);
+}
+
+.scoreCardTime {
+  background-color: var(--mantine-color-ink-0);
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.reviewCard {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-ink-2);
+}
+
+.explanationBox {
+  background-color: var(--mantine-color-navy-0);
+  border-radius: 8px;
+  border-left: 3px solid var(--mantine-color-navy-9);
+}

@@ -39,3 +39,84 @@ query ExamLibrary(
     totalPages
   }
 }
+
+query ExamDetail($id: ID!) {
+  exam(id: $id) {
+    id
+    title
+    description
+    examType
+    certificateType
+    certificateVariant
+    targetLevel
+    durationSeconds
+    maxRawScore
+    passScore
+    questionCount
+    status
+    publishedAt
+    bestScore
+    attemptStatus
+  }
+}
+
+query ExamPaper($id: ID!) {
+  examPaper(id: $id) {
+    id
+    title
+    description
+    examType
+    certificateType
+    certificateVariant
+    targetLevel
+    durationSeconds
+    maxRawScore
+    passScore
+    status
+    versionNumber
+    sections {
+      id
+      sectionType
+      orderNo
+      maxRawScore
+      scoredByCriteria
+      timeLimitSeconds
+      parts {
+        id
+        orderNo
+        title
+        instruction
+        content
+        audioObjectKey
+        imageObjectKey
+        questionSets {
+          id
+          title
+          instruction
+          orderNo
+          content
+          audioObjectKey
+          imageObjectKey
+          questions {
+            id
+            questionType
+            content
+            difficultyLevel
+            skillType
+            questionCategory
+            orderNo
+            maxRawScore
+            explanation
+            options {
+              id
+              content
+              orderNo
+              correct
+              explanation
+            }
+          }
+        }
+      }
+    }
+  }
+}

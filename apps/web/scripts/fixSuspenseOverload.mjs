@@ -32,6 +32,10 @@ const fixed = content
     // itself unused (its "next line" is a comment, not the overload).
     /(?<!\/\/ @ts-expect-error - see scripts\/fixSuspenseOverload\.mjs\n)^(export function use\w+SuspenseQuery\(baseOptions\?: ApolloReactHooks\.SkipToken \|.*;)$/gm,
     "// @ts-expect-error - see scripts/fixSuspenseOverload.mjs\n$1",
+  )
+  .replace(
+    /return ApolloReactHooks\.useSuspenseQuery<([^>]+)>\(([^,]+), options\);/g,
+    "return ApolloReactHooks.useSuspenseQuery<$1>($2, options as any);",
   );
 
 if (fixed !== content) {

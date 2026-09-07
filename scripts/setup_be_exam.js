@@ -1,48 +1,128 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const repoPath = path.resolve(
-  "../Englow3_BE/src/main/java/com/englow3/exam/repository/ExamRepository.java",
-);
-let repoContent = fs.readFileSync(repoPath, "utf-8");
+const controllerPath = path.resolve("../Englow3_BE/src/main/java/com/englow3/exam/controller/ExamController.java");
+const controllerContent = `package com.englow3.exam.controller;
 
-if (!repoContent.includes("searchCatalogue")) {
-  // Normalize \r\n to \n for replacement, then keep clean
-  const insertionPoint = "Page<Exam> search(";
-  const index = repoContent.indexOf(insertionPoint);
-  if (index !== -1) {
-    const semiIndex = repoContent.indexOf(";", index);
-    const before = repoContent.slice(0, semiIndex + 1);
-    const after = repoContent.slice(semiIndex + 1);
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
 
-    const addition = `
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-    @Query("""
-            select e from Exam e
-            where (:status is null or e.status = :status)
-              and (:examType is null or e.examType = :examType)
-              and (:certificateType is null or e.certificateType = :certificateType)
-              and (:certificateVariant is null or e.certificateVariant = :certificateVariant)
-              and (:targetLevel is null or e.targetLevel = :targetLevel)
-              and (:title is null or lower(e.title) like lower(concat('%', cast(:title as String), '%')))
-            """)
-    Page<Exam> searchCatalogue(
-            @Param("status") ExamStatus status,
-            @Param("examType") ExamType examType,
-            @Param("certificateType") com.englow3.exam.entity.CertificateType certificateType,
-            @Param("certificateVariant") com.englow3.exam.entity.CertificateVariant certificateVariant,
-            @Param("targetLevel") com.englow3.exam.entity.TargetLevel targetLevel,
-            @Param("title") String title,
-            Pageable pageable);`;
+import com.englow3.exam.dto.result.ExamDetailResult;
+import com.englow3.exam.entity.CertificateType;
+import com.englow3.exam.entity.CertificateVariant;
+import com.englow3.exam.entity.Exam;
+import com.englow3.exam.entity.ExamStatus;
+import com.englow3.exam.entity.ExamType;
+import com.englow3.exam.entity.TargetLevel;
+import com.englow3.exam.query.AdminExamPaperQuery;
+import com.englow3.exam.repository.ExamRepository;
+import com.englow3.shared.error.NotFoundException;
+import com.englow3.shared.page.PageResponse;
 
-    repoContent = before + addition + after;
-    fs.writeFileSync(repoPath, repoContent, "utf-8");
-    console.log(
-      "ExamRepository.java successfully updated with searchCatalogue!",
-    );
-  } else {
-    console.error("Could not find insertion point in ExamRepository.java");
-  }
-} else {
-  console.log("ExamRepository.java already contains searchCatalogue");
+@RestController
+@RequestMapping("/api/exams")
+public class ExamController {
+
+    private final ExamRepository examRepo;
+    private final AdminExamPaperQuery examPaperQuery;
+
+    public ExamController(ExamRepository examRepo, AdminExamPaperQuery examPaperQuery) {
+        this.examRepo = examRepo;
+        this.examPaperQuery = examPaperQuery;
+    }
+
+    public record LearnerExamCardResponse(
+            UUID id,
+            String title,
+            String description,
+            ExamType examType,
+            CertificateType certificateType,
+            CertificateVariant certificateVariant,
+            TargetLevel targetLevel,
+            int durationSeconds,
+            BigDecimal maxRawScore,
+            BigDecimal passScore,
+            long questionCount,
+            ExamStatus status,
+            Instant publishedAt
+    ) {
+        public static LearnerExamCardResponse from(Exam exam, long questionCount) {
+            return new LearnerExamCardResponse(
+                    exam.getId(),
+                    exam.getTitle(),
+                    exam.getDescription(),
+                    exam.getExamType(),
+                    exam.getCertificateType(),
+                    exam.getCertificateVariant(),
+                    exam.getTargetLevel(),
+                    exam.getDurationSeconds(),
+                    exam.getMaxRawScore(),
+                    exam.getPassScore(),
+                    questionCount,
+                    exam.getStatus(),
+                    exam.getPublishedAt()
+            );
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<LearnerExamCardResponse>> search(
+            @RequestParam(required = false) ExamType examType,
+            @RequestParam(required = false) CertificateType certificateType,
+            @RequestParam(required = false) CertificateVariant certificateVariant,
+            @RequestParam(required = false) TargetLevel targetLevel,
+            @RequestParam(required = false) String title,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<Exam> page = examRepo.searchCatalogue(
+                ExamStatus.PUBLISHED,
+                examType,
+                certificateType,
+                certificateVariant,
+                targetLevel,
+                title,
+                pageable
+        );
+
+        Page<LearnerExamCardResponse> dtoPage = page.map(e ->
+                LearnerExamCardResponse.from(e, examRepo.countQuestions(e.getId()))
+        );
+
+        return ResponseEntity.ok(PageResponse.from(dtoPage));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LearnerExamCardResponse> getById(@PathVariable UUID id) {
+        Exam exam = examRepo.findById(id)
+                .filter(e -> e.getStatus() == ExamStatus.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException("EXAM_NOT_FOUND", "No published exam with id " + id));
+
+        return ResponseEntity.ok(LearnerExamCardResponse.from(exam, examRepo.countQuestions(exam.getId())));
+    }
+
+    @GetMapping("/{id}/paper")
+    public ResponseEntity<ExamDetailResult> getPaper(@PathVariable UUID id) {
+        Exam exam = examRepo.findById(id)
+                .filter(e -> e.getStatus() == ExamStatus.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException("EXAM_NOT_FOUND", "No published exam with id " + id));
+
+        return ResponseEntity.ok(examPaperQuery.loadForAdmin(exam.getId())
+                .orElseThrow(() -> new NotFoundException("EXAM_NOT_FOUND", "No exam paper with id " + id)));
+    }
 }
+`;
+
+fs.writeFileSync(controllerPath, controllerContent, "utf-8");
+console.log("ExamController.java with getPaper written successfully");

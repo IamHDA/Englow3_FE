@@ -95,3 +95,73 @@ export type SearchLearnerExamsParams = {
   page?: number;
   size?: number;
 };
+
+export type QuestionOptionDto = {
+  id: string;
+  content: string;
+  orderNo: number;
+  correct: boolean;
+  explanation: string | null;
+};
+
+export type QuestionDto = {
+  id: string;
+  questionType: string;
+  content: string;
+  difficultyLevel: string;
+  skillType: string;
+  questionCategory: string | null;
+  orderNo: number;
+  maxRawScore: number;
+  explanation: string | null;
+  options: QuestionOptionDto[];
+};
+
+export type QuestionSetDto = {
+  id: string;
+  title: string | null;
+  instruction: string | null;
+  orderNo: number;
+  content: string | null;
+  audioObjectKey: string | null;
+  imageObjectKey: string | null;
+  questions: QuestionDto[];
+};
+
+export type SectionPartDto = {
+  id: string;
+  orderNo: number;
+  title: string;
+  instruction: string | null;
+  content: string | null;
+  audioObjectKey: string | null;
+  imageObjectKey: string | null;
+  questionSets: QuestionSetDto[];
+};
+
+export type ExamSectionDto = {
+  id: string;
+  sectionType: string;
+  orderNo: number;
+  maxRawScore: number;
+  scoredByCriteria: boolean;
+  timeLimitSeconds: number | null;
+  parts: SectionPartDto[];
+};
+
+export type ExamPaperResponse = {
+  id: string;
+  title: string;
+  description: string;
+  examType: ExamType;
+  certificateType: CertificateType | null;
+  certificateVariant: CertificateVariant | null;
+  targetLevel: TargetLevel | null;
+  durationSeconds: number;
+  maxRawScore: number;
+  passScore: number | null;
+  status: ExamStatus;
+  versionNumber: number;
+  sections: ExamSectionDto[];
+};
+

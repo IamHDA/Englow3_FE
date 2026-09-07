@@ -1,7 +1,9 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   ExamPageResponse,
+  ExamPaperResponse,
   ExamResponse,
+  LearnerExamItemResponse,
   LearnerExamPageResponse,
   SearchExamsParams,
   SearchLearnerExamsParams,
@@ -30,6 +32,15 @@ export class ExamApi {
 
     return this.client.get(`${EXAM_BASE_PATH}?${query.toString()}`);
   }
+
+  getByIdAsLearner(id: string): Promise<LearnerExamItemResponse> {
+    return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}`);
+  }
+
+  getPaperAsLearner(id: string): Promise<ExamPaperResponse> {
+    return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}/paper`);
+  }
+
 
   /** Admin-only on the backend (@PreAuthorize hasRole ADMIN) - it answers 403 for anyone else. */
   searchAsAdmin(params: SearchExamsParams): Promise<ExamPageResponse> {

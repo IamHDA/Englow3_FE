@@ -1,0 +1,73 @@
+.breadcrumbLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mantine-color-ink-5);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbLink:hover {
+  color: var(--mantine-color-navy-9);
+}
+
+.heroCard {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-ink-2);
+  box-shadow: 0 4px 20px rgba(30, 58, 138, 0.06);
+}
+
+.metricCard {
+  background-color: var(--mantine-color-ink-0);
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.sectionCard {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-ink-2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sectionCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.06);
+}
+
+.guidelinesBox {
+  background-color: #F8FAFC;
+  border: 1px solid var(--mantine-color-ink-2);
+  border-radius: 14px;
+}
+
+.badgeNavy {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background-color: var(--mantine-color-navy-0);
+  color: var(--mantine-color-navy-9);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.badgeOrange {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background-color: var(--mantine-color-orange-0);
+  color: var(--mantine-color-orange-8);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.startBtn {
+  background-color: var(--mantine-color-orange-6);
+  color: var(--mantine-color-white);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(240, 138, 12, 0.35);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.startBtn:hover {
+  background-color: var(--mantine-color-orange-7);
+  transform: translateY(-1px);
+}
