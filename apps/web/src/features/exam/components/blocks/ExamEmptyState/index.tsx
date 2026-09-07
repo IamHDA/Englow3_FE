@@ -1,5 +1,5 @@
+import { Button, Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { Search } from "lucide-react";
-import classes from "./ExamEmptyState.module.css";
 
 type ExamEmptyStateProps = {
   searchQuery?: string;
@@ -11,26 +11,39 @@ export function ExamEmptyState({
   onResetFilters,
 }: ExamEmptyStateProps) {
   return (
-    <div className={classes.emptyContainer}>
-      <div className={classes.iconCircle}>
-        <Search size={28} aria-hidden="true" />
-      </div>
+    <Paper
+      withBorder
+      radius="lg"
+      p={{ base: "xl", sm: 54 }}
+      shadow="xs"
+      bg="white"
+    >
+      <Stack align="center" gap="md" ta="center">
+        <ThemeIcon size={64} radius="xl" variant="light" color="blue">
+          <Search size={28} aria-hidden="true" />
+        </ThemeIcon>
 
-      <h3 className={classes.title}>Không tìm thấy đề thi phù hợp</h3>
+        <Title order={3} fw={700} c="navy.9">
+          Không tìm thấy đề thi phù hợp
+        </Title>
 
-      <p className={classes.description}>
-        {searchQuery
-          ? `Không có đề thi nào khớp với từ khoá "${searchQuery}". Thử điều chỉnh từ khoá hoặc xoá bớt các bộ lọc để xem nhiều kết quả hơn.`
-          : "Không có đề thi nào thoả mãn các điều kiện lọc hiện tại. Thử bỏ chọn một vài bộ lọc để xem danh sách đề."}
-      </p>
+        <Text c="dimmed" size="sm" maw={460} lh={1.6}>
+          {searchQuery
+            ? `Không có đề thi nào khớp với từ khoá "${searchQuery}". Thử điều chỉnh từ khoá hoặc xoá bớt các bộ lọc để xem nhiều kết quả hơn.`
+            : "Không có đề thi nào thoả mãn các điều kiện lọc hiện tại. Thử bỏ chọn một vài bộ lọc để xem danh sách đề."}
+        </Text>
 
-      <button
-        type="button"
-        className={classes.clearButton}
-        onClick={onResetFilters}
-      >
-        Xoá toàn bộ bộ lọc
-      </button>
-    </div>
+        <Button
+          variant="filled"
+          color="navy.9"
+          radius="xl"
+          size="sm"
+          mt="xs"
+          onClick={onResetFilters}
+        >
+          Xoá toàn bộ bộ lọc
+        </Button>
+      </Stack>
+    </Paper>
   );
 }

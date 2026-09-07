@@ -1,7 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Button,
+  Center,
+  Container,
+  Flex,
+  Group,
+  Pagination,
+  SimpleGrid,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 
 import { useExamLibraryQuery } from "@/lib/graphql/generated/hooks";
 import { ExamCard } from "../../blocks/ExamCard";
@@ -10,7 +21,6 @@ import { ExamFilters } from "../../blocks/ExamFilters";
 import { ExamLibrarySkeleton } from "../../blocks/ExamLibrarySkeleton";
 import { EXAM_TYPE_TABS } from "../../../constants/examLibrary";
 import type { ExamFiltersState } from "../../../types";
-import classes from "./ExamLibraryView.module.css";
 import type {
   CertificateType,
   CertificateVariant,
@@ -104,129 +114,123 @@ export function ExamLibraryView() {
   const endItem = Math.min((currentPage + 1) * PAGE_SIZE, totalItems);
 
   return (
-    <div className={classes.wrapper}>
-      {/* Header Banner */}
-      <div className={classes.headerBanner}>
-        <div className={classes.headerText}>
-          <span className={classes.tagline}>Mock Test · Thư viện đề</span>
-          <h1 className={classes.title}>Thư viện đề thi</h1>
-          <p className={classes.subtitle}>
-            Chọn đề thi đầy đủ bấm giờ chuẩn kỳ thi quốc tế ETS &amp; IELTS,
-            hoặc đề theo từng kỹ năng để ôn luyện tập trung.
-          </p>
-        </div>
+    <Container size="xl" py="xl">
+      <Stack gap="xl">
+        {/* Header Banner */}
+        <Flex
+          justify="space-between"
+          align={{ base: "flex-start", sm: "flex-end" }}
+          direction={{ base: "column", sm: "row" }}
+          gap="lg"
+        >
+          <Stack gap={6} maw={640}>
+            <Text
+              size="xs"
+              fw={700}
+              tt="uppercase"
+              lts="0.12em"
+              c="orange.6"
+            >
+              Mock Test · Thư viện đề
+            </Text>
+            <Title order={1} size="h1" c="navy.9" lh={1.15} style={{ letterSpacing: "-0.02em" }}>
+              Thư viện đề thi
+            </Title>
+            <Text size="sm" c="dimmed" lh={1.6}>
+              Chọn đề thi đầy đủ bấm giờ chuẩn kỳ thi quốc tế ETS &amp; IELTS,
+              hoặc đề theo từng kỹ năng để ôn luyện tập trung.
+            </Text>
+          </Stack>
 
-        <div className={classes.statsRow}>
-          <div className={classes.statItem}>
-            <span className={classes.statValue}>{totalItems}</span>
-            <span className={classes.statLabel}>Bộ đề thi thật</span>
-          </div>
-          <div className={classes.statItem}>
-            <span className={classes.statValue}>100%</span>
-            <span className={classes.statLabel}>Chấm tự động</span>
-          </div>
-          <div className={classes.statItem}>
-            <span className={classes.statValue}>AI</span>
-            <span className={classes.statLabel}>Phân tích điểm</span>
-          </div>
-        </div>
-      </div>
+          <Group gap="xl" wrap="nowrap">
+            <Stack gap={2} align="flex-end">
+              <Text fw={800} size="xl" c="navy.9" style={{ fontVariantNumeric: "tabular-nums" }}>
+                {totalItems}
+              </Text>
+              <Text size="xs" c="dimmed">
+                Bộ đề thi thật
+              </Text>
+            </Stack>
+            <Stack gap={2} align="flex-end">
+              <Text fw={800} size="xl" c="navy.9">
+                100%
+              </Text>
+              <Text size="xs" c="dimmed">
+                Chấm tự động
+              </Text>
+            </Stack>
+            <Stack gap={2} align="flex-end">
+              <Text fw={800} size="xl" c="navy.9">
+                AI
+              </Text>
+              <Text size="xs" c="dimmed">
+                Phân tích điểm
+              </Text>
+            </Stack>
+          </Group>
+        </Flex>
 
-      {/* Filter Toolbar */}
-      <ExamFilters
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onResetFilters={handleResetFilters}
-        totalItems={totalItems}
-      />
-
-      {/* Content Area */}
-      {loading && !data ? (
-        <ExamLibrarySkeleton />
-      ) : error ? (
-        <div style={{ textAlign: "center", padding: "48px 0" }}>
-          <p style={{ color: "var(--mantine-color-red-6)", fontWeight: 600 }}>
-            Không thể tải danh sách đề thi: {error.message}
-          </p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            style={{
-              marginTop: 12,
-              padding: "8px 20px",
-              borderRadius: 999,
-              background: "#0f172a",
-              color: "#fff",
-              border: 0,
-              cursor: "pointer",
-            }}
-          >
-            Thử lại
-          </button>
-        </div>
-      ) : sortedItems.length === 0 ? (
-        <ExamEmptyState
-          searchQuery={filters.searchQuery}
+        {/* Filter Toolbar */}
+        <ExamFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
+          totalItems={totalItems}
         />
-      ) : (
-        <>
-          <div className={classes.grid}>
-            {sortedItems.map((exam) => (
-              <ExamCard key={exam.id} exam={exam} />
-            ))}
-          </div>
 
-          {/* Pagination */}
-          {totalPages > 1 ? (
-            <div className={classes.paginationRow}>
-              <span className={classes.rangeLabel}>
-                Hiển thị {startItem} - {endItem} của {totalItems} đề thi
-              </span>
+        {/* Content Area */}
+        {loading && !data ? (
+          <ExamLibrarySkeleton />
+        ) : error ? (
+          <Center py={64}>
+            <Stack align="center" gap="sm">
+              <Text c="red.6" fw={600}>
+                Không thể tải danh sách đề thi: {error.message}
+              </Text>
+              <Button
+                variant="filled"
+                color="navy.9"
+                radius="xl"
+                size="sm"
+                onClick={() => refetch()}
+              >
+                Thử lại
+              </Button>
+            </Stack>
+          </Center>
+        ) : sortedItems.length === 0 ? (
+          <ExamEmptyState
+            searchQuery={filters.searchQuery}
+            onResetFilters={handleResetFilters}
+          />
+        ) : (
+          <Stack gap="xl">
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+              {sortedItems.map((exam) => (
+                <ExamCard key={exam.id} exam={exam} />
+              ))}
+            </SimpleGrid>
 
-              <div className={classes.pageButtons}>
-                <button
-                  type="button"
-                  className={classes.navButton}
-                  onClick={() =>
-                    handleFilterChange({ page: Math.max(currentPage - 1, 0) })
-                  }
-                  disabled={currentPage === 0}
-                  aria-label="Trang trước"
-                >
-                  <ChevronLeft size={16} />
-                </button>
+            {/* Pagination */}
+            {totalPages > 1 ? (
+              <Group justify="space-between" align="center" pt="md" wrap="wrap" gap="md">
+                <Text size="sm" c="dimmed">
+                  Hiển thị {startItem} - {endItem} của {totalItems} đề thi
+                </Text>
 
-                {Array.from({ length: totalPages }).map((_, pIdx) => (
-                  <button
-                    key={pIdx}
-                    type="button"
-                    className={classes.pageNumber}
-                    data-active={currentPage === pIdx}
-                    onClick={() => handleFilterChange({ page: pIdx })}
-                  >
-                    {pIdx + 1}
-                  </button>
-                ))}
-
-                <button
-                  type="button"
-                  className={classes.navButton}
-                  onClick={() =>
-                    handleFilterChange({
-                      page: Math.min(currentPage + 1, totalPages - 1),
-                    })
-                  }
-                  disabled={currentPage >= totalPages - 1}
-                  aria-label="Trang sau"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
-          ) : null}
-        </>
-      )}
-    </div>
+                <Pagination
+                  total={totalPages}
+                  value={currentPage + 1}
+                  onChange={(page) => handleFilterChange({ page: page - 1 })}
+                  radius="xl"
+                  size="sm"
+                  color="navy.9"
+                />
+              </Group>
+            ) : null}
+          </Stack>
+        )}
+      </Stack>
+    </Container>
   );
 }

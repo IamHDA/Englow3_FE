@@ -1,6 +1,17 @@
 "use client";
 
-import { Menu, TextInput, UnstyledButton } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Flex,
+  Group,
+  Menu,
+  Paper,
+  Tabs,
+  Text,
+  TextInput,
+  UnstyledButton,
+} from "@mantine/core";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 
 import {
@@ -12,7 +23,6 @@ import {
   type SortKey,
 } from "../../../constants/examLibrary";
 import type { ExamFiltersState } from "../../../types";
-import classes from "./ExamFilters.module.css";
 import type { TargetLevel } from "@/lib/graphql/generated/schemaTypes";
 
 type ExamFiltersProps = {
@@ -51,9 +61,9 @@ export function ExamFilters({
     "Trạng thái: Tất cả";
 
   return (
-    <div className={classes.filterContainer}>
-      <div className={classes.topBar}>
-        <div className={classes.searchWrapper}>
+    <Paper radius="lg" p="md" withBorder bg="white" shadow="xs">
+      <Flex justify="space-between" align="center" wrap="wrap" gap="md">
+        <Box style={{ flex: "1 1 260px" }}>
           <TextInput
             placeholder="Tìm theo tên đề hoặc bộ đề…"
             value={filters.searchQuery}
@@ -73,32 +83,37 @@ export function ExamFilters({
               ) : null
             }
             radius="xl"
-            className={classes.searchInput}
+            size="sm"
           />
-        </div>
+        </Box>
 
-        <nav className={classes.tabsNav} aria-label="Phân loại đề thi">
-          {EXAM_TYPE_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={classes.tabButton}
-              data-active={filters.tabId === tab.id}
-              onClick={() => onFilterChange({ tabId: tab.id, page: 0 })}
-            >
-              {tab.name}
-            </button>
-          ))}
-        </nav>
+        <Tabs
+          value={filters.tabId}
+          onChange={(val) => onFilterChange({ tabId: val || "all", page: 0 })}
+        >
+          <Tabs.List>
+            {EXAM_TYPE_TABS.map((tab) => (
+              <Tabs.Tab key={tab.id} value={tab.id}>
+                {tab.name}
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+        </Tabs>
 
-        <div className={classes.sortWrapper}>
-          <span className={classes.sortLabel}>Sắp xếp:</span>
+        <Group gap="xs">
+          <Text size="xs" c="dimmed" fw={600}>
+            Sắp xếp:
+          </Text>
           <Menu shadow="md" width={200} position="bottom-end">
             <Menu.Target>
-              <button type="button" className={classes.filterMenuButton}>
-                <span>{currentSortLabel}</span>
-                <ChevronDown size={14} aria-hidden="true" />
-              </button>
+              <Button
+                variant="default"
+                size="xs"
+                radius="xl"
+                rightSection={<ChevronDown size={14} aria-hidden="true" />}
+              >
+                {currentSortLabel}
+              </Button>
             </Menu.Target>
             <Menu.Dropdown>
               {SORT_OPTIONS.map((opt) => (
@@ -111,7 +126,7 @@ export function ExamFilters({
                     filters.sortBy === opt.value ? (
                       <Check size={14} color="var(--mantine-color-blue-6)" />
                     ) : (
-                      <span style={{ width: 14 }} />
+                      <Box w={14} />
                     )
                   }
                 >
@@ -120,21 +135,22 @@ export function ExamFilters({
               ))}
             </Menu.Dropdown>
           </Menu>
-        </div>
-      </div>
+        </Group>
+      </Flex>
 
-      <div className={classes.bottomBar}>
+      <Flex align="center" wrap="wrap" gap="xs" mt="md" pt="xs" style={{ borderTop: "1px solid var(--mantine-color-gray-2)" }}>
         {/* Kỹ năng */}
         <Menu shadow="md" width={180}>
           <Menu.Target>
-            <button
-              type="button"
-              className={classes.filterMenuButton}
-              data-active={filters.skill !== "ALL"}
+            <Button
+              variant={filters.skill !== "ALL" ? "light" : "default"}
+              color={filters.skill !== "ALL" ? "blue" : undefined}
+              size="xs"
+              radius="xl"
+              rightSection={<ChevronDown size={14} aria-hidden="true" />}
             >
-              <span>{currentSkillLabel}</span>
-              <ChevronDown size={14} aria-hidden="true" />
-            </button>
+              {currentSkillLabel}
+            </Button>
           </Menu.Target>
           <Menu.Dropdown>
             {SKILL_OPTIONS.map((opt) => (
@@ -145,7 +161,7 @@ export function ExamFilters({
                   filters.skill === opt.value ? (
                     <Check size={14} color="var(--mantine-color-blue-6)" />
                   ) : (
-                    <span style={{ width: 14 }} />
+                    <Box w={14} />
                   )
                 }
               >
@@ -158,14 +174,15 @@ export function ExamFilters({
         {/* Độ khó */}
         <Menu shadow="md" width={190}>
           <Menu.Target>
-            <button
-              type="button"
-              className={classes.filterMenuButton}
-              data-active={filters.targetLevel !== "ALL"}
+            <Button
+              variant={filters.targetLevel !== "ALL" ? "light" : "default"}
+              color={filters.targetLevel !== "ALL" ? "blue" : undefined}
+              size="xs"
+              radius="xl"
+              rightSection={<ChevronDown size={14} aria-hidden="true" />}
             >
-              <span>{currentDiffLabel}</span>
-              <ChevronDown size={14} aria-hidden="true" />
-            </button>
+              {currentDiffLabel}
+            </Button>
           </Menu.Target>
           <Menu.Dropdown>
             {DIFFICULTY_OPTIONS.map((opt) => (
@@ -181,7 +198,7 @@ export function ExamFilters({
                   filters.targetLevel === opt.value ? (
                     <Check size={14} color="var(--mantine-color-blue-6)" />
                   ) : (
-                    <span style={{ width: 14 }} />
+                    <Box w={14} />
                   )
                 }
               >
@@ -194,14 +211,15 @@ export function ExamFilters({
         {/* Trạng thái */}
         <Menu shadow="md" width={180}>
           <Menu.Target>
-            <button
-              type="button"
-              className={classes.filterMenuButton}
-              data-active={filters.attemptStatus !== "ALL"}
+            <Button
+              variant={filters.attemptStatus !== "ALL" ? "light" : "default"}
+              color={filters.attemptStatus !== "ALL" ? "blue" : undefined}
+              size="xs"
+              radius="xl"
+              rightSection={<ChevronDown size={14} aria-hidden="true" />}
             >
-              <span>{currentStatusLabel}</span>
-              <ChevronDown size={14} aria-hidden="true" />
-            </button>
+              {currentStatusLabel}
+            </Button>
           </Menu.Target>
           <Menu.Dropdown>
             {STATUS_OPTIONS.map((opt) => (
@@ -214,7 +232,7 @@ export function ExamFilters({
                   filters.attemptStatus === opt.value ? (
                     <Check size={14} color="var(--mantine-color-blue-6)" />
                   ) : (
-                    <span style={{ width: 14 }} />
+                    <Box w={14} />
                   )
                 }
               >
@@ -225,18 +243,22 @@ export function ExamFilters({
         </Menu>
 
         {isFiltered ? (
-          <button
-            type="button"
-            className={classes.clearButton}
+          <Button
+            variant="subtle"
+            color="gray"
+            size="xs"
+            radius="xl"
+            leftSection={<X size={14} aria-hidden="true" />}
             onClick={onResetFilters}
           >
-            <X size={14} aria-hidden="true" />
-            <span>Xoá bộ lọc</span>
-          </button>
+            Xoá bộ lọc
+          </Button>
         ) : null}
 
-        <span className={classes.resultCount}>{totalItems} đề thi</span>
-      </div>
-    </div>
+        <Text size="xs" c="dimmed" fw={600} ml="auto">
+          {totalItems} đề thi
+        </Text>
+      </Flex>
+    </Paper>
   );
 }

@@ -5,6 +5,7 @@ import {
   Button,
   Group,
   Modal,
+  Paper,
   SimpleGrid,
   Stack,
   Text,
@@ -53,56 +54,66 @@ export function SubmitModal({
     >
       <Stack gap="md">
         {hasUnanswered ? (
-          <Group gap="xs" p="sm" className={classes.warningBox}>
-            <ThemeIcon color="warn" variant="light" size="md">
-              <AlertTriangle size={18} />
-            </ThemeIcon>
-            <Text size="xs" c="warn.7" fw={600}>
-              Bạn còn <b>{unansweredCount}</b> câu hỏi chưa trả lời!
-            </Text>
-          </Group>
+          <Paper p="sm" radius="md" bg="orange.0" withBorder>
+            <Group gap="xs">
+              <ThemeIcon color="orange" variant="light" size="md">
+                <AlertTriangle size={18} />
+              </ThemeIcon>
+              <Text size="xs" c="orange.9" fw={600}>
+                Bạn còn <b>{unansweredCount}</b> câu hỏi chưa trả lời!
+              </Text>
+            </Group>
+          </Paper>
         ) : (
-          <Group gap="xs" p="sm" className={classes.successBox}>
-            <ThemeIcon color="green" variant="light" size="md">
-              <CheckCircle2 size={18} />
-            </ThemeIcon>
-            <Text size="xs" c="green.8" fw={600}>
-              Bạn đã hoàn thành tất cả {totalQuestions} câu hỏi!
-            </Text>
-          </Group>
+          <Paper p="sm" radius="md" bg="teal.0" withBorder>
+            <Group gap="xs">
+              <ThemeIcon color="teal" variant="light" size="md">
+                <CheckCircle2 size={18} />
+              </ThemeIcon>
+              <Text size="xs" c="teal.9" fw={600}>
+                Bạn đã hoàn thành tất cả {totalQuestions} câu hỏi!
+              </Text>
+            </Group>
+          </Paper>
         )}
 
         {/* Stats Summary */}
         <SimpleGrid cols={3} spacing="xs">
-          <Stack gap={2} align="center" p="xs" className={classes.statCard}>
-            <CheckCircle2 size={18} color="var(--mantine-color-navy-9)" />
-            <Text size="xs" c="ink.5">
-              Đã làm
-            </Text>
-            <Text fw={700} size="sm" c="navy.9">
-              {answeredCount}
-            </Text>
-          </Stack>
+          <Paper p="xs" radius="md" withBorder bg="gray.0">
+            <Stack gap={2} align="center">
+              <CheckCircle2 size={18} color="var(--mantine-color-navy-9)" />
+              <Text size="xs" c="ink.5">
+                Đã làm
+              </Text>
+              <Text fw={700} size="sm" c="navy.9">
+                {answeredCount}
+              </Text>
+            </Stack>
+          </Paper>
 
-          <Stack gap={2} align="center" p="xs" className={classes.statCard}>
-            <HelpCircle size={18} color={hasUnanswered ? 'var(--mantine-color-warn-6)' : 'gray'} />
-            <Text size="xs" c="ink.5">
-              Chưa làm
-            </Text>
-            <Text fw={700} size="sm" c={hasUnanswered ? 'warn.6' : 'navy.9'}>
-              {unansweredCount}
-            </Text>
-          </Stack>
+          <Paper p="xs" radius="md" withBorder bg="gray.0">
+            <Stack gap={2} align="center">
+              <HelpCircle size={18} color={hasUnanswered ? 'var(--mantine-color-warn-6)' : 'gray'} />
+              <Text size="xs" c="ink.5">
+                Chưa làm
+              </Text>
+              <Text fw={700} size="sm" c={hasUnanswered ? 'orange.8' : 'navy.9'}>
+                {unansweredCount}
+              </Text>
+            </Stack>
+          </Paper>
 
-          <Stack gap={2} align="center" p="xs" className={classes.statCard}>
-            <Flag size={18} color="#F59E0B" />
-            <Text size="xs" c="ink.5">
-              Gắn cờ
-            </Text>
-            <Text fw={700} size="sm" c="#92400E">
-              {flaggedCount}
-            </Text>
-          </Stack>
+          <Paper p="xs" radius="md" withBorder bg="gray.0">
+            <Stack gap={2} align="center">
+              <Flag size={18} color="#F59E0B" />
+              <Text size="xs" c="ink.5">
+                Gắn cờ
+              </Text>
+              <Text fw={700} size="sm" c="yellow.9">
+                {flaggedCount}
+              </Text>
+            </Stack>
+          </Paper>
         </SimpleGrid>
 
         <Text size="xs" c="ink.6">

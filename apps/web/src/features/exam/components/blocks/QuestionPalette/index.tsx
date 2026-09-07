@@ -4,11 +4,11 @@ import React from 'react';
 import {
   Box,
   Card,
-  Flex,
   Group,
   SimpleGrid,
   Stack,
   Text,
+  UnstyledButton,
 } from '@mantine/core';
 import { Flag } from 'lucide-react';
 import classes from './QuestionPalette.module.css';
@@ -60,26 +60,26 @@ export function QuestionPalette({
         </Group>
 
         {/* Legend */}
-        <Flex wrap="wrap" gap="xs" p={8} className={classes.legendContainer}>
-          <Flex align="center" gap={4}>
+        <Group gap="sm" p={8} className={classes.legendContainer}>
+          <Group gap={5} align="center">
             <Box className={classes.legendDotAnswered} />
             <Text size="xs" c="ink.6">
               Đã làm
             </Text>
-          </Flex>
-          <Flex align="center" gap={4}>
+          </Group>
+          <Group gap={5} align="center">
             <Box className={classes.legendDotFlagged} />
             <Text size="xs" c="ink.6">
               Gắn cờ ({flaggedCount})
             </Text>
-          </Flex>
-          <Flex align="center" gap={4}>
+          </Group>
+          <Group gap={5} align="center">
             <Box className={classes.legendDotUnanswered} />
             <Text size="xs" c="ink.6">
               Chưa làm
             </Text>
-          </Flex>
-        </Flex>
+          </Group>
+        </Group>
 
         {/* Palette Grid */}
         <SimpleGrid cols={5} spacing={6}>
@@ -88,30 +88,19 @@ export function QuestionPalette({
             const isFlagged = flaggedQuestionIds.has(q.questionId);
             const isCurrent = q.globalIndex === currentIndex;
 
-            let bgColor = 'var(--mantine-color-white)';
-            let textColor = 'var(--mantine-color-ink-8)';
-            let borderColor = 'var(--mantine-color-ink-2)';
-
-            if (isFlagged) {
-              bgColor = '#FEF3C7';
-              textColor = '#92400E';
-              borderColor = '#F59E0B';
-            } else if (isAnswered) {
-              bgColor = 'var(--mantine-color-navy-9)';
-              textColor = 'var(--mantine-color-white)';
-              borderColor = 'var(--mantine-color-navy-9)';
-            }
+            const status = isFlagged
+              ? 'flagged'
+              : isAnswered
+              ? 'answered'
+              : 'unanswered';
 
             return (
-              <Box
+              <UnstyledButton
                 key={q.questionId}
                 onClick={() => onSelectQuestion(q.globalIndex)}
                 className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ''}`}
-                style={{
-                  backgroundColor: bgColor,
-                  color: textColor,
-                  border: `1.5px solid ${borderColor}`,
-                }}
+                data-status={status}
+                aria-label={`Câu ${q.globalIndex + 1}`}
               >
                 {q.globalIndex + 1}
                 {isFlagged && (
@@ -119,7 +108,7 @@ export function QuestionPalette({
                     <Flag size={10} color="#F59E0B" fill="#F59E0B" />
                   </Box>
                 )}
-              </Box>
+              </UnstyledButton>
             );
           })}
         </SimpleGrid>

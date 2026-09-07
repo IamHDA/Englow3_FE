@@ -1,4 +1,4 @@
-import { Button } from "@mantine/core";
+import { Badge, Button, Card, Divider, Group, Stack, Text } from "@mantine/core";
 import { Clock, FileText, Play } from "lucide-react";
 import Link from "next/link";
 
@@ -45,7 +45,7 @@ export function ExamCard({ exam }: ExamCardProps) {
     : isStarted
       ? "Đang làm dở"
       : "Chưa làm";
-  const statusColor = isDone ? "#10B981" : isStarted ? "#F59E0B" : "#94A3B8";
+  const statusBadgeColor = isDone ? "teal" : isStarted ? "yellow" : "gray";
 
   // Derive skill labels based on variant or certificate
   const skills: string[] = [];
@@ -65,10 +65,12 @@ export function ExamCard({ exam }: ExamCardProps) {
     : "Đề thi thử";
 
   return (
-    <div className={classes.card}>
-      <div className={classes.headerRow}>
-        <span
-          className={classes.levelBadge}
+    <Card withBorder radius="lg" p="lg" className={classes.card}>
+      <Group justify="space-between" align="center" mb="xs">
+        <Badge
+          size="md"
+          radius="xl"
+          variant="outline"
           style={{
             background: colors.bg,
             color: colors.fg,
@@ -76,75 +78,76 @@ export function ExamCard({ exam }: ExamCardProps) {
           }}
         >
           {level}
-        </span>
-        <span
-          className={classes.statusIndicator}
-          style={{ color: statusColor }}
-        >
-          <span
-            className={classes.statusDot}
-            style={{ background: statusColor }}
-          />
+        </Badge>
+        <Badge size="sm" radius="xl" variant="dot" color={statusBadgeColor}>
           {statusLabel}
-        </span>
-      </div>
+        </Badge>
+      </Group>
 
-      <div>
-        <div className={classes.seriesTag}>{seriesName}</div>
-        <h3 className={classes.title} title={exam.title}>
+      <Stack gap={4}>
+        <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts="0.08em">
+          {seriesName}
+        </Text>
+        <Text fw={700} size="md" c="navy.9" lineClamp={2} title={exam.title} lh={1.35}>
           {exam.title}
-        </h3>
-      </div>
+        </Text>
+      </Stack>
 
-      <div className={classes.skillsRow}>
+      <Group gap={6} mt={6} mb="xs">
         {skills.map((skill) => (
-          <span key={skill} className={classes.skillBadge}>
+          <Badge key={skill} size="sm" variant="light" color="gray" radius="sm">
             {skill}
-          </span>
+          </Badge>
         ))}
-      </div>
+      </Group>
 
-      <div className={classes.spacer} />
+      <Stack gap="xs" mt="auto" pt="xs">
+        <Divider color="gray.2" />
 
-      <div className={classes.metaRow}>
-        <span className={classes.metaItem}>
-          <FileText size={14} aria-hidden="true" />
-          <span>{exam.questionCount} câu</span>
-        </span>
-        <span className={classes.metaItem}>
-          <Clock size={14} aria-hidden="true" />
-          <span>{durationMinutes} phút</span>
-        </span>
-      </div>
+        <Group gap="md">
+          <Group gap={5}>
+            <FileText size={14} aria-hidden="true" color="var(--mantine-color-gray-6)" />
+            <Text size="xs" c="dimmed">
+              {exam.questionCount} câu
+            </Text>
+          </Group>
+          <Group gap={5}>
+            <Clock size={14} aria-hidden="true" color="var(--mantine-color-gray-6)" />
+            <Text size="xs" c="dimmed">
+              {durationMinutes} phút
+            </Text>
+          </Group>
+        </Group>
 
-      <div className={classes.footerRow}>
-        <div className={classes.scoreGroup}>
-          <span className={classes.scoreLabel}>
-            {exam.bestScore !== null && exam.bestScore !== undefined
-              ? "Điểm cao nhất"
-              : "Điểm tối đa"}
-          </span>
-          <span className={classes.scoreValue}>
-            {exam.bestScore !== null && exam.bestScore !== undefined
-              ? `${exam.bestScore}/${exam.maxRawScore}`
-              : `${exam.maxRawScore} điểm`}
-          </span>
-        </div>
+        <Group justify="space-between" align="center" pt={4}>
+          <Stack gap={1}>
+            <Text size="xs" c="dimmed">
+              {exam.bestScore !== null && exam.bestScore !== undefined
+                ? "Điểm cao nhất"
+                : "Điểm tối đa"}
+            </Text>
+            <Text fw={700} size="sm" c="navy.9" style={{ fontVariantNumeric: "tabular-nums" }}>
+              {exam.bestScore !== null && exam.bestScore !== undefined
+                ? `${exam.bestScore}/${exam.maxRawScore}`
+                : `${exam.maxRawScore} điểm`}
+            </Text>
+          </Stack>
 
-        <Button
-          component={Link}
-          href={`/mock-test/${exam.id}`}
-          size="sm"
-          className={classes.ctaButton}
-          color={isDone ? "gray" : isStarted ? "orange" : "blue"}
-          variant={isDone ? "outline" : "filled"}
-          rightSection={
-            <Play size={13} fill="currentColor" aria-hidden="true" />
-          }
-        >
-          {isDone ? "Làm lại" : isStarted ? "Làm tiếp" : "Bắt đầu làm bài"}
-        </Button>
-      </div>
-    </div>
+          <Button
+            component={Link}
+            href={`/mock-test/${exam.id}`}
+            size="xs"
+            radius="xl"
+            color={isDone ? "gray" : isStarted ? "orange" : "blue"}
+            variant={isDone ? "outline" : "filled"}
+            rightSection={
+              <Play size={12} fill="currentColor" aria-hidden="true" />
+            }
+          >
+            {isDone ? "Làm lại" : isStarted ? "Làm tiếp" : "Bắt đầu làm bài"}
+          </Button>
+        </Group>
+      </Stack>
+    </Card>
   );
 }

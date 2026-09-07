@@ -10,10 +10,12 @@ import {
   Card,
   Flex,
   Group,
+  Paper,
   SimpleGrid,
   Stack,
   Tabs,
   Text,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
 import {
@@ -128,10 +130,14 @@ export function ExamResultView({
       <Stack gap="xl">
         {/* Breadcrumbs */}
         <Flex align="center" gap="xs">
-          <Link href="/mock-test" className={classes.breadcrumbLink}>
+          <Text
+            component={Link}
+            href="/mock-test"
+            className={classes.breadcrumbLink}
+          >
             <ArrowLeft size={16} />
-            <span>Thư viện đề</span>
-          </Link>
+            Thư viện đề
+          </Text>
           <Text c="ink.3" size="sm">
             /
           </Text>
@@ -149,14 +155,14 @@ export function ExamResultView({
         >
           <Stack gap="lg">
             <Group justify="space-between" align="flex-start">
-              <div>
-                <Badge color="navy" variant="light" size="lg" radius="xl" mb={8}>
+              <Stack gap={4}>
+                <Badge color="navy" variant="light" size="lg" radius="xl" mb={4}>
                   Hoàn thành bài thi
                 </Badge>
                 <Title order={1} size="h2" c="navy.9" fw={700}>
                   {paper.title}
                 </Title>
-              </div>
+              </Stack>
 
               {/* Action buttons */}
               <Group gap="xs">
@@ -255,14 +261,14 @@ export function ExamResultView({
         >
           <Stack gap="md">
             <Group justify="space-between" align="center">
-              <div>
+              <Stack gap={2}>
                 <Title order={2} size="h3" c="navy.9" fw={700}>
                   Đáp án & Giải thích chi tiết
                 </Title>
                 <Text size="xs" c="ink.5">
                   Xem lại toàn bộ câu hỏi kèm đáp án đúng và phân tích lý do
                 </Text>
-              </div>
+              </Stack>
 
               {/* Review Filter Tabs */}
               <Tabs value={filterTab} onChange={(val) => setFilterTab(val || 'all')}>
@@ -286,39 +292,24 @@ export function ExamResultView({
                       <Accordion.Control>
                         <Group justify="space-between" wrap="nowrap">
                           <Group gap="sm">
-                            <span
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: 26,
-                                height: 26,
-                                borderRadius: '50%',
-                                backgroundColor: !isAnswered
-                                  ? 'var(--mantine-color-ink-2)'
-                                  : isCorrect
-                                  ? '#DCFCE7'
-                                  : '#FEE2E2',
-                                color: !isAnswered
-                                  ? 'var(--mantine-color-ink-6)'
-                                  : isCorrect
-                                  ? '#16A34A'
-                                  : '#DC2626',
-                                fontSize: 13,
-                                fontWeight: 700,
-                                flexShrink: 0,
-                              }}
+                            <ThemeIcon
+                              size={26}
+                              radius="xl"
+                              color={!isAnswered ? 'gray.2' : isCorrect ? 'teal.1' : 'red.1'}
+                              c={!isAnswered ? 'ink.6' : isCorrect ? 'teal.9' : 'red.9'}
                             >
-                              {item.globalIndex + 1}
-                            </span>
-                            <div>
+                              <Text size="xs" fw={700}>
+                                {item.globalIndex + 1}
+                              </Text>
+                            </ThemeIcon>
+                            <Stack gap={1}>
                               <Text size="sm" fw={600} c="navy.9" lineClamp={1}>
                                 {question.content}
                               </Text>
                               <Text size="xs" c="ink.5">
                                 {partTitle}
                               </Text>
-                            </div>
+                            </Stack>
                           </Group>
 
                           <Badge
@@ -341,55 +332,47 @@ export function ExamResultView({
                               const isCorrectOpt = opt.correct;
                               const letter = String.fromCharCode(65 + optIdx);
 
-                              let bg = 'var(--mantine-color-white)';
-                              let border = 'var(--mantine-color-ink-2)';
+                              let bg = 'white';
                               let badgeLabel = null;
 
                               if (isCorrectOpt) {
                                 bg = '#F0FDF4';
-                                border = '#86EFAC';
                                 badgeLabel = 'Đáp án đúng';
                               } else if (isUserChoice && !isCorrectOpt) {
                                 bg = '#FEF2F2';
-                                border = '#FCA5A5';
                                 badgeLabel = 'Lựa chọn của bạn';
                               }
 
                               return (
-                                <Box
+                                <Paper
                                   key={opt.id}
                                   p="xs"
-                                  style={{
-                                    borderRadius: 8,
-                                    backgroundColor: bg,
-                                    border: `1px solid ${border}`,
-                                  }}
+                                  radius="md"
+                                  withBorder
+                                  bg={bg}
                                 >
                                   <Flex justify="space-between" align="center">
                                     <Group gap="sm">
-                                      <span
-                                        style={{
-                                          width: 22,
-                                          height: 22,
-                                          borderRadius: '50%',
-                                          display: 'inline-flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                          backgroundColor: isCorrectOpt
-                                            ? '#16A34A'
+                                      <ThemeIcon
+                                        size={22}
+                                        radius="xl"
+                                        color={
+                                          isCorrectOpt
+                                            ? 'teal.7'
                                             : isUserChoice
-                                            ? '#DC2626'
-                                            : 'var(--mantine-color-ink-2)',
-                                          color:
-                                            isCorrectOpt || isUserChoice
-                                              ? 'var(--mantine-color-white)'
-                                              : 'var(--mantine-color-ink-7)',
-                                          fontSize: 12,
-                                          fontWeight: 700,
-                                        }}
+                                            ? 'red.7'
+                                            : 'gray.2'
+                                        }
+                                        c={
+                                          isCorrectOpt || isUserChoice
+                                            ? 'white'
+                                            : 'ink.7'
+                                        }
                                       >
-                                        {letter}
-                                      </span>
+                                        <Text size="xs" fw={700}>
+                                          {letter}
+                                        </Text>
+                                      </ThemeIcon>
                                       <Text size="sm" c="ink.8">
                                         {opt.content}
                                       </Text>
@@ -405,7 +388,7 @@ export function ExamResultView({
                                       </Badge>
                                     )}
                                   </Flex>
-                                </Box>
+                                </Paper>
                               );
                             })}
                           </Stack>

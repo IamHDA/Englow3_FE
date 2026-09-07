@@ -5,11 +5,14 @@ import {
   Box,
   Button,
   Card,
+  Divider,
   Flex,
   Group,
   Radio,
   Stack,
   Text,
+  ThemeIcon,
+  UnstyledButton,
 } from '@mantine/core';
 import {
   ArrowLeft,
@@ -126,9 +129,11 @@ export function QuestionCard({
         {/* Question Item Header */}
         <Group justify="space-between" align="center">
           <Group gap="xs">
-            <span className={classes.questionNumberBadge}>
-              {questionIndex + 1}
-            </span>
+            <ThemeIcon size={26} radius="xl" color="navy.9">
+              <Text size="xs" fw={700} c="white">
+                {questionIndex + 1}
+              </Text>
+            </ThemeIcon>
             <Text size="xs" c="ink.5" fw={600}>
               Câu {questionIndex + 1} / {totalQuestions}
             </Text>
@@ -149,7 +154,7 @@ export function QuestionCard({
 
         {/* Question Prompt */}
         <Box>
-          <Text fw={600} size="md" c="navy.9" style={{ lineHeight: 1.5 }}>
+          <Text fw={600} size="md" c="navy.9" lh={1.5}>
             {question.content}
           </Text>
         </Box>
@@ -166,20 +171,24 @@ export function QuestionCard({
                 const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
 
                 return (
-                  <Box
+                  <UnstyledButton
                     key={option.id}
                     onClick={() => onSelectOption(option.id)}
                     p="sm"
                     className={isSelected ? classes.optionItemSelected : classes.optionItem}
+                    style={{ width: '100%', borderRadius: 8, display: 'block' }}
                   >
                     <Flex align="center" gap="md">
-                      <span
-                        className={
-                          isSelected ? classes.optionLetterSelected : classes.optionLetter
-                        }
+                      <ThemeIcon
+                        size={26}
+                        radius="xl"
+                        color={isSelected ? 'navy.9' : 'gray.2'}
+                        c={isSelected ? 'white' : 'ink.8'}
                       >
-                        {letter}
-                      </span>
+                        <Text size="xs" fw={700}>
+                          {letter}
+                        </Text>
+                      </ThemeIcon>
                       <Text
                         size="sm"
                         c={isSelected ? 'navy.9' : 'ink.8'}
@@ -189,15 +198,17 @@ export function QuestionCard({
                         {option.content}
                       </Text>
                     </Flex>
-                  </Box>
+                  </UnstyledButton>
                 );
               })}
             </Stack>
           </Radio.Group>
         </Stack>
 
+        <Divider color="gray.2" />
+
         {/* Navigation Action Buttons */}
-        <Group justify="space-between" pt="md" style={{ borderTop: '1px solid var(--mantine-color-ink-2)' }}>
+        <Group justify="space-between">
           <Button
             variant="default"
             radius="xl"

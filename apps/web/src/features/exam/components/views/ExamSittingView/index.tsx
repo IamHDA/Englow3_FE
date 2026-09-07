@@ -252,7 +252,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
   // 2. Active Sitting Mode
   return (
-    <Box bg="ink.0" style={{ minHeight: '100vh', paddingBottom: 60 }}>
+    <Box bg="ink.0" mih="100vh" pb={60}>
       {/* Sticky Timer & Examination Header */}
       <ExamSittingHeader
         title={paper.title}

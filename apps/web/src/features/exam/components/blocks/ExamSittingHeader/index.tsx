@@ -4,9 +4,11 @@ import React from 'react';
 import {
   Box,
   Button,
+  Divider,
   Flex,
   Group,
   Progress,
+  Stack,
   Text,
 } from '@mantine/core';
 import { Clock, Send, AlertTriangle } from 'lucide-react';
@@ -56,15 +58,15 @@ export function ExamSittingHeader({
             >
               Thoát
             </Button>
-            <Box className={classes.divider} />
-            <div>
+            <Divider orientation="vertical" />
+            <Stack gap={1}>
               <Text fw={700} size="sm" c="navy.9" lineClamp={1}>
                 {title}
               </Text>
               <Text size="xs" c="ink.5" fw={600}>
                 {sectionTitle}
               </Text>
-            </div>
+            </Stack>
           </Group>
 
           {/* Center: Live Timer */}
@@ -91,7 +93,7 @@ export function ExamSittingHeader({
 
           {/* Right: Progress and Submit CTA */}
           <Group gap="md">
-            <Box style={{ width: 140 }}>
+            <Box w={140}>
               <Flex justify="space-between" mb={2}>
                 <Text size="xs" c="ink.5" fw={600}>
                   Tiến độ

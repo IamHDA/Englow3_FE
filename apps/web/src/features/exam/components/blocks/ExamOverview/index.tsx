@@ -3,11 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import {
+  Badge,
   Box,
   Button,
   Card,
   Flex,
   Group,
+  Paper,
   SimpleGrid,
   Stack,
   Text,
@@ -54,10 +56,14 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
     <Box py="xl" px={{ base: 'md', md: 'xl' }} maw={1100} mx="auto">
       {/* Breadcrumb Navigation */}
       <Flex align="center" gap="xs" mb="lg">
-        <Link href="/mock-test" className={classes.breadcrumbLink}>
+        <Text
+          component={Link}
+          href="/mock-test"
+          className={classes.breadcrumbLink}
+        >
           <ArrowLeft size={16} />
-          <span>Thư viện đề</span>
-        </Link>
+          Thư viện đề
+        </Text>
         <Text c="ink.3" size="sm">
           /
         </Text>
@@ -79,18 +85,18 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
             <Stack gap={6}>
               <Group gap="xs">
                 {paper.certificateType && (
-                  <span className={classes.badgeNavy}>
+                  <Badge color="navy" variant="light" size="md" radius="sm">
                     {paper.certificateType}{' '}
                     {paper.certificateVariant ? paper.certificateVariant : ''}
-                  </span>
+                  </Badge>
                 )}
                 {paper.targetLevel && (
-                  <span className={classes.badgeOrange}>
+                  <Badge color="orange" variant="light" size="md" radius="sm">
                     Level {paper.targetLevel}
-                  </span>
+                  </Badge>
                 )}
               </Group>
-              <Title order={1} c="navy.9" style={{ fontSize: 28, letterSpacing: '-0.02em' }}>
+              <Title order={1} size="h2" c="navy.9" lh={1.2} style={{ letterSpacing: '-0.02em' }}>
                 {paper.title}
               </Title>
               <Text c="ink.6" size="sm">
@@ -225,7 +231,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
           </Stack>
 
           {/* Guidelines Box */}
-          <Box p="md" className={classes.guidelinesBox}>
+          <Paper p="md" radius="md" withBorder className={classes.guidelinesBox}>
             <Group gap="xs" mb="xs">
               <AlertCircle size={18} color="var(--mantine-color-navy-9)" />
               <Text fw={700} size="sm" c="navy.9">
@@ -258,7 +264,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 </Text>
               </Flex>
             </Stack>
-          </Box>
+          </Paper>
 
           {/* Action CTA */}
           <Group justify="flex-end" pt="sm">
