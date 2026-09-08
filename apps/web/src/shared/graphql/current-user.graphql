@@ -1,8 +1,20 @@
 query CurrentUser {
   me {
     id
+    email
+    fullName
     displayName
+    gender
+    birthDate
     avatarUrl
+    bannerUrl
     onboardingStep
+    onboardingState {
+      currentLevel
+      targetCertificateType
+      targetScore
+      targetDate
+      targetSkills
+    }
   }
 }

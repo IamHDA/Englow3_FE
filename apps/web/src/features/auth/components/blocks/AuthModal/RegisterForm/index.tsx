@@ -20,12 +20,13 @@ import { z } from "zod";
 
 import {
   BIRTH_DAY_OPTIONS,
-  BIRTH_MONTH_OPTIONS,
   BIRTH_YEAR_OPTIONS,
-  GENDER_OPTIONS,
+  getBirthMonthOptions,
+  getGenderOptions,
 } from "@/features/auth/constants/authOptions";
 import { Gender } from "@/lib/graphql/generated";
 import { supabase } from "@/lib/supabase/client";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
 
@@ -79,6 +80,10 @@ type RegisterFormProps = {
 
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const router = useRouter();
+  const { t } = useLanguage();
+  const birthMonthOptions = getBirthMonthOptions(t);
+  const genderOptions = getGenderOptions(t);
+
   const {
     register,
     handleSubmit,
@@ -140,8 +145,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       <SimpleGrid cols={2} spacing={14}>
         <TextInput
           {...register("fullName")}
-          label="Họ và tên"
-          placeholder="Nguyễn Văn A"
+          label={t.auth.fullNameLabel}
+          placeholder={t.auth.fullNamePlaceholder}
           error={errors.fullName?.message}
           classNames={{ label: classes.label, input: classes.input }}
         />
@@ -149,11 +154,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           {...register("nickname")}
           label={
             <>
-              Nickname
-              <span className={classes.labelHint}>hiển thị công khai</span>
+              {t.auth.nicknameLabel}
+              <span className={classes.labelHint}>{t.auth.nicknameHint}</span>
             </>
           }
-          placeholder="vana"
+          placeholder={t.auth.nicknamePlaceholder}
           error={errors.nickname?.message}
           classNames={{ label: classes.label, input: classes.input }}
         />
@@ -161,8 +166,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <TextInput
         {...register("email")}
-        label="Email"
-        placeholder="example@example.com"
+        label={t.auth.emailLabel}
+        placeholder={t.auth.emailPlaceholder}
         error={errors.email?.message}
         classNames={{ label: classes.label, input: classes.input }}
       />
@@ -171,13 +176,13 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         {...register("password")}
         label={
           <>
-            Mật khẩu
+            {t.auth.passwordLabel}
             <span className={classes.labelHint}>
-              8+ ký tự, hoa, thường, ký tự đặc biệt
+              {t.auth.passwordRegisterHint}
             </span>
           </>
         }
-        placeholder="Tạo mật khẩu"
+        placeholder={t.auth.createPasswordPlaceholder}
         error={errors.password?.message}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
@@ -191,27 +196,27 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <Stack gap={8}>
         <Text className={classes.label} component="span">
-          Ngày sinh
+          {t.auth.birthDateLabel}
         </Text>
         <SimpleGrid cols={3} spacing={10}>
           <NativeSelect
             {...register("birthDay")}
-            aria-label="Ngày sinh - ngày"
-            data={[{ value: "", label: "Ngày" }, ...BIRTH_DAY_OPTIONS]}
+            aria-label={`${t.auth.birthDateLabel} - ${t.auth.dayLabel}`}
+            data={[{ value: "", label: t.auth.dayLabel }, ...BIRTH_DAY_OPTIONS]}
             error={!!errors.birthDay}
             classNames={{ input: classes.input }}
           />
           <NativeSelect
             {...register("birthMonth")}
-            aria-label="Ngày sinh - tháng"
-            data={[{ value: "", label: "Tháng" }, ...BIRTH_MONTH_OPTIONS]}
+            aria-label={`${t.auth.birthDateLabel} - ${t.auth.monthLabel}`}
+            data={[{ value: "", label: t.auth.monthLabel }, ...birthMonthOptions]}
             error={!!errors.birthMonth}
             classNames={{ input: classes.input }}
           />
           <NativeSelect
             {...register("birthYear")}
-            aria-label="Ngày sinh - năm"
-            data={[{ value: "", label: "Năm" }, ...BIRTH_YEAR_OPTIONS]}
+            aria-label={`${t.auth.birthDateLabel} - ${t.auth.yearLabel}`}
+            data={[{ value: "", label: t.auth.yearLabel }, ...BIRTH_YEAR_OPTIONS]}
             error={!!errors.birthYear}
             classNames={{ input: classes.input }}
           />
@@ -225,8 +230,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <NativeSelect
         {...register("gender")}
-        label="Giới tính"
-        data={GENDER_OPTIONS}
+        label={t.auth.genderLabel}
+        data={genderOptions}
         classNames={{ label: classes.label, input: classes.input }}
       />
 
@@ -236,15 +241,15 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         error={errors.acceptedTerms?.message}
         label={
           <Text size="sm" c="ink.7" component="span">
-            Tôi đồng ý với{" "}
+            {t.auth.termsAgreementPre}{" "}
             <Text component="span" fw={600} c="navy.9">
-              Điều khoản sử dụng
+              {t.auth.termsOfService}
             </Text>{" "}
-            và{" "}
+            {t.auth.andWord}{" "}
             <Text component="span" fw={600} c="navy.9">
-              Chính sách bảo mật
-            </Text>{" "}
-            của Englow3.
+              {t.auth.privacyPolicy}
+            </Text>
+            {t.auth.termsAgreementPost ? ` ${t.auth.termsAgreementPost}` : "."}
           </Text>
         }
       />
@@ -258,7 +263,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         fz={16}
         fw={700}
       >
-        Tạo tài khoản
+        {t.auth.createAccountSubmit}
       </Button>
     </Flex>
   );

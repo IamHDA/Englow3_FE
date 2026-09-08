@@ -15,15 +15,16 @@ import {
 import { Check, ChevronDown, Search, X } from "lucide-react";
 
 import {
-  DIFFICULTY_OPTIONS,
-  EXAM_TYPE_TABS,
-  SKILL_OPTIONS,
-  SORT_OPTIONS,
-  STATUS_OPTIONS,
+  getDifficultyOptions,
+  getExamTypeTabs,
+  getSkillOptions,
+  getSortOptions,
+  getStatusOptions,
   type SortKey,
 } from "../../../constants/examLibrary";
 import type { ExamFiltersState } from "../../../types";
 import type { TargetLevel } from "@/lib/graphql/generated/schemaTypes";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 type ExamFiltersProps = {
   filters: ExamFiltersState;
@@ -38,6 +39,24 @@ export function ExamFilters({
   onResetFilters,
   totalItems,
 }: ExamFiltersProps) {
+  const { t, isVi } = useLanguage();
+
+  const examTypeTabs = getExamTypeTabs(t.exam.tabAll);
+  const skillOptions = getSkillOptions(t.exam.skillAll);
+  const difficultyOptions = getDifficultyOptions(t.exam.diffAll, isVi);
+  const statusOptions = getStatusOptions(
+    t.exam.statusAll,
+    t.exam.notStarted,
+    t.exam.inProgress,
+    t.exam.completed,
+  );
+  const sortOptions = getSortOptions(
+    t.exam.sortNewest,
+    t.exam.sortLevelAsc,
+    t.exam.sortLevelDesc,
+    t.exam.sortScoreDesc,
+  );
+
   const isFiltered =
     Boolean(filters.searchQuery) ||
     filters.tabId !== "all" ||
@@ -46,26 +65,25 @@ export function ExamFilters({
     filters.attemptStatus !== "ALL";
 
   const currentSortLabel =
-    SORT_OPTIONS.find((s) => s.value === filters.sortBy)?.label ?? "Mới nhất";
+    sortOptions.find((s) => s.value === filters.sortBy)?.label ?? t.exam.sortNewest;
 
   const currentSkillLabel =
-    SKILL_OPTIONS.find((s) => s.value === filters.skill)?.label ??
-    "Kỹ năng: Tất cả";
+    skillOptions.find((s) => s.value === filters.skill)?.label ?? t.exam.skillAll;
 
   const currentDiffLabel =
-    DIFFICULTY_OPTIONS.find((s) => s.value === filters.targetLevel)?.label ??
-    "Độ khó: Tất cả";
+    difficultyOptions.find((s) => s.value === filters.targetLevel)?.label ??
+    t.exam.diffAll;
 
   const currentStatusLabel =
-    STATUS_OPTIONS.find((s) => s.value === filters.attemptStatus)?.label ??
-    "Trạng thái: Tất cả";
+    statusOptions.find((s) => s.value === filters.attemptStatus)?.label ??
+    t.exam.statusAll;
 
   return (
     <Paper radius="lg" p="md" withBorder bg="white" shadow="xs">
       <Flex justify="space-between" align="center" wrap="wrap" gap="md">
         <Box style={{ flex: "1 1 260px" }}>
           <TextInput
-            placeholder="Tìm theo tên đề hoặc bộ đề…"
+            placeholder={t.exam.searchPlaceholder}
             value={filters.searchQuery}
             onChange={(e) =>
               onFilterChange({ searchQuery: e.currentTarget.value, page: 0 })
@@ -75,7 +93,7 @@ export function ExamFilters({
               filters.searchQuery ? (
                 <UnstyledButton
                   onClick={() => onFilterChange({ searchQuery: "", page: 0 })}
-                  aria-label="Xoá từ khoá tìm kiếm"
+                  aria-label={t.exam.clearSearchAria}
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <X size={14} />
@@ -92,7 +110,7 @@ export function ExamFilters({
           onChange={(val) => onFilterChange({ tabId: val || "all", page: 0 })}
         >
           <Tabs.List>
-            {EXAM_TYPE_TABS.map((tab) => (
+            {examTypeTabs.map((tab) => (
               <Tabs.Tab key={tab.id} value={tab.id}>
                 {tab.name}
               </Tabs.Tab>
@@ -102,7 +120,7 @@ export function ExamFilters({
 
         <Group gap="xs">
           <Text size="xs" c="dimmed" fw={600}>
-            Sắp xếp:
+            {t.exam.sortByLabel}
           </Text>
           <Menu shadow="md" width={200} position="bottom-end">
             <Menu.Target>
@@ -116,7 +134,7 @@ export function ExamFilters({
               </Button>
             </Menu.Target>
             <Menu.Dropdown>
-              {SORT_OPTIONS.map((opt) => (
+              {sortOptions.map((opt) => (
                 <Menu.Item
                   key={opt.value}
                   onClick={() =>
@@ -153,7 +171,7 @@ export function ExamFilters({
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            {SKILL_OPTIONS.map((opt) => (
+            {skillOptions.map((opt) => (
               <Menu.Item
                 key={opt.value}
                 onClick={() => onFilterChange({ skill: opt.value, page: 0 })}
@@ -185,7 +203,7 @@ export function ExamFilters({
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            {DIFFICULTY_OPTIONS.map((opt) => (
+            {difficultyOptions.map((opt) => (
               <Menu.Item
                 key={opt.value}
                 onClick={() =>
@@ -222,7 +240,7 @@ export function ExamFilters({
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            {STATUS_OPTIONS.map((opt) => (
+            {statusOptions.map((opt) => (
               <Menu.Item
                 key={opt.value}
                 onClick={() =>
@@ -251,12 +269,12 @@ export function ExamFilters({
             leftSection={<X size={14} aria-hidden="true" />}
             onClick={onResetFilters}
           >
-            Xoá bộ lọc
+            {t.exam.clearFilters}
           </Button>
         ) : null}
 
         <Text size="xs" c="dimmed" fw={600} ml="auto">
-          {totalItems} đề thi
+          {totalItems} {t.exam.examsCountUnit}
         </Text>
       </Flex>
     </Paper>

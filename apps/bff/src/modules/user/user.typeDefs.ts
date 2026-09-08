@@ -26,7 +26,18 @@ export const userTypeDefs = `#graphql
     onboardingStep: OnboardingStep!
   }
 
+  input UpdateProfileInput {
+    fullName: String!
+    displayName: String!
+    gender: Gender
+    birthDate: Date
+  }
+
   extend type Query {
     me: Me!
+  }
+
+  extend type Mutation {
+    updateProfile(input: UpdateProfileInput!): Me!
   }
 `;

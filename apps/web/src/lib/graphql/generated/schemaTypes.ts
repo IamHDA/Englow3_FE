@@ -237,6 +237,7 @@ export type Mutation = {
    * extensions.backendCode on the error (e.g. EXAM_SCORE_MISMATCH).
    */
   publishExam: Exam;
+  updateProfile: Me;
 };
 
 
@@ -247,6 +248,11 @@ export type MutationArchiveExamArgs = {
 
 export type MutationPublishExamArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateProfileInput;
 };
 
 export type OnboardingState = {
@@ -338,3 +344,10 @@ export enum TargetLevel {
   C1 = 'C1',
   C2 = 'C2'
 }
+
+export type UpdateProfileInput = {
+  birthDate?: InputMaybe<Scalars['Date']['input']>;
+  displayName: Scalars['String']['input'];
+  fullName: Scalars['String']['input'];
+  gender?: InputMaybe<Gender>;
+};

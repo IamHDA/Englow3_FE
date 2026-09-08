@@ -20,11 +20,13 @@ import { Fragment, type ReactNode } from "react";
 import { useAccountProfile } from "@/features/account";
 import { useAuth } from "@/features/auth";
 import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
+import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import {
-  primaryLinks,
+  getPrimaryLinks,
+  getStudyLinks,
   studyIcon as StudyIcon,
-  studyLinks,
 } from "@/shared/constants/navigation";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
@@ -48,6 +50,10 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const [drawerOpened, drawer] = useDisclosure(false);
   const pathname = usePathname();
   const isStudyActive = isLinkActive(pathname, "/study");
+  const { t } = useLanguage();
+
+  const studyLinks = getStudyLinks(t.nav);
+  const primaryLinks = getPrimaryLinks(t.nav);
 
   // Hai nguồn tách biệt: `session` quyết định hiện nút đăng nhập hay menu tài
   // khoản, `profile` chỉ lo tên và avatar. BFF hỏng thì mất tên chứ không đá
@@ -55,7 +61,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const { session } = useAuth();
   const { profile } = useAccountProfile();
   const accountName =
-    profile?.displayName ?? session?.email ?? ACCOUNT_FALLBACK_NAME;
+    profile?.displayName ?? session?.email ?? (t.nav.account || ACCOUNT_FALLBACK_NAME);
 
   // Chặn điều hướng tới các trang chức năng khi chưa onboarding xong; nút nhắc
   // ở header dùng `requiresOnboarding` trực tiếp để quyết định có hiện không.
@@ -89,7 +95,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                   data-active={isStudyActive || undefined}
                 >
                   <StudyIcon aria-hidden="true" size={16} strokeWidth={2.5} />
-                  Học tập
+                  {t.nav.study}
                   <ChevronDown
                     aria-hidden="true"
                     size={16}
@@ -145,8 +151,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
           </Group>
         </Group>
 
-        <Group gap={4} wrap="nowrap">
+        <Group gap={8} wrap="nowrap">
           <Group visibleFrom="md" gap={12}>
+            <LanguageSwitcher />
             {session ? (
               <>
                 {requiresOnboarding ? <SiteHeaderOnboardingButton /> : null}
@@ -177,7 +184,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         title="Menu"
         hiddenFrom="md"
       >
-        <Stack gap={2}>
+        <Stack gap={10}>
+          <LanguageSwitcher fullWidth />
+
           {studyLinks.map(({ icon: Icon, ...link }) => (
             <Link
               key={link.href}

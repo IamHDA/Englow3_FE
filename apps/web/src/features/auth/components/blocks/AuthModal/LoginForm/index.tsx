@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { forgetSessionOnBrowserClose, supabase } from "@/lib/supabase/client";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
 
@@ -34,6 +35,7 @@ type LoginFormProps = {
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -117,16 +119,16 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     >
       <TextInput
         {...register("email")}
-        label="Email"
-        placeholder="example@example.com"
+        label={t.auth.emailLabel}
+        placeholder={t.auth.emailPlaceholder}
         error={errors.email?.message}
         classNames={{ label: classes.label, input: classes.input }}
       />
 
       <PasswordInput
         {...register("password")}
-        label="Mật khẩu"
-        placeholder="Nhập mật khẩu của bạn"
+        label={t.auth.passwordLabel}
+        placeholder={t.auth.passwordPlaceholder}
         error={errors.password?.message}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
@@ -141,7 +143,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       <Group justify="space-between" wrap="nowrap">
         <Checkbox
           {...register("rememberMe")}
-          label="Ghi nhớ đăng nhập"
+          label={t.auth.rememberMe}
           color="navy.9"
           size="xs"
         />
@@ -152,7 +154,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           c="navy.9"
           onClick={() => handleForgotPassword()}
         >
-          Quên mật khẩu?
+          {t.auth.forgotPassword}
         </UnstyledButton>
       </Group>
 
@@ -165,7 +167,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         fz={16}
         fw={700}
       >
-        Đăng nhập
+        {t.auth.loginSubmit}
       </Button>
     </Flex>
   );

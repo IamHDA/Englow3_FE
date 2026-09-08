@@ -15,6 +15,7 @@ import {
 } from "@mantine/core";
 
 import { useExamLibraryQuery } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import { ExamCard } from "../../blocks/ExamCard";
 import { ExamEmptyState } from "../../blocks/ExamEmptyState";
 import { ExamFilters } from "../../blocks/ExamFilters";
@@ -31,6 +32,7 @@ import type {
 const PAGE_SIZE = 8;
 
 export function ExamLibraryView() {
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<ExamFiltersState>({
     searchQuery: "",
     tabId: "all",
@@ -131,14 +133,13 @@ export function ExamLibraryView() {
               lts="0.12em"
               c="orange.6"
             >
-              Mock Test · Thư viện đề
+              {t.exam.mockTestBadge}
             </Text>
             <Title order={1} size="h1" c="navy.9" lh={1.15} style={{ letterSpacing: "-0.02em" }}>
-              Thư viện đề thi
+              {t.exam.title}
             </Title>
             <Text size="sm" c="dimmed" lh={1.6}>
-              Chọn đề thi đầy đủ bấm giờ chuẩn kỳ thi quốc tế ETS &amp; IELTS,
-              hoặc đề theo từng kỹ năng để ôn luyện tập trung.
+              {t.exam.subtitle}
             </Text>
           </Stack>
 
@@ -148,7 +149,7 @@ export function ExamLibraryView() {
                 {totalItems}
               </Text>
               <Text size="xs" c="dimmed">
-                Bộ đề thi thật
+                {t.exam.officialExamsUnit}
               </Text>
             </Stack>
             <Stack gap={2} align="flex-end">
@@ -156,7 +157,7 @@ export function ExamLibraryView() {
                 100%
               </Text>
               <Text size="xs" c="dimmed">
-                Chấm tự động
+                {t.exam.autoGradingLabel}
               </Text>
             </Stack>
             <Stack gap={2} align="flex-end">
@@ -164,7 +165,7 @@ export function ExamLibraryView() {
                 AI
               </Text>
               <Text size="xs" c="dimmed">
-                Phân tích điểm
+                {t.exam.aiAnalysisLabel}
               </Text>
             </Stack>
           </Group>
@@ -185,7 +186,7 @@ export function ExamLibraryView() {
           <Center py={64}>
             <Stack align="center" gap="sm">
               <Text c="red.6" fw={600}>
-                Không thể tải danh sách đề thi: {error.message}
+                {t.exam.loadListError}: {error.message}
               </Text>
               <Button
                 variant="filled"
@@ -194,7 +195,7 @@ export function ExamLibraryView() {
                 size="sm"
                 onClick={() => refetch()}
               >
-                Thử lại
+                {t.common.retry}
               </Button>
             </Stack>
           </Center>
@@ -215,7 +216,10 @@ export function ExamLibraryView() {
             {totalPages > 1 ? (
               <Group justify="space-between" align="center" pt="md" wrap="wrap" gap="md">
                 <Text size="sm" c="dimmed">
-                  Hiển thị {startItem} - {endItem} của {totalItems} đề thi
+                  {t.exam.showingRange
+                    .replace("{start}", String(startItem))
+                    .replace("{end}", String(endItem))
+                    .replace("{total}", String(totalItems))}
                 </Text>
 
                 <Pagination

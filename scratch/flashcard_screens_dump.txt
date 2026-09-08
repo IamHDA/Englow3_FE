@@ -1,0 +1,244 @@
+============================== FLASHCARD ==============================
+Screen IDs: ['1a', '1b', '1c', '1d', '1e', '1f']
+
+------------------- SCREEN 1a -------------------
+1a
+Dashboard
+hôm nay học gì · tiến độ ra sao
+Study
+Mock Test
+AI Tutor
+MA
+Minh Anh
+Study
+Flashcard
+Dashboard
+Flashcard Sets
+Statistics
+24 cards due today
+Good morning, Minh Anh
+Ready for today's review?
+Due today
+24 flashcards
+Start Review
+{{ s.value }}
+{{ s.label }}
+Continue Learning
+All sets
+{{ r.name }}
+{{ r.topic }}
+{{ r.total }} cards
+{{ r.pct }}%
+{{ r.due }}
+cards due today
+Continue
+Weekly Activity
+243
+cards studied
+1h 52m
+study time
+87%
+accuracy
+{{ d.n }}
+{{ d.day }}
+Needs Attention
+Những thẻ bạn hay quên hoặc đánh giá "Hard".
+{{ a.word }}
+{{ a.set }}
+{{ a.miss }}× forgot
+Review these first
+
+------------------- SCREEN 1b -------------------
+1b
+Flashcard Sets
+bấm nút Grid / List để đổi cách hiển thị
+Study
+Mock Test
+AI Tutor
+MA
+Minh Anh
+Study
+Flashcard
+Dashboard
+Flashcard Sets
+Statistics
+24 cards due today
+Your Flashcard Sets
+New Flashcard Set
+{{ t.label }}
+Recently studied
+Name
+Progress
+Number of cards
+Recent
+{{ s.name }}
+{{ s.topic }}
+{{ s.total }} cards
+{{ s.pct }}% mastered
+{{ s.due }} due
+Last studied: {{ s.last }}
+Study
+View cards
+All sets
+{{ s.name }}
+{{ s.topic }}
+{{ s.total }} cards
+{{ s.pct }}% mastered
+{{ s.due }} due
+Last studied: {{ s.last }}
+Study
+View cards
+Set
+Topic
+Cards
+Progress
+Last studied
+{{ s.name }}
+{{ s.due }} due
+{{ s.topic }}
+{{ s.total }}
+{{ s.pct }}%
+{{ s.last }}
+Study
+
+------------------- SCREEN 1c -------------------
+1c
+Set Detail
+danh sách thẻ trong bộ
+Study
+Mock Test
+AI Tutor
+MA
+Minh Anh
+Study
+Flashcard
+Dashboard
+Flashcard Sets
+Statistics
+24 cards due today
+Flashcard Sets
+IELTS Vocabulary
+English
+Academic word list cho phần Reading và Writing của IELTS. Mỗi thẻ có phiên âm, nghĩa tiếng Việt, câu ví dụ và collocation đi kèm.
+Study Now
+Add Card
+{{ s.value }}
+{{ s.label }}
+120 cards
+Front
+Back
+Status
+Last reviewed
+Actions
+{{ c.front }}
+{{ c.back }}
+{{ c.status }}
+{{ c.last }}
+
+------------------- SCREEN 1d -------------------
+1d
+Study Screen
+bấm thẻ hoặc Space để lật · không sidebar, không distraction
+IELTS Vocabulary
+Card
+12
+/ 30
+abandon
+/əˈbændən/
+Pronunciation
+abandon
+Verb
+/əˈbændən/
+“To leave someone or something permanently.”
+Vietnamese meaning
+“Từ bỏ, bỏ rơi”
+Example
+“He
+abandoned
+the project after several unsuccessful attempts.”
+Note
+Đừng nhầm với
+abundant
+(dồi dào).
+{{ flipHint }}
+{{ r.key }}
+{{ r.label }}
+{{ r.desc }}
+{{ r.next }}
+Edit card
+Favorite
+Report mistake
+Space
+flip
+1
+Again
+2
+Hard
+3
+Good
+4
+Easy
+
+------------------- SCREEN 1e -------------------
+1e
+Session Summary
+hiện khi hết thẻ trong phiên
+Session Complete
+30 cards reviewed · IELTS Vocabulary
+Accuracy
+87%
+Study time
+8m 32s
+Breakdown
+{{ b.n }}
+{{ b.label }}
+Review mistakes
+Back to Dashboard
+
+------------------- SCREEN 1f -------------------
+1f
+History & Statistics
+bấm 7 Days / 30 Days / 3 Months / All Time
+Study
+Mock Test
+AI Tutor
+MA
+Minh Anh
+Study
+Flashcard
+Dashboard
+Flashcard Sets
+Statistics
+24 cards due today
+Learning Statistics
+{{ p.label }}
+{{ s.value }}
+{{ s.label }}
+Study Activity
+cards reviewed per day
+{{ a.n }}
+{{ a.d }}
+Learning Progress
+{{ p.label }}
+{{ p.n }}
+Recall Performance
+{{ r.label }}
+{{ r.pct }}
+Most Difficult Cards
+Card
+Set
+Mistakes
+Last review
+{{ d.card }}
+{{ d.set }}
+{{ d.miss }}
+{{ d.last }}
+Review
+Study History
+{{ h.date }}
+{{ h.set }}
+{{ h.cards }}
+{{ h.recall }}
+{{ h.time }}
+Review Session
+

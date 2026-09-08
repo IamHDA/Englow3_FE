@@ -33,3 +33,11 @@ body > main {
   flex-direction: column;
   flex: 1;
 }
+
+/* Hide Next.js dev indicator badge & popup */
+nextjs-portal,
+[data-nextjs-dev-indicator],
+[data-next-badge] {
+  display: none !important;
+}
+

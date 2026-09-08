@@ -22,6 +22,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import type { ExamPaperQuery } from '@/lib/graphql/generated/hooks';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import classes from './QuestionCard.module.css';
 
 type ExamPaper = NonNullable<ExamPaperQuery['examPaper']>;
@@ -63,6 +64,7 @@ export function QuestionCard({
   hasPrev,
   hasNext,
 }: QuestionCardProps) {
+  const { t } = useLanguage();
   const isListening = section.sectionType.toUpperCase().includes('LISTEN');
 
   return (
@@ -83,7 +85,7 @@ export function QuestionCard({
               <Group gap={4}>
                 <Headphones size={14} color="var(--mantine-color-navy-9)" />
                 <Text size="xs" fw={600} c="navy.9">
-                  Phần Nghe
+                  {t.exam.listeningSection}
                 </Text>
               </Group>
             )}
@@ -118,7 +120,7 @@ export function QuestionCard({
                 <Group gap="xs">
                   <Volume2 size={18} color="var(--mantine-color-navy-9)" />
                   <Text size="xs" fw={600} c="navy.9">
-                    Audio bài nghe: {questionSet.audioObjectKey}
+                    {t.exam.audioStimulus} {questionSet.audioObjectKey}
                   </Text>
                 </Group>
               </Box>
@@ -135,7 +137,7 @@ export function QuestionCard({
               </Text>
             </ThemeIcon>
             <Text size="xs" c="ink.5" fw={600}>
-              Câu {questionIndex + 1} / {totalQuestions}
+              {t.exam.questionPrefix} {questionIndex + 1} / {totalQuestions}
             </Text>
           </Group>
 
@@ -148,7 +150,7 @@ export function QuestionCard({
             leftSection={<Flag size={14} />}
             onClick={onToggleFlag}
           >
-            {isFlagged ? 'Đã gắn cờ' : 'Gắn cờ'}
+            {isFlagged ? t.exam.flagged : t.exam.flag}
           </Button>
         </Group>
 
@@ -217,7 +219,7 @@ export function QuestionCard({
             onClick={onPrevQuestion}
             disabled={!hasPrev}
           >
-            Câu trước
+            {t.exam.prevQuestion}
           </Button>
           <Button
             radius="xl"
@@ -227,7 +229,7 @@ export function QuestionCard({
             disabled={!hasNext}
             className={classes.nextBtn}
           >
-            Câu tiếp theo
+            {t.exam.nextQuestion}
           </Button>
         </Group>
       </Stack>

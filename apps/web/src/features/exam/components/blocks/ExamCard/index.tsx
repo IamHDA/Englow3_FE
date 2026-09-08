@@ -2,6 +2,7 @@ import { Badge, Button, Card, Divider, Group, Stack, Text } from "@mantine/core"
 import { Clock, FileText, Play } from "lucide-react";
 import Link from "next/link";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import { CEFR_COLOR_MAP } from "../../../constants/examLibrary";
 import classes from "./ExamCard.module.css";
 
@@ -27,6 +28,7 @@ type ExamCardProps = {
 };
 
 export function ExamCard({ exam }: ExamCardProps) {
+  const { t } = useLanguage();
   const level = exam.targetLevel ?? "B1";
   const colors = CEFR_COLOR_MAP[level] ?? {
     bg: "#F1F5F9",
@@ -41,10 +43,10 @@ export function ExamCard({ exam }: ExamCardProps) {
   const isDone = exam.attemptStatus === "COMPLETED";
 
   const statusLabel = isDone
-    ? "Đã hoàn thành"
+    ? t.exam.completed
     : isStarted
-      ? "Đang làm dở"
-      : "Chưa làm";
+      ? t.exam.inProgress
+      : t.exam.notStarted;
   const statusBadgeColor = isDone ? "teal" : isStarted ? "yellow" : "gray";
 
   // Derive skill labels based on variant or certificate
@@ -56,13 +58,13 @@ export function ExamCard({ exam }: ExamCardProps) {
   } else if (exam.certificateType === "IELTS") {
     skills.push("Listening", "Reading", "Writing");
   } else {
-    skills.push("Tổng hợp");
+    skills.push(t.exam.generalSkill);
   }
 
   // Series label
   const seriesName = exam.certificateType
     ? `${exam.certificateType} ${exam.certificateVariant ?? ""}`.trim()
-    : "Đề thi thử";
+    : t.exam.mockTestFallback;
 
   return (
     <Card withBorder radius="lg" p="lg" className={classes.card}>
@@ -108,13 +110,13 @@ export function ExamCard({ exam }: ExamCardProps) {
           <Group gap={5}>
             <FileText size={14} aria-hidden="true" color="var(--mantine-color-gray-6)" />
             <Text size="xs" c="dimmed">
-              {exam.questionCount} câu
+              {exam.questionCount} {t.exam.questionsUnit}
             </Text>
           </Group>
           <Group gap={5}>
             <Clock size={14} aria-hidden="true" color="var(--mantine-color-gray-6)" />
             <Text size="xs" c="dimmed">
-              {durationMinutes} phút
+              {durationMinutes} {t.exam.minutesUnit}
             </Text>
           </Group>
         </Group>
@@ -123,19 +125,19 @@ export function ExamCard({ exam }: ExamCardProps) {
           <Stack gap={1}>
             <Text size="xs" c="dimmed">
               {exam.bestScore !== null && exam.bestScore !== undefined
-                ? "Điểm cao nhất"
-                : "Điểm tối đa"}
+                ? t.exam.bestScoreLabel
+                : t.exam.maxScoreLabel}
             </Text>
             <Text fw={700} size="sm" c="navy.9" style={{ fontVariantNumeric: "tabular-nums" }}>
               {exam.bestScore !== null && exam.bestScore !== undefined
                 ? `${exam.bestScore}/${exam.maxRawScore}`
-                : `${exam.maxRawScore} điểm`}
+                : `${exam.maxRawScore} ${t.exam.pointsUnit}`}
             </Text>
           </Stack>
 
           <Button
             component={Link}
-            href={`/mock-test/${exam.id}`}
+            href={`/exams/${exam.id}`}
             size="xs"
             radius="xl"
             color={isDone ? "gray" : isStarted ? "orange" : "blue"}
@@ -144,7 +146,7 @@ export function ExamCard({ exam }: ExamCardProps) {
               <Play size={12} fill="currentColor" aria-hidden="true" />
             }
           >
-            {isDone ? "Làm lại" : isStarted ? "Làm tiếp" : "Bắt đầu làm bài"}
+            {isDone ? t.exam.retakeAction : isStarted ? t.exam.continueAction : t.exam.startAction}
           </Button>
         </Group>
       </Stack>

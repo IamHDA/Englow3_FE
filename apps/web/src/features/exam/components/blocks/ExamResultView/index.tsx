@@ -27,6 +27,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import type { ExamPaperQuery } from '@/lib/graphql/generated/hooks';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import type { FlatQuestionItem } from '../QuestionPalette';
 import classes from './ExamResultView.module.css';
 
@@ -47,6 +48,7 @@ export function ExamResultView({
   timeSpentSeconds,
   onRetake,
 }: ExamResultViewProps) {
+  const { t } = useLanguage();
   const [filterTab, setFilterTab] = useState<string>('all');
 
   // Build a lookup map of all questions in paper
@@ -116,7 +118,7 @@ export function ExamResultView({
 
   const minutes = Math.floor(timeSpentSeconds / 60);
   const seconds = timeSpentSeconds % 60;
-  const timeFormatted = `${minutes} phút ${seconds.toString().padStart(2, '0')} giây`;
+  const timeFormatted = `${minutes} ${t.exam.minutesText} ${seconds.toString().padStart(2, '0')} ${t.exam.secondsText}`;
 
   const filteredQuestions = evaluatedQuestions.filter((eq) => {
     if (filterTab === 'correct') return eq.isCorrect;
@@ -132,17 +134,17 @@ export function ExamResultView({
         <Flex align="center" gap="xs">
           <Text
             component={Link}
-            href="/mock-test"
+            href="/exams"
             className={classes.breadcrumbLink}
           >
             <ArrowLeft size={16} />
-            Thư viện đề
+            {t.exam.backToLibrary}
           </Text>
           <Text c="ink.3" size="sm">
             /
           </Text>
           <Text c="navy.9" size="sm" fw={600}>
-            Kết quả: {paper.title}
+            {t.exam.resultTitlePrefix} {paper.title}
           </Text>
         </Flex>
 
@@ -157,7 +159,7 @@ export function ExamResultView({
             <Group justify="space-between" align="flex-start">
               <Stack gap={4}>
                 <Badge color="navy" variant="light" size="lg" radius="xl" mb={4}>
-                  Hoàn thành bài thi
+                  {t.exam.finishedBadge}
                 </Badge>
                 <Title order={1} size="h2" c="navy.9" fw={700}>
                   {paper.title}
@@ -173,16 +175,16 @@ export function ExamResultView({
                   leftSection={<RotateCcw size={16} />}
                   onClick={onRetake}
                 >
-                  Làm lại
+                  {t.exam.retakeCTA}
                 </Button>
                 <Button
                   component={Link}
-                  href="/mock-test"
+                  href="/exams"
                   radius="xl"
                   size="sm"
                   className={classes.libraryBtn}
                 >
-                  Thư viện đề
+                  {t.exam.backToLibrary}
                 </Button>
               </Group>
             </Group>
@@ -193,14 +195,14 @@ export function ExamResultView({
                 <Group gap="xs" mb={4}>
                   <Award size={20} color="var(--mantine-color-navy-9)" />
                   <Text size="xs" fw={700} c="navy.9">
-                    Điểm số ước tính
+                    {t.exam.estimatedScore}
                   </Text>
                 </Group>
                 <Text size="xl" fw={800} c="navy.9">
                   {scaledScore} / {paper.maxRawScore}
                 </Text>
                 <Text size="xs" c="navy.7">
-                  Độ chính xác: {accuracyPercent}%
+                  {t.exam.accuracyRate} {accuracyPercent}%
                 </Text>
               </Card>
 
@@ -208,14 +210,14 @@ export function ExamResultView({
                 <Group gap="xs" mb={4}>
                   <CheckCircle2 size={20} color="#16A34A" />
                   <Text size="xs" fw={700} c="green.9">
-                    Số câu đúng
+                    {t.exam.correctAnswersCount}
                   </Text>
                 </Group>
                 <Text size="xl" fw={800} c="green.9">
                   {correctCount}
                 </Text>
                 <Text size="xs" c="green.7">
-                  Trên tổng {totalQuestions} câu
+                  {t.exam.outOfTotal.replace('{total}', String(totalQuestions))}
                 </Text>
               </Card>
 
@@ -223,14 +225,14 @@ export function ExamResultView({
                 <Group gap="xs" mb={4}>
                   <XCircle size={20} color="#D9483B" />
                   <Text size="xs" fw={700} c="warn.9">
-                    Số câu sai
+                    {t.exam.incorrectAnswersCount}
                   </Text>
                 </Group>
                 <Text size="xl" fw={800} c="warn.9">
                   {incorrectCount}
                 </Text>
                 <Text size="xs" c="warn.7">
-                  Cần xem lại giải thích
+                  {t.exam.reviewNeeded}
                 </Text>
               </Card>
 
@@ -238,14 +240,14 @@ export function ExamResultView({
                 <Group gap="xs" mb={4}>
                   <Clock size={20} color="var(--mantine-color-ink-7)" />
                   <Text size="xs" fw={700} c="ink.7">
-                    Thời gian làm
+                    {t.exam.timeSpentLabel}
                   </Text>
                 </Group>
                 <Text size="md" fw={700} c="ink.9">
                   {timeFormatted}
                 </Text>
                 <Text size="xs" c="ink.5">
-                  Bỏ qua: {skippedCount} câu
+                  {t.exam.skippedCount.replace('{count}', String(skippedCount))}
                 </Text>
               </Card>
             </SimpleGrid>
@@ -263,20 +265,20 @@ export function ExamResultView({
             <Group justify="space-between" align="center">
               <Stack gap={2}>
                 <Title order={2} size="h3" c="navy.9" fw={700}>
-                  Đáp án & Giải thích chi tiết
+                  {t.exam.explanationsTitle}
                 </Title>
                 <Text size="xs" c="ink.5">
-                  Xem lại toàn bộ câu hỏi kèm đáp án đúng và phân tích lý do
+                  {t.exam.explanationsDesc}
                 </Text>
               </Stack>
 
               {/* Review Filter Tabs */}
               <Tabs value={filterTab} onChange={(val) => setFilterTab(val || 'all')}>
                 <Tabs.List>
-                  <Tabs.Tab value="all">Tất cả ({totalQuestions})</Tabs.Tab>
-                  <Tabs.Tab value="correct">Đúng ({correctCount})</Tabs.Tab>
-                  <Tabs.Tab value="incorrect">Sai ({incorrectCount})</Tabs.Tab>
-                  <Tabs.Tab value="skipped">Chưa làm ({skippedCount})</Tabs.Tab>
+                  <Tabs.Tab value="all">{t.exam.tabAllReview} ({totalQuestions})</Tabs.Tab>
+                  <Tabs.Tab value="correct">{t.exam.tabCorrect} ({correctCount})</Tabs.Tab>
+                  <Tabs.Tab value="incorrect">{t.exam.tabIncorrect} ({incorrectCount})</Tabs.Tab>
+                  <Tabs.Tab value="skipped">{t.exam.tabSkipped} ({skippedCount})</Tabs.Tab>
                 </Tabs.List>
               </Tabs>
             </Group>
@@ -318,7 +320,7 @@ export function ExamResultView({
                             size="sm"
                             radius="xl"
                           >
-                            {!isAnswered ? 'Chưa làm' : isCorrect ? 'Đúng' : 'Sai'}
+                            {!isAnswered ? t.exam.tabSkipped : isCorrect ? t.exam.tabCorrect : t.exam.tabIncorrect}
                           </Badge>
                         </Group>
                       </Accordion.Control>
@@ -333,14 +335,14 @@ export function ExamResultView({
                               const letter = String.fromCharCode(65 + optIdx);
 
                               let bg = 'white';
-                              let badgeLabel = null;
+                              let badgeLabel: string | null = null;
 
                               if (isCorrectOpt) {
                                 bg = '#F0FDF4';
-                                badgeLabel = 'Đáp án đúng';
+                                badgeLabel = t.exam.correctBadge;
                               } else if (isUserChoice && !isCorrectOpt) {
                                 bg = '#FEF2F2';
-                                badgeLabel = 'Lựa chọn của bạn';
+                                badgeLabel = t.exam.yourChoiceBadge;
                               }
 
                               return (
@@ -397,7 +399,7 @@ export function ExamResultView({
                           {(question.explanation || correctOption?.explanation) && (
                             <Box p="sm" className={classes.explanationBox}>
                               <Text size="xs" fw={700} c="navy.9" mb={2}>
-                                Giải thích chi tiết:
+                                {t.exam.detailedExplanation}
                               </Text>
                               <Text size="xs" c="ink.7" style={{ lineHeight: 1.5 }}>
                                 {question.explanation || correctOption?.explanation}

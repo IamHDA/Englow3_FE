@@ -11,6 +11,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { Flag } from 'lucide-react';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import classes from './QuestionPalette.module.css';
 
 export interface FlatQuestionItem {
@@ -38,6 +39,7 @@ export function QuestionPalette({
   flaggedQuestionIds,
   onSelectQuestion,
 }: QuestionPaletteProps) {
+  const { t } = useLanguage();
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = flaggedQuestionIds.size;
   const totalCount = questions.length;
@@ -52,10 +54,12 @@ export function QuestionPalette({
       <Stack gap="sm">
         <Group justify="space-between" align="center">
           <Text fw={700} size="sm" c="navy.9">
-            Bảng câu hỏi
+            {t.exam.paletteTitle}
           </Text>
           <Text size="xs" c="ink.5" fw={600}>
-            {answeredCount}/{totalCount} đã làm
+            {t.exam.paletteCompleted
+              .replace('{answered}', String(answeredCount))
+              .replace('{total}', String(totalCount))}
           </Text>
         </Group>
 
@@ -64,19 +68,19 @@ export function QuestionPalette({
           <Group gap={5} align="center">
             <Box className={classes.legendDotAnswered} />
             <Text size="xs" c="ink.6">
-              Đã làm
+              {t.exam.legendAnswered}
             </Text>
           </Group>
           <Group gap={5} align="center">
             <Box className={classes.legendDotFlagged} />
             <Text size="xs" c="ink.6">
-              Gắn cờ ({flaggedCount})
+              {t.exam.legendFlagged} ({flaggedCount})
             </Text>
           </Group>
           <Group gap={5} align="center">
             <Box className={classes.legendDotUnanswered} />
             <Text size="xs" c="ink.6">
-              Chưa làm
+              {t.exam.legendUnanswered}
             </Text>
           </Group>
         </Group>
@@ -100,7 +104,7 @@ export function QuestionPalette({
                 onClick={() => onSelectQuestion(q.globalIndex)}
                 className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ''}`}
                 data-status={status}
-                aria-label={`Câu ${q.globalIndex + 1}`}
+                aria-label={t.exam.questionAria.replace('{index}', String(q.globalIndex + 1))}
               >
                 {q.globalIndex + 1}
                 {isFlagged && (

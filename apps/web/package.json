@@ -20,6 +20,7 @@
     "@mantine/notifications": "^9.5.1",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
+    "@tabler/icons-react": "^3.46.0",
     "graphql": "^16.14.2",
     "lucide-react": "^1.30.0",
     "next": "16.2.12",

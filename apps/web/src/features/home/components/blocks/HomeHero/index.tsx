@@ -4,10 +4,13 @@ import { Button, Flex, Text, Title } from "@mantine/core";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./HomeHero.module.css";
 
 export function HomeHero() {
+  const { t } = useLanguage();
+
   return (
     <Flex
       component="section"
@@ -27,18 +30,15 @@ export function HomeHero() {
       >
         <Flex direction="column" gap={{ base: 28, md: 42 }}>
           <Title order={1} className={classes.title}>
-            Chinh phục tiếng Anh cùng Englow3
+            {t.home.heroTitle}
           </Title>
 
           <Text className={classes.quote}>
-            &ldquo;<em>Con đường của riêng bạn, tương lai trong tay bạn</em>
-            &rdquo;
+            &ldquo;<em>{t.home.heroQuote}</em>&rdquo;
           </Text>
 
           <Text className={classes.description}>
-            Nâng tầm khả năng nói lưu loát với chấm điểm phát âm AI theo thời
-            gian thực, chat bot cá nhân hóa, thẻ ghi nhớ 3D, thử thách chính tả
-            và các bài thi thử IELTS/TOEIC đầy đủ.
+            {t.home.heroDescription}
           </Text>
         </Flex>
 
@@ -51,13 +51,13 @@ export function HomeHero() {
           }
           classNames={{ root: classes.cta, label: classes.ctaLabel }}
         >
-          Bắt đầu học ngay
+          {t.home.heroCta}
         </Button>
       </Flex>
 
       <Image
         src="/englow3_hero.png"
-        alt="Không gian học tập Englow3 với phân tích phát âm, bộ thẻ ghi nhớ và trình theo dõi tiến độ hàng ngày"
+        alt={t.home.heroImageAlt}
         width={533}
         height={490}
         className={classes.illustration}

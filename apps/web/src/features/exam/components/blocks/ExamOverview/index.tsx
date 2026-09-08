@@ -28,6 +28,7 @@ import {
   Headphones,
 } from 'lucide-react';
 import type { ExamPaperQuery } from '@/lib/graphql/generated/hooks';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import classes from './ExamOverview.module.css';
 
 type ExamPaper = NonNullable<ExamPaperQuery['examPaper']>;
@@ -38,6 +39,8 @@ export interface ExamOverviewProps {
 }
 
 export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
+  const { t } = useLanguage();
+
   const totalQuestions = paper.sections.reduce((acc, sec) => {
     return (
       acc +
@@ -58,11 +61,11 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
       <Flex align="center" gap="xs" mb="lg">
         <Text
           component={Link}
-          href="/mock-test"
+          href="/exams"
           className={classes.breadcrumbLink}
         >
           <ArrowLeft size={16} />
-          Thư viện đề
+          {t.exam.backToLibrary}
         </Text>
         <Text c="ink.3" size="sm">
           /
@@ -100,8 +103,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 {paper.title}
               </Title>
               <Text c="ink.6" size="sm">
-                {paper.description ||
-                  'Đề thi thử chuẩn định dạng quốc tế giúp bạn đánh giá chính xác năng lực và quen với áp lực thời gian.'}
+                {paper.description || t.exam.defaultDescription}
               </Text>
             </Stack>
           </Group>
@@ -115,10 +117,10 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 </ThemeIcon>
                 <Stack gap={1}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    Thời gian làm bài
+                    {t.exam.examTimeLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {durationMinutes} phút
+                    {durationMinutes} {t.exam.minutesUnit}
                   </Text>
                 </Stack>
               </Group>
@@ -131,10 +133,10 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 </ThemeIcon>
                 <Stack gap={1}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    Số lượng câu
+                    {t.exam.questionQuantityLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {totalQuestions} câu hỏi
+                    {totalQuestions} {t.exam.questionsUnitFull}
                   </Text>
                 </Stack>
               </Group>
@@ -147,10 +149,10 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 </ThemeIcon>
                 <Stack gap={1}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    Thang điểm tối đa
+                    {t.exam.maxScoreScaleLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {paper.maxRawScore} điểm
+                    {paper.maxRawScore} {t.exam.pointsUnit}
                   </Text>
                 </Stack>
               </Group>
@@ -163,10 +165,10 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 </ThemeIcon>
                 <Stack gap={1}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    Số phần thi
+                    {t.exam.sectionsCountLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {paper.sections.length} phần thi
+                    {paper.sections.length} {t.exam.sectionsUnit}
                   </Text>
                 </Stack>
               </Group>
@@ -176,7 +178,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
           {/* Section Breakdown List */}
           <Stack gap="xs">
             <Text fw={700} size="md" c="navy.9">
-              Cấu trúc bài thi:
+              {t.exam.examStructureLabel}
             </Text>
             <SimpleGrid cols={{ base: 1, sm: paper.sections.length }} spacing="md">
               {paper.sections.map((section, idx) => {
@@ -211,17 +213,19 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                           )}
                         </ThemeIcon>
                         <Text fw={700} size="sm" c="navy.9">
-                          Phần {idx + 1}: {section.sectionType}
+                          {t.exam.sectionPrefix} {idx + 1}: {section.sectionType}
                         </Text>
                       </Group>
                     </Group>
                     <Text size="xs" c="ink.5">
-                      Bao gồm {section.parts.length} part · {sectionQuestions} câu hỏi
+                      {t.exam.sectionIncludes
+                        .replace('{parts}', String(section.parts.length))
+                        .replace('{questions}', String(sectionQuestions))}
                     </Text>
                     {section.timeLimitSeconds && (
                       <Text size="xs" c="ink.5" mt={4}>
-                        Thời gian quy định: {Math.round(section.timeLimitSeconds / 60)}{' '}
-                        phút
+                        {t.exam.allocatedTimeLabel} {Math.round(section.timeLimitSeconds / 60)}{' '}
+                        {t.exam.minutesUnit}
                       </Text>
                     )}
                   </Card>
@@ -235,32 +239,32 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
             <Group gap="xs" mb="xs">
               <AlertCircle size={18} color="var(--mantine-color-navy-9)" />
               <Text fw={700} size="sm" c="navy.9">
-                Quy định & hướng dẫn làm bài:
+                {t.exam.rulesTitle}
               </Text>
             </Group>
             <Stack gap={8}>
               <Flex gap="xs" align="flex-start">
                 <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
                 <Text size="xs" c="ink.6">
-                  Đồng hồ đếm ngược sẽ bắt đầu chạy ngay khi bạn nhấn <b>Bắt đầu làm bài</b>.
+                  {t.exam.rule1}
                 </Text>
               </Flex>
               <Flex gap="xs" align="flex-start">
                 <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
                 <Text size="xs" c="ink.6">
-                  Sử dụng <b>Question Palette</b> bên phải để theo dõi trạng thái các câu hỏi và nhảy nhanh tới bất kỳ câu nào.
+                  {t.exam.rule2}
                 </Text>
               </Flex>
               <Flex gap="xs" align="flex-start">
                 <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
                 <Text size="xs" c="ink.6">
-                  Bạn có thể <b>Đánh dấu cờ (Flag)</b> các câu chưa chắc chắn để xem lại trước khi nộp bài.
+                  {t.exam.rule3}
                 </Text>
               </Flex>
               <Flex gap="xs" align="flex-start">
                 <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
                 <Text size="xs" c="ink.6">
-                  Sau khi nộp bài, hệ thống sẽ chấm điểm và cung cấp đáp án cùng giải thích chi tiết cho từng câu hỏi.
+                  {t.exam.rule4}
                 </Text>
               </Flex>
             </Stack>
@@ -270,12 +274,12 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
           <Group justify="flex-end" pt="sm">
             <Button
               component={Link}
-              href="/mock-test"
+              href="/exams"
               variant="default"
               radius="xl"
               size="md"
             >
-              Quay lại thư viện
+              {t.exam.returnToLibrary}
             </Button>
             <Button
               onClick={onStart}
@@ -284,7 +288,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
               rightSection={<Play size={16} />}
               className={classes.startBtn}
             >
-              Bắt đầu làm bài
+              {t.exam.startExam}
             </Button>
           </Group>
         </Stack>

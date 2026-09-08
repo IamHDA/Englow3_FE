@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="31833182-3e33-4b19-8de2-d1eb0220f17b"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d6207ce1-a618-4b18-9683-7d1b5bf88421") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ffe5ba5e-8e3c-47c9-be81-a63bfe35ee6b") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7a9e8935-f476-4814-98e3-3ead977287a4") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7d8f3fc6-0ea1-44c8-8372-2937301b61d4") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("19e3191c-5973-45c3-8464-a0044c865ca9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6074a238-dbb2-493c-a090-2feba5672d5f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("951d9716-1a18-4d72-938e-3205bd79917d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+</style>
+<style>:root{
+/* Navy scale (was teal) — primary per project rules */
+--teal-900:#1E3A8A;--teal-700:#2A4CA8;--teal-500:#3B6FD4;--teal-300:#A8BBE8;
+--mint-300:#C3D2F0;--mint-100:#E9EEFB;
+/* Orange accent (was gold) */
+--gold-500:#F08A0C;--gold-300:#F5A623;--gold-100:#FDEFDC;
+--terracotta-500:#D9483B;
+/* Neutral page tints (was cream) */
+--cream-50:#F4F6FA;--cream-100:#E9EEFB;
+--ink-900:#1B2540;--ink-700:#54607A;--ink-500:#8892A6;--sand-300:#E3E8F0;--sand-200:#EDF1F7;
+--white:#FFFFFF;
+--success-500:#2E7D57;--warning-500:#F5A623;--error-500:#D9483B;--info-500:#3B6FD4;
+
+/* Project palette aliases */
+--nv-900:#1E3A8A;--nv-800:#2A4CA8;--nv-600:#3B6FD4;--nv-300:#A8BBE8;--nv-100:#E9EEFB;
+--or-500:#F08A0C;--or-600:#D97706;--or-400:#F5A623;--or-100:#FDEFDC;
+--pg:#F4F6FA;--line:#E3E8F0;--tx:#1B2540;--tx2:#54607A;--tx3:#8892A6;
+--ok:#1F8A5F;--ok-bg:#E6F4EE;--warn:#D9483B;--warn-bg:#FCEBE9;
+
+--surface-page:var(--cream-50);
+--surface-raised:var(--white);
+--surface-sunken:var(--cream-100);
+--surface-inverse:var(--teal-900);
+--border-default:var(--sand-300);
+--border-strong:var(--teal-300);
+--text-primary:var(--ink-900);
+--text-secondary:var(--ink-700);
+--text-muted:var(--ink-500);
+--text-on-dark:#FFFFFF;
+--text-on-accent:var(--white);
+--accent-primary:var(--teal-900);
+--accent-primary-hover:var(--teal-700);
+/* darker orange so white label keeps 4.5:1 on filled CTAs */
+--accent-secondary:#C2410C;
+--accent-secondary-hover:#9A3412;
+--focus-ring:var(--teal-500);
+--path-line:var(--cream-50);
+--path-dot:var(--gold-500);
+}
+</style>
+<style>:root{
+--font-display:'Lora',Georgia,serif;
+--font-body:'Work Sans',Arial,sans-serif;
+--text-xs:12px;--text-sm:14px;--text-base:16px;--text-md:18px;--text-lg:22px;--text-xl:28px;--text-2xl:36px;--text-3xl:48px;--text-4xl:64px;
+--leading-tight:1.15;--leading-snug:1.35;--leading-normal:1.55;--leading-relaxed:1.75;
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+--tracking-tight:-0.01em;--tracking-normal:0;--tracking-wide:0.04em;
+}</style>
+<style>:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;
+}</style>
+<style>:root{
+--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:999px;--radius-circle:50%;
+}</style>
+<style>:root{
+--shadow-sm:0 1px 3px rgba(30,58,138,0.10);
+--shadow-md:0 6px 20px rgba(30,58,138,0.12);
+--shadow-lg:0 18px 48px rgba(30,58,138,0.16);
+--shadow-focus:0 0 0 3px rgba(59,111,212,0.30);
+}
+</style>
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d6207ce1-a618-4b18-9683-7d1b5bf88421") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ffe5ba5e-8e3c-47c9-be81-a63bfe35ee6b") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7a9e8935-f476-4814-98e3-3ead977287a4") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7d8f3fc6-0ea1-44c8-8372-2937301b61d4") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("19e3191c-5973-45c3-8464-a0044c865ca9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6074a238-dbb2-493c-a090-2feba5672d5f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("951d9716-1a18-4d72-938e-3205bd79917d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b8a18036-ed01-4726-96ba-1cf909889b89") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("004f8741-e0e9-4d18-baa2-fb7195a31f39") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("a2a14986-02ea-4ae4-9301-4aef49456e74") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b8aa87e2-87c4-4bdb-b84e-6a0c6dba64d3") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("4f115725-6f45-4307-b0ff-528368bfd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("34e5eef8-317f-488d-993e-97a20b65d7a6") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e970f8ab-6124-412a-92ae-011bb4a5c759") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b1eebb56-6b94-472c-a822-6891107ecdd5") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d1b1fce9-4f2d-4689-956b-1a11750b04c4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("1bf009c9-985d-4597-a968-09a148c34078") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root{
+/* Navy scale (was teal) — primary per project rules */
+--teal-900:#1E3A8A;--teal-700:#2A4CA8;--teal-500:#3B6FD4;--teal-300:#A8BBE8;
+--mint-300:#C3D2F0;--mint-100:#E9EEFB;
+/* Orange accent (was gold) */
+--gold-500:#F08A0C;--gold-300:#F5A623;--gold-100:#FDEFDC;
+--terracotta-500:#D9483B;
+/* Neutral page tints (was cream) */
+--cream-50:#F4F6FA;--cream-100:#E9EEFB;
+--ink-900:#1B2540;--ink-700:#54607A;--ink-500:#8892A6;--sand-300:#E3E8F0;--sand-200:#EDF1F7;
+--white:#FFFFFF;
+--success-500:#2E7D57;--warning-500:#F5A623;--error-500:#D9483B;--info-500:#3B6FD4;
+
+/* Project palette aliases */
+--nv-900:#1E3A8A;--nv-800:#2A4CA8;--nv-600:#3B6FD4;--nv-300:#A8BBE8;--nv-100:#E9EEFB;
+--or-500:#F08A0C;--or-600:#D97706;--or-400:#F5A623;--or-100:#FDEFDC;
+--pg:#F4F6FA;--line:#E3E8F0;--tx:#1B2540;--tx2:#54607A;--tx3:#8892A6;
+--ok:#1F8A5F;--ok-bg:#E6F4EE;--warn:#D9483B;--warn-bg:#FCEBE9;
+
+--surface-page:var(--cream-50);
+--surface-raised:var(--white);
+--surface-sunken:var(--cream-100);
+--surface-inverse:var(--teal-900);
+--border-default:var(--sand-300);
+--border-strong:var(--teal-300);
+--text-primary:var(--ink-900);
+--text-secondary:var(--ink-700);
+--text-muted:var(--ink-500);
+--text-on-dark:#FFFFFF;
+--text-on-accent:var(--white);
+--accent-primary:var(--teal-900);
+--accent-primary-hover:var(--teal-700);
+/* darker orange so white label keeps 4.5:1 on filled CTAs */
+--accent-secondary:#C2410C;
+--accent-secondary-hover:#9A3412;
+--focus-ring:var(--teal-500);
+--path-line:var(--cream-50);
+--path-dot:var(--gold-500);
+}
+
+:root{
+--font-display:'Lora',Georgia,serif;
+--font-body:'Work Sans',Arial,sans-serif;
+--text-xs:12px;--text-sm:14px;--text-base:16px;--text-md:18px;--text-lg:22px;--text-xl:28px;--text-2xl:36px;--text-3xl:48px;--text-4xl:64px;
+--leading-tight:1.15;--leading-snug:1.35;--leading-normal:1.55;--leading-relaxed:1.75;
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+--tracking-tight:-0.01em;--tracking-normal:0;--tracking-wide:0.04em;
+}
+:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;
+}
+:root{
+--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:999px;--radius-circle:50%;
+}
+:root{
+--shadow-sm:0 1px 3px rgba(30,58,138,0.10);
+--shadow-md:0 6px 20px rgba(30,58,138,0.12);
+--shadow-lg:0 18px 48px rgba(30,58,138,0.16);
+--shadow-focus:0 0 0 3px rgba(59,111,212,0.30);
+}
+
+body{font-family:var(--font-body);background:var(--surface-page);color:var(--text-primary)}
+a{color:var(--teal-700)}
+a:hover{color:var(--teal-900)}
+</style>
+<script src="11c16616-3db2-439d-b9e6-034c7484654b"></script>
+<style>
+  /* palette lives in the design system: _ds/.../tokens/colors.css */
+  body { margin: 0; background: #E2E7F0; font-family: var(--font-body); }
+  a { color: var(--nv-900); text-decoration: none; }
+  a:hover { color: var(--or-500); }
+</style>
+</helmet>
+
+<section style="padding: 64px 64px 96px; display: flex; flex-direction: column; gap: 40px">
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-500)">Phần học · Quiz</span>
+    <h1 style="margin: 0; font-size: 46px; font-weight: 700; line-height: 1.1; color: var(--nv-900); letter-spacing: -0.02em">Trang Quiz</h1>
+    <p style="margin: 0; max-width: 860px; font-size: 16px; line-height: 1.6; color: var(--tx2); text-wrap: pretty"><a href="#1a">1a</a> trang chính với hai tab — bấm để đổi giữa "Quiz hiện có" và "Lịch sử làm quiz". <a href="#1b">1b</a> màn làm quiz, <a href="#1c">1c</a> màn kết quả. Các dạng câu hỏi: <a href="#1d">1d</a> điền từ, <a href="#1e">1e</a> viết lại câu, <a href="#1f">1f</a> sắp xếp từ, <a href="#1g">1g</a> nối vế câu. Chấm điểm thường, không có buff hay vật phẩm.</p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 48px; align-items: flex-start">
+
+    <div id="1a" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1a</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Trang Quiz — hai tab</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm tab để xem nội dung còn lại</span>
+      </div>
+
+      <div style="width: 1440px; height: 880px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <header style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 44px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <a href="#1a" style="flex: none; display: flex; align-items: center">
+            <img src="e0b23d79-b4aa-44a3-993a-41e5ed8dc0d3" alt="Englow3 — Your Personal Path, Your Future in Hand" style="height: 46px; width: auto; display: block">
+          </a>
+          <nav style="display: flex; align-items: stretch; gap: 26px">
+            <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid var(--or-500); font-size: 15px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Study<svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></a>
+            <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Mock Test</a>
+            <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">AI Tutor</a>
+          </nav>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 14px">
+            <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 999px; border: 1px solid var(--line)">
+              <span style="width: 30px; height: 30px; flex: none; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MA</span>
+              <span style="font-size: 14px; font-weight: 700; color: var(--tx)">Minh Anh</span>
+            </span>
+          </div>
+        </header>
+
+        <div style="height: 58px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 24px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <span style="flex: none; display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 14px; color: var(--tx3)">Study</span>
+            <span style="color: var(--tx3); display: inline-flex"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+            <button style="display: flex; align-items: center; gap: 7px; border: 0; background: transparent; padding: 0; font-family: var(--font-body); cursor: pointer">
+              <span style="font-size: 16px; font-weight: 700; color: var(--nv-900)">Quiz</span>
+              <span style="color: var(--tx3); display: inline-flex"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </button>
+          </span>
+          <span style="flex: none; width: 1px; margin: 16px 0; background: var(--line)"></span>
+          <nav style="display: flex; align-items: stretch; gap: 22px">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+              <button sc-camel-on-click="{{ t.go }}" style="display: flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 19px 2px 17px; border-bottom: 2px solid {{ t.bar }}; font-family: var(--font-body); font-size: 14px; font-weight: 700; color: {{ t.fg }}; white-space: nowrap; cursor: pointer">
+                {{ t.name }}
+                <span style="padding: 2px 9px; border-radius: 999px; background: {{ t.pillBg }}; color: {{ t.pillFg }}; font-size: 12px; font-weight: 700">{{ t.count }}</span>
+              </button>
+            </sc-for>
+          </nav>
+        </div>
+
+        <div style="flex: none; padding: 30px 40px 26px; display: flex; flex-direction: column; gap: 22px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <div style="display: flex; align-items: flex-end; gap: 24px">
+            <div style="display: flex; flex-direction: column; gap: 7px">
+              <h2 style="margin: 0; font-size: 34px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.02em">Quiz</h2>
+              <p style="margin: 0; font-size: 15px; color: var(--tx2)">Làm bài trắc nghiệm ngắn theo chủ đề, chấm điểm ngay sau khi nộp.</p>
+            </div>
+            <div style="margin-left: auto; display: flex; gap: 28px">
+              <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
+                <div style="display: flex; flex-direction: column; gap: 3px; text-align: right">
+                  <span style="font-size: 26px; font-weight: 700; color: var(--nv-900); font-variant-numeric: tabular-nums">{{ s.value }}</span>
+                  <span style="font-size: 13px; color: var(--tx3)">{{ s.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+        </div>
+
+        <sc-if value="{{ isLibrary }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: 1; min-height: 0; overflow: hidden; padding: 28px 40px 34px; display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+                <button sc-camel-on-click="{{ f.go }}" style="border: 1px solid {{ f.bc }}; background: {{ f.bg }}; color: {{ f.fg }}; cursor: pointer; padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600">{{ f.name }}</button>
+              </sc-for>
+              <span style="margin-left: auto; font-size: 14px; color: var(--tx3)">Sắp xếp: <b style="color: var(--nv-900)">Mới nhất</b></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px">
+              <sc-for list="{{ quizzes }}" as="q" hint-placeholder-count="6">
+                <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 2px 10px rgba(30,58,138,0.05)">
+                  <div style="display: flex; align-items: center; gap: 9px">
+                    <span style="padding: 5px 12px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">{{ q.topic }}</span>
+                    <span style="padding: 5px 12px; border-radius: 999px; background: {{ q.lvlBg }}; color: {{ q.lvlFg }}; font-size: 12px; font-weight: 700">{{ q.level }}</span>
+                    <span style="margin-left: auto; font-size: 12px; font-weight: 700; color: {{ q.stateFg }}">{{ q.state }}</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 6px">
+                    <span style="font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--nv-900); text-wrap: pretty">{{ q.title }}</span>
+                    <span style="font-size: 14px; line-height: 1.5; color: var(--tx2); text-wrap: pretty">{{ q.desc }}</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding-top: 12px; border-top: 1px solid var(--line)">
+                    <span style="font-size: 13px; color: var(--tx3)">{{ q.count }} câu</span>
+                    <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--line)"></span>
+                    <span style="font-size: 13px; color: var(--tx3)">{{ q.time }}</span>
+                    <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--line)"></span>
+                    <span style="font-size: 13px; color: var(--tx3)">{{ q.best }}</span>
+                    <button style="margin-left: auto; border: 0; background: {{ q.ctaBg }}; color: {{ q.ctaFg }}; padding: 10px 20px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 700; cursor: pointer">{{ q.cta }}</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+          <div style="flex: 1; min-height: 0; overflow: hidden; padding: 28px 40px 34px; display: flex; flex-direction: column; gap: 18px">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <sc-for list="{{ hFilters }}" as="f" hint-placeholder-count="4">
+                <button sc-camel-on-click="{{ f.go }}" style="border: 1px solid {{ f.bc }}; background: {{ f.bg }}; color: {{ f.fg }}; cursor: pointer; padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600">{{ f.name }}</button>
+              </sc-for>
+              <span style="margin-left: auto; font-size: 14px; color: var(--tx3)">Điểm trung bình 30 ngày qua: <b style="color: var(--nv-900)">7.6 / 10</b></span>
+            </div>
+
+            <div style="flex: 1; min-height: 0; overflow-y: auto; background: #FFFFFF; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 2px 10px rgba(30,58,138,0.05)">
+              <div style="display: grid; grid-template-columns: 300px 132px 120px 120px 1fr 132px; gap: 16px; padding: 14px 24px; background: var(--pg); border-bottom: 1px solid var(--line)">
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Bài quiz</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Thời gian</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Đúng</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Điểm</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Tỉ lệ đúng</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3); text-align: right">Thao tác</span>
+              </div>
+              <sc-for list="{{ history }}" as="h" hint-placeholder-count="7">
+                <div style="display: grid; grid-template-columns: 300px 132px 120px 120px 1fr 132px; gap: 16px; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--line)">
+                  <div style="display: flex; flex-direction: column; gap: 3px">
+                    <span style="font-size: 15px; font-weight: 700; color: var(--nv-900)">{{ h.title }}</span>
+                    <span style="font-size: 13px; color: var(--tx3)">{{ h.topic }} · lần {{ h.attempt }}</span>
+                  </div>
+                  <span style="font-size: 14px; color: var(--tx2)">{{ h.date }}</span>
+                  <span style="font-size: 14px; color: var(--tx2); font-variant-numeric: tabular-nums">{{ h.correct }}</span>
+                  <span style="display: inline-flex; align-items: center; justify-content: center; padding: 5px 0; width: 62px; border-radius: 999px; background: {{ h.scoreBg }}; color: {{ h.scoreFg }}; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums">{{ h.score }}</span>
+                  <div style="display: flex; align-items: center; gap: 12px">
+                    <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--nv-100); position: relative; overflow: hidden">
+                      <span style="position: absolute; inset: 0 auto 0 0; width: {{ h.pct }}; border-radius: 999px; background: {{ h.fill }}"></span>
+                    </span>
+                    <span style="width: 44px; font-size: 13px; color: var(--tx3); font-variant-numeric: tabular-nums">{{ h.pct }}</span>
+                  </div>
+                  <span style="display: flex; justify-content: flex-end; gap: 8px">
+                    <button style="border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 8px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer">Xem lại</button>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div id="1b" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1b</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Màn làm quiz</span>
+        <span style="font-size: 14px; color: var(--tx3)">chọn đáp án, chuyển câu</span>
+      </div>
+
+      <div style="position: relative; width: 1440px; height: 840px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <div style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer">← Thoát</button>
+          <span style="font-size: 17px; font-weight: 700; color: var(--nv-900)">Từ vựng văn phòng · Bộ 3</span>
+          <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">10 câu</span>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 22px">
+            <span style="font-size: 14px; color: var(--tx2)">Câu <b style="color: var(--nv-900); font-variant-numeric: tabular-nums">{{ qNo }}</b> / 10</span>
+            <div style="display: flex; align-items: baseline; gap: 9px; padding: 9px 20px; border-radius: 14px; background: var(--nv-900)">
+              <span style="font-size: 24px; font-weight: 700; color: #FFFFFF; font-variant-numeric: tabular-nums">{{ clock }}</span>
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--or-400)">còn lại</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: none; height: 6px; background: var(--nv-100); position: relative">
+          <span style="position: absolute; inset: 0 auto 0 0; width: {{ progress }}; background: var(--or-500)"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; padding: 40px 40px 32px">
+          <div style="width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: 22px">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 20px; padding: 34px 36px; display: flex; flex-direction: column; gap: 26px; box-shadow: 0 2px 12px rgba(30,58,138,0.06)">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">Chọn nghĩa đúng</span>
+                <span style="font-size: 13px; color: var(--tx3)">1 điểm mỗi câu đúng</span>
+              </div>
+              <p style="margin: 0; font-size: 28px; font-weight: 700; line-height: 1.35; color: var(--nv-900); text-wrap: pretty">{{ prompt }}</p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
+                <sc-for list="{{ opts }}" as="o" hint-placeholder-count="4">
+                  <button sc-camel-on-click="{{ o.pick }}" style="text-align: left; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 18px 20px; border-radius: 16px; font-family: var(--font-body); background: {{ o.bg }}; border: 2px solid {{ o.bc }}">
+                    <span style="width: 32px; height: 32px; flex: none; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; background: {{ o.keyBg }}; color: {{ o.keyFg }}">{{ o.key }}</span>
+                    <span style="font-size: 17px; line-height: 1.4; color: var(--tx)">{{ o.text }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px">
+              <button sc-camel-on-click="{{ prev }}" style="border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">← Câu trước</button>
+              <button sc-camel-on-click="{{ next }}" style="border: 0; background: var(--or-500); color: #FFFFFF; padding: 13px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Câu tiếp →</button>
+              <div style="margin-left: auto; display: flex; align-items: center; gap: 7px">
+                <sc-for list="{{ dots }}" as="d" hint-placeholder-count="10">
+                  <span sc-camel-on-click="{{ d.go }}" style="width: 30px; height: 30px; cursor: pointer; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; background: {{ d.bg }}; color: {{ d.fg }}; border: 2px solid {{ d.bc }}">{{ d.n }}</span>
+                </sc-for>
+              </div>
+              <button sc-camel-on-click="{{ openSubmit }}" style="border: 1px solid var(--nv-900); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Nộp bài</button>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ submitOpen }}" hint-placeholder-val="{{ true }}">
+          
+        </sc-if>
+      </div>
+    </div>
+
+    <div id="1d" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1d</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Câu hỏi điền từ</span>
+        <span style="font-size: 14px; color: var(--tx3)">gõ được · có ghi chú quy tắc chấm</span>
+      </div>
+
+      <div style="width: 1440px; height: 840px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <div style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer">← Thoát</button>
+          <span style="font-size: 17px; font-weight: 700; color: var(--nv-900)">Giới từ chỉ thời gian · Điền từ</span>
+          <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">10 câu</span>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 22px">
+            <span style="font-size: 14px; color: var(--tx2)">Câu <b style="color: var(--nv-900); font-variant-numeric: tabular-nums">4</b> / 10</span>
+            <div style="display: flex; align-items: baseline; gap: 9px; padding: 9px 20px; border-radius: 14px; background: var(--nv-900)">
+              <span style="font-size: 24px; font-weight: 700; color: #FFFFFF; font-variant-numeric: tabular-nums">{{ clock }}</span>
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--or-400)">còn lại</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: none; height: 6px; background: var(--nv-100); position: relative">
+          <span style="position: absolute; inset: 0 auto 0 0; width: 40%; background: var(--or-500)"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; padding: 36px 40px 32px">
+          <div style="width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: 20px">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 20px; padding: 32px 36px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 2px 12px rgba(30,58,138,0.06)">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">Điền từ vào chỗ trống</span>
+                <span style="font-size: 13px; color: var(--tx3)">1 điểm mỗi câu đúng</span>
+              </div>
+
+              <p style="margin: 0; font-family: var(--font-display); font-size: 26px; line-height: 1.6; color: var(--nv-900); text-wrap: pretty">The training session starts <span style="display: inline-block; min-width: 132px; padding: 2px 10px; border-bottom: 3px solid var(--or-500); text-align: center; color: var(--or-500); font-weight: 700">{{ blank }}</span>9 a.m. on Monday.</p>
+
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Câu trả lời của bạn</span>
+                <input value="{{ fill }}" sc-camel-on-input="{{ onFill }}" placeholder="Gõ một từ…" style="width: 100%; box-sizing: border-box; padding: 16px 20px; border-radius: 14px; border: 2px solid {{ fillBc }}; background: var(--pg); font-family: var(--font-body); font-size: 20px; font-weight: 600; color: var(--tx); outline: none">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span style="font-size: 13px; color: var(--tx3)">{{ fillCount }} ký tự</span>
+                  <span style="margin-left: auto; font-size: 13px; color: var(--tx3)">Enter để sang câu tiếp</span>
+                </div>
+              </div>
+
+              <div style="border-radius: 14px; background: var(--or-100); padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 13px; font-weight: 700; color: #8A4A00">Cách chấm câu điền từ</span>
+                <div style="display: flex; flex-direction: column; gap: 7px">
+                  <sc-for list="{{ fillRules }}" as="r" hint-placeholder-count="4">
+                    <div style="display: flex; align-items: flex-start; gap: 10px">
+                      <span style="width: 18px; height: 18px; flex: none; margin-top: 1px; border-radius: 6px; background: {{ r.bg }}; color: {{ r.fg }}; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">{{ r.mark }}</span>
+                      <span style="font-size: 14px; line-height: 1.45; color: var(--tx2)">{{ r.text }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px">
+              <button style="border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">← Câu trước</button>
+              <button style="border: 0; background: var(--or-500); color: #FFFFFF; padding: 13px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Câu tiếp →</button>
+              <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 13px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">Bỏ qua</button>
+              <button style="margin-left: auto; border: 1px solid var(--nv-900); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Nộp bài</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1e" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1e</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Viết lại câu</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm từ gợi ý để lắp vào chỗ trống · bấm lại để gỡ ra</span>
+      </div>
+
+      <div style="width: 1440px; height: 840px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <div style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer">← Thoát</button>
+          <span style="font-size: 17px; font-weight: 700; color: var(--nv-900)">Cấu trúc câu · Viết lại</span>
+          <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">10 câu</span>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 22px">
+            <span style="font-size: 14px; color: var(--tx2)">Câu <b style="color: var(--nv-900); font-variant-numeric: tabular-nums">5</b> / 10</span>
+            <div style="display: flex; align-items: baseline; gap: 9px; padding: 9px 20px; border-radius: 14px; background: var(--nv-900)">
+              <span style="font-size: 24px; font-weight: 700; color: #FFFFFF; font-variant-numeric: tabular-nums">{{ clock }}</span>
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--or-400)">còn lại</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: none; height: 6px; background: var(--nv-100); position: relative">
+          <span style="position: absolute; inset: 0 auto 0 0; width: 50%; background: var(--or-500)"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; padding: 36px 40px 32px">
+          <div style="width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 20px; padding: 32px 36px; display: flex; flex-direction: column; gap: 24px; box-shadow: 0 2px 12px rgba(30,58,138,0.06)">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">Viết lại câu</span>
+                <span style="font-size: 13px; color: var(--tx3)">1 điểm mỗi câu đúng · phải điền đủ ba chỗ trống</span>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Câu gốc</span>
+                <p style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.5; color: var(--tx); text-wrap: pretty">The report must be finished before Friday.</p>
+                <span style="font-size: 14px; color: var(--tx2)">Viết lại câu trên, dùng <b style="color: var(--nv-900)">have to</b>.</span>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Câu viết lại</span>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 22px 24px; border-radius: 16px; background: var(--pg); border: 1px solid var(--line)">
+                  <sc-for list="{{ rwTokens }}" as="t" hint-placeholder-count="5">
+                    <span sc-camel-on-click="{{ t.click }}" style="display: inline-flex; align-items: center; justify-content: center; min-width: {{ t.minW }}; padding: {{ t.pad }}; border-radius: 12px; border: 2px {{ t.bs }} {{ t.bc }}; background: {{ t.bg }}; color: {{ t.fg }}; font-family: var(--font-display); font-size: 24px; font-weight: {{ t.fw }}; line-height: 1.4; cursor: {{ t.cur }}">{{ t.label }}</span>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Từ gợi ý</span>
+                  <span style="font-size: 13px; color: var(--tx3)">có vài từ thừa — chỉ lắp những từ cần dùng</span>
+                  <button sc-camel-on-click="{{ rwReset }}" style="margin-left: auto; border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 7px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer">Xoá hết</button>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                  <sc-for list="{{ rwBank }}" as="w" hint-placeholder-count="6">
+                    <button sc-camel-on-click="{{ w.click }}" style="border: 2px solid {{ w.bc }}; background: {{ w.bg }}; color: {{ w.fg }}; padding: 12px 22px; border-radius: 14px; font-family: var(--font-body); font-size: 19px; font-weight: 600; cursor: {{ w.cur }}">{{ w.text }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px">
+              <button style="border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">← Câu trước</button>
+              <button style="border: 0; background: var(--or-500); color: #FFFFFF; padding: 13px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Câu tiếp →</button>
+              <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 13px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">Bỏ qua</button>
+              <button style="margin-left: auto; border: 1px solid var(--nv-900); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Nộp bài</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1f" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1f</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Sắp xếp từ thành câu</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm từ để thêm vào câu · bấm từ trong câu để trả về</span>
+      </div>
+
+      <div style="width: 1440px; height: 840px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <div style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer">← Thoát</button>
+          <span style="font-size: 17px; font-weight: 700; color: var(--nv-900)">Trật tự từ · Sắp xếp câu</span>
+          <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">10 câu</span>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 22px">
+            <span style="font-size: 14px; color: var(--tx2)">Câu <b style="color: var(--nv-900); font-variant-numeric: tabular-nums">6</b> / 10</span>
+            <div style="display: flex; align-items: baseline; gap: 9px; padding: 9px 20px; border-radius: 14px; background: var(--nv-900)">
+              <span style="font-size: 24px; font-weight: 700; color: #FFFFFF; font-variant-numeric: tabular-nums">{{ clock }}</span>
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--or-400)">còn lại</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: none; height: 6px; background: var(--nv-100); position: relative">
+          <span style="position: absolute; inset: 0 auto 0 0; width: 60%; background: var(--or-500)"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; padding: 36px 40px 32px">
+          <div style="width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 20px; padding: 32px 36px; display: flex; flex-direction: column; gap: 24px; box-shadow: 0 2px 12px rgba(30,58,138,0.06)">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">Sắp xếp thành câu đúng</span>
+                <span style="font-size: 13px; color: var(--tx3)">dùng hết tất cả các từ</span>
+              </div>
+
+              <span style="font-size: 15px; color: var(--tx2)">Sắp xếp các từ sau thành một câu hoàn chỉnh.</span>
+
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Câu của bạn</span>
+                  <span style="margin-left: auto; font-size: 13px; color: var(--tx3)">{{ ordUsed }} / {{ ordTotal }} từ đã dùng</span>
+                </div>
+                <div style="min-height: 96px; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: center; gap: 8px; padding: 20px 22px; border-radius: 16px; background: var(--pg); border: 2px dashed {{ ordBc }}">
+                  <span style="font-size: 18px; color: var(--tx3); display: {{ ordHintShow }}">Bấm các từ bên dưới để xếp câu…</span>
+                  <sc-for list="{{ ordLine }}" as="w" hint-placeholder-count="4">
+                    <button sc-camel-on-click="{{ w.click }}" style="border: 2px solid var(--or-500); background: var(--or-100); color: var(--nv-900); padding: 10px 20px; border-radius: 12px; font-family: var(--font-display); font-size: 23px; font-weight: 600; cursor: pointer">{{ w.text }}</button>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Các từ còn lại</span>
+                  <button sc-camel-on-click="{{ ordReset }}" style="margin-left: auto; border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 7px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer">Xếp lại từ đầu</button>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; min-height: 58px">
+                  <sc-for list="{{ ordBank }}" as="w" hint-placeholder-count="9">
+                    <button sc-camel-on-click="{{ w.click }}" style="border: 2px solid var(--line); background: #FFFFFF; color: var(--tx); padding: 11px 20px; border-radius: 12px; font-family: var(--font-body); font-size: 19px; font-weight: 600; cursor: pointer">{{ w.text }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px">
+              <button style="border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">← Câu trước</button>
+              <button style="border: 0; background: var(--or-500); color: #FFFFFF; padding: 13px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Câu tiếp →</button>
+              <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 13px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">Bỏ qua</button>
+              <button style="margin-left: auto; border: 1px solid var(--nv-900); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Nộp bài</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1g" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1g</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Nối vế câu (matching)</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm vế trái rồi bấm vế phải để nối · bấm cặp đã nối để gỡ</span>
+      </div>
+
+      <div style="width: 1440px; height: 840px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <div style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 9px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer">← Thoát</button>
+          <span style="font-size: 17px; font-weight: 700; color: var(--nv-900)">Mệnh đề · Nối câu</span>
+          <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">5 cặp</span>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 22px">
+            <span style="font-size: 14px; color: var(--tx2)">Đã nối <b style="color: var(--nv-900); font-variant-numeric: tabular-nums">{{ mDone }}</b> / 5</span>
+            <div style="display: flex; align-items: baseline; gap: 9px; padding: 9px 20px; border-radius: 14px; background: var(--nv-900)">
+              <span style="font-size: 24px; font-weight: 700; color: #FFFFFF; font-variant-numeric: tabular-nums">{{ clock }}</span>
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--or-400)">còn lại</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: none; height: 6px; background: var(--nv-100); position: relative">
+          <span style="position: absolute; inset: 0 auto 0 0; width: {{ mProgress }}; background: var(--or-500)"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; padding: 34px 40px 30px">
+          <div style="width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 20px">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 20px; padding: 30px 34px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 2px 12px rgba(30,58,138,0.06)">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span style="padding: 6px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">Nối hai vế thành câu đúng</span>
+                <span style="font-size: 13px; color: var(--tx3)">1 điểm mỗi cặp đúng</span>
+                <span style="margin-left: auto; font-size: 13px; color: var(--tx3)">{{ mHint }}</span>
+                <button sc-camel-on-click="{{ mReset }}" style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 7px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer">Gỡ hết</button>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 26px">
+                <div style="display: flex; flex-direction: column; gap: 10px">
+                  <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Vế đầu</span>
+                  <sc-for list="{{ mLeft }}" as="l" hint-placeholder-count="5">
+                    <button sc-camel-on-click="{{ l.click }}" style="text-align: left; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; border: 2px solid {{ l.bc }}; background: {{ l.bg }}; font-family: var(--font-body); cursor: pointer">
+                      <span style="width: 30px; height: 30px; flex: none; border-radius: 9px; background: {{ l.badgeBg }}; color: {{ l.badgeFg }}; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">{{ l.badge }}</span>
+                      <span style="font-size: 17px; line-height: 1.4; color: var(--tx)">{{ l.text }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px">
+                  <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Vế sau</span>
+                  <sc-for list="{{ mRight }}" as="r" hint-placeholder-count="5">
+                    <button sc-camel-on-click="{{ r.click }}" style="text-align: left; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; border: 2px solid {{ r.bc }}; background: {{ r.bg }}; font-family: var(--font-body); cursor: pointer">
+                      <span style="width: 30px; height: 30px; flex: none; border-radius: 9px; background: {{ r.badgeBg }}; color: {{ r.badgeFg }}; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">{{ r.badge }}</span>
+                      <span style="font-size: 17px; line-height: 1.4; color: var(--tx)">{{ r.text }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px">
+              <button style="border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">← Câu trước</button>
+              <button style="border: 0; background: var(--or-500); color: #FFFFFF; padding: 13px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Câu tiếp →</button>
+              <button style="border: 1px solid var(--line); background: transparent; color: var(--tx2); padding: 13px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">Bỏ qua</button>
+              <button style="margin-left: auto; border: 1px solid var(--nv-900); background: transparent; color: var(--nv-900); padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Nộp bài</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1c" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--or-500); color: #FFFFFF; font-size: 13px; font-weight: 700">1c</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Kết quả quiz</span>
+        <span style="font-size: 14px; color: var(--tx3)">điểm thường, không thưởng thêm</span>
+      </div>
+
+      <div style="width: 1440px; height: 840px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex">
+        <div style="width: 460px; flex: none; padding: 48px 44px; background: var(--nv-900); display: flex; flex-direction: column; gap: 22px">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-400)">Kết quả</span>
+          <span style="font-size: 21px; font-weight: 700; color: #FFFFFF; line-height: 1.35">Từ vựng văn phòng · Bộ 3</span>
+          <div style="display: flex; align-items: flex-end; gap: 10px">
+            <span style="font-size: 104px; line-height: 0.85; font-weight: 700; color: #FFFFFF; letter-spacing: -0.03em">8</span>
+            <span style="font-size: 28px; font-weight: 600; color: rgba(255,255,255,0.55); padding-bottom: 8px">/ 10</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 6px">
+            <sc-for list="{{ summary }}" as="s" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.15)">
+                <span style="font-size: 15px; color: rgba(255,255,255,0.72)">{{ s.label }}</span>
+                <span style="margin-left: auto; font-size: 16px; font-weight: 700; color: #FFFFFF; font-variant-numeric: tabular-nums">{{ s.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px">
+            <button style="border: 0; background: var(--or-500); color: #FFFFFF; padding: 15px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 16px; font-weight: 700; cursor: pointer">Làm lại bộ này</button>
+            <button style="border: 1px solid rgba(255,255,255,0.35); background: transparent; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer">Về danh sách quiz</button>
+          </div>
+        </div>
+
+        <div style="flex: 1; padding: 44px; display: flex; flex-direction: column; gap: 18px; min-height: 0">
+          <div style="display: flex; align-items: baseline; gap: 14px">
+            <h2 style="margin: 0; font-size: 27px; font-weight: 700; color: var(--nv-900)">Xem lại từng câu</h2>
+            <span style="font-size: 14px; color: var(--tx3)">2 câu sai — bấm để xem giải thích</span>
+          </div>
+          <div style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px">
+            <sc-for list="{{ review }}" as="r" hint-placeholder-count="6">
+              <div style="background: #FFFFFF; border: 1px solid {{ r.bc }}; border-radius: 14px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 16px">
+                <span style="width: 30px; height: 30px; flex: none; border-radius: 9px; background: {{ r.badgeBg }}; color: {{ r.badgeFg }}; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">{{ r.n }}</span>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 5px">
+                  <span style="font-size: 16px; font-weight: 600; color: var(--nv-900); line-height: 1.4">{{ r.q }}</span>
+                  <span style="font-size: 14px; color: var(--tx2); line-height: 1.5">{{ r.detail }}</span>
+                </div>
+                <span style="flex: none; padding: 5px 13px; border-radius: 999px; background: {{ r.tagBg }}; color: {{ r.tagFg }}; font-size: 12px; font-weight: 700">{{ r.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div style="width: 560px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 30px 80px rgba(15,27,58,0.35); overflow: hidden; display: flex; flex-direction: column; position: absolute; left: 1809px; top: 1373px">
+              <div style="padding: 30px 34px 0; display: flex; flex-direction: column; gap: 12px">
+                <span style="width: 46px; height: 46px; border-radius: 14px; background: var(--or-100); color: var(--or-500); display: inline-flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700">!</span>
+                <h3 style="margin: 0; font-size: 25px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em">Nộp bài sớm?</h3>
+                <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--tx2); text-wrap: pretty">Bạn vẫn còn thời gian làm bài. Sau khi nộp, bài sẽ được chấm ngay và bạn không quay lại sửa được nữa.</p>
+              </div>
+
+              <div style="margin: 20px 34px 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden">
+                <sc-for list="{{ submitRows }}" as="r" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 14px; padding: 13px 18px; border-bottom: 1px solid var(--line)">
+                    <span style="font-size: 14px; color: var(--tx2)">{{ r.label }}</span>
+                    <span style="margin-left: auto; font-size: 15px; font-weight: 700; color: {{ r.fg }}; font-variant-numeric: tabular-nums">{{ r.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="margin: 16px 34px 0; display: flex; flex-direction: column; gap: 9px">
+                <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Câu chưa trả lời</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 7px">
+                  <sc-for list="{{ unanswered }}" as="u" hint-placeholder-count="8">
+                    <span sc-camel-on-click="{{ u.go }}" style="width: 32px; height: 32px; cursor: pointer; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; background: var(--or-100); color: #8A4A00; border: 1px solid #F3D4A6">{{ u.n }}</span>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="margin-top: 26px; padding: 18px 34px 24px; background: var(--pg); border-top: 1px solid var(--line); display: flex; align-items: center; gap: 12px">
+                <button sc-camel-on-click="{{ closeSubmit }}" style="flex: 1; border: 1px solid var(--nv-300); background: #FFFFFF; color: var(--nv-900); padding: 14px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Quay lại làm tiếp</button>
+                <button sc-camel-on-click="{{ closeSubmit }}" style="flex: 1; border: 0; background: var(--or-500); color: #FFFFFF; padding: 14px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer">Nộp bài</button>
+              </div>
+            </div></x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;activeTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;library&quot;,&quot;history&quot;],&quot;default&quot;:&quot;library&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Trang Quiz&quot;}}">
+const QUIZZES = [
+  { topic: 'Từ vựng', level: 'Cơ bản', title: 'Từ vựng văn phòng · Bộ 3', desc: 'Email, lịch họp và các cụm từ dùng hằng ngày ở công ty.', count: 10, time: '8 phút', best: 'Cao nhất 8/10', state: 'Đang làm dở', cta: 'Tiếp tục', primary: true },
+  { topic: 'Ngữ pháp', level: 'Trung cấp', title: 'Thì hiện tại hoàn thành', desc: 'Phân biệt hiện tại hoàn thành với quá khứ đơn trong ngữ cảnh công việc.', count: 15, time: '12 phút', best: 'Cao nhất 11/15', state: 'Đã làm 2 lần', cta: 'Làm lại' },
+  { topic: 'Nghe', level: 'Trung cấp', title: 'Nghe số liệu và ngày tháng', desc: 'Nghe đoạn ngắn rồi chọn con số, ngày giờ được nhắc tới.', count: 12, time: '10 phút', best: 'Chưa làm', state: 'Mới', cta: 'Bắt đầu', primary: true },
+  { topic: 'Từ vựng', level: 'Nâng cao', title: 'Cụm động từ trong hợp đồng', desc: 'Các phrasal verb thường gặp khi đọc điều khoản và thư thương mại.', count: 15, time: '14 phút', best: 'Cao nhất 9/15', state: 'Đã làm 1 lần', cta: 'Làm lại' },
+  { topic: 'Ngữ pháp', level: 'Cơ bản', title: 'Giới từ chỉ thời gian', desc: 'in, on, at và cách dùng trong lịch làm việc.', count: 10, time: '7 phút', best: 'Cao nhất 10/10', state: 'Hoàn thành', cta: 'Làm lại' },
+  { topic: 'Đọc', level: 'Trung cấp', title: 'Đọc thông báo nội bộ', desc: 'Ba thông báo ngắn, mỗi bài bốn câu hỏi tìm ý chính.', count: 12, time: '11 phút', best: 'Chưa làm', state: 'Mới', cta: 'Bắt đầu', primary: true }
+];
+
+const HISTORY = [
+  { title: 'Giới từ chỉ thời gian', topic: 'Ngữ pháp', attempt: 3, date: 'Hôm nay · 09:12', correct: '10/10', score: '10', pct: '100%' },
+  { title: 'Từ vựng văn phòng · Bộ 3', topic: 'Từ vựng', attempt: 2, date: 'Hôm nay · 08:30', correct: '8/10', score: '8', pct: '80%' },
+  { title: 'Thì hiện tại hoàn thành', topic: 'Ngữ pháp', attempt: 2, date: 'Hôm qua · 20:45', correct: '11/15', score: '7.3', pct: '73%' },
+  { title: 'Cụm động từ trong hợp đồng', topic: 'Từ vựng', attempt: 1, date: '4 tháng 8 · 19:02', correct: '9/15', score: '6', pct: '60%' },
+  { title: 'Từ vựng văn phòng · Bộ 2', topic: 'Từ vựng', attempt: 1, date: '3 tháng 8 · 21:15', correct: '9/10', score: '9', pct: '90%' },
+  { title: 'Thì hiện tại hoàn thành', topic: 'Ngữ pháp', attempt: 1, date: '2 tháng 8 · 18:40', correct: '8/15', score: '5.3', pct: '53%' },
+  { title: 'Nghe số liệu và ngày tháng', topic: 'Nghe', attempt: 1, date: '1 tháng 8 · 07:55', correct: '9/12', score: '7.5', pct: '75%' }
+];
+
+const QUESTIONS = [
+  { prompt: 'What does "reschedule a meeting" mean?', opts: ['Đổi sang thời gian khác', 'Huỷ hẳn cuộc họp', 'Mời thêm người dự', 'Ghi biên bản cuộc họp'] },
+  { prompt: 'Choose the closest meaning of "invoice".', opts: ['Hoá đơn thanh toán', 'Bản hợp đồng', 'Phiếu giao hàng', 'Biên bản họp'] },
+  { prompt: 'What does "follow up on an email" mean?', opts: ['Nhắc lại sau khi đã gửi email', 'Chuyển tiếp email cho người khác', 'Xoá email cũ', 'Trả lời tự động'] }
+];
+
+const SUMMARY = [
+  { label: 'Số câu đúng', value: '8 / 10' },
+  { label: 'Thời gian làm', value: '6 phút 42 giây' },
+  { label: 'Điểm cao nhất trước đây', value: '7 / 10' },
+  { label: 'Lần làm thứ', value: '3' }
+];
+
+const REVIEW = [
+  { n: 1, q: 'What does "reschedule a meeting" mean?', detail: 'Bạn chọn: Đổi sang thời gian khác', ok: true, tag: 'Đúng' },
+  { n: 2, q: 'Choose the closest meaning of "invoice".', detail: 'Bạn chọn: Hoá đơn thanh toán', ok: true, tag: 'Đúng' },
+  { n: 3, q: 'What does "follow up on an email" mean?', detail: 'Bạn chọn: Chuyển tiếp email cho người khác — đáp án đúng: Nhắc lại sau khi đã gửi email', ok: false, tag: 'Sai' },
+  { n: 4, q: 'Which word means "a short written record of a meeting"?', detail: 'Bạn chọn: minutes', ok: true, tag: 'Đúng' },
+  { n: 5, q: 'What does "on behalf of" mean?', detail: 'Bạn chọn: thay vì — đáp án đúng: thay mặt cho', ok: false, tag: 'Sai' },
+  { n: 6, q: 'Choose the closest meaning of "deadline".', detail: 'Bạn chọn: hạn chót', ok: true, tag: 'Đúng' }
+];
+
+const RW_BANK = ['have', 'to', 'finish', 'finished', 'has', 'finishing'];
+const RW_TOKENS = [{ t: 'We' }, { slot: 0 }, { slot: 1 }, { slot: 2 }, { t: 'the report before Friday.' }];
+const ORD_WORDS = ['asked', 'The manager', 'to submit', 'us', 'the report', 'by Friday.', 'again', 'quickly'];
+const MATCH_L = [
+  'If the shipment is delayed,',
+  'Because the client approved the budget,',
+  'Although the meeting was short,',
+  'Before you send the report,',
+  'As soon as the invoice arrives,'
+];
+const MATCH_R = [
+  'please ask Linh to proofread it.',
+  'we can start production next week.',
+  'we will notify the customer right away.',
+  'accounting will process the payment.',
+  'we covered every item on the agenda.'
+];
+
+const KEYS = ['A', 'B', 'C', 'D'];
+const FILTERS = ['Tất cả', 'Từ vựng', 'Ngữ pháp', 'Nghe', 'Đọc'];
+const H_FILTERS = ['Tất cả', '7 ngày qua', '30 ngày qua', 'Điểm dưới 7'];
+
+class Component extends DCLogic {
+  state = { fill: 'at', tab: null, filter: 0, hFilter: 0, qIdx: 0, picks: { 0: 0, 1: 0 }, secs: 5 * 60 + 12,
+    rw: [0, 1, null], ord: [1, 0], mSel: null, pairs: { 1: 1 }, submitOpen: true };
+
+  rwPut(i) {
+    this.setState(s => {
+      if (s.rw.includes(i)) return { rw: s.rw.map(v => (v === i ? null : v)) };
+      const k = s.rw.indexOf(null);
+      if (k === -1) return null;
+      const rw = s.rw.slice(); rw[k] = i; return { rw };
+    });
+  }
+  ordPut(i) {
+    this.setState(s => (s.ord.includes(i) ? { ord: s.ord.filter(v => v !== i) } : { ord: s.ord.concat(i) }));
+  }
+  matchClick(side, i) {
+    this.setState(s => {
+      const pairs = { ...s.pairs };
+      if (side === 'l') {
+        if (pairs[i] !== undefined) { delete pairs[i]; return { pairs, mSel: null }; }
+        return { mSel: s.mSel === i ? null : i };
+      }
+      const owner = Object.keys(pairs).find(k => pairs[k] === i);
+      if (owner !== undefined) { delete pairs[owner]; return { pairs, mSel: null }; }
+      if (s.mSel === null) return null;
+      pairs[s.mSel] = i;
+      return { pairs, mSel: null };
+    });
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState(s => ({ secs: Math.max(0, s.secs - 1) })), 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  renderVals() {
+    const tab = this.state.tab ?? this.props.activeTab ?? 'library';
+    const mkTab = (key, name, count) => ({
+      name, count, go: () => this.setState({ tab: key }),
+      fg: tab === key ? 'var(--nv-900)' : 'var(--tx3)',
+      bar: tab === key ? 'var(--nv-900)' : 'transparent',
+      pillBg: tab === key ? 'var(--nv-100)' : 'var(--pg)',
+      pillFg: tab === key ? 'var(--nv-900)' : 'var(--tx3)'
+    });
+    const chip = (name, on, go) => ({ name, go,
+      bg: on ? 'var(--nv-900)' : '#FFFFFF', bc: on ? 'var(--nv-900)' : 'var(--line)',
+      fg: on ? '#FFFFFF' : 'var(--tx2)' });
+
+    const idx = this.state.qIdx;
+    const q = QUESTIONS[idx % QUESTIONS.length];
+    const pick = this.state.picks[idx];
+    const opts = q.opts.map((text, i) => {
+      const on = pick === i;
+      return { key: KEYS[i], text,
+        bg: on ? 'var(--or-100)' : 'var(--pg)', bc: on ? 'var(--or-500)' : 'var(--line)',
+        keyBg: on ? 'var(--or-500)' : '#FFFFFF', keyFg: on ? '#FFFFFF' : 'var(--tx3)',
+        pick: () => this.setState(s => ({ picks: { ...s.picks, [idx]: i } })) };
+    });
+    const picks = this.state.picks;
+    const dots = Array.from({ length: 10 }, (_, i) => {
+      const cur = i === idx, done = picks[i] !== undefined && !cur;
+      return { n: i + 1, go: () => this.setState({ qIdx: i }),
+        bg: cur ? 'var(--or-500)' : (done ? 'var(--nv-900)' : '#FFFFFF'),
+        fg: cur || done ? '#FFFFFF' : 'var(--tx3)',
+        bc: cur ? 'var(--or-500)' : (done ? 'var(--nv-900)' : 'var(--line)') };
+    });
+    const m = Math.floor(this.state.secs / 60), s = this.state.secs % 60;
+
+    return {
+      isLibrary: tab === 'library', isHistory: tab === 'history',
+      tabs: [mkTab('library', 'Quiz hiện có', 24), mkTab('history', 'Lịch sử làm quiz', 38)],
+      stats: [
+        { value: '38', label: 'Lượt làm' }, { value: '7.6', label: 'Điểm trung bình' },
+        { value: '6', label: 'Bộ đã hoàn thành' }
+      ],
+      filters: FILTERS.map((name, i) => chip(name, i === this.state.filter, () => this.setState({ filter: i }))),
+      hFilters: H_FILTERS.map((name, i) => chip(name, i === this.state.hFilter, () => this.setState({ hFilter: i }))),
+      quizzes: QUIZZES.filter(q => this.state.filter === 0 || q.topic === FILTERS[this.state.filter]).map(q => ({
+        ...q,
+        lvlBg: q.level === 'Nâng cao' ? 'var(--or-100)' : 'var(--pg)',
+        lvlFg: q.level === 'Nâng cao' ? '#8A4A00' : 'var(--tx2)',
+        stateFg: q.state === 'Hoàn thành' ? 'var(--ok)' : (q.state === 'Đang làm dở' ? 'var(--or-500)' : 'var(--tx3)'),
+        ctaBg: q.primary ? 'var(--or-500)' : 'var(--nv-100)',
+        ctaFg: q.primary ? '#FFFFFF' : 'var(--nv-900)'
+      })),
+      history: HISTORY.map(h => {
+        const v = parseFloat(h.score);
+        return { ...h,
+          scoreBg: v >= 8 ? 'var(--ok-bg)' : (v >= 6 ? 'var(--or-100)' : 'var(--warn-bg)'),
+          scoreFg: v >= 8 ? 'var(--ok)' : (v >= 6 ? '#8A4A00' : 'var(--warn)'),
+          fill: v >= 8 ? 'var(--ok)' : (v >= 6 ? 'var(--or-500)' : 'var(--warn)') };
+      }),
+      qNo: idx + 1, prompt: q.prompt, opts, dots,
+      progress: ((idx + 1) * 10) + '%',
+      clock: String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'),
+      next: () => this.setState(s => ({ qIdx: Math.min(9, s.qIdx + 1) })),
+      prev: () => this.setState(s => ({ qIdx: Math.max(0, s.qIdx - 1) })),
+      fill: this.state.fill,
+      blank: this.state.fill || '______',
+      fillCount: this.state.fill.length,
+      fillBc: this.state.fill ? 'var(--or-500)' : 'var(--line)',
+      onFill: e => this.setState({ fill: e.target.value }),
+      fillRules: [
+        { mark: '✓', ok: true, text: 'Không phân biệt hoa thường — viết "At" hay "at" đều được tính đúng.' },
+        { mark: '✓', ok: true, text: 'Khoảng trắng thừa ở đầu và cuối sẽ được bỏ qua.' },
+        { mark: '!', ok: false, text: 'Phải viết đúng chính tả, kể cả dấu nháy trong "doesn\'t".' },
+        { mark: '!', ok: false, text: 'Chỉ điền một từ, đúng dạng được hỏi (số ít / số nhiều, thì của động từ).' }
+      ].map(r => ({ ...r, bg: r.ok ? 'var(--ok-bg)' : '#FBE3C7', fg: r.ok ? 'var(--ok)' : '#8A4A00' })),
+      rwTokens: RW_TOKENS.map(t => {
+        if (t.t) return { label: t.t, minW: 'auto', pad: '6px 2px', bs: 'solid', bc: 'transparent', bg: 'transparent', fg: 'var(--tx)', fw: '500', cur: 'default' };
+        const w = this.state.rw[t.slot];
+        const on = w !== null && w !== undefined;
+        return { label: on ? RW_BANK[w] : '', minW: '124px', pad: '6px 16px',
+          bs: on ? 'solid' : 'dashed', bc: on ? 'var(--or-500)' : 'var(--nv-300)',
+          bg: on ? 'var(--or-100)' : '#FFFFFF', fg: 'var(--nv-900)', fw: '700',
+          cur: on ? 'pointer' : 'default',
+          click: on ? () => this.rwPut(w) : undefined };
+      }),
+      rwBank: RW_BANK.map((text, i) => {
+        const used = this.state.rw.includes(i);
+        return { text, click: () => this.rwPut(i), cur: 'pointer',
+          bg: used ? 'var(--nv-100)' : '#FFFFFF', bc: used ? 'var(--nv-100)' : 'var(--line)',
+          fg: used ? 'var(--nv-300)' : 'var(--tx)' };
+      }),
+      rwReset: () => this.setState({ rw: [null, null, null] }),
+      ordLine: this.state.ord.map(i => ({ text: ORD_WORDS[i], click: () => this.ordPut(i) })),
+      ordBank: ORD_WORDS.map((text, i) => ({ text, i })).filter(w => !this.state.ord.includes(w.i))
+        .map(w => ({ text: w.text, click: () => this.ordPut(w.i) })),
+      ordUsed: this.state.ord.length, ordTotal: ORD_WORDS.length,
+      ordHintShow: this.state.ord.length ? 'none' : 'inline',
+      ordBc: this.state.ord.length ? 'var(--or-500)' : 'var(--nv-300)',
+      ordReset: () => this.setState({ ord: [] }),
+      mLeft: MATCH_L.map((text, i) => {
+        const paired = this.state.pairs[i] !== undefined;
+        const sel = this.state.mSel === i;
+        const num = Object.keys(this.state.pairs).map(Number).sort((a, b) => a - b).indexOf(i) + 1;
+        return { text, click: () => this.matchClick('l', i),
+          bg: paired ? 'var(--nv-100)' : (sel ? 'var(--or-100)' : '#FFFFFF'),
+          bc: paired ? 'var(--nv-900)' : (sel ? 'var(--or-500)' : 'var(--line)'),
+          badge: paired ? String(num) : '·',
+          badgeBg: paired ? 'var(--nv-900)' : (sel ? 'var(--or-500)' : 'var(--pg)'),
+          badgeFg: paired || sel ? '#FFFFFF' : 'var(--tx3)' };
+      }),
+      mRight: MATCH_R.map((text, i) => {
+        const owner = Object.keys(this.state.pairs).map(Number).find(k => this.state.pairs[k] === i);
+        const paired = owner !== undefined;
+        const num = paired ? Object.keys(this.state.pairs).map(Number).sort((a, b) => a - b).indexOf(owner) + 1 : 0;
+        return { text, click: () => this.matchClick('r', i),
+          bg: paired ? 'var(--nv-100)' : '#FFFFFF',
+          bc: paired ? 'var(--nv-900)' : 'var(--line)',
+          badge: paired ? String(num) : '·',
+          badgeBg: paired ? 'var(--nv-900)' : 'var(--pg)',
+          badgeFg: paired ? '#FFFFFF' : 'var(--tx3)' };
+      }),
+      mDone: Object.keys(this.state.pairs).length,
+      mProgress: (Object.keys(this.state.pairs).length * 20) + '%',
+      mHint: this.state.mSel === null ? 'Bấm một vế đầu để bắt đầu nối' : 'Đang chọn vế đầu — bấm một vế sau để nối',
+      mReset: () => this.setState({ pairs: {}, mSel: null }),
+      submitOpen: this.state.submitOpen,
+      openSubmit: () => this.setState({ submitOpen: true }),
+      closeSubmit: () => this.setState({ submitOpen: false }),
+      submitRows: [
+        { label: 'Đã trả lời', value: Object.keys(picks).length + ' / 10', fg: 'var(--nv-900)' },
+        { label: 'Chưa trả lời', value: String(10 - Object.keys(picks).length), fg: 'var(--or-500)' },
+        { label: 'Thời gian còn lại', value: String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'), fg: 'var(--nv-900)' }
+      ],
+      unanswered: Array.from({ length: 10 }, (_, i) => i).filter(i => picks[i] === undefined)
+        .map(i => ({ n: i + 1, go: () => this.setState({ qIdx: i, submitOpen: false }) })),
+      summary: SUMMARY,
+      review: REVIEW.map(r => ({ ...r,
+        bc: r.ok ? 'var(--line)' : '#F3C6C0',
+        badgeBg: r.ok ? 'var(--ok-bg)' : 'var(--warn-bg)',
+        badgeFg: r.ok ? 'var(--ok)' : 'var(--warn)',
+        tagBg: r.ok ? 'var(--ok-bg)' : 'var(--warn-bg)',
+        tagFg: r.ok ? 'var(--ok)' : 'var(--warn)' }))
+    };
+  }
+}
+
+</script>
+
+
+</body></html>

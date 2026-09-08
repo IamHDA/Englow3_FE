@@ -1,0 +1,22 @@
+.formPaper {
+  background-color: var(--mantine-color-body);
+}
+
+.label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--mantine-color-ink-9);
+  margin-bottom: 6px;
+}
+
+.input {
+  height: 44px;
+  border-radius: var(--mantine-radius-md);
+  border-color: var(--mantine-color-ink-3);
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--mantine-color-navy-7);
+}

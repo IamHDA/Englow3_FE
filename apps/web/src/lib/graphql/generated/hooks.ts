@@ -8,6 +8,13 @@ import { gql } from '@apollo/client';
 import * as ApolloReactCommon from '@apollo/client/react';
 import * as ApolloReactHooks from '@apollo/client/react';
 const defaultOptions = {} as const;
+export type UpdateProfileMutationVariables = Exact<{
+  input: Types.UpdateProfileInput;
+}>;
+
+
+export type UpdateProfileMutation = { updateProfile: { id: string, email: string, fullName: string, displayName: string, gender: Types.Gender | null, birthDate: unknown, avatarUrl: string | null, bannerUrl: string | null, onboardingStep: Types.OnboardingStep, onboardingState: { currentLevel: Types.CefrLevel | null, targetCertificateType: string | null, targetScore: number | null, targetDate: unknown, targetSkills: Array<Types.LearningSkill> } | null } };
+
 export type ExamLibraryQueryVariables = Exact<{
   examType?: Types.ExamType | null | undefined;
   certificateType?: Types.CertificateType | null | undefined;
@@ -43,9 +50,57 @@ export type LearningPurposesQuery = { learningPurposes: Array<{ id: number, purp
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { me: { id: string, displayName: string, avatarUrl: string | null, onboardingStep: Types.OnboardingStep } };
+export type CurrentUserQuery = { me: { id: string, email: string, fullName: string, displayName: string, gender: Types.Gender | null, birthDate: unknown, avatarUrl: string | null, bannerUrl: string | null, onboardingStep: Types.OnboardingStep, onboardingState: { currentLevel: Types.CefrLevel | null, targetCertificateType: string | null, targetScore: number | null, targetDate: unknown, targetSkills: Array<Types.LearningSkill> } | null } };
 
 
+export const UpdateProfileDocument = gql`
+    mutation UpdateProfile($input: UpdateProfileInput!) {
+  updateProfile(input: $input) {
+    id
+    email
+    fullName
+    displayName
+    gender
+    birthDate
+    avatarUrl
+    bannerUrl
+    onboardingStep
+    onboardingState {
+      currentLevel
+      targetCertificateType
+      targetScore
+      targetDate
+      targetSkills
+    }
+  }
+}
+    `;
+export type UpdateProfileMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) => Promise<any>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, options);
+      }
+export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
+export type UpdateProfileMutationResult = ApolloReactCommon.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = ApolloReactCommon.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
 export const ExamLibraryDocument = gql`
     query ExamLibrary($examType: ExamType, $certificateType: CertificateType, $certificateVariant: CertificateVariant, $targetLevel: TargetLevel, $title: String, $page: Int, $size: Int) {
   exams(
@@ -326,9 +381,21 @@ export const CurrentUserDocument = gql`
     query CurrentUser {
   me {
     id
+    email
+    fullName
     displayName
+    gender
+    birthDate
     avatarUrl
+    bannerUrl
     onboardingStep
+    onboardingState {
+      currentLevel
+      targetCertificateType
+      targetScore
+      targetDate
+      targetSkills
+    }
   }
 }
     `;

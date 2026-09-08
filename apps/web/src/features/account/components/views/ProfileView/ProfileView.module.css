@@ -1,0 +1,49 @@
+.viewContainer {
+  width: 100%;
+}
+
+.breadcrumb {
+  padding-bottom: 4px;
+}
+
+.breadcrumbLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mantine-color-ink-5);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbLink:hover {
+  color: var(--mantine-color-navy-8);
+}
+
+.breadcrumbSeparator {
+  color: var(--mantine-color-ink-3);
+}
+
+.tabsList {
+  background-color: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-md);
+  padding: 4px;
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.tabItem {
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: var(--mantine-radius-md);
+  transition: all 0.15s ease;
+}
+
+.errorPaper,
+.unauthPaper {
+  background-color: var(--mantine-color-body);
+}
+
+.unauthIcon {
+  color: var(--mantine-color-ink-4);
+}

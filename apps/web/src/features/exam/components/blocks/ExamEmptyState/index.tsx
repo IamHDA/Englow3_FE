@@ -1,5 +1,6 @@
 import { Button, Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { Search } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 type ExamEmptyStateProps = {
   searchQuery?: string;
@@ -10,6 +11,8 @@ export function ExamEmptyState({
   searchQuery,
   onResetFilters,
 }: ExamEmptyStateProps) {
+  const { t } = useLanguage();
+
   return (
     <Paper
       withBorder
@@ -24,13 +27,13 @@ export function ExamEmptyState({
         </ThemeIcon>
 
         <Title order={3} fw={700} c="navy.9">
-          Không tìm thấy đề thi phù hợp
+          {t.exam.emptyTitle}
         </Title>
 
         <Text c="dimmed" size="sm" maw={460} lh={1.6}>
           {searchQuery
-            ? `Không có đề thi nào khớp với từ khoá "${searchQuery}". Thử điều chỉnh từ khoá hoặc xoá bớt các bộ lọc để xem nhiều kết quả hơn.`
-            : "Không có đề thi nào thoả mãn các điều kiện lọc hiện tại. Thử bỏ chọn một vài bộ lọc để xem danh sách đề."}
+            ? t.exam.emptySearchDesc.replace("{query}", searchQuery)
+            : t.exam.emptyFilterDesc}
         </Text>
 
         <Button
@@ -41,7 +44,7 @@ export function ExamEmptyState({
           mt="xs"
           onClick={onResetFilters}
         >
-          Xoá toàn bộ bộ lọc
+          {t.exam.clearAllFilters}
         </Button>
       </Stack>
     </Paper>

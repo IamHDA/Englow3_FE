@@ -1,4 +1,5 @@
 import { Gender } from "@/lib/graphql/generated";
+import type { AppTranslations } from "@/shared/constants/translations";
 
 export const AuthMode = {
   LOGIN: "login",
@@ -19,6 +20,25 @@ type AuthModeCopy = {
   footerPrompt: string;
   footerAction: string;
 };
+
+export function getAuthModeCopy(mode: AuthMode, t: AppTranslations): AuthModeCopy {
+  if (mode === AuthMode.REGISTER) {
+    return {
+      title: t.auth.registerTitle,
+      subtitle: t.auth.registerSubtitle,
+      socialLabel: t.auth.registerSocial,
+      footerPrompt: t.auth.hasAccountPrompt,
+      footerAction: t.auth.loginAction,
+    };
+  }
+  return {
+    title: t.auth.loginTitle,
+    subtitle: t.auth.loginSubtitle,
+    socialLabel: t.auth.loginSocial,
+    footerPrompt: t.auth.noAccountPrompt,
+    footerAction: t.auth.registerAction,
+  };
+}
 
 export const AUTH_MODE_COPY: Record<AuthMode, AuthModeCopy> = {
   [AuthMode.LOGIN]: {
@@ -41,6 +61,13 @@ export const BIRTH_DAY_OPTIONS: string[] = Array.from({ length: 31 }, (_, i) =>
   String(i + 1),
 );
 
+export function getBirthMonthOptions(t: AppTranslations): { value: string; label: string }[] {
+  return Array.from({ length: 12 }, (_, i) => ({
+    value: String(i + 1),
+    label: `${t.auth.monthLabel} ${i + 1}`,
+  }));
+}
+
 export const BIRTH_MONTH_OPTIONS: { value: string; label: string }[] =
   Array.from({ length: 12 }, (_, i) => ({
     value: String(i + 1),
@@ -51,12 +78,14 @@ export const BIRTH_YEAR_OPTIONS: string[] = Array.from({ length: 60 }, (_, i) =>
   String(2010 - i),
 );
 
-/**
- * Chỉ có nhãn tiếng Việt ở đây - danh sách giá trị thuộc về schema BFF, lấy từ
- * enum `Gender` do codegen sinh. BFF thêm hoặc đổi tên một giá trị thì
- * `Record<Gender, string>` báo thiếu nhãn ngay lúc biên dịch; bản chép tay
- * trước đây lệch âm thầm cho tới khi BFF từ chối dữ liệu lúc chạy.
- */
+export function getGenderOptions(t: AppTranslations) {
+  return [
+    { value: Gender.OTHER, label: t.account.otherGender },
+    { value: Gender.MALE, label: t.account.male },
+    { value: Gender.FEMALE, label: t.account.female },
+  ];
+}
+
 export const GENDER_OPTIONS = [
   { value: Gender.OTHER, label: "Khác" },
   { value: Gender.MALE, label: "Nam" },

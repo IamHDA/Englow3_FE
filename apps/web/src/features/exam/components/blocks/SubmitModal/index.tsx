@@ -17,6 +17,7 @@ import {
   HelpCircle,
   Flag,
 } from 'lucide-react';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import classes from './SubmitModal.module.css';
 
 export interface SubmitModalProps {
@@ -36,6 +37,7 @@ export function SubmitModal({
   onClose,
   onConfirmSubmit,
 }: SubmitModalProps) {
+  const { t } = useLanguage();
   const unansweredCount = totalQuestions - answeredCount;
   const hasUnanswered = unansweredCount > 0;
 
@@ -45,7 +47,7 @@ export function SubmitModal({
       onClose={onClose}
       title={
         <Text fw={700} size="md" c="navy.9">
-          Xác nhận nộp bài thi
+          {t.exam.confirmModalTitle}
         </Text>
       }
       centered
@@ -60,7 +62,7 @@ export function SubmitModal({
                 <AlertTriangle size={18} />
               </ThemeIcon>
               <Text size="xs" c="orange.9" fw={600}>
-                Bạn còn <b>{unansweredCount}</b> câu hỏi chưa trả lời!
+                {t.exam.unansweredWarning.replace('{count}', String(unansweredCount))}
               </Text>
             </Group>
           </Paper>
@@ -71,7 +73,7 @@ export function SubmitModal({
                 <CheckCircle2 size={18} />
               </ThemeIcon>
               <Text size="xs" c="teal.9" fw={600}>
-                Bạn đã hoàn thành tất cả {totalQuestions} câu hỏi!
+                {t.exam.allDoneNotice.replace('{count}', String(totalQuestions))}
               </Text>
             </Group>
           </Paper>
@@ -83,7 +85,7 @@ export function SubmitModal({
             <Stack gap={2} align="center">
               <CheckCircle2 size={18} color="var(--mantine-color-navy-9)" />
               <Text size="xs" c="ink.5">
-                Đã làm
+                {t.exam.legendAnswered}
               </Text>
               <Text fw={700} size="sm" c="navy.9">
                 {answeredCount}
@@ -95,7 +97,7 @@ export function SubmitModal({
             <Stack gap={2} align="center">
               <HelpCircle size={18} color={hasUnanswered ? 'var(--mantine-color-warn-6)' : 'gray'} />
               <Text size="xs" c="ink.5">
-                Chưa làm
+                {t.exam.legendUnanswered}
               </Text>
               <Text fw={700} size="sm" c={hasUnanswered ? 'orange.8' : 'navy.9'}>
                 {unansweredCount}
@@ -107,7 +109,7 @@ export function SubmitModal({
             <Stack gap={2} align="center">
               <Flag size={18} color="#F59E0B" />
               <Text size="xs" c="ink.5">
-                Gắn cờ
+                {t.exam.legendFlagged}
               </Text>
               <Text fw={700} size="sm" c="yellow.9">
                 {flaggedCount}
@@ -117,12 +119,12 @@ export function SubmitModal({
         </SimpleGrid>
 
         <Text size="xs" c="ink.6">
-          Sau khi xác nhận nộp bài, hệ thống sẽ kết thúc lượt thi và chuyển đến màn hình kết quả đánh giá cùng giải thích đáp án.
+          {t.exam.submitExplanation}
         </Text>
 
         <Group justify="flex-end" gap="xs" pt="sm">
           <Button variant="default" radius="xl" size="sm" onClick={onClose}>
-            Tiếp tục làm bài
+            {t.exam.continueDoing}
           </Button>
           <Button
             radius="xl"
@@ -130,7 +132,7 @@ export function SubmitModal({
             onClick={onConfirmSubmit}
             className={classes.confirmBtn}
           >
-            Xác nhận nộp bài
+            {t.exam.confirmSubmitCTA}
           </Button>
         </Group>
       </Stack>

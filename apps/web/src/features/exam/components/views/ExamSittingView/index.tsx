@@ -15,6 +15,7 @@ import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 import { useExamPaperQuery } from '@/lib/graphql/generated/hooks';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import { useExamTimer } from '../../../hooks/useExamTimer';
 import { EXAM_LOCAL_STORAGE_PREFIX } from '../../../constants/examSitting';
 
@@ -34,6 +35,7 @@ type SittingMode = 'overview' | 'sitting' | 'result';
 
 export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const { data, loading, error } = useExamPaperQuery({
     variables: { id: examId },
     fetchPolicy: 'cache-and-network',
@@ -208,19 +210,19 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         <Stack align="center" gap="md" py={60}>
           <AlertCircle size={40} color="var(--mantine-color-warn-6)" />
           <Text size="lg" fw={700} c="navy.9">
-            Không thể tải đề thi
+            {t.exam.failedLoadExam}
           </Text>
           <Text size="sm" c="ink.5" ta="center">
-            {error?.message || 'Đề thi không tồn tại hoặc bạn chưa có quyền truy cập.'}
+            {error?.message || t.exam.failedLoadExamDesc}
           </Text>
           <Button
             component={Link}
-            href="/mock-test"
+            href="/exams"
             variant="default"
             radius="xl"
             leftSection={<ArrowLeft size={16} />}
           >
-            Về thư viện đề
+            {t.exam.returnToLibrary}
           </Button>
         </Stack>
       </Container>
@@ -264,8 +266,8 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         totalQuestions={flatQuestions.length}
         onSubmitClick={() => setSubmitModalOpen(true)}
         onExitClick={() => {
-          if (window.confirm('Bạn có chắc chắn muốn thoát? Bài làm hiện tại sẽ không được lưu.')) {
-            router.push('/mock-test');
+          if (window.confirm(t.exam.exitConfirm)) {
+            router.push('/exams');
           }
         }}
       />
@@ -297,7 +299,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
             ) : (
               <Card p="xl" radius="lg">
                 <Text c="ink.5" ta="center">
-                  Không tìm thấy dữ liệu câu hỏi.
+                  {t.exam.notFoundQuestion}
                 </Text>
               </Card>
             )}

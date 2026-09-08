@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="019eabd1-d1b8-4809-bc05-05dfd53ac00d"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4dbf34f1-67bd-4f0e-afb6-b804fefbffdb") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("25133846-665c-4874-9612-4ea40073ba56") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("491e7247-b3c2-49a2-9cd4-db13c0808c51") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("466ec3ce-c38e-4a98-ade2-6ff8593e1e76") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6a8be1d3-cf02-40aa-b580-3b576c7aa506") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7a05e529-2b29-4d38-b662-cded767250b3") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("cc210ac2-5c26-44db-a108-a37a96f3807d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+</style>
+<style>:root{
+/* Navy scale (was teal) — primary per project rules */
+--teal-900:#1E3A8A;--teal-700:#2A4CA8;--teal-500:#3B6FD4;--teal-300:#A8BBE8;
+--mint-300:#C3D2F0;--mint-100:#E9EEFB;
+/* Orange accent (was gold) */
+--gold-500:#F08A0C;--gold-300:#F5A623;--gold-100:#FDEFDC;
+--terracotta-500:#D9483B;
+/* Neutral page tints (was cream) */
+--cream-50:#F4F6FA;--cream-100:#E9EEFB;
+--ink-900:#1B2540;--ink-700:#54607A;--ink-500:#8892A6;--sand-300:#E3E8F0;--sand-200:#EDF1F7;
+--white:#FFFFFF;
+--success-500:#2E7D57;--warning-500:#F5A623;--error-500:#D9483B;--info-500:#3B6FD4;
+
+/* Project palette aliases */
+--nv-900:#1E3A8A;--nv-800:#2A4CA8;--nv-600:#3B6FD4;--nv-300:#A8BBE8;--nv-100:#E9EEFB;
+--or-500:#F08A0C;--or-600:#D97706;--or-400:#F5A623;--or-100:#FDEFDC;
+--pg:#F4F6FA;--line:#E3E8F0;--tx:#1B2540;--tx2:#54607A;--tx3:#8892A6;
+--ok:#1F8A5F;--ok-bg:#E6F4EE;--warn:#D9483B;--warn-bg:#FCEBE9;
+
+--surface-page:var(--cream-50);
+--surface-raised:var(--white);
+--surface-sunken:var(--cream-100);
+--surface-inverse:var(--teal-900);
+--border-default:var(--sand-300);
+--border-strong:var(--teal-300);
+--text-primary:var(--ink-900);
+--text-secondary:var(--ink-700);
+--text-muted:var(--ink-500);
+--text-on-dark:#FFFFFF;
+--text-on-accent:var(--white);
+--accent-primary:var(--teal-900);
+--accent-primary-hover:var(--teal-700);
+/* darker orange so white label keeps 4.5:1 on filled CTAs */
+--accent-secondary:#C2410C;
+--accent-secondary-hover:#9A3412;
+--focus-ring:var(--teal-500);
+--path-line:var(--cream-50);
+--path-dot:var(--gold-500);
+}
+</style>
+<style>:root{
+--font-display:'Lora',Georgia,serif;
+--font-body:'Work Sans',Arial,sans-serif;
+--text-xs:12px;--text-sm:14px;--text-base:16px;--text-md:18px;--text-lg:22px;--text-xl:28px;--text-2xl:36px;--text-3xl:48px;--text-4xl:64px;
+--leading-tight:1.15;--leading-snug:1.35;--leading-normal:1.55;--leading-relaxed:1.75;
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+--tracking-tight:-0.01em;--tracking-normal:0;--tracking-wide:0.04em;
+}</style>
+<style>:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;
+}</style>
+<style>:root{
+--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:999px;--radius-circle:50%;
+}</style>
+<style>:root{
+--shadow-sm:0 1px 3px rgba(30,58,138,0.10);
+--shadow-md:0 6px 20px rgba(30,58,138,0.12);
+--shadow-lg:0 18px 48px rgba(30,58,138,0.16);
+--shadow-focus:0 0 0 3px rgba(59,111,212,0.30);
+}
+</style>
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4dbf34f1-67bd-4f0e-afb6-b804fefbffdb") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("25133846-665c-4874-9612-4ea40073ba56") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("491e7247-b3c2-49a2-9cd4-db13c0808c51") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("466ec3ce-c38e-4a98-ade2-6ff8593e1e76") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6a8be1d3-cf02-40aa-b580-3b576c7aa506") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7a05e529-2b29-4d38-b662-cded767250b3") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("cc210ac2-5c26-44db-a108-a37a96f3807d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("bcd88b9c-141d-45c8-ba91-d2621085b063") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d8587d22-2d8c-4c51-9b46-075317eb8384") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* math */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("24870448-affe-4179-94f3-d98b170e5c2a") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-208E, U+2090-209C, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("1ba994fa-2e4e-485d-8e75-ea5af223f6cf") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA89, U+1FA8F-1FAC6, U+1FACE-1FADC, U+1FADF-1FAE9, U+1FAF0-1FAF8, U+1FB00-1FBFF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("3f1408b0-4759-4d22-9913-f124a1775557") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("4c3c3460-2a1f-4fdd-a41e-d5b3f08d0543") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("c26ae30b-0cee-499a-b256-6d4a8209b5e7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("66268f5a-6a71-436b-a025-9b26e17adcf8") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("759eb0a1-f36f-4dc2-9a22-ab69d9006eae") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("4c252d69-27a6-4ab9-92ae-3f4e9d34747f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root{
+/* Navy scale (was teal) — primary per project rules */
+--teal-900:#1E3A8A;--teal-700:#2A4CA8;--teal-500:#3B6FD4;--teal-300:#A8BBE8;
+--mint-300:#C3D2F0;--mint-100:#E9EEFB;
+/* Orange accent (was gold) */
+--gold-500:#F08A0C;--gold-300:#F5A623;--gold-100:#FDEFDC;
+--terracotta-500:#D9483B;
+/* Neutral page tints (was cream) */
+--cream-50:#F4F6FA;--cream-100:#E9EEFB;
+--ink-900:#1B2540;--ink-700:#54607A;--ink-500:#8892A6;--sand-300:#E3E8F0;--sand-200:#EDF1F7;
+--white:#FFFFFF;
+--success-500:#2E7D57;--warning-500:#F5A623;--error-500:#D9483B;--info-500:#3B6FD4;
+
+/* Project palette aliases */
+--nv-900:#1E3A8A;--nv-800:#2A4CA8;--nv-600:#3B6FD4;--nv-300:#A8BBE8;--nv-100:#E9EEFB;
+--or-500:#F08A0C;--or-600:#D97706;--or-400:#F5A623;--or-100:#FDEFDC;
+--pg:#F4F6FA;--line:#E3E8F0;--tx:#1B2540;--tx2:#54607A;--tx3:#8892A6;
+--ok:#1F8A5F;--ok-bg:#E6F4EE;--warn:#D9483B;--warn-bg:#FCEBE9;
+
+--surface-page:var(--cream-50);
+--surface-raised:var(--white);
+--surface-sunken:var(--cream-100);
+--surface-inverse:var(--teal-900);
+--border-default:var(--sand-300);
+--border-strong:var(--teal-300);
+--text-primary:var(--ink-900);
+--text-secondary:var(--ink-700);
+--text-muted:var(--ink-500);
+--text-on-dark:#FFFFFF;
+--text-on-accent:var(--white);
+--accent-primary:var(--teal-900);
+--accent-primary-hover:var(--teal-700);
+/* darker orange so white label keeps 4.5:1 on filled CTAs */
+--accent-secondary:#C2410C;
+--accent-secondary-hover:#9A3412;
+--focus-ring:var(--teal-500);
+--path-line:var(--cream-50);
+--path-dot:var(--gold-500);
+}
+
+:root{
+--font-display:'Lora',Georgia,serif;
+--font-body:'Work Sans',Arial,sans-serif;
+--text-xs:12px;--text-sm:14px;--text-base:16px;--text-md:18px;--text-lg:22px;--text-xl:28px;--text-2xl:36px;--text-3xl:48px;--text-4xl:64px;
+--leading-tight:1.15;--leading-snug:1.35;--leading-normal:1.55;--leading-relaxed:1.75;
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+--tracking-tight:-0.01em;--tracking-normal:0;--tracking-wide:0.04em;
+}
+:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;
+}
+:root{
+--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:999px;--radius-circle:50%;
+}
+:root{
+--shadow-sm:0 1px 3px rgba(30,58,138,0.10);
+--shadow-md:0 6px 20px rgba(30,58,138,0.12);
+--shadow-lg:0 18px 48px rgba(30,58,138,0.16);
+--shadow-focus:0 0 0 3px rgba(59,111,212,0.30);
+}
+
+body{font-family:var(--font-body);background:var(--surface-page);color:var(--text-primary)}
+a{color:var(--teal-700)}
+a:hover{color:var(--teal-900)}
+</style>
+<script src="ca088f19-c307-4d7f-8424-63a46e1aba7e"></script>
+<style>
+  /* palette lives in the design system: _ds/.../tokens/colors.css */
+  body { margin: 0; background: #E2E7F0; font-family: var(--font-body); }
+  a { color: var(--nv-900); text-decoration: none; }
+  a:hover { color: var(--or-500); }
+</style>
+</helmet>
+
+<section style="padding: 64px 64px 110px; display: flex; flex-direction: column; gap: 44px">
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-500)">Flashcard · Spaced repetition</span>
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 48px; font-weight: 700; line-height: 1.1; color: var(--nv-900); letter-spacing: -0.02em">Flashcard Learning App</h1>
+    <p style="margin: 0; max-width: 940px; font-size: 16px; line-height: 1.6; color: var(--tx2); text-wrap: pretty">Flashcard là một mục trong khu Study của Englow3 — header sản phẩm ở trên, thanh module Flashcard ở dưới. Sáu màn: <a href="#1a">1a</a> Dashboard · <a href="#1b">1b</a> Flashcard Sets · <a href="#1c">1c</a> Set Detail · <a href="#1d">1d</a> Study Screen · <a href="#1e">1e</a> Session Summary · <a href="#1f">1f</a> History &amp; Statistics. Màn <a href="#1d">1d</a> bấm được thật — click thẻ hoặc nhấn Space để lật, sau khi lật hiện bốn nút đánh giá.</p>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start">
+
+    <div id="1a" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1a</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Dashboard</span>
+        <span style="font-size: 14px; color: var(--tx3)">hôm nay học gì · tiến độ ra sao</span>
+      </div>
+
+      <div data-screen-label="Dashboard" style="box-sizing: border-box; width: 1440px; height: 1034px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <header style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 44px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <a href="#1a" style="flex: none; display: flex; align-items: center">
+            <img src="f7cd064b-27cf-462c-b944-ced9f3048b57" alt="Englow3 — Your Personal Path, Your Future in Hand" style="height: 46px; width: auto; display: block">
+          </a>
+          <nav style="display: flex; align-items: stretch; gap: 26px">
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid var(--or-500); font-size: 15px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Study<svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Mock Test</a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">AI Tutor</a>
+          </nav>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 14px">
+            <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 999px; border: 1px solid var(--line)">
+              <span style="width: 30px; height: 30px; flex: none; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MA</span>
+              <span style="font-size: 14px; font-weight: 700; color: var(--tx)">Minh Anh</span>
+            </span>
+          </div>
+        </header>
+        <div style="height: 58px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 24px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <span style="flex: none; display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 14px; color: var(--tx3)">Study</span>
+            <span style="color: var(--tx3); display: inline-flex"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+            <button style="display: flex; align-items: center; gap: 7px; border: 0; background: transparent; padding: 0; font-family: var(--font-body); cursor: pointer">
+              <span style="font-size: 16px; font-weight: 700; color: var(--nv-900)">Flashcard</span>
+              <span style="color: var(--tx3); display: inline-flex"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </button>
+          </span>
+          <span style="flex: none; width: 1px; margin: 16px 0; background: var(--line)"></span>
+          <nav style="display: flex; align-items: stretch; gap: 22px">
+            <a href="#1a" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid var(--nv-900); font-size: 14px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Dashboard</a>
+            <a href="#1b" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Flashcard Sets</a>
+            <a href="#1f" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Statistics</a>
+          </nav>
+          <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; align-self: center; padding: 7px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">24 cards due today</span>
+        </div>
+
+        <main style="flex: 1; min-height: 0; overflow: auto; padding: 30px 40px 14px; display: grid; grid-auto-rows: min-content; align-content: start; gap: 24px">
+          <div style="display: flex; align-items: flex-end; gap: 24px">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px">
+              <h2 style="margin: 0; font-family: var(--font-display); font-size: 34px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em; white-space: nowrap">Good morning, Minh Anh</h2>
+              <p style="margin: 0; font-size: 16px; color: var(--tx2)">Ready for today's review?</p>
+            </div>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 16px">
+              <span style="display: flex; flex-direction: column; align-items: flex-end">
+                <span style="font-size: 13px; color: var(--tx2)">Due today</span>
+                <span style="font-size: 20px; font-weight: 700; color: var(--nv-900); font-variant-numeric: tabular-nums">24 flashcards</span>
+              </span>
+              <a href="#1d" style="display: inline-flex; align-items: center; gap: 10px; background: var(--or-500); color: #FFFFFF; padding: 15px 28px; border-radius: 999px; font-size: 16px; font-weight: 700" style-hover="background: var(--or-600); color: #FFFFFF">
+                <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+                Start Review
+              </a>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px">
+            <sc-for list="{{ summary }}" as="s" hint-placeholder-count="4">
+              <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px">
+                <span style="width: 34px; height: 34px; border-radius: 10px; background: {{ s.tint }}; color: {{ s.ink }}; display: inline-flex; align-items: center; justify-content: center">
+                  <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" sc-camel-dangerously-set-inner-h-t-m-l="{{ s.icon }}"></svg>
+                </span>
+                <span style="font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--nv-900); line-height: 1; font-variant-numeric: tabular-nums">{{ s.value }}</span>
+                <span style="font-size: 14px; color: var(--tx2)">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 380px; gap: 22px; align-items: start">
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; align-items: baseline; gap: 12px">
+                <h3 style="margin: 0; font-size: 19px; font-weight: 700; color: var(--nv-900)">Continue Learning</h3>
+                <a href="#1b" style="margin-left: auto; font-size: 14px; font-weight: 600; color: var(--nv-900)">All sets</a>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+                <sc-for list="{{ recentSets }}" as="r" hint-placeholder-count="4">
+                  <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 13px">
+                    <div style="display: flex; align-items: flex-start; gap: 10px">
+                      <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0">
+                        <span style="font-size: 16px; font-weight: 700; color: var(--tx)">{{ r.name }}</span>
+                        <span style="display: flex; align-items: center; gap: 8px">
+                          <span style="padding: 3px 10px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 600">{{ r.topic }}</span>
+                          <span style="font-size: 12px; color: var(--tx3)">{{ r.total }} cards</span>
+                        </span>
+                      </div>
+                      <span style="margin-left: auto; flex: none; font-size: 15px; font-weight: 700; color: var(--nv-900); font-variant-numeric: tabular-nums">{{ r.pct }}%</span>
+                    </div>
+                    <div style="height: 8px; border-radius: 999px; background: var(--pg); overflow: hidden">
+                      <span style="display: block; height: 100%; width: {{ r.bar }}; background: var(--nv-900)"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px">
+                      <span style="font-size: 13px; color: var(--tx2)"><b style="color: var(--or-600)">{{ r.due }}</b> cards due today</span>
+                      <a href="#1d" style="margin-left: auto; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--nv-300); color: var(--nv-900); font-size: 13px; font-weight: 700" style-hover="background: var(--nv-100); color: var(--nv-900)">Continue</a>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 18px">
+                <div style="display: flex; align-items: baseline; gap: 22px">
+                  <h3 style="margin: 0; font-size: 19px; font-weight: 700; color: var(--nv-900)">Weekly Activity</h3>
+                  <span style="margin-left: auto; display: flex; align-items: baseline; gap: 6px"><b style="font-size: 17px; color: var(--tx); font-variant-numeric: tabular-nums">243</b><span style="font-size: 13px; color: var(--tx2)">cards studied</span></span>
+                  <span style="display: flex; align-items: baseline; gap: 6px"><b style="font-size: 17px; color: var(--tx); font-variant-numeric: tabular-nums">1h 52m</b><span style="font-size: 13px; color: var(--tx2)">study time</span></span>
+                  <span style="display: flex; align-items: baseline; gap: 6px"><b style="font-size: 17px; color: var(--tx); font-variant-numeric: tabular-nums">87%</b><span style="font-size: 13px; color: var(--tx2)">accuracy</span></span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; align-items: end; height: 132px">
+                  <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+                      <span style="font-size: 12px; font-weight: 700; color: var(--tx2); font-variant-numeric: tabular-nums">{{ d.n }}</span>
+                      <span style="width: 100%; height: {{ d.h }}; border-radius: 8px 8px 4px 4px; background: {{ d.bg }}"></span>
+                      <span style="font-size: 12px; color: var(--tx3)">{{ d.day }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span style="width: 30px; height: 30px; border-radius: 9px; background: var(--or-100); color: var(--or-600); display: inline-flex; align-items: center; justify-content: center">
+                  <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                </span>
+                <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: var(--nv-900)">Needs Attention</h3>
+              </div>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5; color: var(--tx2)">Những thẻ bạn hay quên hoặc đánh giá "Hard".</p>
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <sc-for list="{{ attention }}" as="a" hint-placeholder-count="4">
+                  <a href="#1d" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px" style-hover="background: var(--pg); color: var(--nv-900)">
+                    <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+                      <span style="font-size: 15px; font-weight: 700; color: var(--tx)">{{ a.word }}</span>
+                      <span style="font-size: 12px; color: var(--tx3)">{{ a.set }}</span>
+                    </span>
+                    <span style="margin-left: auto; flex: none; padding: 4px 10px; border-radius: 999px; background: var(--or-100); color: #8A4A00; font-size: 12px; font-weight: 700">{{ a.miss }}× forgot</span>
+                  </a>
+                </sc-for>
+              </div>
+              <a href="#1f" style="text-align: center; padding: 11px 0; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--nv-900)" style-hover="background: var(--pg); color: var(--nv-900)">Review these first</a>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div id="1b" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1b</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Flashcard Sets</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm nút Grid / List để đổi cách hiển thị</span>
+      </div>
+
+      <div data-screen-label="Flashcard Sets" style="box-sizing: border-box; width: 1440px; height: 1034px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <header style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 44px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <a href="#1a" style="flex: none; display: flex; align-items: center">
+            <img src="f7cd064b-27cf-462c-b944-ced9f3048b57" alt="Englow3 — Your Personal Path, Your Future in Hand" style="height: 46px; width: auto; display: block">
+          </a>
+          <nav style="display: flex; align-items: stretch; gap: 26px">
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid var(--or-500); font-size: 15px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Study<svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Mock Test</a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">AI Tutor</a>
+          </nav>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 14px">
+            <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 999px; border: 1px solid var(--line)">
+              <span style="width: 30px; height: 30px; flex: none; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MA</span>
+              <span style="font-size: 14px; font-weight: 700; color: var(--tx)">Minh Anh</span>
+            </span>
+          </div>
+        </header>
+        <div style="height: 58px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 24px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <span style="flex: none; display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 14px; color: var(--tx3)">Study</span>
+            <span style="color: var(--tx3); display: inline-flex"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+            <button style="display: flex; align-items: center; gap: 7px; border: 0; background: transparent; padding: 0; font-family: var(--font-body); cursor: pointer">
+              <span style="font-size: 16px; font-weight: 700; color: var(--nv-900)">Flashcard</span>
+              <span style="color: var(--tx3); display: inline-flex"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </button>
+          </span>
+          <span style="flex: none; width: 1px; margin: 16px 0; background: var(--line)"></span>
+          <nav style="display: flex; align-items: stretch; gap: 22px">
+            <a href="#1a" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Dashboard</a>
+            <a href="#1b" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid var(--nv-900); font-size: 14px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Flashcard Sets</a>
+            <a href="#1f" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Statistics</a>
+          </nav>
+          <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; align-self: center; padding: 7px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">24 cards due today</span>
+        </div>
+
+        <main style="flex: 1; min-height: 0; overflow: auto; padding: 30px 40px 36px; display: grid; grid-auto-rows: min-content; align-content: start; gap: 22px">
+          <div style="display: flex; align-items: center; gap: 20px">
+            <h2 style="margin: 0; font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em">Your Flashcard Sets</h2>
+            <button style="margin-left: auto; display: inline-flex; align-items: center; gap: 9px; border: 0; background: var(--or-500); color: #FFFFFF; padding: 13px 24px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer" style-hover="background: var(--or-600)">
+              <svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+              New Flashcard Set
+            </button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span style="position: relative; display: block; flex: 1; max-width: 360px">
+              <svg style="position: absolute; top: 50%; left: 14px; transform: translateY(-50%); pointer-events: none; color: var(--tx3)" width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" placeholder="Search flashcard sets" style="width: 100%; box-sizing: border-box; padding: 12px 16px 12px 42px; border: 1px solid var(--line); border-radius: 12px; background: #FFFFFF; font-family: var(--font-body); font-size: 15px; color: var(--tx); outline: none" style-focus="border-color: var(--nv-600)">
+            </span>
+
+            <div style="display: flex; align-items: center; gap: 8px">
+              <sc-for list="{{ topics }}" as="t" hint-placeholder-count="6">
+                <button sc-camel-on-click="{{ t.click }}" style="border: 1px solid {{ t.bc }}; background: {{ t.bg }}; color: {{ t.fg }}; padding: 9px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer">{{ t.label }}</button>
+              </sc-for>
+            </div>
+
+            <span style="margin-left: auto; position: relative; display: block">
+              <sc-raw-select style="appearance: none; padding: 11px 34px 11px 14px; border: 1px solid var(--line); border-radius: 12px; background: #FFFFFF; font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--tx); outline: none; cursor: pointer">
+                <option>Recently studied</option>
+                <option>Name</option>
+                <option>Progress</option>
+                <option>Number of cards</option>
+              </sc-raw-select>
+              <svg style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); pointer-events: none; color: var(--tx3)" width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+
+            <div style="display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: #FFFFFF">
+              <button sc-camel-on-click="{{ setGrid }}" aria-label="Grid view" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: {{ gridBg }}; color: {{ gridFg }}; cursor: pointer">
+                <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+              </button>
+              <button sc-camel-on-click="{{ setList }}" aria-label="List view" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: {{ listBg }}; color: {{ listFg }}; cursor: pointer">
+                <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h.01"></path><path d="M3 12h.01"></path><path d="M3 19h.01"></path><path d="M8 5h13"></path><path d="M8 12h13"></path><path d="M8 19h13"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column; gap: 22px">
+              <div style="display: flex; flex-direction: column; gap: 13px">
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Recent</span>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px">
+                  <sc-for list="{{ setsRecent }}" as="s" hint-placeholder-count="3">
+                    <a href="#1c" style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px" style-hover="border-color: var(--nv-300); color: var(--tx)">
+                      <div style="display: flex; align-items: flex-start; gap: 10px">
+                        <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+                          <span style="font-size: 17px; font-weight: 700; color: var(--tx)">{{ s.name }}</span>
+                          <span style="display: flex; align-items: center; gap: 8px">
+                            <span style="padding: 3px 10px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 600">{{ s.topic }}</span>
+                            <span style="font-size: 12px; color: var(--tx3)">{{ s.total }} cards</span>
+                          </span>
+                        </div>
+                        <button aria-label="More" style="margin-left: auto; flex: none; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: transparent; color: var(--tx3); cursor: pointer" style-hover="background: var(--pg)">
+                          <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                        </button>
+                      </div>
+                      <div style="display: flex; align-items: baseline; gap: 10px">
+                        <span style="font-size: 13px; color: var(--tx2)">{{ s.pct }}% mastered</span>
+                        <span style="margin-left: auto; font-size: 13px; font-weight: 700; color: var(--or-600)">{{ s.due }} due</span>
+                      </div>
+                      <div style="height: 8px; border-radius: 999px; background: var(--pg); overflow: hidden">
+                        <span style="display: block; height: 100%; width: {{ s.bar }}; background: var(--nv-900)"></span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 10px; padding-top: 3px">
+                        <span style="font-size: 12px; color: var(--tx3)">Last studied: {{ s.last }}</span>
+                        <span style="margin-left: auto; display: flex; gap: 7px">
+                          <span style="padding: 7px 16px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">Study</span>
+                          <span style="padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--tx2); font-size: 13px; font-weight: 600">View cards</span>
+                        </span>
+                      </div>
+                    </a>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 13px">
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">All sets</span>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px">
+                  <sc-for list="{{ setsAll }}" as="s" hint-placeholder-count="3">
+                    <a href="#1c" style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px" style-hover="border-color: var(--nv-300); color: var(--tx)">
+                      <div style="display: flex; align-items: flex-start; gap: 10px">
+                        <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+                          <span style="font-size: 17px; font-weight: 700; color: var(--tx)">{{ s.name }}</span>
+                          <span style="display: flex; align-items: center; gap: 8px">
+                            <span style="padding: 3px 10px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 600">{{ s.topic }}</span>
+                            <span style="font-size: 12px; color: var(--tx3)">{{ s.total }} cards</span>
+                          </span>
+                        </div>
+                        <button aria-label="More" style="margin-left: auto; flex: none; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: transparent; color: var(--tx3); cursor: pointer" style-hover="background: var(--pg)">
+                          <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                        </button>
+                      </div>
+                      <div style="display: flex; align-items: baseline; gap: 10px">
+                        <span style="font-size: 13px; color: var(--tx2)">{{ s.pct }}% mastered</span>
+                        <span style="margin-left: auto; font-size: 13px; font-weight: 700; color: var(--or-600)">{{ s.due }} due</span>
+                      </div>
+                      <div style="height: 8px; border-radius: 999px; background: var(--pg); overflow: hidden">
+                        <span style="display: block; height: 100%; width: {{ s.bar }}; background: var(--nv-900)"></span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 10px; padding-top: 3px">
+                        <span style="font-size: 12px; color: var(--tx3)">Last studied: {{ s.last }}</span>
+                        <span style="margin-left: auto; display: flex; gap: 7px">
+                          <span style="padding: 7px 16px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">Study</span>
+                          <span style="padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--tx2); font-size: 13px; font-weight: 600">View cards</span>
+                        </span>
+                      </div>
+                    </a>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+              <div style="display: grid; grid-template-columns: 2.4fr 1fr 1fr 1.6fr 1fr 150px; gap: 14px; padding: 13px 22px; background: var(--pg); border-bottom: 1px solid var(--line)">
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Set</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Topic</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Cards</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Progress</span>
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Last studied</span>
+                <span></span>
+              </div>
+              <sc-for list="{{ setsList }}" as="s" hint-placeholder-count="6">
+                <div style="display: grid; grid-template-columns: 2.4fr 1fr 1fr 1.6fr 1fr 150px; gap: 14px; align-items: center; padding: 15px 22px; border-bottom: 1px solid var(--line)">
+                  <span style="display: flex; align-items: center; gap: 11px; min-width: 0">
+                    <span style="font-size: 15px; font-weight: 700; color: var(--tx)">{{ s.name }}</span>
+                    <span style="flex: none; padding: 3px 9px; border-radius: 999px; background: var(--or-100); color: #8A4A00; font-size: 11px; font-weight: 700">{{ s.due }} due</span>
+                  </span>
+                  <span style="font-size: 13px; color: var(--tx2)">{{ s.topic }}</span>
+                  <span style="font-size: 14px; color: var(--tx); font-variant-numeric: tabular-nums">{{ s.total }}</span>
+                  <span style="display: flex; align-items: center; gap: 10px">
+                    <span style="flex: 1; height: 7px; border-radius: 999px; background: var(--pg); overflow: hidden"><span style="display: block; height: 100%; width: {{ s.bar }}; background: var(--nv-900)"></span></span>
+                    <span style="flex: none; font-size: 13px; font-weight: 700; color: var(--nv-900); font-variant-numeric: tabular-nums">{{ s.pct }}%</span>
+                  </span>
+                  <span style="font-size: 13px; color: var(--tx2)">{{ s.last }}</span>
+                  <span style="display: flex; gap: 7px; justify-content: flex-end">
+                    <a href="#1d" style="padding: 7px 16px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700" style-hover="background: var(--nv-800); color: #FFFFFF">Study</a>
+                    <a href="#1c" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; color: var(--tx3)" style-hover="background: var(--pg); color: var(--tx)">
+                      <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                    </a>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </main>
+      </div>
+    </div>
+
+    <div id="1c" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1c</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Set Detail</span>
+        <span style="font-size: 14px; color: var(--tx3)">danh sách thẻ trong bộ</span>
+      </div>
+
+      <div data-screen-label="Set Detail" style="box-sizing: border-box; width: 1440px; height: 1034px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <header style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 44px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <a href="#1a" style="flex: none; display: flex; align-items: center">
+            <img src="f7cd064b-27cf-462c-b944-ced9f3048b57" alt="Englow3 — Your Personal Path, Your Future in Hand" style="height: 46px; width: auto; display: block">
+          </a>
+          <nav style="display: flex; align-items: stretch; gap: 26px">
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid var(--or-500); font-size: 15px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Study<svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Mock Test</a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">AI Tutor</a>
+          </nav>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 14px">
+            <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 999px; border: 1px solid var(--line)">
+              <span style="width: 30px; height: 30px; flex: none; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MA</span>
+              <span style="font-size: 14px; font-weight: 700; color: var(--tx)">Minh Anh</span>
+            </span>
+          </div>
+        </header>
+        <div style="height: 58px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 24px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <span style="flex: none; display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 14px; color: var(--tx3)">Study</span>
+            <span style="color: var(--tx3); display: inline-flex"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+            <button style="display: flex; align-items: center; gap: 7px; border: 0; background: transparent; padding: 0; font-family: var(--font-body); cursor: pointer">
+              <span style="font-size: 16px; font-weight: 700; color: var(--nv-900)">Flashcard</span>
+              <span style="color: var(--tx3); display: inline-flex"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </button>
+          </span>
+          <span style="flex: none; width: 1px; margin: 16px 0; background: var(--line)"></span>
+          <nav style="display: flex; align-items: stretch; gap: 22px">
+            <a href="#1a" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Dashboard</a>
+            <a href="#1b" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid var(--nv-900); font-size: 14px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Flashcard Sets</a>
+            <a href="#1f" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Statistics</a>
+          </nav>
+          <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; align-self: center; padding: 7px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">24 cards due today</span>
+        </div>
+
+        <main style="flex: 1; min-height: 0; overflow: auto; padding: 26px 40px 36px; display: grid; grid-auto-rows: min-content; align-content: start; gap: 22px">
+          <a href="#1b" style="display: inline-flex; align-items: center; gap: 8px; justify-self: start; font-size: 14px; font-weight: 600; color: var(--tx2)" style-hover="color: var(--nv-900)">
+            <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+            Flashcard Sets
+          </a>
+
+          <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 18px; padding: 26px 28px; display: flex; align-items: flex-start; gap: 30px">
+            <div style="display: flex; flex-direction: column; gap: 10px; max-width: 520px">
+              <div style="display: flex; align-items: center; gap: 11px">
+                <h2 style="margin: 0; font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em">IELTS Vocabulary</h2>
+                <span style="padding: 4px 12px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 12px; font-weight: 700">English</span>
+              </div>
+              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--tx2); text-wrap: pretty">Academic word list cho phần Reading và Writing của IELTS. Mỗi thẻ có phiên âm, nghĩa tiếng Việt, câu ví dụ và collocation đi kèm.</p>
+              <div style="display: flex; gap: 10px; padding-top: 6px">
+                <a href="#1d" style="display: inline-flex; align-items: center; gap: 9px; background: var(--or-500); color: #FFFFFF; padding: 13px 26px; border-radius: 999px; font-size: 15px; font-weight: 700" style-hover="background: var(--or-600); color: #FFFFFF">
+                  <svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+                  Study Now
+                </a>
+                <button style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--nv-300); background: transparent; color: var(--nv-900); padding: 13px 22px; border-radius: 999px; font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer" style-hover="background: var(--nv-100)">
+                  <svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                  Add Card
+                </button>
+              </div>
+            </div>
+
+            <div style="margin-left: auto; display: grid; grid-template-columns: repeat(5, 96px); gap: 10px">
+              <sc-for list="{{ setStats }}" as="s" hint-placeholder-count="5">
+                <div style="padding: 14px 12px; border-radius: 13px; background: {{ s.bg }}; display: flex; flex-direction: column; gap: 4px; align-items: center">
+                  <span style="font-family: var(--font-display); font-size: 25px; font-weight: 700; color: {{ s.fg }}; line-height: 1; font-variant-numeric: tabular-nums">{{ s.value }}</span>
+                  <span style="font-size: 12px; font-weight: 600; color: {{ s.sub }}">{{ s.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+            <div style="padding: 16px 22px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--line)">
+              <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: var(--nv-900)">120 cards</h3>
+              <span style="position: relative; display: block; margin-left: auto; width: 280px">
+                <svg style="position: absolute; top: 50%; left: 13px; transform: translateY(-50%); pointer-events: none; color: var(--tx3)" width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="text" placeholder="Search in this set" style="width: 100%; box-sizing: border-box; padding: 10px 14px 10px 38px; border: 1px solid var(--line); border-radius: 11px; background: var(--pg); font-family: var(--font-body); font-size: 14px; color: var(--tx); outline: none" style-focus="border-color: var(--nv-600); background: #FFFFFF">
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.1fr 2fr 1fr 1fr 96px; gap: 16px; padding: 12px 22px; background: var(--pg); border-bottom: 1px solid var(--line)">
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Front</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Back</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Status</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Last reviewed</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3); text-align: right">Actions</span>
+            </div>
+
+            <sc-for list="{{ cardRows }}" as="c" hint-placeholder-count="7">
+              <div style="display: grid; grid-template-columns: 1.1fr 2fr 1fr 1fr 96px; gap: 16px; align-items: center; padding: 14px 22px; border-bottom: 1px solid var(--line)">
+                <span style="font-size: 15px; font-weight: 700; color: var(--tx)">{{ c.front }}</span>
+                <span style="font-size: 14px; color: var(--tx2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ c.back }}</span>
+                <span><span style="padding: 4px 12px; border-radius: 999px; background: {{ c.bg }}; color: {{ c.fg }}; font-size: 12px; font-weight: 700">{{ c.status }}</span></span>
+                <span style="font-size: 13px; color: var(--tx2)">{{ c.last }}</span>
+                <span style="display: flex; gap: 4px; justify-content: flex-end">
+                  <button aria-label="Edit card" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: transparent; color: var(--tx3); cursor: pointer" style-hover="background: var(--pg); color: var(--tx)">
+                    <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+                  </button>
+                  <button aria-label="More" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: transparent; color: var(--tx3); cursor: pointer" style-hover="background: var(--pg); color: var(--tx)">
+                    <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                  </button>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div id="1d" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1d</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Study Screen</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm thẻ hoặc Space để lật · không sidebar, không distraction</span>
+      </div>
+
+      <div data-screen-label="Study" style="width: 1440px; height: 900px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <div style="flex: none; height: 70px; padding: 0 32px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <a href="#1c" aria-label="Exit" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; color: var(--tx3)" style-hover="background: var(--pg); color: var(--tx)">
+            <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </a>
+          <span style="font-size: 16px; font-weight: 700; color: var(--nv-900)">IELTS Vocabulary</span>
+          <span style="margin-left: auto; font-size: 14px; color: var(--tx2)">Card <b style="color: var(--nv-900); font-variant-numeric: tabular-nums">12</b> / 30</span>
+        </div>
+        <div style="flex: none; height: 5px; background: var(--nv-100)">
+          <span style="display: block; height: 100%; width: 40%; background: var(--or-500)"></span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 32px 40px">
+          <div sc-camel-on-click="{{ flip }}" style="width: 760px; min-height: 340px; background: #FFFFFF; border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 8px 28px rgba(30,58,138,0.10); padding: 40px 48px; display: flex; flex-direction: column; cursor: pointer">
+            <sc-if value="{{ isFront }}" hint-placeholder-val="{{ true }}">
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px">
+                <span style="font-family: var(--font-display); font-size: 56px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.02em">abandon</span>
+                <span style="font-size: 21px; color: var(--tx2)">/əˈbændən/</span>
+                <button sc-camel-on-click="{{ stop }}" style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line); background: var(--pg); color: var(--nv-900); padding: 10px 20px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer" style-hover="background: var(--nv-100)">
+                  <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+                  Pronunciation
+                </button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isBack }}" hint-placeholder-val="{{ false }}">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 20px">
+                <div style="display: flex; align-items: baseline; gap: 14px">
+                  <span style="font-family: var(--font-display); font-size: 38px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em">abandon</span>
+                  <span style="padding: 4px 12px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">Verb</span>
+                  <span style="font-size: 16px; color: var(--tx3)">/əˈbændən/</span>
+                  <button sc-camel-on-click="{{ stop }}" aria-label="Pronunciation" style="margin-left: auto; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 10px; background: var(--pg); color: var(--nv-900); cursor: pointer">
+                    <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+                  </button>
+                </div>
+
+                <p style="margin: 0; font-family: var(--font-display); font-size: 22px; line-height: 1.5; color: var(--tx); text-wrap: pretty">“To leave someone or something permanently.”</p>
+
+                <div style="display: flex; flex-direction: column; gap: 5px">
+                  <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Vietnamese meaning</span>
+                  <span style="font-size: 19px; font-weight: 600; color: var(--nv-900)">“Từ bỏ, bỏ rơi”</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 5px; padding: 16px 18px; border-radius: 13px; background: var(--pg)">
+                  <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Example</span>
+                  <span style="font-size: 17px; line-height: 1.55; color: var(--tx)">“He <b style="color: var(--or-600)">abandoned</b> the project after several unsuccessful attempts.”</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 9px; padding-top: 2px">
+                  <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Note</span>
+                  <span style="font-size: 14px; color: var(--tx2)">Đừng nhầm với <i>abundant</i> (dồi dào).</span>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <span style="font-size: 14px; color: var(--tx3)">{{ flipHint }}</span>
+
+          <sc-if value="{{ isBack }}" hint-placeholder-val="{{ false }}">
+            <div style="display: grid; grid-template-columns: repeat(4, 168px); gap: 14px">
+              <sc-for list="{{ ratings }}" as="r" hint-placeholder-count="4">
+                <button sc-camel-on-click="{{ r.click }}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 10px 12px; border: 2px solid {{ r.bc }}; background: {{ r.bg }}; border-radius: 14px; font-family: var(--font-body); cursor: pointer" style-hover="border-color: {{ r.hover }}">
+                  <span style="display: flex; align-items: center; gap: 7px">
+                    <span style="width: 19px; height: 19px; border-radius: 6px; background: {{ r.keyBg }}; color: {{ r.keyFg }}; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">{{ r.key }}</span>
+                    <span style="font-size: 16px; font-weight: 700; color: {{ r.fg }}">{{ r.label }}</span>
+                  </span>
+                  <span style="font-size: 12px; color: var(--tx3)">{{ r.desc }}</span>
+                  <span style="font-size: 12px; font-weight: 700; color: {{ r.fg }}">{{ r.next }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="flex: none; padding: 0 32px 24px; display: flex; align-items: center; gap: 10px">
+          <button style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #FFFFFF; color: var(--tx2); padding: 9px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer" style-hover="background: var(--pg)">
+            <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+            Edit card
+          </button>
+          <button sc-camel-on-click="{{ toggleFav }}" style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid {{ favBc }}; background: {{ favBg }}; color: {{ favFg }}; padding: 9px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer">
+            <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="{{ favFill }}" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.12 2.12 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.12 2.12 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.12 2.12 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.12 2.12 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.12 2.12 0 0 0 1.597-1.16z"></path></svg>
+            Favorite
+          </button>
+          <button style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #FFFFFF; color: var(--tx2); padding: 9px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer" style-hover="background: var(--pg)">
+            <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><path d="M4 22v-7"></path></svg>
+            Report mistake
+          </button>
+          <span style="margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--tx3)">
+            <span><b style="color: var(--tx2)">Space</b> flip</span>
+            <span><b style="color: var(--tx2)">1</b> Again</span>
+            <span><b style="color: var(--tx2)">2</b> Hard</span>
+            <span><b style="color: var(--tx2)">3</b> Good</span>
+            <span><b style="color: var(--tx2)">4</b> Easy</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div id="1e" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1e</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">Session Summary</span>
+        <span style="font-size: 14px; color: var(--tx3)">hiện khi hết thẻ trong phiên</span>
+      </div>
+
+      <div data-screen-label="Session Summary" style="box-sizing: border-box; width: 1440px; height: 900px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; align-items: center; justify-content: center; padding: 40px">
+        <div style="width: 720px; background: #FFFFFF; border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 8px 28px rgba(30,58,138,0.10); padding: 44px 48px; display: flex; flex-direction: column; gap: 26px">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <span style="width: 56px; height: 56px; border-radius: 17px; background: var(--nv-900); color: var(--or-400); display: inline-flex; align-items: center; justify-content: center">
+              <svg width="30" height="30" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0z"></path></svg>
+            </span>
+            <h2 style="margin: 0; font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em">Session Complete</h2>
+            <p style="margin: 0; font-size: 16px; color: var(--tx2)">30 cards reviewed · IELTS Vocabulary</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
+            <div style="padding: 20px 22px; border-radius: 15px; background: var(--pg); display: flex; flex-direction: column; gap: 5px">
+              <span style="font-size: 13px; color: var(--tx2)">Accuracy</span>
+              <span style="font-family: var(--font-display); font-size: 38px; font-weight: 700; color: var(--nv-900); line-height: 1; font-variant-numeric: tabular-nums">87%</span>
+            </div>
+            <div style="padding: 20px 22px; border-radius: 15px; background: var(--pg); display: flex; flex-direction: column; gap: 5px">
+              <span style="font-size: 13px; color: var(--tx2)">Study time</span>
+              <span style="font-family: var(--font-display); font-size: 38px; font-weight: 700; color: var(--nv-900); line-height: 1; font-variant-numeric: tabular-nums">8m 32s</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 11px">
+            <span style="font-size: 13px; font-weight: 700; color: var(--tx2)">Breakdown</span>
+            <div style="display: flex; height: 12px; border-radius: 999px; overflow: hidden; gap: 2px">
+              <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="4">
+                <span style="width: {{ b.w }}; background: {{ b.color }}"></span>
+              </sc-for>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-top: 4px">
+              <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="4">
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 12px; border-left: 3px solid {{ b.color }}">
+                  <span style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--tx); line-height: 1; font-variant-numeric: tabular-nums">{{ b.n }}</span>
+                  <span style="font-size: 13px; font-weight: 600; color: var(--tx2)">{{ b.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px">
+            <a href="#1d" style="flex: 1; text-align: center; background: var(--or-500); color: #FFFFFF; padding: 15px 24px; border-radius: 999px; font-size: 15px; font-weight: 700" style-hover="background: var(--or-600); color: #FFFFFF">Review mistakes</a>
+            <a href="#1a" style="flex: 1; text-align: center; border: 1px solid var(--nv-300); color: var(--nv-900); padding: 15px 24px; border-radius: 999px; font-size: 15px; font-weight: 700" style-hover="background: var(--nv-100); color: var(--nv-900)">Back to Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1f" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; font-size: 13px; font-weight: 700">1f</span>
+        <span style="font-size: 20px; font-weight: 700; color: var(--nv-900)">History &amp; Statistics</span>
+        <span style="font-size: 14px; color: var(--tx3)">bấm 7 Days / 30 Days / 3 Months / All Time</span>
+      </div>
+
+      <div data-screen-label="Statistics" style="box-sizing: border-box; width: 1440px; height: 1634px; overflow: hidden; border-radius: 24px; background: var(--pg); box-shadow: 0 24px 60px rgba(30,58,138,0.18); display: flex; flex-direction: column">
+        <header style="height: 76px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 44px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <a href="#1a" style="flex: none; display: flex; align-items: center">
+            <img src="f7cd064b-27cf-462c-b944-ced9f3048b57" alt="Englow3 — Your Personal Path, Your Future in Hand" style="height: 46px; width: auto; display: block">
+          </a>
+          <nav style="display: flex; align-items: stretch; gap: 26px">
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid var(--or-500); font-size: 15px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Study<svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Mock Test</a>
+              <a href="#1a" style="display: flex; align-items: center; gap: 6px; padding: 26px 2px 24px; border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">AI Tutor</a>
+          </nav>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 14px">
+            <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 999px; border: 1px solid var(--line)">
+              <span style="width: 30px; height: 30px; flex: none; border-radius: 999px; background: var(--nv-900); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MA</span>
+              <span style="font-size: 14px; font-weight: 700; color: var(--tx)">Minh Anh</span>
+            </span>
+          </div>
+        </header>
+        <div style="height: 58px; flex: none; padding: 0 36px; display: flex; align-items: stretch; gap: 24px; background: #FFFFFF; border-bottom: 1px solid var(--line)">
+          <span style="flex: none; display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 14px; color: var(--tx3)">Study</span>
+            <span style="color: var(--tx3); display: inline-flex"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+            <button style="display: flex; align-items: center; gap: 7px; border: 0; background: transparent; padding: 0; font-family: var(--font-body); cursor: pointer">
+              <span style="font-size: 16px; font-weight: 700; color: var(--nv-900)">Flashcard</span>
+              <span style="color: var(--tx3); display: inline-flex"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </button>
+          </span>
+          <span style="flex: none; width: 1px; margin: 16px 0; background: var(--line)"></span>
+          <nav style="display: flex; align-items: stretch; gap: 22px">
+            <a href="#1a" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Dashboard</a>
+            <a href="#1b" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid transparent; font-size: 14px; white-space: nowrap; color: var(--tx2); font-weight: 600" style-hover="color: var(--nv-900)">Flashcard Sets</a>
+            <a href="#1f" style="display: flex; align-items: center; padding: 19px 2px 17px; border-bottom: 2px solid var(--nv-900); font-size: 14px; white-space: nowrap; color: var(--nv-900); font-weight: 700">Statistics</a>
+          </nav>
+          <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; align-self: center; padding: 7px 14px; border-radius: 999px; background: var(--nv-100); color: var(--nv-900); font-size: 13px; font-weight: 700">24 cards due today</span>
+        </div>
+
+        <main style="flex: 1; min-height: 0; overflow: auto; padding: 30px 40px 36px; display: grid; grid-auto-rows: min-content; align-content: start; gap: 22px">
+          <div style="display: flex; align-items: center; gap: 20px">
+            <h2 style="margin: 0; font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--nv-900); letter-spacing: -0.01em">Learning Statistics</h2>
+            <div style="margin-left: auto; display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: #FFFFFF">
+              <sc-for list="{{ periods }}" as="p" hint-placeholder-count="4">
+                <button sc-camel-on-click="{{ p.click }}" style="border: 0; padding: 9px 18px; border-radius: 999px; background: {{ p.bg }}; color: {{ p.fg }}; font-family: var(--font-body); font-size: 14px; font-weight: 700; cursor: pointer">{{ p.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px">
+            <sc-for list="{{ statCards }}" as="s" hint-placeholder-count="4">
+              <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: flex; flex-direction: column; gap: 7px">
+                <span style="font-family: var(--font-display); font-size: 34px; font-weight: 700; color: var(--nv-900); line-height: 1; font-variant-numeric: tabular-nums">{{ s.value }}</span>
+                <span style="font-size: 14px; color: var(--tx2)">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 18px">
+            <div style="display: flex; align-items: baseline; gap: 14px">
+              <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--nv-900)">Study Activity</h3>
+              <span style="font-size: 13px; color: var(--tx3)">cards reviewed per day</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: end; height: 168px">
+              <sc-for list="{{ activity }}" as="a" hint-placeholder-count="14">
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+                  <span style="font-size: 11px; color: var(--tx3); font-variant-numeric: tabular-nums">{{ a.n }}</span>
+                  <span style="width: 100%; height: {{ a.h }}; border-radius: 6px 6px 3px 3px; background: {{ a.bg }}"></span>
+                  <span style="font-size: 11px; color: var(--tx3)">{{ a.d }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px">
+              <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--nv-900)">Learning Progress</h3>
+              <div style="display: flex; height: 34px; border-radius: 10px; overflow: hidden; gap: 2px">
+                <sc-for list="{{ progress }}" as="p" hint-placeholder-count="3">
+                  <span style="width: {{ p.w }}; background: {{ p.color }}"></span>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{ progress }}" as="p" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 11px">
+                    <span style="width: 12px; height: 12px; flex: none; border-radius: 4px; background: {{ p.color }}"></span>
+                    <span style="font-size: 15px; font-weight: 600; color: var(--tx)">{{ p.label }}</span>
+                    <span style="margin-left: auto; font-size: 15px; font-weight: 700; color: var(--nv-900); font-variant-numeric: tabular-nums">{{ p.n }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px">
+              <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--nv-900)">Recall Performance</h3>
+              <div style="display: flex; flex-direction: column; gap: 13px">
+                <sc-for list="{{ recall }}" as="r" hint-placeholder-count="4">
+                  <div style="display: flex; align-items: center; gap: 13px">
+                    <span style="width: 54px; flex: none; font-size: 14px; font-weight: 700; color: var(--tx)">{{ r.label }}</span>
+                    <span style="flex: 1; height: 12px; border-radius: 999px; background: var(--pg); overflow: hidden"><span style="display: block; height: 100%; width: {{ r.w }}; background: {{ r.color }}"></span></span>
+                    <span style="width: 42px; flex: none; text-align: right; font-size: 14px; font-weight: 700; color: var(--tx2); font-variant-numeric: tabular-nums">{{ r.pct }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+            <div style="padding: 18px 24px; border-bottom: 1px solid var(--line)">
+              <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--nv-900)">Most Difficult Cards</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: 1.2fr 1.4fr 0.8fr 1fr 110px; gap: 16px; padding: 12px 24px; background: var(--pg); border-bottom: 1px solid var(--line)">
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Card</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Set</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Mistakes</span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tx3)">Last review</span>
+              <span></span>
+            </div>
+            <sc-for list="{{ difficult }}" as="d" hint-placeholder-count="4">
+              <div style="display: grid; grid-template-columns: 1.2fr 1.4fr 0.8fr 1fr 110px; gap: 16px; align-items: center; padding: 14px 24px; border-bottom: 1px solid var(--line)">
+                <span style="font-size: 15px; font-weight: 700; color: var(--tx)">{{ d.card }}</span>
+                <span style="font-size: 14px; color: var(--tx2)">{{ d.set }}</span>
+                <span><span style="padding: 4px 12px; border-radius: 999px; background: var(--or-100); color: #8A4A00; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums">{{ d.miss }}</span></span>
+                <span style="font-size: 14px; color: var(--tx2)">{{ d.last }}</span>
+                <a href="#1d" style="text-align: center; padding: 8px 0; border-radius: 999px; border: 1px solid var(--nv-300); color: var(--nv-900); font-size: 13px; font-weight: 700" style-hover="background: var(--nv-100); color: var(--nv-900)">Review</a>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+            <div style="padding: 18px 24px; border-bottom: 1px solid var(--line)">
+              <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--nv-900)">Study History</h3>
+            </div>
+            <sc-for list="{{ history }}" as="h" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; gap: 18px; padding: 16px 24px; border-bottom: 1px solid var(--line)">
+                <span style="width: 90px; flex: none; font-size: 14px; font-weight: 700; color: var(--nv-900)">{{ h.date }}</span>
+                <span style="width: 10px; height: 10px; flex: none; border-radius: 999px; background: var(--or-500)"></span>
+                <span style="flex: 1; min-width: 0; font-size: 15px; font-weight: 600; color: var(--tx)">{{ h.set }}</span>
+                <span style="width: 90px; flex: none; font-size: 14px; color: var(--tx2); font-variant-numeric: tabular-nums">{{ h.cards }}</span>
+                <span style="width: 100px; flex: none; font-size: 14px; color: var(--tx2); font-variant-numeric: tabular-nums">{{ h.recall }}</span>
+                <span style="width: 70px; flex: none; font-size: 14px; color: var(--tx2); font-variant-numeric: tabular-nums">{{ h.time }}</span>
+                <a href="#1e" style="flex: none; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--line); color: var(--nv-900); font-size: 13px; font-weight: 700" style-hover="background: var(--pg); color: var(--nv-900)">Review Session</a>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{}">
+const ICON = {
+  clock: '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
+  check: '<path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path>',
+  flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>',
+  trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0z"></path>'
+};
+
+const SUMMARY = [
+  { value: '24', label: 'Cards due today', icon: ICON.clock, tint: 'var(--or-100)', ink: 'var(--or-600)' },
+  { value: '38', label: 'Studied today', icon: ICON.check, tint: 'var(--nv-100)', ink: 'var(--nv-900)' },
+  { value: '7 days', label: 'Current streak', icon: ICON.flame, tint: 'var(--or-100)', ink: 'var(--or-600)' },
+  { value: '326', label: 'Cards mastered', icon: ICON.trophy, tint: 'var(--nv-100)', ink: 'var(--nv-900)' }
+];
+
+const RECENT = [
+  { name: 'IELTS Vocabulary', topic: 'English', total: 120, pct: 68, due: 15, last: 'Yesterday' },
+  { name: 'Java Concepts', topic: 'Programming', total: 84, pct: 45, due: 9, last: '2 days ago' },
+  { name: 'Japanese N5', topic: 'Japanese', total: 210, pct: 82, due: 6, last: 'Aug 12' },
+  { name: 'World History', topic: 'History', total: 96, pct: 31, due: 12, last: 'Aug 10' }
+];
+
+const MORE_SETS = [
+  { name: 'Business English', topic: 'English', total: 145, pct: 54, due: 11, last: 'Aug 9' },
+  { name: 'Physics Formulas', topic: 'Science', total: 62, pct: 77, due: 3, last: 'Aug 8' },
+  { name: 'TOEIC Part 5', topic: 'English', total: 180, pct: 22, due: 20, last: 'Aug 6' }
+];
+
+const WEEK = [
+  { day: 'Mon', n: 42 }, { day: 'Tue', n: 28 }, { day: 'Wed', n: 51 }, { day: 'Thu', n: 0 },
+  { day: 'Fri', n: 38 }, { day: 'Sat', n: 46 }, { day: 'Sun', n: 38 }
+];
+
+const ATTENTION = [
+  { word: 'ubiquitous', set: 'IELTS Vocabulary', miss: 8 },
+  { word: 'ephemeral', set: 'IELTS Vocabulary', miss: 6 },
+  { word: 'polymorphism', set: 'Java Concepts', miss: 5 },
+  { word: 'meticulous', set: 'Business English', miss: 4 }
+];
+
+const TOPICS = ['All topics', 'English', 'Programming', 'History', 'Japanese', 'Science'];
+
+const SET_STATS = [
+  { value: '120', label: 'Total', bg: 'var(--pg)', fg: 'var(--nv-900)', sub: 'var(--tx2)' },
+  { value: '82', label: 'Mastered', bg: 'var(--nv-100)', fg: 'var(--nv-900)', sub: 'var(--nv-900)' },
+  { value: '23', label: 'Learning', bg: 'var(--pg)', fg: 'var(--nv-900)', sub: 'var(--tx2)' },
+  { value: '15', label: 'New', bg: 'var(--pg)', fg: 'var(--nv-900)', sub: 'var(--tx2)' },
+  { value: '15', label: 'Due today', bg: 'var(--or-100)', fg: '#8A4A00', sub: '#8A4A00' }
+];
+
+const CARD_ROWS = [
+  { front: 'abandon', back: 'Từ bỏ, bỏ rơi — to leave someone or something permanently', status: 'Learning', last: 'Today' },
+  { front: 'ubiquitous', back: 'Có mặt khắp nơi — present everywhere at the same time', status: 'Learning', last: 'Today' },
+  { front: 'ephemeral', back: 'Phù du, chóng tàn — lasting for a very short time', status: 'Learning', last: 'Yesterday' },
+  { front: 'meticulous', back: 'Tỉ mỉ — showing great attention to detail', status: 'Mastered', last: 'Yesterday' },
+  { front: 'coherent', back: 'Mạch lạc — logical and consistent', status: 'Mastered', last: 'Aug 13' },
+  { front: 'substantiate', back: 'Chứng minh — to provide evidence to support a claim', status: 'New', last: '—' },
+  { front: 'inevitable', back: 'Không thể tránh khỏi — certain to happen', status: 'Mastered', last: 'Aug 12' }
+];
+
+const STATUS_STYLE = {
+  Mastered: { bg: 'var(--nv-100)', fg: 'var(--nv-900)' },
+  Learning: { bg: 'var(--or-100)', fg: '#8A4A00' },
+  New: { bg: 'var(--pg)', fg: 'var(--tx2)' }
+};
+
+const RATINGS = [
+  { key: '1', label: 'Again', desc: 'I forgot it', next: '1 min', color: 'var(--warn)', tint: '#FCEEEC' },
+  { key: '2', label: 'Hard', desc: 'Difficult to remember', next: '6 min', color: 'var(--or-600)', tint: 'var(--or-100)' },
+  { key: '3', label: 'Good', desc: 'I remembered it', next: '1 day', color: 'var(--nv-600)', tint: 'var(--nv-100)' },
+  { key: '4', label: 'Easy', desc: 'Very easy', next: '4 days', color: 'var(--nv-900)', tint: 'var(--nv-100)' }
+];
+
+const BREAKDOWN = [
+  { label: 'Good', n: 22, color: 'var(--nv-600)' },
+  { label: 'Easy', n: 4, color: 'var(--nv-900)' },
+  { label: 'Hard', n: 3, color: 'var(--or-500)' },
+  { label: 'Again', n: 1, color: 'var(--warn)' }
+];
+
+const STAT_CARDS = [
+  { value: '1,248', label: 'Cards reviewed' },
+  { value: '326', label: 'Cards mastered' },
+  { value: '86%', label: 'Recall rate' },
+  { value: '12.4 hours', label: 'Study time' }
+];
+
+const ACTIVITY = [31, 44, 22, 0, 38, 52, 41, 27, 49, 35, 0, 46, 58, 38];
+const ACTIVITY_DAYS = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
+
+const PROGRESS = [
+  { label: 'Mastered', n: 326, color: 'var(--nv-900)' },
+  { label: 'Learning', n: 184, color: 'var(--or-500)' },
+  { label: 'New', n: 215, color: 'var(--nv-300)' }
+];
+
+const RECALL = [
+  { label: 'Again', pct: 8, color: 'var(--warn)' },
+  { label: 'Hard', pct: 14, color: 'var(--or-500)' },
+  { label: 'Good', pct: 61, color: 'var(--nv-600)' },
+  { label: 'Easy', pct: 17, color: 'var(--nv-900)' }
+];
+
+const DIFFICULT = [
+  { card: 'ubiquitous', set: 'IELTS Vocabulary', miss: 8, last: 'Today' },
+  { card: 'ephemeral', set: 'IELTS Vocabulary', miss: 6, last: 'Yesterday' },
+  { card: 'polymorphism', set: 'Java Concepts', miss: 5, last: '2 days ago' },
+  { card: 'meticulous', set: 'Business English', miss: 4, last: '3 days ago' }
+];
+
+const HISTORY = [
+  { date: 'Today', set: 'IELTS Vocabulary', cards: '32 cards', recall: '87% recall', time: '8 min' },
+  { date: 'Yesterday', set: 'Java Concepts', cards: '24 cards', recall: '79% recall', time: '6 min' },
+  { date: 'Aug 12', set: 'Japanese N5', cards: '40 cards', recall: '91% recall', time: '12 min' },
+  { date: 'Aug 11', set: 'Business English', cards: '18 cards', recall: '83% recall', time: '5 min' }
+];
+
+const PERIODS = ['7 Days', '30 Days', '3 Months', 'All Time'];
+
+function setShape(s) {
+  return { ...s, bar: s.pct + '%' };
+}
+
+class Component extends DCLogic {
+  state = { flipped: false, view: 'grid', topic: 'All topics', period: '7 Days', fav: false, rated: null };
+
+  componentDidMount() {
+    this._onKey = (e) => {
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
+      if (e.code === 'Space') { e.preventDefault(); this.setState(s => ({ flipped: !s.flipped })); return; }
+      const n = ['1', '2', '3', '4'].indexOf(e.key);
+      if (n !== -1 && this.state.flipped) this.setState({ rated: n, flipped: false });
+    };
+    window.addEventListener('keydown', this._onKey);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this._onKey); }
+
+  renderVals() {
+    const weekMax = Math.max(...WEEK.map(w => w.n));
+    const actMax = Math.max(...ACTIVITY);
+    const progTotal = PROGRESS.reduce((a, p) => a + p.n, 0);
+    const bdTotal = BREAKDOWN.reduce((a, b) => a + b.n, 0);
+    const grid = this.state.view === 'grid';
+
+    return {
+      summary: SUMMARY.map(s => ({ ...s, icon: { __html: s.icon } })),
+      recentSets: RECENT.map(setShape),
+      setsRecent: RECENT.slice(0, 3).map(setShape),
+      setsAll: MORE_SETS.map(setShape),
+      setsList: RECENT.concat(MORE_SETS).map(setShape),
+      week: WEEK.map(w => ({
+        day: w.day, n: w.n,
+        h: w.n === 0 ? '4px' : Math.round((w.n / weekMax) * 92) + '%',
+        bg: w.n === 0 ? 'var(--line)' : (w.n === weekMax ? 'var(--or-500)' : 'var(--nv-300)')
+      })),
+      attention: ATTENTION,
+      topics: TOPICS.map(label => {
+        const on = this.state.topic === label;
+        return {
+          label, click: () => this.setState({ topic: label }),
+          bg: on ? 'var(--nv-900)' : '#FFFFFF',
+          bc: on ? 'var(--nv-900)' : 'var(--line)',
+          fg: on ? '#FFFFFF' : 'var(--tx2)'
+        };
+      }),
+      isGrid: grid,
+      isList: !grid,
+      setGrid: () => this.setState({ view: 'grid' }),
+      setList: () => this.setState({ view: 'list' }),
+      gridBg: grid ? 'var(--nv-900)' : 'transparent',
+      gridFg: grid ? '#FFFFFF' : 'var(--tx3)',
+      listBg: grid ? 'transparent' : 'var(--nv-900)',
+      listFg: grid ? 'var(--tx3)' : '#FFFFFF',
+
+      setStats: SET_STATS,
+      cardRows: CARD_ROWS.map(c => ({ ...c, bg: STATUS_STYLE[c.status].bg, fg: STATUS_STYLE[c.status].fg })),
+
+      isFront: !this.state.flipped,
+      isBack: this.state.flipped,
+      flip: () => this.setState(s => ({ flipped: !s.flipped })),
+      stop: (e) => { e.stopPropagation(); },
+      flipHint: this.state.flipped ? 'Chọn mức nhớ bên dưới, hoặc nhấn 1–4' : 'Click hoặc nhấn Space để lật thẻ',
+      ratings: RATINGS.map((r, i) => {
+        const on = this.state.rated === i;
+        return {
+          key: r.key, label: r.label, desc: r.desc, next: r.next, fg: r.color,
+          click: () => this.setState({ rated: i, flipped: false }),
+          bg: on ? r.tint : '#FFFFFF',
+          bc: on ? r.color : 'var(--line)',
+          hover: r.color,
+          keyBg: on ? r.color : 'var(--pg)',
+          keyFg: on ? '#FFFFFF' : 'var(--tx3)'
+        };
+      }),
+      favBg: this.state.fav ? 'var(--or-100)' : '#FFFFFF',
+      favBc: this.state.fav ? 'var(--or-500)' : 'var(--line)',
+      favFg: this.state.fav ? '#8A4A00' : 'var(--tx2)',
+      favFill: this.state.fav ? 'var(--or-400)' : 'none',
+      toggleFav: () => this.setState(s => ({ fav: !s.fav })),
+
+      breakdown: BREAKDOWN.map(b => ({ ...b, w: (b.n / bdTotal * 100) + '%' })),
+
+      periods: PERIODS.map(label => {
+        const on = this.state.period === label;
+        return {
+          label, click: () => this.setState({ period: label }),
+          bg: on ? 'var(--nv-900)' : 'transparent',
+          fg: on ? '#FFFFFF' : 'var(--tx2)'
+        };
+      }),
+      statCards: STAT_CARDS,
+      activity: ACTIVITY.map((n, i) => ({
+        n: n === 0 ? '' : String(n), d: ACTIVITY_DAYS[i],
+        h: n === 0 ? '4px' : Math.round((n / actMax) * 88) + '%',
+        bg: n === 0 ? 'var(--line)' : (n === actMax ? 'var(--or-500)' : 'var(--nv-300)')
+      })),
+      progress: PROGRESS.map(p => ({ ...p, w: (p.n / progTotal * 100) + '%' })),
+      recall: RECALL.map(r => ({ ...r, w: r.pct + '%', pct: r.pct + '%' })),
+      difficult: DIFFICULT,
+      history: HISTORY
+    };
+  }
+}
+
+</script>
+
+
+</body></html>

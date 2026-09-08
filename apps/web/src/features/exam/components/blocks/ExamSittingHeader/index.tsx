@@ -12,6 +12,7 @@ import {
   Text,
 } from '@mantine/core';
 import { Clock, Send, AlertTriangle } from 'lucide-react';
+import { useLanguage } from '@/shared/hooks/useLanguage';
 import classes from './ExamSittingHeader.module.css';
 
 export interface ExamSittingHeaderProps {
@@ -36,6 +37,7 @@ export function ExamSittingHeader({
   onSubmitClick,
   onExitClick,
 }: ExamSittingHeaderProps) {
+  const { t } = useLanguage();
   const progressPercent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 
   return (
@@ -56,7 +58,7 @@ export function ExamSittingHeader({
               onClick={onExitClick}
               radius="xl"
             >
-              Thoát
+              {t.exam.exitExam}
             </Button>
             <Divider orientation="vertical" />
             <Stack gap={1}>
@@ -96,7 +98,7 @@ export function ExamSittingHeader({
             <Box w={140}>
               <Flex justify="space-between" mb={2}>
                 <Text size="xs" c="ink.5" fw={600}>
-                  Tiến độ
+                  {t.exam.progress}
                 </Text>
                 <Text size="xs" fw={700} c="navy.9">
                   {answeredCount}/{totalQuestions}
@@ -112,7 +114,7 @@ export function ExamSittingHeader({
               rightSection={<Send size={14} />}
               className={classes.submitBtn}
             >
-              Nộp bài
+              {t.exam.submitExamCTA}
             </Button>
           </Group>
         </Flex>

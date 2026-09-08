@@ -36,6 +36,14 @@ const fixed = content
   .replace(
     /return ApolloReactHooks\.useSuspenseQuery<([^>]+)>\(([^,]+), options\);/g,
     "return ApolloReactHooks.useSuspenseQuery<$1>($2, options as any);",
+  )
+  .replace(
+    /ApolloReactCommon\.MutationFunction<([^,>]+),\s*([^>]+)>/g,
+    "(options?: ApolloReactCommon.MutationFunctionOptions<$1, $2>) => Promise<any>",
+  )
+  .replace(
+    /ApolloReactCommon\.BaseMutationOptions<([^>]+)>/g,
+    "ApolloReactCommon.MutationHookOptions<$1>",
   );
 
 if (fixed !== content) {

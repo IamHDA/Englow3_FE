@@ -1,0 +1,202 @@
+============================== QUIZ ==============================
+Screen IDs: ['1a', '1b', '1d', '1e', '1f', '1g', '1c']
+
+------------------- SCREEN 1a -------------------
+1a
+Trang Quiz — hai tab
+bấm tab để xem nội dung còn lại
+Study
+Mock Test
+AI Tutor
+MA
+Minh Anh
+Study
+Quiz
+{{ t.name }}
+{{ t.count }}
+Quiz
+Làm bài trắc nghiệm ngắn theo chủ đề, chấm điểm ngay sau khi nộp.
+{{ s.value }}
+{{ s.label }}
+{{ f.name }}
+Sắp xếp:
+Mới nhất
+{{ q.topic }}
+{{ q.level }}
+{{ q.state }}
+{{ q.title }}
+{{ q.desc }}
+{{ q.count }} câu
+{{ q.time }}
+{{ q.best }}
+{{ q.cta }}
+{{ f.name }}
+Điểm trung bình 30 ngày qua:
+7.6 / 10
+Bài quiz
+Thời gian
+Đúng
+Điểm
+Tỉ lệ đúng
+Thao tác
+{{ h.title }}
+{{ h.topic }} · lần {{ h.attempt }}
+{{ h.date }}
+{{ h.correct }}
+{{ h.score }}
+{{ h.pct }}
+Xem lại
+
+------------------- SCREEN 1b -------------------
+1b
+Màn làm quiz
+chọn đáp án, chuyển câu
+← Thoát
+Từ vựng văn phòng · Bộ 3
+10 câu
+Câu
+{{ qNo }}
+/ 10
+{{ clock }}
+còn lại
+Chọn nghĩa đúng
+1 điểm mỗi câu đúng
+{{ prompt }}
+{{ o.key }}
+{{ o.text }}
+← Câu trước
+Câu tiếp →
+{{ d.n }}
+Nộp bài
+
+------------------- SCREEN 1d -------------------
+1d
+Câu hỏi điền từ
+gõ được · có ghi chú quy tắc chấm
+← Thoát
+Giới từ chỉ thời gian · Điền từ
+10 câu
+Câu
+4
+/ 10
+{{ clock }}
+còn lại
+Điền từ vào chỗ trống
+1 điểm mỗi câu đúng
+The training session starts
+{{ blank }}
+9 a.m. on Monday.
+Câu trả lời của bạn
+{{ fillCount }} ký tự
+Enter để sang câu tiếp
+Cách chấm câu điền từ
+{{ r.mark }}
+{{ r.text }}
+← Câu trước
+Câu tiếp →
+Bỏ qua
+Nộp bài
+
+------------------- SCREEN 1e -------------------
+1e
+Viết lại câu
+bấm từ gợi ý để lắp vào chỗ trống · bấm lại để gỡ ra
+← Thoát
+Cấu trúc câu · Viết lại
+10 câu
+Câu
+5
+/ 10
+{{ clock }}
+còn lại
+Viết lại câu
+1 điểm mỗi câu đúng · phải điền đủ ba chỗ trống
+Câu gốc
+The report must be finished before Friday.
+Viết lại câu trên, dùng
+have to
+.
+Câu viết lại
+{{ t.label }}
+Từ gợi ý
+có vài từ thừa — chỉ lắp những từ cần dùng
+Xoá hết
+{{ w.text }}
+← Câu trước
+Câu tiếp →
+Bỏ qua
+Nộp bài
+
+------------------- SCREEN 1f -------------------
+1f
+Sắp xếp từ thành câu
+bấm từ để thêm vào câu · bấm từ trong câu để trả về
+← Thoát
+Trật tự từ · Sắp xếp câu
+10 câu
+Câu
+6
+/ 10
+{{ clock }}
+còn lại
+Sắp xếp thành câu đúng
+dùng hết tất cả các từ
+Sắp xếp các từ sau thành một câu hoàn chỉnh.
+Câu của bạn
+{{ ordUsed }} / {{ ordTotal }} từ đã dùng
+Bấm các từ bên dưới để xếp câu…
+{{ w.text }}
+Các từ còn lại
+Xếp lại từ đầu
+{{ w.text }}
+← Câu trước
+Câu tiếp →
+Bỏ qua
+Nộp bài
+
+------------------- SCREEN 1g -------------------
+1g
+Nối vế câu (matching)
+bấm vế trái rồi bấm vế phải để nối · bấm cặp đã nối để gỡ
+← Thoát
+Mệnh đề · Nối câu
+5 cặp
+Đã nối
+{{ mDone }}
+/ 5
+{{ clock }}
+còn lại
+Nối hai vế thành câu đúng
+1 điểm mỗi cặp đúng
+{{ mHint }}
+Gỡ hết
+Vế đầu
+{{ l.badge }}
+{{ l.text }}
+Vế sau
+{{ r.badge }}
+{{ r.text }}
+← Câu trước
+Câu tiếp →
+Bỏ qua
+Nộp bài
+
+------------------- SCREEN 1c -------------------
+1c
+Kết quả quiz
+điểm thường, không thưởng thêm
+Kết quả
+Từ vựng văn phòng · Bộ 3
+8
+/ 10
+{{ s.label }}
+{{ s.value }}
+Làm lại bộ này
+Về danh sách quiz
+Xem lại từng câu
+2 câu sai — bấm để xem giải thích
+{{ r.n }}
+{{ r.q }}
+{{ r.detail }}
+{{ r.tag }}
+

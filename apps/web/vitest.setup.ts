@@ -15,3 +15,11 @@ window.matchMedia =
       removeEventListener: () => {},
       dispatchEvent: () => false,
     }) as MediaQueryList);
+
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+window.ResizeObserver = window.ResizeObserver || ResizeObserverMock;
