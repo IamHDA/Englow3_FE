@@ -1,9 +1,5 @@
 export type QuizQuestionType =
-  | "MULTIPLE_CHOICE"
-  | "FILL_BLANK"
-  | "REWRITE"
-  | "REORDER"
-  | "MATCHING";
+  "MULTIPLE_CHOICE" | "FILL_BLANK" | "REWRITE" | "REORDER" | "MATCHING";
 
 export type DailyPathNodeStatus = "COMPLETED" | "CURRENT" | "LOCKED";
 

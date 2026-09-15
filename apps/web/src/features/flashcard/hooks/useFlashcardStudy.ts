@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlashcardItem, FlashcardSessionSummaryData, SRSRating } from "../types";
+import {
+  FlashcardItem,
+  FlashcardSessionSummaryData,
+  SRSRating,
+} from "../types";
 
 export interface UseFlashcardStudyOptions {
   cards: FlashcardItem[];
@@ -47,14 +51,20 @@ export function useFlashcardStudy({
     setIsFlipped((prev) => !prev);
   }, []);
 
-  const speakCard = useCallback((text?: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text || currentCard?.front || "");
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-  }, [currentCard?.front]);
+  const speakCard = useCallback(
+    (text?: string) => {
+      if (typeof window === "undefined" || !("speechSynthesis" in window))
+        return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(
+        text || currentCard?.front || "",
+      );
+      utterance.lang = "en-US";
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    },
+    [currentCard?.front],
+  );
 
   const formatDuration = (totalSecs: number) => {
     const mins = Math.floor(totalSecs / 60);
@@ -76,7 +86,8 @@ export function useFlashcardStudy({
         setIsCompleted(true);
         const totalReviewed = cards.length;
         const successful = nextCounts.good + nextCounts.easy;
-        const accuracyPercent = Math.round((successful / totalReviewed) * 100) || 0;
+        const accuracyPercent =
+          Math.round((successful / totalReviewed) * 100) || 0;
         const summary: FlashcardSessionSummaryData = {
           setName,
           totalReviewed,
@@ -90,7 +101,14 @@ export function useFlashcardStudy({
         setCurrentIndex((prev) => prev + 1);
       }
     },
-    [cards.length, currentIndex, onComplete, ratingCounts, setName, studySeconds]
+    [
+      cards.length,
+      currentIndex,
+      onComplete,
+      ratingCounts,
+      setName,
+      studySeconds,
+    ],
   );
 
   const restartStudy = useCallback(() => {
@@ -138,7 +156,8 @@ export function useFlashcardStudy({
     return {
       setName,
       totalReviewed,
-      accuracyPercent: totalReviewed > 0 ? Math.round((successful / totalReviewed) * 100) : 0,
+      accuracyPercent:
+        totalReviewed > 0 ? Math.round((successful / totalReviewed) * 100) : 0,
       studyDurationFormatted: formatDuration(studySeconds),
       breakdown: ratingCounts,
     };

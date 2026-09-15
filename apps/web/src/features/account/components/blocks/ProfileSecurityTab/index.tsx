@@ -40,9 +40,12 @@ export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
     });
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(profile.email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        profile.email,
+        {
+          redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
+        },
+      );
 
       if (error) {
         notifications.update({
@@ -115,7 +118,12 @@ export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
 
           <Divider />
 
-          <Paper p="md" radius="md" withBorder className={classes.securityAdvice}>
+          <Paper
+            p="md"
+            radius="md"
+            withBorder
+            className={classes.securityAdvice}
+          >
             <Group gap="xs" align="flex-start">
               <ShieldAlert size={18} className={classes.warningIcon} />
               <Text size="xs" c="ink.7" style={{ flex: 1 }}>

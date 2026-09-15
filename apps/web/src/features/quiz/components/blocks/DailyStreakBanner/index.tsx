@@ -11,11 +11,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import {
-  IconFlame,
-  IconSparkles,
-  IconTrophy,
-} from "@tabler/icons-react";
+import { IconFlame, IconSparkles, IconTrophy } from "@tabler/icons-react";
 import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -43,7 +39,8 @@ export function DailyStreakBanner({
       padding="xl"
       radius="lg"
       style={{
-        background: "linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%)",
+        background:
+          "linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%)",
         color: "#ffffff",
       }}
     >
@@ -51,7 +48,13 @@ export function DailyStreakBanner({
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="xs">
             <Group gap="xs">
-              <Badge variant="filled" color="yellow" size="sm" c="dark.9" fw={700}>
+              <Badge
+                variant="filled"
+                color="yellow"
+                size="sm"
+                c="dark.9"
+                fw={700}
+              >
                 {isVi ? "LỘ TRÌNH THÍCH ỨNG AI" : "AI ADAPTIVE LEARNING PATH"}
               </Badge>
               <Group gap={4}>
@@ -65,7 +68,9 @@ export function DailyStreakBanner({
             </Group>
 
             <Title order={2} fw={800} c="white">
-              {isVi ? "Lộ trình học tập mỗi ngày" : "Adaptive Daily Learning Path"}
+              {isVi
+                ? "Lộ trình học tập mỗi ngày"
+                : "Adaptive Daily Learning Path"}
             </Title>
 
             <Text fz="sm" c="indigo.1" maw={560}>
@@ -76,7 +81,12 @@ export function DailyStreakBanner({
 
             <Group gap="lg" mt="xs">
               <Group gap="xs">
-                <ThemeIcon variant="filled" color="yellow" size="sm" radius="xl">
+                <ThemeIcon
+                  variant="filled"
+                  color="yellow"
+                  size="sm"
+                  radius="xl"
+                >
                   <IconTrophy size={14} />
                 </ThemeIcon>
                 <Text fz="xs" fw={600} c="white">
@@ -87,11 +97,18 @@ export function DailyStreakBanner({
               </Group>
 
               <Group gap="xs">
-                <ThemeIcon variant="filled" color="indigo" size="sm" radius="xl">
+                <ThemeIcon
+                  variant="filled"
+                  color="indigo"
+                  size="sm"
+                  radius="xl"
+                >
                   <IconSparkles size={14} />
                 </ThemeIcon>
                 <Text fz="xs" fw={600} c="white">
-                  {isVi ? `Tổng tích lũy: ${totalXp} XP` : `Total XP: ${totalXp} XP`}
+                  {isVi
+                    ? `Tổng tích lũy: ${totalXp} XP`
+                    : `Total XP: ${totalXp} XP`}
                 </Text>
               </Group>
             </Group>

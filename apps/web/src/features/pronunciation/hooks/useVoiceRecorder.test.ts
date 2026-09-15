@@ -31,7 +31,7 @@ describe("useVoiceRecorder", () => {
 
   it("initializes with non-recording state", () => {
     const { result } = renderHook(() =>
-      useVoiceRecorder({ lesson: mockLesson })
+      useVoiceRecorder({ lesson: mockLesson }),
     );
 
     expect(result.current.isRecording).toBe(false);
@@ -43,7 +43,7 @@ describe("useVoiceRecorder", () => {
   it("handles simulated recording and generates AI evaluation", async () => {
     const onEvaluated = vi.fn();
     const { result } = renderHook(() =>
-      useVoiceRecorder({ lesson: mockLesson, onEvaluated })
+      useVoiceRecorder({ lesson: mockLesson, onEvaluated }),
     );
 
     await act(async () => {
@@ -79,7 +79,7 @@ describe("useVoiceRecorder", () => {
 
   it("resets practice cleanly", async () => {
     const { result } = renderHook(() =>
-      useVoiceRecorder({ lesson: mockLesson })
+      useVoiceRecorder({ lesson: mockLesson }),
     );
 
     await act(async () => {

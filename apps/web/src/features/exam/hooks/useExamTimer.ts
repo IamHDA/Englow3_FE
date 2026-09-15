@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   TIMER_WARNING_THRESHOLD_SECONDS,
   TIMER_CRITICAL_THRESHOLD_SECONDS,
-} from '../constants/examSitting';
+} from "../constants/examSitting";
 
 interface UseExamTimerOptions {
   durationSeconds: number;
@@ -19,7 +19,8 @@ export function useExamTimer({
 }: UseExamTimerOptions) {
   // Target deadline timestamp (ms since epoch)
   const deadlineRef = useRef<number | null>(null);
-  const [remainingSeconds, setRemainingSeconds] = useState<number>(durationSeconds);
+  const [remainingSeconds, setRemainingSeconds] =
+    useState<number>(durationSeconds);
   const [timeSpentSeconds, setTimeSpentSeconds] = useState<number>(0);
   const startTimestampRef = useRef<number | null>(null);
 
@@ -68,17 +69,17 @@ export function useExamTimer({
     };
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         updateTimer();
       }
     };
 
-    window.addEventListener('focus', handleFocus);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('focus', handleFocus);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isActive, updateTimer]);
 
@@ -96,9 +97,9 @@ export function useExamTimer({
     const seconds = totalSec % 60;
 
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     }
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const isWarning = remainingSeconds <= TIMER_WARNING_THRESHOLD_SECONDS;

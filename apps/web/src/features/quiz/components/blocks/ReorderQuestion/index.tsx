@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  Group,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Badge, Button, Card, Group, Stack, Text } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import React, { useMemo } from "react";
 import { QuizQuestion } from "../../../types";

@@ -13,7 +13,9 @@ interface DailyPathPageProps {
   }>;
 }
 
-export default async function DailyPathPage({ searchParams }: DailyPathPageProps) {
+export default async function DailyPathPage({
+  searchParams,
+}: DailyPathPageProps) {
   const { tab } = await searchParams;
   const initialTab = tab === "quizzes" ? "quizzes" : "roadmap";
 

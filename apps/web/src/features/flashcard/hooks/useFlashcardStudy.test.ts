@@ -31,7 +31,7 @@ const mockCards: FlashcardItem[] = [
 describe("useFlashcardStudy", () => {
   it("initializes with first card and unflipped state", () => {
     const { result } = renderHook(() =>
-      useFlashcardStudy({ cards: mockCards, setName: "Test Set" })
+      useFlashcardStudy({ cards: mockCards, setName: "Test Set" }),
     );
 
     expect(result.current.currentIndex).toBe(0);
@@ -43,7 +43,7 @@ describe("useFlashcardStudy", () => {
 
   it("flips card when flipCard is called", () => {
     const { result } = renderHook(() =>
-      useFlashcardStudy({ cards: mockCards, setName: "Test Set" })
+      useFlashcardStudy({ cards: mockCards, setName: "Test Set" }),
     );
 
     act(() => {
@@ -62,7 +62,7 @@ describe("useFlashcardStudy", () => {
   it("advances card upon rating and triggers onComplete on last card", () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() =>
-      useFlashcardStudy({ cards: mockCards, setName: "Test Set", onComplete })
+      useFlashcardStudy({ cards: mockCards, setName: "Test Set", onComplete }),
     );
 
     // Rate first card
@@ -87,13 +87,13 @@ describe("useFlashcardStudy", () => {
         totalReviewed: 2,
         accuracyPercent: 100,
         breakdown: { again: 0, hard: 0, good: 1, easy: 1 },
-      })
+      }),
     );
   });
 
   it("restarts study successfully", () => {
     const { result } = renderHook(() =>
-      useFlashcardStudy({ cards: mockCards, setName: "Test Set" })
+      useFlashcardStudy({ cards: mockCards, setName: "Test Set" }),
     );
 
     act(() => {

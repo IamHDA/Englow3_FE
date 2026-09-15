@@ -11,7 +11,7 @@
 }
 
 .stimulusCard {
-  background-color: #F8FAFC;
+  background-color: #f8fafc;
   border: 1px solid var(--mantine-color-ink-2);
 }
 
@@ -39,12 +39,14 @@
   border: 1.5px solid var(--mantine-color-ink-2);
   background-color: var(--mantine-color-white);
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .optionItem:hover {
   border-color: var(--mantine-color-navy-5);
-  background-color: #FAFCFF;
+  background-color: #fafcff;
 }
 
 .optionItemSelected {

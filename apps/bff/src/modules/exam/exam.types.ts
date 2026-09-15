@@ -164,4 +164,3 @@ export type ExamPaperResponse = {
   versionNumber: number;
   sections: ExamSectionDto[];
 };
-

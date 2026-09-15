@@ -23,7 +23,7 @@
   width: 12px;
   height: 12px;
   border-radius: 3px;
-  background-color: #F59E0B;
+  background-color: #f59e0b;
 }
 
 .legendDotUnanswered {
@@ -44,7 +44,10 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    transform 0.1s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .paletteBtn[data-status="unanswered"] {
@@ -60,9 +63,9 @@
 }
 
 .paletteBtn[data-status="flagged"] {
-  background-color: #FEF3C7;
-  color: #92400E;
-  border: 1.5px solid #F59E0B;
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1.5px solid #f59e0b;
 }
 
 .paletteBtn:hover {

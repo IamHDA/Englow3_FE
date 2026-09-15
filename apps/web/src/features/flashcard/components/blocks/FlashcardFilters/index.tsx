@@ -40,7 +40,10 @@ export function FlashcardFilters({
     { key: "ALL", label: isVi ? "Tất cả" : "All" },
     { key: "IELTS", label: "IELTS" },
     { key: "TOEIC", label: "TOEIC" },
-    { key: "Daily Conversation", label: isVi ? "Giao tiếp hàng ngày" : "Daily Conversation" },
+    {
+      key: "Daily Conversation",
+      label: isVi ? "Giao tiếp hàng ngày" : "Daily Conversation",
+    },
     { key: "Travel", label: isVi ? "Du lịch" : "Travel" },
   ];
 

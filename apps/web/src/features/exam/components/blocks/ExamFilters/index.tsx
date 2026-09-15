@@ -65,10 +65,12 @@ export function ExamFilters({
     filters.attemptStatus !== "ALL";
 
   const currentSortLabel =
-    sortOptions.find((s) => s.value === filters.sortBy)?.label ?? t.exam.sortNewest;
+    sortOptions.find((s) => s.value === filters.sortBy)?.label ??
+    t.exam.sortNewest;
 
   const currentSkillLabel =
-    skillOptions.find((s) => s.value === filters.skill)?.label ?? t.exam.skillAll;
+    skillOptions.find((s) => s.value === filters.skill)?.label ??
+    t.exam.skillAll;
 
   const currentDiffLabel =
     difficultyOptions.find((s) => s.value === filters.targetLevel)?.label ??
@@ -156,7 +158,14 @@ export function ExamFilters({
         </Group>
       </Flex>
 
-      <Flex align="center" wrap="wrap" gap="xs" mt="md" pt="xs" style={{ borderTop: "1px solid var(--mantine-color-gray-2)" }}>
+      <Flex
+        align="center"
+        wrap="wrap"
+        gap="xs"
+        mt="md"
+        pt="xs"
+        style={{ borderTop: "1px solid var(--mantine-color-gray-2)" }}
+      >
         {/* Kỹ năng */}
         <Menu shadow="md" width={180}>
           <Menu.Target>

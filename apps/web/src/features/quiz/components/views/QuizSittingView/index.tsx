@@ -68,27 +68,44 @@ export function QuizSittingView({ quiz }: QuizSittingViewProps) {
 
         if (q.type === "MULTIPLE_CHOICE") {
           const opt = q.mcOptions?.find((o) => o.id === userAns);
-          const correctOpt = q.mcOptions?.find((o) => o.id === q.correctOptionId);
-          userAnsText = opt ? `${opt.label}. ${opt.text}` : isVi ? "(Chưa chọn)" : "(No selection)";
-          correctAnsText = correctOpt ? `${correctOpt.label}. ${correctOpt.text}` : "";
+          const correctOpt = q.mcOptions?.find(
+            (o) => o.id === q.correctOptionId,
+          );
+          userAnsText = opt
+            ? `${opt.label}. ${opt.text}`
+            : isVi
+              ? "(Chưa chọn)"
+              : "(No selection)";
+          correctAnsText = correctOpt
+            ? `${correctOpt.label}. ${correctOpt.text}`
+            : "";
           isCorrect = userAns === q.correctOptionId;
         } else if (q.type === "FILL_BLANK") {
-          userAnsText = (userAns as string) || (isVi ? "(Chưa điền)" : "(Empty)");
+          userAnsText =
+            (userAns as string) || (isVi ? "(Chưa điền)" : "(Empty)");
           correctAnsText = q.acceptedAnswers?.join(" / ") || "";
           isCorrect =
-            String(userAns || "").trim().toLowerCase() === String(q.acceptedAnswers?.[0] || "").trim().toLowerCase();
+            String(userAns || "")
+              .trim()
+              .toLowerCase() ===
+            String(q.acceptedAnswers?.[0] || "")
+              .trim()
+              .toLowerCase();
         } else if (q.type === "REWRITE") {
           const words = (userAns as string[]) || [];
           userAnsText = words.join(" ") || (isVi ? "(Chưa viết)" : "(Empty)");
           correctAnsText = q.correctRewriteWords?.join(" ") || "";
           isCorrect =
-            userAnsText.trim().toLowerCase() === correctAnsText.trim().toLowerCase();
+            userAnsText.trim().toLowerCase() ===
+            correctAnsText.trim().toLowerCase();
         } else if (q.type === "REORDER") {
           const words = (userAns as string[]) || [];
-          userAnsText = words.join(" ") || (isVi ? "(Chưa sắp xếp)" : "(Empty)");
+          userAnsText =
+            words.join(" ") || (isVi ? "(Chưa sắp xếp)" : "(Empty)");
           correctAnsText = q.correctOrderWords?.join(" ") || "";
           isCorrect =
-            userAnsText.trim().toLowerCase() === correctAnsText.trim().toLowerCase();
+            userAnsText.trim().toLowerCase() ===
+            correctAnsText.trim().toLowerCase();
         } else if (q.type === "MATCHING") {
           const userPairs = (userAns as Record<string, string>) || {};
           const correctPairs = q.matchingPairs || [];
@@ -98,8 +115,12 @@ export function QuizSittingView({ quiz }: QuizSittingViewProps) {
               matches++;
             }
           });
-          userAnsText = isVi ? `${matches}/${correctPairs.length} cặp đúng` : `${matches}/${correctPairs.length} correct pairs`;
-          correctAnsText = isVi ? `${correctPairs.length}/${correctPairs.length} cặp` : `${correctPairs.length}/${correctPairs.length} pairs`;
+          userAnsText = isVi
+            ? `${matches}/${correctPairs.length} cặp đúng`
+            : `${matches}/${correctPairs.length} correct pairs`;
+          correctAnsText = isVi
+            ? `${correctPairs.length}/${correctPairs.length} cặp`
+            : `${correctPairs.length}/${correctPairs.length} pairs`;
           isCorrect = matches === correctPairs.length;
         }
 
@@ -219,8 +240,12 @@ export function QuizSittingView({ quiz }: QuizSittingViewProps) {
                   {currentQuestion.type === "MULTIPLE_CHOICE" && (
                     <MultipleChoiceQuestion
                       question={currentQuestion}
-                      selectedOptionId={answers[currentQuestion.id] as string | undefined}
-                      onSelectOption={(val) => setAnswer(currentQuestion.id, val)}
+                      selectedOptionId={
+                        answers[currentQuestion.id] as string | undefined
+                      }
+                      onSelectOption={(val) =>
+                        setAnswer(currentQuestion.id, val)
+                      }
                     />
                   )}
 
@@ -235,7 +260,9 @@ export function QuizSittingView({ quiz }: QuizSittingViewProps) {
                   {currentQuestion.type === "REWRITE" && (
                     <RewriteQuestion
                       question={currentQuestion}
-                      selectedWords={answers[currentQuestion.id] as string[] | undefined}
+                      selectedWords={
+                        answers[currentQuestion.id] as string[] | undefined
+                      }
                       onChange={(words) => setAnswer(currentQuestion.id, words)}
                     />
                   )}
@@ -243,7 +270,9 @@ export function QuizSittingView({ quiz }: QuizSittingViewProps) {
                   {currentQuestion.type === "REORDER" && (
                     <ReorderQuestion
                       question={currentQuestion}
-                      orderedWords={answers[currentQuestion.id] as string[] | undefined}
+                      orderedWords={
+                        answers[currentQuestion.id] as string[] | undefined
+                      }
                       onChange={(words) => setAnswer(currentQuestion.id, words)}
                     />
                   )}
@@ -251,7 +280,10 @@ export function QuizSittingView({ quiz }: QuizSittingViewProps) {
                   {currentQuestion.type === "MATCHING" && (
                     <MatchingQuestion
                       question={currentQuestion}
-                      userPairs={answers[currentQuestion.id] as Record<string, string> | undefined}
+                      userPairs={
+                        answers[currentQuestion.id] as
+                          Record<string, string> | undefined
+                      }
                       onChange={(pairs) => setAnswer(currentQuestion.id, pairs)}
                     />
                   )}

@@ -19,7 +19,9 @@ describe("computeWordDiff", () => {
     const res = computeWordDiff(expected, actual);
 
     expect(res.accuracyPercent).toBeLessThan(100);
-    expect(res.items.some((it) => it.type === "bad" && it.text === "go")).toBe(true);
+    expect(res.items.some((it) => it.type === "bad" && it.text === "go")).toBe(
+      true,
+    );
     expect(res.items.some((it) => it.type === "missing")).toBe(true);
     expect(res.fixes.length).toBeGreaterThan(0);
   });

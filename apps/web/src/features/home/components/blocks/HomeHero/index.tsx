@@ -37,9 +37,7 @@ export function HomeHero() {
             &ldquo;<em>{t.home.heroQuote}</em>&rdquo;
           </Text>
 
-          <Text className={classes.description}>
-            {t.home.heroDescription}
-          </Text>
+          <Text className={classes.description}>{t.home.heroDescription}</Text>
         </Flex>
 
         <Button

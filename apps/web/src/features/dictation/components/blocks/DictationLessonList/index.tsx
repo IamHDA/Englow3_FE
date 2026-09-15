@@ -21,7 +21,13 @@ interface DictationLessonListProps {
 export function DictationLessonList({ lessons }: DictationLessonListProps) {
   if (lessons.length === 0) {
     return (
-      <Paper radius="md" p="xl" withBorder bg="white" style={{ textAlign: "center" }}>
+      <Paper
+        radius="md"
+        p="xl"
+        withBorder
+        bg="white"
+        style={{ textAlign: "center" }}
+      >
         <Text c="ink.6" size="sm">
           Không tìm thấy bài học nào phù hợp.
         </Text>
@@ -40,7 +46,9 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
               <Table.Th>Độ khó</Table.Th>
               <Table.Th>Thời lượng</Table.Th>
               <Table.Th style={{ width: 180 }}>Tiến độ</Table.Th>
-              <Table.Th style={{ width: 140, textAlign: "right" }}>Hành động</Table.Th>
+              <Table.Th style={{ width: 140, textAlign: "right" }}>
+                Hành động
+              </Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -64,7 +72,10 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
                   <Table.Td>
                     <Group gap="xs">
                       {isCompleted && (
-                        <CheckCircle2 size={16} color="var(--mantine-color-teal-6)" />
+                        <CheckCircle2
+                          size={16}
+                          color="var(--mantine-color-teal-6)"
+                        />
                       )}
                       <Text fw={600} size="sm" c="ink.9">
                         {lesson.title}
@@ -95,7 +106,12 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
                         radius="xl"
                         style={{ flex: 1 }}
                       />
-                      <Text size="xs" c="ink.6" fw={600} style={{ minWidth: 32 }}>
+                      <Text
+                        size="xs"
+                        c="ink.6"
+                        fw={600}
+                        style={{ minWidth: 32 }}
+                      >
                         {lesson.progressPercent}%
                       </Text>
                     </Group>

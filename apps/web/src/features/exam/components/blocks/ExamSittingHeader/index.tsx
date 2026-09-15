@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   Box,
   Button,
@@ -10,10 +10,10 @@ import {
   Progress,
   Stack,
   Text,
-} from '@mantine/core';
-import { Clock, Send, AlertTriangle } from 'lucide-react';
-import { useLanguage } from '@/shared/hooks/useLanguage';
-import classes from './ExamSittingHeader.module.css';
+} from "@mantine/core";
+import { Clock, Send, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import classes from "./ExamSittingHeader.module.css";
 
 export interface ExamSittingHeaderProps {
   title: string;
@@ -38,15 +38,16 @@ export function ExamSittingHeader({
   onExitClick,
 }: ExamSittingHeaderProps) {
   const { t } = useLanguage();
-  const progressPercent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  const progressPercent =
+    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 
   return (
     <Box className={classes.headerRoot}>
-      <Box px={{ base: 'md', md: 'xl' }} py="xs">
+      <Box px={{ base: "md", md: "xl" }} py="xs">
         <Flex
           justify="space-between"
           align="center"
-          direction={{ base: 'column', sm: 'row' }}
+          direction={{ base: "column", sm: "row" }}
           gap="sm"
         >
           {/* Left: Title and Section */}
@@ -86,8 +87,8 @@ export function ExamSittingHeader({
             <Text
               fw={700}
               size="sm"
-              c={isWarning ? 'warn.6' : 'navy.9'}
-              style={{ fontVariantNumeric: 'tabular-nums' }}
+              c={isWarning ? "warn.6" : "navy.9"}
+              style={{ fontVariantNumeric: "tabular-nums" }}
             >
               {formattedTime}
             </Text>
@@ -104,7 +105,12 @@ export function ExamSittingHeader({
                   {answeredCount}/{totalQuestions}
                 </Text>
               </Flex>
-              <Progress value={progressPercent} size="xs" color="navy.9" radius="xl" />
+              <Progress
+                value={progressPercent}
+                size="xs"
+                color="navy.9"
+                radius="xl"
+              />
             </Box>
 
             <Button

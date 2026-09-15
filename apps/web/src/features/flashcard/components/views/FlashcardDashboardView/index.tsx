@@ -71,7 +71,9 @@ export function FlashcardDashboardView({
               dueCount={totalDueCount}
               streakDays={MOCK_FLASHCARD_STATS.dailyStreakDays}
               retentionPercent={MOCK_FLASHCARD_STATS.retentionRatePercent}
-              primarySetSlug={MOCK_FLASHCARD_SETS[0]?.slug || "ielts-core-vocab"}
+              primarySetSlug={
+                MOCK_FLASHCARD_SETS[0]?.slug || "ielts-core-vocab"
+              }
             />
 
             <FlashcardFilters
@@ -95,7 +97,9 @@ export function FlashcardDashboardView({
           <>
             <FlashcardStatsOverview stats={MOCK_FLASHCARD_STATS} />
             <FlashcardCharts stats={MOCK_FLASHCARD_STATS} />
-            <FlashcardDifficultCards cards={MOCK_FLASHCARD_STATS.difficultCards} />
+            <FlashcardDifficultCards
+              cards={MOCK_FLASHCARD_STATS.difficultCards}
+            />
             <FlashcardHistoryTable history={MOCK_FLASHCARD_STATS.history} />
           </>
         )}

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Card,
-  Group,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Box, Card, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconCheck, IconVolume } from "@tabler/icons-react";
 import React from "react";
 import { IpaChartSound } from "../../../types";
@@ -17,7 +10,9 @@ interface PronunciationPhonemeMapProps {
   sounds: IpaChartSound[];
 }
 
-export function PronunciationPhonemeMap({ sounds }: PronunciationPhonemeMapProps) {
+export function PronunciationPhonemeMap({
+  sounds,
+}: PronunciationPhonemeMapProps) {
   const { isVi } = useLanguage();
 
   const handleSpeak = (symbol: string) => {

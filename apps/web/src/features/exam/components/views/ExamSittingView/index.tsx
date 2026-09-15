@@ -1,56 +1,53 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Box, Button, Card, Container, Grid, Stack, Text } from "@mantine/core";
+import { AlertCircle, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+
+import { useExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import { useExamTimer } from "../../../hooks/useExamTimer";
+import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
+
+import { ExamOverview } from "../../blocks/ExamOverview";
+import { ExamOverviewSkeleton } from "../../blocks/ExamOverview/ExamOverviewSkeleton";
+import { ExamSittingHeader } from "../../blocks/ExamSittingHeader";
+import { QuestionCard } from "../../blocks/QuestionCard";
 import {
-  Box,
-  Button,
-  Card,
-  Container,
-  Grid,
-  Stack,
-  Text,
-} from '@mantine/core';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-
-import { useExamPaperQuery } from '@/lib/graphql/generated/hooks';
-import { useLanguage } from '@/shared/hooks/useLanguage';
-import { useExamTimer } from '../../../hooks/useExamTimer';
-import { EXAM_LOCAL_STORAGE_PREFIX } from '../../../constants/examSitting';
-
-import { ExamOverview } from '../../blocks/ExamOverview';
-import { ExamOverviewSkeleton } from '../../blocks/ExamOverview/ExamOverviewSkeleton';
-import { ExamSittingHeader } from '../../blocks/ExamSittingHeader';
-import { QuestionCard } from '../../blocks/QuestionCard';
-import { QuestionPalette, type FlatQuestionItem } from '../../blocks/QuestionPalette';
-import { SubmitModal } from '../../blocks/SubmitModal';
-import { ExamResultView } from '../../blocks/ExamResultView';
+  QuestionPalette,
+  type FlatQuestionItem,
+} from "../../blocks/QuestionPalette";
+import { SubmitModal } from "../../blocks/SubmitModal";
+import { ExamResultView } from "../../blocks/ExamResultView";
 
 interface ExamSittingViewProps {
   examId: string;
 }
 
-type SittingMode = 'overview' | 'sitting' | 'result';
+type SittingMode = "overview" | "sitting" | "result";
 
 export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const router = useRouter();
   const { t } = useLanguage();
   const { data, loading, error } = useExamPaperQuery({
     variables: { id: examId },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
   });
 
   const paper = data?.examPaper;
 
-  const [mode, setMode] = useState<SittingMode>('overview');
+  const [mode, setMode] = useState<SittingMode>("overview");
   const [currentIndex, setCurrentIndex] = useState<number>(() => {
-    if (typeof window === 'undefined') return 0;
+    if (typeof window === "undefined") return 0;
     try {
-      const saved = sessionStorage.getItem(`${EXAM_LOCAL_STORAGE_PREFIX}${examId}`);
+      const saved = sessionStorage.getItem(
+        `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
+      );
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (typeof parsed.currentIndex === 'number') return parsed.currentIndex;
+        if (typeof parsed.currentIndex === "number") return parsed.currentIndex;
       }
     } catch {
       // ignore
@@ -58,12 +55,15 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     return 0;
   });
   const [answers, setAnswers] = useState<Record<string, string>>(() => {
-    if (typeof window === 'undefined') return {};
+    if (typeof window === "undefined") return {};
     try {
-      const saved = sessionStorage.getItem(`${EXAM_LOCAL_STORAGE_PREFIX}${examId}`);
+      const saved = sessionStorage.getItem(
+        `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
+      );
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.answers && typeof parsed.answers === 'object') return parsed.answers;
+        if (parsed.answers && typeof parsed.answers === "object")
+          return parsed.answers;
       }
     } catch {
       // ignore
@@ -71,9 +71,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     return {};
   });
   const [flaggedIds, setFlaggedIds] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set();
+    if (typeof window === "undefined") return new Set();
     try {
-      const saved = sessionStorage.getItem(`${EXAM_LOCAL_STORAGE_PREFIX}${examId}`);
+      const saved = sessionStorage.getItem(
+        `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
+      );
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed.flaggedIds)) return new Set(parsed.flaggedIds);
@@ -88,7 +90,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   // Submit test action
   const handleFinalSubmit = useCallback(() => {
     setSubmitModalOpen(false);
-    setMode('result');
+    setMode("result");
     try {
       sessionStorage.removeItem(`${EXAM_LOCAL_STORAGE_PREFIX}${examId}`);
     } catch {
@@ -105,13 +107,13 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     reset: resetTimer,
   } = useExamTimer({
     durationSeconds: paper?.durationSeconds ?? 7200,
-    isActive: mode === 'sitting',
+    isActive: mode === "sitting",
     onExpire: handleFinalSubmit,
   });
 
   // Auto-persist answers locally as learner answers (per exam-flow.md rule)
   useEffect(() => {
-    if (mode === 'sitting') {
+    if (mode === "sitting") {
       try {
         sessionStorage.setItem(
           `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
@@ -155,12 +157,23 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
   // Current question references
   const currentItem = flatQuestions[currentIndex];
-  const currentSection = currentItem ? paper?.sections[currentItem.sectionIndex] : null;
-  const currentPart = currentItem && currentSection ? currentSection.parts[currentItem.partIndex] : null;
-  const currentQuestionSet = currentItem && currentPart ? currentPart.questionSets[currentItem.questionSetIndex] : null;
-  const currentQuestion = currentItem && currentQuestionSet
-    ? currentQuestionSet.questions.find((q) => q.id === currentItem.questionId)
+  const currentSection = currentItem
+    ? paper?.sections[currentItem.sectionIndex]
     : null;
+  const currentPart =
+    currentItem && currentSection
+      ? currentSection.parts[currentItem.partIndex]
+      : null;
+  const currentQuestionSet =
+    currentItem && currentPart
+      ? currentPart.questionSets[currentItem.questionSetIndex]
+      : null;
+  const currentQuestion =
+    currentItem && currentQuestionSet
+      ? currentQuestionSet.questions.find(
+          (q) => q.id === currentItem.questionId,
+        )
+      : null;
 
   // Answer selection handler
   const handleSelectOption = (optionId: string) => {
@@ -196,7 +209,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     } catch {
       // ignore
     }
-    setMode('overview');
+    setMode("overview");
   };
 
   // Fallback loading: Named skeleton component, never a spinner
@@ -230,17 +243,12 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   }
 
   // 1. Overview Mode (Briefing)
-  if (mode === 'overview') {
-    return (
-      <ExamOverview
-        paper={paper}
-        onStart={() => setMode('sitting')}
-      />
-    );
+  if (mode === "overview") {
+    return <ExamOverview paper={paper} onStart={() => setMode("sitting")} />;
   }
 
   // 3. Result Mode (Post-submission)
-  if (mode === 'result') {
+  if (mode === "result") {
     return (
       <ExamResultView
         paper={paper}
@@ -258,7 +266,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       {/* Sticky Timer & Examination Header */}
       <ExamSittingHeader
         title={paper.title}
-        sectionTitle={currentSection ? `${currentSection.sectionType} · ${currentPart?.title || ''}` : ''}
+        sectionTitle={
+          currentSection
+            ? `${currentSection.sectionType} · ${currentPart?.title || ""}`
+            : ""
+        }
         formattedTime={formattedTime}
         isWarning={isWarning}
         isCritical={isCritical}
@@ -267,7 +279,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         onSubmitClick={() => setSubmitModalOpen(true)}
         onExitClick={() => {
           if (window.confirm(t.exam.exitConfirm)) {
-            router.push('/exams');
+            router.push("/exams");
           }
         }}
       />
@@ -277,7 +289,10 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         <Grid gap="lg">
           {/* Left: Question Card & Stimulus */}
           <Grid.Col span={{ base: 12, md: 8, lg: 8.5 }}>
-            {currentSection && currentPart && currentQuestionSet && currentQuestion ? (
+            {currentSection &&
+            currentPart &&
+            currentQuestionSet &&
+            currentQuestion ? (
               <QuestionCard
                 section={currentSection}
                 part={currentPart}
@@ -289,9 +304,13 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
                 isFlagged={flaggedIds.has(currentQuestion.id)}
                 onSelectOption={handleSelectOption}
                 onToggleFlag={handleToggleFlag}
-                onPrevQuestion={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+                onPrevQuestion={() =>
+                  setCurrentIndex((prev) => Math.max(0, prev - 1))
+                }
                 onNextQuestion={() =>
-                  setCurrentIndex((prev) => Math.min(flatQuestions.length - 1, prev + 1))
+                  setCurrentIndex((prev) =>
+                    Math.min(flatQuestions.length - 1, prev + 1),
+                  )
                 }
                 hasPrev={currentIndex > 0}
                 hasNext={currentIndex < flatQuestions.length - 1}

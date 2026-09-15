@@ -111,7 +111,8 @@ export function QuizTimerPalette({
                 {isVi ? "BẢNG CÂU HỎI:" : "QUESTION PALETTE:"}
               </Text>
               <Text fz="xs" fw={600} c="indigo">
-                {answeredCount}/{questions.length} {isVi ? "Đã làm" : "Answered"}
+                {answeredCount}/{questions.length}{" "}
+                {isVi ? "Đã làm" : "Answered"}
               </Text>
             </Group>
 
@@ -127,8 +128,8 @@ export function QuizTimerPalette({
                   (Array.isArray(ans)
                     ? ans.length > 0
                     : typeof ans === "object"
-                    ? Object.keys(ans as Record<string, unknown>).length > 0
-                    : true);
+                      ? Object.keys(ans as Record<string, unknown>).length > 0
+                      : true);
 
                 let variant: "filled" | "light" | "outline" = "outline";
                 let color = "gray";
@@ -188,8 +189,12 @@ export function QuizTimerPalette({
                 leftSection={<IconFlag size={16} />}
               >
                 {isCurrentFlagged
-                  ? isVi ? "Bỏ đánh dấu xem lại" : "Unflag question"
-                  : isVi ? "Đánh dấu xem lại" : "Flag for review"}
+                  ? isVi
+                    ? "Bỏ đánh dấu xem lại"
+                    : "Unflag question"
+                  : isVi
+                    ? "Đánh dấu xem lại"
+                    : "Flag for review"}
               </Button>
             )}
 
@@ -238,7 +243,11 @@ export function QuizTimerPalette({
             <Button variant="subtle" color="gray" onClick={close}>
               {isVi ? "Tiếp tục làm bài" : "Keep Working"}
             </Button>
-            <Button variant="filled" color="indigo" onClick={handleConfirmSubmit}>
+            <Button
+              variant="filled"
+              color="indigo"
+              onClick={handleConfirmSubmit}
+            >
               {isVi ? "Xác nhận nộp bài" : "Confirm Submit"}
             </Button>
           </Group>

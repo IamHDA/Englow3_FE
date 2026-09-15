@@ -105,7 +105,11 @@ export function ProfileView() {
       }
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : isVi ? "Đã có lỗi xảy ra khi lưu hồ sơ" : "Error saving profile";
+        err instanceof Error
+          ? err.message
+          : isVi
+            ? "Đã có lỗi xảy ra khi lưu hồ sơ"
+            : "Error saving profile";
       notifications.show({
         color: "warn",
         icon: <AlertCircle size={18} />,

@@ -35,7 +35,8 @@ export const MOCK_DAILY_PATH_NODES: DailyPathNode[] = [
   {
     id: "node-4",
     title: "Thử thách: IELTS & Academic Grammar Master",
-    subtitle: "Chinh phục 5 dạng câu hỏi: Trắc nghiệm, Điền từ, Viết lại câu, Sắp xếp & Nối vế",
+    subtitle:
+      "Chinh phục 5 dạng câu hỏi: Trắc nghiệm, Điền từ, Viết lại câu, Sắp xếp & Nối vế",
     type: "QUIZ",
     status: "CURRENT",
     order: 4,
@@ -134,7 +135,8 @@ export const MOCK_QUIZZES: QuizItem[] = [
         explanation:
           "'Put off' là phrasal verb đồng nghĩa với 'postpone' hoặc 'delay'. Ví dụ: put off the meeting = hoãn cuộc họp.",
         beforeText: "The executive committee decided to put",
-        afterText: "the annual general meeting until next month due to health concerns.",
+        afterText:
+          "the annual general meeting until next month due to health concerns.",
         acceptedAnswers: ["off"],
       },
       {
@@ -144,7 +146,8 @@ export const MOCK_QUIZZES: QuizItem[] = [
         prompt:
           "Viết lại câu sau sử dụng từ khoá cho sẵn, click chọn các thẻ từ theo đúng thứ tự (không dùng các từ gây nhiễu):",
         points: 2,
-        originalSentence: "Although it rained heavily, they thoroughly enjoyed the outdoor music festival.",
+        originalSentence:
+          "Although it rained heavily, they thoroughly enjoyed the outdoor music festival.",
         rewriteKeyword: "DESPITE",
         explanation:
           "'Despite + Noun Phrase' thay thế cho 'Although + Clause'. Viết lại đúng: 'Despite the heavy rain they thoroughly enjoyed the outdoor music festival'.",
@@ -268,7 +271,8 @@ export const MOCK_QUIZZES: QuizItem[] = [
         prompt:
           "Sau nhiều giờ thảo luận, hai công ty đã đạt được thỏa thuận chung:\n\n'Both parties finally ______ an agreement after hours of negotiation.'",
         points: 5,
-        explanation: "'Reach an agreement' hoặc 'come to an agreement' là collocation chuẩn.",
+        explanation:
+          "'Reach an agreement' hoặc 'come to an agreement' là collocation chuẩn.",
         mcOptions: [
           { id: "opt-1", label: "A", text: "reached" },
           { id: "opt-2", label: "B", text: "took" },
@@ -284,7 +288,8 @@ export const MOCK_QUIZZES: QuizItem[] = [
         prompt:
           "Điền giới từ thích hợp: 'The new policy was designed in compliance ______ international security guidelines.'",
         points: 5,
-        explanation: "'In compliance with' là cụm giới từ cố định mang nghĩa tuân thủ theo quy định.",
+        explanation:
+          "'In compliance with' là cụm giới từ cố định mang nghĩa tuân thủ theo quy định.",
         beforeText: "The new policy was designed in compliance",
         afterText: "international security guidelines.",
         acceptedAnswers: ["with"],
@@ -310,7 +315,8 @@ export const MOCK_QUIZZES: QuizItem[] = [
         prompt:
           "'I ______ an old high school friend while shopping at the supermarket yesterday.'",
         points: 5,
-        explanation: "'Ran into' hoặc 'bumped into' có nghĩa là tình cờ bắt gặp.",
+        explanation:
+          "'Ran into' hoặc 'bumped into' có nghĩa là tình cờ bắt gặp.",
         mcOptions: [
           { id: "pv-opt-1", label: "A", text: "ran into" },
           { id: "pv-opt-2", label: "B", text: "ran down" },

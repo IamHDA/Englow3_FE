@@ -87,7 +87,10 @@ export function DictationStatsOverview({
           data={[
             { label: isVi ? "7 ngày qua" : "Past 7 Days", value: "7 Days" },
             { label: isVi ? "30 ngày qua" : "Past 30 Days", value: "30 Days" },
-            { label: isVi ? "3 tháng qua" : "Past 3 Months", value: "3 Months" },
+            {
+              label: isVi ? "3 tháng qua" : "Past 3 Months",
+              value: "3 Months",
+            },
             { label: isVi ? "Tất cả" : "All Time", value: "All Time" },
           ]}
         />

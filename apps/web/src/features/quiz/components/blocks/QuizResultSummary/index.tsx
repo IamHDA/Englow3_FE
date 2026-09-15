@@ -31,7 +31,10 @@ interface QuizResultSummaryProps {
   onRestart: () => void;
 }
 
-export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps) {
+export function QuizResultSummary({
+  result,
+  onRestart,
+}: QuizResultSummaryProps) {
   const { isVi } = useLanguage();
   const isPassed = result.isPassed;
   const statusColor = isPassed ? "teal" : "orange";
@@ -47,20 +50,19 @@ export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps)
       {/* Header Result Card */}
       <Card withBorder padding="xl" radius="lg" shadow="sm">
         <Stack align="center" gap="md">
-          <ThemeIcon
-            size={68}
-            radius="xl"
-            color={statusColor}
-            variant="light"
-          >
+          <ThemeIcon size={68} radius="xl" color={statusColor} variant="light">
             {isPassed ? <IconTrophy size={40} /> : <IconFlame size={40} />}
           </ThemeIcon>
 
           <Stack align="center" gap={4}>
             <Badge size="lg" variant="filled" color={statusColor}>
               {isPassed
-                ? isVi ? "ĐẠT YÊU CẦU" : "PASSED"
-                : isVi ? "CHƯA ĐẠT" : "NEEDS RETAKE"}
+                ? isVi
+                  ? "ĐẠT YÊU CẦU"
+                  : "PASSED"
+                : isVi
+                  ? "CHƯA ĐẠT"
+                  : "NEEDS RETAKE"}
             </Badge>
             <Text fz="xl" fw={800} ta="center">
               {result.quizTitle}
@@ -93,21 +95,27 @@ export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps)
               <Group gap="xs">
                 <IconCheck size={18} color="var(--mantine-color-teal-6)" />
                 <Text fz="sm">
-                  {isVi ? "Điểm số:" : "Score:"} <b>{result.score} / {result.totalPoints} {isVi ? "điểm" : "pts"}</b>
+                  {isVi ? "Điểm số:" : "Score:"}{" "}
+                  <b>
+                    {result.score} / {result.totalPoints}{" "}
+                    {isVi ? "điểm" : "pts"}
+                  </b>
                 </Text>
               </Group>
 
               <Group gap="xs">
                 <IconClock size={18} color="var(--mantine-color-blue-6)" />
                 <Text fz="sm">
-                  {isVi ? "Thời gian làm:" : "Time spent:"} <b>{formatTime(result.timeSpentSeconds)}</b>
+                  {isVi ? "Thời gian làm:" : "Time spent:"}{" "}
+                  <b>{formatTime(result.timeSpentSeconds)}</b>
                 </Text>
               </Group>
 
               <Group gap="xs">
                 <IconFlame size={18} color="var(--mantine-color-orange-6)" />
                 <Text fz="sm">
-                  {isVi ? "Kinh nghiệm:" : "Experience:"} <b>+{result.score * 10} XP</b>
+                  {isVi ? "Kinh nghiệm:" : "Experience:"}{" "}
+                  <b>+{result.score * 10} XP</b>
                 </Text>
               </Group>
             </Stack>
@@ -152,7 +160,16 @@ export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps)
                     color={rev.isCorrect ? "teal" : "red"}
                     size="md"
                   >
-                    {isVi ? `Câu ${idx + 1}:` : `Question ${idx + 1}:`} {rev.isCorrect ? (isVi ? "Đúng" : "Correct") : (isVi ? "Sai" : "Incorrect")} (+{rev.pointsEarned}/{rev.pointsPossible} {isVi ? "đ" : "pts"})
+                    {isVi ? `Câu ${idx + 1}:` : `Question ${idx + 1}:`}{" "}
+                    {rev.isCorrect
+                      ? isVi
+                        ? "Đúng"
+                        : "Correct"
+                      : isVi
+                        ? "Sai"
+                        : "Incorrect"}{" "}
+                    (+{rev.pointsEarned}/{rev.pointsPossible}{" "}
+                    {isVi ? "đ" : "pts"})
                   </Badge>
                   <Badge variant="outline" color="gray" size="xs">
                     {rev.type}
@@ -160,7 +177,12 @@ export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps)
                 </Group>
               </Group>
 
-              <Text fw={600} fz="sm" c="dark.9" style={{ whiteSpace: "pre-line" }}>
+              <Text
+                fw={600}
+                fz="sm"
+                c="dark.9"
+                style={{ whiteSpace: "pre-line" }}
+              >
                 {rev.prompt}
               </Text>
 
@@ -186,7 +208,12 @@ export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps)
                     <Text fz="xs" c="dimmed" fw={700}>
                       {isVi ? "ĐÁP ÁN CHÍNH XÁC:" : "CORRECT ANSWER:"}
                     </Text>
-                    <Text fz="sm" fw={600} c="teal.8" style={{ whiteSpace: "pre-line" }}>
+                    <Text
+                      fz="sm"
+                      fw={600}
+                      c="teal.8"
+                      style={{ whiteSpace: "pre-line" }}
+                    >
                       {rev.correctAnswerText}
                     </Text>
                   </Box>
@@ -199,15 +226,25 @@ export function QuizResultSummary({ result, onRestart }: QuizResultSummaryProps)
                 padding="xs"
                 radius="sm"
                 bg="var(--mantine-color-indigo-0)"
-                style={{ borderLeft: "4px solid var(--mantine-color-indigo-6)" }}
+                style={{
+                  borderLeft: "4px solid var(--mantine-color-indigo-6)",
+                }}
               >
                 <Group gap="xs" align="flex-start" wrap="nowrap">
-                  <ThemeIcon variant="light" color="indigo" size="xs" radius="xl" mt={2}>
+                  <ThemeIcon
+                    variant="light"
+                    color="indigo"
+                    size="xs"
+                    radius="xl"
+                    mt={2}
+                  >
                     <IconHelpCircle size={14} />
                   </ThemeIcon>
                   <Box>
                     <Text fz="xs" fw={700} c="indigo.9">
-                      {isVi ? "GIẢI THÍCH NGỮ PHÁP / KIẾN THỨC:" : "EXPLANATION & GRAMMAR NOTE:"}
+                      {isVi
+                        ? "GIẢI THÍCH NGỮ PHÁP / KIẾN THỨC:"
+                        : "EXPLANATION & GRAMMAR NOTE:"}
                     </Text>
                     <Text fz="xs" c="dark.8" style={{ whiteSpace: "pre-line" }}>
                       {rev.explanation}

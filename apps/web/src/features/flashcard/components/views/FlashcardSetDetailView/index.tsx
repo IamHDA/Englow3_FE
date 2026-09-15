@@ -86,7 +86,9 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                     </Badge>
                   ) : (
                     <Badge variant="light" color="teal" size="sm">
-                      {isVi ? "Đã hoàn thành mục tiêu hôm nay" : "Completed for today"}
+                      {isVi
+                        ? "Đã hoàn thành mục tiêu hôm nay"
+                        : "Completed for today"}
                     </Badge>
                   )}
                 </Group>
@@ -104,13 +106,17 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
               <Group gap="xs">
                 <IconBook size={16} color="var(--mantine-color-indigo-6)" />
                 <Text fz="sm">
-                  {isVi ? "Tổng số từ:" : "Total cards:"} <b>{set.totalCards} {isVi ? "từ" : "cards"}</b>
+                  {isVi ? "Tổng số từ:" : "Total cards:"}{" "}
+                  <b>
+                    {set.totalCards} {isVi ? "từ" : "cards"}
+                  </b>
                 </Text>
               </Group>
               <Group gap="xs">
                 <IconClock size={16} color="var(--mantine-color-blue-6)" />
                 <Text fz="sm">
-                  {isVi ? "Lần học gần nhất:" : "Last studied:"} <b>{set.lastStudied}</b>
+                  {isVi ? "Lần học gần nhất:" : "Last studied:"}{" "}
+                  <b>{set.lastStudied}</b>
                 </Text>
               </Group>
               <Box style={{ flex: 1, maxWidth: 240 }}>
@@ -156,7 +162,9 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                   <Table.Th>{isVi ? "Phiên âm IPA" : "IPA"}</Table.Th>
                   <Table.Th>{isVi ? "Từ loại" : "Part of Speech"}</Table.Th>
                   <Table.Th>{isVi ? "Nghĩa" : "Definition"}</Table.Th>
-                  <Table.Th>{isVi ? "Định nghĩa tiếng Anh" : "English Meaning"}</Table.Th>
+                  <Table.Th>
+                    {isVi ? "Định nghĩa tiếng Anh" : "English Meaning"}
+                  </Table.Th>
                   <Table.Th>{isVi ? "Trạng thái" : "Status"}</Table.Th>
                   <Table.Th ta="right">{isVi ? "Nghe" : "Audio"}</Table.Th>
                 </Table.Tr>

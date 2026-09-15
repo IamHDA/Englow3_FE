@@ -57,8 +57,8 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
                       row.recallPercent >= 85
                         ? "teal"
                         : row.recallPercent >= 70
-                        ? "blue"
-                        : "orange"
+                          ? "blue"
+                          : "orange"
                     }
                     variant="light"
                     size="sm"

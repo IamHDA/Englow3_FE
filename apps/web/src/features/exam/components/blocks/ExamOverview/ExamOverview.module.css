@@ -27,7 +27,9 @@
 .sectionCard {
   background-color: var(--mantine-color-white);
   border-color: var(--mantine-color-ink-2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .sectionCard:hover {
@@ -36,7 +38,7 @@
 }
 
 .guidelinesBox {
-  background-color: #F8FAFC;
+  background-color: #f8fafc;
   border: 1px solid var(--mantine-color-ink-2);
   border-radius: 14px;
 }
@@ -64,7 +66,9 @@
   color: var(--mantine-color-white);
   font-weight: 700;
   box-shadow: 0 4px 14px rgba(240, 138, 12, 0.35);
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .startBtn:hover {

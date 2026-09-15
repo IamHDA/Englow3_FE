@@ -62,12 +62,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 1,
         text: "Could we have a table for two by the window, please?",
         audioDurationSeconds: 4,
-        translationVi: "Cho chúng tôi xin bàn hai người cạnh cửa sổ được không?",
+        translationVi:
+          "Cho chúng tôi xin bàn hai người cạnh cửa sổ được không?",
         hints: {
           wordCount: 11,
           firstLetters: "C w w h a t f t b t w, p?",
           revealWord: "window",
-          translation: "Cho chúng tôi xin bàn hai người cạnh cửa sổ được không?",
+          translation:
+            "Cho chúng tôi xin bàn hai người cạnh cửa sổ được không?",
           partialTranscript: "Could we have a table...",
         },
       },
@@ -76,12 +78,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 2,
         text: "Are you ready to order or do you need a few more minutes?",
         audioDurationSeconds: 5,
-        translationVi: "Quý khách đã sẵn sàng gọi món hay cần thêm vài phút nữa?",
+        translationVi:
+          "Quý khách đã sẵn sàng gọi món hay cần thêm vài phút nữa?",
         hints: {
           wordCount: 13,
           firstLetters: "A y r t o o d y n a f m m?",
           revealWord: "minutes",
-          translation: "Quý khách đã sẵn sàng gọi món hay cần thêm vài phút nữa?",
+          translation:
+            "Quý khách đã sẵn sàng gọi món hay cần thêm vài phút nữa?",
           partialTranscript: "Are you ready to order...",
         },
       },
@@ -118,12 +122,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 5,
         text: "She ordered a hot coffee and a chicken sandwich.",
         audioDurationSeconds: 5,
-        translationVi: "Cô ấy đã gọi một ly cà phê nóng và một bánh kẹp thịt gà.",
+        translationVi:
+          "Cô ấy đã gọi một ly cà phê nóng và một bánh kẹp thịt gà.",
         hints: {
           wordCount: 9,
           firstLetters: "S o a h c a a c s.",
           revealWord: "ordered",
-          translation: "Cô ấy đã gọi một ly cà phê nóng và một bánh kẹp thịt gà.",
+          translation:
+            "Cô ấy đã gọi một ly cà phê nóng và một bánh kẹp thịt gà.",
           partialTranscript: "She ordered a hot coffee...",
         },
       },
@@ -147,12 +153,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 1,
         text: "Passengers on flight VN123 please proceed immediately to gate 14.",
         audioDurationSeconds: 6,
-        translationVi: "Hành khách trên chuyến bay VN123 vui lòng di chuyển ngay đến cửa số 14.",
+        translationVi:
+          "Hành khách trên chuyến bay VN123 vui lòng di chuyển ngay đến cửa số 14.",
         hints: {
           wordCount: 10,
           firstLetters: "P o f V p p i t g 14.",
           revealWord: "proceed",
-          translation: "Hành khách trên chuyến bay VN123 vui lòng di chuyển ngay đến cửa số 14.",
+          translation:
+            "Hành khách trên chuyến bay VN123 vui lòng di chuyển ngay đến cửa số 14.",
           partialTranscript: "Passengers on flight...",
         },
       },
@@ -176,12 +184,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 1,
         text: "Could you send me the updated project report before three PM?",
         audioDurationSeconds: 5,
-        translationVi: "Bạn có thể gửi cho tôi báo cáo dự án cập nhật trước 3 giờ chiều không?",
+        translationVi:
+          "Bạn có thể gửi cho tôi báo cáo dự án cập nhật trước 3 giờ chiều không?",
         hints: {
           wordCount: 11,
           firstLetters: "C y s m t u p r b t P?",
           revealWord: "updated",
-          translation: "Bạn có thể gửi cho tôi báo cáo dự án cập nhật trước 3 giờ chiều không?",
+          translation:
+            "Bạn có thể gửi cho tôi báo cáo dự án cập nhật trước 3 giờ chiều không?",
           partialTranscript: "Could you send me...",
         },
       },
@@ -204,12 +214,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 1,
         text: "The local council has recently approved plans for the community center redevelopment.",
         audioDurationSeconds: 7,
-        translationVi: "Hội đồng địa phương gần đây đã thông qua các kế hoạch tái phát triển trung tâm cộng đồng.",
+        translationVi:
+          "Hội đồng địa phương gần đây đã thông qua các kế hoạch tái phát triển trung tâm cộng đồng.",
         hints: {
           wordCount: 12,
           firstLetters: "T l c h r a p f t c c r.",
           revealWord: "approved",
-          translation: "Hội đồng địa phương gần đây đã thông qua các kế hoạch tái phát triển trung tâm cộng đồng.",
+          translation:
+            "Hội đồng địa phương gần đây đã thông qua các kế hoạch tái phát triển trung tâm cộng đồng.",
           partialTranscript: "The local council has...",
         },
       },
@@ -261,12 +273,14 @@ export const MOCK_LESSONS: DictationLesson[] = [
         order: 1,
         text: "Global stock markets experienced notable gains following the economic announcement.",
         audioDurationSeconds: 6,
-        translationVi: "Các thị trường chứng khoán toàn cầu ghi nhận mức tăng trưởng đáng chú ý sau thông cáo kinh tế.",
+        translationVi:
+          "Các thị trường chứng khoán toàn cầu ghi nhận mức tăng trưởng đáng chú ý sau thông cáo kinh tế.",
         hints: {
           wordCount: 10,
           firstLetters: "G s m e n g f t e a.",
           revealWord: "economic",
-          translation: "Các thị trường chứng khoán toàn cầu ghi nhận mức tăng trưởng đáng chú ý sau thông cáo kinh tế.",
+          translation:
+            "Các thị trường chứng khoán toàn cầu ghi nhận mức tăng trưởng đáng chú ý sau thông cáo kinh tế.",
           partialTranscript: "Global stock markets...",
         },
       },
@@ -292,7 +306,8 @@ export const MOCK_MISTAKE_REVIEW_ITEMS: MistakeReviewItem[] = [
     learnerAnswer: "I want go station.",
     correctAnswer: "I want to go to the station.",
     audioDurationSeconds: 4,
-    explanation: "Câu trước bạn gõ 'I want go station.' — thiếu 'to' và mạo từ 'the'.",
+    explanation:
+      "Câu trước bạn gõ 'I want go station.' — thiếu 'to' và mạo từ 'the'.",
   },
   {
     id: "m-2",

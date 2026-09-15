@@ -20,7 +20,9 @@ interface DictationHardSentencesProps {
   sentences: DifficultSentenceItem[];
 }
 
-export function DictationHardSentences({ sentences }: DictationHardSentencesProps) {
+export function DictationHardSentences({
+  sentences,
+}: DictationHardSentencesProps) {
   const { isVi, t } = useLanguage();
 
   return (
@@ -34,7 +36,9 @@ export function DictationHardSentences({ sentences }: DictationHardSentencesProp
             </Title>
           </Group>
           <Text size="xs" c="ink.5">
-            {isVi ? "Dựa trên tỉ lệ gõ đúng trung bình thấp nhất" : "Ranked by lowest average accuracy"}
+            {isVi
+              ? "Dựa trên tỉ lệ gõ đúng trung bình thấp nhất"
+              : "Ranked by lowest average accuracy"}
           </Text>
         </Group>
 
@@ -53,14 +57,21 @@ export function DictationHardSentences({ sentences }: DictationHardSentencesProp
                       {s.topic}
                     </Badge>
                     <Badge size="xs" color="warn" variant="light">
-                      {isVi ? `Chính xác TB: ${s.avgAccuracyPercent}%` : `Avg. Accuracy: ${s.avgAccuracyPercent}%`}
+                      {isVi
+                        ? `Chính xác TB: ${s.avgAccuracyPercent}%`
+                        : `Avg. Accuracy: ${s.avgAccuracyPercent}%`}
                     </Badge>
                     <Text size="xs" c="ink.5">
                       • {s.attemptsCount} {isVi ? "lần thử" : "attempts"}
                     </Text>
                   </Group>
 
-                  <Text size="sm" fw={600} c="ink.9" style={{ fontStyle: "italic" }}>
+                  <Text
+                    size="sm"
+                    fw={600}
+                    c="ink.9"
+                    style={{ fontStyle: "italic" }}
+                  >
                     “{s.text}”
                   </Text>
                 </Stack>

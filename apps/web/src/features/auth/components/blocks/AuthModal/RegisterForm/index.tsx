@@ -209,14 +209,20 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           <NativeSelect
             {...register("birthMonth")}
             aria-label={`${t.auth.birthDateLabel} - ${t.auth.monthLabel}`}
-            data={[{ value: "", label: t.auth.monthLabel }, ...birthMonthOptions]}
+            data={[
+              { value: "", label: t.auth.monthLabel },
+              ...birthMonthOptions,
+            ]}
             error={!!errors.birthMonth}
             classNames={{ input: classes.input }}
           />
           <NativeSelect
             {...register("birthYear")}
             aria-label={`${t.auth.birthDateLabel} - ${t.auth.yearLabel}`}
-            data={[{ value: "", label: t.auth.yearLabel }, ...BIRTH_YEAR_OPTIONS]}
+            data={[
+              { value: "", label: t.auth.yearLabel },
+              ...BIRTH_YEAR_OPTIONS,
+            ]}
             error={!!errors.birthYear}
             classNames={{ input: classes.input }}
           />

@@ -54,10 +54,20 @@ export function DictationDiffResult({
             <ThemeIcon
               size={36}
               radius="xl"
-              color={isPerfect ? "teal" : diff.accuracyPercent >= 70 ? "orange" : "warn"}
+              color={
+                isPerfect
+                  ? "teal"
+                  : diff.accuracyPercent >= 70
+                    ? "orange"
+                    : "warn"
+              }
               variant="light"
             >
-              {isPerfect ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+              {isPerfect ? (
+                <CheckCircle2 size={20} />
+              ) : (
+                <AlertCircle size={20} />
+              )}
             </ThemeIcon>
             <Stack gap={2}>
               <Title order={3} size="h4" fw={700} c="ink.9">
@@ -66,8 +76,8 @@ export function DictationDiffResult({
                     ? "Xuất sắc! Bạn đã gõ đúng 100%"
                     : "Outstanding! 100% Accuracy"
                   : isVi
-                  ? `${diff.mistakesCount} từ cần chú ý sửa lại`
-                  : `${diff.mistakesCount} words need correction`}
+                    ? `${diff.mistakesCount} từ cần chú ý sửa lại`
+                    : `${diff.mistakesCount} words need correction`}
               </Title>
               <Text size="xs" c="ink.6">
                 {isVi
@@ -80,7 +90,13 @@ export function DictationDiffResult({
           <Badge
             size="lg"
             radius="sm"
-            color={isPerfect ? "teal" : diff.accuracyPercent >= 70 ? "orange" : "warn"}
+            color={
+              isPerfect
+                ? "teal"
+                : diff.accuracyPercent >= 70
+                  ? "orange"
+                  : "warn"
+            }
             variant="filled"
           >
             {diff.accuracyPercent}% {isVi ? "Chính xác" : "Accuracy"}
@@ -94,7 +110,13 @@ export function DictationDiffResult({
           withBorder
           style={{ backgroundColor: "var(--mantine-color-ink-0)" }}
         >
-          <Text size="xs" fw={600} c="ink.5" mb="xs" style={{ textTransform: "uppercase" }}>
+          <Text
+            size="xs"
+            fw={600}
+            c="ink.5"
+            mb="xs"
+            style={{ textTransform: "uppercase" }}
+          >
             {t.dictation.wordDiffResult}:
           </Text>
 
@@ -102,7 +124,13 @@ export function DictationDiffResult({
             {diff.items.map((item, idx) => {
               if (item.type === "ok") {
                 return (
-                  <Text key={idx} fw={600} size="md" c="ink.9" style={{ padding: "2px 4px" }}>
+                  <Text
+                    key={idx}
+                    fw={600}
+                    size="md"
+                    c="ink.9"
+                    style={{ padding: "2px 4px" }}
+                  >
                     {item.text}
                   </Text>
                 );
@@ -227,14 +255,19 @@ export function DictationDiffResult({
         {/* Fixes Breakdown Panel */}
         <Paper p="md" radius="md" withBorder bg="white">
           <Group justify="space-between" align="center" mb="xs">
-            <Text size="xs" fw={700} c="ink.8" style={{ textTransform: "uppercase" }}>
+            <Text
+              size="xs"
+              fw={700}
+              c="ink.8"
+              style={{ textTransform: "uppercase" }}
+            >
               {revealMode === "full"
                 ? isVi
                   ? "Toàn bộ câu mẫu:"
                   : "Full Target Sentence:"
                 : isVi
-                ? "Các từ cần sửa:"
-                : "Tokens to Fix:"}
+                  ? "Các từ cần sửa:"
+                  : "Tokens to Fix:"}
             </Text>
 
             <SegmentedControl
@@ -242,7 +275,10 @@ export function DictationDiffResult({
               value={revealMode}
               onChange={(val) => setRevealMode(val as "mistakes" | "full")}
               data={[
-                { label: isVi ? "Chỉ từ lỗi" : "Mistakes only", value: "mistakes" },
+                {
+                  label: isVi ? "Chỉ từ lỗi" : "Mistakes only",
+                  value: "mistakes",
+                },
                 { label: isVi ? "Cả câu mẫu" : "Full sentence", value: "full" },
               ]}
             />
@@ -256,7 +292,9 @@ export function DictationDiffResult({
             <Stack gap="xs">
               {diff.fixes.length === 0 ? (
                 <Text size="sm" c="teal.8" fw={500}>
-                  {isVi ? "Không có từ lỗi nào cần sửa!" : "No errors detected!"}
+                  {isVi
+                    ? "Không có từ lỗi nào cần sửa!"
+                    : "No errors detected!"}
                 </Text>
               ) : (
                 diff.fixes.map((fix, i) => (
@@ -265,7 +303,9 @@ export function DictationDiffResult({
                       size="sm"
                       c={fix.from === "missing" ? "orange.8" : "warn.8"}
                       fw={600}
-                      style={{ textDecoration: fix.strike ? "line-through" : "none" }}
+                      style={{
+                        textDecoration: fix.strike ? "line-through" : "none",
+                      }}
                     >
                       {fix.from}
                     </Text>
@@ -324,8 +364,8 @@ export function DictationDiffResult({
                 ? "Hoàn thành & Xem kết quả"
                 : "Finish & View Results"
               : isVi
-              ? "Câu tiếp theo →"
-              : "Next Sentence →"}
+                ? "Câu tiếp theo →"
+                : "Next Sentence →"}
           </Button>
         </Flex>
       </Stack>

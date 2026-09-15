@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 import {
   Badge,
   Box,
@@ -15,7 +15,7 @@ import {
   Text,
   ThemeIcon,
   Title,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   Clock,
   HelpCircle,
@@ -26,12 +26,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Headphones,
-} from 'lucide-react';
-import type { ExamPaperQuery } from '@/lib/graphql/generated/hooks';
-import { useLanguage } from '@/shared/hooks/useLanguage';
-import classes from './ExamOverview.module.css';
+} from "lucide-react";
+import type { ExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import classes from "./ExamOverview.module.css";
 
-type ExamPaper = NonNullable<ExamPaperQuery['examPaper']>;
+type ExamPaper = NonNullable<ExamPaperQuery["examPaper"]>;
 
 export interface ExamOverviewProps {
   paper: ExamPaper;
@@ -56,14 +56,10 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
   const durationMinutes = Math.round(paper.durationSeconds / 60);
 
   return (
-    <Box py="xl" px={{ base: 'md', md: 'xl' }} maw={1100} mx="auto">
+    <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
       {/* Breadcrumb Navigation */}
       <Flex align="center" gap="xs" mb="lg">
-        <Text
-          component={Link}
-          href="/exams"
-          className={classes.breadcrumbLink}
-        >
+        <Text component={Link} href="/exams" className={classes.breadcrumbLink}>
           <ArrowLeft size={16} />
           {t.exam.backToLibrary}
         </Text>
@@ -78,7 +74,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
       {/* Main Hero Card */}
       <Card
         radius="lg"
-        p={{ base: 'lg', md: 'xl' }}
+        p={{ base: "lg", md: "xl" }}
         withBorder
         className={classes.heroCard}
       >
@@ -89,8 +85,8 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
               <Group gap="xs">
                 {paper.certificateType && (
                   <Badge color="navy" variant="light" size="md" radius="sm">
-                    {paper.certificateType}{' '}
-                    {paper.certificateVariant ? paper.certificateVariant : ''}
+                    {paper.certificateType}{" "}
+                    {paper.certificateVariant ? paper.certificateVariant : ""}
                   </Badge>
                 )}
                 {paper.targetLevel && (
@@ -99,7 +95,13 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                   </Badge>
                 )}
               </Group>
-              <Title order={1} size="h2" c="navy.9" lh={1.2} style={{ letterSpacing: '-0.02em' }}>
+              <Title
+                order={1}
+                size="h2"
+                c="navy.9"
+                lh={1.2}
+                style={{ letterSpacing: "-0.02em" }}
+              >
                 {paper.title}
               </Title>
               <Text c="ink.6" size="sm">
@@ -180,15 +182,23 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
             <Text fw={700} size="md" c="navy.9">
               {t.exam.examStructureLabel}
             </Text>
-            <SimpleGrid cols={{ base: 1, sm: paper.sections.length }} spacing="md">
+            <SimpleGrid
+              cols={{ base: 1, sm: paper.sections.length }}
+              spacing="md"
+            >
               {paper.sections.map((section, idx) => {
                 const sectionQuestions = section.parts.reduce(
                   (acc, p) =>
                     acc +
-                    p.questionSets.reduce((qAcc, qs) => qAcc + qs.questions.length, 0),
+                    p.questionSets.reduce(
+                      (qAcc, qs) => qAcc + qs.questions.length,
+                      0,
+                    ),
                   0,
                 );
-                const isListening = section.sectionType.toUpperCase().includes('LISTEN');
+                const isListening = section.sectionType
+                  .toUpperCase()
+                  .includes("LISTEN");
 
                 return (
                   <Card
@@ -203,8 +213,8 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                         <ThemeIcon
                           size="md"
                           radius="md"
-                          color={isListening ? 'blue.1' : 'orange.1'}
-                          c={isListening ? 'blue.9' : 'orange.9'}
+                          color={isListening ? "blue.1" : "orange.1"}
+                          c={isListening ? "blue.9" : "orange.9"}
                         >
                           {isListening ? (
                             <Headphones size={18} />
@@ -213,18 +223,20 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                           )}
                         </ThemeIcon>
                         <Text fw={700} size="sm" c="navy.9">
-                          {t.exam.sectionPrefix} {idx + 1}: {section.sectionType}
+                          {t.exam.sectionPrefix} {idx + 1}:{" "}
+                          {section.sectionType}
                         </Text>
                       </Group>
                     </Group>
                     <Text size="xs" c="ink.5">
                       {t.exam.sectionIncludes
-                        .replace('{parts}', String(section.parts.length))
-                        .replace('{questions}', String(sectionQuestions))}
+                        .replace("{parts}", String(section.parts.length))
+                        .replace("{questions}", String(sectionQuestions))}
                     </Text>
                     {section.timeLimitSeconds && (
                       <Text size="xs" c="ink.5" mt={4}>
-                        {t.exam.allocatedTimeLabel} {Math.round(section.timeLimitSeconds / 60)}{' '}
+                        {t.exam.allocatedTimeLabel}{" "}
+                        {Math.round(section.timeLimitSeconds / 60)}{" "}
                         {t.exam.minutesUnit}
                       </Text>
                     )}
@@ -235,7 +247,12 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
           </Stack>
 
           {/* Guidelines Box */}
-          <Paper p="md" radius="md" withBorder className={classes.guidelinesBox}>
+          <Paper
+            p="md"
+            radius="md"
+            withBorder
+            className={classes.guidelinesBox}
+          >
             <Group gap="xs" mb="xs">
               <AlertCircle size={18} color="var(--mantine-color-navy-9)" />
               <Text fw={700} size="sm" c="navy.9">
@@ -244,25 +261,41 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
             </Group>
             <Stack gap={8}>
               <Flex gap="xs" align="flex-start">
-                <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
+                <CheckCircle2
+                  size={16}
+                  color="var(--mantine-color-navy-9)"
+                  style={{ marginTop: 2, flexShrink: 0 }}
+                />
                 <Text size="xs" c="ink.6">
                   {t.exam.rule1}
                 </Text>
               </Flex>
               <Flex gap="xs" align="flex-start">
-                <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
+                <CheckCircle2
+                  size={16}
+                  color="var(--mantine-color-navy-9)"
+                  style={{ marginTop: 2, flexShrink: 0 }}
+                />
                 <Text size="xs" c="ink.6">
                   {t.exam.rule2}
                 </Text>
               </Flex>
               <Flex gap="xs" align="flex-start">
-                <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
+                <CheckCircle2
+                  size={16}
+                  color="var(--mantine-color-navy-9)"
+                  style={{ marginTop: 2, flexShrink: 0 }}
+                />
                 <Text size="xs" c="ink.6">
                   {t.exam.rule3}
                 </Text>
               </Flex>
               <Flex gap="xs" align="flex-start">
-                <CheckCircle2 size={16} color="var(--mantine-color-navy-9)" style={{ marginTop: 2, flexShrink: 0 }} />
+                <CheckCircle2
+                  size={16}
+                  color="var(--mantine-color-navy-9)"
+                  style={{ marginTop: 2, flexShrink: 0 }}
+                />
                 <Text size="xs" c="ink.6">
                   {t.exam.rule4}
                 </Text>

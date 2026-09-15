@@ -50,7 +50,13 @@ export function FlashcardHeroCard({
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="sm">
             <Group gap="xs">
-              <Badge variant="filled" color="white" c="indigo.8" size="sm" fw={700}>
+              <Badge
+                variant="filled"
+                color="white"
+                c="indigo.8"
+                size="sm"
+                fw={700}
+              >
                 {isVi ? "LẶP LẠI NGẮT QUÃNG" : "SPACED REPETITION"}
               </Badge>
               <Group gap={4}>

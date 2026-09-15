@@ -1,4 +1,11 @@
-import { Card, Divider, Group, SimpleGrid, Skeleton, Stack } from "@mantine/core";
+import {
+  Card,
+  Divider,
+  Group,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+} from "@mantine/core";
 
 export function ExamLibrarySkeleton() {
   return (

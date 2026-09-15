@@ -10,7 +10,8 @@ export const MOCK_PRONUNCIATION_LESSONS: PronunciationLesson[] = [
     phonemeTarget: "/iː/ vs /ɪ/",
     targetSentence: "Please sit on this seat and leave your sheet on the ship.",
     ipaTranscript: "/pliːz sɪt ɒn ðɪs siːt ænd liːv jɔː ʃiːt ɒn ðə ʃɪp/",
-    translationVi: "Xin vui lòng ngồi vào chiếc ghế này và để lại tờ giấy của bạn trên con tàu.",
+    translationVi:
+      "Xin vui lòng ngồi vào chiếc ghế này và để lại tờ giấy của bạn trên con tàu.",
     phonemes: [
       { symbol: "/iː/", soundType: "vowel", isKeyTarget: true },
       { symbol: "/ɪ/", soundType: "vowel", isKeyTarget: true },
@@ -30,9 +31,12 @@ export const MOCK_PRONUNCIATION_LESSONS: PronunciationLesson[] = [
     category: "Minimal Pairs",
     level: "Intermediate",
     phonemeTarget: "/θ/ vs /ð/",
-    targetSentence: "I thought thirty-three thousand people breathed through the cold weather.",
-    ipaTranscript: "/aɪ θɔːt ˈθɜː.ti θriː ˈθaʊ.zənd ˈpiː.pəl briːðd θruː ðə kəʊld ˈweð.ər/",
-    translationVi: "Tôi nghĩ ba mươi ba nghìn người đã hít thở qua tiết trời giá lạnh.",
+    targetSentence:
+      "I thought thirty-three thousand people breathed through the cold weather.",
+    ipaTranscript:
+      "/aɪ θɔːt ˈθɜː.ti θriː ˈθaʊ.zənd ˈpiː.pəl briːðd θruː ðə kəʊld ˈweð.ər/",
+    translationVi:
+      "Tôi nghĩ ba mươi ba nghìn người đã hít thở qua tiết trời giá lạnh.",
     phonemes: [
       { symbol: "/θ/", soundType: "consonant", isKeyTarget: true },
       { symbol: "/ð/", soundType: "consonant", isKeyTarget: true },
@@ -51,9 +55,12 @@ export const MOCK_PRONUNCIATION_LESSONS: PronunciationLesson[] = [
     category: "IELTS Speaking",
     level: "Advanced",
     phonemeTarget: "Linking Sounds & Rhythm",
-    targetSentence: "The exponential growth of artificial intelligence has revolutionized sustainable energy.",
-    ipaTranscript: "/ði ˌek.spəˈnen.ʃəl ɡrəʊθ əv ˌɑː.tɪˈfɪʃ.əl ɪnˈtel.ɪ.dʒəns hæz ˌrev.əˈluː.ʃən.aɪzd səˈsteɪ.nə.bəl ˈen.ə.dʒi/",
-    translationVi: "Sự phát triển theo cấp số nhân của trí tuệ nhân tạo đã cách mạng hóa ngành năng lượng bền vững.",
+    targetSentence:
+      "The exponential growth of artificial intelligence has revolutionized sustainable energy.",
+    ipaTranscript:
+      "/ði ˌek.spəˈnen.ʃəl ɡrəʊθ əv ˌɑː.tɪˈfɪʃ.əl ɪnˈtel.ɪ.dʒəns hæz ˌrev.əˈluː.ʃən.aɪzd səˈsteɪ.nə.bəl ˈen.ə.dʒi/",
+    translationVi:
+      "Sự phát triển theo cấp số nhân của trí tuệ nhân tạo đã cách mạng hóa ngành năng lượng bền vững.",
     phonemes: [
       { symbol: "/ʃ/", soundType: "consonant" },
       { symbol: "/dʒ/", soundType: "consonant" },
@@ -75,7 +82,8 @@ export const MOCK_PRONUNCIATION_LESSONS: PronunciationLesson[] = [
     phonemeTarget: "Rising Intonation",
     targetSentence: "Could you please give me a hand with this heavy baggage?",
     ipaTranscript: "/kʊd juː pliːz ɡɪv miː ə hænd wɪð ðɪs ˈhev.i ˈbæɡ.ɪdʒ/",
-    translationVi: "Bạn có thể vui lòng giúp tôi một tay với chỗ hành lý nặng này được không?",
+    translationVi:
+      "Bạn có thể vui lòng giúp tôi một tay với chỗ hành lý nặng này được không?",
     phonemes: [
       { symbol: "/ʊ/", soundType: "vowel" },
       { symbol: "/æ/", soundType: "vowel" },
@@ -94,9 +102,12 @@ export const MOCK_PRONUNCIATION_LESSONS: PronunciationLesson[] = [
     category: "Business Pitch",
     level: "Intermediate",
     phonemeTarget: "Sentence Stress",
-    targetSentence: "We project a thirty percent revenue increase over the upcoming fiscal year.",
-    ipaTranscript: "/wiː prəˈdʒekt ə ˈθɜː.ti pəˈsent ˈrev.ən.juː ˈɪn.kriːs ˈəʊ.vər ði ˈʌpˌkʌm.ɪŋ ˈfɪs.kəl jɪər/",
-    translationVi: "Chúng tôi dự báo mức tăng doanh thu ba mươi phần trăm trong năm tài chính sắp tới.",
+    targetSentence:
+      "We project a thirty percent revenue increase over the upcoming fiscal year.",
+    ipaTranscript:
+      "/wiː prəˈdʒekt ə ˈθɜː.ti pəˈsent ˈrev.ən.juː ˈɪn.kriːs ˈəʊ.vər ði ˈʌpˌkʌm.ɪŋ ˈfɪs.kəl jɪər/",
+    translationVi:
+      "Chúng tôi dự báo mức tăng doanh thu ba mươi phần trăm trong năm tài chính sắp tới.",
     phonemes: [
       { symbol: "/θ/", soundType: "consonant" },
       { symbol: "/ɪn/", soundType: "stress" },
@@ -111,25 +122,90 @@ export const MOCK_PRONUNCIATION_LESSONS: PronunciationLesson[] = [
 
 export const MOCK_IPA_CHART: IpaChartSound[] = [
   // Monophthongs
-  { symbol: "/iː/", example: "see, eat", type: "monophthong", isMastered: true },
+  {
+    symbol: "/iː/",
+    example: "see, eat",
+    type: "monophthong",
+    isMastered: true,
+  },
   { symbol: "/ɪ/", example: "sit, bit", type: "monophthong", isMastered: true },
   { symbol: "/e/", example: "bed, red", type: "monophthong", isMastered: true },
-  { symbol: "/æ/", example: "cat, bad", type: "monophthong", isMastered: false },
+  {
+    symbol: "/æ/",
+    example: "cat, bad",
+    type: "monophthong",
+    isMastered: false,
+  },
   { symbol: "/ʌ/", example: "cup, but", type: "monophthong", isMastered: true },
-  { symbol: "/ɑː/", example: "father, car", type: "monophthong", isMastered: false },
+  {
+    symbol: "/ɑː/",
+    example: "father, car",
+    type: "monophthong",
+    isMastered: false,
+  },
   { symbol: "/ɒ/", example: "hot, pot", type: "monophthong", isMastered: true },
-  { symbol: "/ɔː/", example: "call, four", type: "monophthong", isMastered: false },
-  { symbol: "/ʊ/", example: "put, foot", type: "monophthong", isMastered: true },
-  { symbol: "/uː/", example: "too, food", type: "monophthong", isMastered: true },
-  { symbol: "/ɜː/", example: "bird, word", type: "monophthong", isMastered: false },
-  { symbol: "/ə/", example: "about, ago", type: "monophthong", isMastered: true },
+  {
+    symbol: "/ɔː/",
+    example: "call, four",
+    type: "monophthong",
+    isMastered: false,
+  },
+  {
+    symbol: "/ʊ/",
+    example: "put, foot",
+    type: "monophthong",
+    isMastered: true,
+  },
+  {
+    symbol: "/uː/",
+    example: "too, food",
+    type: "monophthong",
+    isMastered: true,
+  },
+  {
+    symbol: "/ɜː/",
+    example: "bird, word",
+    type: "monophthong",
+    isMastered: false,
+  },
+  {
+    symbol: "/ə/",
+    example: "about, ago",
+    type: "monophthong",
+    isMastered: true,
+  },
 
   // Consonants
-  { symbol: "/θ/", example: "think, bath", type: "consonant", isMastered: false },
-  { symbol: "/ð/", example: "this, mother", type: "consonant", isMastered: false },
+  {
+    symbol: "/θ/",
+    example: "think, bath",
+    type: "consonant",
+    isMastered: false,
+  },
+  {
+    symbol: "/ð/",
+    example: "this, mother",
+    type: "consonant",
+    isMastered: false,
+  },
   { symbol: "/ʃ/", example: "she, cash", type: "consonant", isMastered: true },
-  { symbol: "/ʒ/", example: "measure, vision", type: "consonant", isMastered: false },
-  { symbol: "/tʃ/", example: "chip, watch", type: "consonant", isMastered: true },
-  { symbol: "/dʒ/", example: "jam, judge", type: "consonant", isMastered: true },
+  {
+    symbol: "/ʒ/",
+    example: "measure, vision",
+    type: "consonant",
+    isMastered: false,
+  },
+  {
+    symbol: "/tʃ/",
+    example: "chip, watch",
+    type: "consonant",
+    isMastered: true,
+  },
+  {
+    symbol: "/dʒ/",
+    example: "jam, judge",
+    type: "consonant",
+    isMastered: true,
+  },
   { symbol: "/ŋ/", example: "sing, long", type: "consonant", isMastered: true },
 ];

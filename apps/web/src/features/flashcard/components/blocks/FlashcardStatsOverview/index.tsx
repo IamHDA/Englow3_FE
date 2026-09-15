@@ -65,7 +65,12 @@ export function FlashcardStatsOverview({ stats }: FlashcardStatsOverviewProps) {
                     {item.desc}
                   </Text>
                 </Stack>
-                <ThemeIcon variant="light" color={item.color} size="lg" radius="md">
+                <ThemeIcon
+                  variant="light"
+                  color={item.color}
+                  size="lg"
+                  radius="md"
+                >
                   <Icon size={22} />
                 </ThemeIcon>
               </Group>

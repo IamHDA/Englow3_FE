@@ -36,7 +36,9 @@ export function DictationHintDrawer({
     {
       key: "wordCount",
       label: isVi ? "Xem số lượng từ trong câu" : "Word count in sentence",
-      value: isVi ? `${sentence.hints.wordCount} từ` : `${sentence.hints.wordCount} words`,
+      value: isVi
+        ? `${sentence.hints.wordCount} từ`
+        : `${sentence.hints.wordCount} words`,
     },
     {
       key: "firstLetters",
@@ -76,11 +78,15 @@ export function DictationHintDrawer({
               ? "Thu gọn gợi ý"
               : "Collapse hints"
             : isVi
-            ? "Bạn cần gợi ý?"
-            : "Need a hint?"}
+              ? "Bạn cần gợi ý?"
+              : "Need a hint?"}
         </Button>
 
-        <Badge variant="light" color={hintsUsedCount > 0 ? "orange" : "gray"} size="sm">
+        <Badge
+          variant="light"
+          color={hintsUsedCount > 0 ? "orange" : "gray"}
+          size="sm"
+        >
           {isVi
             ? `Đã dùng: ${hintsUsedCount} gợi ý`
             : `Used: ${hintsUsedCount} hints`}

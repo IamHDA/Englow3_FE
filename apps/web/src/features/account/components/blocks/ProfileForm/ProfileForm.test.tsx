@@ -55,7 +55,9 @@ describe("ProfileForm", () => {
     const fullNameInput = screen.getByLabelText(/Họ và tên/);
     await user.clear(fullNameInput);
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
+    const submitBtn = screen.getByRole("button", {
+      name: /Lưu (thông tin|thay đổi)/i,
+    });
     await user.click(submitBtn);
 
     expect(
@@ -71,7 +73,9 @@ describe("ProfileForm", () => {
     const displayNameInput = screen.getByLabelText(/Tên hiển thị/);
     await user.clear(displayNameInput);
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
+    const submitBtn = screen.getByRole("button", {
+      name: /Lưu (thông tin|thay đổi)/i,
+    });
     await user.click(submitBtn);
 
     expect(
@@ -88,7 +92,9 @@ describe("ProfileForm", () => {
     await user.clear(birthDateInput);
     await user.type(birthDateInput, "2099-01-01");
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
+    const submitBtn = screen.getByRole("button", {
+      name: /Lưu (thông tin|thay đổi)/i,
+    });
     await user.click(submitBtn);
 
     expect(
@@ -105,7 +111,9 @@ describe("ProfileForm", () => {
     await user.clear(fullNameInput);
     await user.type(fullNameInput, "Nguyen Van B");
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
+    const submitBtn = screen.getByRole("button", {
+      name: /Lưu (thông tin|thay đổi)/i,
+    });
     await user.click(submitBtn);
 
     await waitFor(() => {

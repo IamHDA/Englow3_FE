@@ -10,13 +10,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import {
-  FastForward,
-  Pause,
-  Play,
-  RotateCcw,
-  RotateCw,
-} from "lucide-react";
+import { FastForward, Pause, Play, RotateCcw, RotateCw } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { DEFAULT_WAVEFORM_BARS } from "../../../constants/dictationData";
 
@@ -47,7 +41,9 @@ export function DictationAudioPlayer({
 }: DictationAudioPlayerProps) {
   const { isVi } = useLanguage();
   const progressRatio = duration > 0 ? currentTime / duration : 0;
-  const activeBarIndex = Math.floor(progressRatio * DEFAULT_WAVEFORM_BARS.length);
+  const activeBarIndex = Math.floor(
+    progressRatio * DEFAULT_WAVEFORM_BARS.length,
+  );
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
@@ -103,7 +99,9 @@ export function DictationAudioPlayer({
             </Text>
             {replayCount > 0 && (
               <Badge variant="light" color="orange" size="sm" radius="sm">
-                {isVi ? `Đã nghe lại: ${replayCount} lần` : `Replays: ${replayCount}`}
+                {isVi
+                  ? `Đã nghe lại: ${replayCount} lần`
+                  : `Replays: ${replayCount}`}
               </Badge>
             )}
           </Group>
@@ -127,10 +125,30 @@ export function DictationAudioPlayer({
               size={52}
               radius="xl"
               onClick={onTogglePlay}
-              title={isPlaying ? (isVi ? "Tạm dừng" : "Pause") : (isVi ? "Phát âm thanh" : "Play audio")}
-              aria-label={isPlaying ? (isVi ? "Tạm dừng" : "Pause") : (isVi ? "Phát âm thanh" : "Play audio")}
+              title={
+                isPlaying
+                  ? isVi
+                    ? "Tạm dừng"
+                    : "Pause"
+                  : isVi
+                    ? "Phát âm thanh"
+                    : "Play audio"
+              }
+              aria-label={
+                isPlaying
+                  ? isVi
+                    ? "Tạm dừng"
+                    : "Pause"
+                  : isVi
+                    ? "Phát âm thanh"
+                    : "Play audio"
+              }
             >
-              {isPlaying ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: 2 }} />}
+              {isPlaying ? (
+                <Pause size={24} />
+              ) : (
+                <Play size={24} style={{ marginLeft: 2 }} />
+              )}
             </ActionIcon>
 
             <ActionIcon

@@ -1,10 +1,4 @@
-import {
-  Grid,
-  Paper,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-} from "@mantine/core";
+import { Grid, Paper, SimpleGrid, Skeleton, Stack } from "@mantine/core";
 
 import classes from "./ProfileSkeleton.module.css";
 
@@ -23,7 +17,11 @@ export function ProfileSkeleton() {
         <Grid.Col span={{ base: 12, lg: 4 }}>
           <Stack gap="lg">
             <Paper radius="lg" withBorder className={classes.headerPaper}>
-              <Skeleton height={130} radius="lg 1lg 0 0" className={classes.banner} />
+              <Skeleton
+                height={130}
+                radius="lg 1lg 0 0"
+                className={classes.banner}
+              />
               <Stack gap="md" p="xl" pt={0}>
                 <Skeleton
                   circle

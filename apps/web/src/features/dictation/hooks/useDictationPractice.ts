@@ -15,7 +15,9 @@ export function useDictationPractice(lesson: DictationLesson) {
   const [isChecked, setIsChecked] = useState(false);
   const [diffResult, setDiffResult] = useState<DiffResult | null>(null);
   const [hintsUsedCount, setHintsUsedCount] = useState(0);
-  const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>({});
+  const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>(
+    {},
+  );
   const [isCompleted, setIsCompleted] = useState(false);
 
   // Per-sentence recorded results
@@ -108,12 +110,23 @@ export function useDictationPractice(lesson: DictationLesson) {
 
   // Summary computed data
   const summaryData: DictationSessionSummaryData = useMemo(() => {
-    const totalWords = completedResults.reduce((acc, r) => acc + r.diff.totalWordsCount, 0) || 1;
-    const correctWords = completedResults.reduce((acc, r) => acc + r.diff.correctWordsCount, 0);
-    const mistakesCount = completedResults.reduce((acc, r) => acc + r.diff.mistakesCount, 0);
+    const totalWords =
+      completedResults.reduce((acc, r) => acc + r.diff.totalWordsCount, 0) || 1;
+    const correctWords = completedResults.reduce(
+      (acc, r) => acc + r.diff.correctWordsCount,
+      0,
+    );
+    const mistakesCount = completedResults.reduce(
+      (acc, r) => acc + r.diff.mistakesCount,
+      0,
+    );
 
-    const overallAccuracyPercent = Math.round((correctWords / totalWords) * 100);
-    const perfectCount = completedResults.filter((r) => r.diff.mistakesCount === 0).length;
+    const overallAccuracyPercent = Math.round(
+      (correctWords / totalWords) * 100,
+    );
+    const perfectCount = completedResults.filter(
+      (r) => r.diff.mistakesCount === 0,
+    ).length;
 
     const mistakesList = completedResults
       .filter((r) => r.diff.mistakesCount > 0)
@@ -128,7 +141,10 @@ export function useDictationPractice(lesson: DictationLesson) {
     return {
       lessonTitle: lesson.title,
       lessonLevel: lesson.level,
-      overallAccuracyPercent: Math.max(0, Math.min(100, overallAccuracyPercent)),
+      overallAccuracyPercent: Math.max(
+        0,
+        Math.min(100, overallAccuracyPercent),
+      ),
       wordsCorrectRatio: `${correctWords} / ${totalWords}`,
       sentencesCompletedCount: completedResults.length,
       studyDurationFormatted: "6m 15s",
@@ -141,7 +157,12 @@ export function useDictationPractice(lesson: DictationLesson) {
       breakdown: {
         correctPercent: Math.min(100, overallAccuracyPercent),
         incorrectPercent: Math.round((mistakesCount / totalWords) * 100),
-        missingPercent: Math.max(0, 100 - overallAccuracyPercent - Math.round((mistakesCount / totalWords) * 100)),
+        missingPercent: Math.max(
+          0,
+          100 -
+            overallAccuracyPercent -
+            Math.round((mistakesCount / totalWords) * 100),
+        ),
       },
       mistakes: mistakesList,
     };

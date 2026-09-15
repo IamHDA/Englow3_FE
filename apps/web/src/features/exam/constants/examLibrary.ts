@@ -108,7 +108,9 @@ export function getExamTypeTabs(allExamsLabel?: string): ExamTypeTab[] {
   ];
 }
 
-export function getSkillOptions(allSkillLabel?: string): FilterOption<string>[] {
+export function getSkillOptions(
+  allSkillLabel?: string,
+): FilterOption<string>[] {
   return [
     { value: "ALL", label: allSkillLabel || "Kỹ năng: Tất cả" },
     { value: "LISTENING", label: "Listening" },
@@ -124,12 +126,30 @@ export function getDifficultyOptions(
 ): FilterOption<TargetLevel>[] {
   return [
     { value: "ALL", label: allDiffLabel || "Độ khó: Tất cả" },
-    { value: "A1" as TargetLevel, label: isVi ? "A1 — Cơ bản" : "A1 — Beginner" },
-    { value: "A2" as TargetLevel, label: isVi ? "A2 — Sơ cấp" : "A2 — Elementary" },
-    { value: "B1" as TargetLevel, label: isVi ? "B1 — Trung cấp" : "B1 — Intermediate" },
-    { value: "B2" as TargetLevel, label: isVi ? "B2 — Trung cao cấp" : "B2 — Upper-Intermediate" },
-    { value: "C1" as TargetLevel, label: isVi ? "C1 — Cao cấp" : "C1 — Advanced" },
-    { value: "C2" as TargetLevel, label: isVi ? "C2 — Thành thạo" : "C2 — Proficiency" },
+    {
+      value: "A1" as TargetLevel,
+      label: isVi ? "A1 — Cơ bản" : "A1 — Beginner",
+    },
+    {
+      value: "A2" as TargetLevel,
+      label: isVi ? "A2 — Sơ cấp" : "A2 — Elementary",
+    },
+    {
+      value: "B1" as TargetLevel,
+      label: isVi ? "B1 — Trung cấp" : "B1 — Intermediate",
+    },
+    {
+      value: "B2" as TargetLevel,
+      label: isVi ? "B2 — Trung cao cấp" : "B2 — Upper-Intermediate",
+    },
+    {
+      value: "C1" as TargetLevel,
+      label: isVi ? "C1 — Cao cấp" : "C1 — Advanced",
+    },
+    {
+      value: "C2" as TargetLevel,
+      label: isVi ? "C2 — Thành thạo" : "C2 — Proficiency",
+    },
   ];
 }
 

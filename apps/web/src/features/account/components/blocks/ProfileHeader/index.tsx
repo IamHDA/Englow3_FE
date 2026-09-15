@@ -9,7 +9,14 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { CheckCircle2, Copy, Hash, Mail, Sparkles, UserCheck } from "lucide-react";
+import {
+  CheckCircle2,
+  Copy,
+  Hash,
+  Mail,
+  Sparkles,
+  UserCheck,
+} from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -30,14 +37,15 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
   const { isVi } = useLanguage();
 
   const genderLabel = isVi
-    ? GENDER_OPTIONS.find((opt) => opt.value === profile.gender)?.label ?? null
+    ? (GENDER_OPTIONS.find((opt) => opt.value === profile.gender)?.label ??
+      null)
     : profile.gender === "MALE"
-    ? "Male"
-    : profile.gender === "FEMALE"
-    ? "Female"
-    : profile.gender
-    ? "Other"
-    : null;
+      ? "Male"
+      : profile.gender === "FEMALE"
+        ? "Female"
+        : profile.gender
+          ? "Other"
+          : null;
 
   const isOnboardingComplete = profile.onboardingStep === "COMPLETED";
 
@@ -73,7 +81,10 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
               radius="xl"
               className={classes.avatar}
             />
-            <Box className={classes.onlineDot} title={isVi ? "Đang hoạt động" : "Online"} />
+            <Box
+              className={classes.onlineDot}
+              title={isVi ? "Đang hoạt động" : "Online"}
+            />
           </Box>
 
           <Badge
@@ -89,8 +100,13 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
             }
           >
             {isOnboardingComplete
-              ? isVi ? "Đã sẵn sàng học" : "Ready to Learn"
-              : isVi ? ONBOARDING_STEP_LABELS[profile.onboardingStep] ?? "Đang thiết lập" : "Setting up"}
+              ? isVi
+                ? "Đã sẵn sàng học"
+                : "Ready to Learn"
+              : isVi
+                ? (ONBOARDING_STEP_LABELS[profile.onboardingStep] ??
+                  "Đang thiết lập")
+                : "Setting up"}
           </Badge>
         </Group>
 

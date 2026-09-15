@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   Box,
   Card,
@@ -9,11 +9,11 @@ import {
   SimpleGrid,
   Skeleton,
   Stack,
-} from '@mantine/core';
+} from "@mantine/core";
 
 export function ExamOverviewSkeleton() {
   return (
-    <Box py="xl" px={{ base: 'md', md: 'xl' }} maw={1100} mx="auto">
+    <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
       {/* Breadcrumb Skeleton */}
       <Flex align="center" gap="xs" mb="lg">
         <Skeleton width={120} height={18} radius="xl" />
@@ -24,11 +24,11 @@ export function ExamOverviewSkeleton() {
       {/* Main Hero Card Skeleton */}
       <Card
         radius="lg"
-        p={{ base: 'lg', md: 'xl' }}
+        p={{ base: "lg", md: "xl" }}
         withBorder
         style={{
-          backgroundColor: 'var(--mantine-color-white)',
-          borderColor: 'var(--mantine-color-ink-2)',
+          backgroundColor: "var(--mantine-color-white)",
+          borderColor: "var(--mantine-color-ink-2)",
         }}
       >
         <Stack gap="lg">
@@ -50,8 +50,8 @@ export function ExamOverviewSkeleton() {
                 p="md"
                 radius="md"
                 style={{
-                  backgroundColor: 'var(--mantine-color-ink-0)',
-                  border: '1px solid var(--mantine-color-ink-2)',
+                  backgroundColor: "var(--mantine-color-ink-0)",
+                  border: "1px solid var(--mantine-color-ink-2)",
                 }}
               >
                 <Group gap="xs">
@@ -76,8 +76,8 @@ export function ExamOverviewSkeleton() {
                   radius="md"
                   withBorder
                   style={{
-                    backgroundColor: 'var(--mantine-color-white)',
-                    borderColor: 'var(--mantine-color-ink-2)',
+                    backgroundColor: "var(--mantine-color-white)",
+                    borderColor: "var(--mantine-color-ink-2)",
                   }}
                 >
                   <Group gap="xs" mb="xs">
@@ -95,8 +95,8 @@ export function ExamOverviewSkeleton() {
           <Box
             p="md"
             style={{
-              backgroundColor: '#F8FAFC',
-              border: '1px solid var(--mantine-color-ink-2)',
+              backgroundColor: "#F8FAFC",
+              border: "1px solid var(--mantine-color-ink-2)",
               borderRadius: 14,
             }}
           >

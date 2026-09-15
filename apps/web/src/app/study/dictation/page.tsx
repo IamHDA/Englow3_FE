@@ -13,7 +13,9 @@ interface DictationPageProps {
   }>;
 }
 
-export default async function DictationPage({ searchParams }: DictationPageProps) {
+export default async function DictationPage({
+  searchParams,
+}: DictationPageProps) {
   const { tab } = await searchParams;
   const initialTab = tab === "stats" ? "stats" : "lessons";
 

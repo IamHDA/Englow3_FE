@@ -1,6 +1,15 @@
 "use client";
 
-import { Anchor, Badge, Breadcrumbs, Group, Stack, Tabs, Text, Title } from "@mantine/core";
+import {
+  Anchor,
+  Badge,
+  Breadcrumbs,
+  Group,
+  Stack,
+  Tabs,
+  Text,
+  Title,
+} from "@mantine/core";
 import { BarChart3, BookOpen, ChevronRight, Headphones } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -10,13 +19,18 @@ interface DictationHeaderProps {
   onTabChange: (tab: "lessons" | "stats") => void;
 }
 
-export function DictationHeader({ activeTab, onTabChange }: DictationHeaderProps) {
+export function DictationHeader({
+  activeTab,
+  onTabChange,
+}: DictationHeaderProps) {
   const { t } = useLanguage();
 
   return (
     <Stack gap="md" pt="md" pb="sm">
       <Breadcrumbs
-        separator={<ChevronRight size={14} color="var(--mantine-color-ink-4)" />}
+        separator={
+          <ChevronRight size={14} color="var(--mantine-color-ink-4)" />
+        }
         styles={{ breadcrumb: { fontSize: 13 } }}
       >
         <Anchor component={Link} href="/" c="ink.6" fw={500}>
@@ -53,7 +67,9 @@ export function DictationHeader({ activeTab, onTabChange }: DictationHeaderProps
 
         <Tabs
           value={activeTab}
-          onChange={(val) => onTabChange((val as "lessons" | "stats") || "lessons")}
+          onChange={(val) =>
+            onTabChange((val as "lessons" | "stats") || "lessons")
+          }
           variant="pills"
           radius="md"
         >

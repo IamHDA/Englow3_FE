@@ -21,7 +21,10 @@ type AuthModeCopy = {
   footerAction: string;
 };
 
-export function getAuthModeCopy(mode: AuthMode, t: AppTranslations): AuthModeCopy {
+export function getAuthModeCopy(
+  mode: AuthMode,
+  t: AppTranslations,
+): AuthModeCopy {
   if (mode === AuthMode.REGISTER) {
     return {
       title: t.auth.registerTitle,
@@ -61,7 +64,9 @@ export const BIRTH_DAY_OPTIONS: string[] = Array.from({ length: 31 }, (_, i) =>
   String(i + 1),
 );
 
-export function getBirthMonthOptions(t: AppTranslations): { value: string; label: string }[] {
+export function getBirthMonthOptions(
+  t: AppTranslations,
+): { value: string; label: string }[] {
   return Array.from({ length: 12 }, (_, i) => ({
     value: String(i + 1),
     label: `${t.auth.monthLabel} ${i + 1}`,

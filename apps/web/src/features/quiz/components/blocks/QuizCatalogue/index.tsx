@@ -60,7 +60,8 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
           onChange={setSelectedCategory}
           data={categories.map((c) => ({
             value: c,
-            label: c === "ALL" ? (isVi ? "Tất cả chủ đề" : "All Categories") : c,
+            label:
+              c === "ALL" ? (isVi ? "Tất cả chủ đề" : "All Categories") : c,
           }))}
         />
       </Group>
@@ -90,8 +91,8 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
                       quiz.level === "Advanced"
                         ? "red"
                         : quiz.level === "Intermediate"
-                        ? "orange"
-                        : "teal"
+                          ? "orange"
+                          : "teal"
                     }
                     size="xs"
                   >
@@ -124,9 +125,13 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
 
                 {quiz.bestScorePercent !== undefined && (
                   <Group gap="xs" mt={4}>
-                    <IconTrophy size={14} color="var(--mantine-color-yellow-6)" />
+                    <IconTrophy
+                      size={14}
+                      color="var(--mantine-color-yellow-6)"
+                    />
                     <Text fz="xs" fw={600} c="yellow.8">
-                      {isVi ? "Điểm cao nhất:" : "Best Score:"} {quiz.bestScorePercent}%
+                      {isVi ? "Điểm cao nhất:" : "Best Score:"}{" "}
+                      {quiz.bestScorePercent}%
                     </Text>
                   </Group>
                 )}

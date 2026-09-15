@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Container,
-  Grid,
-  Group,
-  SegmentedControl,
-  Stack,
-} from "@mantine/core";
+import { Container, Grid, Group, SegmentedControl, Stack } from "@mantine/core";
 import { IconCompass, IconSparkles } from "@tabler/icons-react";
 import React, { useState } from "react";
 import {
@@ -62,7 +56,9 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
                 label: (
                   <Group gap="xs">
                     <IconSparkles size={18} />
-                    <span>{isVi ? "Kho thử thách trắc nghiệm" : "Quiz Challenges"}</span>
+                    <span>
+                      {isVi ? "Kho thử thách trắc nghiệm" : "Quiz Challenges"}
+                    </span>
                   </Group>
                 ),
               },

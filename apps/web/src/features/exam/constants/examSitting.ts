@@ -10,6 +10,7 @@ export const TIMER_WARNING_THRESHOLD_SECONDS = 300;
 export const TIMER_CRITICAL_THRESHOLD_SECONDS = 60;
 
 /** Local storage prefix for saving exam attempts during sitting */
-export const EXAM_LOCAL_STORAGE_PREFIX = 'englow3_exam_attempt_';
+export const EXAM_LOCAL_STORAGE_PREFIX = "englow3_exam_attempt_";
 
-export type PaletteQuestionStatus = 'answered' | 'flagged' | 'unanswered' | 'current';
+export type PaletteQuestionStatus =
+  "answered" | "flagged" | "unanswered" | "current";

@@ -30,9 +30,11 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
   const { isVi } = useLanguage();
   const state = profile.onboardingState;
 
-  const certificate = state?.targetCertificateType ?? (isVi ? "Chưa chọn" : "None");
+  const certificate =
+    state?.targetCertificateType ?? (isVi ? "Chưa chọn" : "None");
   const targetScore = state?.targetScore ?? "--";
-  const currentLevel = state?.currentLevel ?? (isVi ? "Chưa đánh giá" : "Not assessed");
+  const currentLevel =
+    state?.currentLevel ?? (isVi ? "Chưa đánh giá" : "Not assessed");
   const targetSkills = state?.targetSkills ?? [];
 
   return (
@@ -96,7 +98,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
                   radius="sm"
                   leftSection={<Sparkles size={10} />}
                 >
-                  {isVi ? SKILL_LABELS[skill] ?? skill : skill}
+                  {isVi ? (SKILL_LABELS[skill] ?? skill) : skill}
                 </Badge>
               ))}
             </Group>

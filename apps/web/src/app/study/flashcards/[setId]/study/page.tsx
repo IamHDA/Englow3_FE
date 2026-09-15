@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  FlashcardStudyView,
-  MOCK_FLASHCARD_SETS,
-} from "@/features/flashcard";
+import { FlashcardStudyView, MOCK_FLASHCARD_SETS } from "@/features/flashcard";
 
 interface FlashcardStudyPageProps {
   params: Promise<{
@@ -16,7 +13,7 @@ export async function generateMetadata({
 }: FlashcardStudyPageProps): Promise<Metadata> {
   const { setId } = await params;
   const set = MOCK_FLASHCARD_SETS.find(
-    (s) => s.id === setId || s.slug === setId
+    (s) => s.id === setId || s.slug === setId,
   );
 
   if (!set) {
@@ -36,7 +33,7 @@ export default async function FlashcardStudyPage({
 }: FlashcardStudyPageProps) {
   const { setId } = await params;
   const set = MOCK_FLASHCARD_SETS.find(
-    (s) => s.id === setId || s.slug === setId
+    (s) => s.id === setId || s.slug === setId,
   );
 
   if (!set) {

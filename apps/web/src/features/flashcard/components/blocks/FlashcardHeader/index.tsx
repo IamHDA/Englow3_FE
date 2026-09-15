@@ -1,6 +1,14 @@
 "use client";
 
-import { Badge, Box, Group, SegmentedControl, Stack, Text, Title } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Group,
+  SegmentedControl,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { IconCards, IconChartBar } from "@tabler/icons-react";
 import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -10,7 +18,10 @@ interface FlashcardHeaderProps {
   onTabChange: (tab: "decks" | "stats") => void;
 }
 
-export function FlashcardHeader({ activeTab, onTabChange }: FlashcardHeaderProps) {
+export function FlashcardHeader({
+  activeTab,
+  onTabChange,
+}: FlashcardHeaderProps) {
   const { t } = useLanguage();
 
   return (

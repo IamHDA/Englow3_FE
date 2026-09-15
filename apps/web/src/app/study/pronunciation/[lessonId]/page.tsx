@@ -16,7 +16,7 @@ export async function generateMetadata({
 }: LessonPageProps): Promise<Metadata> {
   const { lessonId } = await params;
   const lesson = MOCK_PRONUNCIATION_LESSONS.find(
-    (l) => l.id === lessonId || l.slug === lessonId
+    (l) => l.id === lessonId || l.slug === lessonId,
   );
 
   if (!lesson) {
@@ -36,7 +36,7 @@ export default async function PronunciationLessonPage({
 }: LessonPageProps) {
   const { lessonId } = await params;
   const lesson = MOCK_PRONUNCIATION_LESSONS.find(
-    (l) => l.id === lessonId || l.slug === lessonId
+    (l) => l.id === lessonId || l.slug === lessonId,
   );
 
   if (!lesson) {

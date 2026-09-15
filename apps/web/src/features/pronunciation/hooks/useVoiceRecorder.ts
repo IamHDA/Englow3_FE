@@ -1,20 +1,30 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PhonemeScoreDetail, PronunciationEvaluationResult, PronunciationLesson } from "../types";
+import {
+  PhonemeScoreDetail,
+  PronunciationEvaluationResult,
+  PronunciationLesson,
+} from "../types";
 
 export interface UseVoiceRecorderOptions {
   lesson: PronunciationLesson;
   onEvaluated?: (result: PronunciationEvaluationResult) => void;
 }
 
-export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOptions) {
+export function useVoiceRecorder({
+  lesson,
+  onEvaluated,
+}: UseVoiceRecorderOptions) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null);
-  const [evaluation, setEvaluation] = useState<PronunciationEvaluationResult | null>(null);
-  const [waveformLevels, setWaveformLevels] = useState<number[]>([15, 25, 40, 60, 35, 20, 45, 70, 30, 20]);
+  const [evaluation, setEvaluation] =
+    useState<PronunciationEvaluationResult | null>(null);
+  const [waveformLevels, setWaveformLevels] = useState<number[]>([
+    15, 25, 40, 60, 35, 20, 45, 70, 30, 20,
+  ]);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -24,14 +34,15 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
   // Play Native Pronunciation audio with SpeechSynthesis
   const playNativeAudio = useCallback(
     (slow: boolean = false) => {
-      if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+      if (typeof window === "undefined" || !("speechSynthesis" in window))
+        return;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(lesson.targetSentence);
       utterance.lang = "en-US";
       utterance.rate = slow ? 0.75 : 1.0;
       window.speechSynthesis.speak(utterance);
     },
-    [lesson.targetSentence]
+    [lesson.targetSentence],
   );
 
   // Process AI speech analysis and phoneme breakdown
@@ -41,31 +52,38 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
 
       setTimeout(() => {
         // High quality simulated scoring based on lesson phonemes
-        const phonemeDetails: PhonemeScoreDetail[] = lesson.phonemes.map((ph, idx) => {
-          // Semi-randomized realistic scores
-          const base = 82 + (idx % 3 === 0 ? 10 : idx % 2 === 0 ? -12 : 5);
-          const score = Math.max(65, Math.min(98, base));
-          const status = score >= 85 ? "good" : score >= 75 ? "warning" : "error";
-          let hint = "Khẩu hình và độ rung thanh quản đạt chuẩn bản ngữ.";
-          if (status === "warning") {
-            hint = "Cần mở rộng cơ miệng và giữ luồng hơi ổn định hơn.";
-          } else if (status === "error") {
-            hint = "Âm chưa rõ ràng, hãy nghe lại âm mẫu và chú ý vị trí đặt lưỡi.";
-          }
-          return {
-            phoneme: ph.symbol,
-            score,
-            status,
-            hint,
-          };
-        });
+        const phonemeDetails: PhonemeScoreDetail[] = lesson.phonemes.map(
+          (ph, idx) => {
+            // Semi-randomized realistic scores
+            const base = 82 + (idx % 3 === 0 ? 10 : idx % 2 === 0 ? -12 : 5);
+            const score = Math.max(65, Math.min(98, base));
+            const status =
+              score >= 85 ? "good" : score >= 75 ? "warning" : "error";
+            let hint = "Khẩu hình và độ rung thanh quản đạt chuẩn bản ngữ.";
+            if (status === "warning") {
+              hint = "Cần mở rộng cơ miệng và giữ luồng hơi ổn định hơn.";
+            } else if (status === "error") {
+              hint =
+                "Âm chưa rõ ràng, hãy nghe lại âm mẫu và chú ý vị trí đặt lưỡi.";
+            }
+            return {
+              phoneme: ph.symbol,
+              score,
+              status,
+              hint,
+            };
+          },
+        );
 
         const accuracy = Math.round(
-          phonemeDetails.reduce((acc, p) => acc + p.score, 0) / phonemeDetails.length
+          phonemeDetails.reduce((acc, p) => acc + p.score, 0) /
+            phonemeDetails.length,
         );
         const fluency = 86;
         const intonation = 84;
-        const overall = Math.round((accuracy * 0.5) + (fluency * 0.25) + (intonation * 0.25));
+        const overall = Math.round(
+          accuracy * 0.5 + fluency * 0.25 + intonation * 0.25,
+        );
 
         const result: PronunciationEvaluationResult = {
           lessonId: lesson.id,
@@ -90,7 +108,7 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
         onEvaluated?.(result);
       }, 1200);
     },
-    [lesson, onEvaluated]
+    [lesson, onEvaluated],
   );
 
   const processAIRef = useRef(processPronunciationAI);
@@ -115,7 +133,10 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
       waveformAnimRef.current = null;
     }
 
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
       mediaRecorderRef.current.stop();
     } else {
       processAIRef.current();
@@ -141,7 +162,9 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
 
     waveformAnimRef.current = setInterval(() => {
       setWaveformLevels(
-        Array.from({ length: 12 }).map(() => Math.floor(Math.random() * 65) + 20)
+        Array.from({ length: 12 }).map(
+          () => Math.floor(Math.random() * 65) + 20,
+        ),
       );
     }, 120);
 
@@ -182,7 +205,9 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
         const url = URL.createObjectURL(audioBlob);
         setAudioBlobUrl(url);
         stream.getTracks().forEach((track) => track.stop());
@@ -200,11 +225,16 @@ export function useVoiceRecorder({ lesson, onEvaluated }: UseVoiceRecorderOption
       // Animate waveform bars while recording
       waveformAnimRef.current = setInterval(() => {
         setWaveformLevels(
-          Array.from({ length: 12 }).map(() => Math.floor(Math.random() * 65) + 20)
+          Array.from({ length: 12 }).map(
+            () => Math.floor(Math.random() * 65) + 20,
+          ),
         );
       }, 120);
     } catch (err) {
-      console.warn("Microphone access denied or not available, falling back to simulator:", err);
+      console.warn(
+        "Microphone access denied or not available, falling back to simulator:",
+        err,
+      );
       simulateRecordingRef.current();
     }
   }, []);

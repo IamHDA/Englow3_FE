@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  Group,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Badge, Button, Card, Group, Stack, Text } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import React, { useMemo } from "react";
 import { QuizQuestion } from "../../../types";
@@ -75,7 +68,12 @@ export function RewriteQuestion({
       </Text>
 
       {/* Original Sentence & Keyword */}
-      <Card withBorder padding="md" radius="md" bg="var(--mantine-color-gray-0)">
+      <Card
+        withBorder
+        padding="md"
+        radius="md"
+        bg="var(--mantine-color-gray-0)"
+      >
         <Stack gap="xs">
           <Text fz="xs" fw={700} c="dimmed">
             CÂU GỐC:
@@ -127,7 +125,8 @@ export function RewriteQuestion({
 
           {selectedWords.length === 0 ? (
             <Text fz="sm" c="dimmed" fs="italic" py="xs">
-              Chưa chọn từ nào. Hãy click vào các thẻ từ trong ngân hàng từ phía dưới...
+              Chưa chọn từ nào. Hãy click vào các thẻ từ trong ngân hàng từ phía
+              dưới...
             </Text>
           ) : (
             <Group gap="xs" wrap="wrap">

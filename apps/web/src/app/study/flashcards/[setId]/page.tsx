@@ -16,7 +16,7 @@ export async function generateMetadata({
 }: SetDetailPageProps): Promise<Metadata> {
   const { setId } = await params;
   const set = MOCK_FLASHCARD_SETS.find(
-    (s) => s.id === setId || s.slug === setId
+    (s) => s.id === setId || s.slug === setId,
   );
 
   if (!set) {
@@ -31,12 +31,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function FlashcardSetPage({
-  params,
-}: SetDetailPageProps) {
+export default async function FlashcardSetPage({ params }: SetDetailPageProps) {
   const { setId } = await params;
   const set = MOCK_FLASHCARD_SETS.find(
-    (s) => s.id === setId || s.slug === setId
+    (s) => s.id === setId || s.slug === setId,
   );
 
   if (!set) {

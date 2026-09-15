@@ -61,7 +61,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const { session } = useAuth();
   const { profile } = useAccountProfile();
   const accountName =
-    profile?.displayName ?? session?.email ?? (t.nav.account || ACCOUNT_FALLBACK_NAME);
+    profile?.displayName ??
+    session?.email ??
+    (t.nav.account || ACCOUNT_FALLBACK_NAME);
 
   // Chặn điều hướng tới các trang chức năng khi chưa onboarding xong; nút nhắc
   // ở header dùng `requiresOnboarding` trực tiếp để quyết định có hiện không.

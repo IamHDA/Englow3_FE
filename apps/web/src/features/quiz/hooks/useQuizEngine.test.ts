@@ -88,7 +88,7 @@ describe("useQuizEngine", () => {
   it("submits quiz and computes accurate score and reviews", () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() =>
-      useQuizEngine({ quiz: mockQuiz, onComplete })
+      useQuizEngine({ quiz: mockQuiz, onComplete }),
     );
 
     act(() => {
@@ -108,7 +108,7 @@ describe("useQuizEngine", () => {
         totalPoints: 10,
         scorePercent: 50,
         isPassed: false, // passing is 70%
-      })
+      }),
     );
   });
 });

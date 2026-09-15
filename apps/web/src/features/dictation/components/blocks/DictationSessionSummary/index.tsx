@@ -149,7 +149,13 @@ export function DictationSessionSummary({
       {/* 2-Column Metrics & Breakdown */}
       <Grid gap="md">
         <Grid.Col span={{ base: 12, md: 5 }}>
-          <Paper radius="md" p="lg" withBorder bg="white" style={{ height: "100%" }}>
+          <Paper
+            radius="md"
+            p="lg"
+            withBorder
+            bg="white"
+            style={{ height: "100%" }}
+          >
             <Stack gap="md">
               <Title order={4} size="h5" fw={700} c="ink.9">
                 {isVi ? "Chi tiết phiên học" : "Session Metrics"}
@@ -177,15 +183,20 @@ export function DictationSessionSummary({
                     {isVi ? "Câu chuẩn xác 100%:" : "100% Accurate Sentences:"}
                   </Text>
                   <Text size="sm" fw={700} c="teal.8">
-                    {summary.metrics.perfectSentences} / {summary.sentencesCompletedCount} {isVi ? "câu" : "sentences"}
+                    {summary.metrics.perfectSentences} /{" "}
+                    {summary.sentencesCompletedCount}{" "}
+                    {isVi ? "câu" : "sentences"}
                   </Text>
                 </Group>
                 <Group justify="space-between">
                   <Text size="sm" c="ink.6">
-                    {isVi ? "Câu có từ chưa chuẩn:" : "Sentences with Mistakes:"}
+                    {isVi
+                      ? "Câu có từ chưa chuẩn:"
+                      : "Sentences with Mistakes:"}
                   </Text>
                   <Text size="sm" fw={700} c="warn.8">
-                    {summary.metrics.sentencesWithMistakes} {isVi ? "câu" : "sentences"}
+                    {summary.metrics.sentencesWithMistakes}{" "}
+                    {isVi ? "câu" : "sentences"}
                   </Text>
                 </Group>
               </Stack>
@@ -199,7 +210,9 @@ export function DictationSessionSummary({
                   color="teal"
                   title={isVi ? "Từ gõ đúng" : "Correct"}
                 >
-                  <Progress.Label>{summary.breakdown.correctPercent}%</Progress.Label>
+                  <Progress.Label>
+                    {summary.breakdown.correctPercent}%
+                  </Progress.Label>
                 </Progress.Section>
                 <Progress.Section
                   value={summary.breakdown.incorrectPercent}
@@ -207,7 +220,9 @@ export function DictationSessionSummary({
                   title={isVi ? "Từ gõ sai" : "Incorrect"}
                 >
                   {summary.breakdown.incorrectPercent > 5 && (
-                    <Progress.Label>{summary.breakdown.incorrectPercent}%</Progress.Label>
+                    <Progress.Label>
+                      {summary.breakdown.incorrectPercent}%
+                    </Progress.Label>
                   )}
                 </Progress.Section>
                 <Progress.Section
@@ -216,7 +231,9 @@ export function DictationSessionSummary({
                   title={isVi ? "Từ còn thiếu" : "Missing"}
                 >
                   {summary.breakdown.missingPercent > 5 && (
-                    <Progress.Label>{summary.breakdown.missingPercent}%</Progress.Label>
+                    <Progress.Label>
+                      {summary.breakdown.missingPercent}%
+                    </Progress.Label>
                   )}
                 </Progress.Section>
               </Progress.Root>
@@ -232,7 +249,8 @@ export function DictationSessionSummary({
                     }}
                   />
                   <Text size="xs" c="ink.6">
-                    {isVi ? "Đúng" : "Correct"}: {summary.breakdown.correctPercent}%
+                    {isVi ? "Đúng" : "Correct"}:{" "}
+                    {summary.breakdown.correctPercent}%
                   </Text>
                 </Group>
                 <Group gap={4}>
@@ -245,7 +263,8 @@ export function DictationSessionSummary({
                     }}
                   />
                   <Text size="xs" c="ink.6">
-                    {isVi ? "Sai" : "Incorrect"}: {summary.breakdown.incorrectPercent}%
+                    {isVi ? "Sai" : "Incorrect"}:{" "}
+                    {summary.breakdown.incorrectPercent}%
                   </Text>
                 </Group>
                 <Group gap={4}>
@@ -258,7 +277,8 @@ export function DictationSessionSummary({
                     }}
                   />
                   <Text size="xs" c="ink.6">
-                    {isVi ? "Thiếu" : "Missing"}: {summary.breakdown.missingPercent}%
+                    {isVi ? "Thiếu" : "Missing"}:{" "}
+                    {summary.breakdown.missingPercent}%
                   </Text>
                 </Group>
               </Group>
@@ -268,7 +288,13 @@ export function DictationSessionSummary({
 
         {/* Sentences with Mistakes */}
         <Grid.Col span={{ base: 12, md: 7 }}>
-          <Paper radius="md" p="lg" withBorder bg="white" style={{ height: "100%" }}>
+          <Paper
+            radius="md"
+            p="lg"
+            withBorder
+            bg="white"
+            style={{ height: "100%" }}
+          >
             <Stack gap="md">
               <Group justify="space-between" align="center">
                 <Title order={4} size="h5" fw={700} c="ink.9">
@@ -290,7 +316,13 @@ export function DictationSessionSummary({
               </Group>
 
               {summary.mistakes.length === 0 ? (
-                <Card radius="md" p="lg" withBorder bg="teal.0" style={{ textAlign: "center" }}>
+                <Card
+                  radius="md"
+                  p="lg"
+                  withBorder
+                  bg="teal.0"
+                  style={{ textAlign: "center" }}
+                >
                   <Text size="sm" c="teal.9" fw={600}>
                     {isVi
                       ? "Tuyệt vời! Bạn không mắc phải lỗi nào trong bài học này."
@@ -312,13 +344,23 @@ export function DictationSessionSummary({
                       <Stack gap={2}>
                         <Text size="xs" c="ink.6">
                           {isVi ? "Bạn đã gõ:" : "Your Input:"}{" "}
-                          <span style={{ color: "var(--mantine-color-warn-8)", fontWeight: 600 }}>
+                          <span
+                            style={{
+                              color: "var(--mantine-color-warn-8)",
+                              fontWeight: 600,
+                            }}
+                          >
                             “{m.learnerAnswer}”
                           </span>
                         </Text>
                         <Text size="xs" c="ink.6">
                           {isVi ? "Đáp án đúng:" : "Correct Answer:"}{" "}
-                          <span style={{ color: "var(--mantine-color-teal-8)", fontWeight: 600 }}>
+                          <span
+                            style={{
+                              color: "var(--mantine-color-teal-8)",
+                              fontWeight: 600,
+                            }}
+                          >
                             “{m.correctAnswer}”
                           </span>
                         </Text>

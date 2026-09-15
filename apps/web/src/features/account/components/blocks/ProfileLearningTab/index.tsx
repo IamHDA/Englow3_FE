@@ -37,9 +37,17 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
   const { isVi } = useLanguage();
   const state = profile.onboardingState;
 
-  const certificate = state?.targetCertificateType ?? (isVi ? "Chưa thiết lập" : "Not configured");
-  const targetScore = state?.targetScore != null ? String(state.targetScore) : (isVi ? "Chưa có" : "None");
-  const currentLevel = state?.currentLevel ?? (isVi ? "Chưa đánh giá" : "Not assessed");
+  const certificate =
+    state?.targetCertificateType ??
+    (isVi ? "Chưa thiết lập" : "Not configured");
+  const targetScore =
+    state?.targetScore != null
+      ? String(state.targetScore)
+      : isVi
+        ? "Chưa có"
+        : "None";
+  const currentLevel =
+    state?.currentLevel ?? (isVi ? "Chưa đánh giá" : "Not assessed");
   const targetDate = state?.targetDate ? String(state.targetDate) : null;
   const targetSkills = state?.targetSkills ?? [];
 
@@ -50,7 +58,9 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
           <Group justify="space-between" align="center" wrap="wrap">
             <Stack gap={4}>
               <Title order={3} fz={20} fw={700} c="ink.9">
-                {isVi ? "Lộ trình & Mục tiêu học tập" : "Learning Roadmap & Targets"}
+                {isVi
+                  ? "Lộ trình & Mục tiêu học tập"
+                  : "Learning Roadmap & Targets"}
               </Title>
               <Text size="sm" c="ink.6">
                 {isVi
@@ -74,9 +84,19 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
 
           <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
             {/* Card 1: Certificate */}
-            <Paper radius="md" withBorder p="md" className={classes.highlightBox}>
+            <Paper
+              radius="md"
+              withBorder
+              p="md"
+              className={classes.highlightBox}
+            >
               <Group gap="xs" mb="xs">
-                <ThemeIcon color="orange.5" variant="light" size="lg" radius="md">
+                <ThemeIcon
+                  color="orange.5"
+                  variant="light"
+                  size="lg"
+                  radius="md"
+                >
                   <Award size={20} />
                 </ThemeIcon>
                 <Stack gap={0}>
@@ -94,7 +114,12 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
             </Paper>
 
             {/* Card 2: CEFR Level */}
-            <Paper radius="md" withBorder p="md" className={classes.highlightBox}>
+            <Paper
+              radius="md"
+              withBorder
+              p="md"
+              className={classes.highlightBox}
+            >
               <Group gap="xs" mb="xs">
                 <ThemeIcon color="teal.6" variant="light" size="lg" radius="md">
                   <BookOpen size={20} />
@@ -114,7 +139,12 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
             </Paper>
 
             {/* Card 3: Target Date */}
-            <Paper radius="md" withBorder p="md" className={classes.highlightBox}>
+            <Paper
+              radius="md"
+              withBorder
+              p="md"
+              className={classes.highlightBox}
+            >
               <Group gap="xs" mb="xs">
                 <ThemeIcon color="blue.6" variant="light" size="lg" radius="md">
                   <Calendar size={20} />
@@ -157,7 +187,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                     <Group gap="xs" align="center">
                       <Target size={14} className={classes.skillIcon} />
                       <Text size="sm" fw={600} c="ink.9">
-                        {isVi ? SKILL_LABELS[skill] ?? skill : skill}
+                        {isVi ? (SKILL_LABELS[skill] ?? skill) : skill}
                       </Text>
                     </Group>
                   </Paper>

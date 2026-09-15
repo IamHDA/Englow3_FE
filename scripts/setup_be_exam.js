@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const controllerPath = path.resolve("../Englow3_BE/src/main/java/com/englow3/exam/controller/ExamController.java");
+const controllerPath = path.resolve(
+  "../Englow3_BE/src/main/java/com/englow3/exam/controller/ExamController.java",
+);
 const controllerContent = `package com.englow3.exam.controller;
 
 import java.math.BigDecimal;

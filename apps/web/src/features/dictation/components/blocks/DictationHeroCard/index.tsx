@@ -53,7 +53,10 @@ export function DictationHeroCard() {
               color="gray"
               size="sm"
               radius="sm"
-              style={{ color: "#E9EEFB", borderColor: "rgba(255,255,255,0.25)" }}
+              style={{
+                color: "#E9EEFB",
+                borderColor: "rgba(255,255,255,0.25)",
+              }}
             >
               {lesson.level}
             </Badge>

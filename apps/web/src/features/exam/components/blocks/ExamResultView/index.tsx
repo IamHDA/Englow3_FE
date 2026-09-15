@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
 import {
   Accordion,
   Badge,
@@ -17,7 +17,7 @@ import {
   Text,
   ThemeIcon,
   Title,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   Award,
   CheckCircle2,
@@ -25,13 +25,13 @@ import {
   Clock,
   RotateCcw,
   ArrowLeft,
-} from 'lucide-react';
-import type { ExamPaperQuery } from '@/lib/graphql/generated/hooks';
-import { useLanguage } from '@/shared/hooks/useLanguage';
-import type { FlatQuestionItem } from '../QuestionPalette';
-import classes from './ExamResultView.module.css';
+} from "lucide-react";
+import type { ExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import type { FlatQuestionItem } from "../QuestionPalette";
+import classes from "./ExamResultView.module.css";
 
-type ExamPaper = NonNullable<ExamPaperQuery['examPaper']>;
+type ExamPaper = NonNullable<ExamPaperQuery["examPaper"]>;
 
 export interface ExamResultViewProps {
   paper: ExamPaper;
@@ -49,13 +49,13 @@ export function ExamResultView({
   onRetake,
 }: ExamResultViewProps) {
   const { t } = useLanguage();
-  const [filterTab, setFilterTab] = useState<string>('all');
+  const [filterTab, setFilterTab] = useState<string>("all");
 
   // Build a lookup map of all questions in paper
   const questionMap = new Map<
     string,
     {
-      question: ExamPaper['sections'][number]['parts'][number]['questionSets'][number]['questions'][number];
+      question: ExamPaper["sections"][number]["parts"][number]["questionSets"][number]["questions"][number];
       partTitle: string;
       sectionType: string;
     }
@@ -102,8 +102,8 @@ export function ExamResultView({
     return {
       item,
       question: q,
-      partTitle: qData?.partTitle || '',
-      sectionType: qData?.sectionType || '',
+      partTitle: qData?.partTitle || "",
+      sectionType: qData?.sectionType || "",
       selectedOptionId,
       selectedOption,
       correctOption,
@@ -113,22 +113,25 @@ export function ExamResultView({
   });
 
   const totalQuestions = questions.length;
-  const accuracyPercent = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
-  const scaledScore = Math.round((correctCount / (totalQuestions || 1)) * paper.maxRawScore);
+  const accuracyPercent =
+    totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+  const scaledScore = Math.round(
+    (correctCount / (totalQuestions || 1)) * paper.maxRawScore,
+  );
 
   const minutes = Math.floor(timeSpentSeconds / 60);
   const seconds = timeSpentSeconds % 60;
-  const timeFormatted = `${minutes} ${t.exam.minutesText} ${seconds.toString().padStart(2, '0')} ${t.exam.secondsText}`;
+  const timeFormatted = `${minutes} ${t.exam.minutesText} ${seconds.toString().padStart(2, "0")} ${t.exam.secondsText}`;
 
   const filteredQuestions = evaluatedQuestions.filter((eq) => {
-    if (filterTab === 'correct') return eq.isCorrect;
-    if (filterTab === 'incorrect') return eq.isAnswered && !eq.isCorrect;
-    if (filterTab === 'skipped') return !eq.isAnswered;
+    if (filterTab === "correct") return eq.isCorrect;
+    if (filterTab === "incorrect") return eq.isAnswered && !eq.isCorrect;
+    if (filterTab === "skipped") return !eq.isAnswered;
     return true;
   });
 
   return (
-    <Box py="xl" px={{ base: 'md', md: 'xl' }} maw={1100} mx="auto">
+    <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
       <Stack gap="xl">
         {/* Breadcrumbs */}
         <Flex align="center" gap="xs">
@@ -151,14 +154,20 @@ export function ExamResultView({
         {/* Hero Score Banner */}
         <Card
           radius="lg"
-          p={{ base: 'lg', md: 'xl' }}
+          p={{ base: "lg", md: "xl" }}
           withBorder
           className={classes.bannerCard}
         >
           <Stack gap="lg">
             <Group justify="space-between" align="flex-start">
               <Stack gap={4}>
-                <Badge color="navy" variant="light" size="lg" radius="xl" mb={4}>
+                <Badge
+                  color="navy"
+                  variant="light"
+                  size="lg"
+                  radius="xl"
+                  mb={4}
+                >
                   {t.exam.finishedBadge}
                 </Badge>
                 <Title order={1} size="h2" c="navy.9" fw={700}>
@@ -217,7 +226,7 @@ export function ExamResultView({
                   {correctCount}
                 </Text>
                 <Text size="xs" c="green.7">
-                  {t.exam.outOfTotal.replace('{total}', String(totalQuestions))}
+                  {t.exam.outOfTotal.replace("{total}", String(totalQuestions))}
                 </Text>
               </Card>
 
@@ -247,7 +256,7 @@ export function ExamResultView({
                   {timeFormatted}
                 </Text>
                 <Text size="xs" c="ink.5">
-                  {t.exam.skippedCount.replace('{count}', String(skippedCount))}
+                  {t.exam.skippedCount.replace("{count}", String(skippedCount))}
                 </Text>
               </Card>
             </SimpleGrid>
@@ -257,7 +266,7 @@ export function ExamResultView({
         {/* Detailed Answer Review Section */}
         <Card
           radius="lg"
-          p={{ base: 'md', md: 'xl' }}
+          p={{ base: "md", md: "xl" }}
           withBorder
           className={classes.reviewCard}
         >
@@ -273,12 +282,23 @@ export function ExamResultView({
               </Stack>
 
               {/* Review Filter Tabs */}
-              <Tabs value={filterTab} onChange={(val) => setFilterTab(val || 'all')}>
+              <Tabs
+                value={filterTab}
+                onChange={(val) => setFilterTab(val || "all")}
+              >
                 <Tabs.List>
-                  <Tabs.Tab value="all">{t.exam.tabAllReview} ({totalQuestions})</Tabs.Tab>
-                  <Tabs.Tab value="correct">{t.exam.tabCorrect} ({correctCount})</Tabs.Tab>
-                  <Tabs.Tab value="incorrect">{t.exam.tabIncorrect} ({incorrectCount})</Tabs.Tab>
-                  <Tabs.Tab value="skipped">{t.exam.tabSkipped} ({skippedCount})</Tabs.Tab>
+                  <Tabs.Tab value="all">
+                    {t.exam.tabAllReview} ({totalQuestions})
+                  </Tabs.Tab>
+                  <Tabs.Tab value="correct">
+                    {t.exam.tabCorrect} ({correctCount})
+                  </Tabs.Tab>
+                  <Tabs.Tab value="incorrect">
+                    {t.exam.tabIncorrect} ({incorrectCount})
+                  </Tabs.Tab>
+                  <Tabs.Tab value="skipped">
+                    {t.exam.tabSkipped} ({skippedCount})
+                  </Tabs.Tab>
                 </Tabs.List>
               </Tabs>
             </Group>
@@ -286,19 +306,42 @@ export function ExamResultView({
             {/* Questions Review Accordion */}
             <Accordion variant="separated" radius="md">
               {filteredQuestions.map(
-                ({ item, question, partTitle, selectedOption, correctOption, isCorrect, isAnswered }) => {
+                ({
+                  item,
+                  question,
+                  partTitle,
+                  selectedOption,
+                  correctOption,
+                  isCorrect,
+                  isAnswered,
+                }) => {
                   if (!question) return null;
 
                   return (
-                    <Accordion.Item key={item.questionId} value={item.questionId}>
+                    <Accordion.Item
+                      key={item.questionId}
+                      value={item.questionId}
+                    >
                       <Accordion.Control>
                         <Group justify="space-between" wrap="nowrap">
                           <Group gap="sm">
                             <ThemeIcon
                               size={26}
                               radius="xl"
-                              color={!isAnswered ? 'gray.2' : isCorrect ? 'teal.1' : 'red.1'}
-                              c={!isAnswered ? 'ink.6' : isCorrect ? 'teal.9' : 'red.9'}
+                              color={
+                                !isAnswered
+                                  ? "gray.2"
+                                  : isCorrect
+                                    ? "teal.1"
+                                    : "red.1"
+                              }
+                              c={
+                                !isAnswered
+                                  ? "ink.6"
+                                  : isCorrect
+                                    ? "teal.9"
+                                    : "red.9"
+                              }
                             >
                               <Text size="xs" fw={700}>
                                 {item.globalIndex + 1}
@@ -315,12 +358,18 @@ export function ExamResultView({
                           </Group>
 
                           <Badge
-                            color={!isAnswered ? 'gray' : isCorrect ? 'green' : 'red'}
+                            color={
+                              !isAnswered ? "gray" : isCorrect ? "green" : "red"
+                            }
                             variant="light"
                             size="sm"
                             radius="xl"
                           >
-                            {!isAnswered ? t.exam.tabSkipped : isCorrect ? t.exam.tabCorrect : t.exam.tabIncorrect}
+                            {!isAnswered
+                              ? t.exam.tabSkipped
+                              : isCorrect
+                                ? t.exam.tabCorrect
+                                : t.exam.tabIncorrect}
                           </Badge>
                         </Group>
                       </Accordion.Control>
@@ -330,18 +379,19 @@ export function ExamResultView({
                           {/* Options List */}
                           <Stack gap="xs">
                             {question.options.map((opt, optIdx) => {
-                              const isUserChoice = opt.id === selectedOption?.id;
+                              const isUserChoice =
+                                opt.id === selectedOption?.id;
                               const isCorrectOpt = opt.correct;
                               const letter = String.fromCharCode(65 + optIdx);
 
-                              let bg = 'white';
+                              let bg = "white";
                               let badgeLabel: string | null = null;
 
                               if (isCorrectOpt) {
-                                bg = '#F0FDF4';
+                                bg = "#F0FDF4";
                                 badgeLabel = t.exam.correctBadge;
                               } else if (isUserChoice && !isCorrectOpt) {
-                                bg = '#FEF2F2';
+                                bg = "#FEF2F2";
                                 badgeLabel = t.exam.yourChoiceBadge;
                               }
 
@@ -360,15 +410,15 @@ export function ExamResultView({
                                         radius="xl"
                                         color={
                                           isCorrectOpt
-                                            ? 'teal.7'
+                                            ? "teal.7"
                                             : isUserChoice
-                                            ? 'red.7'
-                                            : 'gray.2'
+                                              ? "red.7"
+                                              : "gray.2"
                                         }
                                         c={
                                           isCorrectOpt || isUserChoice
-                                            ? 'white'
-                                            : 'ink.7'
+                                            ? "white"
+                                            : "ink.7"
                                         }
                                       >
                                         <Text size="xs" fw={700}>
@@ -383,7 +433,7 @@ export function ExamResultView({
                                     {badgeLabel && (
                                       <Badge
                                         size="xs"
-                                        color={isCorrectOpt ? 'green' : 'red'}
+                                        color={isCorrectOpt ? "green" : "red"}
                                         variant="filled"
                                       >
                                         {badgeLabel}
@@ -396,13 +446,19 @@ export function ExamResultView({
                           </Stack>
 
                           {/* Explanation Note */}
-                          {(question.explanation || correctOption?.explanation) && (
+                          {(question.explanation ||
+                            correctOption?.explanation) && (
                             <Box p="sm" className={classes.explanationBox}>
                               <Text size="xs" fw={700} c="navy.9" mb={2}>
                                 {t.exam.detailedExplanation}
                               </Text>
-                              <Text size="xs" c="ink.7" style={{ lineHeight: 1.5 }}>
-                                {question.explanation || correctOption?.explanation}
+                              <Text
+                                size="xs"
+                                c="ink.7"
+                                style={{ lineHeight: 1.5 }}
+                              >
+                                {question.explanation ||
+                                  correctOption?.explanation}
                               </Text>
                             </Box>
                           )}

@@ -203,7 +203,9 @@ describe("Query.exam", () => {
   });
 
   it("forwards id to getByIdAsLearner", async () => {
-    const getByIdAsLearner = vi.fn().mockResolvedValue({ id: "exam-1", title: "Detail" });
+    const getByIdAsLearner = vi
+      .fn()
+      .mockResolvedValue({ id: "exam-1", title: "Detail" });
     const ctx = makeContext(vi.fn(), {}, { getByIdAsLearner });
 
     const res = await examResolvers.Query.exam({}, { id: "exam-1" }, ctx);
@@ -228,14 +230,16 @@ describe("Query.examPaper", () => {
       { getPaperAsLearner },
     );
 
-    expect(() => examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx)).toThrow(
-      "Missing or invalid access token",
-    );
+    expect(() =>
+      examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
     expect(getPaperAsLearner).not.toHaveBeenCalled();
   });
 
   it("forwards id to getPaperAsLearner", async () => {
-    const getPaperAsLearner = vi.fn().mockResolvedValue({ id: "exam-1", sections: [] });
+    const getPaperAsLearner = vi
+      .fn()
+      .mockResolvedValue({ id: "exam-1", sections: [] });
     const ctx = makeContext(vi.fn(), {}, { getPaperAsLearner });
 
     const res = await examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx);
@@ -244,4 +248,3 @@ describe("Query.examPaper", () => {
     expect(res).toEqual({ id: "exam-1", sections: [] });
   });
 });
-

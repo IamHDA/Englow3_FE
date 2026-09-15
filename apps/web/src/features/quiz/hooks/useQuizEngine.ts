@@ -13,7 +13,9 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [flaggedIds, setFlaggedIds] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(quiz.timeLimitMinutes * 60);
+  const [timeRemaining, setTimeRemaining] = useState(
+    quiz.timeLimitMinutes * 60,
+  );
 
   const answersRef = useRef(answers);
   const timeRemainingRef = useRef(timeRemaining);
@@ -41,7 +43,7 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
     setFlaggedIds((prev) =>
       prev.includes(questionId)
         ? prev.filter((id) => id !== questionId)
-        : [...prev, questionId]
+        : [...prev, questionId],
     );
   }, []);
 
@@ -64,15 +66,19 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
           isCorrect = userAns === q.correctOptionId;
           const chosen = q.mcOptions?.find((o) => o.id === userAns);
           const right = q.mcOptions?.find((o) => o.id === q.correctOptionId);
-          userAnsText = chosen ? `${chosen.label}. ${chosen.text}` : "(Chưa chọn)";
+          userAnsText = chosen
+            ? `${chosen.label}. ${chosen.text}`
+            : "(Chưa chọn)";
           correctAnsText = right ? `${right.label}. ${right.text}` : "";
           break;
         }
 
         case "FILL_BLANK": {
-          const cleanUser = String(userAns || "").trim().toLowerCase();
+          const cleanUser = String(userAns || "")
+            .trim()
+            .toLowerCase();
           const matches = q.acceptedAnswers?.some(
-            (ans) => ans.trim().toLowerCase() === cleanUser
+            (ans) => ans.trim().toLowerCase() === cleanUser,
           );
           isCorrect = !!matches;
           userAnsText = userAns ? String(userAns) : "(Chưa điền)";
@@ -81,27 +87,33 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
         }
 
         case "REWRITE": {
-          const userWords: string[] = Array.isArray(userAns) ? (userAns as string[]) : [];
+          const userWords: string[] = Array.isArray(userAns)
+            ? (userAns as string[])
+            : [];
           const correctWords = q.correctRewriteWords || [];
           isCorrect =
             userWords.length === correctWords.length &&
             userWords.every(
-              (w, i) => w.toLowerCase() === correctWords[i]?.toLowerCase()
+              (w, i) => w.toLowerCase() === correctWords[i]?.toLowerCase(),
             );
-          userAnsText = userWords.length > 0 ? userWords.join(" ") : "(Chưa hoàn thành)";
+          userAnsText =
+            userWords.length > 0 ? userWords.join(" ") : "(Chưa hoàn thành)";
           correctAnsText = correctWords.join(" ");
           break;
         }
 
         case "REORDER": {
-          const userWords: string[] = Array.isArray(userAns) ? (userAns as string[]) : [];
+          const userWords: string[] = Array.isArray(userAns)
+            ? (userAns as string[])
+            : [];
           const correctWords = q.correctOrderWords || [];
           isCorrect =
             userWords.length === correctWords.length &&
             userWords.every(
-              (w, i) => w.toLowerCase() === correctWords[i]?.toLowerCase()
+              (w, i) => w.toLowerCase() === correctWords[i]?.toLowerCase(),
             );
-          userAnsText = userWords.length > 0 ? userWords.join(" ") : "(Chưa sắp xếp)";
+          userAnsText =
+            userWords.length > 0 ? userWords.join(" ") : "(Chưa sắp xếp)";
           correctAnsText = correctWords.join(" ");
           break;
         }
@@ -117,7 +129,9 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
           });
           isCorrect = matchesCount === pairs.length && pairs.length > 0;
           userAnsText = `Đúng ${matchesCount}/${pairs.length} cặp`;
-          correctAnsText = pairs.map((p) => `${p.left} ➔ ${p.right}`).join("\n");
+          correctAnsText = pairs
+            .map((p) => `${p.left} ➔ ${p.right}`)
+            .join("\n");
           break;
         }
       }
@@ -209,7 +223,8 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
     answeredCount,
     setAnswer,
     toggleFlag,
-    nextQuestion: () => setCurrentIndex((prev) => Math.min(prev + 1, quiz.questions.length - 1)),
+    nextQuestion: () =>
+      setCurrentIndex((prev) => Math.min(prev + 1, quiz.questions.length - 1)),
     prevQuestion: () => setCurrentIndex((prev) => Math.max(prev - 1, 0)),
     jumpToQuestion: (idx: number) => setCurrentIndex(idx),
     submitQuiz: handleSubmit,

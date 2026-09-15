@@ -44,7 +44,9 @@ export function FlashcardDifficultCards({
             </Text>
           </Group>
           <Badge variant="light" color="red" size="sm">
-            {isVi ? `${cards.length} từ cần ưu tiên` : `${cards.length} priority words`}
+            {isVi
+              ? `${cards.length} từ cần ưu tiên`
+              : `${cards.length} priority words`}
           </Badge>
         </Group>
 
@@ -86,7 +88,9 @@ export function FlashcardDifficultCards({
                     variant="subtle"
                     color="indigo"
                     size="sm"
-                    onClick={() => (onSpeak ? onSpeak(item.card) : handleSpeak(item.card))}
+                    onClick={() =>
+                      onSpeak ? onSpeak(item.card) : handleSpeak(item.card)
+                    }
                   >
                     <IconVolume size={16} />
                   </ActionIcon>

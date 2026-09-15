@@ -34,15 +34,32 @@ export function FlashcardSessionSummary({
   onRestart,
 }: FlashcardSessionSummaryProps) {
   const getFeedback = (accuracy: number) => {
-    if (accuracy >= 85) return { text: "Xuất sắc! Trí nhớ của bạn rất tuyệt vời.", color: "teal" };
-    if (accuracy >= 65) return { text: "Khá tốt! Hãy tiếp tục duy trì chuỗi học này.", color: "blue" };
-    return { text: "Cần luyện tập thêm! Hãy ôn lại những từ chưa nhớ nhé.", color: "orange" };
+    if (accuracy >= 85)
+      return {
+        text: "Xuất sắc! Trí nhớ của bạn rất tuyệt vời.",
+        color: "teal",
+      };
+    if (accuracy >= 65)
+      return {
+        text: "Khá tốt! Hãy tiếp tục duy trì chuỗi học này.",
+        color: "blue",
+      };
+    return {
+      text: "Cần luyện tập thêm! Hãy ôn lại những từ chưa nhớ nhé.",
+      color: "orange",
+    };
   };
 
   const feedback = getFeedback(summary.accuracyPercent);
 
   return (
-    <Card withBorder padding="xl" radius="lg" shadow="sm" style={{ maxWidth: 640, margin: "0 auto" }}>
+    <Card
+      withBorder
+      padding="xl"
+      radius="lg"
+      shadow="sm"
+      style={{ maxWidth: 640, margin: "0 auto" }}
+    >
       <Stack align="center" gap="md">
         <ThemeIcon size={64} radius="xl" color="yellow" variant="light">
           <IconTrophy size={36} />
@@ -65,7 +82,9 @@ export function FlashcardSessionSummary({
             size={120}
             thickness={10}
             roundCaps
-            sections={[{ value: summary.accuracyPercent, color: feedback.color }]}
+            sections={[
+              { value: summary.accuracyPercent, color: feedback.color },
+            ]}
             label={
               <Text ta="center" fw={700} fz="lg">
                 {summary.accuracyPercent}%
@@ -111,7 +130,13 @@ export function FlashcardSessionSummary({
               </Card>
             </Grid.Col>
             <Grid.Col span={3}>
-              <Card withBorder padding="xs" radius="sm" ta="center" bg="orange.0">
+              <Card
+                withBorder
+                padding="xs"
+                radius="sm"
+                ta="center"
+                bg="orange.0"
+              >
                 <Text fz="xs" c="orange.9" fw={600}>
                   Khó nhớ
                 </Text>

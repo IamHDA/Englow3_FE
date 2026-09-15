@@ -34,7 +34,9 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
             </Title>
           </Group>
           <Text size="xs" c="ink.5">
-            {isVi ? "Xem lại các phiên làm bài gần đây" : "Review your recent practice sessions"}
+            {isVi
+              ? "Xem lại các phiên làm bài gần đây"
+              : "Review your recent practice sessions"}
           </Text>
         </Group>
 
@@ -48,7 +50,9 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
                 <Table.Th>{isVi ? "Độ chính xác" : "Accuracy"}</Table.Th>
                 <Table.Th>{isVi ? "Thời lượng" : "Duration"}</Table.Th>
                 <Table.Th>{isVi ? "Gợi ý dùng" : "Hints"}</Table.Th>
-                <Table.Th style={{ textAlign: "right" }}>{isVi ? "Xem lại" : "Action"}</Table.Th>
+                <Table.Th style={{ textAlign: "right" }}>
+                  {isVi ? "Xem lại" : "Action"}
+                </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>

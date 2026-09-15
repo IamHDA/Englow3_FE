@@ -21,7 +21,9 @@ interface PronunciationLessonGridProps {
   lessons: PronunciationLesson[];
 }
 
-export function PronunciationLessonGrid({ lessons }: PronunciationLessonGridProps) {
+export function PronunciationLessonGrid({
+  lessons,
+}: PronunciationLessonGridProps) {
   const { isVi } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
@@ -86,8 +88,8 @@ export function PronunciationLessonGrid({ lessons }: PronunciationLessonGridProp
                       lesson.level === "Advanced"
                         ? "red"
                         : lesson.level === "Intermediate"
-                        ? "orange"
-                        : "teal"
+                          ? "orange"
+                          : "teal"
                     }
                     size="xs"
                   >
@@ -122,7 +124,8 @@ export function PronunciationLessonGrid({ lessons }: PronunciationLessonGridProp
                 {lesson.bestScore !== undefined && (
                   <Group gap="xs" mt="xs">
                     <Badge variant="light" color="teal" size="xs">
-                      {isVi ? "Điểm cao nhất:" : "Best Score:"} {lesson.bestScore}/100
+                      {isVi ? "Điểm cao nhất:" : "Best Score:"}{" "}
+                      {lesson.bestScore}/100
                     </Badge>
                   </Group>
                 )}

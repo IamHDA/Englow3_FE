@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Card,
-  Grid,
-  Group,
-  Progress,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Box, Card, Grid, Group, Progress, Stack, Text } from "@mantine/core";
 import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { FlashcardStatsData } from "../../../types";
@@ -40,9 +32,17 @@ export function FlashcardCharts({ stats }: FlashcardChartsProps) {
               </Text>
             </Box>
 
-            <Group align="flex-end" justify="space-around" h={180} mt="md" px="xs">
+            <Group
+              align="flex-end"
+              justify="space-around"
+              h={180}
+              mt="md"
+              px="xs"
+            >
               {stats.activityDays.map((item, idx) => {
-                const heightPercent = Math.round((item.cardsCount / maxCards) * 100);
+                const heightPercent = Math.round(
+                  (item.cardsCount / maxCards) * 100,
+                );
                 return (
                   <Stack key={idx} align="center" gap={4} style={{ flex: 1 }}>
                     <Text fz="xs" fw={700} c="indigo">
@@ -113,7 +113,9 @@ export function FlashcardCharts({ stats }: FlashcardChartsProps) {
               <Box>
                 <Group justify="space-between" mb={2}>
                   <Text fz="xs" fw={600}>
-                    {isVi ? "Bộ nhớ ngắn hạn (1 - 2 ngày)" : "Short-term (1 - 2 days)"}
+                    {isVi
+                      ? "Bộ nhớ ngắn hạn (1 - 2 ngày)"
+                      : "Short-term (1 - 2 days)"}
                   </Text>
                   <Text fz="xs" fw={700} c="orange">
                     {isVi ? "42 từ (12%)" : "42 cards (12%)"}

@@ -13,7 +13,9 @@ interface FlashcardPageProps {
   }>;
 }
 
-export default async function FlashcardPage({ searchParams }: FlashcardPageProps) {
+export default async function FlashcardPage({
+  searchParams,
+}: FlashcardPageProps) {
   const { tab } = await searchParams;
   const initialTab = tab === "stats" ? "stats" : "decks";
 

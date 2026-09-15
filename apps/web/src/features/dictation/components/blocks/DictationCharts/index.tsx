@@ -33,7 +33,10 @@ export function DictationCharts({ stats }: DictationChartsProps) {
 
   const points = accData.map((d, i) => {
     const x = padding + (i / (accData.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((d.accuracy - minAcc) / (maxAcc - minAcc)) * (height - padding * 2);
+    const y =
+      height -
+      padding -
+      ((d.accuracy - minAcc) / (maxAcc - minAcc)) * (height - padding * 2);
     return { x, y, label: d.dateLabel, value: d.accuracy };
   });
 
@@ -49,7 +52,13 @@ export function DictationCharts({ stats }: DictationChartsProps) {
     <Grid gap="md">
       {/* Accuracy Over Time Line Chart */}
       <Grid.Col span={{ base: 12, md: 7 }}>
-        <Paper radius="md" p="lg" withBorder bg="white" style={{ height: "100%" }}>
+        <Paper
+          radius="md"
+          p="lg"
+          withBorder
+          bg="white"
+          style={{ height: "100%" }}
+        >
           <Stack gap="sm">
             <Group justify="space-between" align="center">
               <Group gap="xs">
@@ -77,7 +86,10 @@ export function DictationCharts({ stats }: DictationChartsProps) {
 
                 {/* Grid guidelines */}
                 {[70, 80, 90, 100].map((v) => {
-                  const y = height - padding - ((v - minAcc) / (maxAcc - minAcc)) * (height - padding * 2);
+                  const y =
+                    height -
+                    padding -
+                    ((v - minAcc) / (maxAcc - minAcc)) * (height - padding * 2);
                   return (
                     <g key={v}>
                       <line
@@ -144,7 +156,13 @@ export function DictationCharts({ stats }: DictationChartsProps) {
 
       {/* Practice Activity Bar Chart */}
       <Grid.Col span={{ base: 12, md: 5 }}>
-        <Paper radius="md" p="lg" withBorder bg="white" style={{ height: "100%" }}>
+        <Paper
+          radius="md"
+          p="lg"
+          withBorder
+          bg="white"
+          style={{ height: "100%" }}
+        >
           <Stack gap="sm">
             <Group justify="space-between" align="center">
               <Group gap="xs">
@@ -167,7 +185,10 @@ export function DictationCharts({ stats }: DictationChartsProps) {
               }}
             >
               {activityData.map((act, i) => {
-                const heightPercent = Math.max(12, Math.round((act.sentencesCount / maxActivity) * 100));
+                const heightPercent = Math.max(
+                  12,
+                  Math.round((act.sentencesCount / maxActivity) * 100),
+                );
                 const isPeak = act.sentencesCount === maxActivity;
 
                 return (
@@ -177,7 +198,11 @@ export function DictationCharts({ stats }: DictationChartsProps) {
                     withArrow
                   >
                     <Stack gap={6} align="center" style={{ flex: 1 }}>
-                      <Text size="xs" fw={700} c={isPeak ? "orange.9" : "ink.7"}>
+                      <Text
+                        size="xs"
+                        fw={700}
+                        c={isPeak ? "orange.9" : "ink.7"}
+                      >
                         {act.sentencesCount}
                       </Text>
                       <div
@@ -188,7 +213,8 @@ export function DictationCharts({ stats }: DictationChartsProps) {
                           backgroundColor: isPeak
                             ? "var(--mantine-color-orange-6)"
                             : "var(--mantine-color-navy-3)",
-                          transition: "height 0.3s ease, background-color 0.2s ease",
+                          transition:
+                            "height 0.3s ease, background-color 0.2s ease",
                         }}
                       />
                       <Text size="xs" fw={600} c="ink.6">

@@ -21,7 +21,9 @@ interface DictationLibraryViewProps {
   initialTab?: "lessons" | "stats";
 }
 
-export function DictationLibraryView({ initialTab = "lessons" }: DictationLibraryViewProps) {
+export function DictationLibraryView({
+  initialTab = "lessons",
+}: DictationLibraryViewProps) {
   const [activeTab, setActiveTab] = useState<"lessons" | "stats">(initialTab);
   const [selectedTopic, setSelectedTopic] = useState("ALL");
   const [selectedLevel, setSelectedLevel] = useState("ALL");
@@ -29,7 +31,9 @@ export function DictationLibraryView({ initialTab = "lessons" }: DictationLibrar
   const [selectedSort, setSelectedSort] = useState("recent");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const [period, setPeriod] = useState<"7 Days" | "30 Days" | "3 Months" | "All Time">("7 Days");
+  const [period, setPeriod] = useState<
+    "7 Days" | "30 Days" | "3 Months" | "All Time"
+  >("7 Days");
 
   const filteredLessons = useMemo(() => {
     return MOCK_LESSONS.filter((lesson) => {
@@ -94,7 +98,9 @@ export function DictationLibraryView({ initialTab = "lessons" }: DictationLibrar
 
             <DictationMissedWordsTable words={MOCK_STATS_DATA.missedWords} />
 
-            <DictationHardSentences sentences={MOCK_STATS_DATA.difficultSentences} />
+            <DictationHardSentences
+              sentences={MOCK_STATS_DATA.difficultSentences}
+            />
 
             <DictationHistoryTable history={MOCK_STATS_DATA.history} />
           </Stack>

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ActionIcon,
-  Flex,
-  Group,
-  Paper,
-  Select,
-  Tooltip,
-} from "@mantine/core";
+import { ActionIcon, Flex, Group, Paper, Select, Tooltip } from "@mantine/core";
 import { LayoutGrid, List } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import {
@@ -77,22 +70,22 @@ export function DictationFilters({
 
   const topicsData = DICTATION_TOPICS.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : (EN_TOPICS[item.value] || item.value),
+    label: isVi ? item.label : EN_TOPICS[item.value] || item.value,
   }));
 
   const levelsData = DICTATION_LEVELS.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : (EN_LEVELS[item.value] || item.value),
+    label: isVi ? item.label : EN_LEVELS[item.value] || item.value,
   }));
 
   const statusesData = DICTATION_STATUSES.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : (EN_STATUSES[item.value] || item.value),
+    label: isVi ? item.label : EN_STATUSES[item.value] || item.value,
   }));
 
   const sortsData = DICTATION_SORTS.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : (EN_SORTS[item.value] || item.label),
+    label: isVi ? item.label : EN_SORTS[item.value] || item.label,
   }));
 
   return (

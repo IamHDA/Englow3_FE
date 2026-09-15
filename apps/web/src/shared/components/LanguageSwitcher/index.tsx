@@ -23,7 +23,11 @@ export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
         >
           <UnstyledButton
             className={classes.trigger}
-            style={fullWidth ? { width: "100%", justifyContent: "center" } : undefined}
+            style={
+              fullWidth
+                ? { width: "100%", justifyContent: "center" }
+                : undefined
+            }
             aria-label="Switch Language / Đổi ngôn ngữ"
           >
             <Languages size={15} strokeWidth={2.2} />
@@ -43,7 +47,11 @@ export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
 
         <Menu.Item
           leftSection={<span className={classes.flag}>🇻🇳</span>}
-          rightSection={isVi ? <Check size={14} color="var(--mantine-color-teal-6)" /> : null}
+          rightSection={
+            isVi ? (
+              <Check size={14} color="var(--mantine-color-teal-6)" />
+            ) : null
+          }
           onClick={() => setLanguage("vi")}
           className={isVi ? classes.menuItemActive : undefined}
         >
@@ -54,7 +62,11 @@ export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
 
         <Menu.Item
           leftSection={<span className={classes.flag}>🇬🇧</span>}
-          rightSection={!isVi ? <Check size={14} color="var(--mantine-color-teal-6)" /> : null}
+          rightSection={
+            !isVi ? (
+              <Check size={14} color="var(--mantine-color-teal-6)" />
+            ) : null
+          }
           onClick={() => setLanguage("en")}
           className={!isVi ? classes.menuItemActive : undefined}
         >

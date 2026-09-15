@@ -41,7 +41,6 @@ export class ExamApi {
     return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}/paper`);
   }
 
-
   /** Admin-only on the backend (@PreAuthorize hasRole ADMIN) - it answers 403 for anyone else. */
   searchAsAdmin(params: SearchExamsParams): Promise<ExamPageResponse> {
     const query = new URLSearchParams();

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Button,
-  Container,
-  Group,
-  Paper,
-  Stack,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Group, Paper, Stack, Title } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { MOCK_MISTAKE_REVIEW_ITEMS } from "../../../constants/dictationData";

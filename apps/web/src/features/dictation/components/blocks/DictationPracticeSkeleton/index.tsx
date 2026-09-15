@@ -18,7 +18,12 @@ export function DictationPracticeSkeleton() {
         <Paper radius="md" p="lg" withBorder>
           <Stack gap="md">
             <Skeleton height={48} width="100%" radius="sm" />
-            <Skeleton height={52} width={52} radius="xl" style={{ margin: "0 auto" }} />
+            <Skeleton
+              height={52}
+              width={52}
+              radius="xl"
+              style={{ margin: "0 auto" }}
+            />
           </Stack>
         </Paper>
 
@@ -26,7 +31,12 @@ export function DictationPracticeSkeleton() {
         <Paper radius="md" p="lg" withBorder>
           <Stack gap="sm">
             <Skeleton height={96} width="100%" radius="md" />
-            <Skeleton height={36} width={160} radius="md" style={{ alignSelf: "flex-end" }} />
+            <Skeleton
+              height={36}
+              width={160}
+              radius="md"
+              style={{ alignSelf: "flex-end" }}
+            />
           </Stack>
         </Paper>
       </Stack>

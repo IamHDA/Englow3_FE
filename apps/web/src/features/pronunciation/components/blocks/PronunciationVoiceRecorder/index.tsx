@@ -227,7 +227,9 @@ export function PronunciationVoiceRecorder({
               <IconPlayerPlay size={12} />
             </ThemeIcon>
             <Text fz="xs" fw={700} c="teal.9">
-              {isVi ? "Bản ghi âm của bạn đã sẵn sàng:" : "Your recording is ready:"}
+              {isVi
+                ? "Bản ghi âm của bạn đã sẵn sàng:"
+                : "Your recording is ready:"}
             </Text>
             <audio src={audioBlobUrl} controls style={{ height: 32 }} />
           </Group>

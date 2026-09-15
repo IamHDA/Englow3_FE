@@ -68,7 +68,9 @@ export function MatchingQuestion({
 
   const handleRightClick = (right: string) => {
     // If this right clause is already used in a pair, unpair it
-    const existingLeft = Object.keys(userPairs).find((l) => userPairs[l] === right);
+    const existingLeft = Object.keys(userPairs).find(
+      (l) => userPairs[l] === right,
+    );
     if (existingLeft) {
       const updated = { ...userPairs };
       delete updated[existingLeft];
@@ -136,13 +138,13 @@ export function MatchingQuestion({
                       borderColor: isSelected
                         ? "var(--mantine-color-indigo-6)"
                         : isPaired
-                        ? `var(--mantine-color-${color}-6)`
-                        : undefined,
+                          ? `var(--mantine-color-${color}-6)`
+                          : undefined,
                       backgroundColor: isSelected
                         ? "var(--mantine-color-indigo-0)"
                         : isPaired
-                        ? `var(--mantine-color-${color}-0)`
-                        : "var(--mantine-color-body)",
+                          ? `var(--mantine-color-${color}-0)`
+                          : "var(--mantine-color-body)",
                       cursor: "pointer",
                       transition: "all 0.15s ease",
                     }}
@@ -160,7 +162,12 @@ export function MatchingQuestion({
                           {left}
                         </Text>
                       </Group>
-                      {isPaired && <IconCheck size={16} color={`var(--mantine-color-${color}-6)`} />}
+                      {isPaired && (
+                        <IconCheck
+                          size={16}
+                          color={`var(--mantine-color-${color}-6)`}
+                        />
+                      )}
                     </Group>
                   </Card>
                 </UnstyledButton>
@@ -176,9 +183,13 @@ export function MatchingQuestion({
               VẾ SAU (KẾT QUẢ TƯƠNG ỨNG):
             </Text>
             {rightItems.map((right, idx) => {
-              const existingLeft = Object.keys(userPairs).find((l) => userPairs[l] === right);
+              const existingLeft = Object.keys(userPairs).find(
+                (l) => userPairs[l] === right,
+              );
               const isPaired = !!existingLeft;
-              const color = existingLeft ? pairColorMap[right] || "indigo" : "gray";
+              const color = existingLeft
+                ? pairColorMap[right] || "indigo"
+                : "gray";
 
               return (
                 <UnstyledButton
@@ -191,12 +202,14 @@ export function MatchingQuestion({
                     padding="sm"
                     radius="md"
                     style={{
-                      borderColor: isPaired ? `var(--mantine-color-${color}-6)` : undefined,
+                      borderColor: isPaired
+                        ? `var(--mantine-color-${color}-6)`
+                        : undefined,
                       backgroundColor: isPaired
                         ? `var(--mantine-color-${color}-0)`
                         : selectedLeft
-                        ? "var(--mantine-color-indigo-0)"
-                        : "var(--mantine-color-body)",
+                          ? "var(--mantine-color-indigo-0)"
+                          : "var(--mantine-color-body)",
                       cursor: "pointer",
                       transition: "all 0.15s ease",
                     }}
@@ -214,7 +227,12 @@ export function MatchingQuestion({
                           {right}
                         </Text>
                       </Group>
-                      {isPaired && <IconLink size={16} color={`var(--mantine-color-${color}-6)`} />}
+                      {isPaired && (
+                        <IconLink
+                          size={16}
+                          color={`var(--mantine-color-${color}-6)`}
+                        />
+                      )}
                     </Group>
                   </Card>
                 </UnstyledButton>

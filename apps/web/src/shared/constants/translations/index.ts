@@ -481,7 +481,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     account: {
       title: "Hồ sơ cá nhân",
-      subtitle: "Quản lý thông tin tài khoản, mục tiêu luyện thi và các thiết lập cá nhân trên Englow3",
+      subtitle:
+        "Quản lý thông tin tài khoản, mục tiêu luyện thi và các thiết lập cá nhân trên Englow3",
       personalInfoTab: "Thông tin cá nhân",
       learningTab: "Lộ trình & Mục tiêu",
       securityTab: "Tài khoản & Bảo mật",
@@ -513,18 +514,22 @@ export const translations: Record<Language, AppTranslations> = {
       activeSessions: "Phiên đăng nhập hiện hoạt",
       logoutAll: "Đăng xuất khỏi tất cả thiết bị",
       accountPasswordTitle: "Mật khẩu tài khoản",
-      accountPasswordDesc: "Bảo vệ tài khoản của bạn bằng mật khẩu mạnh và an toàn",
+      accountPasswordDesc:
+        "Bảo vệ tài khoản của bạn bằng mật khẩu mạnh và an toàn",
       sendResetEmail: "Gửi email đổi mật khẩu",
-      resetLinkValidNotice: "Để đảm bảo an toàn, liên kết đặt lại mật khẩu có hiệu lực trong vòng 24 giờ. Hãy kiểm tra cả hộp thư Spam/Rác nếu bạn không thấy email trong Hộp thư đến.",
+      resetLinkValidNotice:
+        "Để đảm bảo an toàn, liên kết đặt lại mật khẩu có hiệu lực trong vòng 24 giờ. Hãy kiểm tra cả hộp thư Spam/Rác nếu bạn không thấy email trong Hộp thư đến.",
       sendingEmail: "Đang gửi email",
       sendingEmailDesc: "Vui lòng chờ trong giây lát...",
       resetEmailSentTitle: "Đã gửi email thành công",
-      resetEmailSentDesc: "Liên kết đặt lại mật khẩu đã được gửi tới email của bạn. Vui lòng kiểm tra hộp thư.",
+      resetEmailSentDesc:
+        "Liên kết đặt lại mật khẩu đã được gửi tới email của bạn. Vui lòng kiểm tra hộp thư.",
       resetEmailErrorTitle: "Không thể gửi email",
       connectionErrorTitle: "Lỗi kết nối",
       connectionErrorDesc: "Không thể kết nối tới dịch vụ xác thực.",
       activeSessionsTitle: "Phiên đăng nhập & Thiết bị",
-      activeSessionsDesc: "Các phiên đăng nhập hiện đang hoạt động trên hệ thống",
+      activeSessionsDesc:
+        "Các phiên đăng nhập hiện đang hoạt động trên hệ thống",
       currentBrowser: "Trình duyệt Web hiện tại",
       activeNow: "Đang hoạt động",
       supabaseAuthNotice: "Đăng nhập an toàn qua hệ thống Englow3",
@@ -532,7 +537,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     flashcard: {
       title: "Thẻ ghi nhớ 3D",
-      subtitle: "Ghi nhớ từ vựng dài hạn thông qua phương pháp lặp lại ngắt quãng và tương tác lật thẻ trực quan.",
+      subtitle:
+        "Ghi nhớ từ vựng dài hạn thông qua phương pháp lặp lại ngắt quãng và tương tác lật thẻ trực quan.",
       srsBadge: "Thuật toán SRS",
       decksTab: "Bộ từ vựng",
       statsTab: "Thống kê học tập",
@@ -562,7 +568,8 @@ export const translations: Record<Language, AppTranslations> = {
       deckProgress: "Tiến độ bộ thẻ",
       difficultWords: "Từ vựng hay nhầm lẫn",
       studySessionComplete: "Hoàn thành phiên ôn tập!",
-      studySessionDesc: "Bạn đã hoàn thành các thẻ cần ôn hôm nay. Tiếp tục giữ vững phong độ nhé!",
+      studySessionDesc:
+        "Bạn đã hoàn thành các thẻ cần ôn hôm nay. Tiếp tục giữ vững phong độ nhé!",
       returnToDecks: "Quay lại danh sách bộ thẻ",
       frontVocab: "Từ vựng (Mặt trước)",
       backMeaning: "Ý nghĩa (Mặt sau)",
@@ -573,7 +580,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     pronunciation: {
       title: "Luyện phát âm chuẩn AI",
-      subtitle: "Phân tích sóng âm giọng nói theo thời gian thực, đối chiếu khẩu hình chuẩn và chấm điểm chi tiết từng âm vị IPA.",
+      subtitle:
+        "Phân tích sóng âm giọng nói theo thời gian thực, đối chiếu khẩu hình chuẩn và chấm điểm chi tiết từng âm vị IPA.",
       ipaBadge: "Chấm điểm âm vị",
       micReady: "Microphone sẵn sàng",
       startRecording: "Bắt đầu ghi âm",
@@ -599,7 +607,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     dailyPath: {
       title: "Lộ trình học tập mỗi ngày",
-      subtitle: "Hệ thống tự động điều chỉnh độ khó và bài học hàng ngày dựa trên tiến độ và khả năng hấp thu của bạn.",
+      subtitle:
+        "Hệ thống tự động điều chỉnh độ khó và bài học hàng ngày dựa trên tiến độ và khả năng hấp thu của bạn.",
       roadmapTab: "Lộ trình hôm nay",
       quizCatalogueTab: "Thử thách trắc nghiệm",
       streakTitle: "Chuỗi ngày liên tiếp",
@@ -636,7 +645,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     dictation: {
       title: "Luyện nghe chép chính tả",
-      subtitle: "Nâng cao độ nhạy thính giác và sự chính xác câu từ bằng phương pháp nghe và gõ lại từng câu.",
+      subtitle:
+        "Nâng cao độ nhạy thính giác và sự chính xác câu từ bằng phương pháp nghe và gõ lại từng câu.",
       listeningBadge: "Kỹ năng nghe hiểu",
       lessonsTab: "Danh sách bài học",
       statsTab: "Thống kê chi tiết",
@@ -676,7 +686,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     exam: {
       title: "Thư viện đề thi thử",
-      subtitle: "Bộ đề thi mô phỏng định dạng chuẩn quốc tế với chấm điểm tức thì và phân tích chuyên sâu.",
+      subtitle:
+        "Bộ đề thi mô phỏng định dạng chuẩn quốc tế với chấm điểm tức thì và phân tích chuyên sâu.",
       allExams: "Tất cả đề thi",
       ieltsTab: "Đề thi IELTS",
       toeicTab: "Đề thi TOEIC",
@@ -686,7 +697,8 @@ export const translations: Record<Language, AppTranslations> = {
       durationMinutes: "phút",
       totalQuestions: "câu hỏi",
       participants: "lượt thi",
-      flagQuestionTip: "Bạn có thể đánh dấu cờ các câu chưa chắc chắn để xem lại trước khi nộp bài.",
+      flagQuestionTip:
+        "Bạn có thể đánh dấu cờ các câu chưa chắc chắn để xem lại trước khi nộp bài.",
       mockTestBadge: "Mock Test · Thư viện đề",
       officialExamsUnit: "Bộ đề thi thật",
       autoGradingLabel: "Chấm tự động",
@@ -719,10 +731,13 @@ export const translations: Record<Language, AppTranslations> = {
       continueAction: "Làm tiếp",
       startAction: "Bắt đầu làm bài",
       emptyTitle: "Không tìm thấy đề thi phù hợp",
-      emptySearchDesc: "Không có đề thi nào khớp với từ khoá \"{query}\". Thử điều chỉnh từ khoá hoặc xoá bớt các bộ lọc để xem nhiều kết quả hơn.",
-      emptyFilterDesc: "Không có đề thi nào thoả mãn các điều kiện lọc hiện tại. Thử bỏ chọn một vài bộ lọc để xem danh sách đề.",
+      emptySearchDesc:
+        'Không có đề thi nào khớp với từ khoá "{query}". Thử điều chỉnh từ khoá hoặc xoá bớt các bộ lọc để xem nhiều kết quả hơn.',
+      emptyFilterDesc:
+        "Không có đề thi nào thoả mãn các điều kiện lọc hiện tại. Thử bỏ chọn một vài bộ lọc để xem danh sách đề.",
       backToLibrary: "Thư viện đề",
-      defaultDescription: "Đề thi thử chuẩn định dạng quốc tế giúp bạn đánh giá chính xác năng lực và quen với áp lực thời gian.",
+      defaultDescription:
+        "Đề thi thử chuẩn định dạng quốc tế giúp bạn đánh giá chính xác năng lực và quen với áp lực thời gian.",
       examTimeLabel: "Thời gian làm bài",
       questionQuantityLabel: "Số lượng câu",
       questionsUnitFull: "câu hỏi",
@@ -734,15 +749,20 @@ export const translations: Record<Language, AppTranslations> = {
       sectionIncludes: "Bao gồm {parts} part · {questions} câu hỏi",
       allocatedTimeLabel: "Thời gian quy định:",
       rulesTitle: "Quy định & hướng dẫn làm bài:",
-      rule1: "Đồng hồ đếm ngược sẽ bắt đầu chạy ngay khi bạn nhấn Bắt đầu làm bài.",
-      rule2: "Sử dụng bảng điều hướng câu hỏi bên phải để theo dõi trạng thái các câu hỏi và nhảy nhanh tới bất kỳ câu nào.",
-      rule3: "Bạn có thể đánh dấu cờ các câu chưa chắc chắn để xem lại trước khi nộp bài.",
-      rule4: "Sau khi nộp bài, hệ thống sẽ chấm điểm và cung cấp đáp án cùng giải thích chi tiết cho từng câu hỏi.",
+      rule1:
+        "Đồng hồ đếm ngược sẽ bắt đầu chạy ngay khi bạn nhấn Bắt đầu làm bài.",
+      rule2:
+        "Sử dụng bảng điều hướng câu hỏi bên phải để theo dõi trạng thái các câu hỏi và nhảy nhanh tới bất kỳ câu nào.",
+      rule3:
+        "Bạn có thể đánh dấu cờ các câu chưa chắc chắn để xem lại trước khi nộp bài.",
+      rule4:
+        "Sau khi nộp bài, hệ thống sẽ chấm điểm và cung cấp đáp án cùng giải thích chi tiết cho từng câu hỏi.",
       returnToLibrary: "Quay lại thư viện",
       exitExam: "Thoát",
       progress: "Tiến độ",
       submitExamCTA: "Nộp bài",
-      exitConfirm: "Bạn có chắc chắn muốn thoát? Bài làm hiện tại sẽ không được lưu.",
+      exitConfirm:
+        "Bạn có chắc chắn muốn thoát? Bài làm hiện tại sẽ không được lưu.",
       listeningSection: "Phần Nghe",
       audioStimulus: "Audio bài nghe:",
       questionPrefix: "Câu",
@@ -759,7 +779,8 @@ export const translations: Record<Language, AppTranslations> = {
       confirmModalTitle: "Xác nhận nộp bài thi",
       unansweredWarning: "Bạn còn {count} câu hỏi chưa trả lời!",
       allDoneNotice: "Bạn đã hoàn thành tất cả {count} câu hỏi!",
-      submitExplanation: "Sau khi xác nhận nộp bài, hệ thống sẽ kết thúc lượt thi và chuyển đến màn hình kết quả đánh giá cùng giải thích đáp án.",
+      submitExplanation:
+        "Sau khi xác nhận nộp bài, hệ thống sẽ kết thúc lượt thi và chuyển đến màn hình kết quả đánh giá cùng giải thích đáp án.",
       continueDoing: "Tiếp tục làm bài",
       confirmSubmitCTA: "Xác nhận nộp bài",
       resultTitlePrefix: "Kết quả:",
@@ -775,7 +796,8 @@ export const translations: Record<Language, AppTranslations> = {
       minutesText: "phút",
       secondsText: "giây",
       explanationsTitle: "Đáp án & Giải thích chi tiết",
-      explanationsDesc: "Xem lại toàn bộ câu hỏi kèm đáp án đúng và phân tích lý do",
+      explanationsDesc:
+        "Xem lại toàn bộ câu hỏi kèm đáp án đúng và phân tích lý do",
       tabAllReview: "Tất cả",
       tabCorrect: "Đúng",
       tabIncorrect: "Sai",
@@ -786,16 +808,19 @@ export const translations: Record<Language, AppTranslations> = {
       retakeCTA: "Làm lại",
       notFoundQuestion: "Không tìm thấy dữ liệu câu hỏi.",
       failedLoadExam: "Không thể tải đề thi",
-      failedLoadExamDesc: "Đề thi không tồn tại hoặc bạn chưa có quyền truy cập.",
+      failedLoadExamDesc:
+        "Đề thi không tồn tại hoặc bạn chưa có quyền truy cập.",
       showingRange: "Hiển thị {start} - {end} của {total} đề thi",
       loadListError: "Không thể tải danh sách đề thi",
     },
     home: {
       heroTitle: "Chinh phục tiếng Anh cùng Englow3",
       heroQuote: "Con đường của riêng bạn, tương lai trong tay bạn",
-      heroDescription: "Nâng tầm khả năng nói lưu loát với chấm điểm phát âm AI theo thời gian thực, chat bot cá nhân hóa, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
+      heroDescription:
+        "Nâng tầm khả năng nói lưu loát với chấm điểm phát âm AI theo thời gian thực, chat bot cá nhân hóa, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
       heroCta: "Bắt đầu học ngay",
-      heroImageAlt: "Không gian học tập Englow3 với phân tích phát âm, bộ thẻ ghi nhớ và trình theo dõi tiến độ hàng ngày",
+      heroImageAlt:
+        "Không gian học tập Englow3 với phân tích phát âm, bộ thẻ ghi nhớ và trình theo dõi tiến độ hàng ngày",
       statsAria: "Englow3 qua những con số",
       activeLearners: "Học viên hoạt động",
       scoreImprovement: "Cải thiện điểm số",
@@ -808,7 +833,8 @@ export const translations: Record<Language, AppTranslations> = {
       noAccountPrompt: "Chưa có tài khoản?",
       registerAction: "Đăng ký ngay",
       registerTitle: "Tạo tài khoản Englow3",
-      registerSubtitle: "Tham gia vào con đường chinh phục tiếng anh cùng Englow3",
+      registerSubtitle:
+        "Tham gia vào con đường chinh phục tiếng anh cùng Englow3",
       registerSocial: "Hoặc đăng ký bằng",
       hasAccountPrompt: "Đã có tài khoản?",
       loginAction: "Đăng nhập",
@@ -889,7 +915,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     account: {
       title: "My Profile",
-      subtitle: "Manage your account settings, target goals, and personalized learning preferences on Englow3",
+      subtitle:
+        "Manage your account settings, target goals, and personalized learning preferences on Englow3",
       personalInfoTab: "Personal Information",
       learningTab: "Roadmap & Targets",
       securityTab: "Account & Security",
@@ -921,26 +948,33 @@ export const translations: Record<Language, AppTranslations> = {
       activeSessions: "Active Sessions",
       logoutAll: "Sign out from all devices",
       accountPasswordTitle: "Account Password",
-      accountPasswordDesc: "Protect your account with a strong, unique password",
+      accountPasswordDesc:
+        "Protect your account with a strong, unique password",
       sendResetEmail: "Send Password Reset Link",
-      resetLinkValidNotice: "For security, password reset links remain valid for 24 hours. Check your Spam folder if not received in Inbox.",
+      resetLinkValidNotice:
+        "For security, password reset links remain valid for 24 hours. Check your Spam folder if not received in Inbox.",
       sendingEmail: "Sending email...",
       sendingEmailDesc: "Please wait a moment...",
       resetEmailSentTitle: "Email Sent Successfully",
-      resetEmailSentDesc: "A password reset link has been dispatched to your email. Please check your inbox.",
+      resetEmailSentDesc:
+        "A password reset link has been dispatched to your email. Please check your inbox.",
       resetEmailErrorTitle: "Failed to Send Email",
       connectionErrorTitle: "Connection Error",
-      connectionErrorDesc: "Could not establish connection to authentication provider.",
+      connectionErrorDesc:
+        "Could not establish connection to authentication provider.",
       activeSessionsTitle: "Active Sessions & Devices",
-      activeSessionsDesc: "Devices and sessions currently authenticated with your account",
+      activeSessionsDesc:
+        "Devices and sessions currently authenticated with your account",
       currentBrowser: "Current Web Browser",
       activeNow: "Active Now",
-      supabaseAuthNotice: "Authenticated securely via Englow3 security services",
+      supabaseAuthNotice:
+        "Authenticated securely via Englow3 security services",
       secureSession: "Secure Session",
     },
     flashcard: {
       title: "3D Flashcards",
-      subtitle: "Retain vocabulary long-term with science-backed spaced repetition and tactile 3D flipping.",
+      subtitle:
+        "Retain vocabulary long-term with science-backed spaced repetition and tactile 3D flipping.",
       srsBadge: "SRS Algorithm",
       decksTab: "Vocabulary Decks",
       statsTab: "Retention & Stats",
@@ -970,18 +1004,21 @@ export const translations: Record<Language, AppTranslations> = {
       deckProgress: "Deck Progress",
       difficultWords: "Tricky Words",
       studySessionComplete: "Review Session Complete!",
-      studySessionDesc: "You have reviewed all due cards for today. Keep up the great streak!",
+      studySessionDesc:
+        "You have reviewed all due cards for today. Keep up the great streak!",
       returnToDecks: "Return to Decks",
       frontVocab: "Vocabulary (Front)",
       backMeaning: "Definition (Back)",
       needsAttention: "Needs Attention",
       memoryStages: "Memory Retention Stages",
       newCardsBadge: "New Cards",
-      reviewHintSpace: "Press Space or click card to reveal definition and examples",
+      reviewHintSpace:
+        "Press Space or click card to reveal definition and examples",
     },
     pronunciation: {
       title: "AI Pronunciation Coach",
-      subtitle: "Real-time acoustic speech analysis, native mouth positioning comparison, and phoneme-level IPA scoring.",
+      subtitle:
+        "Real-time acoustic speech analysis, native mouth positioning comparison, and phoneme-level IPA scoring.",
       ipaBadge: "Phoneme Scoring",
       micReady: "Microphone AI Ready",
       startRecording: "Start Recording",
@@ -1007,13 +1044,15 @@ export const translations: Record<Language, AppTranslations> = {
     },
     dailyPath: {
       title: "Adaptive Daily Learning Path",
-      subtitle: "Intelligent daily lesson progression that dynamically scales in difficulty based on your mastery.",
+      subtitle:
+        "Intelligent daily lesson progression that dynamically scales in difficulty based on your mastery.",
       roadmapTab: "Today's Roadmap",
       quizCatalogueTab: "Quiz Challenges",
       streakTitle: "Day Streak",
       streakSubtitle: "Practice daily to keep your learning momentum active!",
       dailyQuestsTitle: "Daily Quests",
-      dailyQuestsSubtitle: "Complete daily milestones to collect bonus experience",
+      dailyQuestsSubtitle:
+        "Complete daily milestones to collect bonus experience",
       claimReward: "Claim Reward",
       claimed: "Claimed",
       startNode: "Start Lesson",
@@ -1032,7 +1071,8 @@ export const translations: Record<Language, AppTranslations> = {
       chooseOption: "Select the best answer",
       fillPlaceholder: "Type the missing word here...",
       rewritePlaceholder: "Rewrite the full sentence...",
-      reorderInstruction: "Drag and drop or click words to build the correct sentence",
+      reorderInstruction:
+        "Drag and drop or click words to build the correct sentence",
       matchingInstruction: "Match corresponding items or definitions",
       explanation: "Detailed Explanation",
       summaryTitle: "Quiz Results Summary",
@@ -1044,7 +1084,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     dictation: {
       title: "Audio Dictation Practice",
-      subtitle: "Sharpen listening comprehension and spelling precision by transcribing speech sentence by sentence.",
+      subtitle:
+        "Sharpen listening comprehension and spelling precision by transcribing speech sentence by sentence.",
       listeningBadge: "Listening Skills",
       lessonsTab: "Lesson Catalog",
       statsTab: "Performance Stats",
@@ -1084,7 +1125,8 @@ export const translations: Record<Language, AppTranslations> = {
     },
     exam: {
       title: "Exam Library",
-      subtitle: "Standardized mock tests with instant automated grading and diagnostic breakdown.",
+      subtitle:
+        "Standardized mock tests with instant automated grading and diagnostic breakdown.",
       allExams: "All Exams",
       ieltsTab: "IELTS Exams",
       toeicTab: "TOEIC Exams",
@@ -1094,7 +1136,8 @@ export const translations: Record<Language, AppTranslations> = {
       durationMinutes: "mins",
       totalQuestions: "questions",
       participants: "attempts",
-      flagQuestionTip: "You can flag questions you are unsure about to review before final submission.",
+      flagQuestionTip:
+        "You can flag questions you are unsure about to review before final submission.",
       mockTestBadge: "Mock Test · Library",
       officialExamsUnit: "Official Exams",
       autoGradingLabel: "Auto Grading",
@@ -1127,10 +1170,13 @@ export const translations: Record<Language, AppTranslations> = {
       continueAction: "Continue",
       startAction: "Start Exam",
       emptyTitle: "No matching exams found",
-      emptySearchDesc: "No exams matched your search for \"{query}\". Try adjusting keywords or clearing filters.",
-      emptyFilterDesc: "No exams match your current filter criteria. Try clearing some filters to view available tests.",
+      emptySearchDesc:
+        'No exams matched your search for "{query}". Try adjusting keywords or clearing filters.',
+      emptyFilterDesc:
+        "No exams match your current filter criteria. Try clearing some filters to view available tests.",
       backToLibrary: "Exam Library",
-      defaultDescription: "Standardized mock test simulation to gauge your abilities under realistic timed exam conditions.",
+      defaultDescription:
+        "Standardized mock test simulation to gauge your abilities under realistic timed exam conditions.",
       examTimeLabel: "Test Duration",
       questionQuantityLabel: "Questions",
       questionsUnitFull: "questions",
@@ -1142,15 +1188,20 @@ export const translations: Record<Language, AppTranslations> = {
       sectionIncludes: "Includes {parts} parts · {questions} questions",
       allocatedTimeLabel: "Allocated time:",
       rulesTitle: "Rules & Examination Guidelines:",
-      rule1: "The countdown timer begins immediately once you click Start Exam.",
-      rule2: "Use the question palette on the right to track status and navigate directly to any question.",
-      rule3: "You can flag uncertain questions to review before final submission.",
-      rule4: "Upon submission, answers are automatically graded with comprehensive explanations.",
+      rule1:
+        "The countdown timer begins immediately once you click Start Exam.",
+      rule2:
+        "Use the question palette on the right to track status and navigate directly to any question.",
+      rule3:
+        "You can flag uncertain questions to review before final submission.",
+      rule4:
+        "Upon submission, answers are automatically graded with comprehensive explanations.",
       returnToLibrary: "Back to Library",
       exitExam: "Exit",
       progress: "Progress",
       submitExamCTA: "Submit",
-      exitConfirm: "Are you sure you want to exit? Your current progress will not be saved.",
+      exitConfirm:
+        "Are you sure you want to exit? Your current progress will not be saved.",
       listeningSection: "Listening Section",
       audioStimulus: "Audio Track:",
       questionPrefix: "Question",
@@ -1167,7 +1218,8 @@ export const translations: Record<Language, AppTranslations> = {
       confirmModalTitle: "Confirm Exam Submission",
       unansweredWarning: "You still have {count} unanswered questions!",
       allDoneNotice: "You have answered all {count} questions!",
-      submitExplanation: "Confirming submission will finalize your attempt and display your detailed score report with answer explanations.",
+      submitExplanation:
+        "Confirming submission will finalize your attempt and display your detailed score report with answer explanations.",
       continueDoing: "Continue Exam",
       confirmSubmitCTA: "Confirm Submit",
       resultTitlePrefix: "Results:",
@@ -1183,7 +1235,8 @@ export const translations: Record<Language, AppTranslations> = {
       minutesText: "mins",
       secondsText: "secs",
       explanationsTitle: "Answers & Detailed Explanations",
-      explanationsDesc: "Review all questions alongside correct answers and reasoning",
+      explanationsDesc:
+        "Review all questions alongside correct answers and reasoning",
       tabAllReview: "All",
       tabCorrect: "Correct",
       tabIncorrect: "Incorrect",
@@ -1194,16 +1247,19 @@ export const translations: Record<Language, AppTranslations> = {
       retakeCTA: "Retake Exam",
       notFoundQuestion: "No question data found.",
       failedLoadExam: "Failed to load exam",
-      failedLoadExamDesc: "The requested exam does not exist or you do not have permission to access it.",
+      failedLoadExamDesc:
+        "The requested exam does not exist or you do not have permission to access it.",
       showingRange: "Showing {start} - {end} of {total} exams",
       loadListError: "Failed to load exam list",
     },
     home: {
       heroTitle: "Master English with Englow3",
       heroQuote: "Your unique path, your future in your hands",
-      heroDescription: "Elevate your fluency with real-time AI pronunciation scoring, personalized tutor, 3D flashcards, dictation challenges, and full IELTS/TOEIC mock exams.",
+      heroDescription:
+        "Elevate your fluency with real-time AI pronunciation scoring, personalized tutor, 3D flashcards, dictation challenges, and full IELTS/TOEIC mock exams.",
       heroCta: "Get Started Now",
-      heroImageAlt: "Englow3 learning platform with pronunciation analytics, flashcard sets, and daily progress tracking",
+      heroImageAlt:
+        "Englow3 learning platform with pronunciation analytics, flashcard sets, and daily progress tracking",
       statsAria: "Englow3 by the numbers",
       activeLearners: "Active Learners",
       scoreImprovement: "Score Improvement",

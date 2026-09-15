@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   Button,
   Group,
@@ -10,15 +10,10 @@ import {
   Stack,
   Text,
   ThemeIcon,
-} from '@mantine/core';
-import {
-  AlertTriangle,
-  CheckCircle2,
-  HelpCircle,
-  Flag,
-} from 'lucide-react';
-import { useLanguage } from '@/shared/hooks/useLanguage';
-import classes from './SubmitModal.module.css';
+} from "@mantine/core";
+import { AlertTriangle, CheckCircle2, HelpCircle, Flag } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import classes from "./SubmitModal.module.css";
 
 export interface SubmitModalProps {
   opened: boolean;
@@ -62,7 +57,10 @@ export function SubmitModal({
                 <AlertTriangle size={18} />
               </ThemeIcon>
               <Text size="xs" c="orange.9" fw={600}>
-                {t.exam.unansweredWarning.replace('{count}', String(unansweredCount))}
+                {t.exam.unansweredWarning.replace(
+                  "{count}",
+                  String(unansweredCount),
+                )}
               </Text>
             </Group>
           </Paper>
@@ -73,7 +71,10 @@ export function SubmitModal({
                 <CheckCircle2 size={18} />
               </ThemeIcon>
               <Text size="xs" c="teal.9" fw={600}>
-                {t.exam.allDoneNotice.replace('{count}', String(totalQuestions))}
+                {t.exam.allDoneNotice.replace(
+                  "{count}",
+                  String(totalQuestions),
+                )}
               </Text>
             </Group>
           </Paper>
@@ -95,11 +96,18 @@ export function SubmitModal({
 
           <Paper p="xs" radius="md" withBorder bg="gray.0">
             <Stack gap={2} align="center">
-              <HelpCircle size={18} color={hasUnanswered ? 'var(--mantine-color-warn-6)' : 'gray'} />
+              <HelpCircle
+                size={18}
+                color={hasUnanswered ? "var(--mantine-color-warn-6)" : "gray"}
+              />
               <Text size="xs" c="ink.5">
                 {t.exam.legendUnanswered}
               </Text>
-              <Text fw={700} size="sm" c={hasUnanswered ? 'orange.8' : 'navy.9'}>
+              <Text
+                fw={700}
+                size="sm"
+                c={hasUnanswered ? "orange.8" : "navy.9"}
+              >
                 {unansweredCount}
               </Text>
             </Stack>

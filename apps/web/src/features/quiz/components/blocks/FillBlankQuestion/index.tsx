@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Alert,
-  Card,
-  Group,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Alert, Card, Group, Stack, Text, TextInput } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import React from "react";
 import { QuizQuestion } from "../../../types";
@@ -29,7 +22,12 @@ export function FillBlankQuestion({
         {question.prompt}
       </Text>
 
-      <Card withBorder padding="lg" radius="md" bg="var(--mantine-color-gray-0)">
+      <Card
+        withBorder
+        padding="lg"
+        radius="md"
+        bg="var(--mantine-color-gray-0)"
+      >
         <Group align="center" gap="xs" wrap="wrap">
           {question.beforeText && (
             <Text fz="md" fw={600} c="dark.9">
@@ -66,7 +64,8 @@ export function FillBlankQuestion({
         title="Quy tắc chấm điểm"
         icon={<IconInfoCircle size={16} />}
       >
-        Hệ thống không phân biệt chữ hoa / chữ thường. Hãy kiểm tra kỹ chính tả trước khi chuyển sang câu tiếp theo.
+        Hệ thống không phân biệt chữ hoa / chữ thường. Hãy kiểm tra kỹ chính tả
+        trước khi chuyển sang câu tiếp theo.
       </Alert>
     </Stack>
   );

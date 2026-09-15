@@ -136,7 +136,9 @@ export function DictationPracticeView({ lesson }: DictationPracticeViewProps) {
               practice.handleType("");
             }}
             onListenAgain={audio.replay}
-            isLastSentence={practice.currentIndex + 1 >= practice.totalSentences}
+            isLastSentence={
+              practice.currentIndex + 1 >= practice.totalSentences
+            }
           />
         )}
       </Stack>

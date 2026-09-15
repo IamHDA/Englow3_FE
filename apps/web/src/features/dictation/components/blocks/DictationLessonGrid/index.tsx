@@ -22,9 +22,16 @@ interface DictationLessonGridProps {
 export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
   if (lessons.length === 0) {
     return (
-      <Card radius="md" p="xl" withBorder bg="white" style={{ textAlign: "center" }}>
+      <Card
+        radius="md"
+        p="xl"
+        withBorder
+        bg="white"
+        style={{ textAlign: "center" }}
+      >
         <Text c="ink.6" size="sm">
-          Không tìm thấy bài học nào phù hợp với bộ lọc. Hãy thử thay đổi chủ đề hoặc cấp độ.
+          Không tìm thấy bài học nào phù hợp với bộ lọc. Hãy thử thay đổi chủ đề
+          hoặc cấp độ.
         </Text>
       </Card>
     );
@@ -73,7 +80,10 @@ export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
                     {lesson.level}
                   </Badge>
                   {isCompleted && (
-                    <CheckCircle2 size={16} color="var(--mantine-color-teal-6)" />
+                    <CheckCircle2
+                      size={16}
+                      color="var(--mantine-color-teal-6)"
+                    />
                   )}
                 </Group>
               </Group>

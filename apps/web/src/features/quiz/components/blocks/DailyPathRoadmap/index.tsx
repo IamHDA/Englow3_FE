@@ -47,10 +47,14 @@ export function DailyPathRoadmap({ nodes }: DailyPathRoadmapProps) {
   const getNodeTypeLabel = (type: DailyPathNode["type"]) => {
     if (isVi) {
       switch (type) {
-        case "LESSON": return "Bài học";
-        case "QUIZ": return "Trắc nghiệm";
-        case "CHALLENGE": return "Thử thách";
-        case "MILESTONE": return "Cột mốc";
+        case "LESSON":
+          return "Bài học";
+        case "QUIZ":
+          return "Trắc nghiệm";
+        case "CHALLENGE":
+          return "Thử thách";
+        case "MILESTONE":
+          return "Cột mốc";
       }
     }
     return type;
@@ -87,8 +91,8 @@ export function DailyPathRoadmap({ nodes }: DailyPathRoadmapProps) {
                   borderLeft: isCurrent
                     ? "4px solid var(--mantine-color-indigo-6)"
                     : isCompleted
-                    ? "4px solid var(--mantine-color-teal-6)"
-                    : "4px solid var(--mantine-color-gray-3)",
+                      ? "4px solid var(--mantine-color-teal-6)"
+                      : "4px solid var(--mantine-color-gray-3)",
                   backgroundColor: isCurrent
                     ? "var(--mantine-color-indigo-0)"
                     : "var(--mantine-color-body)",
@@ -102,11 +106,7 @@ export function DailyPathRoadmap({ nodes }: DailyPathRoadmapProps) {
                       size={42}
                       radius="xl"
                       color={
-                        isCompleted
-                          ? "teal"
-                          : isCurrent
-                          ? "indigo"
-                          : "gray"
+                        isCompleted ? "teal" : isCurrent ? "indigo" : "gray"
                       }
                       variant={isCurrent ? "filled" : "light"}
                     >
@@ -119,14 +119,11 @@ export function DailyPathRoadmap({ nodes }: DailyPathRoadmapProps) {
                           size="xs"
                           variant="light"
                           color={
-                            isCompleted
-                              ? "teal"
-                              : isCurrent
-                              ? "indigo"
-                              : "gray"
+                            isCompleted ? "teal" : isCurrent ? "indigo" : "gray"
                           }
                         >
-                          {isVi ? `Trạm ${idx + 1}` : `Stage ${idx + 1}`}: {getNodeTypeLabel(node.type)}
+                          {isVi ? `Trạm ${idx + 1}` : `Stage ${idx + 1}`}:{" "}
+                          {getNodeTypeLabel(node.type)}
                         </Badge>
                         <Badge variant="dot" color="yellow" size="xs">
                           +{node.xpReward} XP

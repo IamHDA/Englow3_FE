@@ -63,7 +63,9 @@ export function Flashcard3DCard({
                     : `Needs review (${card.missCount} misses)`}
                 </Badge>
               )}
-              <Tooltip label={isVi ? "Nghe phát âm chuẩn" : "Listen to native audio"}>
+              <Tooltip
+                label={isVi ? "Nghe phát âm chuẩn" : "Listen to native audio"}
+              >
                 <ActionIcon
                   variant="subtle"
                   color="indigo"
@@ -191,7 +193,13 @@ export function Flashcard3DCard({
 
             {/* Example sentence */}
             <Group align="flex-start" gap="xs" wrap="nowrap">
-              <ThemeIcon variant="light" color="teal" size="sm" radius="xl" mt={2}>
+              <ThemeIcon
+                variant="light"
+                color="teal"
+                size="sm"
+                radius="xl"
+                mt={2}
+              >
                 <IconQuote size={12} />
               </ThemeIcon>
               <Box style={{ flex: 1 }}>
@@ -207,7 +215,13 @@ export function Flashcard3DCard({
             {/* Mnemonic / Memory Note if available */}
             {card.memoryNote && (
               <Group align="flex-start" gap="xs" wrap="nowrap">
-                <ThemeIcon variant="light" color="amber" size="sm" radius="xl" mt={2}>
+                <ThemeIcon
+                  variant="light"
+                  color="amber"
+                  size="sm"
+                  radius="xl"
+                  mt={2}
+                >
                   <IconBulb size={12} />
                 </ThemeIcon>
                 <Box style={{ flex: 1 }}>

@@ -72,7 +72,10 @@ export function useDictationAudio({
 
     timerRef.current = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
-      const progress = Math.min(durationRef.current, (elapsed / totalMs) * durationRef.current);
+      const progress = Math.min(
+        durationRef.current,
+        (elapsed / totalMs) * durationRef.current,
+      );
       setCurrentTime(progress);
 
       if (elapsed >= totalMs) {

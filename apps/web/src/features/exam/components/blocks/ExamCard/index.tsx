@@ -1,4 +1,12 @@
-import { Badge, Button, Card, Divider, Group, Stack, Text } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { Clock, FileText, Play } from "lucide-react";
 import Link from "next/link";
 
@@ -90,7 +98,14 @@ export function ExamCard({ exam }: ExamCardProps) {
         <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts="0.08em">
           {seriesName}
         </Text>
-        <Text fw={700} size="md" c="navy.9" lineClamp={2} title={exam.title} lh={1.35}>
+        <Text
+          fw={700}
+          size="md"
+          c="navy.9"
+          lineClamp={2}
+          title={exam.title}
+          lh={1.35}
+        >
           {exam.title}
         </Text>
       </Stack>
@@ -108,13 +123,21 @@ export function ExamCard({ exam }: ExamCardProps) {
 
         <Group gap="md">
           <Group gap={5}>
-            <FileText size={14} aria-hidden="true" color="var(--mantine-color-gray-6)" />
+            <FileText
+              size={14}
+              aria-hidden="true"
+              color="var(--mantine-color-gray-6)"
+            />
             <Text size="xs" c="dimmed">
               {exam.questionCount} {t.exam.questionsUnit}
             </Text>
           </Group>
           <Group gap={5}>
-            <Clock size={14} aria-hidden="true" color="var(--mantine-color-gray-6)" />
+            <Clock
+              size={14}
+              aria-hidden="true"
+              color="var(--mantine-color-gray-6)"
+            />
             <Text size="xs" c="dimmed">
               {durationMinutes} {t.exam.minutesUnit}
             </Text>
@@ -128,7 +151,12 @@ export function ExamCard({ exam }: ExamCardProps) {
                 ? t.exam.bestScoreLabel
                 : t.exam.maxScoreLabel}
             </Text>
-            <Text fw={700} size="sm" c="navy.9" style={{ fontVariantNumeric: "tabular-nums" }}>
+            <Text
+              fw={700}
+              size="sm"
+              c="navy.9"
+              style={{ fontVariantNumeric: "tabular-nums" }}
+            >
               {exam.bestScore !== null && exam.bestScore !== undefined
                 ? `${exam.bestScore}/${exam.maxRawScore}`
                 : `${exam.maxRawScore} ${t.exam.pointsUnit}`}
@@ -146,7 +174,11 @@ export function ExamCard({ exam }: ExamCardProps) {
               <Play size={12} fill="currentColor" aria-hidden="true" />
             }
           >
-            {isDone ? t.exam.retakeAction : isStarted ? t.exam.continueAction : t.exam.startAction}
+            {isDone
+              ? t.exam.retakeAction
+              : isStarted
+                ? t.exam.continueAction
+                : t.exam.startAction}
           </Button>
         </Group>
       </Stack>

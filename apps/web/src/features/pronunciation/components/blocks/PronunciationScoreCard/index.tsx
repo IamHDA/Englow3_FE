@@ -23,7 +23,10 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import { PhonemeScoreDetail, PronunciationEvaluationResult } from "../../../types";
+import {
+  PhonemeScoreDetail,
+  PronunciationEvaluationResult,
+} from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface PronunciationScoreCardProps {
@@ -36,9 +39,8 @@ export function PronunciationScoreCard({
   onRetry,
 }: PronunciationScoreCardProps) {
   const { isVi } = useLanguage();
-  const [selectedPhoneme, setSelectedPhoneme] = useState<PhonemeScoreDetail | null>(
-    evaluation.phonemeScores[0] || null
-  );
+  const [selectedPhoneme, setSelectedPhoneme] =
+    useState<PhonemeScoreDetail | null>(evaluation.phonemeScores[0] || null);
 
   const getScoreColor = (score: number) => {
     if (score >= 85) return "teal";
@@ -59,7 +61,9 @@ export function PronunciationScoreCard({
               size={110}
               thickness={10}
               roundCaps
-              sections={[{ value: evaluation.overallScore, color: overallColor }]}
+              sections={[
+                { value: evaluation.overallScore, color: overallColor },
+              ]}
               label={
                 <Text ta="center" fw={800} fz="xl">
                   {evaluation.overallScore}
@@ -69,8 +73,12 @@ export function PronunciationScoreCard({
             <Stack gap={2}>
               <Badge variant="filled" color={overallColor} size="md">
                 {evaluation.overallScore >= 80
-                  ? isVi ? "ĐẠT CHUẨN BẢN XỨ" : "NATIVE LEVEL"
-                  : isVi ? "CẦN LUYỆN TẬP THÊM" : "NEEDS PRACTICE"}
+                  ? isVi
+                    ? "ĐẠT CHUẨN BẢN XỨ"
+                    : "NATIVE LEVEL"
+                  : isVi
+                    ? "CẦN LUYỆN TẬP THÊM"
+                    : "NEEDS PRACTICE"}
               </Badge>
               <Text fw={800} fz="lg" c="dark.9">
                 {isVi
@@ -118,7 +126,9 @@ export function PronunciationScoreCard({
                     {evaluation.accuracyScore}%
                   </Text>
                   <Text fz={10} c="dimmed">
-                    {isVi ? "Khẩu hình & vị trí lưỡi" : "Mouth shape & articulation"}
+                    {isVi
+                      ? "Khẩu hình & vị trí lưỡi"
+                      : "Mouth shape & articulation"}
                   </Text>
                 </Stack>
                 <ThemeIcon variant="light" color="teal" size="md" radius="md">
@@ -186,8 +196,8 @@ export function PronunciationScoreCard({
                 ph.status === "good"
                   ? "teal"
                   : ph.status === "warning"
-                  ? "orange"
-                  : "red";
+                    ? "orange"
+                    : "red";
 
               return (
                 <Button
@@ -219,7 +229,13 @@ export function PronunciationScoreCard({
               mt={4}
             >
               <Group gap="xs" align="flex-start" wrap="nowrap">
-                <ThemeIcon variant="light" color="indigo" size="sm" radius="xl" mt={2}>
+                <ThemeIcon
+                  variant="light"
+                  color="indigo"
+                  size="sm"
+                  radius="xl"
+                  mt={2}
+                >
                   <IconInfoCircle size={16} />
                 </ThemeIcon>
                 <Box>
@@ -246,12 +262,20 @@ export function PronunciationScoreCard({
           style={{ borderLeft: "4px solid var(--mantine-color-teal-6)" }}
         >
           <Group gap="sm" align="flex-start" wrap="nowrap">
-            <ThemeIcon variant="filled" color="teal" size="md" radius="xl" mt={2}>
+            <ThemeIcon
+              variant="filled"
+              color="teal"
+              size="md"
+              radius="xl"
+              mt={2}
+            >
               <IconBrain size={18} />
             </ThemeIcon>
             <Stack gap={2}>
               <Text fz="xs" fw={700} c="teal.9">
-                {isVi ? "LỜI KHUYÊN TỪ TRỢ LÝ PHÁT ÂM AI:" : "AI PRONUNCIATION COACH ADVICE:"}
+                {isVi
+                  ? "LỜI KHUYÊN TỪ TRỢ LÝ PHÁT ÂM AI:"
+                  : "AI PRONUNCIATION COACH ADVICE:"}
               </Text>
               <Text fz="sm" c="dark.8">
                 {evaluation.aiCoachingTip}

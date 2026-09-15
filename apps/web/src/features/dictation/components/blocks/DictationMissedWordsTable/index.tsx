@@ -19,7 +19,9 @@ interface DictationMissedWordsTableProps {
   words: MissedWordItem[];
 }
 
-export function DictationMissedWordsTable({ words }: DictationMissedWordsTableProps) {
+export function DictationMissedWordsTable({
+  words,
+}: DictationMissedWordsTableProps) {
   const { isVi, t } = useLanguage();
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 
@@ -63,9 +65,7 @@ export function DictationMissedWordsTable({ words }: DictationMissedWordsTablePr
                 return (
                   <Table.Tr
                     key={w.word}
-                    onClick={() =>
-                      setSelectedWord(isSelected ? null : w.word)
-                    }
+                    onClick={() => setSelectedWord(isSelected ? null : w.word)}
                     style={{
                       cursor: "pointer",
                       backgroundColor: isSelected
@@ -79,7 +79,11 @@ export function DictationMissedWordsTable({ words }: DictationMissedWordsTablePr
                           {w.word}
                         </Text>
                         {isSelected && w.exampleSentence && (
-                          <Text size="xs" c="navy.9" style={{ fontStyle: "italic" }}>
+                          <Text
+                            size="xs"
+                            c="navy.9"
+                            style={{ fontStyle: "italic" }}
+                          >
                             {isVi ? "Ví dụ:" : "Example:"} “{w.exampleSentence}”
                           </Text>
                         )}

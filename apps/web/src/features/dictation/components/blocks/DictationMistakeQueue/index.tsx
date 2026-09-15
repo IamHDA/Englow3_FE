@@ -88,13 +88,21 @@ export function DictationMistakeQueue({
 
   if (queue.length === 0) {
     return (
-      <Paper radius="lg" p="xl" withBorder bg="white" style={{ textAlign: "center" }}>
+      <Paper
+        radius="lg"
+        p="xl"
+        withBorder
+        bg="white"
+        style={{ textAlign: "center" }}
+      >
         <Stack align="center" gap="md" py="xl">
           <ThemeIcon size={64} radius="xl" color="teal" variant="light">
             <Trophy size={36} />
           </ThemeIcon>
           <Title order={2} size="h3" fw={700} c="ink.9">
-            {isVi ? "Xuất sắc! Bạn đã vượt qua tất cả câu sai!" : "Great job! You cleared all mistakes!"}
+            {isVi
+              ? "Xuất sắc! Bạn đã vượt qua tất cả câu sai!"
+              : "Great job! You cleared all mistakes!"}
           </Title>
           <Text size="sm" c="ink.6" style={{ maxWidth: 460 }}>
             {isVi
@@ -129,12 +137,17 @@ export function DictationMistakeQueue({
                 {isVi ? "Luyện tập câu sai" : "Mistake Practice"}
               </Badge>
               <Text size="xs" c="ink.5">
-                • {isVi ? `${queue.length} câu cần ôn tập trong danh sách` : `${queue.length} sentences to review in queue`}
+                •{" "}
+                {isVi
+                  ? `${queue.length} câu cần ôn tập trong danh sách`
+                  : `${queue.length} sentences to review in queue`}
               </Text>
             </Group>
 
             <Text size="xs" fw={600} c="ink.7">
-              {isVi ? `Câu ${currentIndex + 1} / ${queue.length}` : `Sentence ${currentIndex + 1} / ${queue.length}`}
+              {isVi
+                ? `Câu ${currentIndex + 1} / ${queue.length}`
+                : `Sentence ${currentIndex + 1} / ${queue.length}`}
             </Text>
           </Group>
 
@@ -156,7 +169,9 @@ export function DictationMistakeQueue({
                   }}
                   fw={600}
                 >
-                  {isVi ? `Câu ${item.sentenceNumber}` : `Sentence ${item.sentenceNumber}`}
+                  {isVi
+                    ? `Câu ${item.sentenceNumber}`
+                    : `Sentence ${item.sentenceNumber}`}
                 </Button>
               );
             })}
@@ -167,19 +182,27 @@ export function DictationMistakeQueue({
       {/* Previous Attempt Note Banner */}
       <Alert
         icon={<AlertCircle size={18} />}
-        title={isVi ? `Sai lần trước · Độ chính xác ${currentItem.previousAccuracy}%` : `Previous mistake · Accuracy ${currentItem.previousAccuracy}%`}
+        title={
+          isVi
+            ? `Sai lần trước · Độ chính xác ${currentItem.previousAccuracy}%`
+            : `Previous mistake · Accuracy ${currentItem.previousAccuracy}%`
+        }
         color="orange"
         radius="md"
       >
         <Text size="xs" mb={4}>
-          {isVi ? "Nghe lại và gõ đúng để gỡ câu này khỏi danh sách câu sai." : "Listen and type accurately to clear this sentence from mistakes."}
+          {isVi
+            ? "Nghe lại và gõ đúng để gỡ câu này khỏi danh sách câu sai."
+            : "Listen and type accurately to clear this sentence from mistakes."}
         </Text>
         <Text size="xs" fw={500} c="ink.8">
           {currentItem.explanation}
         </Text>
         {isChecked && (
           <Text size="xs" fw={600} c="teal.9" mt="xs">
-            {isVi ? `Đáp án chuẩn: “${currentItem.correctAnswer}”` : `Correct answer: "${currentItem.correctAnswer}"`}
+            {isVi
+              ? `Đáp án chuẩn: “${currentItem.correctAnswer}”`
+              : `Correct answer: "${currentItem.correctAnswer}"`}
           </Text>
         )}
       </Alert>
@@ -223,7 +246,11 @@ export function DictationMistakeQueue({
                 color={isCorrect ? "teal" : "warn"}
                 variant="light"
               >
-                {isCorrect ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+                {isCorrect ? (
+                  <CheckCircle2 size={18} />
+                ) : (
+                  <AlertCircle size={18} />
+                )}
               </ThemeIcon>
               <Text size="sm" fw={600} c={isCorrect ? "teal.9" : "warn.9"}>
                 {isCorrect
@@ -231,8 +258,8 @@ export function DictationMistakeQueue({
                     ? "Chính xác! Câu này sẽ được gỡ khỏi danh sách lỗi."
                     : "Correct! This sentence has been cleared from mistakes."
                   : isVi
-                  ? "Chưa hoàn toàn chính xác. Hãy nghe lại lần nữa nhé!"
-                  : "Not quite right. Please listen and try again!"}
+                    ? "Chưa hoàn toàn chính xác. Hãy nghe lại lần nữa nhé!"
+                    : "Not quite right. Please listen and try again!"}
               </Text>
             </Group>
 
@@ -250,8 +277,8 @@ export function DictationMistakeQueue({
                   ? "Tiếp tục gỡ câu tiếp theo"
                   : "Continue to next sentence"
                 : isVi
-                ? "Thử lại câu tiếp theo"
-                : "Try next sentence"}
+                  ? "Thử lại câu tiếp theo"
+                  : "Try next sentence"}
             </Button>
           </Flex>
         </Paper>

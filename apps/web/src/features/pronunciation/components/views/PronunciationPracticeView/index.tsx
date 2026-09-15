@@ -22,7 +22,9 @@ interface PronunciationPracticeViewProps {
   lesson: PronunciationLesson;
 }
 
-export function PronunciationPracticeView({ lesson }: PronunciationPracticeViewProps) {
+export function PronunciationPracticeView({
+  lesson,
+}: PronunciationPracticeViewProps) {
   const { isVi } = useLanguage();
   const {
     isRecording,
@@ -50,7 +52,9 @@ export function PronunciationPracticeView({ lesson }: PronunciationPracticeViewP
             size="sm"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Quay lại thư viện phát âm" : "Back to Pronunciation Library"}
+            {isVi
+              ? "Quay lại thư viện phát âm"
+              : "Back to Pronunciation Library"}
           </Button>
 
           <Stack gap={2} align="center">

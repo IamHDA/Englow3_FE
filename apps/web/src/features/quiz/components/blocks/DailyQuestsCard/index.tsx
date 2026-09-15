@@ -42,7 +42,7 @@ export function DailyQuestsCard({ quests }: DailyQuestsCardProps) {
           {quests.map((quest) => {
             const percent = Math.min(
               Math.round((quest.progress / quest.target) * 100),
-              100
+              100,
             );
 
             return (
@@ -57,9 +57,16 @@ export function DailyQuestsCard({ quests }: DailyQuestsCardProps) {
                   <Stack gap={0}>
                     <Group gap="xs">
                       {quest.isCompleted && (
-                        <IconCheck size={14} color="var(--mantine-color-teal-6)" />
+                        <IconCheck
+                          size={14}
+                          color="var(--mantine-color-teal-6)"
+                        />
                       )}
-                      <Text fz="xs" fw={700} c={quest.isCompleted ? "teal.9" : "dark.8"}>
+                      <Text
+                        fz="xs"
+                        fw={700}
+                        c={quest.isCompleted ? "teal.9" : "dark.8"}
+                      >
                         {quest.title}
                       </Text>
                     </Group>

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   Box,
   Card,
@@ -9,10 +9,10 @@ import {
   Stack,
   Text,
   UnstyledButton,
-} from '@mantine/core';
-import { Flag } from 'lucide-react';
-import { useLanguage } from '@/shared/hooks/useLanguage';
-import classes from './QuestionPalette.module.css';
+} from "@mantine/core";
+import { Flag } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import classes from "./QuestionPalette.module.css";
 
 export interface FlatQuestionItem {
   globalIndex: number;
@@ -45,12 +45,7 @@ export function QuestionPalette({
   const totalCount = questions.length;
 
   return (
-    <Card
-      radius="lg"
-      p="md"
-      withBorder
-      className={classes.paletteRoot}
-    >
+    <Card radius="lg" p="md" withBorder className={classes.paletteRoot}>
       <Stack gap="sm">
         <Group justify="space-between" align="center">
           <Text fw={700} size="sm" c="navy.9">
@@ -58,8 +53,8 @@ export function QuestionPalette({
           </Text>
           <Text size="xs" c="ink.5" fw={600}>
             {t.exam.paletteCompleted
-              .replace('{answered}', String(answeredCount))
-              .replace('{total}', String(totalCount))}
+              .replace("{answered}", String(answeredCount))
+              .replace("{total}", String(totalCount))}
           </Text>
         </Group>
 
@@ -93,18 +88,21 @@ export function QuestionPalette({
             const isCurrent = q.globalIndex === currentIndex;
 
             const status = isFlagged
-              ? 'flagged'
+              ? "flagged"
               : isAnswered
-              ? 'answered'
-              : 'unanswered';
+                ? "answered"
+                : "unanswered";
 
             return (
               <UnstyledButton
                 key={q.questionId}
                 onClick={() => onSelectQuestion(q.globalIndex)}
-                className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ''}`}
+                className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ""}`}
                 data-status={status}
-                aria-label={t.exam.questionAria.replace('{index}', String(q.globalIndex + 1))}
+                aria-label={t.exam.questionAria.replace(
+                  "{index}",
+                  String(q.globalIndex + 1),
+                )}
               >
                 {q.globalIndex + 1}
                 {isFlagged && (
