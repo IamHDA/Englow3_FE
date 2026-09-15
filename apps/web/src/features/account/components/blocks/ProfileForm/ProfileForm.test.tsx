@@ -42,7 +42,7 @@ describe("ProfileForm", () => {
 
     expect(screen.getByLabelText(/Họ và tên/)).toHaveValue("Nguyen Van A");
     expect(screen.getByLabelText(/Tên hiển thị/)).toHaveValue("vana");
-    expect(screen.getByLabelText(/Địa chỉ email/)).toHaveValue(
+    expect(screen.getByLabelText(/Địa chỉ [Ee]mail/)).toHaveValue(
       "learner@example.com",
     );
     expect(screen.getByLabelText(/Ngày sinh/)).toHaveValue("2000-01-15");
@@ -55,7 +55,7 @@ describe("ProfileForm", () => {
     const fullNameInput = screen.getByLabelText(/Họ và tên/);
     await user.clear(fullNameInput);
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu thay đổi/ });
+    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
     await user.click(submitBtn);
 
     expect(
@@ -71,7 +71,7 @@ describe("ProfileForm", () => {
     const displayNameInput = screen.getByLabelText(/Tên hiển thị/);
     await user.clear(displayNameInput);
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu thay đổi/ });
+    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
     await user.click(submitBtn);
 
     expect(
@@ -88,7 +88,7 @@ describe("ProfileForm", () => {
     await user.clear(birthDateInput);
     await user.type(birthDateInput, "2099-01-01");
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu thay đổi/ });
+    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
     await user.click(submitBtn);
 
     expect(
@@ -105,7 +105,7 @@ describe("ProfileForm", () => {
     await user.clear(fullNameInput);
     await user.type(fullNameInput, "Nguyen Van B");
 
-    const submitBtn = screen.getByRole("button", { name: /Lưu thay đổi/ });
+    const submitBtn = screen.getByRole("button", { name: /Lưu (thông tin|thay đổi)/i });
     await user.click(submitBtn);
 
     await waitFor(() => {
