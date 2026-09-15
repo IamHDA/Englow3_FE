@@ -18,6 +18,7 @@ import { getServerSession } from "@/features/auth/server/getServerSession";
 import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { theme } from "@/lib/mantine/theme";
+import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
 
 const lora = Lora({
@@ -64,11 +65,13 @@ export default async function RootLayout({
           <ApolloWrapper>
             <AuthProvider initialSession={session}>
               <AccountProvider initialProfile={initialProfile}>
-                <OnboardingProvider>
-                  <SiteHeader />
-                  <main>{children}</main>
-                  <OnboardingGate />
-                </OnboardingProvider>
+                <LanguageProvider>
+                  <OnboardingProvider>
+                    <SiteHeader />
+                    <main>{children}</main>
+                    <OnboardingGate />
+                  </OnboardingProvider>
+                </LanguageProvider>
               </AccountProvider>
             </AuthProvider>
           </ApolloWrapper>

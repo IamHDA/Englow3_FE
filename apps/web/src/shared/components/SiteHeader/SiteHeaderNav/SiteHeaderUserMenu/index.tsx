@@ -2,9 +2,11 @@
 
 import { Avatar, Menu, Text, UnstyledButton } from "@mantine/core";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import Link from "next/link";
 
 import { useAuth } from "@/features/auth";
 import { useOnboardingGuard } from "@/features/onboarding";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./SiteHeaderUserMenu.module.css";
 
@@ -21,6 +23,7 @@ export function SiteHeaderUserMenu({
   // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
   // là chuẩn.
   const { signOut } = useAuth();
+  const { t } = useLanguage();
 
   // "Hồ sơ của tôi" và "Cài đặt" chặn khi chưa onboarding; "Đăng xuất" thì
   // không - đó là lối thoát cuối cùng, chặn nốt thì người dùng kẹt hẳn trong
@@ -44,26 +47,27 @@ export function SiteHeaderUserMenu({
         </UnstyledButton>
       </Menu.Target>
 
-      {/* "Hồ sơ của tôi" và "Cài đặt" là placeholder - chưa có trang đích. */}
       <Menu.Dropdown>
         <Menu.Item
+          component={Link}
+          href="/profile"
           leftSection={<User aria-hidden="true" size={16} />}
           onClick={guardNavigation}
         >
-          Hồ sơ của tôi
+          {t.nav.profile}
         </Menu.Item>
         <Menu.Item
           leftSection={<Settings aria-hidden="true" size={16} />}
           onClick={guardNavigation}
         >
-          Cài đặt
+          {t.nav.settings}
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item
           leftSection={<LogOut aria-hidden="true" size={16} />}
           onClick={() => signOut()}
         >
-          Đăng xuất
+          {t.nav.logout}
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

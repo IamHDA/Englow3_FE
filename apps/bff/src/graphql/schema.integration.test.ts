@@ -221,3 +221,52 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
     expect(error?.message).not.toContain("195");
   });
 });
+
+describe("updateProfile mutation - schema wiring", () => {
+  const server = new ApolloServer({ typeDefs, resolvers, formatError });
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  it("calls UserApi.updateProfile and returns updated Me", async () => {
+    const updateProfile = vi.fn().mockResolvedValue(ME);
+    const ctx = makeContext({
+      apis: {
+        userApi: { updateProfile } as any,
+        onboardingApi: {} as any,
+        examApi: {} as any,
+      },
+    });
+
+    const response = await server.executeOperation(
+      {
+        query: `
+          mutation {
+            updateProfile(input: { fullName: "Nguyen Van A", displayName: "vana" }) {
+              id
+              fullName
+              displayName
+            }
+          }
+        `,
+      },
+      { contextValue: ctx },
+    );
+
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
+      updateProfile: {
+        id: "u1",
+        fullName: "Nguyen Van A",
+        displayName: "vana",
+      },
+    });
+    expect(updateProfile).toHaveBeenCalledWith({
+      fullName: "Nguyen Van A",
+      displayName: "vana",
+    });
+  });
+});

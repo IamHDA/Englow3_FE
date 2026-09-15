@@ -8,6 +8,8 @@ import {
   Route,
   type LucideIcon,
 } from "lucide-react";
+import type { AppTranslations } from "./translations";
+import { translations } from "./translations";
 
 export type NavLink = {
   label: string;
@@ -22,34 +24,44 @@ export type StudyLink = NavLink & {
 /** Icon on the Study trigger, kept in step with the other two nav items. */
 export const studyIcon: LucideIcon = GraduationCap;
 
-export const studyLinks: StudyLink[] = [
-  {
-    label: "Phát âm",
-    description: "Chấm điểm phát âm AI theo thời gian thực",
-    href: "/study/pronunciation",
-    icon: Mic,
-  },
-  {
-    label: "Thẻ ghi nhớ",
-    description: "Bộ thẻ 3D tối ưu theo khả năng ghi nhớ của bạn",
-    href: "/study/flashcards",
-    icon: Layers,
-  },
-  {
-    label: "Chính tả",
-    description: "Thử thách nghe và gõ lại",
-    href: "/study/dictation",
-    icon: Headphones,
-  },
-  {
-    label: "Lộ trình hàng ngày",
-    description: "Bài học thích ứng dành riêng cho bạn",
-    href: "/study/daily-path",
-    icon: Route,
-  },
-];
+export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
+  const nav = t || translations.vi.nav;
+  return [
+    {
+      label: nav.pronunciation,
+      description: nav.pronunciationDesc,
+      href: "/study/pronunciation",
+      icon: Mic,
+    },
+    {
+      label: nav.flashcards,
+      description: nav.flashcardsDesc,
+      href: "/study/flashcards",
+      icon: Layers,
+    },
+    {
+      label: nav.dictation,
+      description: nav.dictationDesc,
+      href: "/study/dictation",
+      icon: Headphones,
+    },
+    {
+      label: nav.dailyPath,
+      description: nav.dailyPathDesc,
+      href: "/study/daily-path",
+      icon: Route,
+    },
+  ];
+}
 
-export const primaryLinks: NavLink[] = [
-  { label: "Thi thử", href: "/mock-test", icon: ClipboardCheck },
-  { label: "Gia sư AI", href: "/ai-tutor", icon: Bot },
-];
+export function getPrimaryLinks(t?: AppTranslations["nav"]): NavLink[] {
+  const nav = t || translations.vi.nav;
+  return [
+    { label: nav.exams, href: "/exams", icon: ClipboardCheck },
+    { label: nav.aiTutor, href: "/ai-tutor", icon: Bot },
+  ];
+}
+
+// Backwards compatibility for existing imports
+export const studyLinks: StudyLink[] = getStudyLinks();
+export const primaryLinks: NavLink[] = getPrimaryLinks();

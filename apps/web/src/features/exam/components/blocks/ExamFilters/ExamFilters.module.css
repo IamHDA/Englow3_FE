@@ -1,0 +1,124 @@
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 24px;
+  border: 1px solid var(--mantine-color-gray-2);
+  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.03);
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.searchWrapper {
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.tabsNav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--mantine-color-gray-1);
+  overflow-x: auto;
+}
+
+.tabButton {
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  color: var(--mantine-color-gray-7);
+  transition: all 0.15s ease;
+}
+
+.tabButton[data-active="true"] {
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+}
+
+.sortWrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortLabel {
+  font-size: 13px;
+  color: var(--mantine-color-dimmed);
+}
+
+.bottomBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 14px;
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.filterMenuButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--mantine-color-gray-3);
+  background: #ffffff;
+  color: var(--mantine-color-gray-8);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filterMenuButton[data-active="true"] {
+  background: var(--mantine-color-blue-0);
+  border-color: var(--mantine-color-blue-5);
+  color: var(--mantine-color-blue-8);
+}
+
+.clearButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--mantine-color-dimmed);
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: color 0.15s ease;
+}
+
+.clearButton:hover {
+  color: var(--mantine-color-red-6);
+}
+
+.resultCount {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--mantine-color-dimmed);
+  font-weight: 500;
+}

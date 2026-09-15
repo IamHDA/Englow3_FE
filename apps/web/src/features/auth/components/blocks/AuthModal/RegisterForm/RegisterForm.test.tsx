@@ -46,9 +46,9 @@ async function fillValidForm(
   await user.type(screen.getByLabelText(/Nickname/), "vana");
   await user.type(screen.getByLabelText("Email"), "vana@example.com");
   await user.type(screen.getByLabelText(/Mật khẩu/), password);
-  await user.selectOptions(screen.getByLabelText("Ngày sinh - ngày"), "15");
-  await user.selectOptions(screen.getByLabelText("Ngày sinh - tháng"), "6");
-  await user.selectOptions(screen.getByLabelText("Ngày sinh - năm"), "2000");
+  await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Nn]gày/), "15");
+  await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Tt]háng/), "6");
+  await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Nn]ăm/), "2000");
 }
 
 beforeEach(() => {
@@ -101,9 +101,18 @@ describe("RegisterForm", () => {
     await user.type(screen.getByLabelText(/Nickname/), "vana");
     await user.type(screen.getByLabelText("Email"), "vana@example.com");
     await user.type(screen.getByLabelText(/Mật khẩu/), VALID_PASSWORD);
-    await user.selectOptions(screen.getByLabelText("Ngày sinh - ngày"), "31");
-    await user.selectOptions(screen.getByLabelText("Ngày sinh - tháng"), "2");
-    await user.selectOptions(screen.getByLabelText("Ngày sinh - năm"), "2000");
+    await user.selectOptions(
+      screen.getByLabelText(/Ngày sinh - [Nn]gày/),
+      "31",
+    );
+    await user.selectOptions(
+      screen.getByLabelText(/Ngày sinh - [Tt]háng/),
+      "2",
+    );
+    await user.selectOptions(
+      screen.getByLabelText(/Ngày sinh - [Nn]ăm/),
+      "2000",
+    );
     await user.click(screen.getByRole("button", { name: "Tạo tài khoản" }));
 
     expect(

@@ -17,6 +17,10 @@ export class BackendClient {
     return this.request<T>("POST", path, body);
   }
 
+  put<T>(path: string, body?: unknown): Promise<T> {
+    return this.request<T>("PUT", path, body);
+  }
+
   private async request<T>(
     method: string,
     path: string,
@@ -26,6 +30,7 @@ export class BackendClient {
     try {
       response = await fetch(`${this.baseUrl}${path}`, {
         method,
+        keepalive: true,
         headers: {
           ...(this.token ? { authorization: `Bearer ${this.token}` } : {}),
           ...(this.requestId ? { "x-request-id": this.requestId } : {}),
