@@ -79,3 +79,32 @@ mutation RateFlashcard(
     lapseCount
   }
 }
+
+query FlashcardStats($periodDays: Int) {
+  flashcardStats(periodDays: $periodDays) {
+    periodDays
+    cardsStudied
+    retentionPercent
+    studySeconds
+    streakDays
+    activity {
+      day
+      cardCount
+    }
+    difficultCards {
+      flashcardId
+      lemma
+      setName
+      lapseCount
+      lastReviewed
+    }
+    history {
+      day
+      setId
+      setName
+      cardCount
+      recallPercent
+      studySeconds
+    }
+  }
+}

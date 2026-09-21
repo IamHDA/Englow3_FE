@@ -614,6 +614,36 @@ export type RateFlashcardMutation = {
   };
 };
 
+export type FlashcardStatsQueryVariables = Exact<{
+  periodDays?: number | null | undefined;
+}>;
+
+export type FlashcardStatsQuery = {
+  flashcardStats: {
+    periodDays: number;
+    cardsStudied: number;
+    retentionPercent: number;
+    studySeconds: number;
+    streakDays: number;
+    activity: Array<{ day: string; cardCount: number }>;
+    difficultCards: Array<{
+      flashcardId: string;
+      lemma: string;
+      setName: string;
+      lapseCount: number;
+      lastReviewed: string | null;
+    }>;
+    history: Array<{
+      day: string;
+      setId: string;
+      setName: string;
+      cardCount: number;
+      recallPercent: number;
+      studySeconds: number;
+    }>;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -3468,6 +3498,131 @@ export const RateFlashcardDocument = {
   RateFlashcardMutation,
   RateFlashcardMutationVariables
 >;
+export const FlashcardStatsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FlashcardStats" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "periodDays" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "flashcardStats" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "periodDays" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "periodDays" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "periodDays" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "cardsStudied" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "retentionPercent" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "studySeconds" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "streakDays" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "activity" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "day" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "cardCount" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "difficultCards" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "flashcardId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "lemma" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "setName" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "lapseCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "lastReviewed" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "history" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "day" } },
+                      { kind: "Field", name: { kind: "Name", value: "setId" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "setName" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "cardCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "recallPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "studySeconds" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<FlashcardStatsQuery, FlashcardStatsQueryVariables>;
 export const LearningPurposesDocument = {
   kind: "Document",
   definitions: [

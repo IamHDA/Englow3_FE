@@ -4,6 +4,7 @@ import type {
   DictationLessonPageResponse,
   DictationSubmissionResponse,
   FlashcardResponse,
+  FlashcardStatsResponse,
   SearchDictationLessonsParams,
   QuizAttemptResponse,
   QuizPageResponse,
@@ -128,6 +129,12 @@ export class LearningApi {
     return this.client.post(
       `${DICTATION_BASE_PATH}/sentences/${encodeURIComponent(sentenceId)}/attempts`,
       { response },
+    );
+  }
+
+  getFlashcardStats(periodDays: number): Promise<FlashcardStatsResponse> {
+    return this.client.get(
+      `${FLASHCARD_BASE_PATH}/stats?periodDays=${periodDays}`,
     );
   }
 }

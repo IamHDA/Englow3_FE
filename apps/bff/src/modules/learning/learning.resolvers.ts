@@ -76,6 +76,14 @@ export const learningResolvers = {
       ctx.requireToken();
       return ctx.apis.learningApi.getDictationLesson(args.id);
     },
+    flashcardStats: (
+      _: unknown,
+      args: { periodDays?: number },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.getFlashcardStats(args.periodDays ?? 7);
+    },
   },
   Mutation: {
     rateFlashcard: (

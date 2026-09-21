@@ -250,3 +250,29 @@ export type SearchDictationLessonsParams = {
   page?: number;
   size?: number;
 };
+
+// GET /api/flashcards/stats
+export type FlashcardStatsResponse = {
+  periodDays: number;
+  cardsStudied: number;
+  retentionPercent: number;
+  studySeconds: number;
+  /** Counted over a year, not over the period - a 7-day view still shows a 40-day streak. */
+  streakDays: number;
+  activity: { day: string; cardCount: number }[];
+  difficultCards: {
+    flashcardId: string;
+    lemma: string;
+    setName: string;
+    lapseCount: number;
+    lastReviewed: string | null;
+  }[];
+  history: {
+    day: string;
+    setId: string;
+    setName: string;
+    cardCount: number;
+    recallPercent: number;
+    studySeconds: number;
+  }[];
+};

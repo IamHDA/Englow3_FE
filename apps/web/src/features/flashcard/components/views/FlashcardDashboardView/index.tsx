@@ -1,12 +1,22 @@
 "use client";
 
-import { Alert, Container, Stack } from "@mantine/core";
+import {
+  Alert,
+  Container,
+  Group,
+  SegmentedControl,
+  Stack,
+} from "@mantine/core";
 import { useMemo, useState } from "react";
-import { MOCK_FLASHCARD_STATS } from "../../../constants/flashcardData";
 import { FlashcardDashboardSkeleton } from "../../blocks/FlashcardDashboardSkeleton";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
-import { useFlashcardSetsQuery } from "@/lib/graphql/generated/hooks";
+import {
+  useFlashcardSetsQuery,
+  useFlashcardStatsQuery,
+} from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import { STATS_PERIOD_DAYS, toStatsData } from "./statsMapping";
 import { FlashcardCharts } from "../../blocks/FlashcardCharts";
 import { FlashcardDifficultCards } from "../../blocks/FlashcardDifficultCards";
 import { FlashcardFilters } from "../../blocks/FlashcardFilters";
@@ -37,6 +47,22 @@ export function FlashcardDashboardView({
   const [selectedTopic, setSelectedTopic] = useState("ALL");
   const [selectedSort, setSelectedSort] = useState("due");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  const { isVi } = useLanguage();
+  const [period, setPeriod] =
+    useState<keyof typeof STATS_PERIOD_DAYS>("7 Days");
+
+  // Chỉ gọi khi người dùng mở tab thống kê - mở trang để xem bộ thẻ thì không
+  // phải trả giá cho một lượt tổng hợp mình chưa nhìn tới.
+  const { data: statsData } = useFlashcardStatsQuery({
+    variables: { periodDays: STATS_PERIOD_DAYS[period] },
+    skip: activeTab !== "stats",
+    fetchPolicy: "cache-and-network",
+  });
+
+  const stats = statsData
+    ? toStatsData(statsData.flashcardStats, period, isVi)
+    : null;
 
   const { data, loading, error } = useFlashcardSetsQuery({
     variables: { size: PAGE_SIZE },
@@ -100,8 +126,8 @@ export function FlashcardDashboardView({
 
             <FlashcardHeroCard
               dueCount={totalDueCount}
-              streakDays={MOCK_FLASHCARD_STATS.dailyStreakDays}
-              retentionPercent={MOCK_FLASHCARD_STATS.retentionRatePercent}
+              streakDays={stats?.dailyStreakDays ?? 0}
+              retentionPercent={stats?.retentionRatePercent ?? 0}
               primarySetSlug={filteredSets[0]?.slug ?? sets[0]?.slug ?? ""}
             />
 
@@ -123,14 +149,25 @@ export function FlashcardDashboardView({
             )}
           </>
         ) : (
-          <>
-            <FlashcardStatsOverview stats={MOCK_FLASHCARD_STATS} />
-            <FlashcardCharts stats={MOCK_FLASHCARD_STATS} />
-            <FlashcardDifficultCards
-              cards={MOCK_FLASHCARD_STATS.difficultCards}
-            />
-            <FlashcardHistoryTable history={MOCK_FLASHCARD_STATS.history} />
-          </>
+          stats && (
+            <>
+              <Group justify="flex-end">
+                <SegmentedControl
+                  value={period}
+                  onChange={(next) =>
+                    setPeriod(next as keyof typeof STATS_PERIOD_DAYS)
+                  }
+                  data={Object.keys(STATS_PERIOD_DAYS)}
+                  radius="md"
+                  size="sm"
+                />
+              </Group>
+              <FlashcardStatsOverview stats={stats} />
+              <FlashcardCharts stats={stats} />
+              <FlashcardDifficultCards cards={stats.difficultCards} />
+              <FlashcardHistoryTable history={stats.history} />
+            </>
+          )
         )}
       </Stack>
     </Container>

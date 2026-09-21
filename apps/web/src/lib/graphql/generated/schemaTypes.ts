@@ -291,6 +291,25 @@ export type Flashcard = {
   status: FlashcardReviewStatus;
 };
 
+export type FlashcardDailyActivity = {
+  __typename?: "FlashcardDailyActivity";
+  cardCount: Scalars["Int"]["output"];
+  day: Scalars["Date"]["output"];
+};
+
+export type FlashcardDifficultCard = {
+  __typename?: "FlashcardDifficultCard";
+  flashcardId: Scalars["ID"]["output"];
+  /**
+   * Times the card was lost after having been learned. Not the same as times
+   * failed: failing a card still being learned is ordinary progress.
+   */
+  lapseCount: Scalars["Int"]["output"];
+  lastReviewed?: Maybe<Scalars["DateTime"]["output"]>;
+  lemma: Scalars["String"]["output"];
+  setName: Scalars["String"]["output"];
+};
+
 export type FlashcardReview = {
   __typename?: "FlashcardReview";
   dueAt: Scalars["DateTime"]["output"];
@@ -307,6 +326,16 @@ export enum FlashcardReviewStatus {
   NEW = "NEW",
   REVIEW = "REVIEW",
 }
+
+export type FlashcardSessionSummary = {
+  __typename?: "FlashcardSessionSummary";
+  cardCount: Scalars["Int"]["output"];
+  day: Scalars["Date"]["output"];
+  recallPercent: Scalars["Int"]["output"];
+  setId: Scalars["ID"]["output"];
+  setName: Scalars["String"]["output"];
+  studySeconds: Scalars["Int"]["output"];
+};
 
 export type FlashcardSet = {
   __typename?: "FlashcardSet";
@@ -341,6 +370,19 @@ export type FlashcardSetPage = {
   size: Scalars["Int"]["output"];
   totalItems: Scalars["Int"]["output"];
   totalPages: Scalars["Int"]["output"];
+};
+
+export type FlashcardStats = {
+  __typename?: "FlashcardStats";
+  activity: Array<FlashcardDailyActivity>;
+  cardsStudied: Scalars["Int"]["output"];
+  difficultCards: Array<FlashcardDifficultCard>;
+  history: Array<FlashcardSessionSummary>;
+  periodDays: Scalars["Int"]["output"];
+  retentionPercent: Scalars["Int"]["output"];
+  /** Counted over a year, not the period - a 7-day view still shows a 40-day streak. */
+  streakDays: Scalars["Int"]["output"];
+  studySeconds: Scalars["Int"]["output"];
 };
 
 export enum Gender {
@@ -606,6 +648,11 @@ export type Query = {
   flashcardSet: FlashcardSetDetail;
   flashcardSets: FlashcardSetPage;
   /**
+   * Everything the statistics screen shows, in one call. Six round trips to
+   * draw one page is the problem a BFF exists to avoid.
+   */
+  flashcardStats: FlashcardStats;
+  /**
    * What to study now: cards that are due, then unseen ones to fill the
    * session. The ordering is the backend's - a card about to be forgotten is
    * worth more than a new one, and reordering here would undo the schedule.
@@ -677,6 +724,10 @@ export type QueryFlashcardSetsArgs = {
   size?: InputMaybe<Scalars["Int"]["input"]>;
   title?: InputMaybe<Scalars["String"]["input"]>;
   topic?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryFlashcardStatsArgs = {
+  periodDays?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QueryFlashcardStudyQueueArgs = {

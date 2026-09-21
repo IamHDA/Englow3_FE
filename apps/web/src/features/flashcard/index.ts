@@ -1,5 +1,4 @@
 export * from "./types";
-export * from "./constants/flashcardData";
 export * from "./hooks/useFlashcardStudy";
 
 // Blocks

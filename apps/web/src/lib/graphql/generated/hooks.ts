@@ -617,6 +617,36 @@ export type RateFlashcardMutation = {
   };
 };
 
+export type FlashcardStatsQueryVariables = Exact<{
+  periodDays?: number | null | undefined;
+}>;
+
+export type FlashcardStatsQuery = {
+  flashcardStats: {
+    periodDays: number;
+    cardsStudied: number;
+    retentionPercent: number;
+    studySeconds: number;
+    streakDays: number;
+    activity: Array<{ day: string; cardCount: number }>;
+    difficultCards: Array<{
+      flashcardId: string;
+      lemma: string;
+      setName: string;
+      lapseCount: number;
+      lastReviewed: string | null;
+    }>;
+    history: Array<{
+      day: string;
+      setId: string;
+      setName: string;
+      cardCount: number;
+      recallPercent: number;
+      studySeconds: number;
+    }>;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -2801,6 +2831,128 @@ export type RateFlashcardMutationOptions =
     RateFlashcardMutation,
     RateFlashcardMutationVariables
   >;
+export const FlashcardStatsDocument = gql`
+  query FlashcardStats($periodDays: Int) {
+    flashcardStats(periodDays: $periodDays) {
+      periodDays
+      cardsStudied
+      retentionPercent
+      studySeconds
+      streakDays
+      activity {
+        day
+        cardCount
+      }
+      difficultCards {
+        flashcardId
+        lemma
+        setName
+        lapseCount
+        lastReviewed
+      }
+      history {
+        day
+        setId
+        setName
+        cardCount
+        recallPercent
+        studySeconds
+      }
+    }
+  }
+`;
+
+/**
+ * __useFlashcardStatsQuery__
+ *
+ * To run a query within a React component, call `useFlashcardStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlashcardStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlashcardStatsQuery({
+ *   variables: {
+ *      periodDays: // value for 'periodDays'
+ *   },
+ * });
+ */
+export function useFlashcardStatsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FlashcardStatsQuery,
+    FlashcardStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FlashcardStatsQuery,
+    FlashcardStatsQueryVariables
+  >(FlashcardStatsDocument, options);
+}
+export function useFlashcardStatsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlashcardStatsQuery,
+    FlashcardStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FlashcardStatsQuery,
+    FlashcardStatsQueryVariables
+  >(FlashcardStatsDocument, options);
+}
+export function useFlashcardStatsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FlashcardStatsQuery,
+    FlashcardStatsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardStatsQuery,
+  FlashcardStatsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFlashcardStatsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardStatsQuery,
+        FlashcardStatsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardStatsQuery | undefined,
+  FlashcardStatsQueryVariables
+>;
+export function useFlashcardStatsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardStatsQuery,
+        FlashcardStatsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FlashcardStatsQuery,
+    FlashcardStatsQueryVariables
+  >(FlashcardStatsDocument, options as any);
+}
+export type FlashcardStatsQueryHookResult = ReturnType<
+  typeof useFlashcardStatsQuery
+>;
+export type FlashcardStatsLazyQueryHookResult = ReturnType<
+  typeof useFlashcardStatsLazyQuery
+>;
+export type FlashcardStatsSuspenseQueryHookResult = ReturnType<
+  typeof useFlashcardStatsSuspenseQuery
+>;
+export type FlashcardStatsQueryResult = ApolloReactCommon.QueryResult<
+  FlashcardStatsQuery,
+  FlashcardStatsQueryVariables
+>;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
     learningPurposes {

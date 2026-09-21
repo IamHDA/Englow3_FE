@@ -265,6 +265,44 @@ export const learningTypeDefs = `#graphql
     totalWordCount: Int!
   }
 
+  type FlashcardDailyActivity {
+    day: Date!
+    cardCount: Int!
+  }
+
+  type FlashcardDifficultCard {
+    flashcardId: ID!
+    lemma: String!
+    setName: String!
+    """
+    Times the card was lost after having been learned. Not the same as times
+    failed: failing a card still being learned is ordinary progress.
+    """
+    lapseCount: Int!
+    lastReviewed: DateTime
+  }
+
+  type FlashcardSessionSummary {
+    day: Date!
+    setId: ID!
+    setName: String!
+    cardCount: Int!
+    recallPercent: Int!
+    studySeconds: Int!
+  }
+
+  type FlashcardStats {
+    periodDays: Int!
+    cardsStudied: Int!
+    retentionPercent: Int!
+    studySeconds: Int!
+    """Counted over a year, not the period - a 7-day view still shows a 40-day streak."""
+    streakDays: Int!
+    activity: [FlashcardDailyActivity!]!
+    difficultCards: [FlashcardDifficultCard!]!
+    history: [FlashcardSessionSummary!]!
+  }
+
   extend type Query {
     flashcardSets(
       topic: String
@@ -303,6 +341,12 @@ export const learningTypeDefs = `#graphql
     ): DictationLessonPage!
 
     dictationLesson(id: ID!): DictationLessonDetail!
+
+    """
+    Everything the statistics screen shows, in one call. Six round trips to
+    draw one page is the problem a BFF exists to avoid.
+    """
+    flashcardStats(periodDays: Int = 7): FlashcardStats!
   }
 
   extend type Mutation {
