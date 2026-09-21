@@ -1,21 +1,56 @@
 /** Internal type. DO NOT USE DIRECTLY. */
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import type * as Types from './schemaTypes';
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
+    };
+import type * as Types from "./schemaTypes";
 
-import { gql } from '@apollo/client';
-import * as ApolloReactCommon from '@apollo/client/react';
-import * as ApolloReactHooks from '@apollo/client/react';
+import { gql } from "@apollo/client";
+import * as ApolloReactCommon from "@apollo/client/react";
+import * as ApolloReactHooks from "@apollo/client/react";
 const defaultOptions = {} as const;
 export type UpdateProfileMutationVariables = Exact<{
   input: Types.UpdateProfileInput;
 }>;
 
+export type UpdateProfileMutation = {
+  updateProfile: {
+    id: string;
+    email: string;
+    fullName: string;
+    displayName: string;
+    gender: Types.Gender | null;
+    birthDate: string | null;
+    avatarUrl: string | null;
+    bannerUrl: string | null;
+    onboardingStep: Types.OnboardingStep;
+    onboardingState: {
+      certificateLearner: boolean | null;
+      currentLevel: Types.CefrLevel | null;
+      targetCertificateType: string | null;
+      targetScore: number | null;
+      targetDate: string | null;
+      targetSkills: Array<Types.LearningSkill>;
+    } | null;
+  };
+};
 
-export type UpdateProfileMutation = { updateProfile: { id: string, email: string, fullName: string, displayName: string, gender: Types.Gender | null, birthDate: string | null, avatarUrl: string | null, bannerUrl: string | null, onboardingStep: Types.OnboardingStep, onboardingState: { certificateLearner: boolean | null, currentLevel: Types.CefrLevel | null, targetCertificateType: string | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } | null } };
-
-export type AdminExamFieldsFragment = { id: string, title: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, status: Types.ExamStatus, versionNumber: number, createdByUserId: string, publishedAt: string | null, createdAt: string };
+export type AdminExamFieldsFragment = {
+  id: string;
+  title: string;
+  examType: Types.ExamType;
+  certificateType: Types.CertificateType | null;
+  certificateVariant: Types.CertificateVariant | null;
+  targetLevel: Types.TargetLevel | null;
+  status: Types.ExamStatus;
+  versionNumber: number;
+  createdByUserId: string;
+  publishedAt: string | null;
+  createdAt: string;
+};
 
 export type AdminExamsQueryVariables = Exact<{
   status?: Types.ExamStatus | null | undefined;
@@ -25,57 +60,243 @@ export type AdminExamsQueryVariables = Exact<{
   size?: number | null | undefined;
 }>;
 
+export type AdminExamsQuery = {
+  adminExams: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      examType: Types.ExamType;
+      certificateType: Types.CertificateType | null;
+      certificateVariant: Types.CertificateVariant | null;
+      targetLevel: Types.TargetLevel | null;
+      status: Types.ExamStatus;
+      versionNumber: number;
+      createdByUserId: string;
+      publishedAt: string | null;
+      createdAt: string;
+    }>;
+  };
+};
 
-export type AdminExamsQuery = { adminExams: { page: number, size: number, totalItems: number, totalPages: number, items: Array<{ id: string, title: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, status: Types.ExamStatus, versionNumber: number, createdByUserId: string, publishedAt: string | null, createdAt: string }> } };
-
-export type AdminExamShellFieldsFragment = { id: string, title: string, status: Types.ExamStatus, versionNumber: number, publishedAt: string | null };
+export type AdminExamShellFieldsFragment = {
+  id: string;
+  title: string;
+  status: Types.ExamStatus;
+  versionNumber: number;
+  publishedAt: string | null;
+};
 
 export type PublishExamMutationVariables = Exact<{
   id: string | number;
 }>;
 
-
-export type PublishExamMutation = { publishExam: { id: string, title: string, status: Types.ExamStatus, versionNumber: number, publishedAt: string | null } };
+export type PublishExamMutation = {
+  publishExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+  };
+};
 
 export type ArchiveExamMutationVariables = Exact<{
   id: string | number;
 }>;
 
+export type ArchiveExamMutation = {
+  archiveExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+  };
+};
 
-export type ArchiveExamMutation = { archiveExam: { id: string, title: string, status: Types.ExamStatus, versionNumber: number, publishedAt: string | null } };
+export type ExamAttemptFieldsFragment = {
+  id: string;
+  examId: string;
+  status: Types.ExamAttemptStatus;
+  startedAt: string;
+  expiresAt: string;
+  submittedAt: string | null;
+  scoredAt: string | null;
+  rawScore: number | null;
+  maxRawScore: number | null;
+  scorePercentage: number | null;
+  correctAnswerCount: number | null;
+  questionCount: number;
+  resumed: boolean;
+};
 
-export type ExamAttemptFieldsFragment = { id: string, examId: string, status: Types.ExamAttemptStatus, startedAt: string, expiresAt: string, submittedAt: string | null, scoredAt: string | null, rawScore: number | null, maxRawScore: number | null, scorePercentage: number | null, correctAnswerCount: number | null, questionCount: number, resumed: boolean };
-
-export type AttemptReviewFieldsFragment = { questionId: string, selectedOptionIds: Array<string>, correctOptionIds: Array<string>, correct: boolean, awardedRawScore: number, explanation: string | null, options: Array<{ optionId: string, correct: boolean, explanation: string | null }> };
+export type AttemptReviewFieldsFragment = {
+  questionId: string;
+  selectedOptionIds: Array<string>;
+  correctOptionIds: Array<string>;
+  correct: boolean;
+  awardedRawScore: number;
+  explanation: string | null;
+  options: Array<{
+    optionId: string;
+    correct: boolean;
+    explanation: string | null;
+  }>;
+};
 
 export type StartExamAttemptMutationVariables = Exact<{
   examId: string | number;
 }>;
 
-
-export type StartExamAttemptMutation = { startExamAttempt: { id: string, examId: string, status: Types.ExamAttemptStatus, startedAt: string, expiresAt: string, submittedAt: string | null, scoredAt: string | null, rawScore: number | null, maxRawScore: number | null, scorePercentage: number | null, correctAnswerCount: number | null, questionCount: number, resumed: boolean } };
+export type StartExamAttemptMutation = {
+  startExamAttempt: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number | null;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+  };
+};
 
 export type AttemptPaperQueryVariables = Exact<{
   attemptId: string | number;
 }>;
 
-
-export type AttemptPaperQuery = { attemptPaper: { id: string, title: string, description: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, durationSeconds: number, maxRawScore: number, passScore: number | null, versionNumber: number, sections: Array<{ id: string, sectionType: string, orderNo: number, maxRawScore: number, scoredByCriteria: boolean, timeLimitSeconds: number | null, parts: Array<{ id: string, orderNo: number, title: string, instruction: string | null, content: string | null, audioUrl: string | null, imageUrl: string | null, questionSets: Array<{ id: string, title: string | null, instruction: string | null, orderNo: number, content: string | null, audioUrl: string | null, imageUrl: string | null, questions: Array<{ id: string, questionType: string, content: string, difficultyLevel: string, skillType: string, questionCategory: string | null, orderNo: number, maxRawScore: number, options: Array<{ id: string, content: string, orderNo: number }> }> }> }> }> } };
+export type AttemptPaperQuery = {
+  attemptPaper: {
+    id: string;
+    title: string;
+    description: string;
+    examType: Types.ExamType;
+    certificateType: Types.CertificateType | null;
+    certificateVariant: Types.CertificateVariant | null;
+    targetLevel: Types.TargetLevel | null;
+    durationSeconds: number;
+    maxRawScore: number;
+    passScore: number | null;
+    versionNumber: number;
+    sections: Array<{
+      id: string;
+      sectionType: string;
+      orderNo: number;
+      maxRawScore: number;
+      scoredByCriteria: boolean;
+      timeLimitSeconds: number | null;
+      parts: Array<{
+        id: string;
+        orderNo: number;
+        title: string;
+        instruction: string | null;
+        content: string | null;
+        audioUrl: string | null;
+        imageUrl: string | null;
+        questionSets: Array<{
+          id: string;
+          title: string | null;
+          instruction: string | null;
+          orderNo: number;
+          content: string | null;
+          audioUrl: string | null;
+          imageUrl: string | null;
+          questions: Array<{
+            id: string;
+            questionType: string;
+            content: string;
+            difficultyLevel: string;
+            skillType: string;
+            questionCategory: string | null;
+            orderNo: number;
+            maxRawScore: number;
+            options: Array<{ id: string; content: string; orderNo: number }>;
+          }>;
+        }>;
+      }>;
+    }>;
+  };
+};
 
 export type SubmitExamAttemptMutationVariables = Exact<{
   attemptId: string | number;
   answers: Array<Types.SubmitAnswerInput> | Types.SubmitAnswerInput;
 }>;
 
-
-export type SubmitExamAttemptMutation = { submitExamAttempt: { id: string, examId: string, status: Types.ExamAttemptStatus, startedAt: string, expiresAt: string, submittedAt: string | null, scoredAt: string | null, rawScore: number | null, maxRawScore: number | null, scorePercentage: number | null, correctAnswerCount: number | null, questionCount: number, resumed: boolean, questions: Array<{ questionId: string, selectedOptionIds: Array<string>, correctOptionIds: Array<string>, correct: boolean, awardedRawScore: number, explanation: string | null, options: Array<{ optionId: string, correct: boolean, explanation: string | null }> }> } };
+export type SubmitExamAttemptMutation = {
+  submitExamAttempt: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number | null;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+    questions: Array<{
+      questionId: string;
+      selectedOptionIds: Array<string>;
+      correctOptionIds: Array<string>;
+      correct: boolean;
+      awardedRawScore: number;
+      explanation: string | null;
+      options: Array<{
+        optionId: string;
+        correct: boolean;
+        explanation: string | null;
+      }>;
+    }>;
+  };
+};
 
 export type ExamAttemptResultQueryVariables = Exact<{
   id: string | number;
 }>;
 
-
-export type ExamAttemptResultQuery = { examAttempt: { id: string, examId: string, status: Types.ExamAttemptStatus, startedAt: string, expiresAt: string, submittedAt: string | null, scoredAt: string | null, rawScore: number | null, maxRawScore: number | null, scorePercentage: number | null, correctAnswerCount: number | null, questionCount: number, resumed: boolean, questions: Array<{ questionId: string, selectedOptionIds: Array<string>, correctOptionIds: Array<string>, correct: boolean, awardedRawScore: number, explanation: string | null, options: Array<{ optionId: string, correct: boolean, explanation: string | null }> }> } };
+export type ExamAttemptResultQuery = {
+  examAttempt: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number | null;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+    questions: Array<{
+      questionId: string;
+      selectedOptionIds: Array<string>;
+      correctOptionIds: Array<string>;
+      correct: boolean;
+      awardedRawScore: number;
+      explanation: string | null;
+      options: Array<{
+        optionId: string;
+        correct: boolean;
+        explanation: string | null;
+      }>;
+    }>;
+  };
+};
 
 export type ExamLibraryQueryVariables = Exact<{
   examType?: Types.ExamType | null | undefined;
@@ -87,159 +308,304 @@ export type ExamLibraryQueryVariables = Exact<{
   size?: number | null | undefined;
 }>;
 
-
-export type ExamLibraryQuery = { exams: { page: number, size: number, totalItems: number, totalPages: number, items: Array<{ id: string, title: string, description: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, durationSeconds: number, maxRawScore: number, passScore: number | null, questionCount: number, status: Types.ExamStatus, publishedAt: string | null, bestScore: number | null, attemptStatus: string | null }> } };
+export type ExamLibraryQuery = {
+  exams: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      description: string;
+      examType: Types.ExamType;
+      certificateType: Types.CertificateType | null;
+      certificateVariant: Types.CertificateVariant | null;
+      targetLevel: Types.TargetLevel | null;
+      durationSeconds: number;
+      maxRawScore: number;
+      passScore: number | null;
+      questionCount: number;
+      status: Types.ExamStatus;
+      publishedAt: string | null;
+      bestScore: number | null;
+      attemptStatus: string | null;
+    }>;
+  };
+};
 
 export type ExamDetailQueryVariables = Exact<{
   id: string | number;
 }>;
 
+export type ExamDetailQuery = {
+  exam: {
+    id: string;
+    title: string;
+    description: string;
+    examType: Types.ExamType;
+    certificateType: Types.CertificateType | null;
+    certificateVariant: Types.CertificateVariant | null;
+    targetLevel: Types.TargetLevel | null;
+    durationSeconds: number;
+    maxRawScore: number;
+    passScore: number | null;
+    questionCount: number;
+    status: Types.ExamStatus;
+    publishedAt: string | null;
+    bestScore: number | null;
+    attemptStatus: string | null;
+  } | null;
+};
 
-export type ExamDetailQuery = { exam: { id: string, title: string, description: string, examType: Types.ExamType, certificateType: Types.CertificateType | null, certificateVariant: Types.CertificateVariant | null, targetLevel: Types.TargetLevel | null, durationSeconds: number, maxRawScore: number, passScore: number | null, questionCount: number, status: Types.ExamStatus, publishedAt: string | null, bestScore: number | null, attemptStatus: string | null } | null };
+export type PlacementExamQueryVariables = Exact<{ [key: string]: never }>;
 
-export type LearningPurposesQueryVariables = Exact<{ [key: string]: never; }>;
+export type PlacementExamQuery = {
+  placementExam: {
+    id: string;
+    title: string;
+    description: string;
+    durationSeconds: number;
+    questionCount: number;
+  };
+};
 
+export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
-export type LearningPurposesQuery = { learningPurposes: Array<{ id: number, purposeCode: string, displayName: string }> };
+export type LearningPurposesQuery = {
+  learningPurposes: Array<{
+    id: number;
+    purposeCode: string;
+    displayName: string;
+  }>;
+};
 
-export type OnboardingStateFieldsFragment = { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> };
+export type OnboardingStateFieldsFragment = {
+  learningPurposeIds: Array<number>;
+  certificateLearner: boolean | null;
+  targetCertificateType: string | null;
+  currentLevel: Types.CefrLevel | null;
+  targetScore: number | null;
+  targetDate: string | null;
+  targetSkills: Array<Types.LearningSkill>;
+};
 
 export type SelectLearningPurposesMutationVariables = Exact<{
   purposeIds: Array<number> | number;
 }>;
 
-
-export type SelectLearningPurposesMutation = { selectLearningPurposes: { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } };
+export type SelectLearningPurposesMutation = {
+  selectLearningPurposes: {
+    learningPurposeIds: Array<number>;
+    certificateLearner: boolean | null;
+    targetCertificateType: string | null;
+    currentLevel: Types.CefrLevel | null;
+    targetScore: number | null;
+    targetDate: string | null;
+    targetSkills: Array<Types.LearningSkill>;
+  };
+};
 
 export type SetCertificateTargetMutationVariables = Exact<{
   certificateType: Types.TargetCertificate;
 }>;
 
-
-export type SetCertificateTargetMutation = { setCertificateTarget: { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } };
+export type SetCertificateTargetMutation = {
+  setCertificateTarget: {
+    learningPurposeIds: Array<number>;
+    certificateLearner: boolean | null;
+    targetCertificateType: string | null;
+    currentLevel: Types.CefrLevel | null;
+    targetScore: number | null;
+    targetDate: string | null;
+    targetSkills: Array<Types.LearningSkill>;
+  };
+};
 
 export type SetCurrentLevelMutationVariables = Exact<{
   level: Types.CefrLevel;
 }>;
 
-
-export type SetCurrentLevelMutation = { setCurrentLevel: { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } };
+export type SetCurrentLevelMutation = {
+  setCurrentLevel: {
+    learningPurposeIds: Array<number>;
+    certificateLearner: boolean | null;
+    targetCertificateType: string | null;
+    currentLevel: Types.CefrLevel | null;
+    targetScore: number | null;
+    targetDate: string | null;
+    targetSkills: Array<Types.LearningSkill>;
+  };
+};
 
 export type SetLearningGoalMutationVariables = Exact<{
   input: Types.LearningGoalInput;
 }>;
 
-
-export type SetLearningGoalMutation = { setLearningGoal: { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } };
+export type SetLearningGoalMutation = {
+  setLearningGoal: {
+    learningPurposeIds: Array<number>;
+    certificateLearner: boolean | null;
+    targetCertificateType: string | null;
+    currentLevel: Types.CefrLevel | null;
+    targetScore: number | null;
+    targetDate: string | null;
+    targetSkills: Array<Types.LearningSkill>;
+  };
+};
 
 export type SelectTargetSkillsMutationVariables = Exact<{
   skills: Array<Types.LearningSkill> | Types.LearningSkill;
 }>;
 
+export type SelectTargetSkillsMutation = {
+  selectTargetSkills: {
+    learningPurposeIds: Array<number>;
+    certificateLearner: boolean | null;
+    targetCertificateType: string | null;
+    currentLevel: Types.CefrLevel | null;
+    targetScore: number | null;
+    targetDate: string | null;
+    targetSkills: Array<Types.LearningSkill>;
+  };
+};
 
-export type SelectTargetSkillsMutation = { selectTargetSkills: { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } };
+export type CompleteOnboardingMutationVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type CompleteOnboardingMutationVariables = Exact<{ [key: string]: never; }>;
+export type CompleteOnboardingMutation = {
+  completeOnboarding: {
+    learningPurposeIds: Array<number>;
+    certificateLearner: boolean | null;
+    targetCertificateType: string | null;
+    currentLevel: Types.CefrLevel | null;
+    targetScore: number | null;
+    targetDate: string | null;
+    targetSkills: Array<Types.LearningSkill>;
+  };
+};
 
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
-export type CompleteOnboardingMutation = { completeOnboarding: { learningPurposeIds: Array<number>, certificateLearner: boolean | null, targetCertificateType: string | null, currentLevel: Types.CefrLevel | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } };
-
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CurrentUserQuery = { me: { id: string, email: string, fullName: string, displayName: string, gender: Types.Gender | null, birthDate: string | null, avatarUrl: string | null, bannerUrl: string | null, onboardingStep: Types.OnboardingStep, onboardingState: { certificateLearner: boolean | null, currentLevel: Types.CefrLevel | null, targetCertificateType: string | null, targetScore: number | null, targetDate: string | null, targetSkills: Array<Types.LearningSkill> } | null } };
+export type CurrentUserQuery = {
+  me: {
+    id: string;
+    email: string;
+    fullName: string;
+    displayName: string;
+    gender: Types.Gender | null;
+    birthDate: string | null;
+    avatarUrl: string | null;
+    bannerUrl: string | null;
+    onboardingStep: Types.OnboardingStep;
+    onboardingState: {
+      certificateLearner: boolean | null;
+      currentLevel: Types.CefrLevel | null;
+      targetCertificateType: string | null;
+      targetScore: number | null;
+      targetDate: string | null;
+      targetSkills: Array<Types.LearningSkill>;
+    } | null;
+  };
+};
 
 export const AdminExamFieldsFragmentDoc = gql`
-    fragment AdminExamFields on ExamListItem {
-  id
-  title
-  examType
-  certificateType
-  certificateVariant
-  targetLevel
-  status
-  versionNumber
-  createdByUserId
-  publishedAt
-  createdAt
-}
-    `;
-export const AdminExamShellFieldsFragmentDoc = gql`
-    fragment AdminExamShellFields on Exam {
-  id
-  title
-  status
-  versionNumber
-  publishedAt
-}
-    `;
-export const ExamAttemptFieldsFragmentDoc = gql`
-    fragment ExamAttemptFields on ExamAttempt {
-  id
-  examId
-  status
-  startedAt
-  expiresAt
-  submittedAt
-  scoredAt
-  rawScore
-  maxRawScore
-  scorePercentage
-  correctAnswerCount
-  questionCount
-  resumed
-}
-    `;
-export const AttemptReviewFieldsFragmentDoc = gql`
-    fragment AttemptReviewFields on AttemptQuestionReview {
-  questionId
-  selectedOptionIds
-  correctOptionIds
-  correct
-  awardedRawScore
-  explanation
-  options {
-    optionId
-    correct
-    explanation
-  }
-}
-    `;
-export const OnboardingStateFieldsFragmentDoc = gql`
-    fragment OnboardingStateFields on OnboardingState {
-  learningPurposeIds
-  certificateLearner
-  targetCertificateType
-  currentLevel
-  targetScore
-  targetDate
-  targetSkills
-}
-    `;
-export const UpdateProfileDocument = gql`
-    mutation UpdateProfile($input: UpdateProfileInput!) {
-  updateProfile(input: $input) {
+  fragment AdminExamFields on ExamListItem {
     id
-    email
-    fullName
-    displayName
-    gender
-    birthDate
-    avatarUrl
-    bannerUrl
-    onboardingStep
-    onboardingState {
-      certificateLearner
-      currentLevel
-      targetCertificateType
-      targetScore
-      targetDate
-      targetSkills
+    title
+    examType
+    certificateType
+    certificateVariant
+    targetLevel
+    status
+    versionNumber
+    createdByUserId
+    publishedAt
+    createdAt
+  }
+`;
+export const AdminExamShellFieldsFragmentDoc = gql`
+  fragment AdminExamShellFields on Exam {
+    id
+    title
+    status
+    versionNumber
+    publishedAt
+  }
+`;
+export const ExamAttemptFieldsFragmentDoc = gql`
+  fragment ExamAttemptFields on ExamAttempt {
+    id
+    examId
+    status
+    startedAt
+    expiresAt
+    submittedAt
+    scoredAt
+    rawScore
+    maxRawScore
+    scorePercentage
+    correctAnswerCount
+    questionCount
+    resumed
+  }
+`;
+export const AttemptReviewFieldsFragmentDoc = gql`
+  fragment AttemptReviewFields on AttemptQuestionReview {
+    questionId
+    selectedOptionIds
+    correctOptionIds
+    correct
+    awardedRawScore
+    explanation
+    options {
+      optionId
+      correct
+      explanation
     }
   }
-}
-    `;
-export type UpdateProfileMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) => Promise<any>;
+`;
+export const OnboardingStateFieldsFragmentDoc = gql`
+  fragment OnboardingStateFields on OnboardingState {
+    learningPurposeIds
+    certificateLearner
+    targetCertificateType
+    currentLevel
+    targetScore
+    targetDate
+    targetSkills
+  }
+`;
+export const UpdateProfileDocument = gql`
+  mutation UpdateProfile($input: UpdateProfileInput!) {
+    updateProfile(input: $input) {
+      id
+      email
+      fullName
+      displayName
+      gender
+      birthDate
+      avatarUrl
+      bannerUrl
+      onboardingStep
+      onboardingState {
+        certificateLearner
+        currentLevel
+        targetCertificateType
+        targetScore
+        targetDate
+        targetSkills
+      }
+    }
+  }
+`;
+export type UpdateProfileMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useUpdateProfileMutation__
@@ -258,32 +624,54 @@ export type UpdateProfileMutationFn = (options?: ApolloReactCommon.MutationFunct
  *   },
  * });
  */
-export function useUpdateProfileMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, options);
-      }
-export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
-export type UpdateProfileMutationResult = ApolloReactCommon.MutationResult<UpdateProfileMutation>;
-export type UpdateProfileMutationOptions = ApolloReactCommon.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
-export const AdminExamsDocument = gql`
-    query AdminExams($status: ExamStatus, $examType: ExamType, $title: String, $page: Int, $size: Int) {
-  adminExams(
-    status: $status
-    examType: $examType
-    title: $title
-    page: $page
-    size: $size
-  ) {
-    items {
-      ...AdminExamFields
-    }
-    page
-    size
-    totalItems
-    totalPages
-  }
+export function useUpdateProfileMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >(UpdateProfileDocument, options);
 }
-    ${AdminExamFieldsFragmentDoc}`;
+export type UpdateProfileMutationHookResult = ReturnType<
+  typeof useUpdateProfileMutation
+>;
+export type UpdateProfileMutationResult =
+  ApolloReactCommon.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >;
+export const AdminExamsDocument = gql`
+  query AdminExams(
+    $status: ExamStatus
+    $examType: ExamType
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    adminExams(
+      status: $status
+      examType: $examType
+      title: $title
+      page: $page
+      size: $size
+    ) {
+      items {
+        ...AdminExamFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${AdminExamFieldsFragmentDoc}
+`;
 
 /**
  * __useAdminExamsQuery__
@@ -305,33 +693,93 @@ export const AdminExamsDocument = gql`
  *   },
  * });
  */
-export function useAdminExamsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<AdminExamsQuery, AdminExamsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<AdminExamsQuery, AdminExamsQueryVariables>(AdminExamsDocument, options);
-      }
-export function useAdminExamsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AdminExamsQuery, AdminExamsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<AdminExamsQuery, AdminExamsQueryVariables>(AdminExamsDocument, options);
-        }
-export function useAdminExamsSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<AdminExamsQuery, AdminExamsQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<AdminExamsQuery, AdminExamsQueryVariables>;
-// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useAdminExamsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<AdminExamsQuery, AdminExamsQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<AdminExamsQuery | undefined, AdminExamsQueryVariables>;
-export function useAdminExamsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<AdminExamsQuery, AdminExamsQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<AdminExamsQuery, AdminExamsQueryVariables>(AdminExamsDocument, options as any);
-        }
-export type AdminExamsQueryHookResult = ReturnType<typeof useAdminExamsQuery>;
-export type AdminExamsLazyQueryHookResult = ReturnType<typeof useAdminExamsLazyQuery>;
-export type AdminExamsSuspenseQueryHookResult = ReturnType<typeof useAdminExamsSuspenseQuery>;
-export type AdminExamsQueryResult = ApolloReactCommon.QueryResult<AdminExamsQuery, AdminExamsQueryVariables>;
-export const PublishExamDocument = gql`
-    mutation PublishExam($id: ID!) {
-  publishExam(id: $id) {
-    ...AdminExamShellFields
-  }
+export function useAdminExamsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminExamsQuery,
+    AdminExamsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<AdminExamsQuery, AdminExamsQueryVariables>(
+    AdminExamsDocument,
+    options,
+  );
 }
-    ${AdminExamShellFieldsFragmentDoc}`;
-export type PublishExamMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<PublishExamMutation, PublishExamMutationVariables>) => Promise<any>;
+export function useAdminExamsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminExamsQuery,
+    AdminExamsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminExamsQuery,
+    AdminExamsQueryVariables
+  >(AdminExamsDocument, options);
+}
+export function useAdminExamsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminExamsQuery,
+    AdminExamsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminExamsQuery,
+  AdminExamsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminExamsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminExamsQuery,
+        AdminExamsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminExamsQuery | undefined,
+  AdminExamsQueryVariables
+>;
+export function useAdminExamsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminExamsQuery,
+        AdminExamsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminExamsQuery,
+    AdminExamsQueryVariables
+  >(AdminExamsDocument, options as any);
+}
+export type AdminExamsQueryHookResult = ReturnType<typeof useAdminExamsQuery>;
+export type AdminExamsLazyQueryHookResult = ReturnType<
+  typeof useAdminExamsLazyQuery
+>;
+export type AdminExamsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminExamsSuspenseQuery
+>;
+export type AdminExamsQueryResult = ApolloReactCommon.QueryResult<
+  AdminExamsQuery,
+  AdminExamsQueryVariables
+>;
+export const PublishExamDocument = gql`
+  mutation PublishExam($id: ID!) {
+    publishExam(id: $id) {
+      ...AdminExamShellFields
+    }
+  }
+  ${AdminExamShellFieldsFragmentDoc}
+`;
+export type PublishExamMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    PublishExamMutation,
+    PublishExamMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __usePublishExamMutation__
@@ -350,21 +798,41 @@ export type PublishExamMutationFn = (options?: ApolloReactCommon.MutationFunctio
  *   },
  * });
  */
-export function usePublishExamMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<PublishExamMutation, PublishExamMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<PublishExamMutation, PublishExamMutationVariables>(PublishExamDocument, options);
-      }
-export type PublishExamMutationHookResult = ReturnType<typeof usePublishExamMutation>;
-export type PublishExamMutationResult = ApolloReactCommon.MutationResult<PublishExamMutation>;
-export type PublishExamMutationOptions = ApolloReactCommon.MutationHookOptions<PublishExamMutation, PublishExamMutationVariables>;
-export const ArchiveExamDocument = gql`
-    mutation ArchiveExam($id: ID!) {
-  archiveExam(id: $id) {
-    ...AdminExamShellFields
-  }
+export function usePublishExamMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    PublishExamMutation,
+    PublishExamMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    PublishExamMutation,
+    PublishExamMutationVariables
+  >(PublishExamDocument, options);
 }
-    ${AdminExamShellFieldsFragmentDoc}`;
-export type ArchiveExamMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<ArchiveExamMutation, ArchiveExamMutationVariables>) => Promise<any>;
+export type PublishExamMutationHookResult = ReturnType<
+  typeof usePublishExamMutation
+>;
+export type PublishExamMutationResult =
+  ApolloReactCommon.MutationResult<PublishExamMutation>;
+export type PublishExamMutationOptions = ApolloReactCommon.MutationHookOptions<
+  PublishExamMutation,
+  PublishExamMutationVariables
+>;
+export const ArchiveExamDocument = gql`
+  mutation ArchiveExam($id: ID!) {
+    archiveExam(id: $id) {
+      ...AdminExamShellFields
+    }
+  }
+  ${AdminExamShellFieldsFragmentDoc}
+`;
+export type ArchiveExamMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ArchiveExamMutation,
+    ArchiveExamMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useArchiveExamMutation__
@@ -383,21 +851,41 @@ export type ArchiveExamMutationFn = (options?: ApolloReactCommon.MutationFunctio
  *   },
  * });
  */
-export function useArchiveExamMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ArchiveExamMutation, ArchiveExamMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<ArchiveExamMutation, ArchiveExamMutationVariables>(ArchiveExamDocument, options);
-      }
-export type ArchiveExamMutationHookResult = ReturnType<typeof useArchiveExamMutation>;
-export type ArchiveExamMutationResult = ApolloReactCommon.MutationResult<ArchiveExamMutation>;
-export type ArchiveExamMutationOptions = ApolloReactCommon.MutationHookOptions<ArchiveExamMutation, ArchiveExamMutationVariables>;
-export const StartExamAttemptDocument = gql`
-    mutation StartExamAttempt($examId: ID!) {
-  startExamAttempt(examId: $examId) {
-    ...ExamAttemptFields
-  }
+export function useArchiveExamMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ArchiveExamMutation,
+    ArchiveExamMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ArchiveExamMutation,
+    ArchiveExamMutationVariables
+  >(ArchiveExamDocument, options);
 }
-    ${ExamAttemptFieldsFragmentDoc}`;
-export type StartExamAttemptMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<StartExamAttemptMutation, StartExamAttemptMutationVariables>) => Promise<any>;
+export type ArchiveExamMutationHookResult = ReturnType<
+  typeof useArchiveExamMutation
+>;
+export type ArchiveExamMutationResult =
+  ApolloReactCommon.MutationResult<ArchiveExamMutation>;
+export type ArchiveExamMutationOptions = ApolloReactCommon.MutationHookOptions<
+  ArchiveExamMutation,
+  ArchiveExamMutationVariables
+>;
+export const StartExamAttemptDocument = gql`
+  mutation StartExamAttempt($examId: ID!) {
+    startExamAttempt(examId: $examId) {
+      ...ExamAttemptFields
+    }
+  }
+  ${ExamAttemptFieldsFragmentDoc}
+`;
+export type StartExamAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartExamAttemptMutation,
+    StartExamAttemptMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useStartExamAttemptMutation__
@@ -416,71 +904,86 @@ export type StartExamAttemptMutationFn = (options?: ApolloReactCommon.MutationFu
  *   },
  * });
  */
-export function useStartExamAttemptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<StartExamAttemptMutation, StartExamAttemptMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<StartExamAttemptMutation, StartExamAttemptMutationVariables>(StartExamAttemptDocument, options);
-      }
-export type StartExamAttemptMutationHookResult = ReturnType<typeof useStartExamAttemptMutation>;
-export type StartExamAttemptMutationResult = ApolloReactCommon.MutationResult<StartExamAttemptMutation>;
-export type StartExamAttemptMutationOptions = ApolloReactCommon.MutationHookOptions<StartExamAttemptMutation, StartExamAttemptMutationVariables>;
+export function useStartExamAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartExamAttemptMutation,
+    StartExamAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartExamAttemptMutation,
+    StartExamAttemptMutationVariables
+  >(StartExamAttemptDocument, options);
+}
+export type StartExamAttemptMutationHookResult = ReturnType<
+  typeof useStartExamAttemptMutation
+>;
+export type StartExamAttemptMutationResult =
+  ApolloReactCommon.MutationResult<StartExamAttemptMutation>;
+export type StartExamAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartExamAttemptMutation,
+    StartExamAttemptMutationVariables
+  >;
 export const AttemptPaperDocument = gql`
-    query AttemptPaper($attemptId: ID!) {
-  attemptPaper(attemptId: $attemptId) {
-    id
-    title
-    description
-    examType
-    certificateType
-    certificateVariant
-    targetLevel
-    durationSeconds
-    maxRawScore
-    passScore
-    versionNumber
-    sections {
+  query AttemptPaper($attemptId: ID!) {
+    attemptPaper(attemptId: $attemptId) {
       id
-      sectionType
-      orderNo
+      title
+      description
+      examType
+      certificateType
+      certificateVariant
+      targetLevel
+      durationSeconds
       maxRawScore
-      scoredByCriteria
-      timeLimitSeconds
-      parts {
+      passScore
+      versionNumber
+      sections {
         id
+        sectionType
         orderNo
-        title
-        instruction
-        content
-        audioUrl
-        imageUrl
-        questionSets {
+        maxRawScore
+        scoredByCriteria
+        timeLimitSeconds
+        parts {
           id
+          orderNo
           title
           instruction
-          orderNo
           content
           audioUrl
           imageUrl
-          questions {
+          questionSets {
             id
-            questionType
-            content
-            difficultyLevel
-            skillType
-            questionCategory
+            title
+            instruction
             orderNo
-            maxRawScore
-            options {
+            content
+            audioUrl
+            imageUrl
+            questions {
               id
+              questionType
               content
+              difficultyLevel
+              skillType
+              questionCategory
               orderNo
+              maxRawScore
+              options {
+                id
+                content
+                orderNo
+              }
             }
           }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useAttemptPaperQuery__
@@ -498,37 +1001,103 @@ export const AttemptPaperDocument = gql`
  *   },
  * });
  */
-export function useAttemptPaperQuery(baseOptions: ApolloReactHooks.QueryHookOptions<AttemptPaperQuery, AttemptPaperQueryVariables> & ({ variables: AttemptPaperQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<AttemptPaperQuery, AttemptPaperQueryVariables>(AttemptPaperDocument, options);
-      }
-export function useAttemptPaperLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AttemptPaperQuery, AttemptPaperQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<AttemptPaperQuery, AttemptPaperQueryVariables>(AttemptPaperDocument, options);
-        }
-export function useAttemptPaperSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<AttemptPaperQuery, AttemptPaperQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<AttemptPaperQuery, AttemptPaperQueryVariables>;
+export function useAttemptPaperQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AttemptPaperQuery,
+    AttemptPaperQueryVariables
+  > &
+    (
+      | { variables: AttemptPaperQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AttemptPaperQuery,
+    AttemptPaperQueryVariables
+  >(AttemptPaperDocument, options);
+}
+export function useAttemptPaperLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AttemptPaperQuery,
+    AttemptPaperQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AttemptPaperQuery,
+    AttemptPaperQueryVariables
+  >(AttemptPaperDocument, options);
+}
+export function useAttemptPaperSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AttemptPaperQuery,
+    AttemptPaperQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AttemptPaperQuery,
+  AttemptPaperQueryVariables
+>;
 // @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useAttemptPaperSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<AttemptPaperQuery, AttemptPaperQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<AttemptPaperQuery | undefined, AttemptPaperQueryVariables>;
-export function useAttemptPaperSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<AttemptPaperQuery, AttemptPaperQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<AttemptPaperQuery, AttemptPaperQueryVariables>(AttemptPaperDocument, options as any);
-        }
-export type AttemptPaperQueryHookResult = ReturnType<typeof useAttemptPaperQuery>;
-export type AttemptPaperLazyQueryHookResult = ReturnType<typeof useAttemptPaperLazyQuery>;
-export type AttemptPaperSuspenseQueryHookResult = ReturnType<typeof useAttemptPaperSuspenseQuery>;
-export type AttemptPaperQueryResult = ApolloReactCommon.QueryResult<AttemptPaperQuery, AttemptPaperQueryVariables>;
+export function useAttemptPaperSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AttemptPaperQuery,
+        AttemptPaperQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AttemptPaperQuery | undefined,
+  AttemptPaperQueryVariables
+>;
+export function useAttemptPaperSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AttemptPaperQuery,
+        AttemptPaperQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AttemptPaperQuery,
+    AttemptPaperQueryVariables
+  >(AttemptPaperDocument, options as any);
+}
+export type AttemptPaperQueryHookResult = ReturnType<
+  typeof useAttemptPaperQuery
+>;
+export type AttemptPaperLazyQueryHookResult = ReturnType<
+  typeof useAttemptPaperLazyQuery
+>;
+export type AttemptPaperSuspenseQueryHookResult = ReturnType<
+  typeof useAttemptPaperSuspenseQuery
+>;
+export type AttemptPaperQueryResult = ApolloReactCommon.QueryResult<
+  AttemptPaperQuery,
+  AttemptPaperQueryVariables
+>;
 export const SubmitExamAttemptDocument = gql`
-    mutation SubmitExamAttempt($attemptId: ID!, $answers: [SubmitAnswerInput!]!) {
-  submitExamAttempt(attemptId: $attemptId, answers: $answers) {
-    ...ExamAttemptFields
-    questions {
-      ...AttemptReviewFields
+  mutation SubmitExamAttempt($attemptId: ID!, $answers: [SubmitAnswerInput!]!) {
+    submitExamAttempt(attemptId: $attemptId, answers: $answers) {
+      ...ExamAttemptFields
+      questions {
+        ...AttemptReviewFields
+      }
     }
   }
-}
-    ${ExamAttemptFieldsFragmentDoc}
-${AttemptReviewFieldsFragmentDoc}`;
-export type SubmitExamAttemptMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<SubmitExamAttemptMutation, SubmitExamAttemptMutationVariables>) => Promise<any>;
+  ${ExamAttemptFieldsFragmentDoc}
+  ${AttemptReviewFieldsFragmentDoc}
+`;
+export type SubmitExamAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitExamAttemptMutation,
+    SubmitExamAttemptMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useSubmitExamAttemptMutation__
@@ -548,24 +1117,40 @@ export type SubmitExamAttemptMutationFn = (options?: ApolloReactCommon.MutationF
  *   },
  * });
  */
-export function useSubmitExamAttemptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SubmitExamAttemptMutation, SubmitExamAttemptMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SubmitExamAttemptMutation, SubmitExamAttemptMutationVariables>(SubmitExamAttemptDocument, options);
-      }
-export type SubmitExamAttemptMutationHookResult = ReturnType<typeof useSubmitExamAttemptMutation>;
-export type SubmitExamAttemptMutationResult = ApolloReactCommon.MutationResult<SubmitExamAttemptMutation>;
-export type SubmitExamAttemptMutationOptions = ApolloReactCommon.MutationHookOptions<SubmitExamAttemptMutation, SubmitExamAttemptMutationVariables>;
+export function useSubmitExamAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitExamAttemptMutation,
+    SubmitExamAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitExamAttemptMutation,
+    SubmitExamAttemptMutationVariables
+  >(SubmitExamAttemptDocument, options);
+}
+export type SubmitExamAttemptMutationHookResult = ReturnType<
+  typeof useSubmitExamAttemptMutation
+>;
+export type SubmitExamAttemptMutationResult =
+  ApolloReactCommon.MutationResult<SubmitExamAttemptMutation>;
+export type SubmitExamAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitExamAttemptMutation,
+    SubmitExamAttemptMutationVariables
+  >;
 export const ExamAttemptResultDocument = gql`
-    query ExamAttemptResult($id: ID!) {
-  examAttempt(id: $id) {
-    ...ExamAttemptFields
-    questions {
-      ...AttemptReviewFields
+  query ExamAttemptResult($id: ID!) {
+    examAttempt(id: $id) {
+      ...ExamAttemptFields
+      questions {
+        ...AttemptReviewFields
+      }
     }
   }
-}
-    ${ExamAttemptFieldsFragmentDoc}
-${AttemptReviewFieldsFragmentDoc}`;
+  ${ExamAttemptFieldsFragmentDoc}
+  ${AttemptReviewFieldsFragmentDoc}
+`;
 
 /**
  * __useExamAttemptResultQuery__
@@ -583,60 +1168,128 @@ ${AttemptReviewFieldsFragmentDoc}`;
  *   },
  * });
  */
-export function useExamAttemptResultQuery(baseOptions: ApolloReactHooks.QueryHookOptions<ExamAttemptResultQuery, ExamAttemptResultQueryVariables> & ({ variables: ExamAttemptResultQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>(ExamAttemptResultDocument, options);
-      }
-export function useExamAttemptResultLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>(ExamAttemptResultDocument, options);
-        }
-export function useExamAttemptResultSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>;
-// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useExamAttemptResultSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<ExamAttemptResultQuery | undefined, ExamAttemptResultQueryVariables>;
-export function useExamAttemptResultSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>(ExamAttemptResultDocument, options as any);
-        }
-export type ExamAttemptResultQueryHookResult = ReturnType<typeof useExamAttemptResultQuery>;
-export type ExamAttemptResultLazyQueryHookResult = ReturnType<typeof useExamAttemptResultLazyQuery>;
-export type ExamAttemptResultSuspenseQueryHookResult = ReturnType<typeof useExamAttemptResultSuspenseQuery>;
-export type ExamAttemptResultQueryResult = ApolloReactCommon.QueryResult<ExamAttemptResultQuery, ExamAttemptResultQueryVariables>;
-export const ExamLibraryDocument = gql`
-    query ExamLibrary($examType: ExamType, $certificateType: CertificateType, $certificateVariant: CertificateVariant, $targetLevel: TargetLevel, $title: String, $page: Int, $size: Int) {
-  exams(
-    examType: $examType
-    certificateType: $certificateType
-    certificateVariant: $certificateVariant
-    targetLevel: $targetLevel
-    title: $title
-    page: $page
-    size: $size
-  ) {
-    items {
-      id
-      title
-      description
-      examType
-      certificateType
-      certificateVariant
-      targetLevel
-      durationSeconds
-      maxRawScore
-      passScore
-      questionCount
-      status
-      publishedAt
-      bestScore
-      attemptStatus
-    }
-    page
-    size
-    totalItems
-    totalPages
-  }
+export function useExamAttemptResultQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ExamAttemptResultQuery,
+    ExamAttemptResultQueryVariables
+  > &
+    (
+      | { variables: ExamAttemptResultQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ExamAttemptResultQuery,
+    ExamAttemptResultQueryVariables
+  >(ExamAttemptResultDocument, options);
 }
-    `;
+export function useExamAttemptResultLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamAttemptResultQuery,
+    ExamAttemptResultQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ExamAttemptResultQuery,
+    ExamAttemptResultQueryVariables
+  >(ExamAttemptResultDocument, options);
+}
+export function useExamAttemptResultSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamAttemptResultQuery,
+    ExamAttemptResultQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamAttemptResultQuery,
+  ExamAttemptResultQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamAttemptResultSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamAttemptResultQuery,
+        ExamAttemptResultQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamAttemptResultQuery | undefined,
+  ExamAttemptResultQueryVariables
+>;
+export function useExamAttemptResultSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamAttemptResultQuery,
+        ExamAttemptResultQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamAttemptResultQuery,
+    ExamAttemptResultQueryVariables
+  >(ExamAttemptResultDocument, options as any);
+}
+export type ExamAttemptResultQueryHookResult = ReturnType<
+  typeof useExamAttemptResultQuery
+>;
+export type ExamAttemptResultLazyQueryHookResult = ReturnType<
+  typeof useExamAttemptResultLazyQuery
+>;
+export type ExamAttemptResultSuspenseQueryHookResult = ReturnType<
+  typeof useExamAttemptResultSuspenseQuery
+>;
+export type ExamAttemptResultQueryResult = ApolloReactCommon.QueryResult<
+  ExamAttemptResultQuery,
+  ExamAttemptResultQueryVariables
+>;
+export const ExamLibraryDocument = gql`
+  query ExamLibrary(
+    $examType: ExamType
+    $certificateType: CertificateType
+    $certificateVariant: CertificateVariant
+    $targetLevel: TargetLevel
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    exams(
+      examType: $examType
+      certificateType: $certificateType
+      certificateVariant: $certificateVariant
+      targetLevel: $targetLevel
+      title: $title
+      page: $page
+      size: $size
+    ) {
+      items {
+        id
+        title
+        description
+        examType
+        certificateType
+        certificateVariant
+        targetLevel
+        durationSeconds
+        maxRawScore
+        passScore
+        questionCount
+        status
+        publishedAt
+        bestScore
+        attemptStatus
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+`;
 
 /**
  * __useExamLibraryQuery__
@@ -660,46 +1313,100 @@ export const ExamLibraryDocument = gql`
  *   },
  * });
  */
-export function useExamLibraryQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ExamLibraryQuery, ExamLibraryQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<ExamLibraryQuery, ExamLibraryQueryVariables>(ExamLibraryDocument, options);
-      }
-export function useExamLibraryLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ExamLibraryQuery, ExamLibraryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<ExamLibraryQuery, ExamLibraryQueryVariables>(ExamLibraryDocument, options);
-        }
-export function useExamLibrarySuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<ExamLibraryQuery, ExamLibraryQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<ExamLibraryQuery, ExamLibraryQueryVariables>;
-// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useExamLibrarySuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ExamLibraryQuery, ExamLibraryQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<ExamLibraryQuery | undefined, ExamLibraryQueryVariables>;
-export function useExamLibrarySuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ExamLibraryQuery, ExamLibraryQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<ExamLibraryQuery, ExamLibraryQueryVariables>(ExamLibraryDocument, options as any);
-        }
-export type ExamLibraryQueryHookResult = ReturnType<typeof useExamLibraryQuery>;
-export type ExamLibraryLazyQueryHookResult = ReturnType<typeof useExamLibraryLazyQuery>;
-export type ExamLibrarySuspenseQueryHookResult = ReturnType<typeof useExamLibrarySuspenseQuery>;
-export type ExamLibraryQueryResult = ApolloReactCommon.QueryResult<ExamLibraryQuery, ExamLibraryQueryVariables>;
-export const ExamDetailDocument = gql`
-    query ExamDetail($id: ID!) {
-  exam(id: $id) {
-    id
-    title
-    description
-    examType
-    certificateType
-    certificateVariant
-    targetLevel
-    durationSeconds
-    maxRawScore
-    passScore
-    questionCount
-    status
-    publishedAt
-    bestScore
-    attemptStatus
-  }
+export function useExamLibraryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<ExamLibraryQuery, ExamLibraryQueryVariables>(
+    ExamLibraryDocument,
+    options,
+  );
 }
-    `;
+export function useExamLibraryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >(ExamLibraryDocument, options);
+}
+export function useExamLibrarySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamLibraryQuery,
+  ExamLibraryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamLibrarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamLibraryQuery,
+        ExamLibraryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamLibraryQuery | undefined,
+  ExamLibraryQueryVariables
+>;
+export function useExamLibrarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamLibraryQuery,
+        ExamLibraryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamLibraryQuery,
+    ExamLibraryQueryVariables
+  >(ExamLibraryDocument, options as any);
+}
+export type ExamLibraryQueryHookResult = ReturnType<typeof useExamLibraryQuery>;
+export type ExamLibraryLazyQueryHookResult = ReturnType<
+  typeof useExamLibraryLazyQuery
+>;
+export type ExamLibrarySuspenseQueryHookResult = ReturnType<
+  typeof useExamLibrarySuspenseQuery
+>;
+export type ExamLibraryQueryResult = ApolloReactCommon.QueryResult<
+  ExamLibraryQuery,
+  ExamLibraryQueryVariables
+>;
+export const ExamDetailDocument = gql`
+  query ExamDetail($id: ID!) {
+    exam(id: $id) {
+      id
+      title
+      description
+      examType
+      certificateType
+      certificateVariant
+      targetLevel
+      durationSeconds
+      maxRawScore
+      passScore
+      questionCount
+      status
+      publishedAt
+      bestScore
+      attemptStatus
+    }
+  }
+`;
 
 /**
  * __useExamDetailQuery__
@@ -717,34 +1424,194 @@ export const ExamDetailDocument = gql`
  *   },
  * });
  */
-export function useExamDetailQuery(baseOptions: ApolloReactHooks.QueryHookOptions<ExamDetailQuery, ExamDetailQueryVariables> & ({ variables: ExamDetailQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<ExamDetailQuery, ExamDetailQueryVariables>(ExamDetailDocument, options);
-      }
-export function useExamDetailLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ExamDetailQuery, ExamDetailQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<ExamDetailQuery, ExamDetailQueryVariables>(ExamDetailDocument, options);
-        }
-export function useExamDetailSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<ExamDetailQuery, ExamDetailQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<ExamDetailQuery, ExamDetailQueryVariables>;
-// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useExamDetailSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ExamDetailQuery, ExamDetailQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<ExamDetailQuery | undefined, ExamDetailQueryVariables>;
-export function useExamDetailSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ExamDetailQuery, ExamDetailQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<ExamDetailQuery, ExamDetailQueryVariables>(ExamDetailDocument, options as any);
-        }
-export type ExamDetailQueryHookResult = ReturnType<typeof useExamDetailQuery>;
-export type ExamDetailLazyQueryHookResult = ReturnType<typeof useExamDetailLazyQuery>;
-export type ExamDetailSuspenseQueryHookResult = ReturnType<typeof useExamDetailSuspenseQuery>;
-export type ExamDetailQueryResult = ApolloReactCommon.QueryResult<ExamDetailQuery, ExamDetailQueryVariables>;
-export const LearningPurposesDocument = gql`
-    query LearningPurposes {
-  learningPurposes {
-    id
-    purposeCode
-    displayName
-  }
+export function useExamDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ExamDetailQuery,
+    ExamDetailQueryVariables
+  > &
+    (
+      | { variables: ExamDetailQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<ExamDetailQuery, ExamDetailQueryVariables>(
+    ExamDetailDocument,
+    options,
+  );
 }
-    `;
+export function useExamDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamDetailQuery,
+    ExamDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ExamDetailQuery,
+    ExamDetailQueryVariables
+  >(ExamDetailDocument, options);
+}
+export function useExamDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamDetailQuery,
+    ExamDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamDetailQuery,
+  ExamDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamDetailQuery,
+        ExamDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamDetailQuery | undefined,
+  ExamDetailQueryVariables
+>;
+export function useExamDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamDetailQuery,
+        ExamDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamDetailQuery,
+    ExamDetailQueryVariables
+  >(ExamDetailDocument, options as any);
+}
+export type ExamDetailQueryHookResult = ReturnType<typeof useExamDetailQuery>;
+export type ExamDetailLazyQueryHookResult = ReturnType<
+  typeof useExamDetailLazyQuery
+>;
+export type ExamDetailSuspenseQueryHookResult = ReturnType<
+  typeof useExamDetailSuspenseQuery
+>;
+export type ExamDetailQueryResult = ApolloReactCommon.QueryResult<
+  ExamDetailQuery,
+  ExamDetailQueryVariables
+>;
+export const PlacementExamDocument = gql`
+  query PlacementExam {
+    placementExam {
+      id
+      title
+      description
+      durationSeconds
+      questionCount
+    }
+  }
+`;
+
+/**
+ * __usePlacementExamQuery__
+ *
+ * To run a query within a React component, call `usePlacementExamQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlacementExamQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlacementExamQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePlacementExamQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    PlacementExamQuery,
+    PlacementExamQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    PlacementExamQuery,
+    PlacementExamQueryVariables
+  >(PlacementExamDocument, options);
+}
+export function usePlacementExamLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PlacementExamQuery,
+    PlacementExamQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    PlacementExamQuery,
+    PlacementExamQueryVariables
+  >(PlacementExamDocument, options);
+}
+export function usePlacementExamSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    PlacementExamQuery,
+    PlacementExamQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  PlacementExamQuery,
+  PlacementExamQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function usePlacementExamSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PlacementExamQuery,
+        PlacementExamQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  PlacementExamQuery | undefined,
+  PlacementExamQueryVariables
+>;
+export function usePlacementExamSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PlacementExamQuery,
+        PlacementExamQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    PlacementExamQuery,
+    PlacementExamQueryVariables
+  >(PlacementExamDocument, options as any);
+}
+export type PlacementExamQueryHookResult = ReturnType<
+  typeof usePlacementExamQuery
+>;
+export type PlacementExamLazyQueryHookResult = ReturnType<
+  typeof usePlacementExamLazyQuery
+>;
+export type PlacementExamSuspenseQueryHookResult = ReturnType<
+  typeof usePlacementExamSuspenseQuery
+>;
+export type PlacementExamQueryResult = ApolloReactCommon.QueryResult<
+  PlacementExamQuery,
+  PlacementExamQueryVariables
+>;
+export const LearningPurposesDocument = gql`
+  query LearningPurposes {
+    learningPurposes {
+      id
+      purposeCode
+      displayName
+    }
+  }
+`;
 
 /**
  * __useLearningPurposesQuery__
@@ -761,33 +1628,95 @@ export const LearningPurposesDocument = gql`
  *   },
  * });
  */
-export function useLearningPurposesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LearningPurposesQuery, LearningPurposesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<LearningPurposesQuery, LearningPurposesQueryVariables>(LearningPurposesDocument, options);
-      }
-export function useLearningPurposesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LearningPurposesQuery, LearningPurposesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<LearningPurposesQuery, LearningPurposesQueryVariables>(LearningPurposesDocument, options);
-        }
-export function useLearningPurposesSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<LearningPurposesQuery, LearningPurposesQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<LearningPurposesQuery, LearningPurposesQueryVariables>;
-// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useLearningPurposesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<LearningPurposesQuery, LearningPurposesQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<LearningPurposesQuery | undefined, LearningPurposesQueryVariables>;
-export function useLearningPurposesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<LearningPurposesQuery, LearningPurposesQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<LearningPurposesQuery, LearningPurposesQueryVariables>(LearningPurposesDocument, options as any);
-        }
-export type LearningPurposesQueryHookResult = ReturnType<typeof useLearningPurposesQuery>;
-export type LearningPurposesLazyQueryHookResult = ReturnType<typeof useLearningPurposesLazyQuery>;
-export type LearningPurposesSuspenseQueryHookResult = ReturnType<typeof useLearningPurposesSuspenseQuery>;
-export type LearningPurposesQueryResult = ApolloReactCommon.QueryResult<LearningPurposesQuery, LearningPurposesQueryVariables>;
-export const SelectLearningPurposesDocument = gql`
-    mutation SelectLearningPurposes($purposeIds: [Int!]!) {
-  selectLearningPurposes(purposeIds: $purposeIds) {
-    ...OnboardingStateFields
-  }
+export function useLearningPurposesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >(LearningPurposesDocument, options);
 }
-    ${OnboardingStateFieldsFragmentDoc}`;
-export type SelectLearningPurposesMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<SelectLearningPurposesMutation, SelectLearningPurposesMutationVariables>) => Promise<any>;
+export function useLearningPurposesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >(LearningPurposesDocument, options);
+}
+export function useLearningPurposesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LearningPurposesQuery,
+  LearningPurposesQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useLearningPurposesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LearningPurposesQuery,
+        LearningPurposesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LearningPurposesQuery | undefined,
+  LearningPurposesQueryVariables
+>;
+export function useLearningPurposesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LearningPurposesQuery,
+        LearningPurposesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    LearningPurposesQuery,
+    LearningPurposesQueryVariables
+  >(LearningPurposesDocument, options as any);
+}
+export type LearningPurposesQueryHookResult = ReturnType<
+  typeof useLearningPurposesQuery
+>;
+export type LearningPurposesLazyQueryHookResult = ReturnType<
+  typeof useLearningPurposesLazyQuery
+>;
+export type LearningPurposesSuspenseQueryHookResult = ReturnType<
+  typeof useLearningPurposesSuspenseQuery
+>;
+export type LearningPurposesQueryResult = ApolloReactCommon.QueryResult<
+  LearningPurposesQuery,
+  LearningPurposesQueryVariables
+>;
+export const SelectLearningPurposesDocument = gql`
+  mutation SelectLearningPurposes($purposeIds: [Int!]!) {
+    selectLearningPurposes(purposeIds: $purposeIds) {
+      ...OnboardingStateFields
+    }
+  }
+  ${OnboardingStateFieldsFragmentDoc}
+`;
+export type SelectLearningPurposesMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SelectLearningPurposesMutation,
+    SelectLearningPurposesMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useSelectLearningPurposesMutation__
@@ -806,21 +1735,42 @@ export type SelectLearningPurposesMutationFn = (options?: ApolloReactCommon.Muta
  *   },
  * });
  */
-export function useSelectLearningPurposesMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SelectLearningPurposesMutation, SelectLearningPurposesMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SelectLearningPurposesMutation, SelectLearningPurposesMutationVariables>(SelectLearningPurposesDocument, options);
-      }
-export type SelectLearningPurposesMutationHookResult = ReturnType<typeof useSelectLearningPurposesMutation>;
-export type SelectLearningPurposesMutationResult = ApolloReactCommon.MutationResult<SelectLearningPurposesMutation>;
-export type SelectLearningPurposesMutationOptions = ApolloReactCommon.MutationHookOptions<SelectLearningPurposesMutation, SelectLearningPurposesMutationVariables>;
-export const SetCertificateTargetDocument = gql`
-    mutation SetCertificateTarget($certificateType: TargetCertificate!) {
-  setCertificateTarget(certificateType: $certificateType) {
-    ...OnboardingStateFields
-  }
+export function useSelectLearningPurposesMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SelectLearningPurposesMutation,
+    SelectLearningPurposesMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SelectLearningPurposesMutation,
+    SelectLearningPurposesMutationVariables
+  >(SelectLearningPurposesDocument, options);
 }
-    ${OnboardingStateFieldsFragmentDoc}`;
-export type SetCertificateTargetMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<SetCertificateTargetMutation, SetCertificateTargetMutationVariables>) => Promise<any>;
+export type SelectLearningPurposesMutationHookResult = ReturnType<
+  typeof useSelectLearningPurposesMutation
+>;
+export type SelectLearningPurposesMutationResult =
+  ApolloReactCommon.MutationResult<SelectLearningPurposesMutation>;
+export type SelectLearningPurposesMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SelectLearningPurposesMutation,
+    SelectLearningPurposesMutationVariables
+  >;
+export const SetCertificateTargetDocument = gql`
+  mutation SetCertificateTarget($certificateType: TargetCertificate!) {
+    setCertificateTarget(certificateType: $certificateType) {
+      ...OnboardingStateFields
+    }
+  }
+  ${OnboardingStateFieldsFragmentDoc}
+`;
+export type SetCertificateTargetMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SetCertificateTargetMutation,
+    SetCertificateTargetMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useSetCertificateTargetMutation__
@@ -839,21 +1789,42 @@ export type SetCertificateTargetMutationFn = (options?: ApolloReactCommon.Mutati
  *   },
  * });
  */
-export function useSetCertificateTargetMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetCertificateTargetMutation, SetCertificateTargetMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SetCertificateTargetMutation, SetCertificateTargetMutationVariables>(SetCertificateTargetDocument, options);
-      }
-export type SetCertificateTargetMutationHookResult = ReturnType<typeof useSetCertificateTargetMutation>;
-export type SetCertificateTargetMutationResult = ApolloReactCommon.MutationResult<SetCertificateTargetMutation>;
-export type SetCertificateTargetMutationOptions = ApolloReactCommon.MutationHookOptions<SetCertificateTargetMutation, SetCertificateTargetMutationVariables>;
-export const SetCurrentLevelDocument = gql`
-    mutation SetCurrentLevel($level: CefrLevel!) {
-  setCurrentLevel(level: $level) {
-    ...OnboardingStateFields
-  }
+export function useSetCertificateTargetMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SetCertificateTargetMutation,
+    SetCertificateTargetMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SetCertificateTargetMutation,
+    SetCertificateTargetMutationVariables
+  >(SetCertificateTargetDocument, options);
 }
-    ${OnboardingStateFieldsFragmentDoc}`;
-export type SetCurrentLevelMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<SetCurrentLevelMutation, SetCurrentLevelMutationVariables>) => Promise<any>;
+export type SetCertificateTargetMutationHookResult = ReturnType<
+  typeof useSetCertificateTargetMutation
+>;
+export type SetCertificateTargetMutationResult =
+  ApolloReactCommon.MutationResult<SetCertificateTargetMutation>;
+export type SetCertificateTargetMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SetCertificateTargetMutation,
+    SetCertificateTargetMutationVariables
+  >;
+export const SetCurrentLevelDocument = gql`
+  mutation SetCurrentLevel($level: CefrLevel!) {
+    setCurrentLevel(level: $level) {
+      ...OnboardingStateFields
+    }
+  }
+  ${OnboardingStateFieldsFragmentDoc}
+`;
+export type SetCurrentLevelMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SetCurrentLevelMutation,
+    SetCurrentLevelMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useSetCurrentLevelMutation__
@@ -872,21 +1843,42 @@ export type SetCurrentLevelMutationFn = (options?: ApolloReactCommon.MutationFun
  *   },
  * });
  */
-export function useSetCurrentLevelMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetCurrentLevelMutation, SetCurrentLevelMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SetCurrentLevelMutation, SetCurrentLevelMutationVariables>(SetCurrentLevelDocument, options);
-      }
-export type SetCurrentLevelMutationHookResult = ReturnType<typeof useSetCurrentLevelMutation>;
-export type SetCurrentLevelMutationResult = ApolloReactCommon.MutationResult<SetCurrentLevelMutation>;
-export type SetCurrentLevelMutationOptions = ApolloReactCommon.MutationHookOptions<SetCurrentLevelMutation, SetCurrentLevelMutationVariables>;
-export const SetLearningGoalDocument = gql`
-    mutation SetLearningGoal($input: LearningGoalInput!) {
-  setLearningGoal(input: $input) {
-    ...OnboardingStateFields
-  }
+export function useSetCurrentLevelMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SetCurrentLevelMutation,
+    SetCurrentLevelMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SetCurrentLevelMutation,
+    SetCurrentLevelMutationVariables
+  >(SetCurrentLevelDocument, options);
 }
-    ${OnboardingStateFieldsFragmentDoc}`;
-export type SetLearningGoalMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<SetLearningGoalMutation, SetLearningGoalMutationVariables>) => Promise<any>;
+export type SetCurrentLevelMutationHookResult = ReturnType<
+  typeof useSetCurrentLevelMutation
+>;
+export type SetCurrentLevelMutationResult =
+  ApolloReactCommon.MutationResult<SetCurrentLevelMutation>;
+export type SetCurrentLevelMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SetCurrentLevelMutation,
+    SetCurrentLevelMutationVariables
+  >;
+export const SetLearningGoalDocument = gql`
+  mutation SetLearningGoal($input: LearningGoalInput!) {
+    setLearningGoal(input: $input) {
+      ...OnboardingStateFields
+    }
+  }
+  ${OnboardingStateFieldsFragmentDoc}
+`;
+export type SetLearningGoalMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SetLearningGoalMutation,
+    SetLearningGoalMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useSetLearningGoalMutation__
@@ -905,21 +1897,42 @@ export type SetLearningGoalMutationFn = (options?: ApolloReactCommon.MutationFun
  *   },
  * });
  */
-export function useSetLearningGoalMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetLearningGoalMutation, SetLearningGoalMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SetLearningGoalMutation, SetLearningGoalMutationVariables>(SetLearningGoalDocument, options);
-      }
-export type SetLearningGoalMutationHookResult = ReturnType<typeof useSetLearningGoalMutation>;
-export type SetLearningGoalMutationResult = ApolloReactCommon.MutationResult<SetLearningGoalMutation>;
-export type SetLearningGoalMutationOptions = ApolloReactCommon.MutationHookOptions<SetLearningGoalMutation, SetLearningGoalMutationVariables>;
-export const SelectTargetSkillsDocument = gql`
-    mutation SelectTargetSkills($skills: [LearningSkill!]!) {
-  selectTargetSkills(skills: $skills) {
-    ...OnboardingStateFields
-  }
+export function useSetLearningGoalMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SetLearningGoalMutation,
+    SetLearningGoalMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SetLearningGoalMutation,
+    SetLearningGoalMutationVariables
+  >(SetLearningGoalDocument, options);
 }
-    ${OnboardingStateFieldsFragmentDoc}`;
-export type SelectTargetSkillsMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<SelectTargetSkillsMutation, SelectTargetSkillsMutationVariables>) => Promise<any>;
+export type SetLearningGoalMutationHookResult = ReturnType<
+  typeof useSetLearningGoalMutation
+>;
+export type SetLearningGoalMutationResult =
+  ApolloReactCommon.MutationResult<SetLearningGoalMutation>;
+export type SetLearningGoalMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SetLearningGoalMutation,
+    SetLearningGoalMutationVariables
+  >;
+export const SelectTargetSkillsDocument = gql`
+  mutation SelectTargetSkills($skills: [LearningSkill!]!) {
+    selectTargetSkills(skills: $skills) {
+      ...OnboardingStateFields
+    }
+  }
+  ${OnboardingStateFieldsFragmentDoc}
+`;
+export type SelectTargetSkillsMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SelectTargetSkillsMutation,
+    SelectTargetSkillsMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useSelectTargetSkillsMutation__
@@ -938,21 +1951,42 @@ export type SelectTargetSkillsMutationFn = (options?: ApolloReactCommon.Mutation
  *   },
  * });
  */
-export function useSelectTargetSkillsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SelectTargetSkillsMutation, SelectTargetSkillsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SelectTargetSkillsMutation, SelectTargetSkillsMutationVariables>(SelectTargetSkillsDocument, options);
-      }
-export type SelectTargetSkillsMutationHookResult = ReturnType<typeof useSelectTargetSkillsMutation>;
-export type SelectTargetSkillsMutationResult = ApolloReactCommon.MutationResult<SelectTargetSkillsMutation>;
-export type SelectTargetSkillsMutationOptions = ApolloReactCommon.MutationHookOptions<SelectTargetSkillsMutation, SelectTargetSkillsMutationVariables>;
-export const CompleteOnboardingDocument = gql`
-    mutation CompleteOnboarding {
-  completeOnboarding {
-    ...OnboardingStateFields
-  }
+export function useSelectTargetSkillsMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SelectTargetSkillsMutation,
+    SelectTargetSkillsMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SelectTargetSkillsMutation,
+    SelectTargetSkillsMutationVariables
+  >(SelectTargetSkillsDocument, options);
 }
-    ${OnboardingStateFieldsFragmentDoc}`;
-export type CompleteOnboardingMutationFn = (options?: ApolloReactCommon.MutationFunctionOptions<CompleteOnboardingMutation, CompleteOnboardingMutationVariables>) => Promise<any>;
+export type SelectTargetSkillsMutationHookResult = ReturnType<
+  typeof useSelectTargetSkillsMutation
+>;
+export type SelectTargetSkillsMutationResult =
+  ApolloReactCommon.MutationResult<SelectTargetSkillsMutation>;
+export type SelectTargetSkillsMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SelectTargetSkillsMutation,
+    SelectTargetSkillsMutationVariables
+  >;
+export const CompleteOnboardingDocument = gql`
+  mutation CompleteOnboarding {
+    completeOnboarding {
+      ...OnboardingStateFields
+    }
+  }
+  ${OnboardingStateFieldsFragmentDoc}
+`;
+export type CompleteOnboardingMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CompleteOnboardingMutation,
+    CompleteOnboardingMutationVariables
+  >,
+) => Promise<any>;
 
 /**
  * __useCompleteOnboardingMutation__
@@ -970,36 +2004,51 @@ export type CompleteOnboardingMutationFn = (options?: ApolloReactCommon.Mutation
  *   },
  * });
  */
-export function useCompleteOnboardingMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CompleteOnboardingMutation, CompleteOnboardingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<CompleteOnboardingMutation, CompleteOnboardingMutationVariables>(CompleteOnboardingDocument, options);
-      }
-export type CompleteOnboardingMutationHookResult = ReturnType<typeof useCompleteOnboardingMutation>;
-export type CompleteOnboardingMutationResult = ApolloReactCommon.MutationResult<CompleteOnboardingMutation>;
-export type CompleteOnboardingMutationOptions = ApolloReactCommon.MutationHookOptions<CompleteOnboardingMutation, CompleteOnboardingMutationVariables>;
+export function useCompleteOnboardingMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CompleteOnboardingMutation,
+    CompleteOnboardingMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CompleteOnboardingMutation,
+    CompleteOnboardingMutationVariables
+  >(CompleteOnboardingDocument, options);
+}
+export type CompleteOnboardingMutationHookResult = ReturnType<
+  typeof useCompleteOnboardingMutation
+>;
+export type CompleteOnboardingMutationResult =
+  ApolloReactCommon.MutationResult<CompleteOnboardingMutation>;
+export type CompleteOnboardingMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CompleteOnboardingMutation,
+    CompleteOnboardingMutationVariables
+  >;
 export const CurrentUserDocument = gql`
-    query CurrentUser {
-  me {
-    id
-    email
-    fullName
-    displayName
-    gender
-    birthDate
-    avatarUrl
-    bannerUrl
-    onboardingStep
-    onboardingState {
-      certificateLearner
-      currentLevel
-      targetCertificateType
-      targetScore
-      targetDate
-      targetSkills
+  query CurrentUser {
+    me {
+      id
+      email
+      fullName
+      displayName
+      gender
+      birthDate
+      avatarUrl
+      bannerUrl
+      onboardingStep
+      onboardingState {
+        certificateLearner
+        currentLevel
+        targetCertificateType
+        targetScore
+        targetDate
+        targetSkills
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useCurrentUserQuery__
@@ -1016,22 +2065,76 @@ export const CurrentUserDocument = gql`
  *   },
  * });
  */
-export function useCurrentUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-      }
-export function useCurrentUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-        }
-export function useCurrentUserSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export function useCurrentUserQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    CurrentUserQuery,
+    CurrentUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(
+    CurrentUserDocument,
+    options,
+  );
+}
+export function useCurrentUserLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    CurrentUserQuery,
+    CurrentUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    CurrentUserQuery,
+    CurrentUserQueryVariables
+  >(CurrentUserDocument, options);
+}
+export function useCurrentUserSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    CurrentUserQuery,
+    CurrentUserQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  CurrentUserQuery,
+  CurrentUserQueryVariables
+>;
 // @ts-expect-error - see scripts/fixSuspenseOverload.mjs
-export function useCurrentUserSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<CurrentUserQuery | undefined, CurrentUserQueryVariables>;
-export function useCurrentUserSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options as any);
-        }
+export function useCurrentUserSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        CurrentUserQuery,
+        CurrentUserQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  CurrentUserQuery | undefined,
+  CurrentUserQueryVariables
+>;
+export function useCurrentUserSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        CurrentUserQuery,
+        CurrentUserQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    CurrentUserQuery,
+    CurrentUserQueryVariables
+  >(CurrentUserDocument, options as any);
+}
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
-export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
-export type CurrentUserSuspenseQueryHookResult = ReturnType<typeof useCurrentUserSuspenseQuery>;
-export type CurrentUserQueryResult = ApolloReactCommon.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export type CurrentUserLazyQueryHookResult = ReturnType<
+  typeof useCurrentUserLazyQuery
+>;
+export type CurrentUserSuspenseQueryHookResult = ReturnType<
+  typeof useCurrentUserSuspenseQuery
+>;
+export type CurrentUserQueryResult = ApolloReactCommon.QueryResult<
+  CurrentUserQuery,
+  CurrentUserQueryVariables
+>;

@@ -161,6 +161,8 @@ export const ONBOARDING_ERROR_MESSAGES: Record<string, string> = {
   ONBOARDING_PURPOSE_REQUIRED: "Cần chọn ít nhất một mục đích học.",
   ONBOARDING_CERTIFICATE_TARGET_REQUIRED:
     "Cần chọn chứng chỉ bạn đang nhắm tới.",
+  PLACEMENT_EXAM_NOT_FOUND:
+    "Chưa có đề kiểm tra đầu vào nào được phát hành. Hãy tự chọn một mức bên dưới.",
 };
 
 export const ONBOARDING_GENERIC_ERROR =

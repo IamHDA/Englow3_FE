@@ -2,283 +2,283 @@ export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  Date: { input: string; output: string; }
-  DateTime: { input: string; output: string; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
+  Date: { input: string; output: string };
+  DateTime: { input: string; output: string };
 };
 
 export type AttemptOptionReview = {
-  __typename?: 'AttemptOptionReview';
-  correct: Scalars['Boolean']['output'];
-  explanation?: Maybe<Scalars['String']['output']>;
-  optionId: Scalars['ID']['output'];
+  __typename?: "AttemptOptionReview";
+  correct: Scalars["Boolean"]["output"];
+  explanation?: Maybe<Scalars["String"]["output"]>;
+  optionId: Scalars["ID"]["output"];
 };
 
 export type AttemptQuestionReview = {
-  __typename?: 'AttemptQuestionReview';
-  awardedRawScore: Scalars['Float']['output'];
-  correct: Scalars['Boolean']['output'];
-  correctOptionIds: Array<Scalars['ID']['output']>;
-  explanation?: Maybe<Scalars['String']['output']>;
+  __typename?: "AttemptQuestionReview";
+  awardedRawScore: Scalars["Float"]["output"];
+  correct: Scalars["Boolean"]["output"];
+  correctOptionIds: Array<Scalars["ID"]["output"]>;
+  explanation?: Maybe<Scalars["String"]["output"]>;
   options: Array<AttemptOptionReview>;
-  questionId: Scalars['ID']['output'];
-  selectedOptionIds: Array<Scalars['ID']['output']>;
+  questionId: Scalars["ID"]["output"];
+  selectedOptionIds: Array<Scalars["ID"]["output"]>;
 };
 
 export enum CefrLevel {
-  A1 = 'A1',
-  A2 = 'A2',
-  B1 = 'B1',
-  B2 = 'B2',
-  C1 = 'C1',
-  C2 = 'C2'
+  A1 = "A1",
+  A2 = "A2",
+  B1 = "B1",
+  B2 = "B2",
+  C1 = "C1",
+  C2 = "C2",
 }
 
 export enum CertificateType {
-  IELTS = 'IELTS',
-  TOEIC = 'TOEIC'
+  IELTS = "IELTS",
+  TOEIC = "TOEIC",
 }
 
 export enum CertificateVariant {
-  ACADEMIC = 'ACADEMIC',
-  GENERAL = 'GENERAL',
-  LR = 'LR',
-  SW = 'SW'
+  ACADEMIC = "ACADEMIC",
+  GENERAL = "GENERAL",
+  LR = "LR",
+  SW = "SW",
 }
 
 /** The full paper shell returned by create, update, publish and archive. */
 export type Exam = {
-  __typename?: 'Exam';
+  __typename?: "Exam";
   certificateType?: Maybe<CertificateType>;
   certificateVariant?: Maybe<CertificateVariant>;
-  createdByUserId: Scalars['ID']['output'];
-  description: Scalars['String']['output'];
-  durationSeconds: Scalars['Int']['output'];
+  createdByUserId: Scalars["ID"]["output"];
+  description: Scalars["String"]["output"];
+  durationSeconds: Scalars["Int"]["output"];
   examType: ExamType;
-  id: Scalars['ID']['output'];
-  maxRawScore: Scalars['Float']['output'];
-  passScore?: Maybe<Scalars['Float']['output']>;
-  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars["ID"]["output"];
+  maxRawScore: Scalars["Float"]["output"];
+  passScore?: Maybe<Scalars["Float"]["output"]>;
+  publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
   status: ExamStatus;
   targetLevel?: Maybe<TargetLevel>;
-  title: Scalars['String']['output'];
-  versionNumber: Scalars['Int']['output'];
+  title: Scalars["String"]["output"];
+  versionNumber: Scalars["Int"]["output"];
 };
 
 export type ExamAttempt = {
-  __typename?: 'ExamAttempt';
-  correctAnswerCount?: Maybe<Scalars['Int']['output']>;
-  examId: Scalars['ID']['output'];
+  __typename?: "ExamAttempt";
+  correctAnswerCount?: Maybe<Scalars["Int"]["output"]>;
+  examId: Scalars["ID"]["output"];
   /**
    * The deadline the backend issued. This is the only authority on remaining
    * time - a countdown from durationSeconds drifts across a sleeping laptop.
    */
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  maxRawScore?: Maybe<Scalars['Float']['output']>;
-  questionCount: Scalars['Int']['output'];
+  expiresAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  maxRawScore?: Maybe<Scalars["Float"]["output"]>;
+  questionCount: Scalars["Int"]["output"];
   /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
   questions: Array<AttemptQuestionReview>;
   /** Null until the attempt is scored. */
-  rawScore?: Maybe<Scalars['Float']['output']>;
+  rawScore?: Maybe<Scalars["Float"]["output"]>;
   /** True when the backend handed back an attempt that was already open. */
-  resumed: Scalars['Boolean']['output'];
-  scorePercentage?: Maybe<Scalars['Float']['output']>;
-  scoredAt?: Maybe<Scalars['DateTime']['output']>;
-  startedAt: Scalars['DateTime']['output'];
+  resumed: Scalars["Boolean"]["output"];
+  scorePercentage?: Maybe<Scalars["Float"]["output"]>;
+  scoredAt?: Maybe<Scalars["DateTime"]["output"]>;
+  startedAt: Scalars["DateTime"]["output"];
   status: ExamAttemptStatus;
-  submittedAt?: Maybe<Scalars['DateTime']['output']>;
+  submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
 };
 
 export enum ExamAttemptStatus {
-  EXPIRED = 'EXPIRED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  SCORED = 'SCORED'
+  EXPIRED = "EXPIRED",
+  IN_PROGRESS = "IN_PROGRESS",
+  SCORED = "SCORED",
 }
 
 export type ExamListItem = {
-  __typename?: 'ExamListItem';
+  __typename?: "ExamListItem";
   /**
    * Null on a paper with no certificate (e.g. a PLACEMENT exam) - the backend
    * allows that combination, so this cannot be non-null.
    */
   certificateType?: Maybe<CertificateType>;
   certificateVariant?: Maybe<CertificateVariant>;
-  createdAt: Scalars['DateTime']['output'];
-  createdByUserId: Scalars['ID']['output'];
+  createdAt: Scalars["DateTime"]["output"];
+  createdByUserId: Scalars["ID"]["output"];
   examType: ExamType;
-  id: Scalars['ID']['output'];
-  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars["ID"]["output"];
+  publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
   status: ExamStatus;
   targetLevel?: Maybe<TargetLevel>;
-  title: Scalars['String']['output'];
-  versionNumber: Scalars['Int']['output'];
+  title: Scalars["String"]["output"];
+  versionNumber: Scalars["Int"]["output"];
 };
 
 export type ExamPage = {
-  __typename?: 'ExamPage';
+  __typename?: "ExamPage";
   items: Array<ExamListItem>;
-  page: Scalars['Int']['output'];
-  size: Scalars['Int']['output'];
-  totalItems: Scalars['Int']['output'];
-  totalPages: Scalars['Int']['output'];
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
 };
 
 export type ExamPaper = {
-  __typename?: 'ExamPaper';
+  __typename?: "ExamPaper";
   certificateType?: Maybe<CertificateType>;
   certificateVariant?: Maybe<CertificateVariant>;
-  description: Scalars['String']['output'];
-  durationSeconds: Scalars['Int']['output'];
+  description: Scalars["String"]["output"];
+  durationSeconds: Scalars["Int"]["output"];
   examType: ExamType;
-  id: Scalars['ID']['output'];
-  maxRawScore: Scalars['Float']['output'];
-  passScore?: Maybe<Scalars['Float']['output']>;
+  id: Scalars["ID"]["output"];
+  maxRawScore: Scalars["Float"]["output"];
+  passScore?: Maybe<Scalars["Float"]["output"]>;
   sections: Array<ExamSectionDetail>;
   targetLevel?: Maybe<TargetLevel>;
-  title: Scalars['String']['output'];
-  versionNumber: Scalars['Int']['output'];
+  title: Scalars["String"]["output"];
+  versionNumber: Scalars["Int"]["output"];
 };
 
 export type ExamQuestion = {
-  __typename?: 'ExamQuestion';
-  content: Scalars['String']['output'];
-  difficultyLevel: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  maxRawScore: Scalars['Float']['output'];
+  __typename?: "ExamQuestion";
+  content: Scalars["String"]["output"];
+  difficultyLevel: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  maxRawScore: Scalars["Float"]["output"];
   options: Array<QuestionOption>;
-  orderNo: Scalars['Int']['output'];
-  questionCategory?: Maybe<Scalars['String']['output']>;
-  questionType: Scalars['String']['output'];
-  skillType: Scalars['String']['output'];
+  orderNo: Scalars["Int"]["output"];
+  questionCategory?: Maybe<Scalars["String"]["output"]>;
+  questionType: Scalars["String"]["output"];
+  skillType: Scalars["String"]["output"];
 };
 
 export type ExamQuestionSet = {
-  __typename?: 'ExamQuestionSet';
+  __typename?: "ExamQuestionSet";
   /** Pre-signed and short-lived - the backend resolves the object key for us. */
-  audioUrl?: Maybe<Scalars['String']['output']>;
-  content?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  instruction?: Maybe<Scalars['String']['output']>;
-  orderNo: Scalars['Int']['output'];
+  audioUrl?: Maybe<Scalars["String"]["output"]>;
+  content?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  imageUrl?: Maybe<Scalars["String"]["output"]>;
+  instruction?: Maybe<Scalars["String"]["output"]>;
+  orderNo: Scalars["Int"]["output"];
   questions: Array<ExamQuestion>;
-  title?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type ExamSectionDetail = {
-  __typename?: 'ExamSectionDetail';
-  id: Scalars['ID']['output'];
-  maxRawScore: Scalars['Float']['output'];
-  orderNo: Scalars['Int']['output'];
+  __typename?: "ExamSectionDetail";
+  id: Scalars["ID"]["output"];
+  maxRawScore: Scalars["Float"]["output"];
+  orderNo: Scalars["Int"]["output"];
   parts: Array<ExamSectionPart>;
-  scoredByCriteria: Scalars['Boolean']['output'];
-  sectionType: Scalars['String']['output'];
-  timeLimitSeconds?: Maybe<Scalars['Int']['output']>;
+  scoredByCriteria: Scalars["Boolean"]["output"];
+  sectionType: Scalars["String"]["output"];
+  timeLimitSeconds?: Maybe<Scalars["Int"]["output"]>;
 };
 
 export type ExamSectionPart = {
-  __typename?: 'ExamSectionPart';
-  audioUrl?: Maybe<Scalars['String']['output']>;
-  content?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  instruction?: Maybe<Scalars['String']['output']>;
-  orderNo: Scalars['Int']['output'];
+  __typename?: "ExamSectionPart";
+  audioUrl?: Maybe<Scalars["String"]["output"]>;
+  content?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  imageUrl?: Maybe<Scalars["String"]["output"]>;
+  instruction?: Maybe<Scalars["String"]["output"]>;
+  orderNo: Scalars["Int"]["output"];
   questionSets: Array<ExamQuestionSet>;
-  title: Scalars['String']['output'];
+  title: Scalars["String"]["output"];
 };
 
 export enum ExamStatus {
-  ARCHIVED = 'ARCHIVED',
-  DRAFT = 'DRAFT',
-  PUBLISHED = 'PUBLISHED'
+  ARCHIVED = "ARCHIVED",
+  DRAFT = "DRAFT",
+  PUBLISHED = "PUBLISHED",
 }
 
 export enum ExamType {
-  MOCK = 'MOCK',
-  PLACEMENT = 'PLACEMENT'
+  MOCK = "MOCK",
+  PLACEMENT = "PLACEMENT",
 }
 
 export enum Gender {
-  FEMALE = 'FEMALE',
-  MALE = 'MALE',
-  OTHER = 'OTHER'
+  FEMALE = "FEMALE",
+  MALE = "MALE",
+  OTHER = "OTHER",
 }
 
 export type LearnerExamItem = {
-  __typename?: 'LearnerExamItem';
-  attemptStatus?: Maybe<Scalars['String']['output']>;
-  bestScore?: Maybe<Scalars['Float']['output']>;
+  __typename?: "LearnerExamItem";
+  attemptStatus?: Maybe<Scalars["String"]["output"]>;
+  bestScore?: Maybe<Scalars["Float"]["output"]>;
   certificateType?: Maybe<CertificateType>;
   certificateVariant?: Maybe<CertificateVariant>;
-  description: Scalars['String']['output'];
-  durationSeconds: Scalars['Int']['output'];
+  description: Scalars["String"]["output"];
+  durationSeconds: Scalars["Int"]["output"];
   examType: ExamType;
-  id: Scalars['ID']['output'];
-  maxRawScore: Scalars['Float']['output'];
-  passScore?: Maybe<Scalars['Float']['output']>;
-  publishedAt?: Maybe<Scalars['DateTime']['output']>;
-  questionCount: Scalars['Int']['output'];
+  id: Scalars["ID"]["output"];
+  maxRawScore: Scalars["Float"]["output"];
+  passScore?: Maybe<Scalars["Float"]["output"]>;
+  publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  questionCount: Scalars["Int"]["output"];
   status: ExamStatus;
   targetLevel?: Maybe<TargetLevel>;
-  title: Scalars['String']['output'];
+  title: Scalars["String"]["output"];
 };
 
 export type LearnerExamPage = {
-  __typename?: 'LearnerExamPage';
+  __typename?: "LearnerExamPage";
   items: Array<LearnerExamItem>;
-  page: Scalars['Int']['output'];
-  size: Scalars['Int']['output'];
-  totalItems: Scalars['Int']['output'];
-  totalPages: Scalars['Int']['output'];
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
 };
 
 export type LearningGoalInput = {
   certificateType: TargetCertificate;
-  targetDate?: InputMaybe<Scalars['Date']['input']>;
+  targetDate?: InputMaybe<Scalars["Date"]["input"]>;
   /** Only a certificate learner may send this - the backend refuses it otherwise. */
-  targetScore?: InputMaybe<Scalars['Float']['input']>;
+  targetScore?: InputMaybe<Scalars["Float"]["input"]>;
 };
 
 export type LearningPurpose = {
-  __typename?: 'LearningPurpose';
-  displayName: Scalars['String']['output'];
-  id: Scalars['Int']['output'];
-  purposeCode: Scalars['String']['output'];
+  __typename?: "LearningPurpose";
+  displayName: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  purposeCode: Scalars["String"]["output"];
 };
 
 export enum LearningSkill {
-  GRAMMAR = 'GRAMMAR',
-  LISTENING = 'LISTENING',
-  PRONUNCIATION = 'PRONUNCIATION',
-  READING = 'READING',
-  SPEAKING = 'SPEAKING',
-  VOCABULARY = 'VOCABULARY',
-  WRITING = 'WRITING'
+  GRAMMAR = "GRAMMAR",
+  LISTENING = "LISTENING",
+  PRONUNCIATION = "PRONUNCIATION",
+  READING = "READING",
+  SPEAKING = "SPEAKING",
+  VOCABULARY = "VOCABULARY",
+  WRITING = "WRITING",
 }
 
 export type Me = {
-  __typename?: 'Me';
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  bannerUrl?: Maybe<Scalars['String']['output']>;
-  birthDate?: Maybe<Scalars['Date']['output']>;
-  displayName: Scalars['String']['output'];
-  email: Scalars['String']['output'];
-  fullName: Scalars['String']['output'];
+  __typename?: "Me";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  bannerUrl?: Maybe<Scalars["String"]["output"]>;
+  birthDate?: Maybe<Scalars["Date"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  email: Scalars["String"]["output"];
+  fullName: Scalars["String"]["output"];
   gender?: Maybe<Gender>;
-  id: Scalars['ID']['output'];
+  id: Scalars["ID"]["output"];
   onboardingState?: Maybe<OnboardingState>;
   onboardingStep: OnboardingStep;
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
-  _empty?: Maybe<Scalars['Boolean']['output']>;
+  __typename?: "Mutation";
+  _empty?: Maybe<Scalars["Boolean"]["output"]>;
   /**
    * DRAFT or PUBLISHED -> ARCHIVED. There is no delete; archiving is the
    * retirement path. Archiving an already-archived paper fails with
@@ -339,79 +339,69 @@ export type Mutation = {
   updateProfile: Me;
 };
 
-
 export type MutationArchiveExamArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars["ID"]["input"];
 };
-
 
 export type MutationPublishExamArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars["ID"]["input"];
 };
-
 
 export type MutationSelectLearningPurposesArgs = {
-  purposeIds: Array<Scalars['Int']['input']>;
+  purposeIds: Array<Scalars["Int"]["input"]>;
 };
-
 
 export type MutationSelectTargetSkillsArgs = {
   skills: Array<LearningSkill>;
 };
 
-
 export type MutationSetCertificateTargetArgs = {
   certificateType: TargetCertificate;
 };
-
 
 export type MutationSetCurrentLevelArgs = {
   level: CefrLevel;
 };
 
-
 export type MutationSetLearningGoalArgs = {
   input: LearningGoalInput;
 };
 
-
 export type MutationStartExamAttemptArgs = {
-  examId: Scalars['ID']['input'];
+  examId: Scalars["ID"]["input"];
 };
-
 
 export type MutationSubmitExamAttemptArgs = {
   answers: Array<SubmitAnswerInput>;
-  attemptId: Scalars['ID']['input'];
+  attemptId: Scalars["ID"]["input"];
 };
-
 
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
 
 export type OnboardingState = {
-  __typename?: 'OnboardingState';
-  certificateLearner?: Maybe<Scalars['Boolean']['output']>;
+  __typename?: "OnboardingState";
+  certificateLearner?: Maybe<Scalars["Boolean"]["output"]>;
   currentLevel?: Maybe<CefrLevel>;
-  learningPurposeIds: Array<Scalars['Int']['output']>;
-  targetCertificateType?: Maybe<Scalars['String']['output']>;
-  targetDate?: Maybe<Scalars['Date']['output']>;
-  targetScore?: Maybe<Scalars['Float']['output']>;
+  learningPurposeIds: Array<Scalars["Int"]["output"]>;
+  targetCertificateType?: Maybe<Scalars["String"]["output"]>;
+  targetDate?: Maybe<Scalars["Date"]["output"]>;
+  targetScore?: Maybe<Scalars["Float"]["output"]>;
   targetSkills: Array<LearningSkill>;
 };
 
 export enum OnboardingStep {
-  CERTIFICATE_TARGET = 'CERTIFICATE_TARGET',
-  COMPLETED = 'COMPLETED',
-  CURRENT_LEVEL = 'CURRENT_LEVEL',
-  LEARNING_GOAL = 'LEARNING_GOAL',
-  LEARNING_PURPOSES = 'LEARNING_PURPOSES',
-  TARGET_SKILLS = 'TARGET_SKILLS'
+  CERTIFICATE_TARGET = "CERTIFICATE_TARGET",
+  COMPLETED = "COMPLETED",
+  CURRENT_LEVEL = "CURRENT_LEVEL",
+  LEARNING_GOAL = "LEARNING_GOAL",
+  LEARNING_PURPOSES = "LEARNING_PURPOSES",
+  TARGET_SKILLS = "TARGET_SKILLS",
 }
 
 export type Query = {
-  __typename?: 'Query';
+  __typename?: "Query";
   /**
    * Admin catalogue search - returns drafts and archived papers too, so the
    * backend restricts it to ADMIN. Sorted newest first by the backend.
@@ -432,44 +422,45 @@ export type Query = {
   examAttempt: ExamAttempt;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
-  health: Scalars['String']['output'];
+  health: Scalars["String"]["output"];
   learningPurposes: Array<LearningPurpose>;
   me: Me;
+  /**
+   * The placement paper, for a learner who does not know their level. Errors
+   * with NOT_FOUND when the deployment has no published placement exam, which
+   * is a normal state rather than a fault.
+   */
+  placementExam: LearnerExamItem;
 };
-
 
 export type QueryAdminExamsArgs = {
   examType?: InputMaybe<ExamType>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  size?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
   status?: InputMaybe<ExamStatus>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
 };
-
 
 export type QueryAttemptPaperArgs = {
-  attemptId: Scalars['ID']['input'];
+  attemptId: Scalars["ID"]["input"];
 };
-
 
 export type QueryExamArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars["ID"]["input"];
 };
-
 
 export type QueryExamAttemptArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars["ID"]["input"];
 };
-
 
 export type QueryExamsArgs = {
   certificateType?: InputMaybe<CertificateType>;
   certificateVariant?: InputMaybe<CertificateVariant>;
   examType?: InputMaybe<ExamType>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  size?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
   targetLevel?: InputMaybe<TargetLevel>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 /**
@@ -477,16 +468,16 @@ export type QueryExamsArgs = {
  * explanation. Both arrive afterwards on AttemptOptionReview.
  */
 export type QuestionOption = {
-  __typename?: 'QuestionOption';
-  content: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  orderNo: Scalars['Int']['output'];
+  __typename?: "QuestionOption";
+  content: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  orderNo: Scalars["Int"]["output"];
 };
 
 export type SubmitAnswerInput = {
-  questionId: Scalars['ID']['input'];
+  questionId: Scalars["ID"]["input"];
   /** Empty for a question the learner skipped; several for a multi-select. */
-  selectedOptionIds: Array<Scalars['ID']['input']>;
+  selectedOptionIds: Array<Scalars["ID"]["input"]>;
 };
 
 /**
@@ -496,8 +487,8 @@ export type SubmitAnswerInput = {
  * exam.entity.CertificateType for the same reason.
  */
 export enum TargetCertificate {
-  IELTS = 'IELTS',
-  TOEIC = 'TOEIC'
+  IELTS = "IELTS",
+  TOEIC = "TOEIC",
 }
 
 /**
@@ -505,17 +496,17 @@ export enum TargetCertificate {
  * own level - the backend keeps the two enums apart for the same reason.
  */
 export enum TargetLevel {
-  A1 = 'A1',
-  A2 = 'A2',
-  B1 = 'B1',
-  B2 = 'B2',
-  C1 = 'C1',
-  C2 = 'C2'
+  A1 = "A1",
+  A2 = "A2",
+  B1 = "B1",
+  B2 = "B2",
+  C1 = "C1",
+  C2 = "C2",
 }
 
 export type UpdateProfileInput = {
-  birthDate?: InputMaybe<Scalars['Date']['input']>;
-  displayName: Scalars['String']['input'];
-  fullName: Scalars['String']['input'];
+  birthDate?: InputMaybe<Scalars["Date"]["input"]>;
+  displayName: Scalars["String"]["input"];
+  fullName: Scalars["String"]["input"];
   gender?: InputMaybe<Gender>;
 };

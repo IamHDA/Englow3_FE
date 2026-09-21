@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import { useAccountProfile } from "@/features/account";
+import { useOnboarding } from "@/features/onboarding/hooks/useOnboarding";
 import {
   ONBOARDING_ERROR_MESSAGES,
   ONBOARDING_GENERIC_ERROR,
@@ -16,6 +18,7 @@ import {
   useSetCertificateTargetMutation,
   useSetCurrentLevelMutation,
   useSetLearningGoalMutation,
+  usePlacementExamLazyQuery,
 } from "@/lib/graphql/generated/hooks";
 
 import type {
@@ -56,6 +59,8 @@ function messageForError(error: unknown): string {
  */
 export function useOnboardingActions() {
   const { refresh } = useAccountProfile();
+  const { close } = useOnboarding();
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [selectPurposes, purposesState] = useSelectLearningPurposesMutation();
@@ -64,6 +69,7 @@ export function useOnboardingActions() {
   const [setGoal, goalState] = useSetLearningGoalMutation();
   const [selectSkills, skillsState] = useSelectTargetSkillsMutation();
   const [complete, completeState] = useCompleteOnboardingMutation();
+  const [loadPlacementExam, placementState] = usePlacementExamLazyQuery();
 
   const pending =
     purposesState.loading ||
@@ -71,7 +77,8 @@ export function useOnboardingActions() {
     levelState.loading ||
     goalState.loading ||
     skillsState.loading ||
-    completeState.loading;
+    completeState.loading ||
+    placementState.loading;
 
   /**
    * Chạy mutation rồi đọc lại hồ sơ. Lỗi được giữ lại thành lời tiếng Việt chứ
@@ -117,6 +124,23 @@ export function useOnboardingActions() {
      * Bước cuối gọi hai endpoint: backend ghi kỹ năng nhưng cố ý không đẩy
      * bước, `complete` mới là thứ chuyển sang COMPLETED.
      */
+    /**
+     * Bài kiểm tra đầu xếp trình độ chạy trên đúng luồng thi bình thường, nên ở
+     * đây chỉ cần hỏi backend đề nào rồi điều hướng tới đó. Điểm chấm xong sẽ tự
+     * ghi trình độ và đẩy onboarding sang bước kế - không cần quay lại popup.
+     */
+    startPlacementTest: useCallback(async () => {
+      setErrorMessage(null);
+      const { data, error } = await loadPlacementExam();
+
+      if (error || !data) {
+        setErrorMessage(messageForError(error));
+        return;
+      }
+
+      close();
+      router.push(`/exams/${data.placementExam.id}`);
+    }, [loadPlacementExam, close, router]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>
         run(async () => {

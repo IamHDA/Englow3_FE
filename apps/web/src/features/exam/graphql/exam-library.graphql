@@ -59,3 +59,13 @@ query ExamDetail($id: ID!) {
     attemptStatus
   }
 }
+
+query PlacementExam {
+  placementExam {
+    id
+    title
+    description
+    durationSeconds
+    questionCount
+  }
+}

@@ -36,6 +36,11 @@ export class ExamApi {
     return this.client.get(`${EXAM_BASE_PATH}?${query.toString()}`);
   }
 
+  /** The placement paper to sit. 404 when the deployment has none published. */
+  getPlacementExam(): Promise<LearnerExamItemResponse> {
+    return this.client.get(`${EXAM_BASE_PATH}/placement`);
+  }
+
   getByIdAsLearner(id: string): Promise<LearnerExamItemResponse> {
     return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}`);
   }

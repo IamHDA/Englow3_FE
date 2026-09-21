@@ -131,6 +131,13 @@ export const examTypeDefs = `#graphql
       size: Int = 20
     ): LearnerExamPage!
 
+    """
+    The placement paper, for a learner who does not know their level. Errors
+    with NOT_FOUND when the deployment has no published placement exam, which
+    is a normal state rather than a fault.
+    """
+    placementExam: LearnerExamItem!
+
     """Learner exam detail by id"""
     exam(id: ID!): LearnerExamItem
 

@@ -82,6 +82,7 @@ function renderOnboardingStep(
           pending={pending}
           errorMessage={errorMessage}
           onContinue={actions.submitCurrentLevel}
+          onTakePlacementTest={actions.startPlacementTest}
         />
       );
     case OnboardingStep.LEARNING_GOAL:

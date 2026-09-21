@@ -41,6 +41,10 @@ export const examResolvers = {
       ctx.requireToken();
       return ctx.apis.examApi.getByIdAsLearner(args.id);
     },
+    placementExam: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getPlacementExam();
+    },
     attemptPaper: (
       _: unknown,
       args: { attemptId: string },

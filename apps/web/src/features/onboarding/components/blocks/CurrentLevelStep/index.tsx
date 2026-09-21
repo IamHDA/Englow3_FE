@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, SimpleGrid, Text } from "@mantine/core";
+import { Anchor, Box, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
 
 import {
@@ -20,19 +20,21 @@ type CurrentLevelStepProps = {
   pending: boolean;
   errorMessage: string | null;
   onContinue: (level: CefrLevel) => void;
+  /** Mở bài kiểm tra xếp trình độ thay vì tự khai. */
+  onTakePlacementTest: () => void;
 };
 
 /**
- * Không có ô "tôi chưa biết": backend chỉ nhận mức null để đẩy người học sang
- * bài kiểm tra xếp trình độ, mà bài đó chưa dựng nên nó trả về
- * PLACEMENT_NOT_AVAILABLE / QUIZ_NOT_AVAILABLE. Vẽ ô đó ra là mời người dùng
- * bấm vào một đường chắc chắn hỏng.
+ * "Tôi chưa biết" không gửi mức null lên backend - backend từ chối mức null.
+ * Nó mở bài kiểm tra xếp trình độ, và chính điểm của bài đó ghi mức cho người
+ * học rồi đẩy onboarding sang bước kế.
  */
 export function CurrentLevelStep({
   initialLevel,
   pending,
   errorMessage,
   onContinue,
+  onTakePlacementTest,
 }: CurrentLevelStepProps) {
   const [selected, setSelected] = useState<CefrLevel | null>(initialLevel);
 
@@ -65,9 +67,17 @@ export function CurrentLevelStep({
         </SimpleGrid>
       </Box>
 
-      <Text size="xs" c="ink.5" ta="center" mt={18}>
-        Bài kiểm tra xếp trình độ tự động sẽ có sau - tạm thời bạn tự chọn mức
-        gần đúng nhất.
+      <Text size="sm" c="ink.6" ta="center" mt={18}>
+        Chưa chắc mình ở đâu?{" "}
+        <Anchor
+          component="button"
+          type="button"
+          onClick={onTakePlacementTest}
+          disabled={pending}
+          fw={700}
+        >
+          Làm bài kiểm tra đầu vào
+        </Anchor>
       </Text>
     </OnboardingStepShell>
   );
