@@ -215,9 +215,9 @@ describe("Query.exam", () => {
   });
 });
 
-describe("Query.examPaper", () => {
+describe("Query.attemptPaper", () => {
   it("fails before calling the backend when there is no token", () => {
-    const getPaperAsLearner = vi.fn();
+    const getAttemptPaper = vi.fn();
     const ctx = makeContext(
       vi.fn(),
       {
@@ -227,24 +227,86 @@ describe("Query.examPaper", () => {
           });
         },
       },
-      { getPaperAsLearner },
+      { getAttemptPaper },
     );
 
     expect(() =>
-      examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx),
+      examResolvers.Query.attemptPaper({}, { attemptId: "attempt-1" }, ctx),
     ).toThrow("Missing or invalid access token");
-    expect(getPaperAsLearner).not.toHaveBeenCalled();
+    expect(getAttemptPaper).not.toHaveBeenCalled();
   });
 
-  it("forwards id to getPaperAsLearner", async () => {
-    const getPaperAsLearner = vi
+  it("reads the paper by attempt id, never by exam id", async () => {
+    const getAttemptPaper = vi
       .fn()
       .mockResolvedValue({ id: "exam-1", sections: [] });
-    const ctx = makeContext(vi.fn(), {}, { getPaperAsLearner });
+    const ctx = makeContext(vi.fn(), {}, { getAttemptPaper });
 
-    const res = await examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx);
+    const res = await examResolvers.Query.attemptPaper(
+      {},
+      { attemptId: "attempt-1" },
+      ctx,
+    );
 
-    expect(getPaperAsLearner).toHaveBeenCalledWith("exam-1");
+    expect(getAttemptPaper).toHaveBeenCalledWith("attempt-1");
     expect(res).toEqual({ id: "exam-1", sections: [] });
+  });
+});
+
+describe("Mutation.startExamAttempt", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const startAttempt = vi.fn();
+    const ctx = makeContext(
+      vi.fn(),
+      {
+        requireToken: () => {
+          throw new GraphQLError("Missing or invalid access token", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        },
+      },
+      { startAttempt },
+    );
+
+    expect(() =>
+      examResolvers.Mutation.startExamAttempt({}, { examId: "exam-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(startAttempt).not.toHaveBeenCalled();
+  });
+
+  it("passes the resumed attempt through rather than starting a second one", async () => {
+    const startAttempt = vi
+      .fn()
+      .mockResolvedValue({ id: "attempt-1", resumed: true });
+    const ctx = makeContext(vi.fn(), {}, { startAttempt });
+
+    const res = await examResolvers.Mutation.startExamAttempt(
+      {},
+      { examId: "exam-1" },
+      ctx,
+    );
+
+    expect(startAttempt).toHaveBeenCalledTimes(1);
+    expect(startAttempt).toHaveBeenCalledWith("exam-1");
+    expect(res).toEqual({ id: "attempt-1", resumed: true });
+  });
+});
+
+describe("Mutation.submitExamAttempt", () => {
+  it("forwards the answers untouched - scoring is the backend's call", async () => {
+    const submitAttempt = vi
+      .fn()
+      .mockResolvedValue({ id: "attempt-1", status: "SCORED" });
+    const ctx = makeContext(vi.fn(), {}, { submitAttempt });
+    const answers = [{ questionId: "q-1", selectedOptionIds: ["o-1"] }];
+
+    const res = await examResolvers.Mutation.submitExamAttempt(
+      {},
+      { attemptId: "attempt-1", answers },
+      ctx,
+    );
+
+    expect(submitAttempt).toHaveBeenCalledWith("attempt-1", answers);
+    expect(res).toEqual({ id: "attempt-1", status: "SCORED" });
   });
 });

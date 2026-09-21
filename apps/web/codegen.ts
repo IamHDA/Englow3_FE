@@ -15,6 +15,12 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 // `index.ts` re-exports schemaTypes + documents; it is hand-written on
 // purpose (see index.ts) and is the one file in this folder codegen does not
 // own.
+// Both scalars are strings on the wire - the BFF's serialisers reject anything
+// else (see apps/bff/src/graphql/scalars.ts). Without this they land as
+// `unknown` and every read needs a typeof check to get back to the string the
+// value always was.
+const SCALARS = { Date: "string", DateTime: "string" } as const;
+
 const config: CodegenConfig = {
   schema:
     process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ?? "http://localhost:4000/graphql",
@@ -25,12 +31,13 @@ const config: CodegenConfig = {
   generates: {
     "src/lib/graphql/generated/schemaTypes.ts": {
       plugins: ["typescript"],
-      config: { namingConvention: { enumValues: "keep" } },
+      config: { namingConvention: { enumValues: "keep" }, scalars: SCALARS },
     },
     "src/lib/graphql/generated/documents.ts": {
       plugins: ["typescript-operations", "typed-document-node"],
       config: {
         importSchemaTypesFrom: "./src/lib/graphql/generated/schemaTypes",
+        scalars: SCALARS,
       },
     },
     "src/lib/graphql/generated/hooks.ts": {
@@ -38,6 +45,7 @@ const config: CodegenConfig = {
       config: {
         withHooks: true,
         importSchemaTypesFrom: "./src/lib/graphql/generated/schemaTypes",
+        scalars: SCALARS,
         // Apollo Client v4 moved useQuery/useLazyQuery/useSuspenseQuery and
         // their option types out of the root export into "@apollo/client/react".
         // This plugin still defaults to importing them from "@apollo/client".

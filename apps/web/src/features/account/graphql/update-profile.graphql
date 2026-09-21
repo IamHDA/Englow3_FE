@@ -10,6 +10,7 @@ mutation UpdateProfile($input: UpdateProfileInput!) {
     bannerUrl
     onboardingStep
     onboardingState {
+      certificateLearner
       currentLevel
       targetCertificateType
       targetScore

@@ -134,16 +134,28 @@ export const examTypeDefs = `#graphql
     """Learner exam detail by id"""
     exam(id: ID!): LearnerExamItem
 
-    """Full exam paper for sitting the test"""
-    examPaper(id: ID!): ExamPaper
+    """
+    The paper to sit, reachable only through an open attempt. There is no
+    lookup by exam id: the answer key is stripped per attempt, and handing out
+    a paper without one would mean handing it out unscoped.
+    """
+    attemptPaper(attemptId: ID!): ExamPaper!
+
+    """
+    The scored attempt. Carries the answer key, so it is only worth reading
+    once the attempt has left IN_PROGRESS.
+    """
+    examAttempt(id: ID!): ExamAttempt!
   }
 
+  """
+  An option as the learner sees it while sitting: no correctness flag and no
+  explanation. Both arrive afterwards on AttemptOptionReview.
+  """
   type QuestionOption {
     id: ID!
     content: String!
     orderNo: Int!
-    correct: Boolean!
-    explanation: String
   }
 
   type ExamQuestion {
@@ -155,7 +167,6 @@ export const examTypeDefs = `#graphql
     questionCategory: String
     orderNo: Int!
     maxRawScore: Float!
-    explanation: String
     options: [QuestionOption!]!
   }
 
@@ -165,8 +176,9 @@ export const examTypeDefs = `#graphql
     instruction: String
     orderNo: Int!
     content: String
-    audioObjectKey: String
-    imageObjectKey: String
+    """Pre-signed and short-lived - the backend resolves the object key for us."""
+    audioUrl: String
+    imageUrl: String
     questions: [ExamQuestion!]!
   }
 
@@ -176,8 +188,8 @@ export const examTypeDefs = `#graphql
     title: String!
     instruction: String
     content: String
-    audioObjectKey: String
-    imageObjectKey: String
+    audioUrl: String
+    imageUrl: String
     questionSets: [ExamQuestionSet!]!
   }
 
@@ -202,12 +214,79 @@ export const examTypeDefs = `#graphql
     durationSeconds: Int!
     maxRawScore: Float!
     passScore: Float
-    status: ExamStatus!
     versionNumber: Int!
     sections: [ExamSectionDetail!]!
   }
 
+  enum ExamAttemptStatus {
+    IN_PROGRESS
+    SCORED
+    EXPIRED
+  }
+
+  type AttemptOptionReview {
+    optionId: ID!
+    correct: Boolean!
+    explanation: String
+  }
+
+  type AttemptQuestionReview {
+    questionId: ID!
+    selectedOptionIds: [ID!]!
+    correctOptionIds: [ID!]!
+    correct: Boolean!
+    awardedRawScore: Float!
+    explanation: String
+    options: [AttemptOptionReview!]!
+  }
+
+  type ExamAttempt {
+    id: ID!
+    examId: ID!
+    status: ExamAttemptStatus!
+    startedAt: DateTime!
+    """
+    The deadline the backend issued. This is the only authority on remaining
+    time - a countdown from durationSeconds drifts across a sleeping laptop.
+    """
+    expiresAt: DateTime!
+    submittedAt: DateTime
+    scoredAt: DateTime
+    """Null until the attempt is scored."""
+    rawScore: Float
+    maxRawScore: Float
+    scorePercentage: Float
+    correctAnswerCount: Int
+    questionCount: Int!
+    """True when the backend handed back an attempt that was already open."""
+    resumed: Boolean!
+    """Empty while the attempt is IN_PROGRESS - it carries the answer key."""
+    questions: [AttemptQuestionReview!]!
+  }
+
+  input SubmitAnswerInput {
+    questionId: ID!
+    """Empty for a question the learner skipped; several for a multi-select."""
+    selectedOptionIds: [ID!]!
+  }
+
   extend type Mutation {
+    """
+    Opens an attempt, or returns the one already open with resumed: true. The
+    backend enforces one live attempt per learner and exam, so calling this
+    twice does not create two.
+    """
+    startExamAttempt(examId: ID!): ExamAttempt!
+
+    """
+    Submits and scores in one step. The backend rejects a submission after
+    expiresAt, which is why the client must never decide expiry itself.
+    """
+    submitExamAttempt(
+      attemptId: ID!
+      answers: [SubmitAnswerInput!]!
+    ): ExamAttempt!
+
     """
     DRAFT -> PUBLISHED. The backend refuses a paper that is not a draft, has
     no section or question, whose section scores do not total maxRawScore, or

@@ -1,0 +1,110 @@
+fragment ExamAttemptFields on ExamAttempt {
+  id
+  examId
+  status
+  startedAt
+  expiresAt
+  submittedAt
+  scoredAt
+  rawScore
+  maxRawScore
+  scorePercentage
+  correctAnswerCount
+  questionCount
+  resumed
+}
+
+fragment AttemptReviewFields on AttemptQuestionReview {
+  questionId
+  selectedOptionIds
+  correctOptionIds
+  correct
+  awardedRawScore
+  explanation
+  options {
+    optionId
+    correct
+    explanation
+  }
+}
+
+mutation StartExamAttempt($examId: ID!) {
+  startExamAttempt(examId: $examId) {
+    ...ExamAttemptFields
+  }
+}
+
+query AttemptPaper($attemptId: ID!) {
+  attemptPaper(attemptId: $attemptId) {
+    id
+    title
+    description
+    examType
+    certificateType
+    certificateVariant
+    targetLevel
+    durationSeconds
+    maxRawScore
+    passScore
+    versionNumber
+    sections {
+      id
+      sectionType
+      orderNo
+      maxRawScore
+      scoredByCriteria
+      timeLimitSeconds
+      parts {
+        id
+        orderNo
+        title
+        instruction
+        content
+        audioUrl
+        imageUrl
+        questionSets {
+          id
+          title
+          instruction
+          orderNo
+          content
+          audioUrl
+          imageUrl
+          questions {
+            id
+            questionType
+            content
+            difficultyLevel
+            skillType
+            questionCategory
+            orderNo
+            maxRawScore
+            options {
+              id
+              content
+              orderNo
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation SubmitExamAttempt($attemptId: ID!, $answers: [SubmitAnswerInput!]!) {
+  submitExamAttempt(attemptId: $attemptId, answers: $answers) {
+    ...ExamAttemptFields
+    questions {
+      ...AttemptReviewFields
+    }
+  }
+}
+
+query ExamAttemptResult($id: ID!) {
+  examAttempt(id: $id) {
+    ...ExamAttemptFields
+    questions {
+      ...AttemptReviewFields
+    }
+  }
+}

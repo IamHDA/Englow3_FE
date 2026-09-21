@@ -96,12 +96,14 @@ export type SearchLearnerExamsParams = {
   size?: number;
 };
 
+// The paper the learner sits, from GET /api/exam-attempts/{attemptId}/paper.
+// It deliberately carries no `correct` flag and no explanation: the backend
+// strips both so the answer key never reaches the browser mid-attempt. They
+// come back afterwards on the attempt result instead.
 export type QuestionOptionDto = {
   id: string;
   content: string;
   orderNo: number;
-  correct: boolean;
-  explanation: string | null;
 };
 
 export type QuestionDto = {
@@ -113,18 +115,19 @@ export type QuestionDto = {
   questionCategory: string | null;
   orderNo: number;
   maxRawScore: number;
-  explanation: string | null;
   options: QuestionOptionDto[];
 };
 
+// The backend resolves object keys into pre-signed URLs before answering, so
+// what arrives here is already fetchable and expires on its own.
 export type QuestionSetDto = {
   id: string;
   title: string | null;
   instruction: string | null;
   orderNo: number;
   content: string | null;
-  audioObjectKey: string | null;
-  imageObjectKey: string | null;
+  audioUrl: string | null;
+  imageUrl: string | null;
   questions: QuestionDto[];
 };
 
@@ -134,8 +137,8 @@ export type SectionPartDto = {
   title: string;
   instruction: string | null;
   content: string | null;
-  audioObjectKey: string | null;
-  imageObjectKey: string | null;
+  audioUrl: string | null;
+  imageUrl: string | null;
   questionSets: QuestionSetDto[];
 };
 
@@ -160,7 +163,56 @@ export type ExamPaperResponse = {
   durationSeconds: number;
   maxRawScore: number;
   passScore: number | null;
-  status: ExamStatus;
   versionNumber: number;
   sections: ExamSectionDto[];
+};
+
+export type ExamAttemptStatus = "IN_PROGRESS" | "SCORED" | "EXPIRED";
+
+export type AttemptOptionReviewDto = {
+  optionId: string;
+  correct: boolean;
+  explanation: string | null;
+};
+
+export type AttemptQuestionReviewDto = {
+  questionId: string;
+  selectedOptionIds: string[];
+  correctOptionIds: string[];
+  correct: boolean;
+  awardedRawScore: number;
+  explanation: string | null;
+  options: AttemptOptionReviewDto[];
+};
+
+// mirrors ExamAttemptResponse - the shape POST /api/exams/{id}/attempts,
+// POST /api/exam-attempts/{id}/submit and GET /api/exam-attempts/{id}/result
+// all answer with. The scoring fields stay null while the attempt is
+// IN_PROGRESS, and `questions` is empty until it is scored.
+export type ExamAttemptResponse = {
+  id: string;
+  examId: string;
+  status: ExamAttemptStatus;
+  startedAt: string; // ISO-8601 instant
+  expiresAt: string; // ISO-8601 instant - the deadline the UI counts down to
+  submittedAt: string | null;
+  scoredAt: string | null;
+  rawScore: number | null;
+  maxRawScore: number | null;
+  scorePercentage: number | null;
+  correctAnswerCount: number | null;
+  questionCount: number;
+  /** True when the backend handed back an attempt that was already open. */
+  resumed: boolean;
+  questions: AttemptQuestionReviewDto[];
+};
+
+// mirrors POST /api/exam-attempts/{id}/submit request body
+export type SubmitExamAttemptRequest = {
+  answers: SubmittedAnswer[];
+};
+
+export type SubmittedAnswer = {
+  questionId: string;
+  selectedOptionIds: string[];
 };

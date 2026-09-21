@@ -6,7 +6,12 @@ import { Box, Button, Card, Container, Grid, Stack, Text } from "@mantine/core";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { useExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import {
+  useAttemptPaperQuery,
+  useExamDetailQuery,
+  useStartExamAttemptMutation,
+  useSubmitExamAttemptMutation,
+} from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useExamTimer } from "../../../hooks/useExamTimer";
 import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
@@ -22,112 +27,72 @@ import {
 import { SubmitModal } from "../../blocks/SubmitModal";
 import { ExamResultView } from "../../blocks/ExamResultView";
 
+import type { ExamAttemptResult } from "../../../types";
+
 interface ExamSittingViewProps {
   examId: string;
 }
 
-type SittingMode = "overview" | "sitting" | "result";
+type StoredProgress = {
+  answers: Record<string, string>;
+  flaggedIds: string[];
+  currentIndex: number;
+};
+
+/**
+ * Bản nháp cục bộ được khoá theo lượt thi chứ không theo đề: mỗi lượt là một
+ * phiên riêng, dùng chung khoá thì bài làm của lượt trước sẽ chảy sang lượt sau.
+ */
+function storageKey(attemptId: string): string {
+  return `${EXAM_LOCAL_STORAGE_PREFIX}${attemptId}`;
+}
+
+function readProgress(attemptId: string): StoredProgress | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = sessionStorage.getItem(storageKey(attemptId));
+    return saved ? (JSON.parse(saved) as StoredProgress) : null;
+  } catch {
+    return null;
+  }
+}
 
 export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const router = useRouter();
   const { t } = useLanguage();
-  const { data, loading, error } = useExamPaperQuery({
-    variables: { id: examId },
+
+  const [attemptId, setAttemptId] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  const [result, setResult] = useState<ExamAttemptResult | null>(null);
+
+  // Bản tóm tắt đề cho màn giới thiệu - đọc được trước khi đồng hồ chạy.
+  const {
+    data: detailData,
+    loading: detailLoading,
+    error: detailError,
+  } = useExamDetailQuery({ variables: { id: examId } });
+
+  const [startAttempt, { loading: starting, error: startError }] =
+    useStartExamAttemptMutation();
+  const [submitAttempt, { loading: submitting, error: submitError }] =
+    useSubmitExamAttemptMutation();
+
+  const {
+    data,
+    loading: paperLoading,
+    error: paperError,
+  } = useAttemptPaperQuery({
+    variables: { attemptId: attemptId ?? "" },
+    skip: attemptId === null,
     fetchPolicy: "cache-and-network",
   });
 
-  const paper = data?.examPaper;
+  const paper = data?.attemptPaper;
 
-  const [mode, setMode] = useState<SittingMode>("overview");
-  const [currentIndex, setCurrentIndex] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
-    try {
-      const saved = sessionStorage.getItem(
-        `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
-      );
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (typeof parsed.currentIndex === "number") return parsed.currentIndex;
-      }
-    } catch {
-      // ignore
-    }
-    return 0;
-  });
-  const [answers, setAnswers] = useState<Record<string, string>>(() => {
-    if (typeof window === "undefined") return {};
-    try {
-      const saved = sessionStorage.getItem(
-        `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
-      );
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.answers && typeof parsed.answers === "object")
-          return parsed.answers;
-      }
-    } catch {
-      // ignore
-    }
-    return {};
-  });
-  const [flaggedIds, setFlaggedIds] = useState<Set<string>>(() => {
-    if (typeof window === "undefined") return new Set();
-    try {
-      const saved = sessionStorage.getItem(
-        `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
-      );
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed.flaggedIds)) return new Set(parsed.flaggedIds);
-      }
-    } catch {
-      // ignore
-    }
-    return new Set();
-  });
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [flaggedIds, setFlaggedIds] = useState<Set<string>>(new Set());
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
-
-  // Submit test action
-  const handleFinalSubmit = useCallback(() => {
-    setSubmitModalOpen(false);
-    setMode("result");
-    try {
-      sessionStorage.removeItem(`${EXAM_LOCAL_STORAGE_PREFIX}${examId}`);
-    } catch {
-      // ignore storage errors
-    }
-  }, [examId]);
-
-  // Hook-extracted timer with background clock-skew protection
-  const {
-    formattedTime,
-    timeSpentSeconds,
-    isWarning,
-    isCritical,
-    reset: resetTimer,
-  } = useExamTimer({
-    durationSeconds: paper?.durationSeconds ?? 7200,
-    isActive: mode === "sitting",
-    onExpire: handleFinalSubmit,
-  });
-
-  // Auto-persist answers locally as learner answers (per exam-flow.md rule)
-  useEffect(() => {
-    if (mode === "sitting") {
-      try {
-        sessionStorage.setItem(
-          `${EXAM_LOCAL_STORAGE_PREFIX}${examId}`,
-          JSON.stringify({
-            answers,
-            flaggedIds: Array.from(flaggedIds),
-            currentIndex,
-          }),
-        );
-      } catch {
-        // ignore
-      }
-    }
-  }, [mode, examId, answers, flaggedIds, currentIndex]);
 
   // Flatten questions list for sequential navigation
   const flatQuestions = useMemo<FlatQuestionItem[]>(() => {
@@ -155,6 +120,82 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     return list;
   }, [paper]);
 
+  /**
+   * Nộp bài. Backend chấm ngay và trả kết quả, kể cả khi mảng đáp án rỗng - hết
+   * giờ thì nộp những gì đang có chứ không vứt đi, rồi để server phán quyết.
+   */
+  const handleFinalSubmit = useCallback(async () => {
+    if (attemptId === null) return;
+
+    setSubmitModalOpen(false);
+
+    const payload = Object.entries(answers).map(
+      ([questionId, selectedOptionId]) => ({
+        questionId,
+        selectedOptionIds: [selectedOptionId],
+      }),
+    );
+
+    const response = await submitAttempt({
+      variables: { attemptId, answers: payload },
+    }).catch(() => null);
+
+    if (!response?.data) return;
+
+    setResult(response.data.submitExamAttempt);
+    try {
+      sessionStorage.removeItem(storageKey(attemptId));
+    } catch {
+      // ignore storage errors
+    }
+  }, [attemptId, answers, submitAttempt]);
+
+  const { formattedTime, isWarning, isCritical } = useExamTimer({
+    expiresAt,
+    isActive: attemptId !== null && result === null,
+    onExpire: handleFinalSubmit,
+  });
+
+  /**
+   * Mở lượt thi. Backend luôn trả về một lượt đang mở: lượt cũ còn hạn thì trả
+   * lại với `resumed: true`, hết hạn thì nó đóng lại rồi tạo lượt mới. Nên bấm
+   * "Bắt đầu" lần nữa không bao giờ tạo ra hai lượt song song.
+   */
+  const handleStart = useCallback(async () => {
+    const response = await startAttempt({
+      variables: { examId },
+    }).catch(() => null);
+
+    const attempt = response?.data?.startExamAttempt;
+    if (!attempt) return;
+
+    // Lượt được nối lại có thể đã làm dở ở lần trước - khôi phục bản nháp cục
+    // bộ của đúng lượt đó, kể cả vị trí câu đang đứng.
+    const restored = readProgress(attempt.id);
+    setAnswers(restored?.answers ?? {});
+    setFlaggedIds(new Set(restored?.flaggedIds ?? []));
+    setCurrentIndex(restored?.currentIndex ?? 0);
+    setAttemptId(attempt.id);
+    setExpiresAt(attempt.expiresAt);
+  }, [examId, startAttempt]);
+
+  // Giữ bản nháp cục bộ để tải lại trang hay mất mạng không mất bài đang làm.
+  useEffect(() => {
+    if (attemptId === null || result !== null) return;
+    try {
+      sessionStorage.setItem(
+        storageKey(attemptId),
+        JSON.stringify({
+          answers,
+          flaggedIds: Array.from(flaggedIds),
+          currentIndex,
+        }),
+      );
+    } catch {
+      // ignore
+    }
+  }, [attemptId, result, answers, flaggedIds, currentIndex]);
+
   // Current question references
   const currentItem = flatQuestions[currentIndex];
   const currentSection = currentItem
@@ -175,16 +216,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         )
       : null;
 
-  // Answer selection handler
   const handleSelectOption = (optionId: string) => {
     if (!currentItem) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [currentItem.questionId]: optionId,
-    }));
+    setAnswers((prev) => ({ ...prev, [currentItem.questionId]: optionId }));
   };
 
-  // Flag toggle handler
   const handleToggleFlag = () => {
     if (!currentItem) return;
     setFlaggedIds((prev) => {
@@ -198,26 +234,20 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     });
   };
 
-  // Retake test
+  // Làm lại là mở một lượt mới - backend cấp id và hạn nộp mới, không tái dùng
+  // lượt đã chấm.
   const handleRetake = () => {
+    setResult(null);
+    setAttemptId(null);
+    setExpiresAt(null);
     setAnswers({});
     setFlaggedIds(new Set());
     setCurrentIndex(0);
-    resetTimer();
-    try {
-      sessionStorage.removeItem(`${EXAM_LOCAL_STORAGE_PREFIX}${examId}`);
-    } catch {
-      // ignore
-    }
-    setMode("overview");
   };
 
-  // Fallback loading: Named skeleton component, never a spinner
-  if (loading && !paper) {
-    return <ExamOverviewSkeleton />;
-  }
+  const error = detailError ?? startError ?? paperError ?? submitError;
 
-  if (error || !paper) {
+  if (error) {
     return (
       <Container size="md" py="xl">
         <Stack align="center" gap="md" py={60}>
@@ -226,7 +256,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
             {t.exam.failedLoadExam}
           </Text>
           <Text size="sm" c="ink.5" ta="center">
-            {error?.message || t.exam.failedLoadExamDesc}
+            {t.exam.failedLoadExamDesc}
           </Text>
           <Button
             component={Link}
@@ -242,19 +272,24 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     );
   }
 
-  // 1. Overview Mode (Briefing)
-  if (mode === "overview") {
-    return <ExamOverview paper={paper} onStart={() => setMode("sitting")} />;
+  // 1. Overview Mode (Briefing) - chưa mở lượt thi nào
+  if (attemptId === null || !paper) {
+    const exam = detailData?.exam;
+    if (detailLoading || !exam || (attemptId !== null && paperLoading)) {
+      return <ExamOverviewSkeleton />;
+    }
+    return (
+      <ExamOverview exam={exam} starting={starting} onStart={handleStart} />
+    );
   }
 
   // 3. Result Mode (Post-submission)
-  if (mode === "result") {
+  if (result) {
     return (
       <ExamResultView
         paper={paper}
         questions={flatQuestions}
-        answers={answers}
-        timeSpentSeconds={timeSpentSeconds}
+        attempt={result}
         onRetake={handleRetake}
       />
     );
@@ -263,7 +298,6 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   // 2. Active Sitting Mode
   return (
     <Box bg="ink.0" mih="100vh" pb={60}>
-      {/* Sticky Timer & Examination Header */}
       <ExamSittingHeader
         title={paper.title}
         sectionTitle={
@@ -284,10 +318,8 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         }}
       />
 
-      {/* Main Examination Workspace (Split Layout) */}
       <Container size="xl" py="lg">
         <Grid gap="lg">
-          {/* Left: Question Card & Stimulus */}
           <Grid.Col span={{ base: 12, md: 8, lg: 8.5 }}>
             {currentSection &&
             currentPart &&
@@ -324,7 +356,6 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
             )}
           </Grid.Col>
 
-          {/* Right: Question Palette Sidebar */}
           <Grid.Col span={{ base: 12, md: 4, lg: 3.5 }}>
             <QuestionPalette
               questions={flatQuestions}
@@ -337,12 +368,12 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         </Grid>
       </Container>
 
-      {/* Confirmation Submit Modal */}
       <SubmitModal
         opened={submitModalOpen}
         totalQuestions={flatQuestions.length}
         answeredCount={Object.keys(answers).length}
         flaggedCount={flaggedIds.size}
+        submitting={submitting}
         onClose={() => setSubmitModalOpen(false)}
         onConfirmSubmit={handleFinalSubmit}
       />

@@ -10,6 +10,7 @@ query CurrentUser {
     bannerUrl
     onboardingStep
     onboardingState {
+      certificateLearner
       currentLevel
       targetCertificateType
       targetScore

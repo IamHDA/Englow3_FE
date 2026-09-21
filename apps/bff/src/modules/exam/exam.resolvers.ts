@@ -2,6 +2,7 @@ import type { GraphQLContext } from "../../graphql/context.js";
 import type {
   SearchExamsParams,
   SearchLearnerExamsParams,
+  SubmittedAnswer,
 } from "./exam.types.js";
 
 /** The backend trusts the requested size; the cap belongs here so a client cannot ask for the whole table. */
@@ -40,12 +41,36 @@ export const examResolvers = {
       ctx.requireToken();
       return ctx.apis.examApi.getByIdAsLearner(args.id);
     },
-    examPaper: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+    attemptPaper: (
+      _: unknown,
+      args: { attemptId: string },
+      ctx: GraphQLContext,
+    ) => {
       ctx.requireToken();
-      return ctx.apis.examApi.getPaperAsLearner(args.id);
+      return ctx.apis.examApi.getAttemptPaper(args.attemptId);
+    },
+    examAttempt: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getAttemptResult(args.id);
     },
   },
   Mutation: {
+    startExamAttempt: (
+      _: unknown,
+      args: { examId: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.startAttempt(args.examId);
+    },
+    submitExamAttempt: (
+      _: unknown,
+      args: { attemptId: string; answers: SubmittedAnswer[] },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.submitAttempt(args.attemptId, args.answers);
+    },
     publishExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
       ctx.requireToken();
       return ctx.apis.examApi.publishAsAdmin(args.id);

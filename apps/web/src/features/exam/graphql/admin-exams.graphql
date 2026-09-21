@@ -1,0 +1,57 @@
+fragment AdminExamFields on ExamListItem {
+  id
+  title
+  examType
+  certificateType
+  certificateVariant
+  targetLevel
+  status
+  versionNumber
+  createdByUserId
+  publishedAt
+  createdAt
+}
+
+query AdminExams(
+  $status: ExamStatus
+  $examType: ExamType
+  $title: String
+  $page: Int
+  $size: Int
+) {
+  adminExams(
+    status: $status
+    examType: $examType
+    title: $title
+    page: $page
+    size: $size
+  ) {
+    items {
+      ...AdminExamFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+fragment AdminExamShellFields on Exam {
+  id
+  title
+  status
+  versionNumber
+  publishedAt
+}
+
+mutation PublishExam($id: ID!) {
+  publishExam(id: $id) {
+    ...AdminExamShellFields
+  }
+}
+
+mutation ArchiveExam($id: ID!) {
+  archiveExam(id: $id) {
+    ...AdminExamShellFields
+  }
+}

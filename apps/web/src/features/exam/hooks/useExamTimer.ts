@@ -1,77 +1,59 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import {
   TIMER_WARNING_THRESHOLD_SECONDS,
   TIMER_CRITICAL_THRESHOLD_SECONDS,
 } from "../constants/examSitting";
 
 interface UseExamTimerOptions {
-  durationSeconds: number;
+  /**
+   * Hạn nộp do backend cấp cùng lượt thi (ISO-8601). Đây là nguồn duy nhất
+   * quyết định còn bao nhiêu thời gian - đếm lùi từ `durationSeconds` sẽ lệch
+   * khi máy ngủ, tab bị treo hoặc đồng hồ máy sai, và quan trọng hơn là nó
+   * không khớp với mốc backend dùng để từ chối bài nộp muộn.
+   *
+   * null khi chưa mở lượt thi nào.
+   */
+  expiresAt: string | null;
   isActive: boolean;
   onExpire?: () => void;
 }
 
+function secondsUntil(deadlineMs: number): number {
+  return Math.max(0, Math.ceil((deadlineMs - Date.now()) / 1000));
+}
+
 export function useExamTimer({
-  durationSeconds,
+  expiresAt,
   isActive,
   onExpire,
 }: UseExamTimerOptions) {
-  // Target deadline timestamp (ms since epoch)
-  const deadlineRef = useRef<number | null>(null);
-  const [remainingSeconds, setRemainingSeconds] =
-    useState<number>(durationSeconds);
-  const [timeSpentSeconds, setTimeSpentSeconds] = useState<number>(0);
-  const startTimestampRef = useRef<number | null>(null);
+  const deadlineMs = expiresAt === null ? null : Date.parse(expiresAt);
 
-  // Initialize or reset deadline when activated
+  // Thời gian còn lại được tính lúc render từ hạn nộp, không giữ trong state:
+  // state sẽ cũ đi mỗi khi `expiresAt` đổi (mở lượt mới), còn cách này thì
+  // không bao giờ lệch. `tick` chỉ để kéo một lượt render mỗi giây.
+  const [, tick] = useReducer((count: number) => count + 1, 0);
+  const remainingSeconds = deadlineMs === null ? 0 : secondsUntil(deadlineMs);
+
+  const running = isActive && deadlineMs !== null;
+
   useEffect(() => {
-    if (isActive && deadlineRef.current === null) {
-      const now = Date.now();
-      deadlineRef.current = now + durationSeconds * 1000;
-      startTimestampRef.current = now;
-      setRemainingSeconds(durationSeconds);
-    }
-  }, [isActive, durationSeconds]);
+    if (!running) return;
 
-  // Re-derives remaining time from target deadline
-  const updateTimer = useCallback(() => {
-    if (!deadlineRef.current || !startTimestampRef.current || !isActive) return;
-
-    const now = Date.now();
-    const remainingMs = deadlineRef.current - now;
-    const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
-    const spentSec = Math.floor((now - startTimestampRef.current) / 1000);
-
-    setRemainingSeconds(remainingSec);
-    setTimeSpentSeconds(spentSec);
-
-    if (remainingSec <= 0) {
-      deadlineRef.current = null;
-      onExpire?.();
-    }
-  }, [isActive, onExpire]);
-
-  // Main 1-second interval
-  useEffect(() => {
-    if (!isActive) return;
-
-    const interval = setInterval(updateTimer, 1000);
+    const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [isActive, updateTimer]);
+  }, [running]);
 
-  // Tab focus & visibility change handler to prevent clock skew on sleeping laptops or background tabs
+  // Quay lại tab hoặc mở nắp máy: vẽ lại ngay thay vì đợi nhịp kế tiếp, vì
+  // trình duyệt bóp nhịp interval của tab chạy nền.
   useEffect(() => {
-    if (!isActive) return;
+    if (!running) return;
 
-    const handleFocus = () => {
-      updateTimer();
-    };
-
+    const handleFocus = () => tick();
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        updateTimer();
-      }
+      if (document.visibilityState === "visible") tick();
     };
 
     window.addEventListener("focus", handleFocus);
@@ -81,14 +63,22 @@ export function useExamTimer({
       window.removeEventListener("focus", handleFocus);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [isActive, updateTimer]);
+  }, [running]);
 
-  const reset = useCallback(() => {
-    deadlineRef.current = null;
-    startTimestampRef.current = null;
-    setRemainingSeconds(durationSeconds);
-    setTimeSpentSeconds(0);
-  }, [durationSeconds]);
+  // Hết giờ chỉ được báo một lần: `onExpire` nộp bài, gọi lần hai sẽ nộp chồng
+  // lên một lượt đã đóng.
+  const expiredRef = useRef(false);
+
+  useEffect(() => {
+    expiredRef.current = false;
+  }, [expiresAt]);
+
+  useEffect(() => {
+    if (!running || remainingSeconds > 0 || expiredRef.current) return;
+
+    expiredRef.current = true;
+    onExpire?.();
+  }, [running, remainingSeconds, onExpire]);
 
   // Format HH:MM:SS or MM:SS
   const formatTime = (totalSec: number) => {
@@ -102,15 +92,10 @@ export function useExamTimer({
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const isWarning = remainingSeconds <= TIMER_WARNING_THRESHOLD_SECONDS;
-  const isCritical = remainingSeconds <= TIMER_CRITICAL_THRESHOLD_SECONDS;
-
   return {
     remainingSeconds,
-    timeSpentSeconds,
     formattedTime: formatTime(remainingSeconds),
-    isWarning,
-    isCritical,
-    reset,
+    isWarning: remainingSeconds <= TIMER_WARNING_THRESHOLD_SECONDS,
+    isCritical: remainingSeconds <= TIMER_CRITICAL_THRESHOLD_SECONDS,
   };
 }

@@ -25,35 +25,26 @@ import {
   Play,
   CheckCircle2,
   AlertCircle,
-  Headphones,
 } from "lucide-react";
-import type { ExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import type { ExamSummary } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./ExamOverview.module.css";
 
-type ExamPaper = NonNullable<ExamPaperQuery["examPaper"]>;
-
 export interface ExamOverviewProps {
-  paper: ExamPaper;
+  /**
+   * Bản tóm tắt đề, không phải đề đầy đủ: đề chỉ về sau khi mở lượt thi, mà
+   * mở lượt là backend bắt đầu tính giờ - màn giới thiệu phải đọc được trước
+   * khi đồng hồ chạy.
+   */
+  exam: ExamSummary;
+  starting: boolean;
   onStart: () => void;
 }
 
-export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
+export function ExamOverview({ exam, starting, onStart }: ExamOverviewProps) {
   const { t } = useLanguage();
 
-  const totalQuestions = paper.sections.reduce((acc, sec) => {
-    return (
-      acc +
-      sec.parts.reduce((pAcc, part) => {
-        return (
-          pAcc +
-          part.questionSets.reduce((qAcc, qs) => qAcc + qs.questions.length, 0)
-        );
-      }, 0)
-    );
-  }, 0);
-
-  const durationMinutes = Math.round(paper.durationSeconds / 60);
+  const durationMinutes = Math.round(exam.durationSeconds / 60);
 
   return (
     <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
@@ -67,7 +58,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
           /
         </Text>
         <Text c="navy.9" size="sm" fw={600}>
-          {paper.title}
+          {exam.title}
         </Text>
       </Flex>
 
@@ -83,15 +74,15 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
           <Group justify="space-between" align="flex-start">
             <Stack gap={6}>
               <Group gap="xs">
-                {paper.certificateType && (
+                {exam.certificateType && (
                   <Badge color="navy" variant="light" size="md" radius="sm">
-                    {paper.certificateType}{" "}
-                    {paper.certificateVariant ? paper.certificateVariant : ""}
+                    {exam.certificateType}{" "}
+                    {exam.certificateVariant ? exam.certificateVariant : ""}
                   </Badge>
                 )}
-                {paper.targetLevel && (
+                {exam.targetLevel && (
                   <Badge color="orange" variant="light" size="md" radius="sm">
-                    Level {paper.targetLevel}
+                    Level {exam.targetLevel}
                   </Badge>
                 )}
               </Group>
@@ -102,10 +93,10 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 lh={1.2}
                 style={{ letterSpacing: "-0.02em" }}
               >
-                {paper.title}
+                {exam.title}
               </Title>
               <Text c="ink.6" size="sm">
-                {paper.description || t.exam.defaultDescription}
+                {exam.description || t.exam.defaultDescription}
               </Text>
             </Stack>
           </Group>
@@ -138,7 +129,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                     {t.exam.questionQuantityLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {totalQuestions} {t.exam.questionsUnitFull}
+                    {exam.questionCount} {t.exam.questionsUnitFull}
                   </Text>
                 </Stack>
               </Group>
@@ -154,7 +145,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                     {t.exam.maxScoreScaleLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {paper.maxRawScore} {t.exam.pointsUnit}
+                    {exam.maxRawScore} {t.exam.pointsUnit}
                   </Text>
                 </Stack>
               </Group>
@@ -167,84 +158,17 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
                 </ThemeIcon>
                 <Stack gap={1}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    {t.exam.sectionsCountLabel}
+                    {t.exam.passScoreLabel}
                   </Text>
                   <Text size="md" fw={700} c="navy.9">
-                    {paper.sections.length} {t.exam.sectionsUnit}
+                    {exam.passScore === null
+                      ? t.exam.passScoreUnset
+                      : `${exam.passScore} ${t.exam.pointsUnit}`}
                   </Text>
                 </Stack>
               </Group>
             </Card>
           </SimpleGrid>
-
-          {/* Section Breakdown List */}
-          <Stack gap="xs">
-            <Text fw={700} size="md" c="navy.9">
-              {t.exam.examStructureLabel}
-            </Text>
-            <SimpleGrid
-              cols={{ base: 1, sm: paper.sections.length }}
-              spacing="md"
-            >
-              {paper.sections.map((section, idx) => {
-                const sectionQuestions = section.parts.reduce(
-                  (acc, p) =>
-                    acc +
-                    p.questionSets.reduce(
-                      (qAcc, qs) => qAcc + qs.questions.length,
-                      0,
-                    ),
-                  0,
-                );
-                const isListening = section.sectionType
-                  .toUpperCase()
-                  .includes("LISTEN");
-
-                return (
-                  <Card
-                    key={section.id}
-                    p="md"
-                    radius="md"
-                    withBorder
-                    className={classes.sectionCard}
-                  >
-                    <Group justify="space-between" mb="xs">
-                      <Group gap="xs">
-                        <ThemeIcon
-                          size="md"
-                          radius="md"
-                          color={isListening ? "blue.1" : "orange.1"}
-                          c={isListening ? "blue.9" : "orange.9"}
-                        >
-                          {isListening ? (
-                            <Headphones size={18} />
-                          ) : (
-                            <BookOpen size={18} />
-                          )}
-                        </ThemeIcon>
-                        <Text fw={700} size="sm" c="navy.9">
-                          {t.exam.sectionPrefix} {idx + 1}:{" "}
-                          {section.sectionType}
-                        </Text>
-                      </Group>
-                    </Group>
-                    <Text size="xs" c="ink.5">
-                      {t.exam.sectionIncludes
-                        .replace("{parts}", String(section.parts.length))
-                        .replace("{questions}", String(sectionQuestions))}
-                    </Text>
-                    {section.timeLimitSeconds && (
-                      <Text size="xs" c="ink.5" mt={4}>
-                        {t.exam.allocatedTimeLabel}{" "}
-                        {Math.round(section.timeLimitSeconds / 60)}{" "}
-                        {t.exam.minutesUnit}
-                      </Text>
-                    )}
-                  </Card>
-                );
-              })}
-            </SimpleGrid>
-          </Stack>
 
           {/* Guidelines Box */}
           <Paper
@@ -316,6 +240,7 @@ export function ExamOverview({ paper, onStart }: ExamOverviewProps) {
             </Button>
             <Button
               onClick={onStart}
+              loading={starting}
               radius="xl"
               size="md"
               rightSection={<Play size={16} />}

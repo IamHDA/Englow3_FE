@@ -20,6 +20,8 @@ export interface SubmitModalProps {
   totalQuestions: number;
   answeredCount: number;
   flaggedCount: number;
+  /** Đang gửi bài lên server - khoá nút, nhưng chốt chặn thật là tính bất biến của backend. */
+  submitting: boolean;
   onClose: () => void;
   onConfirmSubmit: () => void;
 }
@@ -29,6 +31,7 @@ export function SubmitModal({
   totalQuestions,
   answeredCount,
   flaggedCount,
+  submitting,
   onClose,
   onConfirmSubmit,
 }: SubmitModalProps) {
@@ -138,6 +141,7 @@ export function SubmitModal({
             radius="xl"
             size="sm"
             onClick={onConfirmSubmit}
+            loading={submitting}
             className={classes.confirmBtn}
           >
             {t.exam.confirmSubmitCTA}

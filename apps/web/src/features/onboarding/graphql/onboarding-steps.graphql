@@ -1,0 +1,45 @@
+fragment OnboardingStateFields on OnboardingState {
+  learningPurposeIds
+  certificateLearner
+  targetCertificateType
+  currentLevel
+  targetScore
+  targetDate
+  targetSkills
+}
+
+mutation SelectLearningPurposes($purposeIds: [Int!]!) {
+  selectLearningPurposes(purposeIds: $purposeIds) {
+    ...OnboardingStateFields
+  }
+}
+
+mutation SetCertificateTarget($certificateType: TargetCertificate!) {
+  setCertificateTarget(certificateType: $certificateType) {
+    ...OnboardingStateFields
+  }
+}
+
+mutation SetCurrentLevel($level: CefrLevel!) {
+  setCurrentLevel(level: $level) {
+    ...OnboardingStateFields
+  }
+}
+
+mutation SetLearningGoal($input: LearningGoalInput!) {
+  setLearningGoal(input: $input) {
+    ...OnboardingStateFields
+  }
+}
+
+mutation SelectTargetSkills($skills: [LearningSkill!]!) {
+  selectTargetSkills(skills: $skills) {
+    ...OnboardingStateFields
+  }
+}
+
+mutation CompleteOnboarding {
+  completeOnboarding {
+    ...OnboardingStateFields
+  }
+}

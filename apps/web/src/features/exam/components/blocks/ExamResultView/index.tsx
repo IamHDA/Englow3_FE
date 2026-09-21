@@ -26,26 +26,32 @@ import {
   RotateCcw,
   ArrowLeft,
 } from "lucide-react";
-import type { ExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import type {
+  AttemptQuestionReview,
+  ExamAttemptResult,
+  ExamPaper,
+} from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { FlatQuestionItem } from "../QuestionPalette";
 import classes from "./ExamResultView.module.css";
 
-type ExamPaper = NonNullable<ExamPaperQuery["examPaper"]>;
-
 export interface ExamResultViewProps {
   paper: ExamPaper;
   questions: FlatQuestionItem[];
-  answers: Record<string, string>; // questionId -> optionId
-  timeSpentSeconds: number;
+  /** Lượt thi đã chấm. Điểm, đáp án đúng và giải thích đều lấy từ đây. */
+  attempt: ExamAttemptResult;
   onRetake: () => void;
+}
+
+/** Không chọn ô nào nghĩa là bỏ qua - backend vẫn ghi câu đó với mảng rỗng. */
+function isSkipped(review: AttemptQuestionReview | undefined): boolean {
+  return (review?.selectedOptionIds.length ?? 0) === 0;
 }
 
 export function ExamResultView({
   paper,
   questions,
-  answers,
-  timeSpentSeconds,
+  attempt,
   onRetake,
 }: ExamResultViewProps) {
   const { t } = useLanguage();
@@ -75,50 +81,51 @@ export function ExamResultView({
     });
   });
 
-  // Calculate results
-  let correctCount = 0;
-  let incorrectCount = 0;
-  let skippedCount = 0;
+  // Chấm điểm là việc của backend - ở đây chỉ tra cứu lại kết quả nó trả về.
+  const reviewMap = new Map(
+    attempt.questions.map((review) => [review.questionId, review]),
+  );
 
   const evaluatedQuestions = questions.map((item) => {
     const qData = questionMap.get(item.questionId);
     const q = qData?.question;
-    const selectedOptionId = answers[item.questionId];
+    const review = reviewMap.get(item.questionId);
 
-    const correctOption = q?.options.find((o) => o.correct);
-    const selectedOption = q?.options.find((o) => o.id === selectedOptionId);
-
-    const isAnswered = !!selectedOptionId;
-    const isCorrect = isAnswered && selectedOption?.correct === true;
-
-    if (!isAnswered) {
-      skippedCount++;
-    } else if (isCorrect) {
-      correctCount++;
-    } else {
-      incorrectCount++;
-    }
+    const selectedOptionId = review?.selectedOptionIds[0];
+    const correctOptionId = review?.correctOptionIds[0];
 
     return {
       item,
       question: q,
+      review,
       partTitle: qData?.partTitle || "",
       sectionType: qData?.sectionType || "",
-      selectedOptionId,
-      selectedOption,
-      correctOption,
-      isAnswered,
-      isCorrect,
+      selectedOption: q?.options.find((o) => o.id === selectedOptionId),
+      correctOption: q?.options.find((o) => o.id === correctOptionId),
+      isAnswered: !isSkipped(review),
+      isCorrect: review?.correct === true,
     };
   });
 
-  const totalQuestions = questions.length;
-  const accuracyPercent =
-    totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
-  const scaledScore = Math.round(
-    (correctCount / (totalQuestions || 1)) * paper.maxRawScore,
-  );
+  const totalQuestions = attempt.questionCount;
+  const correctCount = attempt.correctAnswerCount ?? 0;
+  const skippedCount = evaluatedQuestions.filter((eq) => !eq.isAnswered).length;
+  const incorrectCount = totalQuestions - correctCount - skippedCount;
 
+  const accuracyPercent = Math.round(attempt.scorePercentage ?? 0);
+  const scaledScore = attempt.rawScore ?? 0;
+  const maxScore = attempt.maxRawScore ?? paper.maxRawScore;
+
+  // Thời gian làm bài đo bằng hai mốc của server, không bằng đồng hồ máy khách.
+  const timeSpentSeconds = attempt.submittedAt
+    ? Math.max(
+        0,
+        Math.round(
+          (Date.parse(attempt.submittedAt) - Date.parse(attempt.startedAt)) /
+            1000,
+        ),
+      )
+    : 0;
   const minutes = Math.floor(timeSpentSeconds / 60);
   const seconds = timeSpentSeconds % 60;
   const timeFormatted = `${minutes} ${t.exam.minutesText} ${seconds.toString().padStart(2, "0")} ${t.exam.secondsText}`;
@@ -208,7 +215,7 @@ export function ExamResultView({
                   </Text>
                 </Group>
                 <Text size="xl" fw={800} c="navy.9">
-                  {scaledScore} / {paper.maxRawScore}
+                  {scaledScore} / {maxScore}
                 </Text>
                 <Text size="xs" c="navy.7">
                   {t.exam.accuracyRate} {accuracyPercent}%
@@ -309,13 +316,22 @@ export function ExamResultView({
                 ({
                   item,
                   question,
+                  review,
                   partTitle,
                   selectedOption,
-                  correctOption,
                   isCorrect,
                   isAnswered,
                 }) => {
                   if (!question) return null;
+
+                  // Đáp án đúng và giải thích chỉ tồn tại trong kết quả chấm -
+                  // đề người học nhận lúc làm bài đã bị gỡ hết.
+                  const optionReview = new Map(
+                    review?.options.map((o) => [o.optionId, o]) ?? [],
+                  );
+                  const correctExplanation = review?.options.find(
+                    (o) => o.correct,
+                  )?.explanation;
 
                   return (
                     <Accordion.Item
@@ -381,7 +397,8 @@ export function ExamResultView({
                             {question.options.map((opt, optIdx) => {
                               const isUserChoice =
                                 opt.id === selectedOption?.id;
-                              const isCorrectOpt = opt.correct;
+                              const isCorrectOpt =
+                                optionReview.get(opt.id)?.correct === true;
                               const letter = String.fromCharCode(65 + optIdx);
 
                               let bg = "white";
@@ -446,8 +463,7 @@ export function ExamResultView({
                           </Stack>
 
                           {/* Explanation Note */}
-                          {(question.explanation ||
-                            correctOption?.explanation) && (
+                          {(review?.explanation || correctExplanation) && (
                             <Box p="sm" className={classes.explanationBox}>
                               <Text size="xs" fw={700} c="navy.9" mb={2}>
                                 {t.exam.detailedExplanation}
@@ -457,8 +473,7 @@ export function ExamResultView({
                                 c="ink.7"
                                 style={{ lineHeight: 1.5 }}
                               >
-                                {question.explanation ||
-                                  correctOption?.explanation}
+                                {review?.explanation || correctExplanation}
                               </Text>
                             </Box>
                           )}

@@ -1,5 +1,6 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
+  ExamAttemptResponse,
   ExamPageResponse,
   ExamPaperResponse,
   ExamResponse,
@@ -7,10 +8,12 @@ import type {
   LearnerExamPageResponse,
   SearchExamsParams,
   SearchLearnerExamsParams,
+  SubmittedAnswer,
 } from "./exam.types.js";
 
 const ADMIN_EXAM_BASE_PATH = "/api/admin/exams";
 const EXAM_BASE_PATH = "/api/exams";
+const ATTEMPT_BASE_PATH = "/api/exam-attempts";
 
 export class ExamApi {
   constructor(private readonly client: BackendClient) {}
@@ -37,8 +40,38 @@ export class ExamApi {
     return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}`);
   }
 
-  getPaperAsLearner(id: string): Promise<ExamPaperResponse> {
-    return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}/paper`);
+  /**
+   * Opens an attempt, or hands back the one already open - the backend answers
+   * 201 for a new attempt and 200 with `resumed: true` for an existing one, and
+   * a unique index stops a learner holding two at once.
+   */
+  startAttempt(examId: string): Promise<ExamAttemptResponse> {
+    return this.client.post(
+      `${EXAM_BASE_PATH}/${encodeURIComponent(examId)}/attempts`,
+    );
+  }
+
+  /** The paper is reachable only through an attempt, never by exam id. */
+  getAttemptPaper(attemptId: string): Promise<ExamPaperResponse> {
+    return this.client.get(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/paper`,
+    );
+  }
+
+  submitAttempt(
+    attemptId: string,
+    answers: SubmittedAnswer[],
+  ): Promise<ExamAttemptResponse> {
+    return this.client.post(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/submit`,
+      { answers },
+    );
+  }
+
+  getAttemptResult(attemptId: string): Promise<ExamAttemptResponse> {
+    return this.client.get(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/result`,
+    );
   }
 
   /** Admin-only on the backend (@PreAuthorize hasRole ADMIN) - it answers 403 for anyone else. */

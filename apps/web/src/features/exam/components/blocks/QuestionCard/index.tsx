@@ -15,11 +15,10 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { ArrowLeft, ArrowRight, Flag, Headphones, Volume2 } from "lucide-react";
-import type { ExamPaperQuery } from "@/lib/graphql/generated/hooks";
+import type { ExamPaper } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionCard.module.css";
 
-type ExamPaper = NonNullable<ExamPaperQuery["examPaper"]>;
 type Section = ExamPaper["sections"][number];
 type Part = Section["parts"][number];
 type QuestionSet = Part["questionSets"][number];
@@ -93,7 +92,7 @@ export function QuestionCard({
 
         {/* Question Set Stimulus / Passage / Audio */}
         {(questionSet.content ||
-          questionSet.audioObjectKey ||
+          questionSet.audioUrl ||
           questionSet.instruction) && (
           <Card p="md" radius="md" className={classes.stimulusCard}>
             {questionSet.title && (
@@ -115,14 +114,18 @@ export function QuestionCard({
                 {questionSet.content}
               </Text>
             )}
-            {questionSet.audioObjectKey && (
+            {/* URL đã được backend ký sẵn và tự hết hạn, phát thẳng được. */}
+            {questionSet.audioUrl && (
               <Box mt="xs" p="xs" className={classes.audioWidget}>
-                <Group gap="xs">
+                <Group gap="xs" mb={6}>
                   <Volume2 size={18} color="var(--mantine-color-navy-9)" />
                   <Text size="xs" fw={600} c="navy.9">
-                    {t.exam.audioStimulus} {questionSet.audioObjectKey}
+                    {t.exam.audioStimulus}
                   </Text>
                 </Group>
+                <audio controls preload="none" src={questionSet.audioUrl}>
+                  {t.exam.audioStimulus}
+                </audio>
               </Box>
             )}
           </Card>

@@ -353,6 +353,8 @@ export interface ExamTranslations {
   questionQuantityLabel: string;
   questionsUnitFull: string;
   maxScoreScaleLabel: string;
+  passScoreLabel: string;
+  passScoreUnset: string;
   sectionsCountLabel: string;
   sectionsUnit: string;
   examStructureLabel: string;
@@ -742,6 +744,8 @@ export const translations: Record<Language, AppTranslations> = {
       questionQuantityLabel: "Số lượng câu",
       questionsUnitFull: "câu hỏi",
       maxScoreScaleLabel: "Thang điểm tối đa",
+      passScoreLabel: "Điểm đạt",
+      passScoreUnset: "Không đặt",
       sectionsCountLabel: "Số phần thi",
       sectionsUnit: "phần thi",
       examStructureLabel: "Cấu trúc bài thi:",
@@ -1181,6 +1185,8 @@ export const translations: Record<Language, AppTranslations> = {
       questionQuantityLabel: "Questions",
       questionsUnitFull: "questions",
       maxScoreScaleLabel: "Max Score Scale",
+      passScoreLabel: "Pass Score",
+      passScoreUnset: "Not set",
       sectionsCountLabel: "Test Sections",
       sectionsUnit: "sections",
       examStructureLabel: "Test Structure:",
