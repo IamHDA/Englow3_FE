@@ -1,6 +1,7 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   DictationLessonDetailResponse,
+  DictationStatsResponse,
   DictationLessonPageResponse,
   DictationSubmissionResponse,
   FlashcardResponse,
@@ -135,6 +136,12 @@ export class LearningApi {
   getFlashcardStats(periodDays: number): Promise<FlashcardStatsResponse> {
     return this.client.get(
       `${FLASHCARD_BASE_PATH}/stats?periodDays=${periodDays}`,
+    );
+  }
+
+  getDictationStats(periodDays: number): Promise<DictationStatsResponse> {
+    return this.client.get(
+      `${DICTATION_BASE_PATH}/stats?periodDays=${periodDays}`,
     );
   }
 }

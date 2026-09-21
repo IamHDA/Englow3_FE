@@ -137,6 +137,47 @@ export type SubmitDictationMutation = {
   };
 };
 
+export type DictationStatsQueryVariables = Exact<{
+  periodDays?: number | null | undefined;
+}>;
+
+export type DictationStatsQuery = {
+  dictationStats: {
+    periodDays: number;
+    lessonsCompleted: number;
+    averageAccuracyPercent: number;
+    listeningSeconds: number;
+    sentencesPractised: number;
+    streakDays: number;
+    activity: Array<{
+      day: string;
+      accuracyPercent: number;
+      attemptCount: number;
+    }>;
+    missedWords: Array<{
+      word: string;
+      missedCount: number;
+      correctCount: number;
+      accuracyPercent: number;
+    }>;
+    difficultSentences: Array<{
+      sentenceId: string;
+      text: string;
+      topic: string;
+      accuracyPercent: number;
+      attemptCount: number;
+    }>;
+    history: Array<{
+      day: string;
+      lessonId: string;
+      lessonTitle: string;
+      sentenceCount: number;
+      accuracyPercent: number;
+      listeningSeconds: number;
+    }>;
+  };
+};
+
 export type AdminExamFieldsFragment = {
   id: string;
   title: string;
@@ -1482,6 +1523,136 @@ export type SubmitDictationMutationOptions =
     SubmitDictationMutation,
     SubmitDictationMutationVariables
   >;
+export const DictationStatsDocument = gql`
+  query DictationStats($periodDays: Int) {
+    dictationStats(periodDays: $periodDays) {
+      periodDays
+      lessonsCompleted
+      averageAccuracyPercent
+      listeningSeconds
+      sentencesPractised
+      streakDays
+      activity {
+        day
+        accuracyPercent
+        attemptCount
+      }
+      missedWords {
+        word
+        missedCount
+        correctCount
+        accuracyPercent
+      }
+      difficultSentences {
+        sentenceId
+        text
+        topic
+        accuracyPercent
+        attemptCount
+      }
+      history {
+        day
+        lessonId
+        lessonTitle
+        sentenceCount
+        accuracyPercent
+        listeningSeconds
+      }
+    }
+  }
+`;
+
+/**
+ * __useDictationStatsQuery__
+ *
+ * To run a query within a React component, call `useDictationStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDictationStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDictationStatsQuery({
+ *   variables: {
+ *      periodDays: // value for 'periodDays'
+ *   },
+ * });
+ */
+export function useDictationStatsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    DictationStatsQuery,
+    DictationStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    DictationStatsQuery,
+    DictationStatsQueryVariables
+  >(DictationStatsDocument, options);
+}
+export function useDictationStatsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    DictationStatsQuery,
+    DictationStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    DictationStatsQuery,
+    DictationStatsQueryVariables
+  >(DictationStatsDocument, options);
+}
+export function useDictationStatsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    DictationStatsQuery,
+    DictationStatsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationStatsQuery,
+  DictationStatsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useDictationStatsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationStatsQuery,
+        DictationStatsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationStatsQuery | undefined,
+  DictationStatsQueryVariables
+>;
+export function useDictationStatsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationStatsQuery,
+        DictationStatsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    DictationStatsQuery,
+    DictationStatsQueryVariables
+  >(DictationStatsDocument, options as any);
+}
+export type DictationStatsQueryHookResult = ReturnType<
+  typeof useDictationStatsQuery
+>;
+export type DictationStatsLazyQueryHookResult = ReturnType<
+  typeof useDictationStatsLazyQuery
+>;
+export type DictationStatsSuspenseQueryHookResult = ReturnType<
+  typeof useDictationStatsSuspenseQuery
+>;
+export type DictationStatsQueryResult = ApolloReactCommon.QueryResult<
+  DictationStatsQuery,
+  DictationStatsQueryVariables
+>;
 export const AdminExamsDocument = gql`
   query AdminExams(
     $status: ExamStatus

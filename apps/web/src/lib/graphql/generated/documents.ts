@@ -134,6 +134,47 @@ export type SubmitDictationMutation = {
   };
 };
 
+export type DictationStatsQueryVariables = Exact<{
+  periodDays?: number | null | undefined;
+}>;
+
+export type DictationStatsQuery = {
+  dictationStats: {
+    periodDays: number;
+    lessonsCompleted: number;
+    averageAccuracyPercent: number;
+    listeningSeconds: number;
+    sentencesPractised: number;
+    streakDays: number;
+    activity: Array<{
+      day: string;
+      accuracyPercent: number;
+      attemptCount: number;
+    }>;
+    missedWords: Array<{
+      word: string;
+      missedCount: number;
+      correctCount: number;
+      accuracyPercent: number;
+    }>;
+    difficultSentences: Array<{
+      sentenceId: string;
+      text: string;
+      topic: string;
+      accuracyPercent: number;
+      attemptCount: number;
+    }>;
+    history: Array<{
+      day: string;
+      lessonId: string;
+      lessonTitle: string;
+      sentenceCount: number;
+      accuracyPercent: number;
+      listeningSeconds: number;
+    }>;
+  };
+};
+
 export type AdminExamFieldsFragment = {
   id: string;
   title: string;
@@ -1798,6 +1839,161 @@ export const SubmitDictationDocument = {
   SubmitDictationMutation,
   SubmitDictationMutationVariables
 >;
+export const DictationStatsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "DictationStats" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "periodDays" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "dictationStats" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "periodDays" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "periodDays" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "periodDays" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "lessonsCompleted" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "averageAccuracyPercent" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "listeningSeconds" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "sentencesPractised" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "streakDays" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "activity" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "day" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracyPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptCount" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "missedWords" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "word" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "missedCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "correctCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracyPercent" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "difficultSentences" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "sentenceId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "text" } },
+                      { kind: "Field", name: { kind: "Name", value: "topic" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracyPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptCount" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "history" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "day" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "lessonId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "lessonTitle" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "sentenceCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracyPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "listeningSeconds" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DictationStatsQuery, DictationStatsQueryVariables>;
 export const AdminExamsDocument = {
   kind: "Document",
   definitions: [

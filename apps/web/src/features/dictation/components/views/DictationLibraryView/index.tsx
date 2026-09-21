@@ -4,10 +4,14 @@ import { Container, Stack } from "@mantine/core";
 import { lessonStatus, progressPercent } from "../../../lessonProgress";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
-import { useDictationLessonsQuery } from "@/lib/graphql/generated/hooks";
+import {
+  useDictationLessonsQuery,
+  useDictationStatsQuery,
+} from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import { STATS_PERIOD_DAYS, toStatsData } from "./statsMapping";
 import { DictationLibrarySkeleton } from "../../blocks/DictationLibrarySkeleton";
 import { useMemo, useState } from "react";
-import { MOCK_STATS_DATA } from "../../../constants/dictationData";
 import { DictationCharts } from "../../blocks/DictationCharts";
 import { DictationFilters } from "../../blocks/DictationFilters";
 import { DictationHardSentences } from "../../blocks/DictationHardSentences";
@@ -39,6 +43,20 @@ export function DictationLibraryView({
   const [period, setPeriod] = useState<
     "7 Days" | "30 Days" | "3 Months" | "All Time"
   >("7 Days");
+
+  const { isVi } = useLanguage();
+
+  // Chỉ gọi khi người dùng mở tab thống kê - xem danh sách bài thì không phải
+  // trả giá cho một lượt tổng hợp mình chưa nhìn tới.
+  const { data: statsData } = useDictationStatsQuery({
+    variables: { periodDays: STATS_PERIOD_DAYS[period] },
+    skip: activeTab !== "stats",
+    fetchPolicy: "cache-and-network",
+  });
+
+  const stats = statsData
+    ? toStatsData(statsData.dictationStats, period, isVi)
+    : null;
 
   const { data, loading } = useDictationLessonsQuery({
     variables: { size: PAGE_SIZE },
@@ -110,23 +128,23 @@ export function DictationLibraryView({
             )}
           </Stack>
         ) : (
-          <Stack gap="xl">
-            <DictationStatsOverview
-              stats={MOCK_STATS_DATA}
-              period={period}
-              onPeriodChange={setPeriod}
-            />
+          stats && (
+            <Stack gap="xl">
+              <DictationStatsOverview
+                stats={stats}
+                period={period}
+                onPeriodChange={setPeriod}
+              />
 
-            <DictationCharts stats={MOCK_STATS_DATA} />
+              <DictationCharts stats={stats} />
 
-            <DictationMissedWordsTable words={MOCK_STATS_DATA.missedWords} />
+              <DictationMissedWordsTable words={stats.missedWords} />
 
-            <DictationHardSentences
-              sentences={MOCK_STATS_DATA.difficultSentences}
-            />
+              <DictationHardSentences sentences={stats.difficultSentences} />
 
-            <DictationHistoryTable history={MOCK_STATS_DATA.history} />
-          </Stack>
+              <DictationHistoryTable history={stats.history} />
+            </Stack>
+          )
         )}
       </Stack>
     </Container>

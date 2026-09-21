@@ -303,6 +303,53 @@ export const learningTypeDefs = `#graphql
     history: [FlashcardSessionSummary!]!
   }
 
+  type DictationDailyAccuracy {
+    day: Date!
+    accuracyPercent: Int!
+    attemptCount: Int!
+  }
+
+  type DictationMissedWord {
+    word: String!
+    missedCount: Int!
+    correctCount: Int!
+    accuracyPercent: Int!
+  }
+
+  type DictationDifficultSentence {
+    sentenceId: ID!
+    text: String!
+    topic: String!
+    accuracyPercent: Int!
+    attemptCount: Int!
+  }
+
+  type DictationSessionSummary {
+    day: Date!
+    lessonId: ID!
+    lessonTitle: String!
+    sentenceCount: Int!
+    accuracyPercent: Int!
+    listeningSeconds: Int!
+  }
+
+  type DictationStats {
+    periodDays: Int!
+    lessonsCompleted: Int!
+    averageAccuracyPercent: Int!
+    listeningSeconds: Int!
+    sentencesPractised: Int!
+    streakDays: Int!
+    activity: [DictationDailyAccuracy!]!
+    """
+    Recomputed from recent answers rather than stored - ordered by accuracy, so
+    a word missed twice out of two ranks above one missed three times in thirty.
+    """
+    missedWords: [DictationMissedWord!]!
+    difficultSentences: [DictationDifficultSentence!]!
+    history: [DictationSessionSummary!]!
+  }
+
   extend type Query {
     flashcardSets(
       topic: String
@@ -347,6 +394,8 @@ export const learningTypeDefs = `#graphql
     draw one page is the problem a BFF exists to avoid.
     """
     flashcardStats(periodDays: Int = 7): FlashcardStats!
+
+    dictationStats(periodDays: Int = 7): DictationStats!
   }
 
   extend type Mutation {

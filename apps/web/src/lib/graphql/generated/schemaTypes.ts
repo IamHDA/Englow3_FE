@@ -50,6 +50,22 @@ export enum CertificateVariant {
   SW = "SW",
 }
 
+export type DictationDailyAccuracy = {
+  __typename?: "DictationDailyAccuracy";
+  accuracyPercent: Scalars["Int"]["output"];
+  attemptCount: Scalars["Int"]["output"];
+  day: Scalars["Date"]["output"];
+};
+
+export type DictationDifficultSentence = {
+  __typename?: "DictationDifficultSentence";
+  accuracyPercent: Scalars["Int"]["output"];
+  attemptCount: Scalars["Int"]["output"];
+  sentenceId: Scalars["ID"]["output"];
+  text: Scalars["String"]["output"];
+  topic: Scalars["String"]["output"];
+};
+
 export type DictationLesson = {
   __typename?: "DictationLesson";
   /** Per learner: sentences whose best attempt cleared the completion threshold. */
@@ -79,6 +95,14 @@ export type DictationLessonPage = {
   totalPages: Scalars["Int"]["output"];
 };
 
+export type DictationMissedWord = {
+  __typename?: "DictationMissedWord";
+  accuracyPercent: Scalars["Int"]["output"];
+  correctCount: Scalars["Int"]["output"];
+  missedCount: Scalars["Int"]["output"];
+  word: Scalars["String"]["output"];
+};
+
 /**
  * A sentence as the learner practises it. There is no transcript on this type
  * at all - the answer is a different shape entirely, produced only once they
@@ -98,6 +122,34 @@ export type DictationSentence = {
   hintWordCount: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   orderNo: Scalars["Int"]["output"];
+};
+
+export type DictationSessionSummary = {
+  __typename?: "DictationSessionSummary";
+  accuracyPercent: Scalars["Int"]["output"];
+  day: Scalars["Date"]["output"];
+  lessonId: Scalars["ID"]["output"];
+  lessonTitle: Scalars["String"]["output"];
+  listeningSeconds: Scalars["Int"]["output"];
+  sentenceCount: Scalars["Int"]["output"];
+};
+
+export type DictationStats = {
+  __typename?: "DictationStats";
+  activity: Array<DictationDailyAccuracy>;
+  averageAccuracyPercent: Scalars["Int"]["output"];
+  difficultSentences: Array<DictationDifficultSentence>;
+  history: Array<DictationSessionSummary>;
+  lessonsCompleted: Scalars["Int"]["output"];
+  listeningSeconds: Scalars["Int"]["output"];
+  /**
+   * Recomputed from recent answers rather than stored - ordered by accuracy, so
+   * a word missed twice out of two ranks above one missed three times in thirty.
+   */
+  missedWords: Array<DictationMissedWord>;
+  periodDays: Scalars["Int"]["output"];
+  sentencesPractised: Scalars["Int"]["output"];
+  streakDays: Scalars["Int"]["output"];
 };
 
 /** The only type that carries the transcript. */
@@ -636,6 +688,7 @@ export type Query = {
   attemptPaper: ExamPaper;
   dictationLesson: DictationLessonDetail;
   dictationLessons: DictationLessonPage;
+  dictationStats: DictationStats;
   /** Learner exam detail by id */
   exam?: Maybe<LearnerExamItem>;
   /**
@@ -695,6 +748,10 @@ export type QueryDictationLessonsArgs = {
   size?: InputMaybe<Scalars["Int"]["input"]>;
   title?: InputMaybe<Scalars["String"]["input"]>;
   topic?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryDictationStatsArgs = {
+  periodDays?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QueryExamArgs = {

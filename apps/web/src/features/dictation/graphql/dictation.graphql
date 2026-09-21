@@ -56,3 +56,40 @@ mutation SubmitDictation($sentenceId: ID!, $response: String!) {
     totalWordCount
   }
 }
+
+query DictationStats($periodDays: Int) {
+  dictationStats(periodDays: $periodDays) {
+    periodDays
+    lessonsCompleted
+    averageAccuracyPercent
+    listeningSeconds
+    sentencesPractised
+    streakDays
+    activity {
+      day
+      accuracyPercent
+      attemptCount
+    }
+    missedWords {
+      word
+      missedCount
+      correctCount
+      accuracyPercent
+    }
+    difficultSentences {
+      sentenceId
+      text
+      topic
+      accuracyPercent
+      attemptCount
+    }
+    history {
+      day
+      lessonId
+      lessonTitle
+      sentenceCount
+      accuracyPercent
+      listeningSeconds
+    }
+  }
+}

@@ -276,3 +276,35 @@ export type FlashcardStatsResponse = {
     studySeconds: number;
   }[];
 };
+
+// GET /api/dictation/stats
+export type DictationStatsResponse = {
+  periodDays: number;
+  lessonsCompleted: number;
+  averageAccuracyPercent: number;
+  listeningSeconds: number;
+  sentencesPractised: number;
+  streakDays: number;
+  activity: { day: string; accuracyPercent: number; attemptCount: number }[];
+  missedWords: {
+    word: string;
+    missedCount: number;
+    correctCount: number;
+    accuracyPercent: number;
+  }[];
+  difficultSentences: {
+    sentenceId: string;
+    text: string;
+    topic: string;
+    accuracyPercent: number;
+    attemptCount: number;
+  }[];
+  history: {
+    day: string;
+    lessonId: string;
+    lessonTitle: string;
+    sentenceCount: number;
+    accuracyPercent: number;
+    listeningSeconds: number;
+  }[];
+};
