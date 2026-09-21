@@ -12,6 +12,8 @@ import {
   useStartExamAttemptMutation,
   useSubmitExamAttemptMutation,
 } from "@/lib/graphql/generated/hooks";
+import { useAccountProfile } from "@/features/account";
+import { ExamType } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useExamTimer } from "../../../hooks/useExamTimer";
 import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
@@ -60,6 +62,7 @@ function readProgress(attemptId: string): StoredProgress | null {
 export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const router = useRouter();
   const { t } = useLanguage();
+  const { refresh: refreshProfile } = useAccountProfile();
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -88,6 +91,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   });
 
   const paper = data?.attemptPaper;
+  const isPlacement = detailData?.exam?.examType === ExamType.PLACEMENT;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -148,7 +152,14 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     } catch {
       // ignore storage errors
     }
-  }, [attemptId, answers, submitAttempt]);
+
+    // Chấm xong một đề xếp trình độ là backend vừa ghi trình độ và đẩy bước
+    // onboarding. Đọc lại hồ sơ ngay, nếu không thì header và popup vẫn hiện
+    // trạng thái cũ cho tới lần tải trang kế tiếp.
+    if (isPlacement) {
+      await refreshProfile();
+    }
+  }, [attemptId, answers, submitAttempt, isPlacement, refreshProfile]);
 
   const { formattedTime, isWarning, isCritical } = useExamTimer({
     expiresAt,
