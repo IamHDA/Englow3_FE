@@ -35,6 +35,105 @@ export type UpdateProfileMutation = {
   };
 };
 
+export type DictationLessonFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  topic: string;
+  targetLevel: string | null;
+  sentenceCount: number;
+  completedSentenceCount: number;
+  totalDurationSeconds: number;
+  lastPractisedAt: string | null;
+};
+
+export type DictationSentenceFieldsFragment = {
+  id: string;
+  orderNo: number;
+  audioUrl: string;
+  audioDurationSeconds: number;
+  hintWordCount: number;
+  hintFirstLetters: string | null;
+  hintRevealWord: string | null;
+  hintPartialTranscript: string | null;
+  bestAccuracyPercent: number | null;
+};
+
+export type DictationLessonsQueryVariables = Exact<{
+  topic?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type DictationLessonsQuery = {
+  dictationLessons: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      sentenceCount: number;
+      completedSentenceCount: number;
+      totalDurationSeconds: number;
+      lastPractisedAt: string | null;
+    }>;
+  };
+};
+
+export type DictationLessonDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type DictationLessonDetailQuery = {
+  dictationLesson: {
+    lesson: {
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      sentenceCount: number;
+      completedSentenceCount: number;
+      totalDurationSeconds: number;
+      lastPractisedAt: string | null;
+    };
+    sentences: Array<{
+      id: string;
+      orderNo: number;
+      audioUrl: string;
+      audioDurationSeconds: number;
+      hintWordCount: number;
+      hintFirstLetters: string | null;
+      hintRevealWord: string | null;
+      hintPartialTranscript: string | null;
+      bestAccuracyPercent: number | null;
+    }>;
+  };
+};
+
+export type SubmitDictationMutationVariables = Exact<{
+  sentenceId: string | number;
+  response: string;
+}>;
+
+export type SubmitDictationMutation = {
+  submitDictation: {
+    sentenceId: string;
+    correctText: string;
+    translationVi: string | null;
+    response: string;
+    accuracyPercent: number;
+    correctWordCount: number;
+    totalWordCount: number;
+  };
+};
+
 export type AdminExamFieldsFragment = {
   id: string;
   title: string;
@@ -822,6 +921,75 @@ export type CurrentUserQuery = {
   };
 };
 
+export const DictationLessonFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DictationLessonFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "DictationLesson" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "sentenceCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completedSentenceCount" },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "totalDurationSeconds" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastPractisedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DictationLessonFieldsFragment, unknown>;
+export const DictationSentenceFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DictationSentenceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "DictationSentence" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "audioDurationSeconds" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "hintWordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "hintFirstLetters" } },
+          { kind: "Field", name: { kind: "Name", value: "hintRevealWord" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "hintPartialTranscript" },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "bestAccuracyPercent" },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DictationSentenceFieldsFragment, unknown>;
 export const AdminExamFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -1239,6 +1407,366 @@ export const UpdateProfileDocument = {
 } as unknown as DocumentNode<
   UpdateProfileMutation,
   UpdateProfileMutationVariables
+>;
+export const DictationLessonsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "DictationLessons" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "topic" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "title" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "dictationLessons" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "topic" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "topic" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "title" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "DictationLessonFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DictationLessonFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "DictationLesson" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "sentenceCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completedSentenceCount" },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "totalDurationSeconds" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastPractisedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DictationLessonsQuery,
+  DictationLessonsQueryVariables
+>;
+export const DictationLessonDetailDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "DictationLessonDetail" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "dictationLesson" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "lesson" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "DictationLessonFields" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "sentences" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "DictationSentenceFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DictationLessonFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "DictationLesson" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "sentenceCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completedSentenceCount" },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "totalDurationSeconds" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastPractisedAt" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "DictationSentenceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "DictationSentence" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "audioDurationSeconds" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "hintWordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "hintFirstLetters" } },
+          { kind: "Field", name: { kind: "Name", value: "hintRevealWord" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "hintPartialTranscript" },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "bestAccuracyPercent" },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DictationLessonDetailQuery,
+  DictationLessonDetailQueryVariables
+>;
+export const SubmitDictationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SubmitDictation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "sentenceId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "response" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submitDictation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "sentenceId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "sentenceId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "response" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "response" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "sentenceId" } },
+                { kind: "Field", name: { kind: "Name", value: "correctText" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "translationVi" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "response" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "accuracyPercent" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "correctWordCount" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "totalWordCount" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SubmitDictationMutation,
+  SubmitDictationMutationVariables
 >;
 export const AdminExamsDocument = {
   kind: "Document",

@@ -6,10 +6,25 @@ import type {
   DictationLesson,
   DictationSentence,
   DictationSessionSummaryData,
+  DictationSubmission,
   DiffResult,
 } from "../types";
 
-export function useDictationPractice(lesson: DictationLesson) {
+/**
+ * Gửi một câu lên server và nhận lại điểm kèm transcript. Hook không tự gọi
+ * Apollo: nó không biết gì về BFF, và giữ nguyên như vậy thì còn test được mà
+ * không cần mock schema.
+ */
+type CheckSentence = (
+  sentenceId: string,
+  typed: string,
+) => Promise<DictationSubmission | null>;
+
+export function useDictationPractice(
+  lesson: DictationLesson,
+  sentences: DictationSentence[],
+  checkSentence: CheckSentence,
+) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typedText, setTypedText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -25,15 +40,16 @@ export function useDictationPractice(lesson: DictationLesson) {
     Array<{
       sentence: DictationSentence;
       learnerAnswer: string;
+      correctText: string;
       diff: DiffResult;
     }>
   >([]);
 
   const currentSentence = useMemo(() => {
-    return lesson.sentences[currentIndex] || lesson.sentences[0];
-  }, [lesson.sentences, currentIndex]);
+    return sentences[currentIndex] || sentences[0];
+  }, [sentences, currentIndex]);
 
-  const totalSentences = lesson.sentences.length;
+  const totalSentences = sentences.length;
 
   const handleType = useCallback((value: string) => {
     setTypedText(value);
@@ -49,24 +65,45 @@ export function useDictationPractice(lesson: DictationLesson) {
     });
   }, []);
 
-  const checkAnswer = useCallback(() => {
-    if (!currentSentence) return;
-    const diff = computeWordDiff(currentSentence.text, typedText);
-    setDiffResult(diff);
-    setIsChecked(true);
+  /**
+   * Chấm bài. Con số là của server; `computeWordDiff` ở đây chỉ để tô màu chỗ
+   * sai trên transcript vừa nhận về, nên hai bên không thể nói khác nhau.
+   */
+  const recordAnswer = useCallback(
+    async (answer: string) => {
+      if (!currentSentence) return null;
 
-    setCompletedResults((prev) => {
-      const existing = prev.filter((r) => r.sentence.id !== currentSentence.id);
-      return [
-        ...existing,
+      const submission = await checkSentence(currentSentence.id, answer);
+      if (!submission) return null;
+
+      const diff: DiffResult = {
+        ...computeWordDiff(submission.correctText, answer),
+        accuracyPercent: Math.round(submission.accuracyPercent),
+        correctWordsCount: submission.correctWordCount,
+        totalWordsCount: submission.totalWordCount,
+      };
+
+      setCompletedResults((prev) => [
+        ...prev.filter((r) => r.sentence.id !== currentSentence.id),
         {
           sentence: currentSentence,
-          learnerAnswer: typedText,
+          learnerAnswer: answer,
+          correctText: submission.correctText,
           diff,
         },
-      ];
-    });
-  }, [currentSentence, typedText]);
+      ]);
+
+      return diff;
+    },
+    [currentSentence, checkSentence],
+  );
+
+  const checkAnswer = useCallback(async () => {
+    const diff = await recordAnswer(typedText);
+    if (!diff) return;
+    setDiffResult(diff);
+    setIsChecked(true);
+  }, [recordAnswer, typedText]);
 
   const nextSentence = useCallback(() => {
     if (currentIndex + 1 < totalSentences) {
@@ -80,22 +117,12 @@ export function useDictationPractice(lesson: DictationLesson) {
     }
   }, [currentIndex, totalSentences]);
 
-  const skipSentence = useCallback(() => {
-    if (!currentSentence) return;
-    const diff = computeWordDiff(currentSentence.text, "");
-    setCompletedResults((prev) => {
-      const existing = prev.filter((r) => r.sentence.id !== currentSentence.id);
-      return [
-        ...existing,
-        {
-          sentence: currentSentence,
-          learnerAnswer: "",
-          diff,
-        },
-      ];
-    });
+  // Bỏ qua vẫn là một lần trả lời - ghi lại chuỗi rỗng để lịch sử phản ánh đúng
+  // những câu người học né, chứ không phải những câu họ chưa gặp.
+  const skipSentence = useCallback(async () => {
+    await recordAnswer("");
     nextSentence();
-  }, [currentSentence, nextSentence]);
+  }, [recordAnswer, nextSentence]);
 
   const restartPractice = useCallback(() => {
     setCurrentIndex(0);
@@ -132,15 +159,15 @@ export function useDictationPractice(lesson: DictationLesson) {
       .filter((r) => r.diff.mistakesCount > 0)
       .map((r, i) => ({
         id: r.sentence.id,
-        sentenceLabel: `Sentence ${r.sentence.order || i + 1}`,
+        sentenceLabel: `Sentence ${r.sentence.orderNo || i + 1}`,
         accuracyPercent: r.diff.accuracyPercent,
         learnerAnswer: r.learnerAnswer || "(Bỏ qua)",
-        correctAnswer: r.sentence.text,
+        correctAnswer: r.correctText,
       }));
 
     return {
       lessonTitle: lesson.title,
-      lessonLevel: lesson.level,
+      lessonLevel: lesson.targetLevel ?? "",
       overallAccuracyPercent: Math.max(
         0,
         Math.min(100, overallAccuracyPercent),
@@ -166,12 +193,18 @@ export function useDictationPractice(lesson: DictationLesson) {
       },
       mistakes: mistakesList,
     };
-  }, [completedResults, hintsUsedCount, lesson.level, lesson.title]);
+  }, [completedResults, hintsUsedCount, lesson.targetLevel, lesson.title]);
+
+  /** Transcript của câu vừa chấm. Rỗng cho tới khi người học nộp - đó là cả ý đồ. */
+  const currentCorrectText =
+    completedResults.find((r) => r.sentence.id === currentSentence?.id)
+      ?.correctText ?? "";
 
   return {
     currentIndex,
     totalSentences,
     currentSentence,
+    currentCorrectText,
     typedText,
     isChecked,
     diffResult,

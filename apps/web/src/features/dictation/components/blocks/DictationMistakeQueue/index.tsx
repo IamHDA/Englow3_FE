@@ -46,8 +46,12 @@ export function DictationMistakeQueue({
 
   const currentItem = queue[currentIndex];
 
+  // Hàng đợi lỗi vẫn chạy dữ liệu giả: chưa có endpoint "những câu tôi hay sai",
+  // nên chưa có URL bản ghi để phát. Thanh tiến trình vẫn chạy, chỉ là không có
+  // tiếng - đọc transcript bằng speech synthesis như trước thì lại phải đưa đáp
+  // án xuống client.
   const audio = useDictationAudio({
-    textToSpeak: currentItem ? currentItem.correctAnswer : "",
+    audioUrl: null,
     durationSeconds: currentItem ? currentItem.audioDurationSeconds : 5,
   });
 

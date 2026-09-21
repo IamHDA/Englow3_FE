@@ -208,6 +208,63 @@ export const learningTypeDefs = `#graphql
     response: String!
   }
 
+  type DictationLesson {
+    id: ID!
+    slug: String!
+    title: String!
+    topic: String!
+    targetLevel: String
+    sentenceCount: Int!
+    """Per learner: sentences whose best attempt cleared the completion threshold."""
+    completedSentenceCount: Int!
+    totalDurationSeconds: Int!
+    lastPractisedAt: DateTime
+  }
+
+  type DictationLessonPage {
+    items: [DictationLesson!]!
+    page: Int!
+    size: Int!
+    totalItems: Int!
+    totalPages: Int!
+  }
+
+  """
+  A sentence as the learner practises it. There is no transcript on this type
+  at all - the answer is a different shape entirely, produced only once they
+  have committed one of their own.
+  """
+  type DictationSentence {
+    id: ID!
+    orderNo: Int!
+    """Pre-signed and short-lived."""
+    audioUrl: String!
+    audioDurationSeconds: Int!
+    """Counted by the same scorer that marks the answer, so the two agree."""
+    hintWordCount: Int!
+    hintFirstLetters: String
+    hintRevealWord: String
+    hintPartialTranscript: String
+    """The learner's best attempt on this line so far. Null if never tried."""
+    bestAccuracyPercent: Float
+  }
+
+  type DictationLessonDetail {
+    lesson: DictationLesson!
+    sentences: [DictationSentence!]!
+  }
+
+  """The only type that carries the transcript."""
+  type DictationSubmission {
+    sentenceId: ID!
+    correctText: String!
+    translationVi: String
+    response: String!
+    accuracyPercent: Float!
+    correctWordCount: Int!
+    totalWordCount: Int!
+  }
+
   extend type Query {
     flashcardSets(
       topic: String
@@ -237,6 +294,15 @@ export const learningTypeDefs = `#graphql
 
     """The scored attempt. Carries the answer key, so only worth reading once scored."""
     quizAttempt(id: ID!): QuizAttempt!
+
+    dictationLessons(
+      topic: String
+      title: String
+      page: Int = 0
+      size: Int = 20
+    ): DictationLessonPage!
+
+    dictationLesson(id: ID!): DictationLessonDetail!
   }
 
   extend type Mutation {
@@ -261,5 +327,11 @@ export const learningTypeDefs = `#graphql
     than skipped, so the percentage means what it says.
     """
     submitQuizAttempt(attemptId: ID!, answers: [QuizAnswerInput!]!): QuizAttempt!
+
+    """
+    Marks one transcription and returns the correct text with it. An empty
+    answer is a real answer - it scores zero rather than being rejected.
+    """
+    submitDictation(sentenceId: ID!, response: String!): DictationSubmission!
   }
 `;

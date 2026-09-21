@@ -11,6 +11,12 @@ import {
   Text,
 } from "@mantine/core";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import {
+  estimatedTime,
+  lessonStatus,
+  progressPercent,
+} from "../../../lessonProgress";
 import Link from "next/link";
 import type { DictationLesson } from "../../../types";
 
@@ -19,6 +25,8 @@ interface DictationLessonListProps {
 }
 
 export function DictationLessonList({ lessons }: DictationLessonListProps) {
+  const { isVi } = useLanguage();
+
   if (lessons.length === 0) {
     return (
       <Paper
@@ -53,8 +61,8 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
           </Table.Thead>
           <Table.Tbody>
             {lessons.map((lesson) => {
-              const isCompleted = lesson.status === "Completed";
-              const isInProgress = lesson.status === "In progress";
+              const isCompleted = lessonStatus(lesson) === "Completed";
+              const isInProgress = lessonStatus(lesson) === "In progress";
 
               let ctaText = "Bắt đầu";
               let ctaVariant: "filled" | "outline" | "light" = "outline";
@@ -89,18 +97,19 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
                   </Table.Td>
                   <Table.Td>
                     <Badge size="xs" variant="outline" color="ink.6">
-                      {lesson.level}
+                      {lesson.targetLevel ??
+                        (isVi ? "Mọi trình độ" : "All levels")}
                     </Badge>
                   </Table.Td>
                   <Table.Td>
                     <Text size="xs" c="ink.6">
-                      {lesson.sentenceCount} câu · {lesson.estimatedTime}
+                      {lesson.sentenceCount} câu · {estimatedTime(lesson, isVi)}
                     </Text>
                   </Table.Td>
                   <Table.Td>
                     <Group gap="xs" align="center">
                       <Progress
-                        value={lesson.progressPercent}
+                        value={progressPercent(lesson)}
                         color={isCompleted ? "teal" : "orange"}
                         size="sm"
                         radius="xl"
@@ -112,7 +121,7 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
                         fw={600}
                         style={{ minWidth: 32 }}
                       >
-                        {lesson.progressPercent}%
+                        {progressPercent(lesson)}%
                       </Text>
                     </Group>
                   </Table.Td>

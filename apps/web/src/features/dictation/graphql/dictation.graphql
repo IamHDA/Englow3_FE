@@ -1,0 +1,58 @@
+fragment DictationLessonFields on DictationLesson {
+  id
+  slug
+  title
+  topic
+  targetLevel
+  sentenceCount
+  completedSentenceCount
+  totalDurationSeconds
+  lastPractisedAt
+}
+
+fragment DictationSentenceFields on DictationSentence {
+  id
+  orderNo
+  audioUrl
+  audioDurationSeconds
+  hintWordCount
+  hintFirstLetters
+  hintRevealWord
+  hintPartialTranscript
+  bestAccuracyPercent
+}
+
+query DictationLessons($topic: String, $title: String, $page: Int, $size: Int) {
+  dictationLessons(topic: $topic, title: $title, page: $page, size: $size) {
+    items {
+      ...DictationLessonFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query DictationLessonDetail($id: ID!) {
+  dictationLesson(id: $id) {
+    lesson {
+      ...DictationLessonFields
+    }
+    sentences {
+      ...DictationSentenceFields
+    }
+  }
+}
+
+mutation SubmitDictation($sentenceId: ID!, $response: String!) {
+  submitDictation(sentenceId: $sentenceId, response: $response) {
+    sentenceId
+    correctText
+    translationVi
+    response
+    accuracyPercent
+    correctWordCount
+    totalWordCount
+  }
+}

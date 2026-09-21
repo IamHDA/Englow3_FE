@@ -12,6 +12,13 @@ import {
   Title,
 } from "@mantine/core";
 import { ArrowRight, CheckCircle2, Clock, Headphones } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import {
+  estimatedTime,
+  lastPractisedLabel,
+  lessonStatus,
+  progressPercent,
+} from "../../../lessonProgress";
 import Link from "next/link";
 import type { DictationLesson } from "../../../types";
 
@@ -20,6 +27,8 @@ interface DictationLessonGridProps {
 }
 
 export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
+  const { isVi } = useLanguage();
+
   if (lessons.length === 0) {
     return (
       <Card
@@ -40,8 +49,8 @@ export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
   return (
     <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
       {lessons.map((lesson) => {
-        const isCompleted = lesson.status === "Completed";
-        const isInProgress = lesson.status === "In progress";
+        const isCompleted = lessonStatus(lesson) === "Completed";
+        const isInProgress = lessonStatus(lesson) === "In progress";
 
         let ctaText = "Bắt đầu học";
         let ctaVariant: "filled" | "outline" | "light" = "outline";
@@ -77,7 +86,8 @@ export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
                 </Badge>
                 <Group gap={6}>
                   <Badge size="xs" variant="outline" color="ink.6">
-                    {lesson.level}
+                    {lesson.targetLevel ??
+                      (isVi ? "Mọi trình độ" : "All levels")}
                   </Badge>
                   {isCompleted && (
                     <CheckCircle2
@@ -99,7 +109,7 @@ export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
                 </Group>
                 <Group gap={4}>
                   <Clock size={13} />
-                  <Text size="xs">{lesson.estimatedTime}</Text>
+                  <Text size="xs">{estimatedTime(lesson, isVi)}</Text>
                 </Group>
               </Group>
             </Stack>
@@ -107,19 +117,19 @@ export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
             <Stack gap="xs" mt="md">
               <Group justify="space-between" align="center">
                 <Text size="xs" c="ink.6" fw={500}>
-                  {lesson.progressPercent > 0
-                    ? `${lesson.progressPercent}% hoàn thành`
+                  {progressPercent(lesson) > 0
+                    ? `${progressPercent(lesson)}% hoàn thành`
                     : "Chưa bắt đầu"}
                 </Text>
-                {lesson.lastPracticed && (
+                {lastPractisedLabel(lesson, isVi) && (
                   <Text size="xs" c="ink.5">
-                    {lesson.lastPracticed}
+                    {lastPractisedLabel(lesson, isVi)}
                   </Text>
                 )}
               </Group>
 
               <Progress
-                value={lesson.progressPercent}
+                value={progressPercent(lesson)}
                 color={isCompleted ? "teal" : "orange"}
                 size="sm"
                 radius="xl"

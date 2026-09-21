@@ -3,12 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseDictationAudioOptions {
-  textToSpeak: string;
+  /**
+   * Bản ghi của câu, ký sẵn và ngắn hạn. Trước đây hook này đọc transcript bằng
+   * speech synthesis - nghĩa là trình duyệt phải có sẵn đáp án để nói ra nó.
+   * Giờ nó phát đúng file, nên đáp án không còn cần tới phía client.
+   */
+  audioUrl: string | null;
   durationSeconds?: number;
 }
 
 export function useDictationAudio({
-  textToSpeak,
+  audioUrl,
   durationSeconds = 5,
 }: UseDictationAudioOptions) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -16,6 +21,7 @@ export function useDictationAudio({
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [replayCount, setReplayCount] = useState(0);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const durationRef = useRef<number>(durationSeconds);
@@ -34,8 +40,9 @@ export function useDictationAudio({
   const stopAudio = useCallback(() => {
     stopTimer();
     setIsPlaying(false);
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
   }, [stopTimer]);
 
@@ -47,23 +54,31 @@ export function useDictationAudio({
     setCurrentTime(0);
     startTimeRef.current = Date.now();
 
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = "en-US";
-      utterance.rate = playbackSpeed;
+    if (audioUrl) {
+      // Dựng phần tử mới mỗi lượt phát rồi mới gắn vào ref: sửa một giá trị
+      // đọc ra từ ref là thứ React Compiler cấm, và phần tử cũ đã bị dừng ở
+      // `stopAudio` phía trên.
+      const element = new Audio(audioUrl);
+      element.playbackRate = playbackSpeed;
 
-      utterance.onend = () => {
+      element.onended = () => {
         setIsPlaying(false);
         setCurrentTime(durationRef.current);
         stopTimer();
       };
 
-      utterance.onerror = () => {
+      element.onerror = () => {
         setIsPlaying(false);
         stopTimer();
       };
 
-      window.speechSynthesis.speak(utterance);
+      audioRef.current = element;
+      void element.play().catch(() => {
+        // Trình duyệt chặn phát tự động: giữ nguyên trạng thái dừng thay vì
+        // hiện thanh tiến trình chạy trong im lặng.
+        setIsPlaying(false);
+        stopTimer();
+      });
     }
 
     // Interval to simulate timer & waveform progression
@@ -84,7 +99,7 @@ export function useDictationAudio({
         stopTimer();
       }
     }, intervalMs);
-  }, [playbackSpeed, stopAudio, stopTimer, textToSpeak]);
+  }, [playbackSpeed, stopAudio, stopTimer, audioUrl]);
 
   const togglePlay = useCallback(() => {
     if (isPlaying) {

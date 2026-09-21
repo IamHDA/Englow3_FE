@@ -190,3 +190,63 @@ export type SearchQuizzesParams = {
   page?: number;
   size?: number;
 };
+
+// GET /api/dictation/lessons
+export type DictationLessonResponse = {
+  id: string;
+  slug: string;
+  title: string;
+  topic: string;
+  targetLevel: string | null;
+  sentenceCount: number;
+  /** Per learner: sentences whose best attempt cleared the completion threshold. */
+  completedSentenceCount: number;
+  totalDurationSeconds: number;
+  lastPractisedAt: string | null;
+};
+
+export type DictationLessonPageResponse = {
+  items: DictationLessonResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+// A sentence as the learner practises it. There is deliberately no transcript
+// field: the answer arrives only in the response to a submission.
+export type DictationSentenceResponse = {
+  id: string;
+  orderNo: number;
+  audioUrl: string;
+  audioDurationSeconds: number;
+  hintWordCount: number;
+  hintFirstLetters: string | null;
+  hintRevealWord: string | null;
+  hintPartialTranscript: string | null;
+  bestAccuracyPercent: number | null;
+};
+
+// GET /api/dictation/lessons/{id}
+export type DictationLessonDetailResponse = {
+  lesson: DictationLessonResponse;
+  sentences: DictationSentenceResponse[];
+};
+
+// POST /api/dictation/sentences/{id}/attempts - the only shape carrying the transcript
+export type DictationSubmissionResponse = {
+  sentenceId: string;
+  correctText: string;
+  translationVi: string | null;
+  response: string;
+  accuracyPercent: number;
+  correctWordCount: number;
+  totalWordCount: number;
+};
+
+export type SearchDictationLessonsParams = {
+  topic?: string;
+  title?: string;
+  page?: number;
+  size?: number;
+};

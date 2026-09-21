@@ -50,6 +50,68 @@ export enum CertificateVariant {
   SW = "SW",
 }
 
+export type DictationLesson = {
+  __typename?: "DictationLesson";
+  /** Per learner: sentences whose best attempt cleared the completion threshold. */
+  completedSentenceCount: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  lastPractisedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  sentenceCount: Scalars["Int"]["output"];
+  slug: Scalars["String"]["output"];
+  targetLevel?: Maybe<Scalars["String"]["output"]>;
+  title: Scalars["String"]["output"];
+  topic: Scalars["String"]["output"];
+  totalDurationSeconds: Scalars["Int"]["output"];
+};
+
+export type DictationLessonDetail = {
+  __typename?: "DictationLessonDetail";
+  lesson: DictationLesson;
+  sentences: Array<DictationSentence>;
+};
+
+export type DictationLessonPage = {
+  __typename?: "DictationLessonPage";
+  items: Array<DictationLesson>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/**
+ * A sentence as the learner practises it. There is no transcript on this type
+ * at all - the answer is a different shape entirely, produced only once they
+ * have committed one of their own.
+ */
+export type DictationSentence = {
+  __typename?: "DictationSentence";
+  audioDurationSeconds: Scalars["Int"]["output"];
+  /** Pre-signed and short-lived. */
+  audioUrl: Scalars["String"]["output"];
+  /** The learner's best attempt on this line so far. Null if never tried. */
+  bestAccuracyPercent?: Maybe<Scalars["Float"]["output"]>;
+  hintFirstLetters?: Maybe<Scalars["String"]["output"]>;
+  hintPartialTranscript?: Maybe<Scalars["String"]["output"]>;
+  hintRevealWord?: Maybe<Scalars["String"]["output"]>;
+  /** Counted by the same scorer that marks the answer, so the two agree. */
+  hintWordCount: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  orderNo: Scalars["Int"]["output"];
+};
+
+/** The only type that carries the transcript. */
+export type DictationSubmission = {
+  __typename?: "DictationSubmission";
+  accuracyPercent: Scalars["Float"]["output"];
+  correctText: Scalars["String"]["output"];
+  correctWordCount: Scalars["Int"]["output"];
+  response: Scalars["String"]["output"];
+  sentenceId: Scalars["ID"]["output"];
+  totalWordCount: Scalars["Int"]["output"];
+  translationVi?: Maybe<Scalars["String"]["output"]>;
+};
+
 /** The full paper shell returned by create, update, publish and archive. */
 export type Exam = {
   __typename?: "Exam";
@@ -419,6 +481,11 @@ export type Mutation = {
    */
   startQuizAttempt: QuizAttempt;
   /**
+   * Marks one transcription and returns the correct text with it. An empty
+   * answer is a real answer - it scores zero rather than being rejected.
+   */
+  submitDictation: DictationSubmission;
+  /**
    * Submits and scores in one step. The backend rejects a submission after
    * expiresAt, which is why the client must never decide expiry itself.
    */
@@ -473,6 +540,11 @@ export type MutationStartQuizAttemptArgs = {
   quizId: Scalars["ID"]["input"];
 };
 
+export type MutationSubmitDictationArgs = {
+  response: Scalars["String"]["input"];
+  sentenceId: Scalars["ID"]["input"];
+};
+
 export type MutationSubmitExamAttemptArgs = {
   answers: Array<SubmitAnswerInput>;
   attemptId: Scalars["ID"]["input"];
@@ -520,6 +592,8 @@ export type Query = {
    * a paper without one would mean handing it out unscoped.
    */
   attemptPaper: ExamPaper;
+  dictationLesson: DictationLessonDetail;
+  dictationLessons: DictationLessonPage;
   /** Learner exam detail by id */
   exam?: Maybe<LearnerExamItem>;
   /**
@@ -563,6 +637,17 @@ export type QueryAdminExamsArgs = {
 
 export type QueryAttemptPaperArgs = {
   attemptId: Scalars["ID"]["input"];
+};
+
+export type QueryDictationLessonArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryDictationLessonsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
+  topic?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryExamArgs = {

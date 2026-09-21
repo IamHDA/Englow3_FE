@@ -7,16 +7,23 @@ import {
   Group,
   Paper,
   Stack,
+  Text,
   Title,
 } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
+// Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
+// hooks để Server Component không kéo theo "@apollo/client/react".
+import {
+  useDictationLessonDetailQuery,
+  useSubmitDictationMutation,
+} from "@/lib/graphql/generated/hooks";
+import { DictationPracticeSkeleton } from "../../blocks/DictationPracticeSkeleton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 import { useDictationPractice } from "../../../hooks/useDictationPractice";
-import type { DictationLesson } from "../../../types";
 import { DictationAudioPlayer } from "../../blocks/DictationAudioPlayer";
 import { DictationDiffResult } from "../../blocks/DictationDiffResult";
 import { DictationHintDrawer } from "../../blocks/DictationHintDrawer";
@@ -24,22 +31,89 @@ import { DictationInputArea } from "../../blocks/DictationInputArea";
 import { DictationSessionSummary } from "../../blocks/DictationSessionSummary";
 
 interface DictationPracticeViewProps {
-  lesson: DictationLesson;
+  lessonId: string;
 }
 
-export function DictationPracticeView({ lesson }: DictationPracticeViewProps) {
+/**
+ * Bài rỗng để hook luôn nhận đủ tham số trong lúc chờ dữ liệu. Không bao giờ
+ * render ra - các nhánh loading và lỗi ở dưới chặn trước.
+ */
+const EMPTY_LESSON = {
+  id: "",
+  slug: "",
+  title: "",
+  topic: "",
+  targetLevel: null,
+  sentenceCount: 0,
+  completedSentenceCount: 0,
+  totalDurationSeconds: 0,
+  lastPractisedAt: null,
+};
+
+export function DictationPracticeView({
+  lessonId,
+}: DictationPracticeViewProps) {
   const router = useRouter();
   const { isVi } = useLanguage();
   const [hintDrawerOpen, setHintDrawerOpen] = useState(false);
 
-  const practice = useDictationPractice(lesson);
+  const { data, loading, error } = useDictationLessonDetailQuery({
+    variables: { id: lessonId },
+    fetchPolicy: "cache-and-network",
+  });
+  const [submitDictation] = useSubmitDictationMutation();
+
+  const lesson = data?.dictationLesson.lesson;
+  const sentences = useMemo(
+    () => data?.dictationLesson.sentences ?? [],
+    [data],
+  );
+
+  /**
+   * Chấm một câu. Trả về null khi gọi hỏng, và hook sẽ không ghi kết quả -
+   * thà không có gì còn hơn ghi một con số tự bịa ở client.
+   */
+  const checkSentence = useCallback(
+    async (sentenceId: string, typed: string) => {
+      const response = await submitDictation({
+        variables: { sentenceId, response: typed },
+      }).catch(() => null);
+      return response?.data?.submitDictation ?? null;
+    },
+    [submitDictation],
+  );
+
+  const practice = useDictationPractice(
+    lesson ?? EMPTY_LESSON,
+    sentences,
+    checkSentence,
+  );
 
   const audio = useDictationAudio({
-    textToSpeak: practice.currentSentence ? practice.currentSentence.text : "",
+    audioUrl: practice.currentSentence?.audioUrl ?? null,
     durationSeconds: practice.currentSentence
       ? practice.currentSentence.audioDurationSeconds
       : 5,
   });
+
+  if (loading && lesson === undefined) {
+    return <DictationPracticeSkeleton />;
+  }
+
+  if (error || lesson === undefined) {
+    return (
+      <Container size="md" py="xl">
+        <Stack align="center" gap="md" py={60}>
+          <Text fw={700}>
+            {isVi ? "Không tải được bài nghe" : "Could not load the lesson"}
+          </Text>
+          <Button component={Link} href="/study/dictation" variant="default">
+            {isVi ? "Quay lại thư viện" : "Back to the library"}
+          </Button>
+        </Stack>
+      </Container>
+    );
+  }
 
   if (practice.isCompleted) {
     return (
@@ -81,7 +155,7 @@ export function DictationPracticeView({ lesson }: DictationPracticeViewProps) {
 
             <Group gap="xs">
               <Badge size="sm" variant="light" color="navy">
-                {lesson.level}
+                {lesson.targetLevel ?? ""}
               </Badge>
               <Badge size="sm" variant="filled" color="orange">
                 {isVi
@@ -129,7 +203,7 @@ export function DictationPracticeView({ lesson }: DictationPracticeViewProps) {
         {practice.isChecked && practice.diffResult && (
           <DictationDiffResult
             diff={practice.diffResult}
-            expectedSentence={practice.currentSentence.text}
+            expectedSentence={practice.currentCorrectText}
             onNextSentence={practice.nextSentence}
             onTryAgain={() => {
               // Allows user to try typing again

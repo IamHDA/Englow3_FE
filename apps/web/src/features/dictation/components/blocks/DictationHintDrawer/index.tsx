@@ -37,28 +37,28 @@ export function DictationHintDrawer({
       key: "wordCount",
       label: isVi ? "Xem số lượng từ trong câu" : "Word count in sentence",
       value: isVi
-        ? `${sentence.hints.wordCount} từ`
-        : `${sentence.hints.wordCount} words`,
+        ? `${sentence.hintWordCount} từ`
+        : `${sentence.hintWordCount} words`,
     },
     {
       key: "firstLetters",
       label: isVi ? "Gợi ý các chữ cái đầu tiên" : "First letter of each word",
-      value: sentence.hints.firstLetters,
+      value: sentence.hintFirstLetters,
     },
     {
       key: "revealWord",
       label: isVi ? "Mở khóa 1 từ khóa quan trọng" : "Reveal 1 key word",
-      value: sentence.hints.revealWord,
+      value: sentence.hintRevealWord,
     },
     {
       key: "translation",
       label: isVi ? "Xem bản dịch tiếng Việt" : "Vietnamese translation",
-      value: sentence.hints.translation,
+      value: null,
     },
     {
       key: "partialTranscript",
       label: isVi ? "Xem trích đoạn đầu của câu" : "Sentence opening excerpt",
-      value: sentence.hints.partialTranscript,
+      value: sentence.hintPartialTranscript,
     },
   ];
 

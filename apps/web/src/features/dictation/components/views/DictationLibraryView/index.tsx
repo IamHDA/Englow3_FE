@@ -1,11 +1,13 @@
 "use client";
 
 import { Container, Stack } from "@mantine/core";
+import { lessonStatus, progressPercent } from "../../../lessonProgress";
+// Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
+// hooks để Server Component không kéo theo "@apollo/client/react".
+import { useDictationLessonsQuery } from "@/lib/graphql/generated/hooks";
+import { DictationLibrarySkeleton } from "../../blocks/DictationLibrarySkeleton";
 import { useMemo, useState } from "react";
-import {
-  MOCK_LESSONS,
-  MOCK_STATS_DATA,
-} from "../../../constants/dictationData";
+import { MOCK_STATS_DATA } from "../../../constants/dictationData";
 import { DictationCharts } from "../../blocks/DictationCharts";
 import { DictationFilters } from "../../blocks/DictationFilters";
 import { DictationHardSentences } from "../../blocks/DictationHardSentences";
@@ -21,6 +23,9 @@ interface DictationLibraryViewProps {
   initialTab?: "lessons" | "stats";
 }
 
+/** Một trang bài nghe chép. Phân trang thật sẽ cần khi thư viện vượt con số này. */
+const PAGE_SIZE = 50;
+
 export function DictationLibraryView({
   initialTab = "lessons",
 }: DictationLibraryViewProps) {
@@ -35,28 +40,46 @@ export function DictationLibraryView({
     "7 Days" | "30 Days" | "3 Months" | "All Time"
   >("7 Days");
 
+  const { data, loading } = useDictationLessonsQuery({
+    variables: { size: PAGE_SIZE },
+    fetchPolicy: "cache-and-network",
+  });
+
+  const lessons = useMemo(() => data?.dictationLessons.items ?? [], [data]);
+
+  // Lọc và sắp xếp tại chỗ: một trang năm mươi bài thì gửi thêm tham số lên
+  // server chỉ đổi một lượt round trip lấy một vòng lặp.
   const filteredLessons = useMemo(() => {
-    return MOCK_LESSONS.filter((lesson) => {
-      if (selectedTopic !== "ALL" && lesson.topic !== selectedTopic) {
-        return false;
-      }
-      if (selectedLevel !== "ALL" && lesson.level !== selectedLevel) {
-        return false;
-      }
-      if (selectedStatus !== "ALL" && lesson.status !== selectedStatus) {
-        return false;
-      }
-      return true;
-    }).sort((a, b) => {
-      if (selectedSort === "difficulty") {
-        return a.sentenceCount - b.sentenceCount;
-      }
-      if (selectedSort === "progress") {
-        return b.progressPercent - a.progressPercent;
-      }
-      return 0;
-    });
-  }, [selectedLevel, selectedSort, selectedStatus, selectedTopic]);
+    return lessons
+      .filter((lesson) => {
+        if (selectedTopic !== "ALL" && lesson.topic !== selectedTopic) {
+          return false;
+        }
+        if (selectedLevel !== "ALL" && lesson.targetLevel !== selectedLevel) {
+          return false;
+        }
+        if (
+          selectedStatus !== "ALL" &&
+          lessonStatus(lesson) !== selectedStatus
+        ) {
+          return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (selectedSort === "difficulty") {
+          return a.sentenceCount - b.sentenceCount;
+        }
+        if (selectedSort === "progress") {
+          return progressPercent(b) - progressPercent(a);
+        }
+        return 0;
+      });
+  }, [lessons, selectedLevel, selectedSort, selectedStatus, selectedTopic]);
+
+  if (loading && lessons.length === 0) {
+    return <DictationLibrarySkeleton />;
+  }
 
   return (
     <Container size="lg" py="xl">

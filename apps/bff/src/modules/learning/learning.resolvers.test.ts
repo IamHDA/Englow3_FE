@@ -195,3 +195,35 @@ describe("Mutation.submitQuizAttempt", () => {
     expect(submitQuizAttempt).toHaveBeenCalledWith("attempt-1", { answers });
   });
 });
+
+describe("Mutation.submitDictation", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const submitDictation = vi.fn();
+    const ctx = makeContext({ submitDictation }, unauthenticated());
+
+    expect(() =>
+      learningResolvers.Mutation.submitDictation(
+        {},
+        { sentenceId: "s-1", response: "the cat sat" },
+        ctx,
+      ),
+    ).toThrow("Missing or invalid access token");
+    expect(submitDictation).not.toHaveBeenCalled();
+  });
+
+  /** An empty answer is a real answer - the backend scores it zero rather than rejecting it. */
+  it("forwards an empty answer rather than short-circuiting it", async () => {
+    const submitDictation = vi
+      .fn()
+      .mockResolvedValue({ sentenceId: "s-1", accuracyPercent: 0 });
+    const ctx = makeContext({ submitDictation });
+
+    await learningResolvers.Mutation.submitDictation(
+      {},
+      { sentenceId: "s-1", response: "" },
+      ctx,
+    );
+
+    expect(submitDictation).toHaveBeenCalledWith("s-1", "");
+  });
+});

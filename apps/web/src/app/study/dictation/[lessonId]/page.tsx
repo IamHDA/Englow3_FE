@@ -1,38 +1,25 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { DictationPracticeView, MOCK_LESSONS } from "@/features/dictation";
+import { DictationPracticeView } from "@/features/dictation";
 
-interface DictationPracticePageProps {
+interface DictationLessonPageProps {
   params: Promise<{
     lessonId: string;
   }>;
 }
 
-export async function generateMetadata({
+/**
+ * Tiêu đề chung thay vì tên bài: tên nằm sau một lượt gọi BFF có xác thực, mà
+ * metadata chạy phía server trước khi biết người dùng là ai.
+ */
+export const metadata: Metadata = {
+  title: "Luyện nghe chép | Englow3",
+  description:
+    "Nghe và chép lại từng câu, nhận điểm chính xác theo từng từ sau khi nộp.",
+};
+
+export default async function DictationLessonPage({
   params,
-}: DictationPracticePageProps): Promise<Metadata> {
+}: DictationLessonPageProps) {
   const { lessonId } = await params;
-  const lesson =
-    MOCK_LESSONS.find((l) => l.slug === lessonId || l.id === lessonId) ||
-    MOCK_LESSONS[0];
-
-  return {
-    title: `${lesson.title} — Luyện nghe chính tả | Englow3`,
-    description: `Thực hành nghe và gõ chính tả bài học ${lesson.title} (${lesson.level}) với ${lesson.sentenceCount} câu luyện tập.`,
-  };
-}
-
-export default async function DictationPracticePage({
-  params,
-}: DictationPracticePageProps) {
-  const { lessonId } = await params;
-  const lesson =
-    MOCK_LESSONS.find((l) => l.slug === lessonId || l.id === lessonId) ||
-    MOCK_LESSONS[0];
-
-  if (!lesson) {
-    notFound();
-  }
-
-  return <DictationPracticeView lesson={lesson} />;
+  return <DictationPracticeView lessonId={lessonId} />;
 }

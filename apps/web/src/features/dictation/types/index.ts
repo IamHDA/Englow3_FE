@@ -1,3 +1,20 @@
+import type {
+  DictationLessonFieldsFragment,
+  DictationSentenceFieldsFragment,
+  SubmitDictationMutation,
+} from "@/lib/graphql/generated/documents";
+
+/**
+ * Bài và câu như BFF trả về. Lấy thẳng hình dạng codegen sinh - đặc biệt quan
+ * trọng ở đây: câu KHÔNG có trường transcript, nên không màn nào đọc được đáp
+ * án trước khi người học gõ.
+ */
+export type DictationLesson = DictationLessonFieldsFragment;
+export type DictationSentence = DictationSentenceFieldsFragment;
+
+/** Kết quả chấm - shape duy nhất mang transcript, chỉ có sau khi đã nộp. */
+export type DictationSubmission = SubmitDictationMutation["submitDictation"];
+
 export type DictationLevel =
   | "Beginner"
   | "Elementary"
@@ -15,36 +32,6 @@ export type DictationTopic =
   | "Academic English";
 
 export type DictationStatus = "Not started" | "In progress" | "Completed";
-
-export interface DictationSentence {
-  id: string;
-  order: number;
-  text: string;
-  audioDurationSeconds: number;
-  translationVi: string;
-  hints: {
-    wordCount: number;
-    firstLetters: string;
-    revealWord: string;
-    translation: string;
-    partialTranscript: string;
-  };
-}
-
-export interface DictationLesson {
-  id: string;
-  slug: string;
-  title: string;
-  topic: DictationTopic;
-  level: DictationLevel;
-  sentenceCount: number;
-  estimatedTime: string;
-  progressPercent: number;
-  status: DictationStatus;
-  sentences: DictationSentence[];
-  lastPracticed?: string;
-  completedSentences?: number;
-}
 
 export type DiffType = "ok" | "bad" | "missing" | "extra";
 
@@ -93,7 +80,7 @@ export interface PerformanceBreakdown {
 
 export interface DictationSessionSummaryData {
   lessonTitle: string;
-  lessonLevel: DictationLevel;
+  lessonLevel: string;
   overallAccuracyPercent: number;
   wordsCorrectRatio: string;
   sentencesCompletedCount: number;

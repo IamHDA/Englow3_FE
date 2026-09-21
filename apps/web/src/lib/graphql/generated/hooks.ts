@@ -38,6 +38,105 @@ export type UpdateProfileMutation = {
   };
 };
 
+export type DictationLessonFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  topic: string;
+  targetLevel: string | null;
+  sentenceCount: number;
+  completedSentenceCount: number;
+  totalDurationSeconds: number;
+  lastPractisedAt: string | null;
+};
+
+export type DictationSentenceFieldsFragment = {
+  id: string;
+  orderNo: number;
+  audioUrl: string;
+  audioDurationSeconds: number;
+  hintWordCount: number;
+  hintFirstLetters: string | null;
+  hintRevealWord: string | null;
+  hintPartialTranscript: string | null;
+  bestAccuracyPercent: number | null;
+};
+
+export type DictationLessonsQueryVariables = Exact<{
+  topic?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type DictationLessonsQuery = {
+  dictationLessons: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      sentenceCount: number;
+      completedSentenceCount: number;
+      totalDurationSeconds: number;
+      lastPractisedAt: string | null;
+    }>;
+  };
+};
+
+export type DictationLessonDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type DictationLessonDetailQuery = {
+  dictationLesson: {
+    lesson: {
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      sentenceCount: number;
+      completedSentenceCount: number;
+      totalDurationSeconds: number;
+      lastPractisedAt: string | null;
+    };
+    sentences: Array<{
+      id: string;
+      orderNo: number;
+      audioUrl: string;
+      audioDurationSeconds: number;
+      hintWordCount: number;
+      hintFirstLetters: string | null;
+      hintRevealWord: string | null;
+      hintPartialTranscript: string | null;
+      bestAccuracyPercent: number | null;
+    }>;
+  };
+};
+
+export type SubmitDictationMutationVariables = Exact<{
+  sentenceId: string | number;
+  response: string;
+}>;
+
+export type SubmitDictationMutation = {
+  submitDictation: {
+    sentenceId: string;
+    correctText: string;
+    translationVi: string | null;
+    response: string;
+    accuracyPercent: number;
+    correctWordCount: number;
+    totalWordCount: number;
+  };
+};
+
 export type AdminExamFieldsFragment = {
   id: string;
   title: string;
@@ -825,6 +924,32 @@ export type CurrentUserQuery = {
   };
 };
 
+export const DictationLessonFieldsFragmentDoc = gql`
+  fragment DictationLessonFields on DictationLesson {
+    id
+    slug
+    title
+    topic
+    targetLevel
+    sentenceCount
+    completedSentenceCount
+    totalDurationSeconds
+    lastPractisedAt
+  }
+`;
+export const DictationSentenceFieldsFragmentDoc = gql`
+  fragment DictationSentenceFields on DictationSentence {
+    id
+    orderNo
+    audioUrl
+    audioDurationSeconds
+    hintWordCount
+    hintFirstLetters
+    hintRevealWord
+    hintPartialTranscript
+    bestAccuracyPercent
+  }
+`;
 export const AdminExamFieldsFragmentDoc = gql`
   fragment AdminExamFields on ExamListItem {
     id
@@ -1042,6 +1167,290 @@ export type UpdateProfileMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     UpdateProfileMutation,
     UpdateProfileMutationVariables
+  >;
+export const DictationLessonsDocument = gql`
+  query DictationLessons(
+    $topic: String
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    dictationLessons(topic: $topic, title: $title, page: $page, size: $size) {
+      items {
+        ...DictationLessonFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${DictationLessonFieldsFragmentDoc}
+`;
+
+/**
+ * __useDictationLessonsQuery__
+ *
+ * To run a query within a React component, call `useDictationLessonsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDictationLessonsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDictationLessonsQuery({
+ *   variables: {
+ *      topic: // value for 'topic'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useDictationLessonsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    DictationLessonsQuery,
+    DictationLessonsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    DictationLessonsQuery,
+    DictationLessonsQueryVariables
+  >(DictationLessonsDocument, options);
+}
+export function useDictationLessonsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    DictationLessonsQuery,
+    DictationLessonsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    DictationLessonsQuery,
+    DictationLessonsQueryVariables
+  >(DictationLessonsDocument, options);
+}
+export function useDictationLessonsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    DictationLessonsQuery,
+    DictationLessonsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationLessonsQuery,
+  DictationLessonsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useDictationLessonsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationLessonsQuery,
+        DictationLessonsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationLessonsQuery | undefined,
+  DictationLessonsQueryVariables
+>;
+export function useDictationLessonsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationLessonsQuery,
+        DictationLessonsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    DictationLessonsQuery,
+    DictationLessonsQueryVariables
+  >(DictationLessonsDocument, options as any);
+}
+export type DictationLessonsQueryHookResult = ReturnType<
+  typeof useDictationLessonsQuery
+>;
+export type DictationLessonsLazyQueryHookResult = ReturnType<
+  typeof useDictationLessonsLazyQuery
+>;
+export type DictationLessonsSuspenseQueryHookResult = ReturnType<
+  typeof useDictationLessonsSuspenseQuery
+>;
+export type DictationLessonsQueryResult = ApolloReactCommon.QueryResult<
+  DictationLessonsQuery,
+  DictationLessonsQueryVariables
+>;
+export const DictationLessonDetailDocument = gql`
+  query DictationLessonDetail($id: ID!) {
+    dictationLesson(id: $id) {
+      lesson {
+        ...DictationLessonFields
+      }
+      sentences {
+        ...DictationSentenceFields
+      }
+    }
+  }
+  ${DictationLessonFieldsFragmentDoc}
+  ${DictationSentenceFieldsFragmentDoc}
+`;
+
+/**
+ * __useDictationLessonDetailQuery__
+ *
+ * To run a query within a React component, call `useDictationLessonDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDictationLessonDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDictationLessonDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDictationLessonDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    DictationLessonDetailQuery,
+    DictationLessonDetailQueryVariables
+  > &
+    (
+      | { variables: DictationLessonDetailQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    DictationLessonDetailQuery,
+    DictationLessonDetailQueryVariables
+  >(DictationLessonDetailDocument, options);
+}
+export function useDictationLessonDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    DictationLessonDetailQuery,
+    DictationLessonDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    DictationLessonDetailQuery,
+    DictationLessonDetailQueryVariables
+  >(DictationLessonDetailDocument, options);
+}
+export function useDictationLessonDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    DictationLessonDetailQuery,
+    DictationLessonDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationLessonDetailQuery,
+  DictationLessonDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useDictationLessonDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationLessonDetailQuery,
+        DictationLessonDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationLessonDetailQuery | undefined,
+  DictationLessonDetailQueryVariables
+>;
+export function useDictationLessonDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationLessonDetailQuery,
+        DictationLessonDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    DictationLessonDetailQuery,
+    DictationLessonDetailQueryVariables
+  >(DictationLessonDetailDocument, options as any);
+}
+export type DictationLessonDetailQueryHookResult = ReturnType<
+  typeof useDictationLessonDetailQuery
+>;
+export type DictationLessonDetailLazyQueryHookResult = ReturnType<
+  typeof useDictationLessonDetailLazyQuery
+>;
+export type DictationLessonDetailSuspenseQueryHookResult = ReturnType<
+  typeof useDictationLessonDetailSuspenseQuery
+>;
+export type DictationLessonDetailQueryResult = ApolloReactCommon.QueryResult<
+  DictationLessonDetailQuery,
+  DictationLessonDetailQueryVariables
+>;
+export const SubmitDictationDocument = gql`
+  mutation SubmitDictation($sentenceId: ID!, $response: String!) {
+    submitDictation(sentenceId: $sentenceId, response: $response) {
+      sentenceId
+      correctText
+      translationVi
+      response
+      accuracyPercent
+      correctWordCount
+      totalWordCount
+    }
+  }
+`;
+export type SubmitDictationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitDictationMutation,
+    SubmitDictationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitDictationMutation__
+ *
+ * To run a mutation, you first call `useSubmitDictationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitDictationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitDictationMutation, { data, loading, error }] = useSubmitDictationMutation({
+ *   variables: {
+ *      sentenceId: // value for 'sentenceId'
+ *      response: // value for 'response'
+ *   },
+ * });
+ */
+export function useSubmitDictationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitDictationMutation,
+    SubmitDictationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitDictationMutation,
+    SubmitDictationMutationVariables
+  >(SubmitDictationDocument, options);
+}
+export type SubmitDictationMutationHookResult = ReturnType<
+  typeof useSubmitDictationMutation
+>;
+export type SubmitDictationMutationResult =
+  ApolloReactCommon.MutationResult<SubmitDictationMutation>;
+export type SubmitDictationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitDictationMutation,
+    SubmitDictationMutationVariables
   >;
 export const AdminExamsDocument = gql`
   query AdminExams(

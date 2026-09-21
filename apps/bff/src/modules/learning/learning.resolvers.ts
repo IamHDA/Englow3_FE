@@ -1,6 +1,7 @@
 import type { GraphQLContext } from "../../graphql/context.js";
 import type {
   ReviewRating,
+  SearchDictationLessonsParams,
   SearchFlashcardSetsParams,
   SearchQuizzesParams,
 } from "./learning.types.js";
@@ -56,6 +57,25 @@ export const learningResolvers = {
       ctx.requireToken();
       return ctx.apis.learningApi.getQuizAttemptResult(args.id);
     },
+    dictationLessons: (
+      _: unknown,
+      args: SearchDictationLessonsParams,
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.searchDictationLessons({
+        ...args,
+        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+      });
+    },
+    dictationLesson: (
+      _: unknown,
+      args: { id: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.getDictationLesson(args.id);
+    },
   },
   Mutation: {
     rateFlashcard: (
@@ -93,6 +113,17 @@ export const learningResolvers = {
       return ctx.apis.learningApi.submitQuizAttempt(args.attemptId, {
         answers: args.answers,
       });
+    },
+    submitDictation: (
+      _: unknown,
+      args: { sentenceId: string; response: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.submitDictation(
+        args.sentenceId,
+        args.response,
+      );
     },
   },
 };
