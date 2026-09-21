@@ -151,9 +151,21 @@ describe("Query.exams", () => {
     expect(searchAsLearner).not.toHaveBeenCalled();
   });
 
-  it("forwards filters and decorates items with bestScore and attemptStatus", async () => {
+  /**
+   * The per-learner figures used to be invented here - null and NOT_STARTED for
+   * everyone. They come from the backend now, so this asserts the page is
+   * passed through rather than rewritten.
+   */
+  it("forwards filters and passes the learner's own figures through untouched", async () => {
     const searchAsLearner = vi.fn().mockResolvedValue({
-      items: [{ id: "exam-1", title: "Test 1" }],
+      items: [
+        {
+          id: "exam-1",
+          title: "Test 1",
+          bestScorePercentage: 82.5,
+          attemptStatus: "COMPLETED",
+        },
+      ],
       page: 0,
       size: 20,
       totalItems: 1,
@@ -176,8 +188,8 @@ describe("Query.exams", () => {
     expect(res.items[0]).toEqual({
       id: "exam-1",
       title: "Test 1",
-      bestScore: null,
-      attemptStatus: "NOT_STARTED",
+      bestScorePercentage: 82.5,
+      attemptStatus: "COMPLETED",
     });
   });
 });

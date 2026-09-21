@@ -16,19 +16,13 @@ export const examResolvers = {
       ctx: GraphQLContext,
     ) => {
       ctx.requireToken();
-      const page = await ctx.apis.examApi.searchAsLearner({
+      // The two per-learner figures used to be filled in here with null and
+      // NOT_STARTED because the backend did not supply them. It does now, so
+      // the page passes through untouched.
+      return ctx.apis.examApi.searchAsLearner({
         ...args,
         size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
       });
-
-      return {
-        ...page,
-        items: page.items.map((item) => ({
-          ...item,
-          bestScore: null,
-          attemptStatus: "NOT_STARTED",
-        })),
-      };
     },
     adminExams: (_: unknown, args: SearchExamsParams, ctx: GraphQLContext) => {
       ctx.requireToken();
@@ -52,6 +46,17 @@ export const examResolvers = {
     ) => {
       ctx.requireToken();
       return ctx.apis.examApi.getAttemptPaper(args.attemptId);
+    },
+    examAttempts: (
+      _: unknown,
+      args: { page?: number; size?: number },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.listAttempts(
+        args.page ?? 0,
+        Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+      );
     },
     examAttempt: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
       ctx.requireToken();

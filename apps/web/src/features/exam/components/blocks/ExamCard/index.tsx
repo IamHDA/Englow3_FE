@@ -27,7 +27,8 @@ export type ExamCardData = {
   passScore?: number | null;
   questionCount: number;
   status: string;
-  bestScore?: number | null;
+  /** Phần trăm điểm cao nhất của chính người học, null khi chưa làm xong lần nào. */
+  bestScorePercentage?: number | null;
   attemptStatus?: string | null;
 };
 
@@ -147,7 +148,7 @@ export function ExamCard({ exam }: ExamCardProps) {
         <Group justify="space-between" align="center" pt={4}>
           <Stack gap={1}>
             <Text size="xs" c="dimmed">
-              {exam.bestScore !== null && exam.bestScore !== undefined
+              {exam.bestScorePercentage != null
                 ? t.exam.bestScoreLabel
                 : t.exam.maxScoreLabel}
             </Text>
@@ -157,8 +158,8 @@ export function ExamCard({ exam }: ExamCardProps) {
               c="navy.9"
               style={{ fontVariantNumeric: "tabular-nums" }}
             >
-              {exam.bestScore !== null && exam.bestScore !== undefined
-                ? `${exam.bestScore}/${exam.maxRawScore}`
+              {exam.bestScorePercentage != null
+                ? `${Math.round(exam.bestScorePercentage)}%`
                 : `${exam.maxRawScore} ${t.exam.pointsUnit}`}
             </Text>
           </Stack>

@@ -12,6 +12,7 @@ fragment ExamAttemptFields on ExamAttempt {
   correctAnswerCount
   questionCount
   resumed
+  examTitle
 }
 
 fragment AttemptReviewFields on AttemptQuestionReview {
@@ -106,5 +107,17 @@ query ExamAttemptResult($id: ID!) {
     questions {
       ...AttemptReviewFields
     }
+  }
+}
+
+query ExamAttemptHistory($page: Int, $size: Int) {
+  examAttempts(page: $page, size: $size) {
+    items {
+      ...ExamAttemptFields
+    }
+    page
+    size
+    totalItems
+    totalPages
   }
 }

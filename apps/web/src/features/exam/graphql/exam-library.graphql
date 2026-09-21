@@ -55,7 +55,7 @@ query ExamDetail($id: ID!) {
     questionCount
     status
     publishedAt
-    bestScore
+    bestScorePercentage
     attemptStatus
   }
 }

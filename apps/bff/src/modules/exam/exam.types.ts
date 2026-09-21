@@ -76,6 +76,9 @@ export type LearnerExamItemResponse = {
   questionCount: number;
   status: ExamStatus;
   publishedAt: string | null;
+  /** Per learner. Null until they have finished a sitting. */
+  bestScorePercentage: number | null;
+  attemptStatus: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 };
 
 export type LearnerExamPageResponse = {
@@ -204,7 +207,17 @@ export type ExamAttemptResponse = {
   questionCount: number;
   /** True when the backend handed back an attempt that was already open. */
   resumed: boolean;
+  /** Null except on a history row - a sitting knows its own paper's name. */
+  examTitle: string | null;
   questions: AttemptQuestionReviewDto[];
+};
+
+export type ExamAttemptPageResponse = {
+  items: ExamAttemptResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
 };
 
 // mirrors POST /api/exam-attempts/{id}/submit request body

@@ -1,5 +1,6 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
+  ExamAttemptPageResponse,
   ExamAttemptResponse,
   ExamPageResponse,
   ExamPaperResponse,
@@ -71,6 +72,11 @@ export class ExamApi {
       `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/submit`,
       { answers },
     );
+  }
+
+  /** The learner's own sittings, newest first. No review data on these rows. */
+  listAttempts(page: number, size: number): Promise<ExamAttemptPageResponse> {
+    return this.client.get(`${ATTEMPT_BASE_PATH}?page=${page}&size=${size}`);
   }
 
   getAttemptResult(attemptId: string): Promise<ExamAttemptResponse> {

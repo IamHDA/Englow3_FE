@@ -93,8 +93,15 @@ export const examTypeDefs = `#graphql
     questionCount: Int!
     status: ExamStatus!
     publishedAt: DateTime
-    bestScore: Float
-    attemptStatus: String
+    """Per learner. Null until they have finished a sitting."""
+    bestScorePercentage: Float
+    attemptStatus: LearnerAttemptStatus!
+  }
+
+  enum LearnerAttemptStatus {
+    NOT_STARTED
+    IN_PROGRESS
+    COMPLETED
   }
 
   type LearnerExamPage {
@@ -153,6 +160,12 @@ export const examTypeDefs = `#graphql
     once the attempt has left IN_PROGRESS.
     """
     examAttempt(id: ID!): ExamAttempt!
+
+    """
+    The learner's own sittings, newest first. Rows carry no review - that
+    structure holds the answer key.
+    """
+    examAttempts(page: Int = 0, size: Int = 20): ExamAttemptPage!
   }
 
   """
@@ -267,8 +280,18 @@ export const examTypeDefs = `#graphql
     questionCount: Int!
     """True when the backend handed back an attempt that was already open."""
     resumed: Boolean!
+    """Null except on a history row - a sitting knows its own paper's name."""
+    examTitle: String
     """Empty while the attempt is IN_PROGRESS - it carries the answer key."""
     questions: [AttemptQuestionReview!]!
+  }
+
+  type ExamAttemptPage {
+    items: [ExamAttempt!]!
+    page: Int!
+    size: Int!
+    totalItems: Int!
+    totalPages: Int!
   }
 
   input SubmitAnswerInput {
