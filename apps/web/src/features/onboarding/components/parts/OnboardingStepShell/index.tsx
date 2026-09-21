@@ -10,7 +10,7 @@ import {
   getOnboardingStepNumber,
 } from "@/features/onboarding/constants/onboardingSteps";
 
-import classes from "../LearningPurposeStep.module.css";
+import classes from "./OnboardingStepShell.module.css";
 
 import type { OnboardingStep } from "@/lib/graphql/generated";
 
@@ -24,7 +24,7 @@ type OnboardingStepShellProps = {
   footer?: ReactNode;
   /**
    * Không truyền thì không vẽ nút - bước 1 không có bước trước để lùi về.
-   * Popup onboarding cũng đang bắt buộc nên không có cách nào khác để đóng.
+   * Backend cũng chỉ chuyển bước tiến, không có endpoint lùi lại.
    */
   onBack?: () => void;
 };

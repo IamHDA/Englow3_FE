@@ -1,20 +1,13 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  SimpleGrid,
-  Stack,
-  Text,
-  UnstyledButton,
-} from "@mantine/core";
-import { ArrowRight } from "lucide-react";
+import { Box, SimpleGrid } from "@mantine/core";
 import { useState } from "react";
 
 import { LEARNING_PURPOSE_COPY } from "@/features/onboarding/constants/onboardingSteps";
 
-import classes from "./LearningPurposeStep.module.css";
-import { OnboardingStepShell } from "./OnboardingStepShell";
+import { OnboardingChoiceTile } from "../../parts/OnboardingChoiceTile";
+import { OnboardingStepShell } from "../../parts/OnboardingStepShell";
+import { OnboardingStepFooter } from "../../parts/OnboardingStepFooter";
 
 import { OnboardingStep } from "@/lib/graphql/generated";
 import type { LearningPurposesQuery } from "@/lib/graphql/generated/hooks";
@@ -22,18 +15,19 @@ import type { LearningPurposesQuery } from "@/lib/graphql/generated/hooks";
 /** Một mục đích học như BFF trả về - lấy thẳng hình dạng codegen sinh. */
 type LearningPurpose = LearningPurposesQuery["learningPurposes"][number];
 
-/**
- * Chưa nối mutation lưu lựa chọn lên BFF nên nút Tiếp tục còn khoá - bước này
- * mới dựng để xem giao diện. Bật lại bằng cách sửa đúng dòng này khi BFF có
- * mutation, kèm khôi phục `onContinue` để gọi mutation đó.
- */
-const CONTINUE_ENABLED = false;
-
 type LearningPurposeStepProps = {
   purposes: LearningPurpose[];
+  pending: boolean;
+  errorMessage: string | null;
+  onContinue: (purposeIds: number[]) => void;
 };
 
-export function LearningPurposeStep({ purposes }: LearningPurposeStepProps) {
+export function LearningPurposeStep({
+  purposes,
+  pending,
+  errorMessage,
+  onContinue,
+}: LearningPurposeStepProps) {
   // Backend lưu `learningPurposeIds` là mảng nên chọn được nhiều. State cục bộ
   // của bước này, không đưa lên global.
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -52,40 +46,24 @@ export function LearningPurposeStep({ purposes }: LearningPurposeStepProps) {
       title={LEARNING_PURPOSE_COPY.title}
       subtitle={LEARNING_PURPOSE_COPY.subtitle}
       footer={
-        <Stack gap={8} align="flex-end">
-          <Button
-            type="button"
-            color="orange.4"
-            radius={20}
-            h={60}
-            px={28}
-            fz={18}
-            fw={700}
-            disabled={!CONTINUE_ENABLED || selectedIds.length === 0}
-            rightSection={<ArrowRight aria-hidden="true" size={22} />}
-          >
-            Tiếp tục
-          </Button>
-          <Text size="xs" c="ink.5">
-            Bước tiếp theo đang được hoàn thiện.
-          </Text>
-        </Stack>
+        <OnboardingStepFooter
+          pending={pending}
+          errorMessage={errorMessage}
+          disabled={selectedIds.length === 0}
+          onContinue={() => onContinue(selectedIds)}
+        />
       }
     >
-      {/* Nút thật nên Tab/Enter/Space chạy sẵn; `aria-pressed` cho trình đọc
-          màn hình biết đây là lựa chọn bật/tắt và chọn được nhiều ô. */}
       <Box role="group" aria-label="Mục đích học tiếng Anh">
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={20}>
           {purposes.map((purpose) => (
-            <UnstyledButton
+            <OnboardingChoiceTile
               key={purpose.id}
-              type="button"
-              aria-pressed={selectedIds.includes(purpose.id)}
-              onClick={() => togglePurpose(purpose.id)}
-              className={classes.purpose}
-            >
-              {purpose.displayName}
-            </UnstyledButton>
+              label={purpose.displayName}
+              selected={selectedIds.includes(purpose.id)}
+              disabled={pending}
+              onSelect={() => togglePurpose(purpose.id)}
+            />
           ))}
         </SimpleGrid>
       </Box>

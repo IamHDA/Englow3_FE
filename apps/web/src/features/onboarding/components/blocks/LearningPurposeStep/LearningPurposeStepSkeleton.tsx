@@ -4,7 +4,7 @@ import { SimpleGrid, Skeleton } from "@mantine/core";
 
 import { LEARNING_PURPOSE_COPY } from "@/features/onboarding/constants/onboardingSteps";
 
-import { OnboardingStepShell } from "./OnboardingStepShell";
+import { OnboardingStepShell } from "../../parts/OnboardingStepShell";
 
 import { OnboardingStep } from "@/lib/graphql/generated";
 

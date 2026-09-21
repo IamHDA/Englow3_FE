@@ -1,11 +1,12 @@
 /*
- * Ô chọn mục đích học. Figma: cao 70px, bo 20px, viền ink-3 khi chưa chọn và
- * cam khi đã chọn. Dùng CSS Module chứ không style prop vì có :hover, :focus và
- * biến thể theo trạng thái - style prop không diễn đạt được.
+ * Ô chọn dùng chung cho các bước onboarding. Figma: cao 70px, bo 20px, viền
+ * ink-3 khi chưa chọn và cam khi đã chọn. Dùng CSS Module chứ không style prop
+ * vì có :hover, :focus và biến thể theo trạng thái - style prop không diễn đạt
+ * được.
  */
-.purpose {
-  height: 70px;
-  padding-inline: 16px;
+.tile {
+  min-height: 70px;
+  padding: 12px 16px;
   border: 1px solid var(--mantine-color-ink-3);
   border-radius: 20px;
   background-color: var(--mantine-color-white);
@@ -19,12 +20,12 @@
     color 120ms ease;
 }
 
-.purpose:hover {
+.tile:hover:not(:disabled) {
   border-color: var(--mantine-color-orange-4);
 }
 
 /* Ô đang được chọn - nền kem, viền và chữ cam, đổ bóng như Figma. */
-.purpose[aria-pressed="true"] {
+.tile[aria-pressed="true"] {
   border-color: var(--mantine-color-orange-4);
   background-color: var(--mantine-color-orange-0);
   color: var(--mantine-color-orange-6);
@@ -32,31 +33,19 @@
 }
 
 /* Bàn phím: Mantine chỉ vẽ viền focus khi điều hướng bằng Tab, không khi click. */
-.purpose:focus-visible {
+.tile:focus-visible {
   outline: 2px solid var(--mantine-color-navy-5);
   outline-offset: 2px;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--mantine-color-ink-9);
-  text-align: center;
+.tile:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-.subtitle {
-  font-size: 15px;
+.description {
+  margin-top: 4px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--mantine-color-ink-9);
-  text-align: center;
-}
-
-.backButton {
   color: var(--mantine-color-ink-6);
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.backButton:hover {
-  color: var(--mantine-color-ink-9);
 }
