@@ -37,6 +37,7 @@ export const resolvers = {
   },
   Mutation: {
     ...userResolvers.Mutation,
+    ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
   },
   Me: {
