@@ -7,4 +7,5 @@ export { AuthModal } from "./components/blocks/AuthModal";
 export { AuthProvider } from "./provider";
 export { ResetPasswordView } from "./components/views/ResetPasswordView";
 export { useAuth } from "./hooks/useAuth";
+export { ADMIN_ROLE } from "./types";
 export type { AuthSession } from "./types";

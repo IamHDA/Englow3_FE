@@ -1,10 +1,10 @@
 "use client";
 
 import { Avatar, Menu, Text, UnstyledButton } from "@mantine/core";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { ChevronDown, LogOut, Settings, ShieldCheck, User } from "lucide-react";
 import Link from "next/link";
 
-import { useAuth } from "@/features/auth";
+import { ADMIN_ROLE, useAuth } from "@/features/auth";
 import { useOnboardingGuard } from "@/features/onboarding";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -22,7 +22,7 @@ export function SiteHeaderUserMenu({
   // Đăng xuất đi qua AuthProvider chứ không gọi thẳng supabase ở đây: nếu gọi
   // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
   // là chuẩn.
-  const { signOut } = useAuth();
+  const { session, signOut } = useAuth();
   const { t } = useLanguage();
 
   // "Hồ sơ của tôi" và "Cài đặt" chặn khi chưa onboarding; "Đăng xuất" thì
@@ -62,6 +62,20 @@ export function SiteHeaderUserMenu({
         >
           {t.nav.settings}
         </Menu.Item>
+        {/* Chỉ là lối tắt cho người có quyền - trang /admin/exams vẫn tự xử
+            lý khi backend trả 403, nên ẩn nút không phải là chốt chặn. */}
+        {session?.role === ADMIN_ROLE && (
+          <>
+            <Menu.Divider />
+            <Menu.Item
+              component={Link}
+              href="/admin/exams"
+              leftSection={<ShieldCheck aria-hidden="true" size={16} />}
+            >
+              Quản lý đề thi
+            </Menu.Item>
+          </>
+        )}
         <Menu.Divider />
         <Menu.Item
           leftSection={<LogOut aria-hidden="true" size={16} />}
