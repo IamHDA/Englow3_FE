@@ -414,10 +414,20 @@ export type Mutation = {
    */
   startExamAttempt: ExamAttempt;
   /**
+   * Opens an attempt, or returns the one already open with resumed: true. The
+   * backend enforces one live attempt per learner and quiz.
+   */
+  startQuizAttempt: QuizAttempt;
+  /**
    * Submits and scores in one step. The backend rejects a submission after
    * expiresAt, which is why the client must never decide expiry itself.
    */
   submitExamAttempt: ExamAttempt;
+  /**
+   * Submits and scores in one step. A question left out is marked wrong rather
+   * than skipped, so the percentage means what it says.
+   */
+  submitQuizAttempt: QuizAttempt;
   updateProfile: Me;
 };
 
@@ -459,8 +469,17 @@ export type MutationStartExamAttemptArgs = {
   examId: Scalars["ID"]["input"];
 };
 
+export type MutationStartQuizAttemptArgs = {
+  quizId: Scalars["ID"]["input"];
+};
+
 export type MutationSubmitExamAttemptArgs = {
   answers: Array<SubmitAnswerInput>;
+  attemptId: Scalars["ID"]["input"];
+};
+
+export type MutationSubmitQuizAttemptArgs = {
+  answers: Array<QuizAnswerInput>;
   attemptId: Scalars["ID"]["input"];
 };
 
@@ -527,6 +546,11 @@ export type Query = {
    * is a normal state rather than a fault.
    */
   placementExam: LearnerExamItem;
+  /** The scored attempt. Carries the answer key, so only worth reading once scored. */
+  quizAttempt: QuizAttempt;
+  /** The paper to sit, reachable only through an open attempt. */
+  quizPaper: QuizPaper;
+  quizzes: QuizPage;
 };
 
 export type QueryAdminExamsArgs = {
@@ -575,6 +599,21 @@ export type QueryFlashcardStudyQueueArgs = {
   setId: Scalars["ID"]["input"];
 };
 
+export type QueryQuizAttemptArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryQuizPaperArgs = {
+  attemptId: Scalars["ID"]["input"];
+};
+
+export type QueryQuizzesArgs = {
+  category?: InputMaybe<Scalars["String"]["input"]>;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
+};
+
 /**
  * An option as the learner sees it while sitting: no correctness flag and no
  * explanation. Both arrive afterwards on AttemptOptionReview.
@@ -585,6 +624,138 @@ export type QuestionOption = {
   id: Scalars["ID"]["output"];
   orderNo: Scalars["Int"]["output"];
 };
+
+export type Quiz = {
+  __typename?: "Quiz";
+  attemptCount: Scalars["Int"]["output"];
+  /** Per learner. Null until they have finished one. */
+  bestScorePercent?: Maybe<Scalars["Float"]["output"]>;
+  category: Scalars["String"]["output"];
+  description: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  /** Percentage, so a quiz can gain a question without its pass mark shifting. */
+  passingScorePercent: Scalars["Int"]["output"];
+  questionCount: Scalars["Int"]["output"];
+  slug: Scalars["String"]["output"];
+  targetLevel?: Maybe<Scalars["String"]["output"]>;
+  timeLimitSeconds: Scalars["Int"]["output"];
+  title: Scalars["String"]["output"];
+};
+
+export type QuizAnswerInput = {
+  questionId: Scalars["ID"]["input"];
+  /**
+   * What an answer means depends on the type: an option id, a typed phrase, the
+   * chosen words joined by spaces, or the matched halves joined by "|".
+   */
+  response: Scalars["String"]["input"];
+};
+
+export type QuizAttempt = {
+  __typename?: "QuizAttempt";
+  correctAnswerCount?: Maybe<Scalars["Int"]["output"]>;
+  expiresAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  maxScore: Scalars["Float"]["output"];
+  passed?: Maybe<Scalars["Boolean"]["output"]>;
+  questionCount: Scalars["Int"]["output"];
+  quizId: Scalars["ID"]["output"];
+  quizTitle: Scalars["String"]["output"];
+  /** True when the backend handed back an attempt that was already open. */
+  resumed: Scalars["Boolean"]["output"];
+  /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
+  reviews: Array<QuizQuestionReview>;
+  /** Null until the attempt is scored. */
+  score?: Maybe<Scalars["Float"]["output"]>;
+  scorePercentage?: Maybe<Scalars["Float"]["output"]>;
+  startedAt: Scalars["DateTime"]["output"];
+  status: QuizAttemptStatus;
+  submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
+};
+
+export enum QuizAttemptStatus {
+  EXPIRED = "EXPIRED",
+  IN_PROGRESS = "IN_PROGRESS",
+  SCORED = "SCORED",
+}
+
+/**
+ * An option as the learner sees it while sitting. There is no correctness flag
+ * on this type at all - the answer key is a different shape entirely, so there
+ * is no field here to forget to clear.
+ */
+export type QuizOption = {
+  __typename?: "QuizOption";
+  content: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  label: Scalars["String"]["output"];
+  orderNo: Scalars["Int"]["output"];
+};
+
+export type QuizPage = {
+  __typename?: "QuizPage";
+  items: Array<Quiz>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export type QuizPaper = {
+  __typename?: "QuizPaper";
+  attemptId: Scalars["ID"]["output"];
+  description: Scalars["String"]["output"];
+  expiresAt: Scalars["DateTime"]["output"];
+  questions: Array<QuizPaperQuestion>;
+  quizId: Scalars["ID"]["output"];
+  timeLimitSeconds: Scalars["Int"]["output"];
+  title: Scalars["String"]["output"];
+};
+
+export type QuizPaperQuestion = {
+  __typename?: "QuizPaperQuestion";
+  afterText?: Maybe<Scalars["String"]["output"]>;
+  /** FILL_BLANK renders as "<before> ___ <after>"; null on every other type. */
+  beforeText?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  leftTexts: Array<Scalars["String"]["output"]>;
+  options: Array<QuizOption>;
+  orderNo: Scalars["Int"]["output"];
+  originalSentence?: Maybe<Scalars["String"]["output"]>;
+  points: Scalars["Int"]["output"];
+  prompt: Scalars["String"]["output"];
+  questionType: QuizQuestionType;
+  rewriteKeyword?: Maybe<Scalars["String"]["output"]>;
+  /**
+   * Shuffled by the backend, seeded from the attempt: the stored order is the
+   * answer, and reloading must not deal a new puzzle.
+   */
+  rightTexts: Array<Scalars["String"]["output"]>;
+  scrambledWords: Array<Scalars["String"]["output"]>;
+  title: Scalars["String"]["output"];
+  wordBank: Array<Scalars["String"]["output"]>;
+};
+
+export type QuizQuestionReview = {
+  __typename?: "QuizQuestionReview";
+  correct: Scalars["Boolean"]["output"];
+  correctAnswerText: Scalars["String"]["output"];
+  explanation: Scalars["String"]["output"];
+  pointsEarned: Scalars["Float"]["output"];
+  pointsPossible: Scalars["Int"]["output"];
+  prompt: Scalars["String"]["output"];
+  questionId: Scalars["ID"]["output"];
+  questionType: QuizQuestionType;
+  userAnswerText: Scalars["String"]["output"];
+};
+
+export enum QuizQuestionType {
+  FILL_BLANK = "FILL_BLANK",
+  MATCHING = "MATCHING",
+  MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
+  REORDER = "REORDER",
+  REWRITE = "REWRITE",
+}
 
 /**
  * What the learner said about a card. SM-2 grades answers 0-5; these are the

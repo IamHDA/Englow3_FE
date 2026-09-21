@@ -32,6 +32,8 @@ interface QuizTimerPaletteProps {
   onSelectQuestion: (index: number) => void;
   onToggleFlag: (questionId: string) => void;
   onSubmit: () => void;
+  /** Đang gửi bài lên server - khoá nút xác nhận để không nộp hai lần. */
+  submitting: boolean;
 }
 
 export function QuizTimerPalette({
@@ -44,6 +46,7 @@ export function QuizTimerPalette({
   onSelectQuestion,
   onToggleFlag,
   onSubmit,
+  submitting,
 }: QuizTimerPaletteProps) {
   const { isVi } = useLanguage();
   const [opened, { open, close }] = useDisclosure(false);
@@ -247,6 +250,7 @@ export function QuizTimerPalette({
               variant="filled"
               color="indigo"
               onClick={handleConfirmSubmit}
+              loading={submitting}
             >
               {isVi ? "Xác nhận nộp bài" : "Confirm Submit"}
             </Button>

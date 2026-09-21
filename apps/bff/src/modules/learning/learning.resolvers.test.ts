@@ -134,3 +134,64 @@ describe("Mutation.rateFlashcard", () => {
     expect(result).toEqual({ flashcardId: "card-1", status: "LEARNING" });
   });
 });
+
+describe("Query.quizzes", () => {
+  it("caps the page size so a client cannot ask for the whole table", async () => {
+    const searchQuizzes = vi.fn().mockResolvedValue({ items: [] });
+    const ctx = makeContext({ searchQuizzes });
+
+    await learningResolvers.Query.quizzes({}, { size: 5000 }, ctx);
+
+    expect(searchQuizzes).toHaveBeenCalledWith({ size: 100 });
+  });
+});
+
+describe("Query.quizPaper", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const getQuizPaper = vi.fn();
+    const ctx = makeContext({ getQuizPaper }, unauthenticated());
+
+    expect(() =>
+      learningResolvers.Query.quizPaper({}, { attemptId: "attempt-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(getQuizPaper).not.toHaveBeenCalled();
+  });
+
+  /** The shuffle is the backend's, seeded per attempt. Reordering here would deal a new puzzle on every load. */
+  it("passes the question order and the shuffled halves through untouched", async () => {
+    const paper = {
+      questions: [
+        { id: "q1", rightTexts: ["so we left", "because it rained"] },
+      ],
+    };
+    const getQuizPaper = vi.fn().mockResolvedValue(paper);
+    const ctx = makeContext({ getQuizPaper });
+
+    const result = await learningResolvers.Query.quizPaper(
+      {},
+      { attemptId: "attempt-1" },
+      ctx,
+    );
+
+    expect(getQuizPaper).toHaveBeenCalledWith("attempt-1");
+    expect(result).toBe(paper);
+  });
+});
+
+describe("Mutation.submitQuizAttempt", () => {
+  it("splits the attempt id from the body the backend expects", async () => {
+    const submitQuizAttempt = vi
+      .fn()
+      .mockResolvedValue({ id: "attempt-1", status: "SCORED" });
+    const ctx = makeContext({ submitQuizAttempt });
+    const answers = [{ questionId: "q1", response: "opt-b" }];
+
+    await learningResolvers.Mutation.submitQuizAttempt(
+      {},
+      { attemptId: "attempt-1", answers },
+      ctx,
+    );
+
+    expect(submitQuizAttempt).toHaveBeenCalledWith("attempt-1", { answers });
+  });
+});

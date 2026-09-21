@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { MOCK_QUIZZES, QuizSittingView } from "@/features/quiz";
+import { QuizSittingView } from "@/features/quiz";
 
 interface QuizPageProps {
   params: Promise<{
@@ -8,31 +7,16 @@ interface QuizPageProps {
   }>;
 }
 
-export async function generateMetadata({
-  params,
-}: QuizPageProps): Promise<Metadata> {
-  const { quizId } = await params;
-  const quiz = MOCK_QUIZZES.find((q) => q.id === quizId);
-
-  if (!quiz) {
-    return {
-      title: "Không tìm thấy bài kiểm tra | Englow3",
-    };
-  }
-
-  return {
-    title: `${quiz.title} | Englow3 Quiz`,
-    description: quiz.description,
-  };
-}
+/**
+ * Tiêu đề chung thay vì tên bài: tên nằm sau một lượt gọi BFF có xác thực, mà
+ * metadata chạy phía server trước khi biết người dùng là ai.
+ */
+export const metadata: Metadata = {
+  title: "Bài kiểm tra | Englow3",
+  description: "Làm bài kiểm tra từ vựng, ngữ pháp và đọc hiểu trên Englow3.",
+};
 
 export default async function QuizSittingPage({ params }: QuizPageProps) {
   const { quizId } = await params;
-  const quiz = MOCK_QUIZZES.find((q) => q.id === quizId);
-
-  if (!quiz) {
-    notFound();
-  }
-
-  return <QuizSittingView quiz={quiz} />;
+  return <QuizSittingView quizId={quizId} />;
 }

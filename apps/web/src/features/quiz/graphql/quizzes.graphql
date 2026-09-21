@@ -1,0 +1,102 @@
+fragment QuizFields on Quiz {
+  id
+  slug
+  title
+  description
+  category
+  targetLevel
+  timeLimitSeconds
+  passingScorePercent
+  questionCount
+  bestScorePercent
+  attemptCount
+}
+
+fragment QuizAttemptFields on QuizAttempt {
+  id
+  quizId
+  quizTitle
+  status
+  startedAt
+  expiresAt
+  submittedAt
+  score
+  maxScore
+  scorePercentage
+  correctAnswerCount
+  questionCount
+  passed
+  resumed
+}
+
+fragment QuizReviewFields on QuizQuestionReview {
+  questionId
+  questionType
+  prompt
+  userAnswerText
+  correctAnswerText
+  correct
+  pointsEarned
+  pointsPossible
+  explanation
+}
+
+query Quizzes($category: String, $title: String, $page: Int, $size: Int) {
+  quizzes(category: $category, title: $title, page: $page, size: $size) {
+    items {
+      ...QuizFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+mutation StartQuizAttempt($quizId: ID!) {
+  startQuizAttempt(quizId: $quizId) {
+    ...QuizAttemptFields
+  }
+}
+
+query QuizPaper($attemptId: ID!) {
+  quizPaper(attemptId: $attemptId) {
+    attemptId
+    quizId
+    title
+    description
+    timeLimitSeconds
+    expiresAt
+    questions {
+      id
+      orderNo
+      questionType
+      title
+      prompt
+      points
+      beforeText
+      afterText
+      originalSentence
+      rewriteKeyword
+      options {
+        id
+        orderNo
+        label
+        content
+      }
+      wordBank
+      scrambledWords
+      leftTexts
+      rightTexts
+    }
+  }
+}
+
+mutation SubmitQuizAttempt($attemptId: ID!, $answers: [QuizAnswerInput!]!) {
+  submitQuizAttempt(attemptId: $attemptId, answers: $answers) {
+    ...QuizAttemptFields
+    reviews {
+      ...QuizReviewFields
+    }
+  }
+}

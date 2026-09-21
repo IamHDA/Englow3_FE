@@ -19,11 +19,11 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
-import { QuizItem } from "../../../types";
+import type { QuizSummary } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface QuizCatalogueProps {
-  quizzes: QuizItem[];
+  quizzes: QuizSummary[];
 }
 
 export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
@@ -88,15 +88,15 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
                   <Badge
                     variant="dot"
                     color={
-                      quiz.level === "Advanced"
+                      quiz.targetLevel === "C1" || quiz.targetLevel === "C2"
                         ? "red"
-                        : quiz.level === "Intermediate"
+                        : quiz.targetLevel === "B1" || quiz.targetLevel === "B2"
                           ? "orange"
                           : "teal"
                     }
                     size="xs"
                   >
-                    {quiz.level}
+                    {quiz.targetLevel ?? (isVi ? "Mọi trình độ" : "All levels")}
                   </Badge>
                 </Group>
 
@@ -112,13 +112,14 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
                   <Group gap={4}>
                     <IconHelpCircle size={14} />
                     <span>
-                      {quiz.questions.length} {isVi ? "câu hỏi" : "questions"}
+                      {quiz.questionCount} {isVi ? "câu hỏi" : "questions"}
                     </span>
                   </Group>
                   <Group gap={4}>
                     <IconClock size={14} />
                     <span>
-                      {quiz.timeLimitMinutes} {isVi ? "phút" : "mins"}
+                      {Math.round(quiz.timeLimitSeconds / 60)}{" "}
+                      {isVi ? "phút" : "mins"}
                     </span>
                   </Group>
                 </Group>

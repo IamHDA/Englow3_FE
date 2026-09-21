@@ -634,6 +634,173 @@ export type CompleteOnboardingMutation = {
   };
 };
 
+export type QuizFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  targetLevel: string | null;
+  timeLimitSeconds: number;
+  passingScorePercent: number;
+  questionCount: number;
+  bestScorePercent: number | null;
+  attemptCount: number;
+};
+
+export type QuizAttemptFieldsFragment = {
+  id: string;
+  quizId: string;
+  quizTitle: string;
+  status: Types.QuizAttemptStatus;
+  startedAt: string;
+  expiresAt: string;
+  submittedAt: string | null;
+  score: number | null;
+  maxScore: number;
+  scorePercentage: number | null;
+  correctAnswerCount: number | null;
+  questionCount: number;
+  passed: boolean | null;
+  resumed: boolean;
+};
+
+export type QuizReviewFieldsFragment = {
+  questionId: string;
+  questionType: Types.QuizQuestionType;
+  prompt: string;
+  userAnswerText: string;
+  correctAnswerText: string;
+  correct: boolean;
+  pointsEarned: number;
+  pointsPossible: number;
+  explanation: string;
+};
+
+export type QuizzesQueryVariables = Exact<{
+  category?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type QuizzesQuery = {
+  quizzes: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      description: string;
+      category: string;
+      targetLevel: string | null;
+      timeLimitSeconds: number;
+      passingScorePercent: number;
+      questionCount: number;
+      bestScorePercent: number | null;
+      attemptCount: number;
+    }>;
+  };
+};
+
+export type StartQuizAttemptMutationVariables = Exact<{
+  quizId: string | number;
+}>;
+
+export type StartQuizAttemptMutation = {
+  startQuizAttempt: {
+    id: string;
+    quizId: string;
+    quizTitle: string;
+    status: Types.QuizAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    score: number | null;
+    maxScore: number;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    passed: boolean | null;
+    resumed: boolean;
+  };
+};
+
+export type QuizPaperQueryVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type QuizPaperQuery = {
+  quizPaper: {
+    attemptId: string;
+    quizId: string;
+    title: string;
+    description: string;
+    timeLimitSeconds: number;
+    expiresAt: string;
+    questions: Array<{
+      id: string;
+      orderNo: number;
+      questionType: Types.QuizQuestionType;
+      title: string;
+      prompt: string;
+      points: number;
+      beforeText: string | null;
+      afterText: string | null;
+      originalSentence: string | null;
+      rewriteKeyword: string | null;
+      wordBank: Array<string>;
+      scrambledWords: Array<string>;
+      leftTexts: Array<string>;
+      rightTexts: Array<string>;
+      options: Array<{
+        id: string;
+        orderNo: number;
+        label: string;
+        content: string;
+      }>;
+    }>;
+  };
+};
+
+export type SubmitQuizAttemptMutationVariables = Exact<{
+  attemptId: string | number;
+  answers: Array<Types.QuizAnswerInput> | Types.QuizAnswerInput;
+}>;
+
+export type SubmitQuizAttemptMutation = {
+  submitQuizAttempt: {
+    id: string;
+    quizId: string;
+    quizTitle: string;
+    status: Types.QuizAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    score: number | null;
+    maxScore: number;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    passed: boolean | null;
+    resumed: boolean;
+    reviews: Array<{
+      questionId: string;
+      questionType: Types.QuizQuestionType;
+      prompt: string;
+      userAnswerText: string;
+      correctAnswerText: string;
+      correct: boolean;
+      pointsEarned: number;
+      pointsPossible: number;
+      explanation: string;
+    }>;
+  };
+};
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -759,6 +926,52 @@ export const OnboardingStateFieldsFragmentDoc = gql`
     targetScore
     targetDate
     targetSkills
+  }
+`;
+export const QuizFieldsFragmentDoc = gql`
+  fragment QuizFields on Quiz {
+    id
+    slug
+    title
+    description
+    category
+    targetLevel
+    timeLimitSeconds
+    passingScorePercent
+    questionCount
+    bestScorePercent
+    attemptCount
+  }
+`;
+export const QuizAttemptFieldsFragmentDoc = gql`
+  fragment QuizAttemptFields on QuizAttempt {
+    id
+    quizId
+    quizTitle
+    status
+    startedAt
+    expiresAt
+    submittedAt
+    score
+    maxScore
+    scorePercentage
+    correctAnswerCount
+    questionCount
+    passed
+    resumed
+  }
+`;
+export const QuizReviewFieldsFragmentDoc = gql`
+  fragment QuizReviewFields on QuizQuestionReview {
+    questionId
+    questionType
+    prompt
+    userAnswerText
+    correctAnswerText
+    correct
+    pointsEarned
+    pointsPossible
+    explanation
   }
 `;
 export const UpdateProfileDocument = gql`
@@ -2601,6 +2814,348 @@ export type CompleteOnboardingMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     CompleteOnboardingMutation,
     CompleteOnboardingMutationVariables
+  >;
+export const QuizzesDocument = gql`
+  query Quizzes($category: String, $title: String, $page: Int, $size: Int) {
+    quizzes(category: $category, title: $title, page: $page, size: $size) {
+      items {
+        ...QuizFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${QuizFieldsFragmentDoc}
+`;
+
+/**
+ * __useQuizzesQuery__
+ *
+ * To run a query within a React component, call `useQuizzesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQuizzesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQuizzesQuery({
+ *   variables: {
+ *      category: // value for 'category'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useQuizzesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    QuizzesQuery,
+    QuizzesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<QuizzesQuery, QuizzesQueryVariables>(
+    QuizzesDocument,
+    options,
+  );
+}
+export function useQuizzesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    QuizzesQuery,
+    QuizzesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<QuizzesQuery, QuizzesQueryVariables>(
+    QuizzesDocument,
+    options,
+  );
+}
+export function useQuizzesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    QuizzesQuery,
+    QuizzesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<QuizzesQuery, QuizzesQueryVariables>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useQuizzesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        QuizzesQuery,
+        QuizzesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  QuizzesQuery | undefined,
+  QuizzesQueryVariables
+>;
+export function useQuizzesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        QuizzesQuery,
+        QuizzesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<QuizzesQuery, QuizzesQueryVariables>(
+    QuizzesDocument,
+    options as any,
+  );
+}
+export type QuizzesQueryHookResult = ReturnType<typeof useQuizzesQuery>;
+export type QuizzesLazyQueryHookResult = ReturnType<typeof useQuizzesLazyQuery>;
+export type QuizzesSuspenseQueryHookResult = ReturnType<
+  typeof useQuizzesSuspenseQuery
+>;
+export type QuizzesQueryResult = ApolloReactCommon.QueryResult<
+  QuizzesQuery,
+  QuizzesQueryVariables
+>;
+export const StartQuizAttemptDocument = gql`
+  mutation StartQuizAttempt($quizId: ID!) {
+    startQuizAttempt(quizId: $quizId) {
+      ...QuizAttemptFields
+    }
+  }
+  ${QuizAttemptFieldsFragmentDoc}
+`;
+export type StartQuizAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartQuizAttemptMutation,
+    StartQuizAttemptMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartQuizAttemptMutation__
+ *
+ * To run a mutation, you first call `useStartQuizAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartQuizAttemptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startQuizAttemptMutation, { data, loading, error }] = useStartQuizAttemptMutation({
+ *   variables: {
+ *      quizId: // value for 'quizId'
+ *   },
+ * });
+ */
+export function useStartQuizAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartQuizAttemptMutation,
+    StartQuizAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartQuizAttemptMutation,
+    StartQuizAttemptMutationVariables
+  >(StartQuizAttemptDocument, options);
+}
+export type StartQuizAttemptMutationHookResult = ReturnType<
+  typeof useStartQuizAttemptMutation
+>;
+export type StartQuizAttemptMutationResult =
+  ApolloReactCommon.MutationResult<StartQuizAttemptMutation>;
+export type StartQuizAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartQuizAttemptMutation,
+    StartQuizAttemptMutationVariables
+  >;
+export const QuizPaperDocument = gql`
+  query QuizPaper($attemptId: ID!) {
+    quizPaper(attemptId: $attemptId) {
+      attemptId
+      quizId
+      title
+      description
+      timeLimitSeconds
+      expiresAt
+      questions {
+        id
+        orderNo
+        questionType
+        title
+        prompt
+        points
+        beforeText
+        afterText
+        originalSentence
+        rewriteKeyword
+        options {
+          id
+          orderNo
+          label
+          content
+        }
+        wordBank
+        scrambledWords
+        leftTexts
+        rightTexts
+      }
+    }
+  }
+`;
+
+/**
+ * __useQuizPaperQuery__
+ *
+ * To run a query within a React component, call `useQuizPaperQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQuizPaperQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQuizPaperQuery({
+ *   variables: {
+ *      attemptId: // value for 'attemptId'
+ *   },
+ * });
+ */
+export function useQuizPaperQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    QuizPaperQuery,
+    QuizPaperQueryVariables
+  > &
+    (
+      { variables: QuizPaperQueryVariables; skip?: boolean } | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<QuizPaperQuery, QuizPaperQueryVariables>(
+    QuizPaperDocument,
+    options,
+  );
+}
+export function useQuizPaperLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    QuizPaperQuery,
+    QuizPaperQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<QuizPaperQuery, QuizPaperQueryVariables>(
+    QuizPaperDocument,
+    options,
+  );
+}
+export function useQuizPaperSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    QuizPaperQuery,
+    QuizPaperQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  QuizPaperQuery,
+  QuizPaperQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useQuizPaperSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        QuizPaperQuery,
+        QuizPaperQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  QuizPaperQuery | undefined,
+  QuizPaperQueryVariables
+>;
+export function useQuizPaperSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        QuizPaperQuery,
+        QuizPaperQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    QuizPaperQuery,
+    QuizPaperQueryVariables
+  >(QuizPaperDocument, options as any);
+}
+export type QuizPaperQueryHookResult = ReturnType<typeof useQuizPaperQuery>;
+export type QuizPaperLazyQueryHookResult = ReturnType<
+  typeof useQuizPaperLazyQuery
+>;
+export type QuizPaperSuspenseQueryHookResult = ReturnType<
+  typeof useQuizPaperSuspenseQuery
+>;
+export type QuizPaperQueryResult = ApolloReactCommon.QueryResult<
+  QuizPaperQuery,
+  QuizPaperQueryVariables
+>;
+export const SubmitQuizAttemptDocument = gql`
+  mutation SubmitQuizAttempt($attemptId: ID!, $answers: [QuizAnswerInput!]!) {
+    submitQuizAttempt(attemptId: $attemptId, answers: $answers) {
+      ...QuizAttemptFields
+      reviews {
+        ...QuizReviewFields
+      }
+    }
+  }
+  ${QuizAttemptFieldsFragmentDoc}
+  ${QuizReviewFieldsFragmentDoc}
+`;
+export type SubmitQuizAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitQuizAttemptMutation,
+    SubmitQuizAttemptMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitQuizAttemptMutation__
+ *
+ * To run a mutation, you first call `useSubmitQuizAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitQuizAttemptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitQuizAttemptMutation, { data, loading, error }] = useSubmitQuizAttemptMutation({
+ *   variables: {
+ *      attemptId: // value for 'attemptId'
+ *      answers: // value for 'answers'
+ *   },
+ * });
+ */
+export function useSubmitQuizAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitQuizAttemptMutation,
+    SubmitQuizAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitQuizAttemptMutation,
+    SubmitQuizAttemptMutationVariables
+  >(SubmitQuizAttemptDocument, options);
+}
+export type SubmitQuizAttemptMutationHookResult = ReturnType<
+  typeof useSubmitQuizAttemptMutation
+>;
+export type SubmitQuizAttemptMutationResult =
+  ApolloReactCommon.MutationResult<SubmitQuizAttemptMutation>;
+export type SubmitQuizAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitQuizAttemptMutation,
+    SubmitQuizAttemptMutationVariables
   >;
 export const CurrentUserDocument = gql`
   query CurrentUser {

@@ -1,3 +1,8 @@
+import type { QuizFieldsFragment } from "@/lib/graphql/generated/documents";
+
+/** A quiz as the catalogue lists it, straight off codegen rather than declared twice. */
+export type QuizSummary = QuizFieldsFragment;
+
 export type QuizQuestionType =
   "MULTIPLE_CHOICE" | "FILL_BLANK" | "REWRITE" | "REORDER" | "MATCHING";
 

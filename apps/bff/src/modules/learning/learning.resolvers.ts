@@ -2,6 +2,7 @@ import type { GraphQLContext } from "../../graphql/context.js";
 import type {
   ReviewRating,
   SearchFlashcardSetsParams,
+  SearchQuizzesParams,
 } from "./learning.types.js";
 
 /** The backend trusts the requested size; the cap belongs here so a client cannot ask for the whole table. */
@@ -36,6 +37,25 @@ export const learningResolvers = {
         Math.min(args.limit ?? 20, MAX_STUDY_QUEUE),
       );
     },
+    quizzes: (_: unknown, args: SearchQuizzesParams, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.searchQuizzes({
+        ...args,
+        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+      });
+    },
+    quizPaper: (
+      _: unknown,
+      args: { attemptId: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.getQuizPaper(args.attemptId);
+    },
+    quizAttempt: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.getQuizAttemptResult(args.id);
+    },
   },
   Mutation: {
     rateFlashcard: (
@@ -51,6 +71,27 @@ export const learningResolvers = {
       return ctx.apis.learningApi.rateFlashcard(args.flashcardId, {
         rating: args.rating,
         timeSpentSeconds: args.timeSpentSeconds,
+      });
+    },
+    startQuizAttempt: (
+      _: unknown,
+      args: { quizId: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.startQuizAttempt(args.quizId);
+    },
+    submitQuizAttempt: (
+      _: unknown,
+      args: {
+        attemptId: string;
+        answers: { questionId: string; response: string }[];
+      },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.submitQuizAttempt(args.attemptId, {
+        answers: args.answers,
       });
     },
   },
