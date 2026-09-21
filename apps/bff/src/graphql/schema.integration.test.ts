@@ -20,6 +20,7 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
         publishAsAdmin: vi.fn(),
         archiveAsAdmin: vi.fn(),
       } as any,
+      learningApi: {} as any,
     },
     ...overrides,
   };
@@ -51,6 +52,7 @@ describe("me query - schema wiring and partial failure", () => {
         userApi: { getMe } as any,
         onboardingApi: { getCurrentState } as any,
         examApi: {} as any,
+        learningApi: {} as any,
       },
     });
 
@@ -78,6 +80,7 @@ describe("me query - schema wiring and partial failure", () => {
         userApi: { getMe } as any,
         onboardingApi: { getCurrentState } as any,
         examApi: {} as any,
+        learningApi: {} as any,
       },
     });
 
@@ -119,6 +122,7 @@ describe("me query - schema wiring and partial failure", () => {
         userApi: { getMe } as any,
         onboardingApi: { getCurrentState: vi.fn() } as any,
         examApi: {} as any,
+        learningApi: {} as any,
       },
     });
 
@@ -165,6 +169,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
         userApi: {} as any,
         onboardingApi: {} as any,
         examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
+        learningApi: {} as any,
       },
     });
 
@@ -205,6 +210,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
         userApi: {} as any,
         onboardingApi: {} as any,
         examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
+        learningApi: {} as any,
       },
     });
 
@@ -235,6 +241,7 @@ describe("updateProfile mutation - schema wiring", () => {
         userApi: { updateProfile } as any,
         onboardingApi: {} as any,
         examApi: {} as any,
+        learningApi: {} as any,
       },
     });
 

@@ -53,14 +53,14 @@ export function Flashcard3DCard({
           {/* Top Info Bar */}
           <Group justify="space-between" align="center">
             <Badge variant="light" color="indigo" size="md">
-              {card.pos.toUpperCase()}
+              {card.partOfSpeech.toUpperCase()}
             </Badge>
             <Group gap="xs">
-              {card.missCount > 1 && (
+              {card.lapseCount > 1 && (
                 <Badge variant="dot" color="red" size="sm">
                   {isVi
-                    ? `Cần ôn lại (${card.missCount} lần sai)`
-                    : `Needs review (${card.missCount} misses)`}
+                    ? `Cần ôn lại (${card.lapseCount} lần sai)`
+                    : `Needs review (${card.lapseCount} misses)`}
                 </Badge>
               )}
               <Tooltip
@@ -73,7 +73,7 @@ export function Flashcard3DCard({
                   radius="xl"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onSpeak(card.front);
+                    onSpeak(card.lemma);
                   }}
                   aria-label={isVi ? "Nghe phát âm" : "Listen audio"}
                 >
@@ -92,11 +92,11 @@ export function Flashcard3DCard({
               ta="center"
               style={{ letterSpacing: "-0.02em" }}
             >
-              {card.front}
+              {card.lemma}
             </Text>
             <Group gap="xs" align="center">
               <Text fz="lg" c="dimmed" fs="italic" ta="center">
-                {card.ipa}
+                {card.ipaUs}
               </Text>
               <ActionIcon
                 variant="light"
@@ -105,7 +105,7 @@ export function Flashcard3DCard({
                 radius="xl"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSpeak(card.front);
+                  onSpeak(card.lemma);
                 }}
                 aria-label={isVi ? "Phát âm từ" : "Pronounce word"}
               >
@@ -136,13 +136,13 @@ export function Flashcard3DCard({
           <Group justify="space-between" align="center">
             <Group gap="xs">
               <Badge variant="filled" color="indigo" size="md">
-                {card.pos}
+                {card.partOfSpeech}
               </Badge>
               <Text fz="sm" fw={700} c="indigo">
-                {card.front}
+                {card.lemma}
               </Text>
               <Text fz="xs" c="dimmed" fs="italic">
-                {card.ipa}
+                {card.ipaUs}
               </Text>
             </Group>
             <ActionIcon
@@ -152,7 +152,7 @@ export function Flashcard3DCard({
               radius="xl"
               onClick={(e) => {
                 e.stopPropagation();
-                onSpeak(card.front);
+                onSpeak(card.lemma);
               }}
               aria-label={isVi ? "Nghe lại" : "Listen again"}
             >
@@ -177,7 +177,7 @@ export function Flashcard3DCard({
                 {isVi ? "NGHĨA TIẾNG VIỆT:" : "VIETNAMESE MEANING:"}
               </Text>
               <Text fz="lg" fw={700} c="indigo.9">
-                {card.translationVi}
+                {card.definitionVi}
               </Text>
             </Box>
 
@@ -187,7 +187,7 @@ export function Flashcard3DCard({
                 {isVi ? "ĐỊNH NGHĨA ANH - ANH:" : "ENGLISH DEFINITION:"}
               </Text>
               <Text fz="sm" fw={500} c="dark.7">
-                {card.definition}
+                {card.definitionEn}
               </Text>
             </Box>
 
@@ -213,7 +213,7 @@ export function Flashcard3DCard({
             </Group>
 
             {/* Mnemonic / Memory Note if available */}
-            {card.memoryNote && (
+            {card.mnemonicTipVi && (
               <Group align="flex-start" gap="xs" wrap="nowrap">
                 <ThemeIcon
                   variant="light"
@@ -229,7 +229,7 @@ export function Flashcard3DCard({
                     {isVi ? "MẸO GHI NHỚ:" : "MEMORY MNEMONIC:"}
                   </Text>
                   <Text fz="xs" c="dimmed">
-                    {card.memoryNote}
+                    {card.mnemonicTipVi}
                   </Text>
                 </Box>
               </Group>

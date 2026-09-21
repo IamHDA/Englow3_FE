@@ -1,0 +1,81 @@
+fragment FlashcardSetFields on FlashcardSet {
+  id
+  slug
+  name
+  description
+  topic
+  targetLevel
+  cardCount
+  dueCount
+  masteredCount
+  lastStudiedAt
+}
+
+fragment FlashcardFields on Flashcard {
+  id
+  orderNo
+  lemma
+  partOfSpeech
+  senseLabel
+  ipaUs
+  ipaUk
+  audioUsUrl
+  audioUkUrl
+  definitionEn
+  definitionVi
+  exampleSentence
+  exampleTranslationVi
+  mnemonicTipVi
+  cefrLevel
+  status
+  dueAt
+  lapseCount
+}
+
+query FlashcardSets($topic: String, $title: String, $page: Int, $size: Int) {
+  flashcardSets(topic: $topic, title: $title, page: $page, size: $size) {
+    items {
+      ...FlashcardSetFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query FlashcardSetDetail($id: ID!) {
+  flashcardSet(id: $id) {
+    set {
+      ...FlashcardSetFields
+    }
+    cards {
+      ...FlashcardFields
+    }
+  }
+}
+
+query FlashcardStudyQueue($setId: ID!, $limit: Int) {
+  flashcardStudyQueue(setId: $setId, limit: $limit) {
+    ...FlashcardFields
+  }
+}
+
+mutation RateFlashcard(
+  $flashcardId: ID!
+  $rating: ReviewRating!
+  $timeSpentSeconds: Int!
+) {
+  rateFlashcard(
+    flashcardId: $flashcardId
+    rating: $rating
+    timeSpentSeconds: $timeSpentSeconds
+  ) {
+    flashcardId
+    status
+    repetitions
+    intervalDays
+    dueAt
+    lapseCount
+  }
+}

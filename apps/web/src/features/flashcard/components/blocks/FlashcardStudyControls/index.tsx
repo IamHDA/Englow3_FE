@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Group, Kbd, Stack, Text } from "@mantine/core";
+import { ReviewRating } from "@/lib/graphql/generated";
 import {
   IconCheck,
   IconClock,
@@ -58,7 +59,7 @@ export function FlashcardStudyControls({
           variant="light"
           color="red"
           radius="md"
-          onClick={() => onRate("Again")}
+          onClick={() => onRate(ReviewRating.AGAIN)}
           leftSection={<IconX size={18} />}
           rightSection={<Kbd size="xs">1</Kbd>}
         >
@@ -71,7 +72,7 @@ export function FlashcardStudyControls({
           variant="light"
           color="orange"
           radius="md"
-          onClick={() => onRate("Hard")}
+          onClick={() => onRate(ReviewRating.HARD)}
           leftSection={<IconClock size={18} />}
           rightSection={<Kbd size="xs">2</Kbd>}
         >
@@ -84,7 +85,7 @@ export function FlashcardStudyControls({
           variant="light"
           color="blue"
           radius="md"
-          onClick={() => onRate("Good")}
+          onClick={() => onRate(ReviewRating.GOOD)}
           leftSection={<IconCheck size={18} />}
           rightSection={<Kbd size="xs">3</Kbd>}
         >
@@ -97,7 +98,7 @@ export function FlashcardStudyControls({
           variant="light"
           color="teal"
           radius="md"
-          onClick={() => onRate("Easy")}
+          onClick={() => onRate(ReviewRating.EASY)}
           leftSection={<IconMoodSmile size={18} />}
           rightSection={<Kbd size="xs">4</Kbd>}
         >

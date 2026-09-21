@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReviewRating } from "@/lib/graphql/generated";
 import {
   FlashcardItem,
   FlashcardSessionSummaryData,
@@ -11,12 +12,23 @@ export interface UseFlashcardStudyOptions {
   cards: FlashcardItem[];
   setName: string;
   onComplete?: (summary: FlashcardSessionSummaryData) => void;
+  /**
+   * Báo cho nơi gọi biết một thẻ vừa được chấm. Hook không tự gửi đi: nó không
+   * biết gì về Apollo, và giữ nguyên như vậy thì nó còn test được mà không cần
+   * mock schema.
+   */
+  onRate?: (
+    cardId: string,
+    rating: SRSRating,
+    timeSpentSeconds: number,
+  ) => void;
 }
 
 export function useFlashcardStudy({
   cards,
   setName,
   onComplete,
+  onRate,
 }: UseFlashcardStudyOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -48,6 +60,9 @@ export function useFlashcardStudy({
   }, [cards.length, currentIndex]);
 
   const flipCard = useCallback(() => {
+    // Lần lật đầu của một thẻ là lúc người học thật sự bắt đầu với nó. Đặt mốc
+    // ở đây chứ không lúc render, vì `Date.now()` không thuần.
+    cardShownAtRef.current ??= Date.now();
     setIsFlipped((prev) => !prev);
   }, []);
 
@@ -57,13 +72,13 @@ export function useFlashcardStudy({
         return;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(
-        text || currentCard?.front || "",
+        text || currentCard?.lemma || "",
       );
       utterance.lang = "en-US";
       utterance.rate = 0.9;
       window.speechSynthesis.speak(utterance);
     },
-    [currentCard?.front],
+    [currentCard?.lemma],
   );
 
   const formatDuration = (totalSecs: number) => {
@@ -73,13 +88,32 @@ export function useFlashcardStudy({
     return `${mins}m ${secs}s`;
   };
 
+  // Mốc thời gian của thẻ đang mở, để đo người học nghĩ bao lâu trước khi trả
+  // lời. Ref chứ không phải state: đổi nó không cần vẽ lại gì cả. Đặt lại ngay
+  // trong lúc chấm chứ không qua effect - đây là hệ quả của một hành động, không
+  // phải đồng bộ với thứ gì bên ngoài React.
+  const cardShownAtRef = useRef<number | null>(null);
+
   const rateCard = useCallback(
     (rating: SRSRating) => {
+      const answeredAt = Date.now();
+      const shownAt = cardShownAtRef.current;
+      const card = cards[currentIndex];
+      if (card) {
+        onRate?.(
+          card.id,
+          rating,
+          shownAt === null ? 0 : Math.round((answeredAt - shownAt) / 1000),
+        );
+      }
+      // Thẻ kế tiếp bắt đầu đếm lại từ lần lật của chính nó.
+      cardShownAtRef.current = null;
+
       const nextCounts = { ...ratingCounts };
-      if (rating === "Again") nextCounts.again += 1;
-      else if (rating === "Hard") nextCounts.hard += 1;
-      else if (rating === "Good") nextCounts.good += 1;
-      else if (rating === "Easy") nextCounts.easy += 1;
+      if (rating === ReviewRating.AGAIN) nextCounts.again += 1;
+      else if (rating === ReviewRating.HARD) nextCounts.hard += 1;
+      else if (rating === ReviewRating.GOOD) nextCounts.good += 1;
+      else if (rating === ReviewRating.EASY) nextCounts.easy += 1;
       setRatingCounts(nextCounts);
 
       if (currentIndex + 1 >= cards.length) {
@@ -102,9 +136,10 @@ export function useFlashcardStudy({
       }
     },
     [
-      cards.length,
+      cards,
       currentIndex,
       onComplete,
+      onRate,
       ratingCounts,
       setName,
       studySeconds,
@@ -135,13 +170,13 @@ export function useFlashcardStudy({
         flipCard();
       } else if (isFlipped) {
         if (e.key === "1") {
-          rateCard("Again");
+          rateCard(ReviewRating.AGAIN);
         } else if (e.key === "2") {
-          rateCard("Hard");
+          rateCard(ReviewRating.HARD);
         } else if (e.key === "3") {
-          rateCard("Good");
+          rateCard(ReviewRating.GOOD);
         } else if (e.key === "4") {
-          rateCard("Easy");
+          rateCard(ReviewRating.EASY);
         }
       }
     };

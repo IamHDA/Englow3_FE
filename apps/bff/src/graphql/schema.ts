@@ -1,6 +1,8 @@
 import { dateScalar, dateTimeScalar } from "./scalars.js";
 import { examResolvers } from "../modules/exam/exam.resolvers.js";
 import { examTypeDefs } from "../modules/exam/exam.typeDefs.js";
+import { learningResolvers } from "../modules/learning/learning.resolvers.js";
+import { learningTypeDefs } from "../modules/learning/learning.typeDefs.js";
 import { onboardingResolvers } from "../modules/onboarding/onboarding.resolvers.js";
 import { onboardingTypeDefs } from "../modules/onboarding/onboarding.typeDefs.js";
 import { userResolvers } from "../modules/user/user.resolvers.js";
@@ -24,6 +26,7 @@ export const typeDefs = [
   userTypeDefs,
   onboardingTypeDefs,
   examTypeDefs,
+  learningTypeDefs,
 ];
 
 export const resolvers = {
@@ -34,11 +37,13 @@ export const resolvers = {
     ...userResolvers.Query,
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
+    ...learningResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
+    ...learningResolvers.Mutation,
   },
   Me: {
     ...onboardingResolvers.Me,

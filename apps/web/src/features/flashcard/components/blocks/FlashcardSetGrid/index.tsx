@@ -18,6 +18,7 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import React from "react";
 import { FlashcardSet } from "../../../types";
 
@@ -25,7 +26,32 @@ interface FlashcardSetGridProps {
   sets: FlashcardSet[];
 }
 
+/**
+ * Derived, not stored: the backend reports how many cards are mastered, and the
+ * bar wants a proportion. Computing it here keeps one number in the API instead
+ * of two that can disagree.
+ */
+/**
+ * The backend reports an instant; the card wants "3 days ago". Null means the
+ * learner has never opened this set, which is not the same as "0 days ago".
+ */
+function formatLastStudied(value: string | null, isVi: boolean): string {
+  if (!value) return isVi ? "Chưa học" : "Not started";
+
+  const days = Math.floor((Date.now() - Date.parse(value)) / 86_400_000);
+  if (days <= 0) return isVi ? "Hôm nay" : "Today";
+  if (days === 1) return isVi ? "Hôm qua" : "Yesterday";
+  return isVi ? `${days} ngày trước` : `${days} days ago`;
+}
+
+function masteredPercent(set: FlashcardSet): number {
+  if (set.cardCount === 0) return 0;
+  return Math.round((set.masteredCount / set.cardCount) * 100);
+}
+
 export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
+  const { isVi } = useLanguage();
+
   return (
     <Grid gap="md">
       {sets.map((set) => (
@@ -47,9 +73,9 @@ export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
                 <Badge variant="light" color="indigo" size="sm">
                   {set.topic}
                 </Badge>
-                {set.dueTodayCount > 0 ? (
+                {set.dueCount > 0 ? (
                   <Badge variant="filled" color="orange" size="xs">
-                    {set.dueTodayCount} thẻ cần ôn
+                    {set.dueCount} thẻ cần ôn
                   </Badge>
                 ) : (
                   <Badge variant="light" color="teal" size="xs">
@@ -72,11 +98,11 @@ export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
                     Đã thuần thục:
                   </Text>
                   <Text fz="xs" fw={700} c="indigo">
-                    {set.masteredPercent}%
+                    {masteredPercent(set)}%
                   </Text>
                 </Group>
                 <Progress
-                  value={set.masteredPercent}
+                  value={masteredPercent(set)}
                   color="indigo"
                   size="sm"
                   radius="xl"
@@ -86,11 +112,11 @@ export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
               <Group justify="space-between" mt="xs" c="dimmed" fz="xs">
                 <Group gap={4}>
                   <IconBook size={14} />
-                  <span>{set.totalCards} từ vựng</span>
+                  <span>{set.cardCount} từ vựng</span>
                 </Group>
                 <Group gap={4}>
                   <IconClock size={14} />
-                  <span>{set.lastStudied}</span>
+                  <span>{formatLastStudied(set.lastStudiedAt, isVi)}</span>
                 </Group>
               </Group>
             </Stack>

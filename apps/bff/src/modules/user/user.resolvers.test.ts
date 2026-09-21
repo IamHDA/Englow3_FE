@@ -13,6 +13,7 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
       userApi: { getMe: vi.fn() } as any,
       onboardingApi: {} as any,
       examApi: {} as any,
+      learningApi: {} as any,
     },
     ...overrides,
   };
@@ -52,6 +53,7 @@ describe("Query.me", () => {
         userApi: { getMe } as any,
         onboardingApi: {} as any,
         examApi: {} as any,
+        learningApi: {} as any,
       },
     });
 
@@ -104,6 +106,7 @@ describe("Mutation.updateProfile", () => {
         userApi: { updateProfile } as any,
         onboardingApi: {} as any,
         examApi: {} as any,
+        learningApi: {} as any,
       },
     });
 

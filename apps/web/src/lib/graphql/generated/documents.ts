@@ -367,6 +367,154 @@ export type PlacementExamQuery = {
   };
 };
 
+export type FlashcardSetFieldsFragment = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  topic: string;
+  targetLevel: string | null;
+  cardCount: number;
+  dueCount: number;
+  masteredCount: number;
+  lastStudiedAt: string | null;
+};
+
+export type FlashcardFieldsFragment = {
+  id: string;
+  orderNo: number;
+  lemma: string;
+  partOfSpeech: string;
+  senseLabel: string;
+  ipaUs: string;
+  ipaUk: string | null;
+  audioUsUrl: string | null;
+  audioUkUrl: string | null;
+  definitionEn: string;
+  definitionVi: string;
+  exampleSentence: string;
+  exampleTranslationVi: string | null;
+  mnemonicTipVi: string | null;
+  cefrLevel: string | null;
+  status: Types.FlashcardReviewStatus;
+  dueAt: string | null;
+  lapseCount: number;
+};
+
+export type FlashcardSetsQueryVariables = Exact<{
+  topic?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type FlashcardSetsQuery = {
+  flashcardSets: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      name: string;
+      description: string;
+      topic: string;
+      targetLevel: string | null;
+      cardCount: number;
+      dueCount: number;
+      masteredCount: number;
+      lastStudiedAt: string | null;
+    }>;
+  };
+};
+
+export type FlashcardSetDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type FlashcardSetDetailQuery = {
+  flashcardSet: {
+    set: {
+      id: string;
+      slug: string;
+      name: string;
+      description: string;
+      topic: string;
+      targetLevel: string | null;
+      cardCount: number;
+      dueCount: number;
+      masteredCount: number;
+      lastStudiedAt: string | null;
+    };
+    cards: Array<{
+      id: string;
+      orderNo: number;
+      lemma: string;
+      partOfSpeech: string;
+      senseLabel: string;
+      ipaUs: string;
+      ipaUk: string | null;
+      audioUsUrl: string | null;
+      audioUkUrl: string | null;
+      definitionEn: string;
+      definitionVi: string;
+      exampleSentence: string;
+      exampleTranslationVi: string | null;
+      mnemonicTipVi: string | null;
+      cefrLevel: string | null;
+      status: Types.FlashcardReviewStatus;
+      dueAt: string | null;
+      lapseCount: number;
+    }>;
+  };
+};
+
+export type FlashcardStudyQueueQueryVariables = Exact<{
+  setId: string | number;
+  limit?: number | null | undefined;
+}>;
+
+export type FlashcardStudyQueueQuery = {
+  flashcardStudyQueue: Array<{
+    id: string;
+    orderNo: number;
+    lemma: string;
+    partOfSpeech: string;
+    senseLabel: string;
+    ipaUs: string;
+    ipaUk: string | null;
+    audioUsUrl: string | null;
+    audioUkUrl: string | null;
+    definitionEn: string;
+    definitionVi: string;
+    exampleSentence: string;
+    exampleTranslationVi: string | null;
+    mnemonicTipVi: string | null;
+    cefrLevel: string | null;
+    status: Types.FlashcardReviewStatus;
+    dueAt: string | null;
+    lapseCount: number;
+  }>;
+};
+
+export type RateFlashcardMutationVariables = Exact<{
+  flashcardId: string | number;
+  rating: Types.ReviewRating;
+  timeSpentSeconds: number;
+}>;
+
+export type RateFlashcardMutation = {
+  rateFlashcard: {
+    flashcardId: string;
+    status: Types.FlashcardReviewStatus;
+    repetitions: number;
+    intervalDays: number;
+    dueAt: string;
+    lapseCount: number;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -632,6 +780,73 @@ export const AttemptReviewFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<AttemptReviewFieldsFragment, unknown>;
+export const FlashcardSetFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FlashcardSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "cardCount" } },
+          { kind: "Field", name: { kind: "Name", value: "dueCount" } },
+          { kind: "Field", name: { kind: "Name", value: "masteredCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastStudiedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<FlashcardSetFieldsFragment, unknown>;
+export const FlashcardFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Flashcard" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "lemma" } },
+          { kind: "Field", name: { kind: "Name", value: "partOfSpeech" } },
+          { kind: "Field", name: { kind: "Name", value: "senseLabel" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaUs" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaUk" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUsUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUkUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "definitionEn" } },
+          { kind: "Field", name: { kind: "Name", value: "definitionVi" } },
+          { kind: "Field", name: { kind: "Name", value: "exampleSentence" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "exampleTranslationVi" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "mnemonicTipVi" } },
+          { kind: "Field", name: { kind: "Name", value: "cefrLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "dueAt" } },
+          { kind: "Field", name: { kind: "Name", value: "lapseCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<FlashcardFieldsFragment, unknown>;
 export const OnboardingStateFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -2004,6 +2219,466 @@ export const PlacementExamDocument = {
     },
   ],
 } as unknown as DocumentNode<PlacementExamQuery, PlacementExamQueryVariables>;
+export const FlashcardSetsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FlashcardSets" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "topic" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "title" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "flashcardSets" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "topic" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "topic" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "title" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "FlashcardSetFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FlashcardSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "cardCount" } },
+          { kind: "Field", name: { kind: "Name", value: "dueCount" } },
+          { kind: "Field", name: { kind: "Name", value: "masteredCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastStudiedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<FlashcardSetsQuery, FlashcardSetsQueryVariables>;
+export const FlashcardSetDetailDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FlashcardSetDetail" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "flashcardSet" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "set" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "FlashcardSetFields" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "cards" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "FlashcardFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FlashcardSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "cardCount" } },
+          { kind: "Field", name: { kind: "Name", value: "dueCount" } },
+          { kind: "Field", name: { kind: "Name", value: "masteredCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastStudiedAt" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Flashcard" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "lemma" } },
+          { kind: "Field", name: { kind: "Name", value: "partOfSpeech" } },
+          { kind: "Field", name: { kind: "Name", value: "senseLabel" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaUs" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaUk" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUsUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUkUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "definitionEn" } },
+          { kind: "Field", name: { kind: "Name", value: "definitionVi" } },
+          { kind: "Field", name: { kind: "Name", value: "exampleSentence" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "exampleTranslationVi" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "mnemonicTipVi" } },
+          { kind: "Field", name: { kind: "Name", value: "cefrLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "dueAt" } },
+          { kind: "Field", name: { kind: "Name", value: "lapseCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  FlashcardSetDetailQuery,
+  FlashcardSetDetailQueryVariables
+>;
+export const FlashcardStudyQueueDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FlashcardStudyQueue" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "setId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "limit" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "flashcardStudyQueue" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "setId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "setId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "limit" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "limit" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "FlashcardFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Flashcard" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "lemma" } },
+          { kind: "Field", name: { kind: "Name", value: "partOfSpeech" } },
+          { kind: "Field", name: { kind: "Name", value: "senseLabel" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaUs" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaUk" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUsUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUkUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "definitionEn" } },
+          { kind: "Field", name: { kind: "Name", value: "definitionVi" } },
+          { kind: "Field", name: { kind: "Name", value: "exampleSentence" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "exampleTranslationVi" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "mnemonicTipVi" } },
+          { kind: "Field", name: { kind: "Name", value: "cefrLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "dueAt" } },
+          { kind: "Field", name: { kind: "Name", value: "lapseCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  FlashcardStudyQueueQuery,
+  FlashcardStudyQueueQueryVariables
+>;
+export const RateFlashcardDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RateFlashcard" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "flashcardId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "rating" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "ReviewRating" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "timeSpentSeconds" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "rateFlashcard" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "flashcardId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "flashcardId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "rating" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "rating" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "timeSpentSeconds" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "timeSpentSeconds" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "flashcardId" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "repetitions" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "intervalDays" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "dueAt" } },
+                { kind: "Field", name: { kind: "Name", value: "lapseCount" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RateFlashcardMutation,
+  RateFlashcardMutationVariables
+>;
 export const LearningPurposesDocument = {
   kind: "Document",
   definitions: [

@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Card,
+  Alert,
   Container,
   Group,
   Progress,
@@ -24,14 +25,53 @@ import {
 import Link from "next/link";
 import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { FlashcardSet } from "../../../types";
+import { FlashcardReviewStatus } from "@/lib/graphql/generated";
+// Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
+// hooks để Server Component không kéo theo "@apollo/client/react".
+import { useFlashcardSetDetailQuery } from "@/lib/graphql/generated/hooks";
+import { FlashcardStudySkeleton } from "../../blocks/FlashcardStudySkeleton";
 
 interface FlashcardSetDetailViewProps {
-  set: FlashcardSet;
+  setId: string;
 }
 
-export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
+export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
   const { isVi } = useLanguage();
+  const { data, loading, error } = useFlashcardSetDetailQuery({
+    variables: { id: setId },
+    fetchPolicy: "cache-and-network",
+  });
+
+  if (loading && !data) {
+    return <FlashcardStudySkeleton />;
+  }
+
+  if (error || !data) {
+    return (
+      <Container size="lg" py="xl">
+        <Alert
+          color="warn"
+          title={isVi ? "Không tải được bộ thẻ" : "Could not load deck"}
+        >
+          {isVi
+            ? "Kiểm tra kết nối tới backend rồi tải lại trang."
+            : "Check the backend connection and reload."}
+        </Alert>
+      </Container>
+    );
+  }
+
+  const set = data.flashcardSet.set;
+  const cards = data.flashcardSet.cards;
+  const masteredPercent =
+    set.cardCount === 0
+      ? 0
+      : Math.round((set.masteredCount / set.cardCount) * 100);
+  const lastStudiedLabel = set.lastStudiedAt
+    ? new Date(set.lastStudiedAt).toLocaleDateString(isVi ? "vi-VN" : "en-GB")
+    : isVi
+      ? "Chưa học"
+      : "Not started";
 
   const handleSpeak = (text: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -78,11 +118,11 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                   <Badge variant="filled" color="indigo" size="md">
                     {set.topic}
                   </Badge>
-                  {set.dueTodayCount > 0 ? (
+                  {set.dueCount > 0 ? (
                     <Badge variant="filled" color="orange" size="sm">
                       {isVi
-                        ? `${set.dueTodayCount} từ cần ôn tập hôm nay`
-                        : `${set.dueTodayCount} cards due today`}
+                        ? `${set.dueCount} từ cần ôn tập hôm nay`
+                        : `${set.dueCount} cards due today`}
                     </Badge>
                   ) : (
                     <Badge variant="light" color="teal" size="sm">
@@ -108,7 +148,7 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                 <Text fz="sm">
                   {isVi ? "Tổng số từ:" : "Total cards:"}{" "}
                   <b>
-                    {set.totalCards} {isVi ? "từ" : "cards"}
+                    {set.cardCount} {isVi ? "từ" : "cards"}
                   </b>
                 </Text>
               </Group>
@@ -116,7 +156,7 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                 <IconClock size={16} color="var(--mantine-color-blue-6)" />
                 <Text fz="sm">
                   {isVi ? "Lần học gần nhất:" : "Last studied:"}{" "}
-                  <b>{set.lastStudied}</b>
+                  <b>{lastStudiedLabel}</b>
                 </Text>
               </Group>
               <Box style={{ flex: 1, maxWidth: 240 }}>
@@ -125,11 +165,11 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                     {isVi ? "Đã thuộc:" : "Mastered:"}
                   </Text>
                   <Text fz="xs" fw={700} c="indigo">
-                    {set.masteredPercent}%
+                    {masteredPercent}%
                   </Text>
                 </Group>
                 <Progress
-                  value={set.masteredPercent}
+                  value={masteredPercent}
                   color="indigo"
                   size="sm"
                   radius="xl"
@@ -145,8 +185,8 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
             <Group justify="space-between" align="center">
               <Text fw={700} fz="md" c="dark.9">
                 {isVi
-                  ? `Danh sách từ vựng trong bộ (${set.cards.length} thẻ)`
-                  : `Card list in deck (${set.cards.length} cards)`}
+                  ? `Danh sách từ vựng trong bộ (${cards.length} thẻ)`
+                  : `Card list in deck (${cards.length} cards)`}
               </Text>
               <Text fz="xs" c="dimmed">
                 {isVi
@@ -170,48 +210,48 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {set.cards.map((card) => (
+                {cards.map((card) => (
                   <Table.Tr key={card.id}>
                     <Table.Td>
                       <Text fw={700} c="indigo">
-                        {card.front}
+                        {card.lemma}
                       </Text>
                     </Table.Td>
                     <Table.Td>
                       <Text fz="xs" c="dimmed" fs="italic">
-                        {card.ipa}
+                        {card.ipaUs}
                       </Text>
                     </Table.Td>
                     <Table.Td>
                       <Badge variant="outline" color="gray" size="xs">
-                        {card.pos}
+                        {card.partOfSpeech}
                       </Badge>
                     </Table.Td>
                     <Table.Td>
-                      <Text fz="sm">{card.translationVi}</Text>
+                      <Text fz="sm">{card.definitionVi}</Text>
                     </Table.Td>
                     <Table.Td>
                       <Text fz="xs" c="dimmed">
-                        {card.definition}
+                        {card.definitionEn}
                       </Text>
                     </Table.Td>
                     <Table.Td>
-                      {card.status === "Mastered" && (
+                      {card.status === FlashcardReviewStatus.MASTERED && (
                         <Badge color="teal" variant="light" size="xs">
                           {isVi ? "Đã thuộc" : "Mastered"}
                         </Badge>
                       )}
-                      {card.status === "Review" && (
+                      {card.status === FlashcardReviewStatus.REVIEW && (
                         <Badge color="indigo" variant="light" size="xs">
                           {isVi ? "Ôn tập" : "Review"}
                         </Badge>
                       )}
-                      {card.status === "Learning" && (
+                      {card.status === FlashcardReviewStatus.LEARNING && (
                         <Badge color="blue" variant="light" size="xs">
                           {isVi ? "Đang học" : "Learning"}
                         </Badge>
                       )}
-                      {card.status === "New" && (
+                      {card.status === FlashcardReviewStatus.NEW && (
                         <Badge color="gray" variant="light" size="xs">
                           {isVi ? "Từ mới" : "New"}
                         </Badge>
@@ -222,8 +262,8 @@ export function FlashcardSetDetailView({ set }: FlashcardSetDetailViewProps) {
                         variant="subtle"
                         color="indigo"
                         size="sm"
-                        onClick={() => handleSpeak(card.front)}
-                        aria-label={`Nghe từ ${card.front}`}
+                        onClick={() => handleSpeak(card.lemma)}
+                        aria-label={`Nghe từ ${card.lemma}`}
                       >
                         <IconVolume size={16} />
                       </ActionIcon>

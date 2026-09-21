@@ -1,31 +1,40 @@
 import { act, renderHook } from "@testing-library/react";
+import { FlashcardReviewStatus, ReviewRating } from "@/lib/graphql/generated";
 import { describe, expect, it, vi } from "vitest";
 import { FlashcardItem } from "../types";
 import { useFlashcardStudy } from "./useFlashcardStudy";
 
+/** Shaped like the fragment the BFF returns, so the hook is tested against the real card. */
+function card(
+  id: string,
+  lemma: string,
+  status: FlashcardReviewStatus,
+): FlashcardItem {
+  return {
+    id,
+    orderNo: 1,
+    lemma,
+    partOfSpeech: "adjective",
+    senseLabel: `${lemma} (sense 1)`,
+    ipaUs: "/test/",
+    ipaUk: null,
+    audioUsUrl: null,
+    audioUkUrl: null,
+    definitionEn: "Complete",
+    definitionVi: "Toan dien",
+    exampleSentence: `A ${lemma} review.`,
+    exampleTranslationVi: null,
+    mnemonicTipVi: null,
+    cefrLevel: "B2",
+    status,
+    dueAt: null,
+    lapseCount: 0,
+  };
+}
+
 const mockCards: FlashcardItem[] = [
-  {
-    id: "c1",
-    front: "comprehensive",
-    ipa: "/ˌkɒm.prɪˈhen.sɪv/",
-    pos: "adjective",
-    definition: "Complete",
-    translationVi: "Toàn diện",
-    exampleSentence: "A comprehensive review.",
-    status: "Review",
-    missCount: 1,
-  },
-  {
-    id: "c2",
-    front: "substantiate",
-    ipa: "/səbˈstæn.ʃi.eɪt/",
-    pos: "verb",
-    definition: "Prove with evidence",
-    translationVi: "Chứng minh",
-    exampleSentence: "Substantiate the claims.",
-    status: "Learning",
-    missCount: 2,
-  },
+  card("c1", "comprehensive", FlashcardReviewStatus.REVIEW),
+  card("c2", "substantiate", FlashcardReviewStatus.LEARNING),
 ];
 
 describe("useFlashcardStudy", () => {
@@ -36,7 +45,7 @@ describe("useFlashcardStudy", () => {
 
     expect(result.current.currentIndex).toBe(0);
     expect(result.current.totalCards).toBe(2);
-    expect(result.current.currentCard?.front).toBe("comprehensive");
+    expect(result.current.currentCard?.lemma).toBe("comprehensive");
     expect(result.current.isFlipped).toBe(false);
     expect(result.current.isCompleted).toBe(false);
   });
@@ -67,16 +76,16 @@ describe("useFlashcardStudy", () => {
 
     // Rate first card
     act(() => {
-      result.current.rateCard("Good");
+      result.current.rateCard(ReviewRating.GOOD);
     });
 
     expect(result.current.currentIndex).toBe(1);
-    expect(result.current.currentCard?.front).toBe("substantiate");
+    expect(result.current.currentCard?.lemma).toBe("substantiate");
     expect(result.current.isFlipped).toBe(false);
 
     // Rate second (last) card
     act(() => {
-      result.current.rateCard("Easy");
+      result.current.rateCard(ReviewRating.EASY);
     });
 
     expect(result.current.isCompleted).toBe(true);
@@ -97,10 +106,10 @@ describe("useFlashcardStudy", () => {
     );
 
     act(() => {
-      result.current.rateCard("Again");
+      result.current.rateCard(ReviewRating.AGAIN);
     });
     act(() => {
-      result.current.rateCard("Good");
+      result.current.rateCard(ReviewRating.GOOD);
     });
 
     expect(result.current.isCompleted).toBe(true);

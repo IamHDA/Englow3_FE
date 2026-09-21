@@ -10,6 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconEye, IconPlayerPlay } from "@tabler/icons-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import Link from "next/link";
 import React from "react";
 import { FlashcardSet } from "../../../types";
@@ -18,7 +19,32 @@ interface FlashcardSetListProps {
   sets: FlashcardSet[];
 }
 
+/**
+ * Derived, not stored: the backend reports how many cards are mastered, and the
+ * bar wants a proportion. Computing it here keeps one number in the API instead
+ * of two that can disagree.
+ */
+/**
+ * The backend reports an instant; the card wants "3 days ago". Null means the
+ * learner has never opened this set, which is not the same as "0 days ago".
+ */
+function formatLastStudied(value: string | null, isVi: boolean): string {
+  if (!value) return isVi ? "Chưa học" : "Not started";
+
+  const days = Math.floor((Date.now() - Date.parse(value)) / 86_400_000);
+  if (days <= 0) return isVi ? "Hôm nay" : "Today";
+  if (days === 1) return isVi ? "Hôm qua" : "Yesterday";
+  return isVi ? `${days} ngày trước` : `${days} days ago`;
+}
+
+function masteredPercent(set: FlashcardSet): number {
+  if (set.cardCount === 0) return 0;
+  return Math.round((set.masteredCount / set.cardCount) * 100);
+}
+
 export function FlashcardSetList({ sets }: FlashcardSetListProps) {
+  const { isVi } = useLanguage();
+
   return (
     <Card withBorder padding={0} radius="md">
       <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
@@ -50,25 +76,25 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                 </Badge>
               </Table.Td>
               <Table.Td>
-                <Text fz="xs">{set.totalCards} từ</Text>
+                <Text fz="xs">{set.cardCount} từ</Text>
               </Table.Td>
               <Table.Td style={{ minWidth: 120 }}>
                 <Group gap="xs">
                   <Progress
-                    value={set.masteredPercent}
+                    value={masteredPercent(set)}
                     size="xs"
                     color="indigo"
                     style={{ flex: 1 }}
                   />
                   <Text fz="xs" fw={600}>
-                    {set.masteredPercent}%
+                    {masteredPercent(set)}%
                   </Text>
                 </Group>
               </Table.Td>
               <Table.Td>
-                {set.dueTodayCount > 0 ? (
+                {set.dueCount > 0 ? (
                   <Badge variant="filled" color="orange" size="xs">
-                    {set.dueTodayCount} thẻ
+                    {set.dueCount} thẻ
                   </Badge>
                 ) : (
                   <Badge variant="light" color="teal" size="xs">
@@ -78,7 +104,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
               </Table.Td>
               <Table.Td>
                 <Text fz="xs" c="dimmed">
-                  {set.lastStudied}
+                  {formatLastStudied(set.lastStudiedAt, isVi)}
                 </Text>
               </Table.Td>
               <Table.Td>

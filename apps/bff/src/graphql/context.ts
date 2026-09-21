@@ -3,6 +3,7 @@ import { GraphQLError } from "graphql";
 
 import { env } from "../config/env.js";
 import { ExamApi } from "../modules/exam/exam.api.js";
+import { LearningApi } from "../modules/learning/learning.api.js";
 import { OnboardingApi } from "../modules/onboarding/onboarding.api.js";
 import { UserApi } from "../modules/user/user.api.js";
 import { BackendClient } from "../shared/http/backendClient.js";
@@ -15,6 +16,7 @@ export type GraphQLContext = {
     userApi: UserApi;
     onboardingApi: OnboardingApi;
     examApi: ExamApi;
+    learningApi: LearningApi;
   };
 };
 
@@ -56,6 +58,7 @@ export async function createContext({
       userApi: new UserApi(client),
       onboardingApi: new OnboardingApi(client),
       examApi: new ExamApi(client),
+      learningApi: new LearningApi(client),
     },
   };
 }

@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import {
-  FlashcardSetDetailView,
-  MOCK_FLASHCARD_SETS,
-} from "@/features/flashcard";
+import { FlashcardSetDetailView } from "@/features/flashcard";
 
 interface SetDetailPageProps {
   params: Promise<{
@@ -11,35 +7,18 @@ interface SetDetailPageProps {
   }>;
 }
 
-export async function generateMetadata({
-  params,
-}: SetDetailPageProps): Promise<Metadata> {
-  const { setId } = await params;
-  const set = MOCK_FLASHCARD_SETS.find(
-    (s) => s.id === setId || s.slug === setId,
-  );
-
-  if (!set) {
-    return {
-      title: "Không tìm thấy bộ thẻ | Englow3",
-    };
-  }
-
-  return {
-    title: `${set.name} | Englow3 Flashcards`,
-    description: set.description,
-  };
-}
+/**
+ * Tiêu đề trang không lấy tên bộ thẻ nữa: tên nằm sau một lượt gọi BFF có xác
+ * thực, mà metadata chạy phía server trước khi biết người dùng là ai. Đổi lại
+ * là một tiêu đề chung, thay vì một lượt gọi thứ hai chỉ để lấy cái tên.
+ */
+export const metadata: Metadata = {
+  title: "Bộ thẻ ghi nhớ | Englow3",
+  description:
+    "Xem danh sách từ vựng trong bộ thẻ và bắt đầu phiên học theo chu kỳ lặp lại ngắt quãng.",
+};
 
 export default async function FlashcardSetPage({ params }: SetDetailPageProps) {
   const { setId } = await params;
-  const set = MOCK_FLASHCARD_SETS.find(
-    (s) => s.id === setId || s.slug === setId,
-  );
-
-  if (!set) {
-    notFound();
-  }
-
-  return <FlashcardSetDetailView set={set} />;
+  return <FlashcardSetDetailView setId={setId} />;
 }

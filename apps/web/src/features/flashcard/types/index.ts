@@ -1,3 +1,9 @@
+import type {
+  FlashcardFieldsFragment,
+  FlashcardSetFieldsFragment,
+} from "@/lib/graphql/generated/documents";
+import type { ReviewRating } from "@/lib/graphql/generated";
+
 export type FlashcardTopic =
   | "IELTS"
   | "TOEIC"
@@ -6,36 +12,16 @@ export type FlashcardTopic =
   | "Academic English"
   | "Travel";
 
-export type FlashcardStatus = "New" | "Learning" | "Review" | "Mastered";
+/**
+ * A card and a set as the BFF returns them. Derived from codegen rather than
+ * declared again here - the schema owns the shape, and two declarations of it
+ * drift the moment a field is added.
+ */
+export type FlashcardItem = FlashcardFieldsFragment;
+export type FlashcardSet = FlashcardSetFieldsFragment;
 
-export type SRSRating = "Again" | "Hard" | "Good" | "Easy";
-
-export interface FlashcardItem {
-  id: string;
-  front: string;
-  ipa: string;
-  pos: string; // Part of speech: Verb, Noun, Adjective...
-  definition: string;
-  translationVi: string;
-  exampleSentence: string;
-  memoryNote?: string;
-  status: FlashcardStatus;
-  lastReviewed?: string;
-  missCount: number;
-}
-
-export interface FlashcardSet {
-  id: string;
-  slug: string;
-  name: string;
-  topic: FlashcardTopic;
-  description: string;
-  totalCards: number;
-  masteredPercent: number;
-  dueTodayCount: number;
-  lastStudied: string;
-  cards: FlashcardItem[];
-}
+/** The four buttons, as the schema names them. */
+export type SRSRating = ReviewRating;
 
 export interface FlashcardStudyResult {
   cardId: string;

@@ -204,6 +204,83 @@ export enum ExamType {
   PLACEMENT = "PLACEMENT",
 }
 
+export type Flashcard = {
+  __typename?: "Flashcard";
+  audioUkUrl?: Maybe<Scalars["String"]["output"]>;
+  /** Pre-signed and short-lived - the backend resolves the object key. */
+  audioUsUrl?: Maybe<Scalars["String"]["output"]>;
+  cefrLevel?: Maybe<Scalars["String"]["output"]>;
+  definitionEn: Scalars["String"]["output"];
+  definitionVi: Scalars["String"]["output"];
+  /** Null for a card the learner has never answered. */
+  dueAt?: Maybe<Scalars["DateTime"]["output"]>;
+  exampleSentence: Scalars["String"]["output"];
+  exampleTranslationVi?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  ipaUk?: Maybe<Scalars["String"]["output"]>;
+  ipaUs: Scalars["String"]["output"];
+  lapseCount: Scalars["Int"]["output"];
+  lemma: Scalars["String"]["output"];
+  mnemonicTipVi?: Maybe<Scalars["String"]["output"]>;
+  orderNo: Scalars["Int"]["output"];
+  partOfSpeech: Scalars["String"]["output"];
+  /** Which sense the card teaches - "bank (river)" is not "bank (money)". */
+  senseLabel: Scalars["String"]["output"];
+  status: FlashcardReviewStatus;
+};
+
+export type FlashcardReview = {
+  __typename?: "FlashcardReview";
+  dueAt: Scalars["DateTime"]["output"];
+  flashcardId: Scalars["ID"]["output"];
+  intervalDays: Scalars["Int"]["output"];
+  lapseCount: Scalars["Int"]["output"];
+  repetitions: Scalars["Int"]["output"];
+  status: FlashcardReviewStatus;
+};
+
+export enum FlashcardReviewStatus {
+  LEARNING = "LEARNING",
+  MASTERED = "MASTERED",
+  NEW = "NEW",
+  REVIEW = "REVIEW",
+}
+
+export type FlashcardSet = {
+  __typename?: "FlashcardSet";
+  cardCount: Scalars["Int"]["output"];
+  description: Scalars["String"]["output"];
+  /**
+   * Per learner, not per set: two learners looking at the same set see
+   * different numbers, which is why these are not fields of the set itself.
+   */
+  dueCount: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  /** Null until the learner has answered a card in this set. */
+  lastStudiedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  masteredCount: Scalars["Int"]["output"];
+  name: Scalars["String"]["output"];
+  slug: Scalars["String"]["output"];
+  /** Null on a set that deliberately mixes levels. */
+  targetLevel?: Maybe<Scalars["String"]["output"]>;
+  topic: Scalars["String"]["output"];
+};
+
+export type FlashcardSetDetail = {
+  __typename?: "FlashcardSetDetail";
+  cards: Array<Flashcard>;
+  set: FlashcardSet;
+};
+
+export type FlashcardSetPage = {
+  __typename?: "FlashcardSetPage";
+  items: Array<FlashcardSet>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
 export enum Gender {
   FEMALE = "FEMALE",
   MALE = "MALE",
@@ -299,6 +376,11 @@ export type Mutation = {
    */
   publishExam: Exam;
   /**
+   * Records one answer and returns where the card now sits. Creates the review
+   * row on first sight, so browsing a set costs nothing until it is studied.
+   */
+  rateFlashcard: FlashcardReview;
+  /**
    * Records the purposes and advances the step. Which step comes next is the
    * backend's decision: a learner who picked the certificate purpose goes to
    * CERTIFICATE_TARGET, everyone else skips straight to CURRENT_LEVEL. Read the
@@ -345,6 +427,12 @@ export type MutationArchiveExamArgs = {
 
 export type MutationPublishExamArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type MutationRateFlashcardArgs = {
+  flashcardId: Scalars["ID"]["input"];
+  rating: ReviewRating;
+  timeSpentSeconds: Scalars["Int"]["input"];
 };
 
 export type MutationSelectLearningPurposesArgs = {
@@ -422,6 +510,14 @@ export type Query = {
   examAttempt: ExamAttempt;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
+  flashcardSet: FlashcardSetDetail;
+  flashcardSets: FlashcardSetPage;
+  /**
+   * What to study now: cards that are due, then unseen ones to fill the
+   * session. The ordering is the backend's - a card about to be forgotten is
+   * worth more than a new one, and reordering here would undo the schedule.
+   */
+  flashcardStudyQueue: Array<Flashcard>;
   health: Scalars["String"]["output"];
   learningPurposes: Array<LearningPurpose>;
   me: Me;
@@ -463,6 +559,22 @@ export type QueryExamsArgs = {
   title?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type QueryFlashcardSetArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryFlashcardSetsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
+  topic?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryFlashcardStudyQueueArgs = {
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  setId: Scalars["ID"]["input"];
+};
+
 /**
  * An option as the learner sees it while sitting: no correctness flag and no
  * explanation. Both arrive afterwards on AttemptOptionReview.
@@ -473,6 +585,18 @@ export type QuestionOption = {
   id: Scalars["ID"]["output"];
   orderNo: Scalars["Int"]["output"];
 };
+
+/**
+ * What the learner said about a card. SM-2 grades answers 0-5; these are the
+ * four buttons the interface offers, and the backend maps them onto the
+ * algorithm. Only AGAIN counts as a failure.
+ */
+export enum ReviewRating {
+  AGAIN = "AGAIN",
+  EASY = "EASY",
+  GOOD = "GOOD",
+  HARD = "HARD",
+}
 
 export type SubmitAnswerInput = {
   questionId: Scalars["ID"]["input"];

@@ -370,6 +370,154 @@ export type PlacementExamQuery = {
   };
 };
 
+export type FlashcardSetFieldsFragment = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  topic: string;
+  targetLevel: string | null;
+  cardCount: number;
+  dueCount: number;
+  masteredCount: number;
+  lastStudiedAt: string | null;
+};
+
+export type FlashcardFieldsFragment = {
+  id: string;
+  orderNo: number;
+  lemma: string;
+  partOfSpeech: string;
+  senseLabel: string;
+  ipaUs: string;
+  ipaUk: string | null;
+  audioUsUrl: string | null;
+  audioUkUrl: string | null;
+  definitionEn: string;
+  definitionVi: string;
+  exampleSentence: string;
+  exampleTranslationVi: string | null;
+  mnemonicTipVi: string | null;
+  cefrLevel: string | null;
+  status: Types.FlashcardReviewStatus;
+  dueAt: string | null;
+  lapseCount: number;
+};
+
+export type FlashcardSetsQueryVariables = Exact<{
+  topic?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type FlashcardSetsQuery = {
+  flashcardSets: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      name: string;
+      description: string;
+      topic: string;
+      targetLevel: string | null;
+      cardCount: number;
+      dueCount: number;
+      masteredCount: number;
+      lastStudiedAt: string | null;
+    }>;
+  };
+};
+
+export type FlashcardSetDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type FlashcardSetDetailQuery = {
+  flashcardSet: {
+    set: {
+      id: string;
+      slug: string;
+      name: string;
+      description: string;
+      topic: string;
+      targetLevel: string | null;
+      cardCount: number;
+      dueCount: number;
+      masteredCount: number;
+      lastStudiedAt: string | null;
+    };
+    cards: Array<{
+      id: string;
+      orderNo: number;
+      lemma: string;
+      partOfSpeech: string;
+      senseLabel: string;
+      ipaUs: string;
+      ipaUk: string | null;
+      audioUsUrl: string | null;
+      audioUkUrl: string | null;
+      definitionEn: string;
+      definitionVi: string;
+      exampleSentence: string;
+      exampleTranslationVi: string | null;
+      mnemonicTipVi: string | null;
+      cefrLevel: string | null;
+      status: Types.FlashcardReviewStatus;
+      dueAt: string | null;
+      lapseCount: number;
+    }>;
+  };
+};
+
+export type FlashcardStudyQueueQueryVariables = Exact<{
+  setId: string | number;
+  limit?: number | null | undefined;
+}>;
+
+export type FlashcardStudyQueueQuery = {
+  flashcardStudyQueue: Array<{
+    id: string;
+    orderNo: number;
+    lemma: string;
+    partOfSpeech: string;
+    senseLabel: string;
+    ipaUs: string;
+    ipaUk: string | null;
+    audioUsUrl: string | null;
+    audioUkUrl: string | null;
+    definitionEn: string;
+    definitionVi: string;
+    exampleSentence: string;
+    exampleTranslationVi: string | null;
+    mnemonicTipVi: string | null;
+    cefrLevel: string | null;
+    status: Types.FlashcardReviewStatus;
+    dueAt: string | null;
+    lapseCount: number;
+  }>;
+};
+
+export type RateFlashcardMutationVariables = Exact<{
+  flashcardId: string | number;
+  rating: Types.ReviewRating;
+  timeSpentSeconds: number;
+}>;
+
+export type RateFlashcardMutation = {
+  rateFlashcard: {
+    flashcardId: string;
+    status: Types.FlashcardReviewStatus;
+    repetitions: number;
+    intervalDays: number;
+    dueAt: string;
+    lapseCount: number;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -564,6 +712,42 @@ export const AttemptReviewFieldsFragmentDoc = gql`
       correct
       explanation
     }
+  }
+`;
+export const FlashcardSetFieldsFragmentDoc = gql`
+  fragment FlashcardSetFields on FlashcardSet {
+    id
+    slug
+    name
+    description
+    topic
+    targetLevel
+    cardCount
+    dueCount
+    masteredCount
+    lastStudiedAt
+  }
+`;
+export const FlashcardFieldsFragmentDoc = gql`
+  fragment FlashcardFields on Flashcard {
+    id
+    orderNo
+    lemma
+    partOfSpeech
+    senseLabel
+    ipaUs
+    ipaUk
+    audioUsUrl
+    audioUkUrl
+    definitionEn
+    definitionVi
+    exampleSentence
+    exampleTranslationVi
+    mnemonicTipVi
+    cefrLevel
+    status
+    dueAt
+    lapseCount
   }
 `;
 export const OnboardingStateFieldsFragmentDoc = gql`
@@ -1603,6 +1787,398 @@ export type PlacementExamQueryResult = ApolloReactCommon.QueryResult<
   PlacementExamQuery,
   PlacementExamQueryVariables
 >;
+export const FlashcardSetsDocument = gql`
+  query FlashcardSets($topic: String, $title: String, $page: Int, $size: Int) {
+    flashcardSets(topic: $topic, title: $title, page: $page, size: $size) {
+      items {
+        ...FlashcardSetFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${FlashcardSetFieldsFragmentDoc}
+`;
+
+/**
+ * __useFlashcardSetsQuery__
+ *
+ * To run a query within a React component, call `useFlashcardSetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlashcardSetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlashcardSetsQuery({
+ *   variables: {
+ *      topic: // value for 'topic'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useFlashcardSetsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FlashcardSetsQuery,
+    FlashcardSetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FlashcardSetsQuery,
+    FlashcardSetsQueryVariables
+  >(FlashcardSetsDocument, options);
+}
+export function useFlashcardSetsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlashcardSetsQuery,
+    FlashcardSetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FlashcardSetsQuery,
+    FlashcardSetsQueryVariables
+  >(FlashcardSetsDocument, options);
+}
+export function useFlashcardSetsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FlashcardSetsQuery,
+    FlashcardSetsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardSetsQuery,
+  FlashcardSetsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFlashcardSetsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardSetsQuery,
+        FlashcardSetsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardSetsQuery | undefined,
+  FlashcardSetsQueryVariables
+>;
+export function useFlashcardSetsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardSetsQuery,
+        FlashcardSetsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FlashcardSetsQuery,
+    FlashcardSetsQueryVariables
+  >(FlashcardSetsDocument, options as any);
+}
+export type FlashcardSetsQueryHookResult = ReturnType<
+  typeof useFlashcardSetsQuery
+>;
+export type FlashcardSetsLazyQueryHookResult = ReturnType<
+  typeof useFlashcardSetsLazyQuery
+>;
+export type FlashcardSetsSuspenseQueryHookResult = ReturnType<
+  typeof useFlashcardSetsSuspenseQuery
+>;
+export type FlashcardSetsQueryResult = ApolloReactCommon.QueryResult<
+  FlashcardSetsQuery,
+  FlashcardSetsQueryVariables
+>;
+export const FlashcardSetDetailDocument = gql`
+  query FlashcardSetDetail($id: ID!) {
+    flashcardSet(id: $id) {
+      set {
+        ...FlashcardSetFields
+      }
+      cards {
+        ...FlashcardFields
+      }
+    }
+  }
+  ${FlashcardSetFieldsFragmentDoc}
+  ${FlashcardFieldsFragmentDoc}
+`;
+
+/**
+ * __useFlashcardSetDetailQuery__
+ *
+ * To run a query within a React component, call `useFlashcardSetDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlashcardSetDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlashcardSetDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFlashcardSetDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    FlashcardSetDetailQuery,
+    FlashcardSetDetailQueryVariables
+  > &
+    (
+      | { variables: FlashcardSetDetailQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FlashcardSetDetailQuery,
+    FlashcardSetDetailQueryVariables
+  >(FlashcardSetDetailDocument, options);
+}
+export function useFlashcardSetDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlashcardSetDetailQuery,
+    FlashcardSetDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FlashcardSetDetailQuery,
+    FlashcardSetDetailQueryVariables
+  >(FlashcardSetDetailDocument, options);
+}
+export function useFlashcardSetDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FlashcardSetDetailQuery,
+    FlashcardSetDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardSetDetailQuery,
+  FlashcardSetDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFlashcardSetDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardSetDetailQuery,
+        FlashcardSetDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardSetDetailQuery | undefined,
+  FlashcardSetDetailQueryVariables
+>;
+export function useFlashcardSetDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardSetDetailQuery,
+        FlashcardSetDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FlashcardSetDetailQuery,
+    FlashcardSetDetailQueryVariables
+  >(FlashcardSetDetailDocument, options as any);
+}
+export type FlashcardSetDetailQueryHookResult = ReturnType<
+  typeof useFlashcardSetDetailQuery
+>;
+export type FlashcardSetDetailLazyQueryHookResult = ReturnType<
+  typeof useFlashcardSetDetailLazyQuery
+>;
+export type FlashcardSetDetailSuspenseQueryHookResult = ReturnType<
+  typeof useFlashcardSetDetailSuspenseQuery
+>;
+export type FlashcardSetDetailQueryResult = ApolloReactCommon.QueryResult<
+  FlashcardSetDetailQuery,
+  FlashcardSetDetailQueryVariables
+>;
+export const FlashcardStudyQueueDocument = gql`
+  query FlashcardStudyQueue($setId: ID!, $limit: Int) {
+    flashcardStudyQueue(setId: $setId, limit: $limit) {
+      ...FlashcardFields
+    }
+  }
+  ${FlashcardFieldsFragmentDoc}
+`;
+
+/**
+ * __useFlashcardStudyQueueQuery__
+ *
+ * To run a query within a React component, call `useFlashcardStudyQueueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlashcardStudyQueueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlashcardStudyQueueQuery({
+ *   variables: {
+ *      setId: // value for 'setId'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useFlashcardStudyQueueQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    FlashcardStudyQueueQuery,
+    FlashcardStudyQueueQueryVariables
+  > &
+    (
+      | { variables: FlashcardStudyQueueQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FlashcardStudyQueueQuery,
+    FlashcardStudyQueueQueryVariables
+  >(FlashcardStudyQueueDocument, options);
+}
+export function useFlashcardStudyQueueLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlashcardStudyQueueQuery,
+    FlashcardStudyQueueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FlashcardStudyQueueQuery,
+    FlashcardStudyQueueQueryVariables
+  >(FlashcardStudyQueueDocument, options);
+}
+export function useFlashcardStudyQueueSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FlashcardStudyQueueQuery,
+    FlashcardStudyQueueQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardStudyQueueQuery,
+  FlashcardStudyQueueQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFlashcardStudyQueueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardStudyQueueQuery,
+        FlashcardStudyQueueQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardStudyQueueQuery | undefined,
+  FlashcardStudyQueueQueryVariables
+>;
+export function useFlashcardStudyQueueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardStudyQueueQuery,
+        FlashcardStudyQueueQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FlashcardStudyQueueQuery,
+    FlashcardStudyQueueQueryVariables
+  >(FlashcardStudyQueueDocument, options as any);
+}
+export type FlashcardStudyQueueQueryHookResult = ReturnType<
+  typeof useFlashcardStudyQueueQuery
+>;
+export type FlashcardStudyQueueLazyQueryHookResult = ReturnType<
+  typeof useFlashcardStudyQueueLazyQuery
+>;
+export type FlashcardStudyQueueSuspenseQueryHookResult = ReturnType<
+  typeof useFlashcardStudyQueueSuspenseQuery
+>;
+export type FlashcardStudyQueueQueryResult = ApolloReactCommon.QueryResult<
+  FlashcardStudyQueueQuery,
+  FlashcardStudyQueueQueryVariables
+>;
+export const RateFlashcardDocument = gql`
+  mutation RateFlashcard(
+    $flashcardId: ID!
+    $rating: ReviewRating!
+    $timeSpentSeconds: Int!
+  ) {
+    rateFlashcard(
+      flashcardId: $flashcardId
+      rating: $rating
+      timeSpentSeconds: $timeSpentSeconds
+    ) {
+      flashcardId
+      status
+      repetitions
+      intervalDays
+      dueAt
+      lapseCount
+    }
+  }
+`;
+export type RateFlashcardMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RateFlashcardMutation,
+    RateFlashcardMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRateFlashcardMutation__
+ *
+ * To run a mutation, you first call `useRateFlashcardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRateFlashcardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rateFlashcardMutation, { data, loading, error }] = useRateFlashcardMutation({
+ *   variables: {
+ *      flashcardId: // value for 'flashcardId'
+ *      rating: // value for 'rating'
+ *      timeSpentSeconds: // value for 'timeSpentSeconds'
+ *   },
+ * });
+ */
+export function useRateFlashcardMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RateFlashcardMutation,
+    RateFlashcardMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RateFlashcardMutation,
+    RateFlashcardMutationVariables
+  >(RateFlashcardDocument, options);
+}
+export type RateFlashcardMutationHookResult = ReturnType<
+  typeof useRateFlashcardMutation
+>;
+export type RateFlashcardMutationResult =
+  ApolloReactCommon.MutationResult<RateFlashcardMutation>;
+export type RateFlashcardMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RateFlashcardMutation,
+    RateFlashcardMutationVariables
+  >;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
     learningPurposes {
