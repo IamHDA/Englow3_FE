@@ -39,6 +39,7 @@ import {
 } from "../../../constants/adminContent";
 import type { ContentReviewItem } from "../../../types";
 import { ContentReviewTable } from "../../blocks/ContentReviewTable";
+import { FlashcardImportPanel } from "../../blocks/FlashcardImportPanel";
 import { ContentReviewTableSkeleton } from "../../blocks/ContentReviewTable/ContentReviewTableSkeleton";
 import { RejectContentModal } from "../../blocks/RejectContentModal";
 
@@ -97,6 +98,7 @@ export function AdminContentView() {
   const [page, setPage] = useState(0);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rejecting, setRejecting] = useState<ContentReviewItem | null>(null);
+  const [importingInto, setImportingInto] = useState<string | null>(null);
 
   const { data, loading, error, refetch } = useAdminContentQuery({
     variables: {
@@ -143,6 +145,7 @@ export function AdminContentView() {
   }
 
   const items = data?.adminContent.items ?? [];
+  const draftSets = items.filter((item) => item.status === ContentStatus.DRAFT);
   const totalPages = data?.adminContent.totalPages ?? 0;
 
   return (
@@ -205,6 +208,24 @@ export function AdminContentView() {
             />
           </Group>
         </Card>
+
+        {/* Chỉ với bộ thẻ, và chỉ bộ còn nháp: import từ chối mọi thứ đã xuất
+            bản, nên đưa một bộ đã publish vào đây chỉ để nhận lỗi. */}
+        {kind === ContentKind.FLASHCARD_SET && draftSets.length > 0 && (
+          <Stack gap="sm">
+            <Select
+              label="Nhập thẻ vào bộ nháp"
+              placeholder="Chọn một bộ còn nháp"
+              data={draftSets.map((set) => ({ value: set.id, label: set.title }))}
+              value={importingInto}
+              onChange={setImportingInto}
+              radius="md"
+              maw={420}
+              clearable
+            />
+            {importingInto && <FlashcardImportPanel setId={importingInto} />}
+          </Stack>
+        )}
 
         <Card radius="lg" withBorder p={0}>
           {isForbidden(error) ? (

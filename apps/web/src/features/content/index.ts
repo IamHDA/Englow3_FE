@@ -8,3 +8,4 @@ export * from "./components/blocks/RejectContentModal";
 
 // Views
 export * from "./components/views/AdminContentView";
+export * from "./components/blocks/FlashcardImportPanel";

@@ -6,6 +6,7 @@ import { corsMiddleware, rateLimitMiddleware } from "./config/middleware.js";
 import { createContext } from "./graphql/context.js";
 import { formatError } from "./graphql/errors.js";
 import { resolvers, typeDefs } from "./graphql/schema.js";
+import { importRoute } from "./http/importRoute.js";
 
 export async function startServer() {
   const server = new ApolloServer({
@@ -29,6 +30,11 @@ export async function startServer() {
     express.json({ limit: "128kb" }),
     expressMiddleware(server, { context: createContext }),
   );
+
+  // Content import goes over REST. A generated batch is a multi-megabyte file,
+  // and raising the GraphQL body cap for every query to carry one upload would
+  // be paying for the exception on every request.
+  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), importRoute());
 
   app.listen(env.port, () => {
     console.log(`BFF ready at http://localhost:${env.port}/graphql`);
