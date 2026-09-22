@@ -1,3 +1,15 @@
+"use client";
+
+// Mantine dựng sẵn "use client" trong từng component, nên một Server Component
+// chỉ cầm được tham chiếu tới chúng chứ không cầm chính đối tượng - và tham
+// chiếu đó không mang theo thuộc tính tĩnh. `Grid.Col` vì thế là `undefined`,
+// và React báo đúng câu "Element type is invalid".
+//
+// Khối này toàn component của Mantine nên chẳng được lợi gì khi chạy ở server;
+// khai "use client" là cách sửa đúng chỗ. Cùng cái bẫy sẽ quay lại với bất kỳ
+// compound component nào khác - Tabs.Panel, Menu.Item - nên quy tắc là: block
+// nào dùng dạng X.Y thì phải là client component.
+
 import { Grid, Paper, SimpleGrid, Skeleton, Stack } from "@mantine/core";
 
 import classes from "./ProfileSkeleton.module.css";
