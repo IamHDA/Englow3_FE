@@ -323,3 +323,64 @@ describe("Mutation.submitExamAttempt", () => {
     expect(res).toEqual({ id: "attempt-1", status: "SCORED" });
   });
 });
+
+const NO_TOKEN: Partial<GraphQLContext> = {
+  requireToken: () => {
+    throw new GraphQLError("Missing or invalid access token", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  },
+};
+
+describe("Mutation.rejectExam", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const rejectAsAdmin = vi.fn();
+    const ctx = makeContext(vi.fn(), NO_TOKEN, { rejectAsAdmin });
+
+    expect(() =>
+      examResolvers.Mutation.rejectExam({}, { id: "e-1", note: "no" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(rejectAsAdmin).not.toHaveBeenCalled();
+  });
+
+  /**
+   * The rule that a rejection must say why lives in the backend entity. Trimming
+   * or defaulting the note here would hide a blank one from the only check that
+   * enforces it.
+   */
+  it("forwards a blank note rather than short-circuiting it", async () => {
+    const rejectAsAdmin = vi.fn().mockResolvedValue({ status: "REJECTED" });
+    const ctx = makeContext(vi.fn(), {}, { rejectAsAdmin });
+
+    await examResolvers.Mutation.rejectExam(
+      {},
+      { id: "e-1", note: "   " },
+      ctx,
+    );
+
+    expect(rejectAsAdmin).toHaveBeenCalledWith("e-1", "   ");
+  });
+});
+
+describe("Mutation.submitExamForReview", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const submitForReviewAsAdmin = vi.fn();
+    const ctx = makeContext(vi.fn(), NO_TOKEN, { submitForReviewAsAdmin });
+
+    expect(() =>
+      examResolvers.Mutation.submitExamForReview({}, { id: "e-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(submitForReviewAsAdmin).not.toHaveBeenCalled();
+  });
+
+  it("asks the backend to move the paper into the queue", async () => {
+    const submitForReviewAsAdmin = vi
+      .fn()
+      .mockResolvedValue({ status: "PENDING_REVIEW" });
+    const ctx = makeContext(vi.fn(), {}, { submitForReviewAsAdmin });
+
+    await examResolvers.Mutation.submitExamForReview({}, { id: "e-1" }, ctx);
+
+    expect(submitForReviewAsAdmin).toHaveBeenCalledWith("e-1");
+  });
+});

@@ -2,7 +2,9 @@
 // the backend keeps com.englow3.exam.entity.CertificateType separate from
 // com.englow3.user.entity.CertificateType because there the value is a
 // learner's goal, here it is one half of what identifies a paper.
-export type ExamStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+// DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back.
+export type ExamStatus =
+  "DRAFT" | "PENDING_REVIEW" | "REJECTED" | "PUBLISHED" | "ARCHIVED";
 export type ExamType = "PLACEMENT" | "MOCK";
 export type CertificateType = "IELTS" | "TOEIC";
 export type CertificateVariant = "LR" | "SW" | "ACADEMIC" | "GENERAL";
@@ -23,6 +25,9 @@ export type ExamListItemResponse = {
   createdByUserId: string;
   publishedAt: string | null; // ISO-8601 instant, null until published
   createdAt: string; // ISO-8601 instant
+  submittedForReviewAt: string | null;
+  // Why the paper came back. On the list because that is where its author reads it.
+  reviewNote: string | null;
 };
 
 // mirrors ExamResponse (POST create/publish/archive, PUT update) exactly as the backend returns it
@@ -41,6 +46,10 @@ export type ExamResponse = {
   versionNumber: number;
   createdByUserId: string;
   publishedAt: string | null; // ISO-8601 instant, null until published
+  submittedForReviewAt: string | null;
+  reviewedByUserId: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
 };
 
 // mirrors com.englow3.shared.page.PageResponse exactly as the backend returns it

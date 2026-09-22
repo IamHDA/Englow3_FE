@@ -239,7 +239,11 @@ export type Exam = {
   maxRawScore: Scalars["Float"]["output"];
   passScore?: Maybe<Scalars["Float"]["output"]>;
   publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  reviewNote?: Maybe<Scalars["String"]["output"]>;
+  reviewedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  reviewedByUserId?: Maybe<Scalars["ID"]["output"]>;
   status: ExamStatus;
+  submittedForReviewAt?: Maybe<Scalars["DateTime"]["output"]>;
   targetLevel?: Maybe<TargetLevel>;
   title: Scalars["String"]["output"];
   versionNumber: Scalars["Int"]["output"];
@@ -300,7 +304,13 @@ export type ExamListItem = {
   examType: ExamType;
   id: Scalars["ID"]["output"];
   publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /**
+   * Why the paper came back, in the reviewer words. On the list rather than only
+   * on the detail screen: this is where an author finds out and what to change.
+   */
+  reviewNote?: Maybe<Scalars["String"]["output"]>;
   status: ExamStatus;
+  submittedForReviewAt?: Maybe<Scalars["DateTime"]["output"]>;
   targetLevel?: Maybe<TargetLevel>;
   title: Scalars["String"]["output"];
   versionNumber: Scalars["Int"]["output"];
@@ -380,10 +390,17 @@ export type ExamSectionPart = {
   title: Scalars["String"]["output"];
 };
 
+/**
+ * DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. There is
+ * no locked-style dead end: a rejected paper is editable, or its author could
+ * never answer the note.
+ */
 export enum ExamStatus {
   ARCHIVED = "ARCHIVED",
   DRAFT = "DRAFT",
+  PENDING_REVIEW = "PENDING_REVIEW",
   PUBLISHED = "PUBLISHED",
+  REJECTED = "REJECTED",
 }
 
 export enum ExamType {
@@ -587,11 +604,17 @@ export type Me = {
   id: Scalars["ID"]["output"];
   onboardingState?: Maybe<OnboardingState>;
   onboardingStep: OnboardingStep;
+  role: Role;
 };
 
 export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["Boolean"]["output"]>;
+  /**
+   * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in
+   * the same step - there is no approved-but-unpublished state.
+   */
+  approveExam: Exam;
   /**
    * DRAFT or PUBLISHED -> ARCHIVED. There is no delete; archiving is the
    * retirement path. Archiving an already-archived paper fails with
@@ -616,6 +639,12 @@ export type Mutation = {
    * row on first sight, so browsing a set costs nothing until it is studied.
    */
   rateFlashcard: FlashcardReview;
+  /**
+   * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
+   * backend refuses a blank one with EXAM_REVIEW_NOTE_REQUIRED, because
+   * "rejected" alone leaves the author nothing to change.
+   */
+  rejectExam: Exam;
   /**
    * Records the purposes and advances the step. Which step comes next is the
    * backend's decision: a learner who picked the certificate purpose goes to
@@ -665,11 +694,22 @@ export type Mutation = {
    */
   submitExamAttempt: ExamAttempt;
   /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators may
+   * call it. Held to the publication rules at this end too, so a reviewer is
+   * never handed a paper with no questions: the refusal arrives as
+   * extensions.backendCode (e.g. EXAM_HAS_NO_QUESTION).
+   */
+  submitExamForReview: Exam;
+  /**
    * Submits and scores in one step. A question left out is marked wrong rather
    * than skipped, so the percentage means what it says.
    */
   submitQuizAttempt: QuizAttempt;
   updateProfile: Me;
+};
+
+export type MutationApproveExamArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type MutationArchiveExamArgs = {
@@ -684,6 +724,11 @@ export type MutationRateFlashcardArgs = {
   flashcardId: Scalars["ID"]["input"];
   rating: ReviewRating;
   timeSpentSeconds: Scalars["Int"]["input"];
+};
+
+export type MutationRejectExamArgs = {
+  id: Scalars["ID"]["input"];
+  note: Scalars["String"]["input"];
 };
 
 export type MutationSelectLearningPurposesArgs = {
@@ -722,6 +767,10 @@ export type MutationSubmitDictationArgs = {
 export type MutationSubmitExamAttemptArgs = {
   answers: Array<SubmitAnswerInput>;
   attemptId: Scalars["ID"]["input"];
+};
+
+export type MutationSubmitExamForReviewArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type MutationSubmitQuizAttemptArgs = {
@@ -1055,6 +1104,16 @@ export enum ReviewRating {
   EASY = "EASY",
   GOOD = "GOOD",
   HARD = "HARD",
+}
+
+/**
+ * What the account may do. For drawing the interface only - every gate is
+ * enforced on the backend from the verified token, never from this field.
+ */
+export enum Role {
+  ADMIN = "ADMIN",
+  LEARNER = "LEARNER",
+  STAFF = "STAFF",
 }
 
 export type SubmitAnswerInput = {

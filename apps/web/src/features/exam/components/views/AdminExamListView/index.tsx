@@ -25,13 +25,20 @@ import {
 } from "../../blocks/AdminExamFilters";
 import { AdminExamTable } from "../../blocks/AdminExamTable";
 import { AdminExamTableSkeleton } from "../../blocks/AdminExamTable/AdminExamTableSkeleton";
+import { RejectExamModal } from "../../blocks/RejectExamModal";
 
+import { Role } from "@/lib/graphql/generated";
+import type { AdminExamFieldsFragment } from "@/lib/graphql/generated/documents";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import {
   useAdminExamsQuery,
+  useApproveExamMutation,
   useArchiveExamMutation,
+  useCurrentUserQuery,
   usePublishExamMutation,
+  useRejectExamMutation,
+  useSubmitExamForReviewMutation,
 } from "@/lib/graphql/generated/hooks";
 
 const INITIAL_FILTERS: AdminExamFiltersState = {
@@ -40,7 +47,7 @@ const INITIAL_FILTERS: AdminExamFiltersState = {
   title: "",
 };
 
-/** BFF trả mã này khi backend đáp 403 - tài khoản không có vai trò ADMIN. */
+/** BFF trả mã này khi backend đáp 403 - tài khoản không có vai trò cần thiết. */
 const FORBIDDEN_CODE = "FORBIDDEN";
 
 function backendCodeOf(error: unknown): string | null {
@@ -73,6 +80,9 @@ export function AdminExamListView() {
     useState<AdminExamFiltersState>(INITIAL_FILTERS);
   const [page, setPage] = useState(0);
   const [busyExamId, setBusyExamId] = useState<string | null>(null);
+  const [rejecting, setRejecting] = useState<AdminExamFieldsFragment | null>(
+    null,
+  );
 
   const { data, loading, error, refetch } = useAdminExamsQuery({
     variables: {
@@ -85,8 +95,17 @@ export function AdminExamListView() {
     fetchPolicy: "cache-and-network",
   });
 
+  // Vai trò chỉ để vẽ giao diện. Backend vẫn tự kiểm tra từ token, nên ẩn nút ở
+  // đây không phải là lớp bảo vệ - nó chỉ đỡ cho nhân viên nội dung một cú bấm
+  // chắc chắn bị 403.
+  const { data: meData } = useCurrentUserQuery();
+  const canReview = meData?.me.role === Role.ADMIN;
+
   const [publishExam] = usePublishExamMutation();
   const [archiveExam] = useArchiveExamMutation();
+  const [submitExamForReview] = useSubmitExamForReviewMutation();
+  const [approveExam] = useApproveExamMutation();
+  const [rejectExam] = useRejectExamMutation();
 
   function handleFiltersChange(next: AdminExamFiltersState) {
     setFilters(next);
@@ -128,8 +147,9 @@ export function AdminExamListView() {
             Quản lý đề thi
           </Title>
           <Text size="sm" c="ink.6">
-            Danh sách đầy đủ gồm cả bản nháp và đề đã lưu trữ. Chỉ tài khoản
-            quản trị mới xem được.
+            {canReview
+              ? "Danh sách đầy đủ gồm cả bản nháp, đề chờ duyệt và đề đã lưu trữ."
+              : "Danh sách đầy đủ. Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại."}
           </Text>
         </Stack>
 
@@ -144,8 +164,8 @@ export function AdminExamListView() {
               m="md"
             >
               <Text size="sm">
-                Tài khoản này không có vai trò quản trị. Đăng nhập bằng tài
-                khoản admin rồi thử lại.
+                Tài khoản này không có vai trò quản trị hoặc nhân viên nội dung.
+                Đăng nhập bằng tài khoản phù hợp rồi thử lại.
               </Text>
             </Alert>
           ) : error && exams.length === 0 ? (
@@ -171,6 +191,22 @@ export function AdminExamListView() {
             <AdminExamTable
               exams={exams}
               busyExamId={busyExamId}
+              canReview={canReview}
+              onSubmitForReview={(id) =>
+                runAction(
+                  id,
+                  () => submitExamForReview({ variables: { id } }),
+                  "Đã gửi đề đi duyệt.",
+                )
+              }
+              onApprove={(id) =>
+                runAction(
+                  id,
+                  () => approveExam({ variables: { id } }),
+                  "Đã duyệt và phát hành đề thi.",
+                )
+              }
+              onReject={setRejecting}
               onPublish={(id) =>
                 runAction(
                   id,
@@ -200,6 +236,24 @@ export function AdminExamListView() {
           </Group>
         )}
       </Stack>
+
+      <RejectExamModal
+        examTitle={rejecting?.title ?? null}
+        submitting={rejecting !== null && busyExamId === rejecting.id}
+        onCancel={() => setRejecting(null)}
+        onConfirm={async (note) => {
+          const target = rejecting;
+          if (target === null) return;
+          // Đóng hộp thoại trước khi gọi: giữ nó mở trong lúc chờ rồi đóng sau
+          // sẽ nhấp nháy, còn thông báo kết quả đã có ở notification.
+          setRejecting(null);
+          await runAction(
+            target.id,
+            () => rejectExam({ variables: { id: target.id, note } }),
+            "Đã trả lại đề kèm lý do.",
+          );
+        }}
+      />
     </Container>
   );
 }

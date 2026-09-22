@@ -104,6 +104,28 @@ export class ExamApi {
     );
   }
 
+  /** Staff or admin on the backend. Refuses a paper that is not a draft or rejected. */
+  submitForReviewAsAdmin(id: string): Promise<ExamResponse> {
+    return this.client.post(
+      `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/submit-for-review`,
+    );
+  }
+
+  /** Admin-only on the backend. Publishes in the same step as approving. */
+  approveAsAdmin(id: string): Promise<ExamResponse> {
+    return this.client.post(
+      `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/approve`,
+    );
+  }
+
+  /** Admin-only on the backend. The note is required - a blank one is refused there too. */
+  rejectAsAdmin(id: string, note: string): Promise<ExamResponse> {
+    return this.client.post(
+      `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/reject`,
+      { note },
+    );
+  }
+
   /** Admin-only on the backend. Refuses a paper that is already archived. */
   archiveAsAdmin(id: string): Promise<ExamResponse> {
     return this.client.post(

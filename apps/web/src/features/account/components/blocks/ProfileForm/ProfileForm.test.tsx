@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { theme } from "@/lib/mantine/theme";
-import { Gender, OnboardingStep } from "@/lib/graphql/generated";
+import { Gender, OnboardingStep, Role } from "@/lib/graphql/generated";
 import type { AccountProfile } from "../../../types";
 import { ProfileForm } from "./index";
 
@@ -18,6 +18,7 @@ const mockProfile: NonNullable<AccountProfile> = {
   avatarUrl: null,
   bannerUrl: null,
   onboardingStep: OnboardingStep.COMPLETED,
+  role: Role.LEARNER,
   onboardingState: null,
 };
 

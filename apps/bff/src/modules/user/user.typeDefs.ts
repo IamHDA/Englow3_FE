@@ -14,6 +14,16 @@ export const userTypeDefs = `#graphql
     COMPLETED
   }
 
+  """
+  What the account may do. For drawing the interface only - every gate is
+  enforced on the backend from the verified token, never from this field.
+  """
+  enum Role {
+    LEARNER
+    STAFF
+    ADMIN
+  }
+
   type Me {
     id: ID!
     email: String!
@@ -24,6 +34,7 @@ export const userTypeDefs = `#graphql
     avatarUrl: String
     bannerUrl: String
     onboardingStep: OnboardingStep!
+    role: Role!
   }
 
   input UpdateProfileInput {

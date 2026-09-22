@@ -88,5 +88,28 @@ export const examResolvers = {
       ctx.requireToken();
       return ctx.apis.examApi.archiveAsAdmin(args.id);
     },
+    submitExamForReview: (
+      _: unknown,
+      args: { id: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.submitForReviewAsAdmin(args.id);
+    },
+    approveExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.approveAsAdmin(args.id);
+    },
+    // The note is forwarded as it stands. Trimming or defaulting it here would
+    // hide a blank one from the backend's own check, which is where the rule
+    // that a rejection must say why actually lives.
+    rejectExam: (
+      _: unknown,
+      args: { id: string; note: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.rejectAsAdmin(args.id, args.note);
+    },
   },
 };

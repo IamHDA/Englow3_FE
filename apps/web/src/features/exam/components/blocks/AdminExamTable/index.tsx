@@ -1,9 +1,10 @@
 "use client";
 
 import { Badge, Button, Group, Stack, Table, Text } from "@mantine/core";
-import { Archive, Send } from "lucide-react";
+import { Archive, Check, Send, Undo2, Upload } from "lucide-react";
 
 import {
+  EXAM_ACTIONS_BY_STATUS,
   EXAM_STATUS_COLORS,
   EXAM_STATUS_LABELS,
   EXAM_TYPE_LABELS,
@@ -16,6 +17,14 @@ type AdminExamTableProps = {
   exams: AdminExamFieldsFragment[];
   /** Id của đề đang có thao tác chạy dở - chỉ khoá nút của đúng dòng đó. */
   busyExamId: string | null;
+  /**
+   * Tài khoản đang xem có quyền duyệt hay không. Nhân viên nội dung chỉ gửi
+   * duyệt; phát hành, duyệt, trả lại và lưu trữ là của quản trị.
+   */
+  canReview: boolean;
+  onSubmitForReview: (id: string) => void;
+  onApprove: (id: string) => void;
+  onReject: (exam: AdminExamFieldsFragment) => void;
   onPublish: (id: string) => void;
   onArchive: (id: string) => void;
 };
@@ -28,11 +37,15 @@ function formatDate(value: string | null): string {
 export function AdminExamTable({
   exams,
   busyExamId,
+  canReview,
+  onSubmitForReview,
+  onApprove,
+  onReject,
   onPublish,
   onArchive,
 }: AdminExamTableProps) {
   return (
-    <Table.ScrollContainer minWidth={900}>
+    <Table.ScrollContainer minWidth={980}>
       <Table verticalSpacing="sm" highlightOnHover>
         <Table.Thead>
           <Table.Tr>
@@ -48,6 +61,7 @@ export function AdminExamTable({
         <Table.Tbody>
           {exams.map((exam) => {
             const busy = busyExamId === exam.id;
+            const actions = EXAM_ACTIONS_BY_STATUS[exam.status];
             return (
               <Table.Tr key={exam.id}>
                 <Table.Td>
@@ -62,6 +76,17 @@ export function AdminExamTable({
                         : ""}
                       {exam.targetLevel ? ` · ${exam.targetLevel}` : ""}
                     </Text>
+                    {/*
+                      Lý do trả lại hiện ngay ở dòng, không bắt mở trang chi
+                      tiết: đây là nơi người viết đề biết bài của mình bị trả và
+                      phải sửa gì.
+                    */}
+                    {exam.status === ExamStatus.REJECTED &&
+                      exam.reviewNote !== null && (
+                        <Text size="xs" c="yellow.8" fs="italic">
+                          Lý do: {exam.reviewNote}
+                        </Text>
+                      )}
                   </Stack>
                 </Table.Td>
                 <Table.Td>
@@ -70,13 +95,20 @@ export function AdminExamTable({
                   </Text>
                 </Table.Td>
                 <Table.Td>
-                  <Badge
-                    color={EXAM_STATUS_COLORS[exam.status]}
-                    variant="light"
-                    radius="sm"
-                  >
-                    {EXAM_STATUS_LABELS[exam.status]}
-                  </Badge>
+                  <Stack gap={2}>
+                    <Badge
+                      color={EXAM_STATUS_COLORS[exam.status]}
+                      variant="light"
+                      radius="sm"
+                    >
+                      {EXAM_STATUS_LABELS[exam.status]}
+                    </Badge>
+                    {exam.status === ExamStatus.PENDING_REVIEW && (
+                      <Text size="xs" c="ink.5">
+                        Gửi {formatDate(exam.submittedForReviewAt)}
+                      </Text>
+                    )}
+                  </Stack>
                 </Table.Td>
                 <Table.Td>
                   <Text size="sm" c="ink.7">
@@ -95,10 +127,43 @@ export function AdminExamTable({
                 </Table.Td>
                 <Table.Td>
                   <Group gap="xs" justify="flex-end" wrap="nowrap">
-                    {/* Backend chỉ nhận publish từ bản nháp, archive từ bản
-                        nháp hoặc đã phát hành - ẩn nút ở đây chỉ để đỡ bấm
-                        nhầm, nó vẫn từ chối nếu gọi thẳng. */}
-                    {exam.status === ExamStatus.DRAFT && (
+                    {actions.submit && (
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="light"
+                        loading={busy}
+                        leftSection={<Upload size={14} />}
+                        onClick={() => onSubmitForReview(exam.id)}
+                      >
+                        Gửi duyệt
+                      </Button>
+                    )}
+                    {canReview && actions.approve && (
+                      <Button
+                        size="xs"
+                        radius="md"
+                        color="teal"
+                        loading={busy}
+                        leftSection={<Check size={14} />}
+                        onClick={() => onApprove(exam.id)}
+                      >
+                        Duyệt
+                      </Button>
+                    )}
+                    {canReview && actions.reject && (
+                      <Button
+                        size="xs"
+                        radius="md"
+                        variant="default"
+                        loading={busy}
+                        leftSection={<Undo2 size={14} />}
+                        onClick={() => onReject(exam)}
+                      >
+                        Trả lại
+                      </Button>
+                    )}
+                    {canReview && actions.publish && (
                       <Button
                         size="xs"
                         radius="md"
@@ -109,11 +174,12 @@ export function AdminExamTable({
                         Phát hành
                       </Button>
                     )}
-                    {exam.status !== ExamStatus.ARCHIVED && (
+                    {canReview && actions.archive && (
                       <Button
                         size="xs"
                         radius="md"
-                        variant="default"
+                        variant="subtle"
+                        color="gray"
                         loading={busy}
                         leftSection={<Archive size={14} />}
                         onClick={() => onArchive(exam.id)}

@@ -9,6 +9,7 @@ query CurrentUser {
     avatarUrl
     bannerUrl
     onboardingStep
+    role
     onboardingState {
       certificateLearner
       currentLevel

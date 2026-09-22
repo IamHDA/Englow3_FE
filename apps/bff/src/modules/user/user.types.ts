@@ -1,5 +1,8 @@
 export type Gender = "MALE" | "FEMALE" | "OTHER";
 
+// For drawing the interface. Authorisation happens on the backend from the token.
+export type Role = "LEARNER" | "STAFF" | "ADMIN";
+
 export type OnboardingStep =
   | "LEARNING_PURPOSES"
   | "CERTIFICATE_TARGET"
@@ -19,6 +22,7 @@ export type UserInformationResponse = {
   avatarUrl: string | null;
   bannerUrl: string | null;
   onboardingStep: OnboardingStep;
+  role: Role;
 };
 
 // mirrors PUT /api/user/me/profile request body

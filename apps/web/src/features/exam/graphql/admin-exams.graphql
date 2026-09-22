@@ -10,6 +10,8 @@ fragment AdminExamFields on ExamListItem {
   createdByUserId
   publishedAt
   createdAt
+  submittedForReviewAt
+  reviewNote
 }
 
 query AdminExams(
@@ -42,6 +44,9 @@ fragment AdminExamShellFields on Exam {
   status
   versionNumber
   publishedAt
+  submittedForReviewAt
+  reviewedAt
+  reviewNote
 }
 
 mutation PublishExam($id: ID!) {
@@ -52,6 +57,24 @@ mutation PublishExam($id: ID!) {
 
 mutation ArchiveExam($id: ID!) {
   archiveExam(id: $id) {
+    ...AdminExamShellFields
+  }
+}
+
+mutation SubmitExamForReview($id: ID!) {
+  submitExamForReview(id: $id) {
+    ...AdminExamShellFields
+  }
+}
+
+mutation ApproveExam($id: ID!) {
+  approveExam(id: $id) {
+    ...AdminExamShellFields
+  }
+}
+
+mutation RejectExam($id: ID!, $note: String!) {
+  rejectExam(id: $id, note: $note) {
     ...AdminExamShellFields
   }
 }

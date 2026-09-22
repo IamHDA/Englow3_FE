@@ -190,6 +190,8 @@ export type AdminExamFieldsFragment = {
   createdByUserId: string;
   publishedAt: string | null;
   createdAt: string;
+  submittedForReviewAt: string | null;
+  reviewNote: string | null;
 };
 
 export type AdminExamsQueryVariables = Exact<{
@@ -218,6 +220,8 @@ export type AdminExamsQuery = {
       createdByUserId: string;
       publishedAt: string | null;
       createdAt: string;
+      submittedForReviewAt: string | null;
+      reviewNote: string | null;
     }>;
   };
 };
@@ -228,6 +232,9 @@ export type AdminExamShellFieldsFragment = {
   status: Types.ExamStatus;
   versionNumber: number;
   publishedAt: string | null;
+  submittedForReviewAt: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
 };
 
 export type PublishExamMutationVariables = Exact<{
@@ -241,6 +248,9 @@ export type PublishExamMutation = {
     status: Types.ExamStatus;
     versionNumber: number;
     publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
   };
 };
 
@@ -255,6 +265,61 @@ export type ArchiveExamMutation = {
     status: Types.ExamStatus;
     versionNumber: number;
     publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type SubmitExamForReviewMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SubmitExamForReviewMutation = {
+  submitExamForReview: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type ApproveExamMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ApproveExamMutation = {
+  approveExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type RejectExamMutationVariables = Exact<{
+  id: string | number;
+  note: string;
+}>;
+
+export type RejectExamMutation = {
+  rejectExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
   };
 };
 
@@ -1047,6 +1112,7 @@ export type CurrentUserQuery = {
     avatarUrl: string | null;
     bannerUrl: string | null;
     onboardingStep: Types.OnboardingStep;
+    role: Types.Role;
     onboardingState: {
       certificateLearner: boolean | null;
       currentLevel: Types.CefrLevel | null;
@@ -1097,6 +1163,8 @@ export const AdminExamFieldsFragmentDoc = gql`
     createdByUserId
     publishedAt
     createdAt
+    submittedForReviewAt
+    reviewNote
   }
 `;
 export const AdminExamShellFieldsFragmentDoc = gql`
@@ -1106,6 +1174,9 @@ export const AdminExamShellFieldsFragmentDoc = gql`
     status
     versionNumber
     publishedAt
+    submittedForReviewAt
+    reviewedAt
+    reviewNote
   }
 `;
 export const ExamAttemptFieldsFragmentDoc = gql`
@@ -1942,6 +2013,167 @@ export type ArchiveExamMutationResult =
 export type ArchiveExamMutationOptions = ApolloReactCommon.MutationHookOptions<
   ArchiveExamMutation,
   ArchiveExamMutationVariables
+>;
+export const SubmitExamForReviewDocument = gql`
+  mutation SubmitExamForReview($id: ID!) {
+    submitExamForReview(id: $id) {
+      ...AdminExamShellFields
+    }
+  }
+  ${AdminExamShellFieldsFragmentDoc}
+`;
+export type SubmitExamForReviewMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitExamForReviewMutation,
+    SubmitExamForReviewMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitExamForReviewMutation__
+ *
+ * To run a mutation, you first call `useSubmitExamForReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitExamForReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitExamForReviewMutation, { data, loading, error }] = useSubmitExamForReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSubmitExamForReviewMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitExamForReviewMutation,
+    SubmitExamForReviewMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitExamForReviewMutation,
+    SubmitExamForReviewMutationVariables
+  >(SubmitExamForReviewDocument, options);
+}
+export type SubmitExamForReviewMutationHookResult = ReturnType<
+  typeof useSubmitExamForReviewMutation
+>;
+export type SubmitExamForReviewMutationResult =
+  ApolloReactCommon.MutationResult<SubmitExamForReviewMutation>;
+export type SubmitExamForReviewMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitExamForReviewMutation,
+    SubmitExamForReviewMutationVariables
+  >;
+export const ApproveExamDocument = gql`
+  mutation ApproveExam($id: ID!) {
+    approveExam(id: $id) {
+      ...AdminExamShellFields
+    }
+  }
+  ${AdminExamShellFieldsFragmentDoc}
+`;
+export type ApproveExamMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ApproveExamMutation,
+    ApproveExamMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useApproveExamMutation__
+ *
+ * To run a mutation, you first call `useApproveExamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveExamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveExamMutation, { data, loading, error }] = useApproveExamMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApproveExamMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ApproveExamMutation,
+    ApproveExamMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ApproveExamMutation,
+    ApproveExamMutationVariables
+  >(ApproveExamDocument, options);
+}
+export type ApproveExamMutationHookResult = ReturnType<
+  typeof useApproveExamMutation
+>;
+export type ApproveExamMutationResult =
+  ApolloReactCommon.MutationResult<ApproveExamMutation>;
+export type ApproveExamMutationOptions = ApolloReactCommon.MutationHookOptions<
+  ApproveExamMutation,
+  ApproveExamMutationVariables
+>;
+export const RejectExamDocument = gql`
+  mutation RejectExam($id: ID!, $note: String!) {
+    rejectExam(id: $id, note: $note) {
+      ...AdminExamShellFields
+    }
+  }
+  ${AdminExamShellFieldsFragmentDoc}
+`;
+export type RejectExamMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RejectExamMutation,
+    RejectExamMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRejectExamMutation__
+ *
+ * To run a mutation, you first call `useRejectExamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRejectExamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rejectExamMutation, { data, loading, error }] = useRejectExamMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      note: // value for 'note'
+ *   },
+ * });
+ */
+export function useRejectExamMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RejectExamMutation,
+    RejectExamMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RejectExamMutation,
+    RejectExamMutationVariables
+  >(RejectExamDocument, options);
+}
+export type RejectExamMutationHookResult = ReturnType<
+  typeof useRejectExamMutation
+>;
+export type RejectExamMutationResult =
+  ApolloReactCommon.MutationResult<RejectExamMutation>;
+export type RejectExamMutationOptions = ApolloReactCommon.MutationHookOptions<
+  RejectExamMutation,
+  RejectExamMutationVariables
 >;
 export const StartExamAttemptDocument = gql`
   mutation StartExamAttempt($examId: ID!) {
@@ -4189,6 +4421,7 @@ export const CurrentUserDocument = gql`
       avatarUrl
       bannerUrl
       onboardingStep
+      role
       onboardingState {
         certificateLearner
         currentLevel

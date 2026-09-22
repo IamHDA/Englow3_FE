@@ -1,6 +1,13 @@
 export const examTypeDefs = `#graphql
+  """
+  DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. There is
+  no locked-style dead end: a rejected paper is editable, or its author could
+  never answer the note.
+  """
   enum ExamStatus {
     DRAFT
+    PENDING_REVIEW
+    REJECTED
     PUBLISHED
     ARCHIVED
   }
@@ -51,6 +58,12 @@ export const examTypeDefs = `#graphql
     createdByUserId: ID!
     publishedAt: DateTime
     createdAt: DateTime!
+    submittedForReviewAt: DateTime
+    """
+    Why the paper came back, in the reviewer words. On the list rather than only
+    on the detail screen: this is where an author finds out and what to change.
+    """
+    reviewNote: String
   }
 
   type ExamPage {
@@ -77,6 +90,10 @@ export const examTypeDefs = `#graphql
     versionNumber: Int!
     createdByUserId: ID!
     publishedAt: DateTime
+    submittedForReviewAt: DateTime
+    reviewedByUserId: ID
+    reviewedAt: DateTime
+    reviewNote: String
   }
 
   type LearnerExamItem {
@@ -331,5 +348,26 @@ export const examTypeDefs = `#graphql
     extensions.backendCode: EXAM_ALREADY_ARCHIVED.
     """
     archiveExam(id: ID!): Exam!
+
+    """
+    DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators may
+    call it. Held to the publication rules at this end too, so a reviewer is
+    never handed a paper with no questions: the refusal arrives as
+    extensions.backendCode (e.g. EXAM_HAS_NO_QUESTION).
+    """
+    submitExamForReview(id: ID!): Exam!
+
+    """
+    PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in
+    the same step - there is no approved-but-unpublished state.
+    """
+    approveExam(id: ID!): Exam!
+
+    """
+    PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
+    backend refuses a blank one with EXAM_REVIEW_NOTE_REQUIRED, because
+    "rejected" alone leaves the author nothing to change.
+    """
+    rejectExam(id: ID!, note: String!): Exam!
   }
 `;

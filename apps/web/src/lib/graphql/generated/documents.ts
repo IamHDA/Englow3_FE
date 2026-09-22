@@ -187,6 +187,8 @@ export type AdminExamFieldsFragment = {
   createdByUserId: string;
   publishedAt: string | null;
   createdAt: string;
+  submittedForReviewAt: string | null;
+  reviewNote: string | null;
 };
 
 export type AdminExamsQueryVariables = Exact<{
@@ -215,6 +217,8 @@ export type AdminExamsQuery = {
       createdByUserId: string;
       publishedAt: string | null;
       createdAt: string;
+      submittedForReviewAt: string | null;
+      reviewNote: string | null;
     }>;
   };
 };
@@ -225,6 +229,9 @@ export type AdminExamShellFieldsFragment = {
   status: Types.ExamStatus;
   versionNumber: number;
   publishedAt: string | null;
+  submittedForReviewAt: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
 };
 
 export type PublishExamMutationVariables = Exact<{
@@ -238,6 +245,9 @@ export type PublishExamMutation = {
     status: Types.ExamStatus;
     versionNumber: number;
     publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
   };
 };
 
@@ -252,6 +262,61 @@ export type ArchiveExamMutation = {
     status: Types.ExamStatus;
     versionNumber: number;
     publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type SubmitExamForReviewMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SubmitExamForReviewMutation = {
+  submitExamForReview: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type ApproveExamMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ApproveExamMutation = {
+  approveExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type RejectExamMutationVariables = Exact<{
+  id: string | number;
+  note: string;
+}>;
+
+export type RejectExamMutation = {
+  rejectExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
   };
 };
 
@@ -1044,6 +1109,7 @@ export type CurrentUserQuery = {
     avatarUrl: string | null;
     bannerUrl: string | null;
     onboardingStep: Types.OnboardingStep;
+    role: Types.Role;
     onboardingState: {
       certificateLearner: boolean | null;
       currentLevel: Types.CefrLevel | null;
@@ -1151,6 +1217,11 @@ export const AdminExamFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "createdByUserId" } },
           { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
         ],
       },
     },
@@ -1174,6 +1245,12 @@ export const AdminExamShellFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
           { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
         ],
       },
     },
@@ -2205,6 +2282,11 @@ export const AdminExamsDocument = {
           { kind: "Field", name: { kind: "Name", value: "createdByUserId" } },
           { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
         ],
       },
     },
@@ -2271,6 +2353,12 @@ export const PublishExamDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
           { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
         ],
       },
     },
@@ -2337,11 +2425,255 @@ export const ArchiveExamDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
           { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
         ],
       },
     },
   ],
 } as unknown as DocumentNode<ArchiveExamMutation, ArchiveExamMutationVariables>;
+export const SubmitExamForReviewDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SubmitExamForReview" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submitExamForReview" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminExamShellFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminExamShellFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Exam" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SubmitExamForReviewMutation,
+  SubmitExamForReviewMutationVariables
+>;
+export const ApproveExamDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ApproveExam" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "approveExam" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminExamShellFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminExamShellFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Exam" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ApproveExamMutation, ApproveExamMutationVariables>;
+export const RejectExamDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RejectExam" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "note" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "rejectExam" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "note" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "note" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminExamShellFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminExamShellFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Exam" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RejectExamMutation, RejectExamMutationVariables>;
 export const StartExamAttemptDocument = {
   kind: "Document",
   definitions: [
@@ -5141,6 +5473,7 @@ export const CurrentUserDocument = {
                   kind: "Field",
                   name: { kind: "Name", value: "onboardingStep" },
                 },
+                { kind: "Field", name: { kind: "Name", value: "role" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "onboardingState" },
