@@ -38,6 +38,149 @@ export type UpdateProfileMutation = {
   };
 };
 
+export type ContentReviewFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  status: Types.ContentStatus;
+  itemCount: number;
+  createdAt: string;
+  publishedAt: string | null;
+  submittedForReviewAt: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
+};
+
+export type AdminContentQueryVariables = Exact<{
+  kind: Types.ContentKind;
+  status?: Types.ContentStatus | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type AdminContentQuery = {
+  adminContent: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      status: Types.ContentStatus;
+      itemCount: number;
+      createdAt: string;
+      publishedAt: string | null;
+      submittedForReviewAt: string | null;
+      reviewedAt: string | null;
+      reviewNote: string | null;
+    }>;
+  };
+};
+
+export type SubmitContentForReviewMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+}>;
+
+export type SubmitContentForReviewMutation = {
+  submitContentForReview: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type ApproveContentMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+}>;
+
+export type ApproveContentMutation = {
+  approveContent: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type RejectContentMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+  note: string;
+}>;
+
+export type RejectContentMutation = {
+  rejectContent: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type PublishContentMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+}>;
+
+export type PublishContentMutation = {
+  publishContent: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type ArchiveContentMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+}>;
+
+export type ArchiveContentMutation = {
+  archiveContent: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
 export type DictationLessonFieldsFragment = {
   id: string;
   slug: string;
@@ -1124,6 +1267,20 @@ export type CurrentUserQuery = {
   };
 };
 
+export const ContentReviewFieldsFragmentDoc = gql`
+  fragment ContentReviewFields on ContentReview {
+    id
+    slug
+    title
+    status
+    itemCount
+    createdAt
+    publishedAt
+    submittedForReviewAt
+    reviewedAt
+    reviewNote
+  }
+`;
 export const DictationLessonFieldsFragmentDoc = gql`
   fragment DictationLessonFields on DictationLesson {
     id
@@ -1373,6 +1530,408 @@ export type UpdateProfileMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     UpdateProfileMutation,
     UpdateProfileMutationVariables
+  >;
+export const AdminContentDocument = gql`
+  query AdminContent(
+    $kind: ContentKind!
+    $status: ContentStatus
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    adminContent(
+      kind: $kind
+      status: $status
+      title: $title
+      page: $page
+      size: $size
+    ) {
+      items {
+        ...ContentReviewFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminContentQuery__
+ *
+ * To run a query within a React component, call `useAdminContentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminContentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminContentQuery({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      status: // value for 'status'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useAdminContentQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AdminContentQuery,
+    AdminContentQueryVariables
+  > &
+    (
+      | { variables: AdminContentQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminContentQuery,
+    AdminContentQueryVariables
+  >(AdminContentDocument, options);
+}
+export function useAdminContentLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminContentQuery,
+    AdminContentQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminContentQuery,
+    AdminContentQueryVariables
+  >(AdminContentDocument, options);
+}
+export function useAdminContentSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminContentQuery,
+    AdminContentQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminContentQuery,
+  AdminContentQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminContentSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminContentQuery,
+        AdminContentQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminContentQuery | undefined,
+  AdminContentQueryVariables
+>;
+export function useAdminContentSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminContentQuery,
+        AdminContentQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminContentQuery,
+    AdminContentQueryVariables
+  >(AdminContentDocument, options as any);
+}
+export type AdminContentQueryHookResult = ReturnType<
+  typeof useAdminContentQuery
+>;
+export type AdminContentLazyQueryHookResult = ReturnType<
+  typeof useAdminContentLazyQuery
+>;
+export type AdminContentSuspenseQueryHookResult = ReturnType<
+  typeof useAdminContentSuspenseQuery
+>;
+export type AdminContentQueryResult = ApolloReactCommon.QueryResult<
+  AdminContentQuery,
+  AdminContentQueryVariables
+>;
+export const SubmitContentForReviewDocument = gql`
+  mutation SubmitContentForReview($kind: ContentKind!, $id: ID!) {
+    submitContentForReview(kind: $kind, id: $id) {
+      ...ContentReviewFields
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+export type SubmitContentForReviewMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitContentForReviewMutation,
+    SubmitContentForReviewMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitContentForReviewMutation__
+ *
+ * To run a mutation, you first call `useSubmitContentForReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitContentForReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitContentForReviewMutation, { data, loading, error }] = useSubmitContentForReviewMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSubmitContentForReviewMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitContentForReviewMutation,
+    SubmitContentForReviewMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitContentForReviewMutation,
+    SubmitContentForReviewMutationVariables
+  >(SubmitContentForReviewDocument, options);
+}
+export type SubmitContentForReviewMutationHookResult = ReturnType<
+  typeof useSubmitContentForReviewMutation
+>;
+export type SubmitContentForReviewMutationResult =
+  ApolloReactCommon.MutationResult<SubmitContentForReviewMutation>;
+export type SubmitContentForReviewMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitContentForReviewMutation,
+    SubmitContentForReviewMutationVariables
+  >;
+export const ApproveContentDocument = gql`
+  mutation ApproveContent($kind: ContentKind!, $id: ID!) {
+    approveContent(kind: $kind, id: $id) {
+      ...ContentReviewFields
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+export type ApproveContentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ApproveContentMutation,
+    ApproveContentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useApproveContentMutation__
+ *
+ * To run a mutation, you first call `useApproveContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveContentMutation, { data, loading, error }] = useApproveContentMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApproveContentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ApproveContentMutation,
+    ApproveContentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ApproveContentMutation,
+    ApproveContentMutationVariables
+  >(ApproveContentDocument, options);
+}
+export type ApproveContentMutationHookResult = ReturnType<
+  typeof useApproveContentMutation
+>;
+export type ApproveContentMutationResult =
+  ApolloReactCommon.MutationResult<ApproveContentMutation>;
+export type ApproveContentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ApproveContentMutation,
+    ApproveContentMutationVariables
+  >;
+export const RejectContentDocument = gql`
+  mutation RejectContent($kind: ContentKind!, $id: ID!, $note: String!) {
+    rejectContent(kind: $kind, id: $id, note: $note) {
+      ...ContentReviewFields
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+export type RejectContentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RejectContentMutation,
+    RejectContentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRejectContentMutation__
+ *
+ * To run a mutation, you first call `useRejectContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRejectContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rejectContentMutation, { data, loading, error }] = useRejectContentMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      id: // value for 'id'
+ *      note: // value for 'note'
+ *   },
+ * });
+ */
+export function useRejectContentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RejectContentMutation,
+    RejectContentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RejectContentMutation,
+    RejectContentMutationVariables
+  >(RejectContentDocument, options);
+}
+export type RejectContentMutationHookResult = ReturnType<
+  typeof useRejectContentMutation
+>;
+export type RejectContentMutationResult =
+  ApolloReactCommon.MutationResult<RejectContentMutation>;
+export type RejectContentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RejectContentMutation,
+    RejectContentMutationVariables
+  >;
+export const PublishContentDocument = gql`
+  mutation PublishContent($kind: ContentKind!, $id: ID!) {
+    publishContent(kind: $kind, id: $id) {
+      ...ContentReviewFields
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+export type PublishContentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    PublishContentMutation,
+    PublishContentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __usePublishContentMutation__
+ *
+ * To run a mutation, you first call `usePublishContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePublishContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [publishContentMutation, { data, loading, error }] = usePublishContentMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePublishContentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    PublishContentMutation,
+    PublishContentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    PublishContentMutation,
+    PublishContentMutationVariables
+  >(PublishContentDocument, options);
+}
+export type PublishContentMutationHookResult = ReturnType<
+  typeof usePublishContentMutation
+>;
+export type PublishContentMutationResult =
+  ApolloReactCommon.MutationResult<PublishContentMutation>;
+export type PublishContentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    PublishContentMutation,
+    PublishContentMutationVariables
+  >;
+export const ArchiveContentDocument = gql`
+  mutation ArchiveContent($kind: ContentKind!, $id: ID!) {
+    archiveContent(kind: $kind, id: $id) {
+      ...ContentReviewFields
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+export type ArchiveContentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ArchiveContentMutation,
+    ArchiveContentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useArchiveContentMutation__
+ *
+ * To run a mutation, you first call `useArchiveContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveContentMutation, { data, loading, error }] = useArchiveContentMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveContentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ArchiveContentMutation,
+    ArchiveContentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ArchiveContentMutation,
+    ArchiveContentMutationVariables
+  >(ArchiveContentDocument, options);
+}
+export type ArchiveContentMutationHookResult = ReturnType<
+  typeof useArchiveContentMutation
+>;
+export type ArchiveContentMutationResult =
+  ApolloReactCommon.MutationResult<ArchiveContentMutation>;
+export type ArchiveContentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ArchiveContentMutation,
+    ArchiveContentMutationVariables
   >;
 export const DictationLessonsDocument = gql`
   query DictationLessons(

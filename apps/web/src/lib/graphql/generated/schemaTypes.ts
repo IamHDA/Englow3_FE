@@ -50,6 +50,61 @@ export enum CertificateVariant {
   SW = "SW",
 }
 
+/**
+ * The three kinds of practice content. They share one review workflow, so this
+ * schema presents one surface over three backend resources rather than three
+ * copies of the same six operations.
+ */
+export enum ContentKind {
+  DICTATION_LESSON = "DICTATION_LESSON",
+  FLASHCARD_SET = "FLASHCARD_SET",
+  QUIZ = "QUIZ",
+}
+
+/**
+ * A piece of content as its author and reviewer see it. Never sent to a learner:
+ * it carries the rejection note, and nobody studying should read "rejected
+ * because the audio is unusable".
+ */
+export type ContentReview = {
+  __typename?: "ContentReview";
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  /** Cards, questions or sentences - whatever this kind is made of. */
+  itemCount: Scalars["Int"]["output"];
+  publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /** Why it came back, in the reviewer words. Required when rejecting. */
+  reviewNote?: Maybe<Scalars["String"]["output"]>;
+  reviewedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  reviewedByUserId?: Maybe<Scalars["ID"]["output"]>;
+  slug: Scalars["String"]["output"];
+  status: ContentStatus;
+  submittedForReviewAt?: Maybe<Scalars["DateTime"]["output"]>;
+  title: Scalars["String"]["output"];
+};
+
+export type ContentReviewPage = {
+  __typename?: "ContentReviewPage";
+  items: Array<ContentReview>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/**
+ * DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. The
+ * backend keeps a separate enum per content type; the values are identical by
+ * construction and this is what validates them on the wire.
+ */
+export enum ContentStatus {
+  ARCHIVED = "ARCHIVED",
+  DRAFT = "DRAFT",
+  PENDING_REVIEW = "PENDING_REVIEW",
+  PUBLISHED = "PUBLISHED",
+  REJECTED = "REJECTED",
+}
+
 export type DailyPath = {
   __typename?: "DailyPath";
   level: Scalars["Int"]["output"];
@@ -611,10 +666,17 @@ export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["Boolean"]["output"]>;
   /**
+   * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
+   * same step - there is no approved-but-unpublished state.
+   */
+  approveContent: ContentReview;
+  /**
    * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in
    * the same step - there is no approved-but-unpublished state.
    */
   approveExam: Exam;
+  /** Anything -> ARCHIVED. Administrators only. There is no delete. */
+  archiveContent: ContentReview;
   /**
    * DRAFT or PUBLISHED -> ARCHIVED. There is no delete; archiving is the
    * retirement path. Archiving an already-archived paper fails with
@@ -627,6 +689,8 @@ export type Mutation = {
    * earlier step is missing.
    */
   completeOnboarding: OnboardingState;
+  /** DRAFT -> PUBLISHED, skipping review. Administrators only. */
+  publishContent: ContentReview;
   /**
    * DRAFT -> PUBLISHED. The backend refuses a paper that is not a draft, has
    * no section or question, whose section scores do not total maxRawScore, or
@@ -639,6 +703,12 @@ export type Mutation = {
    * row on first sight, so browsing a set costs nothing until it is studied.
    */
   rateFlashcard: FlashcardReview;
+  /**
+   * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
+   * backend refuses a blank one with REVIEW_NOTE_REQUIRED, because "rejected"
+   * alone leaves the author nothing to change.
+   */
+  rejectContent: ContentReview;
   /**
    * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
    * backend refuses a blank one with EXAM_REVIEW_NOTE_REQUIRED, because
@@ -684,6 +754,12 @@ export type Mutation = {
    */
   startQuizAttempt: QuizAttempt;
   /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators. Held
+   * to the publication rules at this end too, so a reviewer is never handed an
+   * empty set: the refusal arrives as extensions.backendCode.
+   */
+  submitContentForReview: ContentReview;
+  /**
    * Marks one transcription and returns the correct text with it. An empty
    * answer is a real answer - it scores zero rather than being rejected.
    */
@@ -708,12 +784,27 @@ export type Mutation = {
   updateProfile: Me;
 };
 
+export type MutationApproveContentArgs = {
+  id: Scalars["ID"]["input"];
+  kind: ContentKind;
+};
+
 export type MutationApproveExamArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationArchiveContentArgs = {
+  id: Scalars["ID"]["input"];
+  kind: ContentKind;
+};
+
 export type MutationArchiveExamArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type MutationPublishContentArgs = {
+  id: Scalars["ID"]["input"];
+  kind: ContentKind;
 };
 
 export type MutationPublishExamArgs = {
@@ -724,6 +815,12 @@ export type MutationRateFlashcardArgs = {
   flashcardId: Scalars["ID"]["input"];
   rating: ReviewRating;
   timeSpentSeconds: Scalars["Int"]["input"];
+};
+
+export type MutationRejectContentArgs = {
+  id: Scalars["ID"]["input"];
+  kind: ContentKind;
+  note: Scalars["String"]["input"];
 };
 
 export type MutationRejectExamArgs = {
@@ -757,6 +854,11 @@ export type MutationStartExamAttemptArgs = {
 
 export type MutationStartQuizAttemptArgs = {
   quizId: Scalars["ID"]["input"];
+};
+
+export type MutationSubmitContentForReviewArgs = {
+  id: Scalars["ID"]["input"];
+  kind: ContentKind;
 };
 
 export type MutationSubmitDictationArgs = {
@@ -804,6 +906,13 @@ export enum OnboardingStep {
 
 export type Query = {
   __typename?: "Query";
+  /**
+   * The authoring list for one kind of content, at every status. Omitting
+   * status asks for all of them, so this serves both the full list and the
+   * review queue. Staff and administrators only - the backend answers 403 to
+   * anyone else.
+   */
+  adminContent: ContentReviewPage;
   /**
    * Admin catalogue search - returns drafts and archived papers too, so the
    * backend restricts it to ADMIN. Sorted newest first by the backend.
@@ -864,6 +973,14 @@ export type Query = {
   /** The paper to sit, reachable only through an open attempt. */
   quizPaper: QuizPaper;
   quizzes: QuizPage;
+};
+
+export type QueryAdminContentArgs = {
+  kind: ContentKind;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  status?: InputMaybe<ContentStatus>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryAdminExamsArgs = {

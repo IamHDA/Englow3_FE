@@ -255,3 +255,81 @@ describe("Query.dailyPath", () => {
     expect(path).toEqual({ streakDays: 3, tasks: [], quests: [] });
   });
 });
+
+describe("Query.adminContent", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const searchContentForAuthoring = vi.fn();
+    const ctx = makeContext({ searchContentForAuthoring }, unauthenticated());
+
+    expect(() =>
+      learningResolvers.Query.adminContent({}, { kind: "QUIZ" } as never, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(searchContentForAuthoring).not.toHaveBeenCalled();
+  });
+
+  it("caps the page size and forwards the kind", async () => {
+    const searchContentForAuthoring = vi.fn().mockResolvedValue({ items: [] });
+    const ctx = makeContext({ searchContentForAuthoring });
+
+    await learningResolvers.Query.adminContent(
+      {},
+      { kind: "FLASHCARD_SET", size: 5000 } as never,
+      ctx,
+    );
+
+    expect(searchContentForAuthoring).toHaveBeenCalledWith({
+      kind: "FLASHCARD_SET",
+      size: 100,
+    });
+  });
+
+  /** No status means every status, which is what makes one endpoint serve the queue and the full list. */
+  it("leaves status out rather than defaulting it", async () => {
+    const searchContentForAuthoring = vi.fn().mockResolvedValue({ items: [] });
+    const ctx = makeContext({ searchContentForAuthoring });
+
+    await learningResolvers.Query.adminContent(
+      {},
+      { kind: "QUIZ" } as never,
+      ctx,
+    );
+
+    expect(searchContentForAuthoring).toHaveBeenCalledWith({
+      kind: "QUIZ",
+      size: 20,
+    });
+  });
+});
+
+describe("Mutation.rejectContent", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const rejectContent = vi.fn();
+    const ctx = makeContext({ rejectContent }, unauthenticated());
+
+    expect(() =>
+      learningResolvers.Mutation.rejectContent(
+        {},
+        { kind: "QUIZ", id: "q-1", note: "no" } as never,
+        ctx,
+      ),
+    ).toThrow("Missing or invalid access token");
+    expect(rejectContent).not.toHaveBeenCalled();
+  });
+
+  /**
+   * The rule that a rejection must say why lives in the backend entity. Trimming
+   * the note here would hide a blank one from the only check that enforces it.
+   */
+  it("forwards a blank note rather than short-circuiting it", async () => {
+    const rejectContent = vi.fn().mockResolvedValue({ status: "REJECTED" });
+    const ctx = makeContext({ rejectContent });
+
+    await learningResolvers.Mutation.rejectContent(
+      {},
+      { kind: "DICTATION_LESSON", id: "l-1", note: "  " } as never,
+      ctx,
+    );
+
+    expect(rejectContent).toHaveBeenCalledWith("DICTATION_LESSON", "l-1", "  ");
+  });
+});

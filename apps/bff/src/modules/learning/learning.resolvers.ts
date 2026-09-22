@@ -1,6 +1,8 @@
 import type { GraphQLContext } from "../../graphql/context.js";
 import type {
+  ContentKind,
   ReviewRating,
+  SearchContentParams,
   SearchDictationLessonsParams,
   SearchFlashcardSetsParams,
   SearchQuizzesParams,
@@ -96,6 +98,17 @@ export const learningResolvers = {
       ctx.requireToken();
       return ctx.apis.learningApi.getDailyPath();
     },
+    adminContent: (
+      _: unknown,
+      args: SearchContentParams,
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.searchContentForAuthoring({
+        ...args,
+        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+      });
+    },
   },
   Mutation: {
     rateFlashcard: (
@@ -144,6 +157,49 @@ export const learningResolvers = {
         args.sentenceId,
         args.response,
       );
+    },
+    submitContentForReview: (
+      _: unknown,
+      args: { kind: ContentKind; id: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.submitContentForReview(args.kind, args.id);
+    },
+    approveContent: (
+      _: unknown,
+      args: { kind: ContentKind; id: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.approveContent(args.kind, args.id);
+    },
+    // The note is forwarded as it stands. Trimming or defaulting it here would
+    // hide a blank one from the backend check, which is where the rule that a
+    // rejection must say why actually lives.
+    rejectContent: (
+      _: unknown,
+      args: { kind: ContentKind; id: string; note: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.rejectContent(args.kind, args.id, args.note);
+    },
+    publishContent: (
+      _: unknown,
+      args: { kind: ContentKind; id: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.publishContent(args.kind, args.id);
+    },
+    archiveContent: (
+      _: unknown,
+      args: { kind: ContentKind; id: string },
+      ctx: GraphQLContext,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.archiveContent(args.kind, args.id);
     },
   },
 };

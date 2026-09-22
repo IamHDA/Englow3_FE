@@ -1,0 +1,66 @@
+fragment ContentReviewFields on ContentReview {
+  id
+  slug
+  title
+  status
+  itemCount
+  createdAt
+  publishedAt
+  submittedForReviewAt
+  reviewedAt
+  reviewNote
+}
+
+query AdminContent(
+  $kind: ContentKind!
+  $status: ContentStatus
+  $title: String
+  $page: Int
+  $size: Int
+) {
+  adminContent(
+    kind: $kind
+    status: $status
+    title: $title
+    page: $page
+    size: $size
+  ) {
+    items {
+      ...ContentReviewFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+mutation SubmitContentForReview($kind: ContentKind!, $id: ID!) {
+  submitContentForReview(kind: $kind, id: $id) {
+    ...ContentReviewFields
+  }
+}
+
+mutation ApproveContent($kind: ContentKind!, $id: ID!) {
+  approveContent(kind: $kind, id: $id) {
+    ...ContentReviewFields
+  }
+}
+
+mutation RejectContent($kind: ContentKind!, $id: ID!, $note: String!) {
+  rejectContent(kind: $kind, id: $id, note: $note) {
+    ...ContentReviewFields
+  }
+}
+
+mutation PublishContent($kind: ContentKind!, $id: ID!) {
+  publishContent(kind: $kind, id: $id) {
+    ...ContentReviewFields
+  }
+}
+
+mutation ArchiveContent($kind: ContentKind!, $id: ID!) {
+  archiveContent(kind: $kind, id: $id) {
+    ...ContentReviewFields
+  }
+}

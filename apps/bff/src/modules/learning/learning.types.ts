@@ -339,3 +339,51 @@ export type DailyPathResponse = {
     completed: boolean;
   }[];
 };
+
+/**
+ * The three kinds of practice content share one review workflow, so the BFF
+ * presents one surface over three backend resources rather than triplicating
+ * the schema. The backend keeps them separate on purpose - they are separate
+ * resources with separate lifecycles - and collapsing them is exactly the kind
+ * of per-client shaping a BFF exists to do.
+ */
+export type ContentKind = "FLASHCARD_SET" | "QUIZ" | "DICTATION_LESSON";
+
+export type ContentStatus =
+  "DRAFT" | "PENDING_REVIEW" | "REJECTED" | "PUBLISHED" | "ARCHIVED";
+
+// mirrors ContentReviewResponse exactly as the backend returns it
+export type ContentReviewResponse = {
+  id: string;
+  slug: string;
+  title: string;
+  /**
+   * Sent as a string because the backend's three status enums are separate
+   * types with identical values. The GraphQL enum above is what validates it.
+   */
+  status: ContentStatus;
+  /** Cards, questions or sentences - whatever this kind is made of. */
+  itemCount: number;
+  createdAt: string;
+  publishedAt: string | null;
+  submittedForReviewAt: string | null;
+  reviewedByUserId: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
+};
+
+export type ContentReviewPageResponse = {
+  items: ContentReviewResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type SearchContentParams = {
+  kind: ContentKind;
+  status?: ContentStatus | null;
+  title?: string | null;
+  page?: number;
+  size?: number;
+};

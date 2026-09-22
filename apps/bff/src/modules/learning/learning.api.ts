@@ -1,6 +1,10 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
+  ContentKind,
+  ContentReviewPageResponse,
+  ContentReviewResponse,
   DailyPathResponse,
+  SearchContentParams,
   DictationLessonDetailResponse,
   DictationStatsResponse,
   DictationLessonPageResponse,
@@ -25,6 +29,17 @@ const QUIZ_BASE_PATH = "/api/quizzes";
 const QUIZ_ATTEMPT_BASE_PATH = "/api/quiz-attempts";
 const DICTATION_BASE_PATH = "/api/dictation";
 const DAILY_PATH_BASE_PATH = "/api/daily-path";
+
+/**
+ * Where each content kind lives on the backend. One map rather than a switch in
+ * five methods: adding a fourth kind then means one line here, and the five
+ * review actions pick it up for free.
+ */
+const ADMIN_CONTENT_PATHS: Record<ContentKind, string> = {
+  FLASHCARD_SET: "/api/admin/flashcards/sets",
+  QUIZ: "/api/admin/quizzes",
+  DICTATION_LESSON: "/api/admin/dictation/lessons",
+};
 
 export class LearningApi {
   constructor(private readonly client: BackendClient) {}
@@ -150,5 +165,68 @@ export class LearningApi {
   /** No parameters: the only path anyone can read is their own, taken from the token. */
   getDailyPath(): Promise<DailyPathResponse> {
     return this.client.get(DAILY_PATH_BASE_PATH);
+  }
+
+  /** The authoring list, at every status. Omitting status asks for all of them. */
+  searchContentForAuthoring(
+    params: SearchContentParams,
+  ): Promise<ContentReviewPageResponse> {
+    const query = new URLSearchParams();
+    if (params.status) query.set("status", params.status);
+    if (params.title) query.set("title", params.title);
+    query.set("page", String(params.page ?? 0));
+    query.set("size", String(params.size ?? 20));
+
+    return this.client.get(
+      `${ADMIN_CONTENT_PATHS[params.kind]}?${query.toString()}`,
+    );
+  }
+
+  submitContentForReview(
+    kind: ContentKind,
+    id: string,
+  ): Promise<ContentReviewResponse> {
+    return this.client.post(
+      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/submit-for-review`,
+    );
+  }
+
+  approveContent(
+    kind: ContentKind,
+    id: string,
+  ): Promise<ContentReviewResponse> {
+    return this.client.post(
+      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/approve`,
+    );
+  }
+
+  /** The note travels as given - the rule that it must say something is the backend entity. */
+  rejectContent(
+    kind: ContentKind,
+    id: string,
+    note: string,
+  ): Promise<ContentReviewResponse> {
+    return this.client.post(
+      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/reject`,
+      { note },
+    );
+  }
+
+  publishContent(
+    kind: ContentKind,
+    id: string,
+  ): Promise<ContentReviewResponse> {
+    return this.client.post(
+      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/publish`,
+    );
+  }
+
+  archiveContent(
+    kind: ContentKind,
+    id: string,
+  ): Promise<ContentReviewResponse> {
+    return this.client.post(
+      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/archive`,
+    );
   }
 }
