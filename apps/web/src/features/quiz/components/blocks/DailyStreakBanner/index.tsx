@@ -13,25 +13,30 @@ import {
 } from "@mantine/core";
 import { IconFlame, IconSparkles, IconTrophy } from "@tabler/icons-react";
 import React from "react";
+
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { levelTitle } from "../../../constants/dailyPath";
 
 interface DailyStreakBannerProps {
   streakDays: number;
   totalXp: number;
-  currentLevel: number;
-  levelXp: number;
-  nextLevelXp: number;
+  level: number;
+  /** Điểm kiếm được kể từ khi lên cấp này, và số điểm cần để rời nó. */
+  xpIntoLevel: number;
+  levelCostXp: number;
 }
 
 export function DailyStreakBanner({
   streakDays,
   totalXp,
-  currentLevel,
-  levelXp,
-  nextLevelXp,
+  level,
+  xpIntoLevel,
+  levelCostXp,
 }: DailyStreakBannerProps) {
   const { isVi } = useLanguage();
-  const levelProgress = Math.round((levelXp / nextLevelXp) * 100);
+  const levelProgress =
+    levelCostXp === 0 ? 0 : Math.round((xpIntoLevel / levelCostXp) * 100);
+  const remaining = Math.max(levelCostXp - xpIntoLevel, 0);
 
   return (
     <Card
@@ -55,28 +60,34 @@ export function DailyStreakBanner({
                 c="dark.9"
                 fw={700}
               >
-                {isVi ? "LỘ TRÌNH THÍCH ỨNG AI" : "AI ADAPTIVE LEARNING PATH"}
+                {isVi ? "LỘ TRÌNH HẰNG NGÀY" : "DAILY LEARNING PATH"}
               </Badge>
-              <Group gap={4}>
-                <IconFlame size={18} color="#FBBF24" />
-                <Text fz="xs" fw={700} c="yellow.2">
-                  {isVi
-                    ? `Chuỗi ${streakDays} ngày liên tiếp`
-                    : `${streakDays}-day streak`}
-                </Text>
-              </Group>
+              {/* Chuỗi 0 ngày không phải là chuỗi - không dán ngọn lửa lên nó. */}
+              {streakDays > 0 && (
+                <Group gap={4}>
+                  <IconFlame size={18} color="#FBBF24" />
+                  <Text fz="xs" fw={700} c="yellow.2">
+                    {isVi
+                      ? `Chuỗi ${streakDays} ngày liên tiếp`
+                      : `${streakDays}-day streak`}
+                  </Text>
+                </Group>
+              )}
             </Group>
 
             <Title order={2} fw={800} c="white">
-              {isVi
-                ? "Lộ trình học tập mỗi ngày"
-                : "Adaptive Daily Learning Path"}
+              {isVi ? "Lộ trình học tập mỗi ngày" : "Your Daily Learning Path"}
             </Title>
 
+            {/*
+              Bản cũ hứa "hệ thống AI tự động đề xuất dựa trên điểm yếu". Lộ
+              trình này chạy bằng luật: thẻ đến hạn theo lịch ôn, bài nghe còn
+              câu chưa đạt, bài trắc nghiệm chưa qua. Nói đúng cái nó làm.
+            */}
             <Text fz="sm" c="indigo.1" maw={560}>
               {isVi
-                ? "Hệ thống tự động đề xuất bài học, câu đố và dạng bài tập tương tác dựa trên lịch sử làm bài và điểm yếu cần cải thiện của bạn."
-                : "Intelligent daily lesson progression that dynamically scales in difficulty based on your previous performance and areas for improvement."}
+                ? "Lộ trình xếp theo việc bạn đang còn dở: thẻ đến hạn ôn trước, rồi tới bài nghe chưa đạt và bài trắc nghiệm chưa qua điểm."
+                : "Built from what you still owe: cards the review schedule has made due first, then dictation lessons and quizzes you have not finished."}
             </Text>
 
             <Group gap="lg" mt="xs">
@@ -91,8 +102,8 @@ export function DailyStreakBanner({
                 </ThemeIcon>
                 <Text fz="xs" fw={600} c="white">
                   {isVi
-                    ? `Cấp độ ${currentLevel} (Học giả Tiềm năng)`
-                    : `Level ${currentLevel} (Rising Scholar)`}
+                    ? `Cấp độ ${level} (${levelTitle(level, true)})`
+                    : `Level ${level} (${levelTitle(level, false)})`}
                 </Text>
               </Group>
 
@@ -128,11 +139,11 @@ export function DailyStreakBanner({
             <Group justify="space-between">
               <Text fz="xs" fw={700} c="white">
                 {isVi
-                  ? `Tiến độ lên Cấp ${currentLevel + 1}:`
-                  : `Progress to Level ${currentLevel + 1}:`}
+                  ? `Tiến độ lên Cấp ${level + 1}:`
+                  : `Progress to Level ${level + 1}:`}
               </Text>
               <Text fz="xs" fw={700} c="yellow.3">
-                {levelXp} / {nextLevelXp} XP
+                {xpIntoLevel} / {levelCostXp} XP
               </Text>
             </Group>
 
@@ -145,8 +156,8 @@ export function DailyStreakBanner({
 
             <Text fz="xs" c="indigo.2" mt={2}>
               {isVi
-                ? `Còn ${nextLevelXp - levelXp} XP nữa để mở khóa huy hiệu mới.`
-                : `${nextLevelXp - levelXp} XP needed to reach next rank.`}
+                ? `Còn ${remaining} XP nữa để lên cấp.`
+                : `${remaining} XP to the next level.`}
             </Text>
           </Stack>
         </Grid.Col>

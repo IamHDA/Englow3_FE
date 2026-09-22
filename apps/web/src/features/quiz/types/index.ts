@@ -1,4 +1,7 @@
-import type { QuizFieldsFragment } from "@/lib/graphql/generated/documents";
+import type {
+  DailyPathQuery,
+  QuizFieldsFragment,
+} from "@/lib/graphql/generated/documents";
 
 /** A quiz as the catalogue lists it, straight off codegen rather than declared twice. */
 export type QuizSummary = QuizFieldsFragment;
@@ -6,29 +9,14 @@ export type QuizSummary = QuizFieldsFragment;
 export type QuizQuestionType =
   "MULTIPLE_CHOICE" | "FILL_BLANK" | "REWRITE" | "REORDER" | "MATCHING";
 
-export type DailyPathNodeStatus = "COMPLETED" | "CURRENT" | "LOCKED";
-
-export interface DailyPathNode {
-  id: string;
-  title: string;
-  subtitle: string;
-  type: "LESSON" | "QUIZ" | "CHALLENGE" | "MILESTONE";
-  status: DailyPathNodeStatus;
-  order: number;
-  xpReward: number;
-  starsEarned?: number; // 0..3
-  targetQuizId?: string;
-}
-
-export interface DailyQuest {
-  id: string;
-  title: string;
-  description: string;
-  progress: number;
-  target: number;
-  rewardXp: number;
-  isCompleted: boolean;
-}
+/**
+ * Lộ trình hôm nay. Ba kiểu này từng là interface tự viết kèm một file dữ liệu
+ * giả: sáu trạm, ba nhiệm vụ, chuỗi 6 ngày, cấp 4 với 1420 XP - không con số
+ * nào nhúc nhích khi người học thực sự học. Giờ lấy hết từ `dailyPath`.
+ */
+export type DailyPath = DailyPathQuery["dailyPath"];
+export type DailyTask = DailyPath["tasks"][number];
+export type DailyQuest = DailyPath["quests"][number];
 
 export interface MultipleChoiceOption {
   id: string;

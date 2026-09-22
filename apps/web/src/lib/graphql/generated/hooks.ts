@@ -838,6 +838,35 @@ export type CompleteOnboardingMutation = {
   };
 };
 
+export type DailyPathQueryVariables = Exact<{ [key: string]: never }>;
+
+export type DailyPathQuery = {
+  dailyPath: {
+    streakDays: number;
+    totalXp: number;
+    level: number;
+    xpIntoLevel: number;
+    levelCostXp: number;
+    tasks: Array<{
+      kind: Types.DailyTaskKind;
+      status: Types.DailyTaskStatus;
+      targetId: string;
+      title: string;
+      order: number;
+      unitsRemaining: number;
+      unitsDoneToday: number;
+      completionPercent: number | null;
+      xpReward: number;
+    }>;
+    quests: Array<{
+      kind: Types.DailyQuestKind;
+      progress: number;
+      target: number;
+      completed: boolean;
+    }>;
+  };
+};
+
 export type QuizFieldsFragment = {
   id: string;
   slug: string;
@@ -3689,6 +3718,123 @@ export type CompleteOnboardingMutationOptions =
     CompleteOnboardingMutation,
     CompleteOnboardingMutationVariables
   >;
+export const DailyPathDocument = gql`
+  query DailyPath {
+    dailyPath {
+      streakDays
+      totalXp
+      level
+      xpIntoLevel
+      levelCostXp
+      tasks {
+        kind
+        status
+        targetId
+        title
+        order
+        unitsRemaining
+        unitsDoneToday
+        completionPercent
+        xpReward
+      }
+      quests {
+        kind
+        progress
+        target
+        completed
+      }
+    }
+  }
+`;
+
+/**
+ * __useDailyPathQuery__
+ *
+ * To run a query within a React component, call `useDailyPathQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDailyPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDailyPathQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDailyPathQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    DailyPathQuery,
+    DailyPathQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<DailyPathQuery, DailyPathQueryVariables>(
+    DailyPathDocument,
+    options,
+  );
+}
+export function useDailyPathLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    DailyPathQuery,
+    DailyPathQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<DailyPathQuery, DailyPathQueryVariables>(
+    DailyPathDocument,
+    options,
+  );
+}
+export function useDailyPathSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    DailyPathQuery,
+    DailyPathQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DailyPathQuery,
+  DailyPathQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useDailyPathSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DailyPathQuery,
+        DailyPathQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DailyPathQuery | undefined,
+  DailyPathQueryVariables
+>;
+export function useDailyPathSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DailyPathQuery,
+        DailyPathQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    DailyPathQuery,
+    DailyPathQueryVariables
+  >(DailyPathDocument, options as any);
+}
+export type DailyPathQueryHookResult = ReturnType<typeof useDailyPathQuery>;
+export type DailyPathLazyQueryHookResult = ReturnType<
+  typeof useDailyPathLazyQuery
+>;
+export type DailyPathSuspenseQueryHookResult = ReturnType<
+  typeof useDailyPathSuspenseQuery
+>;
+export type DailyPathQueryResult = ApolloReactCommon.QueryResult<
+  DailyPathQuery,
+  DailyPathQueryVariables
+>;
 export const QuizzesDocument = gql`
   query Quizzes($category: String, $title: String, $page: Int, $size: Int) {
     quizzes(category: $category, title: $title, page: $page, size: $size) {

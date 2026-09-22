@@ -50,6 +50,68 @@ export enum CertificateVariant {
   SW = "SW",
 }
 
+export type DailyPath = {
+  __typename?: "DailyPath";
+  level: Scalars["Int"]["output"];
+  levelCostXp: Scalars["Int"]["output"];
+  quests: Array<DailyQuest>;
+  /** Consecutive days with any practice, counted across every feature. */
+  streakDays: Scalars["Int"]["output"];
+  tasks: Array<DailyTask>;
+  /** Derived from the activity tables on every read. There is no points ledger. */
+  totalXp: Scalars["Int"]["output"];
+  xpIntoLevel: Scalars["Int"]["output"];
+};
+
+export type DailyQuest = {
+  __typename?: "DailyQuest";
+  completed: Scalars["Boolean"]["output"];
+  kind: DailyQuestKind;
+  progress: Scalars["Int"]["output"];
+  target: Scalars["Int"]["output"];
+};
+
+export enum DailyQuestKind {
+  PASS_A_QUIZ = "PASS_A_QUIZ",
+  PRACTISE_EVERY_DAY = "PRACTISE_EVERY_DAY",
+  REVIEW_DUE_CARDS = "REVIEW_DUE_CARDS",
+  TYPE_SENTENCES = "TYPE_SENTENCES",
+}
+
+export type DailyTask = {
+  __typename?: "DailyTask";
+  /** How far through it the learner is, or null if they have never opened it. */
+  completionPercent?: Maybe<Scalars["Int"]["output"]>;
+  kind: DailyTaskKind;
+  order: Scalars["Int"]["output"];
+  status: DailyTaskStatus;
+  /** The set, lesson or quiz to open. The link is built from this and the kind. */
+  targetId: Scalars["ID"]["output"];
+  title: Scalars["String"]["output"];
+  unitsDoneToday: Scalars["Int"]["output"];
+  /** Cards due, sentences left, or questions in the quiz. */
+  unitsRemaining: Scalars["Int"]["output"];
+  /** What finishing it pays, from the same weights the counter pays from. */
+  xpReward: Scalars["Int"]["output"];
+};
+
+export enum DailyTaskKind {
+  DICTATION = "DICTATION",
+  /** Cards the spaced-repetition schedule says are due. */
+  FLASHCARD_REVIEW = "FLASHCARD_REVIEW",
+  QUIZ = "QUIZ",
+}
+
+/**
+ * There is deliberately no LOCKED. Nothing gates one piece of content behind
+ * another, so UPCOMING says "not started" rather than "you may not".
+ */
+export enum DailyTaskStatus {
+  COMPLETED = "COMPLETED",
+  CURRENT = "CURRENT",
+  UPCOMING = "UPCOMING",
+}
+
 export type DictationDailyAccuracy = {
   __typename?: "DictationDailyAccuracy";
   accuracyPercent: Scalars["Int"]["output"];
@@ -704,6 +766,11 @@ export type Query = {
    * a paper without one would mean handing it out unscoped.
    */
   attemptPaper: ExamPaper;
+  /**
+   * The learner's own plan for today: streak, points, roadmap and goals. Takes
+   * no argument because the only path anyone can read is their own.
+   */
+  dailyPath: DailyPath;
   dictationLesson: DictationLessonDetail;
   dictationLessons: DictationLessonPage;
   dictationStats: DictationStats;

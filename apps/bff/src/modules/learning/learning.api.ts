@@ -1,5 +1,6 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
+  DailyPathResponse,
   DictationLessonDetailResponse,
   DictationStatsResponse,
   DictationLessonPageResponse,
@@ -23,6 +24,7 @@ const FLASHCARD_BASE_PATH = "/api/flashcards";
 const QUIZ_BASE_PATH = "/api/quizzes";
 const QUIZ_ATTEMPT_BASE_PATH = "/api/quiz-attempts";
 const DICTATION_BASE_PATH = "/api/dictation";
+const DAILY_PATH_BASE_PATH = "/api/daily-path";
 
 export class LearningApi {
   constructor(private readonly client: BackendClient) {}
@@ -143,5 +145,10 @@ export class LearningApi {
     return this.client.get(
       `${DICTATION_BASE_PATH}/stats?periodDays=${periodDays}`,
     );
+  }
+
+  /** No parameters: the only path anyone can read is their own, taken from the token. */
+  getDailyPath(): Promise<DailyPathResponse> {
+    return this.client.get(DAILY_PATH_BASE_PATH);
   }
 }

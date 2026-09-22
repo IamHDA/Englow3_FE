@@ -1,5 +1,5 @@
 export * from "./types";
-export * from "./constants/quizData";
+export * from "./constants/dailyPath";
 export * from "./hooks/useQuizEngine";
 
 // Blocks

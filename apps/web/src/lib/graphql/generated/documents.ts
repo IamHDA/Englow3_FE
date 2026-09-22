@@ -835,6 +835,35 @@ export type CompleteOnboardingMutation = {
   };
 };
 
+export type DailyPathQueryVariables = Exact<{ [key: string]: never }>;
+
+export type DailyPathQuery = {
+  dailyPath: {
+    streakDays: number;
+    totalXp: number;
+    level: number;
+    xpIntoLevel: number;
+    levelCostXp: number;
+    tasks: Array<{
+      kind: Types.DailyTaskKind;
+      status: Types.DailyTaskStatus;
+      targetId: string;
+      title: string;
+      order: number;
+      unitsRemaining: number;
+      unitsDoneToday: number;
+      completionPercent: number | null;
+      xpReward: number;
+    }>;
+    quests: Array<{
+      kind: Types.DailyQuestKind;
+      progress: number;
+      target: number;
+      completed: boolean;
+    }>;
+  };
+};
+
 export type QuizFieldsFragment = {
   id: string;
   slug: string;
@@ -4496,6 +4525,93 @@ export const CompleteOnboardingDocument = {
   CompleteOnboardingMutation,
   CompleteOnboardingMutationVariables
 >;
+export const DailyPathDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "DailyPath" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "dailyPath" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "streakDays" } },
+                { kind: "Field", name: { kind: "Name", value: "totalXp" } },
+                { kind: "Field", name: { kind: "Name", value: "level" } },
+                { kind: "Field", name: { kind: "Name", value: "xpIntoLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "levelCostXp" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "tasks" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "order" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "unitsRemaining" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "unitsDoneToday" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "completionPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "xpReward" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "quests" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "progress" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "target" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "completed" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DailyPathQuery, DailyPathQueryVariables>;
 export const QuizzesDocument = {
   kind: "Document",
   definitions: [

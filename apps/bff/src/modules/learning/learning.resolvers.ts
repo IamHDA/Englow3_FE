@@ -92,6 +92,10 @@ export const learningResolvers = {
       ctx.requireToken();
       return ctx.apis.learningApi.getDictationStats(args.periodDays ?? 7);
     },
+    dailyPath: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.getDailyPath();
+    },
   },
   Mutation: {
     rateFlashcard: (
