@@ -1,13 +1,7 @@
 /**
- * Chỉ còn hàng đợi ôn câu sai là dữ liệu giả - chưa có endpoint "những câu tôi
- * hay chép sai". Danh sách bài và toàn bộ thống kê đã lấy từ backend.
+ * Chỉ còn nhãn bộ lọc và tuỳ chọn sắp xếp - những thứ thuộc về giao diện. Mọi
+ * dữ liệu của người học đều lấy từ backend.
  */
-import type {
-  DictationLevel,
-  DictationTopic,
-  MistakeReviewItem,
-} from "../types";
-
 export const DICTATION_TOPICS: Array<{ value: string; label: string }> = [
   { value: "ALL", label: "Tất cả chủ đề" },
   { value: "Daily Conversation", label: "Giao tiếp hàng ngày" },
@@ -40,56 +34,6 @@ export const DICTATION_SORTS: Array<{ value: string; label: string }> = [
   { value: "difficulty", label: "Độ khó tăng dần" },
   { value: "progress", label: "Tiến độ học tập" },
   { value: "newest", label: "Bài học mới nhất" },
-];
-
-export const CONTINUE_HERO_LESSON = {
-  title: "Daily Conversations – At the Airport",
-  topic: "Travel" as DictationTopic,
-  level: "Intermediate" as DictationLevel,
-  progressText: "8 / 15 câu đã hoàn thành",
-  progressPercent: 53,
-  lastPracticed: "Hôm qua",
-  lessonId: "ordering-food-at-a-restaurant",
-};
-
-export const MOCK_MISTAKE_REVIEW_ITEMS: MistakeReviewItem[] = [
-  {
-    id: "m-1",
-    sentenceNumber: 3,
-    previousAccuracy: 67,
-    learnerAnswer: "I want go station.",
-    correctAnswer: "I want to go to the station.",
-    audioDurationSeconds: 4,
-    explanation:
-      "Câu trước bạn gõ 'I want go station.' — thiếu 'to' và mạo từ 'the'.",
-  },
-  {
-    id: "m-2",
-    sentenceNumber: 5,
-    previousAccuracy: 71,
-    learnerAnswer: "She order a coffee and sandwich.",
-    correctAnswer: "She ordered a coffee and a sandwich.",
-    audioDurationSeconds: 5,
-    explanation: "Chú ý thì quá khứ đơn 'ordered' và mạo từ 'a sandwich'.",
-  },
-  {
-    id: "m-3",
-    sentenceNumber: 9,
-    previousAccuracy: 75,
-    learnerAnswer: "Could I have bill please?",
-    correctAnswer: "Could I have the bill, please?",
-    audioDurationSeconds: 4,
-    explanation: "Thiếu mạo từ 'the bill' trong câu đề nghị lịch sự.",
-  },
-  {
-    id: "m-4",
-    sentenceNumber: 11,
-    previousAccuracy: 60,
-    learnerAnswer: "The train arrive at 10 AM.",
-    correctAnswer: "The train will arrive at 10 AM.",
-    audioDurationSeconds: 5,
-    explanation: "Thiếu trợ động từ tương lai 'will arrive'.",
-  },
 ];
 
 export const DEFAULT_WAVEFORM_BARS = [

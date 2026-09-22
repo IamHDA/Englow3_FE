@@ -321,6 +321,22 @@ export type DictationStatsQuery = {
   };
 };
 
+export type DictationMistakesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type DictationMistakesQuery = {
+  dictationMistakes: Array<{
+    sentenceId: string;
+    text: string;
+    audioUrl: string;
+    audioDurationSeconds: number;
+    lessonId: string;
+    lessonTitle: string;
+    bestAccuracyPercent: number;
+    attemptCount: number;
+    lastResponse: string | null;
+  }>;
+};
+
 export type AdminExamFieldsFragment = {
   id: string;
   title: string;
@@ -2595,6 +2611,112 @@ export type DictationStatsSuspenseQueryHookResult = ReturnType<
 export type DictationStatsQueryResult = ApolloReactCommon.QueryResult<
   DictationStatsQuery,
   DictationStatsQueryVariables
+>;
+export const DictationMistakesDocument = gql`
+  query DictationMistakes {
+    dictationMistakes {
+      sentenceId
+      text
+      audioUrl
+      audioDurationSeconds
+      lessonId
+      lessonTitle
+      bestAccuracyPercent
+      attemptCount
+      lastResponse
+    }
+  }
+`;
+
+/**
+ * __useDictationMistakesQuery__
+ *
+ * To run a query within a React component, call `useDictationMistakesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDictationMistakesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDictationMistakesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDictationMistakesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    DictationMistakesQuery,
+    DictationMistakesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    DictationMistakesQuery,
+    DictationMistakesQueryVariables
+  >(DictationMistakesDocument, options);
+}
+export function useDictationMistakesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    DictationMistakesQuery,
+    DictationMistakesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    DictationMistakesQuery,
+    DictationMistakesQueryVariables
+  >(DictationMistakesDocument, options);
+}
+export function useDictationMistakesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    DictationMistakesQuery,
+    DictationMistakesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationMistakesQuery,
+  DictationMistakesQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useDictationMistakesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationMistakesQuery,
+        DictationMistakesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  DictationMistakesQuery | undefined,
+  DictationMistakesQueryVariables
+>;
+export function useDictationMistakesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        DictationMistakesQuery,
+        DictationMistakesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    DictationMistakesQuery,
+    DictationMistakesQueryVariables
+  >(DictationMistakesDocument, options as any);
+}
+export type DictationMistakesQueryHookResult = ReturnType<
+  typeof useDictationMistakesQuery
+>;
+export type DictationMistakesLazyQueryHookResult = ReturnType<
+  typeof useDictationMistakesLazyQuery
+>;
+export type DictationMistakesSuspenseQueryHookResult = ReturnType<
+  typeof useDictationMistakesSuspenseQuery
+>;
+export type DictationMistakesQueryResult = ApolloReactCommon.QueryResult<
+  DictationMistakesQuery,
+  DictationMistakesQueryVariables
 >;
 export const AdminExamsDocument = gql`
   query AdminExams(

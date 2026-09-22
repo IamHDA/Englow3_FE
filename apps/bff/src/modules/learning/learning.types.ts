@@ -387,3 +387,18 @@ export type SearchContentParams = {
   page?: number;
   size?: number;
 };
+
+// GET /api/dictation/mistakes
+export type MistakeSentenceResponse = {
+  sentenceId: string;
+  /** The correct sentence. Safe here: every row is a line the learner has already answered. */
+  text: string;
+  audioUrl: string;
+  audioDurationSeconds: number;
+  lessonId: string;
+  lessonTitle: string;
+  bestAccuracyPercent: number;
+  attemptCount: number;
+  /** The last thing they typed, so the screen can show what changed. */
+  lastResponse: string | null;
+};

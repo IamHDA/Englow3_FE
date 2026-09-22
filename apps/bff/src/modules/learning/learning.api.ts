@@ -4,6 +4,7 @@ import type {
   ContentReviewPageResponse,
   ContentReviewResponse,
   DailyPathResponse,
+  MistakeSentenceResponse,
   SearchContentParams,
   DictationLessonDetailResponse,
   DictationStatsResponse,
@@ -160,6 +161,11 @@ export class LearningApi {
     return this.client.get(
       `${DICTATION_BASE_PATH}/stats?periodDays=${periodDays}`,
     );
+  }
+
+  /** Lines this learner keeps getting wrong, across every lesson. */
+  getDictationMistakes(): Promise<MistakeSentenceResponse[]> {
+    return this.client.get(`${DICTATION_BASE_PATH}/mistakes`);
   }
 
   /** No parameters: the only path anyone can read is their own, taken from the token. */

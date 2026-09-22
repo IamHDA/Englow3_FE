@@ -2,6 +2,7 @@ import type {
   DictationLessonFieldsFragment,
   DictationSentenceFieldsFragment,
   SubmitDictationMutation,
+  DictationMistakesQuery,
 } from "@/lib/graphql/generated/documents";
 
 /**
@@ -55,15 +56,15 @@ export interface DiffResult {
   }>;
 }
 
-export interface MistakeReviewItem {
-  id: string;
-  sentenceNumber: number;
-  previousAccuracy: number;
-  learnerAnswer: string;
-  correctAnswer: string;
-  audioDurationSeconds: number;
-  explanation: string;
-}
+/**
+ * Một câu người học hay sai, kèm đủ thứ để luyện lại.
+ *
+ * Trước đây là interface tự viết kèm bốn mục bịa, mỗi mục có một đoạn giải
+ * thích ngữ pháp viết tay. Giờ lấy từ codegen, và trường `explanation` đã biến
+ * mất vì không có gì sinh ra nó.
+ */
+export type MistakeSentence =
+  DictationMistakesQuery["dictationMistakes"][number];
 
 export interface SessionMetrics {
   replays: number;

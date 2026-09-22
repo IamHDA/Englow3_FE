@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import { DictationReviewView } from "@/features/dictation";
 
-interface DictationReviewPageProps {
-  params: Promise<{
-    lessonId: string;
-  }>;
-}
+import { DictationReviewView } from "@/features/dictation";
 
 export const metadata: Metadata = {
   title: "Ôn tập câu sai | Englow3",
@@ -14,12 +9,11 @@ export const metadata: Metadata = {
 };
 
 /**
- * Màn này vẫn chạy dữ liệu giả: chưa có endpoint "những câu tôi hay sai". Khi
- * có, nó sẽ nhận lessonId và tự đi lấy như hai màn kia.
+ * Route vẫn nằm dưới `[lessonId]` vì màn luyện tập dẫn sang đây, nhưng danh
+ * sách là của cả người học chứ không riêng bài đó - nên id không được dùng tới.
+ * Đổi route thành `/study/dictation/review` sẽ đúng hơn, và đó là một thay đổi
+ * đường dẫn nên tách riêng.
  */
-export default async function DictationReviewPage({
-  params,
-}: DictationReviewPageProps) {
-  await params;
-  return <DictationReviewView lessonTitle="" />;
+export default function DictationReviewPage() {
+  return <DictationReviewView />;
 }

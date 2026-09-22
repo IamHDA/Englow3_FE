@@ -662,6 +662,29 @@ export type Me = {
   role: Role;
 };
 
+/**
+ * One line to practise again.
+ *
+ * Carries the correct text, unlike DictationSentence which has no transcript
+ * field at all. Not a hole in that rule: every row here is a line the learner
+ * has already committed an answer to.
+ */
+export type MistakeSentence = {
+  __typename?: "MistakeSentence";
+  attemptCount: Scalars["Int"]["output"];
+  audioDurationSeconds: Scalars["Int"]["output"];
+  /** Pre-signed and short-lived. */
+  audioUrl: Scalars["String"]["output"];
+  /** Their best attempt so far - the reason this line is still in the queue. */
+  bestAccuracyPercent: Scalars["Int"]["output"];
+  /** The last thing they typed, so the screen can show what changed. */
+  lastResponse?: Maybe<Scalars["String"]["output"]>;
+  lessonId: Scalars["ID"]["output"];
+  lessonTitle: Scalars["String"]["output"];
+  sentenceId: Scalars["ID"]["output"];
+  text: Scalars["String"]["output"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["Boolean"]["output"]>;
@@ -952,6 +975,13 @@ export type Query = {
   dailyPath: DailyPath;
   dictationLesson: DictationLessonDetail;
   dictationLessons: DictationLessonPage;
+  /**
+   * Lines this learner keeps getting wrong, worst first, across every lesson.
+   * Not per lesson: "what do I keep getting wrong" is a question about the
+   * learner, and the worst ten in one lesson are usually not the ten worth
+   * practising.
+   */
+  dictationMistakes: Array<MistakeSentence>;
   dictationStats: DictationStats;
   /** Learner exam detail by id */
   exam?: Maybe<LearnerExamItem>;

@@ -14,10 +14,21 @@ import {
 } from "@mantine/core";
 import { ArrowRight, Clock, Flame } from "lucide-react";
 import Link from "next/link";
-import { CONTINUE_HERO_LESSON } from "../../../constants/dictationData";
+import type { DictationLesson } from "../../../types";
 
-export function DictationHeroCard() {
-  const lesson = CONTINUE_HERO_LESSON;
+interface DictationHeroCardProps {
+  /** Bài gần nhất người học có luyện. Mọi con số dưới đây đều của chính bài đó. */
+  lesson: DictationLesson;
+}
+
+export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
+  const done = lesson.completedSentenceCount;
+  const total = lesson.sentenceCount;
+  const progressPercent = total === 0 ? 0 : Math.round((done / total) * 100);
+  const lastPractised =
+    lesson.lastPractisedAt === null
+      ? "—"
+      : new Date(lesson.lastPractisedAt).toLocaleDateString("vi-VN");
 
   return (
     <Paper
@@ -58,7 +69,7 @@ export function DictationHeroCard() {
                 borderColor: "rgba(255,255,255,0.25)",
               }}
             >
-              {lesson.level}
+              {lesson.targetLevel ?? "Mọi trình độ"}
             </Badge>
           </Group>
 
@@ -72,17 +83,17 @@ export function DictationHeroCard() {
                 <Clock size={12} />
               </ThemeIcon>
               <Text size="xs" style={{ color: "#C5CBD7" }}>
-                Luyện tập gần nhất: {lesson.lastPracticed}
+                Luyện tập gần nhất: {lastPractised}
               </Text>
             </Group>
             <Text size="xs" style={{ color: "#C5CBD7" }}>
-              • {lesson.progressText}
+              • {done} / {total} câu đã đạt
             </Text>
           </Group>
 
           <Stack gap={4} mt={4}>
             <Progress
-              value={lesson.progressPercent}
+              value={progressPercent}
               color="orange"
               size="sm"
               radius="xl"
@@ -93,7 +104,7 @@ export function DictationHeroCard() {
 
         <Button
           component={Link}
-          href={`/study/dictation/${lesson.lessonId}`}
+          href={`/study/dictation/${lesson.id}`}
           color="orange"
           size="md"
           radius="md"

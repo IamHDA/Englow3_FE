@@ -65,6 +65,22 @@ export function DictationLibraryView({
 
   const lessons = useMemo(() => data?.dictationLessons.items ?? [], [data]);
 
+  // Thẻ "tiếp tục học" là bài được luyện gần nhất, lấy từ chính danh sách này.
+  // Người học chưa luyện bài nào thì không có gì để tiếp tục, nên thẻ biến mất
+  // thay vì hiện một bài bịa.
+  const continueLesson = useMemo(() => {
+    const practised = lessons.filter(
+      (lesson) => lesson.lastPractisedAt !== null,
+    );
+    if (practised.length === 0) return null;
+
+    return practised.reduce((latest, lesson) =>
+      Date.parse(lesson.lastPractisedAt!) > Date.parse(latest.lastPractisedAt!)
+        ? lesson
+        : latest,
+    );
+  }, [lessons]);
+
   // Lọc và sắp xếp tại chỗ: một trang năm mươi bài thì gửi thêm tham số lên
   // server chỉ đổi một lượt round trip lấy một vòng lặp.
   const filteredLessons = useMemo(() => {
@@ -106,7 +122,9 @@ export function DictationLibraryView({
 
         {activeTab === "lessons" ? (
           <Stack gap="lg">
-            <DictationHeroCard />
+            {continueLesson !== null && (
+              <DictationHeroCard lesson={continueLesson} />
+            )}
 
             <DictationFilters
               selectedTopic={selectedTopic}

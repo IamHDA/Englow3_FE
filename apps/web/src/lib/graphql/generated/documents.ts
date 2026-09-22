@@ -318,6 +318,22 @@ export type DictationStatsQuery = {
   };
 };
 
+export type DictationMistakesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type DictationMistakesQuery = {
+  dictationMistakes: Array<{
+    sentenceId: string;
+    text: string;
+    audioUrl: string;
+    audioDurationSeconds: number;
+    lessonId: string;
+    lessonTitle: string;
+    bestAccuracyPercent: number;
+    attemptCount: number;
+    lastResponse: string | null;
+  }>;
+};
+
 export type AdminExamFieldsFragment = {
   id: string;
   title: string;
@@ -3265,6 +3281,54 @@ export const DictationStatsDocument = {
     },
   ],
 } as unknown as DocumentNode<DictationStatsQuery, DictationStatsQueryVariables>;
+export const DictationMistakesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "DictationMistakes" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "dictationMistakes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "sentenceId" } },
+                { kind: "Field", name: { kind: "Name", value: "text" } },
+                { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "audioDurationSeconds" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "lessonId" } },
+                { kind: "Field", name: { kind: "Name", value: "lessonTitle" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "bestAccuracyPercent" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "attemptCount" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "lastResponse" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DictationMistakesQuery,
+  DictationMistakesQueryVariables
+>;
 export const AdminExamsDocument = {
   kind: "Document",
   definitions: [

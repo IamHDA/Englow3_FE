@@ -1,20 +1,42 @@
 "use client";
 
-import { Button, Container, Group, Paper, Stack, Title } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Container,
+  Group,
+  Paper,
+  Skeleton,
+  Stack,
+  Title,
+} from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { MOCK_MISTAKE_REVIEW_ITEMS } from "../../../constants/dictationData";
+
+// Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
+// hooks để Server Component không kéo theo "@apollo/client/react".
+import { useDictationMistakesQuery } from "@/lib/graphql/generated/hooks";
+
 import { DictationMistakeQueue } from "../../blocks/DictationMistakeQueue";
 
-interface DictationReviewViewProps {
-  lessonTitle: string;
-}
+/**
+ * Những câu người học hay sai, trên toàn bộ bài học chứ không riêng một bài.
+ *
+ * Trước đây tiêu đề là "Ôn tập câu sai — {lessonTitle}" với `lessonTitle` được
+ * route truyền vào bằng chuỗi rỗng, còn danh sách thì là bốn câu viết sẵn.
+ * "Câu nào tôi hay sai" là câu hỏi về người học, không phải về một bài, nên
+ * giờ nó hỏi đúng như vậy.
+ */
+export function DictationReviewView() {
+  const { data, loading, error } = useDictationMistakesQuery({
+    fetchPolicy: "cache-and-network",
+  });
 
-export function DictationReviewView({ lessonTitle }: DictationReviewViewProps) {
+  const mistakes = data?.dictationMistakes ?? [];
+
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        {/* Top Navigation */}
         <Paper radius="md" p="md" withBorder bg="white">
           <Group justify="space-between" align="center">
             <Button
@@ -30,15 +52,20 @@ export function DictationReviewView({ lessonTitle }: DictationReviewViewProps) {
             </Button>
 
             <Title order={2} size="h5" fw={700} c="ink.9">
-              Ôn tập câu sai — {lessonTitle}
+              Những câu bạn hay sai
             </Title>
           </Group>
         </Paper>
 
-        <DictationMistakeQueue
-          mistakes={MOCK_MISTAKE_REVIEW_ITEMS}
-          lessonTitle={lessonTitle}
-        />
+        {error && mistakes.length === 0 ? (
+          <Alert color="warn" title="Không tải được danh sách câu sai">
+            Kiểm tra kết nối tới backend rồi tải lại trang.
+          </Alert>
+        ) : loading && mistakes.length === 0 ? (
+          <Skeleton height={420} radius="md" />
+        ) : (
+          <DictationMistakeQueue mistakes={mistakes} />
+        )}
       </Stack>
     </Container>
   );

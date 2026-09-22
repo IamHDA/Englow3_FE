@@ -23,22 +23,20 @@ import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { computeWordDiff } from "../../../utils/diff";
-import type { MistakeReviewItem } from "../../../types";
+import type { MistakeSentence } from "../../../types";
 import { DictationAudioPlayer } from "../DictationAudioPlayer";
 import { DictationInputArea } from "../DictationInputArea";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 
 interface DictationMistakeQueueProps {
-  mistakes: MistakeReviewItem[];
-  lessonTitle: string;
+  mistakes: MistakeSentence[];
 }
 
 export function DictationMistakeQueue({
   mistakes,
-  lessonTitle,
 }: DictationMistakeQueueProps) {
   const { isVi } = useLanguage();
-  const [queue, setQueue] = useState<MistakeReviewItem[]>(mistakes);
+  const [queue, setQueue] = useState<MistakeSentence[]>(mistakes);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [inputVal, setInputVal] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -46,18 +44,17 @@ export function DictationMistakeQueue({
 
   const currentItem = queue[currentIndex];
 
-  // Hàng đợi lỗi vẫn chạy dữ liệu giả: chưa có endpoint "những câu tôi hay sai",
-  // nên chưa có URL bản ghi để phát. Thanh tiến trình vẫn chạy, chỉ là không có
-  // tiếng - đọc transcript bằng speech synthesis như trước thì lại phải đưa đáp
-  // án xuống client.
+  // Phát đúng bản ghi của câu đó. Trước đây chỗ này truyền null vì chưa có
+  // endpoint trả URL - giờ có rồi, nên không còn phải đọc transcript bằng giọng
+  // tổng hợp (cách đó sẽ phải đưa đáp án xuống client trước khi người học gõ).
   const audio = useDictationAudio({
-    audioUrl: null,
+    audioUrl: currentItem ? currentItem.audioUrl : null,
     durationSeconds: currentItem ? currentItem.audioDurationSeconds : 5,
   });
 
   const handleCheck = () => {
     if (!currentItem) return;
-    const diff = computeWordDiff(currentItem.correctAnswer, inputVal);
+    const diff = computeWordDiff(currentItem.text, inputVal);
     const correct = diff.accuracyPercent === 100;
     setIsCorrect(correct);
     setIsChecked(true);
@@ -110,8 +107,8 @@ export function DictationMistakeQueue({
           </Title>
           <Text size="sm" c="ink.6" style={{ maxWidth: 460 }}>
             {isVi
-              ? `Tất cả các câu trong danh sách lỗi của bài “${lessonTitle}” đã được bạn nghe và gõ lại chuẩn xác 100%.`
-              : `All sentences from the mistakes queue of "${lessonTitle}" have been typed with 100% accuracy.`}
+              ? "Không còn câu nào bạn hay sai. Cứ luyện tiếp, danh sách này sẽ tự cập nhật."
+              : "No sentences are giving you trouble. Keep practising and this list will fill itself."}
           </Text>
           <Group gap="sm" mt="md">
             <Button
@@ -161,7 +158,7 @@ export function DictationMistakeQueue({
               const isActive = idx === currentIndex;
               return (
                 <Button
-                  key={item.id}
+                  key={item.sentenceId}
                   size="compact-xs"
                   variant={isActive ? "filled" : "light"}
                   color={isActive ? "orange" : "gray"}
@@ -173,9 +170,7 @@ export function DictationMistakeQueue({
                   }}
                   fw={600}
                 >
-                  {isVi
-                    ? `Câu ${item.sentenceNumber}`
-                    : `Sentence ${item.sentenceNumber}`}
+                  {item.lessonTitle}
                 </Button>
               );
             })}
@@ -188,8 +183,8 @@ export function DictationMistakeQueue({
         icon={<AlertCircle size={18} />}
         title={
           isVi
-            ? `Sai lần trước · Độ chính xác ${currentItem.previousAccuracy}%`
-            : `Previous mistake · Accuracy ${currentItem.previousAccuracy}%`
+            ? `Tốt nhất ${currentItem.bestAccuracyPercent}% sau ${currentItem.attemptCount} lần thử`
+            : `Best ${currentItem.bestAccuracyPercent}% over ${currentItem.attemptCount} attempts`
         }
         color="orange"
         radius="md"
@@ -199,14 +194,19 @@ export function DictationMistakeQueue({
             ? "Nghe lại và gõ đúng để gỡ câu này khỏi danh sách câu sai."
             : "Listen and type accurately to clear this sentence from mistakes."}
         </Text>
-        <Text size="xs" fw={500} c="ink.8">
-          {currentItem.explanation}
-        </Text>
+        {currentItem.lastResponse !== null && (
+          <Text size="xs" fw={500} c="ink.8">
+            {isVi ? "Lần trước bạn gõ: " : "Last time you typed: "}
+            <Text span fs="italic">
+              &ldquo;{currentItem.lastResponse}&rdquo;
+            </Text>
+          </Text>
+        )}
         {isChecked && (
           <Text size="xs" fw={600} c="teal.9" mt="xs">
             {isVi
-              ? `Đáp án chuẩn: “${currentItem.correctAnswer}”`
-              : `Correct answer: "${currentItem.correctAnswer}"`}
+              ? `Đáp án chuẩn: “${currentItem.text}”`
+              : `Correct answer: "${currentItem.text}"`}
           </Text>
         )}
       </Alert>

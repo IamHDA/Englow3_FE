@@ -93,3 +93,17 @@ query DictationStats($periodDays: Int) {
     }
   }
 }
+
+query DictationMistakes {
+  dictationMistakes {
+    sentenceId
+    text
+    audioUrl
+    audioDurationSeconds
+    lessonId
+    lessonTitle
+    bestAccuracyPercent
+    attemptCount
+    lastResponse
+  }
+}

@@ -410,6 +410,28 @@ export const learningTypeDefs = `#graphql
   }
 
   """
+  One line to practise again.
+
+  Carries the correct text, unlike DictationSentence which has no transcript
+  field at all. Not a hole in that rule: every row here is a line the learner
+  has already committed an answer to.
+  """
+  type MistakeSentence {
+    sentenceId: ID!
+    text: String!
+    """Pre-signed and short-lived."""
+    audioUrl: String!
+    audioDurationSeconds: Int!
+    lessonId: ID!
+    lessonTitle: String!
+    """Their best attempt so far - the reason this line is still in the queue."""
+    bestAccuracyPercent: Int!
+    attemptCount: Int!
+    """The last thing they typed, so the screen can show what changed."""
+    lastResponse: String
+  }
+
+  """
   The three kinds of practice content. They share one review workflow, so this
   schema presents one surface over three backend resources rather than three
   copies of the same six operations.
@@ -508,6 +530,14 @@ export const learningTypeDefs = `#graphql
     flashcardStats(periodDays: Int = 7): FlashcardStats!
 
     dictationStats(periodDays: Int = 7): DictationStats!
+
+    """
+    Lines this learner keeps getting wrong, worst first, across every lesson.
+    Not per lesson: "what do I keep getting wrong" is a question about the
+    learner, and the worst ten in one lesson are usually not the ten worth
+    practising.
+    """
+    dictationMistakes: [MistakeSentence!]!
 
     """
     The learner's own plan for today: streak, points, roadmap and goals. Takes
