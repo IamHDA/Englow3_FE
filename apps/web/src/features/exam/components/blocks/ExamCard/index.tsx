@@ -12,28 +12,11 @@ import Link from "next/link";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { CEFR_COLOR_MAP } from "../../../constants/examLibrary";
+import type { ExamListItem } from "../../../types";
 import classes from "./ExamCard.module.css";
 
-export type ExamCardData = {
-  id: string;
-  title: string;
-  description: string;
-  examType: string;
-  certificateType?: string | null;
-  certificateVariant?: string | null;
-  targetLevel?: string | null;
-  durationSeconds: number;
-  maxRawScore: number;
-  passScore?: number | null;
-  questionCount: number;
-  status: string;
-  /** Phần trăm điểm cao nhất của chính người học, null khi chưa làm xong lần nào. */
-  bestScorePercentage?: number | null;
-  attemptStatus?: string | null;
-};
-
 type ExamCardProps = {
-  exam: ExamCardData;
+  exam: ExamListItem;
 };
 
 export function ExamCard({ exam }: ExamCardProps) {

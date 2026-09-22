@@ -187,6 +187,8 @@ export type ExamAttempt = {
   __typename?: "ExamAttempt";
   correctAnswerCount?: Maybe<Scalars["Int"]["output"]>;
   examId: Scalars["ID"]["output"];
+  /** Null except on a history row - a sitting knows its own paper's name. */
+  examTitle?: Maybe<Scalars["String"]["output"]>;
   /**
    * The deadline the backend issued. This is the only authority on remaining
    * time - a countdown from durationSeconds drifts across a sleeping laptop.
@@ -206,6 +208,15 @@ export type ExamAttempt = {
   startedAt: Scalars["DateTime"]["output"];
   status: ExamAttemptStatus;
   submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
+};
+
+export type ExamAttemptPage = {
+  __typename?: "ExamAttemptPage";
+  items: Array<ExamAttempt>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
 };
 
 export enum ExamAttemptStatus {
@@ -443,10 +454,17 @@ export enum Gender {
   OTHER = "OTHER",
 }
 
+export enum LearnerAttemptStatus {
+  COMPLETED = "COMPLETED",
+  IN_PROGRESS = "IN_PROGRESS",
+  NOT_STARTED = "NOT_STARTED",
+}
+
 export type LearnerExamItem = {
   __typename?: "LearnerExamItem";
-  attemptStatus?: Maybe<Scalars["String"]["output"]>;
-  bestScore?: Maybe<Scalars["Float"]["output"]>;
+  attemptStatus: LearnerAttemptStatus;
+  /** Per learner. Null until they have finished a sitting. */
+  bestScorePercentage?: Maybe<Scalars["Float"]["output"]>;
   certificateType?: Maybe<CertificateType>;
   certificateVariant?: Maybe<CertificateVariant>;
   description: Scalars["String"]["output"];
@@ -696,6 +714,11 @@ export type Query = {
    * once the attempt has left IN_PROGRESS.
    */
   examAttempt: ExamAttempt;
+  /**
+   * The learner's own sittings, newest first. Rows carry no review - that
+   * structure holds the answer key.
+   */
+  examAttempts: ExamAttemptPage;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
   flashcardSet: FlashcardSetDetail;
@@ -760,6 +783,11 @@ export type QueryExamArgs = {
 
 export type QueryExamAttemptArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type QueryExamAttemptsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QueryExamsArgs = {

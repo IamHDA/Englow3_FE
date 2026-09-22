@@ -272,6 +272,7 @@ export type ExamAttemptFieldsFragment = {
   correctAnswerCount: number | null;
   questionCount: number;
   resumed: boolean;
+  examTitle: string | null;
 };
 
 export type AttemptReviewFieldsFragment = {
@@ -307,6 +308,7 @@ export type StartExamAttemptMutation = {
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
+    examTitle: string | null;
   };
 };
 
@@ -387,6 +389,7 @@ export type SubmitExamAttemptMutation = {
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
+    examTitle: string | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -422,6 +425,7 @@ export type ExamAttemptResultQuery = {
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
+    examTitle: string | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -434,6 +438,36 @@ export type ExamAttemptResultQuery = {
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+  };
+};
+
+export type ExamAttemptHistoryQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type ExamAttemptHistoryQuery = {
+  examAttempts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      examId: string;
+      status: Types.ExamAttemptStatus;
+      startedAt: string;
+      expiresAt: string;
+      submittedAt: string | null;
+      scoredAt: string | null;
+      rawScore: number | null;
+      maxRawScore: number | null;
+      scorePercentage: number | null;
+      correctAnswerCount: number | null;
+      questionCount: number;
+      resumed: boolean;
+      examTitle: string | null;
     }>;
   };
 };
@@ -468,8 +502,8 @@ export type ExamLibraryQuery = {
       questionCount: number;
       status: Types.ExamStatus;
       publishedAt: string | null;
-      bestScore: number | null;
-      attemptStatus: string | null;
+      bestScorePercentage: number | null;
+      attemptStatus: Types.LearnerAttemptStatus;
     }>;
   };
 };
@@ -493,8 +527,8 @@ export type ExamDetailQuery = {
     questionCount: number;
     status: Types.ExamStatus;
     publishedAt: string | null;
-    bestScore: number | null;
-    attemptStatus: string | null;
+    bestScorePercentage: number | null;
+    attemptStatus: Types.LearnerAttemptStatus;
   } | null;
 };
 
@@ -1060,6 +1094,7 @@ export const ExamAttemptFieldsFragmentDoc = gql`
     correctAnswerCount
     questionCount
     resumed
+    examTitle
   }
 `;
 export const AttemptReviewFieldsFragmentDoc = gql`
@@ -2254,6 +2289,113 @@ export type ExamAttemptResultQueryResult = ApolloReactCommon.QueryResult<
   ExamAttemptResultQuery,
   ExamAttemptResultQueryVariables
 >;
+export const ExamAttemptHistoryDocument = gql`
+  query ExamAttemptHistory($page: Int, $size: Int) {
+    examAttempts(page: $page, size: $size) {
+      items {
+        ...ExamAttemptFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${ExamAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useExamAttemptHistoryQuery__
+ *
+ * To run a query within a React component, call `useExamAttemptHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExamAttemptHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExamAttemptHistoryQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useExamAttemptHistoryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    ExamAttemptHistoryQuery,
+    ExamAttemptHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ExamAttemptHistoryQuery,
+    ExamAttemptHistoryQueryVariables
+  >(ExamAttemptHistoryDocument, options);
+}
+export function useExamAttemptHistoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamAttemptHistoryQuery,
+    ExamAttemptHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ExamAttemptHistoryQuery,
+    ExamAttemptHistoryQueryVariables
+  >(ExamAttemptHistoryDocument, options);
+}
+export function useExamAttemptHistorySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamAttemptHistoryQuery,
+    ExamAttemptHistoryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamAttemptHistoryQuery,
+  ExamAttemptHistoryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamAttemptHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamAttemptHistoryQuery,
+        ExamAttemptHistoryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamAttemptHistoryQuery | undefined,
+  ExamAttemptHistoryQueryVariables
+>;
+export function useExamAttemptHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamAttemptHistoryQuery,
+        ExamAttemptHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamAttemptHistoryQuery,
+    ExamAttemptHistoryQueryVariables
+  >(ExamAttemptHistoryDocument, options as any);
+}
+export type ExamAttemptHistoryQueryHookResult = ReturnType<
+  typeof useExamAttemptHistoryQuery
+>;
+export type ExamAttemptHistoryLazyQueryHookResult = ReturnType<
+  typeof useExamAttemptHistoryLazyQuery
+>;
+export type ExamAttemptHistorySuspenseQueryHookResult = ReturnType<
+  typeof useExamAttemptHistorySuspenseQuery
+>;
+export type ExamAttemptHistoryQueryResult = ApolloReactCommon.QueryResult<
+  ExamAttemptHistoryQuery,
+  ExamAttemptHistoryQueryVariables
+>;
 export const ExamLibraryDocument = gql`
   query ExamLibrary(
     $examType: ExamType
@@ -2287,7 +2429,7 @@ export const ExamLibraryDocument = gql`
         questionCount
         status
         publishedAt
-        bestScore
+        bestScorePercentage
         attemptStatus
       }
       page
@@ -2409,7 +2551,7 @@ export const ExamDetailDocument = gql`
       questionCount
       status
       publishedAt
-      bestScore
+      bestScorePercentage
       attemptStatus
     }
   }

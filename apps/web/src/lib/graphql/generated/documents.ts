@@ -269,6 +269,7 @@ export type ExamAttemptFieldsFragment = {
   correctAnswerCount: number | null;
   questionCount: number;
   resumed: boolean;
+  examTitle: string | null;
 };
 
 export type AttemptReviewFieldsFragment = {
@@ -304,6 +305,7 @@ export type StartExamAttemptMutation = {
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
+    examTitle: string | null;
   };
 };
 
@@ -384,6 +386,7 @@ export type SubmitExamAttemptMutation = {
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
+    examTitle: string | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -419,6 +422,7 @@ export type ExamAttemptResultQuery = {
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
+    examTitle: string | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -431,6 +435,36 @@ export type ExamAttemptResultQuery = {
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+  };
+};
+
+export type ExamAttemptHistoryQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type ExamAttemptHistoryQuery = {
+  examAttempts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      examId: string;
+      status: Types.ExamAttemptStatus;
+      startedAt: string;
+      expiresAt: string;
+      submittedAt: string | null;
+      scoredAt: string | null;
+      rawScore: number | null;
+      maxRawScore: number | null;
+      scorePercentage: number | null;
+      correctAnswerCount: number | null;
+      questionCount: number;
+      resumed: boolean;
+      examTitle: string | null;
     }>;
   };
 };
@@ -465,8 +499,8 @@ export type ExamLibraryQuery = {
       questionCount: number;
       status: Types.ExamStatus;
       publishedAt: string | null;
-      bestScore: number | null;
-      attemptStatus: string | null;
+      bestScorePercentage: number | null;
+      attemptStatus: Types.LearnerAttemptStatus;
     }>;
   };
 };
@@ -490,8 +524,8 @@ export type ExamDetailQuery = {
     questionCount: number;
     status: Types.ExamStatus;
     publishedAt: string | null;
-    bestScore: number | null;
-    attemptStatus: string | null;
+    bestScorePercentage: number | null;
+    attemptStatus: Types.LearnerAttemptStatus;
   } | null;
 };
 
@@ -1145,6 +1179,7 @@ export const ExamAttemptFieldsFragmentDoc = {
           },
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
         ],
       },
     },
@@ -2353,6 +2388,7 @@ export const StartExamAttemptDocument = {
           },
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
         ],
       },
     },
@@ -2749,6 +2785,7 @@ export const SubmitExamAttemptDocument = {
           },
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
         ],
       },
     },
@@ -2873,6 +2910,7 @@ export const ExamAttemptResultDocument = {
           },
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
         ],
       },
     },
@@ -2911,6 +2949,110 @@ export const ExamAttemptResultDocument = {
 } as unknown as DocumentNode<
   ExamAttemptResultQuery,
   ExamAttemptResultQueryVariables
+>;
+export const ExamAttemptHistoryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ExamAttemptHistory" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "examAttempts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "ExamAttemptFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ExamAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ExamAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "expiresAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "scoredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ExamAttemptHistoryQuery,
+  ExamAttemptHistoryQueryVariables
 >;
 export const ExamLibraryDocument = {
   kind: "Document",
@@ -3104,7 +3246,7 @@ export const ExamLibraryDocument = {
                       },
                       {
                         kind: "Field",
-                        name: { kind: "Name", value: "bestScore" },
+                        name: { kind: "Name", value: "bestScorePercentage" },
                       },
                       {
                         kind: "Field",
@@ -3186,7 +3328,10 @@ export const ExamDetailDocument = {
                 },
                 { kind: "Field", name: { kind: "Name", value: "status" } },
                 { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
-                { kind: "Field", name: { kind: "Name", value: "bestScore" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "bestScorePercentage" },
+                },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "attemptStatus" },

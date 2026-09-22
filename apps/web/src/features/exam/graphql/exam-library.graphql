@@ -30,7 +30,7 @@ query ExamLibrary(
       questionCount
       status
       publishedAt
-      bestScore
+      bestScorePercentage
       attemptStatus
     }
     page

@@ -3,6 +3,7 @@ import type {
   AttemptPaperQuery,
   ExamAttemptResultQuery,
   ExamDetailQuery,
+  ExamLibraryQuery,
 } from "@/lib/graphql/generated/documents";
 import type { SortKey } from "./constants/examLibrary";
 
@@ -22,6 +23,14 @@ export type ExamPaperQuestion = ExamPaperQuestionSet["questions"][number];
 
 /** Bản tóm tắt đề, đọc được trước khi mở lượt thi. */
 export type ExamSummary = NonNullable<ExamDetailQuery["exam"]>;
+
+/**
+ * Một dòng trong thư viện đề, kèm hai con số của riêng người học. Lấy từ
+ * codegen chứ không tự khai lại: `ExamCard` từng tự viết shape này, nên khi
+ * schema đổi tên `bestScore` thành `bestScorePercentage` thì không có gì báo
+ * lỗi - thẻ chỉ lặng lẽ đọc `undefined` và không hiện điểm nào.
+ */
+export type ExamListItem = ExamLibraryQuery["exams"]["items"][number];
 
 /** Lượt thi đã chấm, kèm đáp án đúng - chỉ có sau khi nộp bài. */
 export type ExamAttemptResult = ExamAttemptResultQuery["examAttempt"];
