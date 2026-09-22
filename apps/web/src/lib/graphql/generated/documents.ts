@@ -1043,6 +1043,209 @@ export type CompleteOnboardingMutation = {
   };
 };
 
+export type SpeakingPromptFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  targetLevel: string | null;
+  referenceText: string;
+  ipaTranscript: string | null;
+  translationVi: string | null;
+  phonemeTarget: string | null;
+  tips: Array<string>;
+  bestScorePercent: number | null;
+};
+
+export type SpeakingAttemptFieldsFragment = {
+  id: string;
+  speakingPromptId: string;
+  promptTitle: string;
+  referenceText: string;
+  status: Types.SpeakingAttemptStatus;
+  audioUrl: string;
+  recognizedText: string | null;
+  accuracyPercent: number | null;
+  fluencyPercent: number | null;
+  completenessPercent: number | null;
+  prosodyPercent: number | null;
+  pronunciationPercent: number | null;
+  errorCode: string | null;
+  createdAt: string;
+  assessedAt: string | null;
+  words: Array<{
+    orderNo: number;
+    word: string;
+    accuracyPercent: number | null;
+    errorType: string | null;
+    offsetMs: number | null;
+    durationMs: number | null;
+    phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+  }>;
+};
+
+export type SpeakingPromptsQueryVariables = Exact<{
+  category?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type SpeakingPromptsQuery = {
+  speakingPrompts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      category: string;
+      targetLevel: string | null;
+      referenceText: string;
+      ipaTranscript: string | null;
+      translationVi: string | null;
+      phonemeTarget: string | null;
+      tips: Array<string>;
+      bestScorePercent: number | null;
+    }>;
+  };
+};
+
+export type SpeakingPromptQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SpeakingPromptQuery = {
+  speakingPrompt: {
+    id: string;
+    slug: string;
+    title: string;
+    category: string;
+    targetLevel: string | null;
+    referenceText: string;
+    ipaTranscript: string | null;
+    translationVi: string | null;
+    phonemeTarget: string | null;
+    tips: Array<string>;
+    bestScorePercent: number | null;
+  };
+};
+
+export type SpeakingAttemptQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SpeakingAttemptQuery = {
+  speakingAttempt: {
+    id: string;
+    speakingPromptId: string;
+    promptTitle: string;
+    referenceText: string;
+    status: Types.SpeakingAttemptStatus;
+    audioUrl: string;
+    recognizedText: string | null;
+    accuracyPercent: number | null;
+    fluencyPercent: number | null;
+    completenessPercent: number | null;
+    prosodyPercent: number | null;
+    pronunciationPercent: number | null;
+    errorCode: string | null;
+    createdAt: string;
+    assessedAt: string | null;
+    words: Array<{
+      orderNo: number;
+      word: string;
+      accuracyPercent: number | null;
+      errorType: string | null;
+      offsetMs: number | null;
+      durationMs: number | null;
+      phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+    }>;
+  };
+};
+
+export type SpeakingAttemptsQueryVariables = Exact<{
+  promptId: string | number;
+}>;
+
+export type SpeakingAttemptsQuery = {
+  speakingAttempts: Array<{
+    id: string;
+    speakingPromptId: string;
+    promptTitle: string;
+    referenceText: string;
+    status: Types.SpeakingAttemptStatus;
+    audioUrl: string;
+    recognizedText: string | null;
+    accuracyPercent: number | null;
+    fluencyPercent: number | null;
+    completenessPercent: number | null;
+    prosodyPercent: number | null;
+    pronunciationPercent: number | null;
+    errorCode: string | null;
+    createdAt: string;
+    assessedAt: string | null;
+    words: Array<{
+      orderNo: number;
+      word: string;
+      accuracyPercent: number | null;
+      errorType: string | null;
+      offsetMs: number | null;
+      durationMs: number | null;
+      phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+    }>;
+  }>;
+};
+
+export type StartSpeakingAttemptMutationVariables = Exact<{
+  promptId: string | number;
+  contentType: string;
+}>;
+
+export type StartSpeakingAttemptMutation = {
+  startSpeakingAttempt: {
+    attemptId: string;
+    uploadUrl: string;
+    contentType: string;
+    expiresInSeconds: number;
+  };
+};
+
+export type SubmitSpeakingAttemptMutationVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type SubmitSpeakingAttemptMutation = {
+  submitSpeakingAttempt: {
+    id: string;
+    speakingPromptId: string;
+    promptTitle: string;
+    referenceText: string;
+    status: Types.SpeakingAttemptStatus;
+    audioUrl: string;
+    recognizedText: string | null;
+    accuracyPercent: number | null;
+    fluencyPercent: number | null;
+    completenessPercent: number | null;
+    prosodyPercent: number | null;
+    pronunciationPercent: number | null;
+    errorCode: string | null;
+    createdAt: string;
+    assessedAt: string | null;
+    words: Array<{
+      orderNo: number;
+      word: string;
+      accuracyPercent: number | null;
+      errorType: string | null;
+      offsetMs: number | null;
+      durationMs: number | null;
+      phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+    }>;
+  };
+};
+
 export type DailyPathQueryVariables = Exact<{ [key: string]: never }>;
 
 export type DailyPathQuery = {
@@ -1602,6 +1805,109 @@ export const OnboardingStateFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<OnboardingStateFieldsFragment, unknown>;
+export const SpeakingPromptFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingPromptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingPrompt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "category" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaTranscript" } },
+          { kind: "Field", name: { kind: "Name", value: "translationVi" } },
+          { kind: "Field", name: { kind: "Name", value: "phonemeTarget" } },
+          { kind: "Field", name: { kind: "Name", value: "tips" } },
+          { kind: "Field", name: { kind: "Name", value: "bestScorePercent" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<SpeakingPromptFieldsFragment, unknown>;
+export const SpeakingAttemptFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPromptId" } },
+          { kind: "Field", name: { kind: "Name", value: "promptTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "accuracyPercent" } },
+          { kind: "Field", name: { kind: "Name", value: "fluencyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completenessPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "prosodyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "pronunciationPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "words" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "word" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "accuracyPercent" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "errorType" } },
+                { kind: "Field", name: { kind: "Name", value: "offsetMs" } },
+                { kind: "Field", name: { kind: "Name", value: "durationMs" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "phonemes" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "phoneme" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracy" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<SpeakingAttemptFieldsFragment, unknown>;
 export const QuizFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -5680,6 +5986,653 @@ export const CompleteOnboardingDocument = {
 } as unknown as DocumentNode<
   CompleteOnboardingMutation,
   CompleteOnboardingMutationVariables
+>;
+export const SpeakingPromptsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "SpeakingPrompts" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "category" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "title" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "speakingPrompts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "category" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "category" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "title" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "SpeakingPromptFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingPromptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingPrompt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "category" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaTranscript" } },
+          { kind: "Field", name: { kind: "Name", value: "translationVi" } },
+          { kind: "Field", name: { kind: "Name", value: "phonemeTarget" } },
+          { kind: "Field", name: { kind: "Name", value: "tips" } },
+          { kind: "Field", name: { kind: "Name", value: "bestScorePercent" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SpeakingPromptsQuery,
+  SpeakingPromptsQueryVariables
+>;
+export const SpeakingPromptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "SpeakingPrompt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "speakingPrompt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "SpeakingPromptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingPromptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingPrompt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "category" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "ipaTranscript" } },
+          { kind: "Field", name: { kind: "Name", value: "translationVi" } },
+          { kind: "Field", name: { kind: "Name", value: "phonemeTarget" } },
+          { kind: "Field", name: { kind: "Name", value: "tips" } },
+          { kind: "Field", name: { kind: "Name", value: "bestScorePercent" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<SpeakingPromptQuery, SpeakingPromptQueryVariables>;
+export const SpeakingAttemptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "SpeakingAttempt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "speakingAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "SpeakingAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPromptId" } },
+          { kind: "Field", name: { kind: "Name", value: "promptTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "accuracyPercent" } },
+          { kind: "Field", name: { kind: "Name", value: "fluencyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completenessPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "prosodyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "pronunciationPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "words" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "word" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "accuracyPercent" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "errorType" } },
+                { kind: "Field", name: { kind: "Name", value: "offsetMs" } },
+                { kind: "Field", name: { kind: "Name", value: "durationMs" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "phonemes" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "phoneme" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracy" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SpeakingAttemptQuery,
+  SpeakingAttemptQueryVariables
+>;
+export const SpeakingAttemptsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "SpeakingAttempts" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "promptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "speakingAttempts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "promptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "promptId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "SpeakingAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPromptId" } },
+          { kind: "Field", name: { kind: "Name", value: "promptTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "accuracyPercent" } },
+          { kind: "Field", name: { kind: "Name", value: "fluencyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completenessPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "prosodyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "pronunciationPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "words" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "word" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "accuracyPercent" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "errorType" } },
+                { kind: "Field", name: { kind: "Name", value: "offsetMs" } },
+                { kind: "Field", name: { kind: "Name", value: "durationMs" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "phonemes" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "phoneme" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracy" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SpeakingAttemptsQuery,
+  SpeakingAttemptsQueryVariables
+>;
+export const StartSpeakingAttemptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "StartSpeakingAttempt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "promptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentType" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startSpeakingAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "promptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "promptId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentType" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentType" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+                { kind: "Field", name: { kind: "Name", value: "uploadUrl" } },
+                { kind: "Field", name: { kind: "Name", value: "contentType" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "expiresInSeconds" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  StartSpeakingAttemptMutation,
+  StartSpeakingAttemptMutationVariables
+>;
+export const SubmitSpeakingAttemptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SubmitSpeakingAttempt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "attemptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submitSpeakingAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "attemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "attemptId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "SpeakingAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "SpeakingAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "SpeakingAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPromptId" } },
+          { kind: "Field", name: { kind: "Name", value: "promptTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceText" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "accuracyPercent" } },
+          { kind: "Field", name: { kind: "Name", value: "fluencyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completenessPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "prosodyPercent" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "pronunciationPercent" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "words" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "word" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "accuracyPercent" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "errorType" } },
+                { kind: "Field", name: { kind: "Name", value: "offsetMs" } },
+                { kind: "Field", name: { kind: "Name", value: "durationMs" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "phonemes" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "phoneme" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "accuracy" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SubmitSpeakingAttemptMutation,
+  SubmitSpeakingAttemptMutationVariables
 >;
 export const DailyPathDocument = {
   kind: "Document",

@@ -1046,6 +1046,209 @@ export type CompleteOnboardingMutation = {
   };
 };
 
+export type SpeakingPromptFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  targetLevel: string | null;
+  referenceText: string;
+  ipaTranscript: string | null;
+  translationVi: string | null;
+  phonemeTarget: string | null;
+  tips: Array<string>;
+  bestScorePercent: number | null;
+};
+
+export type SpeakingAttemptFieldsFragment = {
+  id: string;
+  speakingPromptId: string;
+  promptTitle: string;
+  referenceText: string;
+  status: Types.SpeakingAttemptStatus;
+  audioUrl: string;
+  recognizedText: string | null;
+  accuracyPercent: number | null;
+  fluencyPercent: number | null;
+  completenessPercent: number | null;
+  prosodyPercent: number | null;
+  pronunciationPercent: number | null;
+  errorCode: string | null;
+  createdAt: string;
+  assessedAt: string | null;
+  words: Array<{
+    orderNo: number;
+    word: string;
+    accuracyPercent: number | null;
+    errorType: string | null;
+    offsetMs: number | null;
+    durationMs: number | null;
+    phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+  }>;
+};
+
+export type SpeakingPromptsQueryVariables = Exact<{
+  category?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type SpeakingPromptsQuery = {
+  speakingPrompts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      category: string;
+      targetLevel: string | null;
+      referenceText: string;
+      ipaTranscript: string | null;
+      translationVi: string | null;
+      phonemeTarget: string | null;
+      tips: Array<string>;
+      bestScorePercent: number | null;
+    }>;
+  };
+};
+
+export type SpeakingPromptQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SpeakingPromptQuery = {
+  speakingPrompt: {
+    id: string;
+    slug: string;
+    title: string;
+    category: string;
+    targetLevel: string | null;
+    referenceText: string;
+    ipaTranscript: string | null;
+    translationVi: string | null;
+    phonemeTarget: string | null;
+    tips: Array<string>;
+    bestScorePercent: number | null;
+  };
+};
+
+export type SpeakingAttemptQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SpeakingAttemptQuery = {
+  speakingAttempt: {
+    id: string;
+    speakingPromptId: string;
+    promptTitle: string;
+    referenceText: string;
+    status: Types.SpeakingAttemptStatus;
+    audioUrl: string;
+    recognizedText: string | null;
+    accuracyPercent: number | null;
+    fluencyPercent: number | null;
+    completenessPercent: number | null;
+    prosodyPercent: number | null;
+    pronunciationPercent: number | null;
+    errorCode: string | null;
+    createdAt: string;
+    assessedAt: string | null;
+    words: Array<{
+      orderNo: number;
+      word: string;
+      accuracyPercent: number | null;
+      errorType: string | null;
+      offsetMs: number | null;
+      durationMs: number | null;
+      phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+    }>;
+  };
+};
+
+export type SpeakingAttemptsQueryVariables = Exact<{
+  promptId: string | number;
+}>;
+
+export type SpeakingAttemptsQuery = {
+  speakingAttempts: Array<{
+    id: string;
+    speakingPromptId: string;
+    promptTitle: string;
+    referenceText: string;
+    status: Types.SpeakingAttemptStatus;
+    audioUrl: string;
+    recognizedText: string | null;
+    accuracyPercent: number | null;
+    fluencyPercent: number | null;
+    completenessPercent: number | null;
+    prosodyPercent: number | null;
+    pronunciationPercent: number | null;
+    errorCode: string | null;
+    createdAt: string;
+    assessedAt: string | null;
+    words: Array<{
+      orderNo: number;
+      word: string;
+      accuracyPercent: number | null;
+      errorType: string | null;
+      offsetMs: number | null;
+      durationMs: number | null;
+      phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+    }>;
+  }>;
+};
+
+export type StartSpeakingAttemptMutationVariables = Exact<{
+  promptId: string | number;
+  contentType: string;
+}>;
+
+export type StartSpeakingAttemptMutation = {
+  startSpeakingAttempt: {
+    attemptId: string;
+    uploadUrl: string;
+    contentType: string;
+    expiresInSeconds: number;
+  };
+};
+
+export type SubmitSpeakingAttemptMutationVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type SubmitSpeakingAttemptMutation = {
+  submitSpeakingAttempt: {
+    id: string;
+    speakingPromptId: string;
+    promptTitle: string;
+    referenceText: string;
+    status: Types.SpeakingAttemptStatus;
+    audioUrl: string;
+    recognizedText: string | null;
+    accuracyPercent: number | null;
+    fluencyPercent: number | null;
+    completenessPercent: number | null;
+    prosodyPercent: number | null;
+    pronunciationPercent: number | null;
+    errorCode: string | null;
+    createdAt: string;
+    assessedAt: string | null;
+    words: Array<{
+      orderNo: number;
+      word: string;
+      accuracyPercent: number | null;
+      errorType: string | null;
+      offsetMs: number | null;
+      durationMs: number | null;
+      phonemes: Array<{ phoneme: string; accuracy: number | null }>;
+    }>;
+  };
+};
+
 export type DailyPathQueryVariables = Exact<{ [key: string]: never }>;
 
 export type DailyPathQuery = {
@@ -1414,6 +1617,52 @@ export const OnboardingStateFieldsFragmentDoc = gql`
     targetScore
     targetDate
     targetSkills
+  }
+`;
+export const SpeakingPromptFieldsFragmentDoc = gql`
+  fragment SpeakingPromptFields on SpeakingPrompt {
+    id
+    slug
+    title
+    category
+    targetLevel
+    referenceText
+    ipaTranscript
+    translationVi
+    phonemeTarget
+    tips
+    bestScorePercent
+  }
+`;
+export const SpeakingAttemptFieldsFragmentDoc = gql`
+  fragment SpeakingAttemptFields on SpeakingAttempt {
+    id
+    speakingPromptId
+    promptTitle
+    referenceText
+    status
+    audioUrl
+    recognizedText
+    accuracyPercent
+    fluencyPercent
+    completenessPercent
+    prosodyPercent
+    pronunciationPercent
+    errorCode
+    createdAt
+    assessedAt
+    words {
+      orderNo
+      word
+      accuracyPercent
+      errorType
+      offsetMs
+      durationMs
+      phonemes {
+        phoneme
+        accuracy
+      }
+    }
   }
 `;
 export const QuizFieldsFragmentDoc = gql`
@@ -4508,6 +4757,548 @@ export type CompleteOnboardingMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     CompleteOnboardingMutation,
     CompleteOnboardingMutationVariables
+  >;
+export const SpeakingPromptsDocument = gql`
+  query SpeakingPrompts(
+    $category: String
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    speakingPrompts(
+      category: $category
+      title: $title
+      page: $page
+      size: $size
+    ) {
+      items {
+        ...SpeakingPromptFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${SpeakingPromptFieldsFragmentDoc}
+`;
+
+/**
+ * __useSpeakingPromptsQuery__
+ *
+ * To run a query within a React component, call `useSpeakingPromptsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpeakingPromptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpeakingPromptsQuery({
+ *   variables: {
+ *      category: // value for 'category'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useSpeakingPromptsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    SpeakingPromptsQuery,
+    SpeakingPromptsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    SpeakingPromptsQuery,
+    SpeakingPromptsQueryVariables
+  >(SpeakingPromptsDocument, options);
+}
+export function useSpeakingPromptsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SpeakingPromptsQuery,
+    SpeakingPromptsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    SpeakingPromptsQuery,
+    SpeakingPromptsQueryVariables
+  >(SpeakingPromptsDocument, options);
+}
+export function useSpeakingPromptsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    SpeakingPromptsQuery,
+    SpeakingPromptsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingPromptsQuery,
+  SpeakingPromptsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useSpeakingPromptsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingPromptsQuery,
+        SpeakingPromptsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingPromptsQuery | undefined,
+  SpeakingPromptsQueryVariables
+>;
+export function useSpeakingPromptsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingPromptsQuery,
+        SpeakingPromptsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    SpeakingPromptsQuery,
+    SpeakingPromptsQueryVariables
+  >(SpeakingPromptsDocument, options as any);
+}
+export type SpeakingPromptsQueryHookResult = ReturnType<
+  typeof useSpeakingPromptsQuery
+>;
+export type SpeakingPromptsLazyQueryHookResult = ReturnType<
+  typeof useSpeakingPromptsLazyQuery
+>;
+export type SpeakingPromptsSuspenseQueryHookResult = ReturnType<
+  typeof useSpeakingPromptsSuspenseQuery
+>;
+export type SpeakingPromptsQueryResult = ApolloReactCommon.QueryResult<
+  SpeakingPromptsQuery,
+  SpeakingPromptsQueryVariables
+>;
+export const SpeakingPromptDocument = gql`
+  query SpeakingPrompt($id: ID!) {
+    speakingPrompt(id: $id) {
+      ...SpeakingPromptFields
+    }
+  }
+  ${SpeakingPromptFieldsFragmentDoc}
+`;
+
+/**
+ * __useSpeakingPromptQuery__
+ *
+ * To run a query within a React component, call `useSpeakingPromptQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpeakingPromptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpeakingPromptQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSpeakingPromptQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    SpeakingPromptQuery,
+    SpeakingPromptQueryVariables
+  > &
+    (
+      | { variables: SpeakingPromptQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    SpeakingPromptQuery,
+    SpeakingPromptQueryVariables
+  >(SpeakingPromptDocument, options);
+}
+export function useSpeakingPromptLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SpeakingPromptQuery,
+    SpeakingPromptQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    SpeakingPromptQuery,
+    SpeakingPromptQueryVariables
+  >(SpeakingPromptDocument, options);
+}
+export function useSpeakingPromptSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    SpeakingPromptQuery,
+    SpeakingPromptQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingPromptQuery,
+  SpeakingPromptQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useSpeakingPromptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingPromptQuery,
+        SpeakingPromptQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingPromptQuery | undefined,
+  SpeakingPromptQueryVariables
+>;
+export function useSpeakingPromptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingPromptQuery,
+        SpeakingPromptQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    SpeakingPromptQuery,
+    SpeakingPromptQueryVariables
+  >(SpeakingPromptDocument, options as any);
+}
+export type SpeakingPromptQueryHookResult = ReturnType<
+  typeof useSpeakingPromptQuery
+>;
+export type SpeakingPromptLazyQueryHookResult = ReturnType<
+  typeof useSpeakingPromptLazyQuery
+>;
+export type SpeakingPromptSuspenseQueryHookResult = ReturnType<
+  typeof useSpeakingPromptSuspenseQuery
+>;
+export type SpeakingPromptQueryResult = ApolloReactCommon.QueryResult<
+  SpeakingPromptQuery,
+  SpeakingPromptQueryVariables
+>;
+export const SpeakingAttemptDocument = gql`
+  query SpeakingAttempt($id: ID!) {
+    speakingAttempt(id: $id) {
+      ...SpeakingAttemptFields
+    }
+  }
+  ${SpeakingAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useSpeakingAttemptQuery__
+ *
+ * To run a query within a React component, call `useSpeakingAttemptQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpeakingAttemptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpeakingAttemptQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSpeakingAttemptQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    SpeakingAttemptQuery,
+    SpeakingAttemptQueryVariables
+  > &
+    (
+      | { variables: SpeakingAttemptQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    SpeakingAttemptQuery,
+    SpeakingAttemptQueryVariables
+  >(SpeakingAttemptDocument, options);
+}
+export function useSpeakingAttemptLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SpeakingAttemptQuery,
+    SpeakingAttemptQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    SpeakingAttemptQuery,
+    SpeakingAttemptQueryVariables
+  >(SpeakingAttemptDocument, options);
+}
+export function useSpeakingAttemptSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    SpeakingAttemptQuery,
+    SpeakingAttemptQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingAttemptQuery,
+  SpeakingAttemptQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useSpeakingAttemptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingAttemptQuery,
+        SpeakingAttemptQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingAttemptQuery | undefined,
+  SpeakingAttemptQueryVariables
+>;
+export function useSpeakingAttemptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingAttemptQuery,
+        SpeakingAttemptQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    SpeakingAttemptQuery,
+    SpeakingAttemptQueryVariables
+  >(SpeakingAttemptDocument, options as any);
+}
+export type SpeakingAttemptQueryHookResult = ReturnType<
+  typeof useSpeakingAttemptQuery
+>;
+export type SpeakingAttemptLazyQueryHookResult = ReturnType<
+  typeof useSpeakingAttemptLazyQuery
+>;
+export type SpeakingAttemptSuspenseQueryHookResult = ReturnType<
+  typeof useSpeakingAttemptSuspenseQuery
+>;
+export type SpeakingAttemptQueryResult = ApolloReactCommon.QueryResult<
+  SpeakingAttemptQuery,
+  SpeakingAttemptQueryVariables
+>;
+export const SpeakingAttemptsDocument = gql`
+  query SpeakingAttempts($promptId: ID!) {
+    speakingAttempts(promptId: $promptId) {
+      ...SpeakingAttemptFields
+    }
+  }
+  ${SpeakingAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useSpeakingAttemptsQuery__
+ *
+ * To run a query within a React component, call `useSpeakingAttemptsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpeakingAttemptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpeakingAttemptsQuery({
+ *   variables: {
+ *      promptId: // value for 'promptId'
+ *   },
+ * });
+ */
+export function useSpeakingAttemptsQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    SpeakingAttemptsQuery,
+    SpeakingAttemptsQueryVariables
+  > &
+    (
+      | { variables: SpeakingAttemptsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    SpeakingAttemptsQuery,
+    SpeakingAttemptsQueryVariables
+  >(SpeakingAttemptsDocument, options);
+}
+export function useSpeakingAttemptsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SpeakingAttemptsQuery,
+    SpeakingAttemptsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    SpeakingAttemptsQuery,
+    SpeakingAttemptsQueryVariables
+  >(SpeakingAttemptsDocument, options);
+}
+export function useSpeakingAttemptsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    SpeakingAttemptsQuery,
+    SpeakingAttemptsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingAttemptsQuery,
+  SpeakingAttemptsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useSpeakingAttemptsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingAttemptsQuery,
+        SpeakingAttemptsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SpeakingAttemptsQuery | undefined,
+  SpeakingAttemptsQueryVariables
+>;
+export function useSpeakingAttemptsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SpeakingAttemptsQuery,
+        SpeakingAttemptsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    SpeakingAttemptsQuery,
+    SpeakingAttemptsQueryVariables
+  >(SpeakingAttemptsDocument, options as any);
+}
+export type SpeakingAttemptsQueryHookResult = ReturnType<
+  typeof useSpeakingAttemptsQuery
+>;
+export type SpeakingAttemptsLazyQueryHookResult = ReturnType<
+  typeof useSpeakingAttemptsLazyQuery
+>;
+export type SpeakingAttemptsSuspenseQueryHookResult = ReturnType<
+  typeof useSpeakingAttemptsSuspenseQuery
+>;
+export type SpeakingAttemptsQueryResult = ApolloReactCommon.QueryResult<
+  SpeakingAttemptsQuery,
+  SpeakingAttemptsQueryVariables
+>;
+export const StartSpeakingAttemptDocument = gql`
+  mutation StartSpeakingAttempt($promptId: ID!, $contentType: String!) {
+    startSpeakingAttempt(promptId: $promptId, contentType: $contentType) {
+      attemptId
+      uploadUrl
+      contentType
+      expiresInSeconds
+    }
+  }
+`;
+export type StartSpeakingAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartSpeakingAttemptMutation,
+    StartSpeakingAttemptMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartSpeakingAttemptMutation__
+ *
+ * To run a mutation, you first call `useStartSpeakingAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartSpeakingAttemptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startSpeakingAttemptMutation, { data, loading, error }] = useStartSpeakingAttemptMutation({
+ *   variables: {
+ *      promptId: // value for 'promptId'
+ *      contentType: // value for 'contentType'
+ *   },
+ * });
+ */
+export function useStartSpeakingAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartSpeakingAttemptMutation,
+    StartSpeakingAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartSpeakingAttemptMutation,
+    StartSpeakingAttemptMutationVariables
+  >(StartSpeakingAttemptDocument, options);
+}
+export type StartSpeakingAttemptMutationHookResult = ReturnType<
+  typeof useStartSpeakingAttemptMutation
+>;
+export type StartSpeakingAttemptMutationResult =
+  ApolloReactCommon.MutationResult<StartSpeakingAttemptMutation>;
+export type StartSpeakingAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartSpeakingAttemptMutation,
+    StartSpeakingAttemptMutationVariables
+  >;
+export const SubmitSpeakingAttemptDocument = gql`
+  mutation SubmitSpeakingAttempt($attemptId: ID!) {
+    submitSpeakingAttempt(attemptId: $attemptId) {
+      ...SpeakingAttemptFields
+    }
+  }
+  ${SpeakingAttemptFieldsFragmentDoc}
+`;
+export type SubmitSpeakingAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitSpeakingAttemptMutation,
+    SubmitSpeakingAttemptMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitSpeakingAttemptMutation__
+ *
+ * To run a mutation, you first call `useSubmitSpeakingAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitSpeakingAttemptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitSpeakingAttemptMutation, { data, loading, error }] = useSubmitSpeakingAttemptMutation({
+ *   variables: {
+ *      attemptId: // value for 'attemptId'
+ *   },
+ * });
+ */
+export function useSubmitSpeakingAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitSpeakingAttemptMutation,
+    SubmitSpeakingAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitSpeakingAttemptMutation,
+    SubmitSpeakingAttemptMutationVariables
+  >(SubmitSpeakingAttemptDocument, options);
+}
+export type SubmitSpeakingAttemptMutationHookResult = ReturnType<
+  typeof useSubmitSpeakingAttemptMutation
+>;
+export type SubmitSpeakingAttemptMutationResult =
+  ApolloReactCommon.MutationResult<SubmitSpeakingAttemptMutation>;
+export type SubmitSpeakingAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitSpeakingAttemptMutation,
+    SubmitSpeakingAttemptMutationVariables
   >;
 export const DailyPathDocument = gql`
   query DailyPath {

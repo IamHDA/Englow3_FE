@@ -1,47 +1,29 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import {
-  MOCK_PRONUNCIATION_LESSONS,
-  PronunciationPracticeView,
-} from "@/features/pronunciation";
 
-interface LessonPageProps {
+import { PronunciationPracticeView } from "@/features/pronunciation";
+
+interface PromptPageProps {
   params: Promise<{
     lessonId: string;
   }>;
 }
 
-export async function generateMetadata({
+/**
+ * Tiêu đề chung, không phải tên câu luyện.
+ *
+ * Trước đây nó tra trong file dữ liệu giả để đặt tiêu đề theo bài. Muốn giữ
+ * được điều đó với dữ liệu thật thì phải gọi backend ngay trong
+ * `generateMetadata`, mà lời gọi đó cần token của người dùng - thứ một trang
+ * dựng phía server chưa có. Tiêu đề chung là đúng hơn một tiêu đề bịa.
+ */
+export const metadata: Metadata = {
+  title: "Luyện phát âm | Englow",
+};
+
+export default async function PronunciationPromptPage({
   params,
-}: LessonPageProps): Promise<Metadata> {
+}: PromptPageProps) {
   const { lessonId } = await params;
-  const lesson = MOCK_PRONUNCIATION_LESSONS.find(
-    (l) => l.id === lessonId || l.slug === lessonId,
-  );
 
-  if (!lesson) {
-    return {
-      title: "Không tìm thấy bài học | Englow3",
-    };
-  }
-
-  return {
-    title: `${lesson.title} | Luyện phát âm AI Englow3`,
-    description: `Luyện phát âm chuẩn AI âm ${lesson.phonemeTarget} với câu: "${lesson.targetSentence}"`,
-  };
-}
-
-export default async function PronunciationLessonPage({
-  params,
-}: LessonPageProps) {
-  const { lessonId } = await params;
-  const lesson = MOCK_PRONUNCIATION_LESSONS.find(
-    (l) => l.id === lessonId || l.slug === lessonId,
-  );
-
-  if (!lesson) {
-    notFound();
-  }
-
-  return <PronunciationPracticeView lesson={lesson} />;
+  return <PronunciationPracticeView promptId={lessonId} />;
 }

@@ -1,0 +1,98 @@
+fragment SpeakingPromptFields on SpeakingPrompt {
+  id
+  slug
+  title
+  category
+  targetLevel
+  referenceText
+  ipaTranscript
+  translationVi
+  phonemeTarget
+  tips
+  bestScorePercent
+}
+
+fragment SpeakingAttemptFields on SpeakingAttempt {
+  id
+  speakingPromptId
+  promptTitle
+  referenceText
+  status
+  audioUrl
+  recognizedText
+  accuracyPercent
+  fluencyPercent
+  completenessPercent
+  prosodyPercent
+  pronunciationPercent
+  errorCode
+  createdAt
+  assessedAt
+  words {
+    orderNo
+    word
+    accuracyPercent
+    errorType
+    offsetMs
+    durationMs
+    phonemes {
+      phoneme
+      accuracy
+    }
+  }
+}
+
+query SpeakingPrompts(
+  $category: String
+  $title: String
+  $page: Int
+  $size: Int
+) {
+  speakingPrompts(
+    category: $category
+    title: $title
+    page: $page
+    size: $size
+  ) {
+    items {
+      ...SpeakingPromptFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query SpeakingPrompt($id: ID!) {
+  speakingPrompt(id: $id) {
+    ...SpeakingPromptFields
+  }
+}
+
+query SpeakingAttempt($id: ID!) {
+  speakingAttempt(id: $id) {
+    ...SpeakingAttemptFields
+  }
+}
+
+query SpeakingAttempts($promptId: ID!) {
+  speakingAttempts(promptId: $promptId) {
+    ...SpeakingAttemptFields
+  }
+}
+
+mutation StartSpeakingAttempt($promptId: ID!, $contentType: String!) {
+  startSpeakingAttempt(promptId: $promptId, contentType: $contentType) {
+    attemptId
+    uploadUrl
+    contentType
+    expiresInSeconds
+  }
+}
+
+mutation SubmitSpeakingAttempt($attemptId: ID!) {
+  submitSpeakingAttempt(attemptId: $attemptId) {
+    ...SpeakingAttemptFields
+  }
+}

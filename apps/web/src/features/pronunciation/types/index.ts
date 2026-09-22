@@ -1,56 +1,27 @@
-export type PronunciationCategory =
-  | "Minimal Pairs"
-  | "Daily Conversations"
-  | "IELTS Speaking"
-  | "Business Pitch"
-  | "Intonation & Stress";
+import type {
+  SpeakingAttemptFieldsFragment,
+  SpeakingPromptFieldsFragment,
+} from "@/lib/graphql/generated/documents";
 
-export type PronunciationLevel = "Beginner" | "Intermediate" | "Advanced";
+/**
+ * Câu để luyện, và kết quả chấm một bản ghi.
+ *
+ * Cả hai đều lấy từ codegen. Trước đây đây là interface tự viết kèm một file
+ * dữ liệu giả - danh mục bài, điểm từng âm vị, lời khuyên của "AI coach" -
+ * không có cái nào đi ra từ một bản ghi thật.
+ */
+export type SpeakingPrompt = SpeakingPromptFieldsFragment;
+export type SpeakingAttempt = SpeakingAttemptFieldsFragment;
+export type SpeakingWord = SpeakingAttempt["words"][number];
+export type SpeakingPhonemeScore = SpeakingWord["phonemes"][number];
 
-export interface PhonemeItem {
-  symbol: string;
-  soundType: "vowel" | "consonant" | "stress";
-  isKeyTarget?: boolean;
-}
-
-export interface PronunciationLesson {
-  id: string;
-  slug: string;
-  title: string;
-  category: PronunciationCategory;
-  level: PronunciationLevel;
-  phonemeTarget: string; // e.g. "/iː/ vs /ɪ/"
-  targetSentence: string;
-  ipaTranscript: string;
-  translationVi: string;
-  phonemes: PhonemeItem[];
-  tips: string[];
-  bestScore?: number;
-}
-
-export interface PhonemeScoreDetail {
-  phoneme: string;
-  score: number;
-  status: "good" | "warning" | "error";
-  hint: string;
-}
-
-export interface PronunciationEvaluationResult {
-  lessonId: string;
-  overallScore: number;
-  accuracyScore: number;
-  fluencyScore: number;
-  intonationScore: number;
-  transcribedText: string;
-  phonemeScores: PhonemeScoreDetail[];
-  feedbackMessage: string;
-  aiCoachingTip: string;
-  userAudioBlobUrl?: string;
-}
-
+/**
+ * Bảng IPA của trang thư viện. Vẫn là dữ liệu tĩnh, và đúng là như vậy: đây là
+ * bảng âm vị tiếng Anh, không phải số liệu của người học. Cái đã bỏ đi là cờ
+ * `isMastered` - nó nói người học đã thạo âm nào, mà chẳng có gì đo điều đó.
+ */
 export interface IpaChartSound {
   symbol: string;
   example: string;
   type: "monophthong" | "diphthong" | "consonant";
-  isMastered: boolean;
 }

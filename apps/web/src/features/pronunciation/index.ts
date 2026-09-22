@@ -1,6 +1,6 @@
 export * from "./types";
 export * from "./constants/pronunciationData";
-export * from "./hooks/useVoiceRecorder";
+export * from "./audio/wav";
 
 // Blocks
 export * from "./components/blocks/PronunciationHeader";

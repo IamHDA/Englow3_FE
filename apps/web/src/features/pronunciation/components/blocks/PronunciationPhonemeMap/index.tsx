@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Card, Group, SimpleGrid, Stack, Text } from "@mantine/core";
-import { IconCheck, IconVolume } from "@tabler/icons-react";
+import { IconVolume } from "@tabler/icons-react";
 import React from "react";
 import { IpaChartSound } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -60,9 +60,6 @@ export function PronunciationPhonemeMap({
                 radius="sm"
                 style={{
                   cursor: "pointer",
-                  backgroundColor: item.isMastered
-                    ? "var(--mantine-color-teal-0)"
-                    : "var(--mantine-color-body)",
                 }}
                 onClick={() => handleSpeak(item.symbol)}
               >
@@ -75,11 +72,7 @@ export function PronunciationPhonemeMap({
                       {item.example}
                     </Text>
                   </Stack>
-                  {item.isMastered ? (
-                    <IconCheck size={14} color="var(--mantine-color-teal-6)" />
-                  ) : (
-                    <IconVolume size={14} color="var(--mantine-color-gray-5)" />
-                  )}
+                  <IconVolume size={14} color="var(--mantine-color-gray-5)" />
                 </Group>
               </Card>
             ))}
@@ -100,9 +93,6 @@ export function PronunciationPhonemeMap({
                 radius="sm"
                 style={{
                   cursor: "pointer",
-                  backgroundColor: item.isMastered
-                    ? "var(--mantine-color-teal-0)"
-                    : "var(--mantine-color-body)",
                 }}
                 onClick={() => handleSpeak(item.symbol)}
               >
@@ -115,11 +105,7 @@ export function PronunciationPhonemeMap({
                       {item.example}
                     </Text>
                   </Stack>
-                  {item.isMastered ? (
-                    <IconCheck size={14} color="var(--mantine-color-teal-6)" />
-                  ) : (
-                    <IconVolume size={14} color="var(--mantine-color-gray-5)" />
-                  )}
+                  <IconVolume size={14} color="var(--mantine-color-gray-5)" />
                 </Group>
               </Card>
             ))}

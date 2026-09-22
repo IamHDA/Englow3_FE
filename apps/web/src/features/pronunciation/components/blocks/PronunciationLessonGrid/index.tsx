@@ -14,28 +14,28 @@ import {
 import { IconMicrophone } from "@tabler/icons-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
-import { PronunciationLesson } from "../../../types";
+import type { SpeakingPrompt } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface PronunciationLessonGridProps {
-  lessons: PronunciationLesson[];
+  prompts: SpeakingPrompt[];
 }
 
 export function PronunciationLessonGrid({
-  lessons,
+  prompts,
 }: PronunciationLessonGridProps) {
   const { isVi } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const categories = useMemo(() => {
-    const set = new Set(lessons.map((l) => l.category));
+    const set = new Set(prompts.map((prompt) => prompt.category));
     return ["ALL", ...Array.from(set)];
-  }, [lessons]);
+  }, [prompts]);
 
-  const filteredLessons = useMemo(() => {
-    if (selectedCategory === "ALL") return lessons;
-    return lessons.filter((l) => l.category === selectedCategory);
-  }, [lessons, selectedCategory]);
+  const filteredPrompts = useMemo(() => {
+    if (selectedCategory === "ALL") return prompts;
+    return prompts.filter((prompt) => prompt.category === selectedCategory);
+  }, [prompts, selectedCategory]);
 
   return (
     <Stack gap="md">
@@ -46,8 +46,8 @@ export function PronunciationLessonGrid({
           </Text>
           <Text fz="xs" c="dimmed">
             {isVi
-              ? "Chọn một bài học để bắt đầu ghi âm và nhận đánh giá từ AI"
-              : "Select a lesson to begin recording and receive instant AI feedback"}
+              ? "Chọn một câu để ghi âm và nhận điểm phát âm"
+              : "Pick a sentence to record and get a pronunciation score"}
           </Text>
         </Box>
 
@@ -63,8 +63,8 @@ export function PronunciationLessonGrid({
       </Group>
 
       <Grid gap="md">
-        {filteredLessons.map((lesson) => (
-          <Grid.Col key={lesson.id} span={{ base: 12, sm: 6, lg: 4 }}>
+        {filteredPrompts.map((prompt) => (
+          <Grid.Col key={prompt.id} span={{ base: 12, sm: 6, lg: 4 }}>
             <Card
               withBorder
               padding="lg"
@@ -80,52 +80,47 @@ export function PronunciationLessonGrid({
               <Stack gap="xs">
                 <Group justify="space-between" align="center">
                   <Badge variant="light" color="indigo" size="xs">
-                    {lesson.category}
+                    {prompt.category}
                   </Badge>
-                  <Badge
-                    variant="dot"
-                    color={
-                      lesson.level === "Advanced"
-                        ? "red"
-                        : lesson.level === "Intermediate"
-                          ? "orange"
-                          : "teal"
-                    }
-                    size="xs"
-                  >
-                    {lesson.level}
-                  </Badge>
+                  {prompt.targetLevel !== null && (
+                    <Badge variant="dot" color="teal" size="xs">
+                      {prompt.targetLevel}
+                    </Badge>
+                  )}
                 </Group>
 
                 <Text fw={700} fz="md" c="dark.9" lineClamp={2}>
-                  {lesson.title}
+                  {prompt.title}
                 </Text>
 
-                <Box
-                  p="xs"
-                  style={{
-                    backgroundColor: "var(--mantine-color-indigo-0)",
-                    borderRadius: "var(--mantine-radius-sm)",
-                  }}
-                >
-                  <Text fz="xs" c="indigo.8" fw={700}>
-                    {isVi ? "Trọng tâm:" : "Focus:"} {lesson.phonemeTarget}
-                  </Text>
-                </Box>
+                {prompt.phonemeTarget !== null && (
+                  <Box
+                    p="xs"
+                    style={{
+                      backgroundColor: "var(--mantine-color-indigo-0)",
+                      borderRadius: "var(--mantine-radius-sm)",
+                    }}
+                  >
+                    <Text fz="xs" c="indigo.8" fw={700}>
+                      {isVi ? "Trọng tâm:" : "Focus:"} {prompt.phonemeTarget}
+                    </Text>
+                  </Box>
+                )}
 
                 <Text fz="xs" c="dark.8" fs="italic" lineClamp={2}>
-                  &ldquo;{lesson.targetSentence}&rdquo;
+                  &ldquo;{prompt.referenceText}&rdquo;
                 </Text>
 
                 <Text fz="xs" c="dimmed" lineClamp={2}>
-                  {lesson.translationVi}
+                  {prompt.translationVi}
                 </Text>
 
-                {lesson.bestScore !== undefined && (
+                {/* Null cho tới khi người học chấm xong lần đầu - không phải 0. */}
+                {prompt.bestScorePercent !== null && (
                   <Group gap="xs" mt="xs">
                     <Badge variant="light" color="teal" size="xs">
                       {isVi ? "Điểm cao nhất:" : "Best Score:"}{" "}
-                      {lesson.bestScore}/100
+                      {Math.round(prompt.bestScorePercent)}/100
                     </Badge>
                   </Group>
                 )}
@@ -134,7 +129,7 @@ export function PronunciationLessonGrid({
               <Group mt="md">
                 <Button
                   component={Link}
-                  href={`/study/pronunciation/${lesson.slug}`}
+                  href={`/study/pronunciation/${prompt.id}`}
                   variant="filled"
                   color="indigo"
                   fullWidth

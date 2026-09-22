@@ -3,6 +3,8 @@ import { examResolvers } from "../modules/exam/exam.resolvers.js";
 import { examTypeDefs } from "../modules/exam/exam.typeDefs.js";
 import { learningResolvers } from "../modules/learning/learning.resolvers.js";
 import { learningTypeDefs } from "../modules/learning/learning.typeDefs.js";
+import { speakingResolvers } from "../modules/speaking/speaking.resolvers.js";
+import { speakingTypeDefs } from "../modules/speaking/speaking.typeDefs.js";
 import { onboardingResolvers } from "../modules/onboarding/onboarding.resolvers.js";
 import { onboardingTypeDefs } from "../modules/onboarding/onboarding.typeDefs.js";
 import { userResolvers } from "../modules/user/user.resolvers.js";
@@ -27,6 +29,7 @@ export const typeDefs = [
   onboardingTypeDefs,
   examTypeDefs,
   learningTypeDefs,
+  speakingTypeDefs,
 ];
 
 export const resolvers = {
@@ -38,12 +41,14 @@ export const resolvers = {
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
     ...learningResolvers.Query,
+    ...speakingResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
     ...learningResolvers.Mutation,
+    ...speakingResolvers.Mutation,
   },
   Me: {
     ...onboardingResolvers.Me,

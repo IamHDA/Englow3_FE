@@ -754,6 +754,12 @@ export type Mutation = {
    */
   startQuizAttempt: QuizAttempt;
   /**
+   * Opens an attempt and returns somewhere to PUT the recording. The format is
+   * checked now rather than at assessment time, so an unusable one is refused
+   * before the learner records anything.
+   */
+  startSpeakingAttempt: SpeakingUploadTicket;
+  /**
    * DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators. Held
    * to the publication rules at this end too, so a reviewer is never handed an
    * empty set: the refusal arrives as extensions.backendCode.
@@ -781,6 +787,12 @@ export type Mutation = {
    * than skipped, so the percentage means what it says.
    */
   submitQuizAttempt: QuizAttempt;
+  /**
+   * The upload is done; queue the assessment. Refused with
+   * extensions.backendCode SPEAKING_RECORDING_MISSING if the recording is not
+   * actually in storage.
+   */
+  submitSpeakingAttempt: SpeakingAttempt;
   updateProfile: Me;
 };
 
@@ -856,6 +868,11 @@ export type MutationStartQuizAttemptArgs = {
   quizId: Scalars["ID"]["input"];
 };
 
+export type MutationStartSpeakingAttemptArgs = {
+  contentType: Scalars["String"]["input"];
+  promptId: Scalars["ID"]["input"];
+};
+
 export type MutationSubmitContentForReviewArgs = {
   id: Scalars["ID"]["input"];
   kind: ContentKind;
@@ -877,6 +894,10 @@ export type MutationSubmitExamForReviewArgs = {
 
 export type MutationSubmitQuizAttemptArgs = {
   answers: Array<QuizAnswerInput>;
+  attemptId: Scalars["ID"]["input"];
+};
+
+export type MutationSubmitSpeakingAttemptArgs = {
   attemptId: Scalars["ID"]["input"];
 };
 
@@ -973,6 +994,12 @@ export type Query = {
   /** The paper to sit, reachable only through an open attempt. */
   quizPaper: QuizPaper;
   quizzes: QuizPage;
+  /** What the screen polls while it waits for a score. */
+  speakingAttempt: SpeakingAttempt;
+  /** This learner's own attempts at one prompt, newest first. No word breakdown. */
+  speakingAttempts: Array<SpeakingAttempt>;
+  speakingPrompt: SpeakingPrompt;
+  speakingPrompts: SpeakingPromptPage;
 };
 
 export type QueryAdminContentArgs = {
@@ -1062,6 +1089,25 @@ export type QueryQuizPaperArgs = {
 };
 
 export type QueryQuizzesArgs = {
+  category?: InputMaybe<Scalars["String"]["input"]>;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QuerySpeakingAttemptArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QuerySpeakingAttemptsArgs = {
+  promptId: Scalars["ID"]["input"];
+};
+
+export type QuerySpeakingPromptArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QuerySpeakingPromptsArgs = {
   category?: InputMaybe<Scalars["String"]["input"]>;
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
@@ -1232,6 +1278,110 @@ export enum Role {
   LEARNER = "LEARNER",
   STAFF = "STAFF",
 }
+
+/**
+ * One recording and its score.
+ *
+ * Every score is nullable and stays that way. The provider omits what it did
+ * not measure - prosody unless asked for, accuracy on a recording of silence -
+ * so a missing measurement is shown as missing. A zero would tell a learner
+ * they scored nothing when nothing was measured.
+ */
+export type SpeakingAttempt = {
+  __typename?: "SpeakingAttempt";
+  accuracyPercent?: Maybe<Scalars["Float"]["output"]>;
+  assessedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /** Pre-signed and short-lived. */
+  audioUrl: Scalars["String"]["output"];
+  completenessPercent?: Maybe<Scalars["Float"]["output"]>;
+  createdAt: Scalars["DateTime"]["output"];
+  /** Why no score will arrive, when none will. */
+  errorCode?: Maybe<Scalars["String"]["output"]>;
+  fluencyPercent?: Maybe<Scalars["Float"]["output"]>;
+  id: Scalars["ID"]["output"];
+  promptTitle: Scalars["String"]["output"];
+  pronunciationPercent?: Maybe<Scalars["Float"]["output"]>;
+  prosodyPercent?: Maybe<Scalars["Float"]["output"]>;
+  /** What the provider heard. Null until assessed. */
+  recognizedText?: Maybe<Scalars["String"]["output"]>;
+  referenceText: Scalars["String"]["output"];
+  speakingPromptId: Scalars["ID"]["output"];
+  status: SpeakingAttemptStatus;
+  /** Empty while the assessment is still queued. */
+  words: Array<SpeakingWord>;
+};
+
+/**
+ * Where one recording stands. There is no RUNNING: whether a worker currently
+ * has the job in hand is the queue's business, and QUEUED is all a learner
+ * watching a spinner needs to know.
+ */
+export enum SpeakingAttemptStatus {
+  ASSESSED = "ASSESSED",
+  AWAITING_UPLOAD = "AWAITING_UPLOAD",
+  FAILED = "FAILED",
+  QUEUED = "QUEUED",
+}
+
+export type SpeakingPhonemeScore = {
+  __typename?: "SpeakingPhonemeScore";
+  accuracy?: Maybe<Scalars["Float"]["output"]>;
+  phoneme: Scalars["String"]["output"];
+};
+
+export type SpeakingPrompt = {
+  __typename?: "SpeakingPrompt";
+  /** Per learner. Null until they have finished one. */
+  bestScorePercent?: Maybe<Scalars["Float"]["output"]>;
+  category: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  ipaTranscript?: Maybe<Scalars["String"]["output"]>;
+  /** The sound being drilled, e.g. "/iː/ vs /ɪ/". */
+  phonemeTarget?: Maybe<Scalars["String"]["output"]>;
+  /** What the learner is asked to say. The accuracy score is accuracy against this. */
+  referenceText: Scalars["String"]["output"];
+  slug: Scalars["String"]["output"];
+  targetLevel?: Maybe<Scalars["String"]["output"]>;
+  tips: Array<Scalars["String"]["output"]>;
+  title: Scalars["String"]["output"];
+  translationVi?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type SpeakingPromptPage = {
+  __typename?: "SpeakingPromptPage";
+  items: Array<SpeakingPrompt>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/** Where to put a recording, and for how long that offer stands. */
+export type SpeakingUploadTicket = {
+  __typename?: "SpeakingUploadTicket";
+  attemptId: Scalars["ID"]["output"];
+  contentType: Scalars["String"]["output"];
+  /** Told to the client so it can say "start again" rather than failing on an expired URL. */
+  expiresInSeconds: Scalars["Int"]["output"];
+  /**
+   * A presigned PUT straight to object storage. The browser uploads there, not
+   * through this BFF: a minute of audio through a request thread costs a thread
+   * for a minute and lands in the same bucket either way.
+   */
+  uploadUrl: Scalars["String"]["output"];
+};
+
+export type SpeakingWord = {
+  __typename?: "SpeakingWord";
+  accuracyPercent?: Maybe<Scalars["Float"]["output"]>;
+  durationMs?: Maybe<Scalars["Int"]["output"]>;
+  /** The provider's own label: Mispronunciation, Omission, Insertion, None. */
+  errorType?: Maybe<Scalars["String"]["output"]>;
+  offsetMs?: Maybe<Scalars["Int"]["output"]>;
+  orderNo: Scalars["Int"]["output"];
+  phonemes: Array<SpeakingPhonemeScore>;
+  word: Scalars["String"]["output"];
+};
 
 export type SubmitAnswerInput = {
   questionId: Scalars["ID"]["input"];
