@@ -74,6 +74,7 @@ const KIND_TABS = [
   ContentKind.FLASHCARD_SET,
   ContentKind.QUIZ,
   ContentKind.DICTATION_LESSON,
+  ContentKind.SPEAKING_PROMPT,
 ];
 
 const STATUS_OPTIONS = [
@@ -85,9 +86,9 @@ const STATUS_OPTIONS = [
 ];
 
 /**
- * Một màn cho cả ba loại nội dung. Ba loại dùng chung một quy trình duyệt, nên
- * ba màn gần-giống-nhau sẽ là ba chỗ phải sửa mỗi lần quy trình đổi. `kind` chỉ
- * đi vào query và vào nhãn.
+ * Một màn cho cả bốn loại nội dung. Bốn loại dùng chung một quy trình duyệt,
+ * nên bốn màn gần-giống-nhau sẽ là bốn chỗ phải sửa mỗi lần quy trình đổi.
+ * `kind` chỉ đi vào query và vào nhãn.
  */
 export function AdminContentView() {
   const [kind, setKind] = useState<ContentKind>(ContentKind.FLASHCARD_SET);
@@ -153,7 +154,7 @@ export function AdminContentView() {
           </Title>
           <Text size="sm" c="ink.6">
             {canReview
-              ? "Bộ thẻ từ, bài trắc nghiệm và bài nghe chép ở mọi trạng thái, kèm việc duyệt."
+              ? "Bộ thẻ từ, bài trắc nghiệm, bài nghe chép và câu luyện nói ở mọi trạng thái, kèm việc duyệt."
               : "Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại."}
           </Text>
         </Stack>

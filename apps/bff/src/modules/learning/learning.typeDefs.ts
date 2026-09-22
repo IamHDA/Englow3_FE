@@ -432,14 +432,15 @@ export const learningTypeDefs = `#graphql
   }
 
   """
-  The three kinds of practice content. They share one review workflow, so this
-  schema presents one surface over three backend resources rather than three
+  The four kinds of authored content. They share one review workflow, so this
+  schema presents one surface over four backend resources rather than four
   copies of the same six operations.
   """
   enum ContentKind {
     FLASHCARD_SET
     QUIZ
     DICTATION_LESSON
+    SPEAKING_PROMPT
   }
 
   """
@@ -465,8 +466,12 @@ export const learningTypeDefs = `#graphql
     slug: String!
     title: String!
     status: ContentStatus!
-    """Cards, questions or sentences - whatever this kind is made of."""
-    itemCount: Int!
+    """
+    Cards, questions or sentences - whatever this kind is made of. Null for a
+    speaking prompt, which is one sentence rather than a collection: "1 item"
+    would be true and would tell a reviewer nothing.
+    """
+    itemCount: Int
     createdAt: DateTime!
     publishedAt: DateTime
     submittedForReviewAt: DateTime

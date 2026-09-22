@@ -87,8 +87,14 @@ export function ContentReviewTable({
                   </Stack>
                 </Table.Td>
                 <Table.Td>
+                  {/*
+                    Gạch ngang khi loại nội dung này không có gì để đếm - câu
+                    luyện nói là một câu, không phải một tập hợp.
+                  */}
                   <Text size="sm" c={item.itemCount === 0 ? "warn.7" : "ink.7"}>
-                    {item.itemCount} {itemLabel}
+                    {item.itemCount === null || itemLabel === null
+                      ? "—"
+                      : `${item.itemCount} ${itemLabel}`}
                   </Text>
                 </Table.Td>
                 <Table.Td>

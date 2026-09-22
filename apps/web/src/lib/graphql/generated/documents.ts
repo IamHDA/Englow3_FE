@@ -40,7 +40,7 @@ export type ContentReviewFieldsFragment = {
   slug: string;
   title: string;
   status: Types.ContentStatus;
-  itemCount: number;
+  itemCount: number | null;
   createdAt: string;
   publishedAt: string | null;
   submittedForReviewAt: string | null;
@@ -67,7 +67,7 @@ export type AdminContentQuery = {
       slug: string;
       title: string;
       status: Types.ContentStatus;
-      itemCount: number;
+      itemCount: number | null;
       createdAt: string;
       publishedAt: string | null;
       submittedForReviewAt: string | null;
@@ -88,7 +88,7 @@ export type SubmitContentForReviewMutation = {
     slug: string;
     title: string;
     status: Types.ContentStatus;
-    itemCount: number;
+    itemCount: number | null;
     createdAt: string;
     publishedAt: string | null;
     submittedForReviewAt: string | null;
@@ -108,7 +108,7 @@ export type ApproveContentMutation = {
     slug: string;
     title: string;
     status: Types.ContentStatus;
-    itemCount: number;
+    itemCount: number | null;
     createdAt: string;
     publishedAt: string | null;
     submittedForReviewAt: string | null;
@@ -129,7 +129,7 @@ export type RejectContentMutation = {
     slug: string;
     title: string;
     status: Types.ContentStatus;
-    itemCount: number;
+    itemCount: number | null;
     createdAt: string;
     publishedAt: string | null;
     submittedForReviewAt: string | null;
@@ -149,7 +149,7 @@ export type PublishContentMutation = {
     slug: string;
     title: string;
     status: Types.ContentStatus;
-    itemCount: number;
+    itemCount: number | null;
     createdAt: string;
     publishedAt: string | null;
     submittedForReviewAt: string | null;
@@ -169,7 +169,7 @@ export type ArchiveContentMutation = {
     slug: string;
     title: string;
     status: Types.ContentStatus;
-    itemCount: number;
+    itemCount: number | null;
     createdAt: string;
     publishedAt: string | null;
     submittedForReviewAt: string | null;

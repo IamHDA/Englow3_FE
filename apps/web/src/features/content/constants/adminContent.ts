@@ -27,13 +27,20 @@ export const CONTENT_KIND_LABELS: Record<ContentKind, string> = {
   [ContentKind.FLASHCARD_SET]: "Bộ thẻ từ",
   [ContentKind.QUIZ]: "Bài trắc nghiệm",
   [ContentKind.DICTATION_LESSON]: "Bài nghe chép",
+  [ContentKind.SPEAKING_PROMPT]: "Câu luyện nói",
 };
 
-/** `itemCount` đếm thứ khác nhau tuỳ loại - "12 thẻ" chứ không phải "12 mục". */
-export const CONTENT_ITEM_LABELS: Record<ContentKind, string> = {
+/**
+ * `itemCount` đếm thứ khác nhau tuỳ loại - "12 thẻ" chứ không phải "12 mục".
+ *
+ * Câu luyện nói không có nhãn vì không có gì để đếm: nó là một câu, không phải
+ * một tập hợp. Backend trả null và bảng hiện dấu gạch ngang.
+ */
+export const CONTENT_ITEM_LABELS: Record<ContentKind, string | null> = {
   [ContentKind.FLASHCARD_SET]: "thẻ",
   [ContentKind.QUIZ]: "câu hỏi",
   [ContentKind.DICTATION_LESSON]: "câu",
+  [ContentKind.SPEAKING_PROMPT]: null,
 };
 
 /**
@@ -91,7 +98,7 @@ export const CONTENT_ACTIONS_BY_STATUS: Record<
 export const ADMIN_CONTENT_PAGE_SIZE = 20;
 
 /**
- * Backend từ chối kèm mã miền ổn định ở `extensions.backendCode`. Ba loại nội
+ * Backend từ chối kèm mã miền ổn định ở `extensions.backendCode`. Bốn loại nội
  * dung có mã riêng cho cùng một luật, trừ `REVIEW_NOTE_REQUIRED` - cái đó dùng
  * chung vì luật và câu thông báo y hệt nhau.
  */
@@ -124,6 +131,15 @@ export const CONTENT_ERROR_MESSAGES: Record<string, string> = {
   DICTATION_LESSON_NOT_PENDING_REVIEW:
     "Bài này không còn chờ duyệt - có thể ai đó vừa xử lý.",
   DICTATION_LESSON_ALREADY_ARCHIVED: "Bài này đã được lưu trữ từ trước.",
+
+  SPEAKING_PROMPT_NO_REFERENCE_TEXT:
+    "Câu luyện nói phải có câu mẫu để người học đọc theo.",
+  SPEAKING_PROMPT_NOT_DRAFT: "Chỉ phát hành được câu đang là bản nháp.",
+  SPEAKING_PROMPT_NOT_SUBMITTABLE:
+    "Chỉ gửi duyệt được câu đang là bản nháp hoặc bị trả lại.",
+  SPEAKING_PROMPT_NOT_PENDING_REVIEW:
+    "Câu này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+  SPEAKING_PROMPT_ALREADY_ARCHIVED: "Câu này đã được lưu trữ từ trước.",
 };
 
 export const CONTENT_GENERIC_ERROR =

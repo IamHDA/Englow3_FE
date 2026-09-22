@@ -6,6 +6,8 @@ import type {
   DailyPathResponse,
   MistakeSentenceResponse,
   SearchContentParams,
+  SpeakingPromptReviewPageResponse,
+  SpeakingPromptReviewResponse,
   DictationLessonDetailResponse,
   DictationStatsResponse,
   DictationLessonPageResponse,
@@ -40,7 +42,34 @@ const ADMIN_CONTENT_PATHS: Record<ContentKind, string> = {
   FLASHCARD_SET: "/api/admin/flashcards/sets",
   QUIZ: "/api/admin/quizzes",
   DICTATION_LESSON: "/api/admin/dictation/lessons",
+  SPEAKING_PROMPT: "/api/admin/speaking/prompts",
 };
+
+/**
+ * Speaking prompts answer with the speaking module's own shape: the same
+ * lifecycle fields plus a reference sentence, minus an item count. Everything
+ * the review screen reads is there, so the difference is reconciled here rather
+ * than by bending one backend module's record to match another's.
+ */
+function toContentReview(
+  prompt: SpeakingPromptReviewResponse,
+): ContentReviewResponse {
+  return {
+    id: prompt.id,
+    slug: prompt.slug,
+    title: prompt.title,
+    status: prompt.status,
+    // A prompt is one sentence, not a collection of things. Null rather than 1,
+    // which would be true and tell a reviewer nothing.
+    itemCount: null,
+    createdAt: prompt.createdAt,
+    publishedAt: prompt.publishedAt,
+    submittedForReviewAt: prompt.submittedForReviewAt,
+    reviewedByUserId: prompt.reviewedByUserId,
+    reviewedAt: prompt.reviewedAt,
+    reviewNote: prompt.reviewNote,
+  };
+}
 
 export class LearningApi {
   constructor(private readonly client: BackendClient) {}
@@ -183,27 +212,45 @@ export class LearningApi {
     query.set("page", String(params.page ?? 0));
     query.set("size", String(params.size ?? 20));
 
-    return this.client.get(
-      `${ADMIN_CONTENT_PATHS[params.kind]}?${query.toString()}`,
-    );
+    const path = `${ADMIN_CONTENT_PATHS[params.kind]}?${query.toString()}`;
+    if (params.kind !== "SPEAKING_PROMPT") {
+      return this.client.get(path);
+    }
+
+    return this.client
+      .get<SpeakingPromptReviewPageResponse>(path)
+      .then((page) => ({ ...page, items: page.items.map(toContentReview) }));
+  }
+
+  /** One helper behind all five review actions, so the mapping lives in one place. */
+  private contentAction(
+    kind: ContentKind,
+    id: string,
+    action: string,
+    body?: unknown,
+  ): Promise<ContentReviewResponse> {
+    const path = `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/${action}`;
+    if (kind !== "SPEAKING_PROMPT") {
+      return this.client.post(path, body);
+    }
+
+    return this.client
+      .post<SpeakingPromptReviewResponse>(path, body)
+      .then(toContentReview);
   }
 
   submitContentForReview(
     kind: ContentKind,
     id: string,
   ): Promise<ContentReviewResponse> {
-    return this.client.post(
-      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/submit-for-review`,
-    );
+    return this.contentAction(kind, id, "submit-for-review");
   }
 
   approveContent(
     kind: ContentKind,
     id: string,
   ): Promise<ContentReviewResponse> {
-    return this.client.post(
-      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/approve`,
-    );
+    return this.contentAction(kind, id, "approve");
   }
 
   /** The note travels as given - the rule that it must say something is the backend entity. */
@@ -212,27 +259,20 @@ export class LearningApi {
     id: string,
     note: string,
   ): Promise<ContentReviewResponse> {
-    return this.client.post(
-      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/reject`,
-      { note },
-    );
+    return this.contentAction(kind, id, "reject", { note });
   }
 
   publishContent(
     kind: ContentKind,
     id: string,
   ): Promise<ContentReviewResponse> {
-    return this.client.post(
-      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/publish`,
-    );
+    return this.contentAction(kind, id, "publish");
   }
 
   archiveContent(
     kind: ContentKind,
     id: string,
   ): Promise<ContentReviewResponse> {
-    return this.client.post(
-      `${ADMIN_CONTENT_PATHS[kind]}/${encodeURIComponent(id)}/archive`,
-    );
+    return this.contentAction(kind, id, "archive");
   }
 }
