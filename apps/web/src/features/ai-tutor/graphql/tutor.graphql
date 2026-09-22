@@ -1,0 +1,69 @@
+fragment TutorMessageFields on TutorMessage {
+  id
+  orderNo
+  role
+  status
+  content
+  errorCode
+  model
+  reported
+  createdAt
+  answeredAt
+}
+
+fragment TutorConversationSummaryFields on TutorConversationSummary {
+  id
+  title
+  topic
+  messageCount
+  lastMessageAt
+  createdAt
+}
+
+query TutorConversations {
+  tutorConversations {
+    ...TutorConversationSummaryFields
+  }
+}
+
+query TutorConversation($id: ID!) {
+  tutorConversation(id: $id) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+
+mutation SendTutorMessage($conversationId: ID, $message: String!, $topic: String) {
+  sendTutorMessage(
+    conversationId: $conversationId
+    message: $message
+    topic: $topic
+  ) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+
+mutation ArchiveTutorConversation($id: ID!) {
+  archiveTutorConversation(id: $id) {
+    ...TutorConversationSummaryFields
+  }
+}
+
+mutation ReportTutorMessage($conversationId: ID!, $messageId: ID!, $note: String) {
+  reportTutorMessage(
+    conversationId: $conversationId
+    messageId: $messageId
+    note: $note
+  ) {
+    ...TutorMessageFields
+  }
+}

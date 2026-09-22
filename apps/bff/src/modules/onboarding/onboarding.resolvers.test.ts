@@ -14,6 +14,8 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
       onboardingApi: { getLearningPurposes: vi.fn() } as any,
       examApi: {} as any,
       learningApi: {} as any,
+      speakingApi: {} as any,
+      tutorApi: {} as any,
     },
     ...overrides,
   };
@@ -47,6 +49,8 @@ describe("Query.learningPurposes", () => {
         onboardingApi: { getLearningPurposes } as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 

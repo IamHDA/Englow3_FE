@@ -21,6 +21,14 @@ export class BackendClient {
     return this.request<T>("PUT", path, body);
   }
 
+  /**
+   * The backend's DELETE routes answer with the resource in its new state rather
+   * than with 204, so this reads a body like the rest.
+   */
+  delete<T>(path: string): Promise<T> {
+    return this.request<T>("DELETE", path);
+  }
+
   private async request<T>(
     method: string,
     path: string,

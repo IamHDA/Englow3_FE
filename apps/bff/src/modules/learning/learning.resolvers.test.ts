@@ -16,6 +16,8 @@ function makeContext(
       onboardingApi: {} as any,
       examApi: {} as any,
       learningApi: learningApiOverrides as any,
+      speakingApi: {} as any,
+      tutorApi: {} as any,
     },
     ...overrides,
   };

@@ -21,6 +21,8 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
         archiveAsAdmin: vi.fn(),
       } as any,
       learningApi: {} as any,
+      speakingApi: {} as any,
+      tutorApi: {} as any,
     },
     ...overrides,
   };
@@ -29,6 +31,7 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
 const ME: UserInformationResponse = {
   id: "u1",
   email: "learner@example.com",
+  role: "LEARNER",
   fullName: "Nguyen Van A",
   displayName: "vana",
   gender: null,
@@ -53,6 +56,8 @@ describe("me query - schema wiring and partial failure", () => {
         onboardingApi: { getCurrentState } as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
@@ -81,6 +86,8 @@ describe("me query - schema wiring and partial failure", () => {
         onboardingApi: { getCurrentState } as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
@@ -123,6 +130,8 @@ describe("me query - schema wiring and partial failure", () => {
         onboardingApi: { getCurrentState: vi.fn() } as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
@@ -170,6 +179,8 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
         onboardingApi: {} as any,
         examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
@@ -211,6 +222,8 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
         onboardingApi: {} as any,
         examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
@@ -242,6 +255,8 @@ describe("updateProfile mutation - schema wiring", () => {
         onboardingApi: {} as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 

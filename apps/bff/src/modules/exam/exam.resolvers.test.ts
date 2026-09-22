@@ -17,6 +17,8 @@ function makeContext(
       onboardingApi: {} as any,
       examApi: { searchAsAdmin, ...examApiOverrides } as any,
       learningApi: {} as any,
+      speakingApi: {} as any,
+      tutorApi: {} as any,
     },
     ...overrides,
   };

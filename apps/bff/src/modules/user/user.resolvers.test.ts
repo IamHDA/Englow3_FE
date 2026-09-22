@@ -14,6 +14,8 @@ function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
       onboardingApi: {} as any,
       examApi: {} as any,
       learningApi: {} as any,
+      speakingApi: {} as any,
+      tutorApi: {} as any,
     },
     ...overrides,
   };
@@ -39,6 +41,7 @@ describe("Query.me", () => {
     const me: UserInformationResponse = {
       id: "u1",
       email: "learner@example.com",
+      role: "LEARNER",
       fullName: "Nguyen Van A",
       displayName: "vana",
       gender: null,
@@ -54,6 +57,8 @@ describe("Query.me", () => {
         onboardingApi: {} as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
@@ -92,6 +97,7 @@ describe("Mutation.updateProfile", () => {
     const updated: UserInformationResponse = {
       id: "u1",
       email: "learner@example.com",
+      role: "LEARNER",
       fullName: "Nguyen Van B",
       displayName: "vanb",
       gender: "MALE",
@@ -107,6 +113,8 @@ describe("Mutation.updateProfile", () => {
         onboardingApi: {} as any,
         examApi: {} as any,
         learningApi: {} as any,
+        speakingApi: {} as any,
+        tutorApi: {} as any,
       },
     });
 
