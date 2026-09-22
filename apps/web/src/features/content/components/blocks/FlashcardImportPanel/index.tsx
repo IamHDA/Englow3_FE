@@ -17,14 +17,20 @@ import React, { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
 import {
+  importDictation,
   importFlashcards,
+  validateDictationImport,
   validateFlashcardImport,
   type FlashcardImportReport,
 } from "../../../api/importFlashcards";
 
 interface FlashcardImportPanelProps {
-  /** The draft set the cards go into. Import refuses anything already published. */
-  setId: string;
+  /**
+   * The draft set the cards go into, for a flashcard batch. Omitted for a
+   * shadowing batch, which creates its own lessons - one per clip.
+   */
+  setId?: string;
+  kind?: "flashcards" | "dictation";
 }
 
 /**
@@ -35,7 +41,11 @@ interface FlashcardImportPanelProps {
  * thật có cùng hình dạng, chỉ khác một chữ - nên `committed` là thứ phân biệt
  * chúng, không phải trí nhớ của người bấm nút.
  */
-export function FlashcardImportPanel({ setId }: FlashcardImportPanelProps) {
+export function FlashcardImportPanel({
+  setId,
+  kind = "flashcards",
+}: FlashcardImportPanelProps) {
+  const isDictation = kind === "dictation";
   const [file, setFile] = useState<File | null>(null);
   const [report, setReport] = useState<FlashcardImportReport | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -62,11 +72,19 @@ export function FlashcardImportPanel({ setId }: FlashcardImportPanelProps) {
     setError(null);
     try {
       const json = await file.text();
-      setReport(
-        commit
-          ? await importFlashcards(setId, json, token)
-          : await validateFlashcardImport(json, token),
-      );
+      if (isDictation) {
+        setReport(
+          commit
+            ? await importDictation(json, token)
+            : await validateDictationImport(json, token),
+        );
+      } else if (setId) {
+        setReport(
+          commit
+            ? await importFlashcards(setId, json, token)
+            : await validateFlashcardImport(json, token),
+        );
+      }
     } catch (failure) {
       setReport(null);
       setError(
@@ -81,10 +99,13 @@ export function FlashcardImportPanel({ setId }: FlashcardImportPanelProps) {
     <Card withBorder radius="md" p="md">
       <Stack gap="md">
         <Stack gap={4}>
-          <Title order={4}>Nhập thẻ từ tệp</Title>
+          <Title order={4}>
+            {isDictation ? "Nhập bài nghe từ tệp" : "Nhập thẻ từ tệp"}
+          </Title>
           <Text size="sm" c="dimmed">
-            Tệp JSON do data pipeline sinh ra. Kiểm tra trước để xem dòng nào
-            không dùng được, rồi mới nhập vào bộ nháp.
+            {isDictation
+              ? "Tệp shadowing batch do data pipeline sinh ra. Mỗi clip thành một bài nháp, mỗi đoạn thành một câu."
+              : "Tệp JSON do data pipeline sinh ra. Kiểm tra trước để xem dòng nào không dùng được, rồi mới nhập vào bộ nháp."}
           </Text>
         </Stack>
 
@@ -116,7 +137,7 @@ export function FlashcardImportPanel({ setId }: FlashcardImportPanelProps) {
             disabled={!file || busy || !report || report.acceptedCount === 0}
             onClick={() => void run(true)}
           >
-            Nhập vào bộ này
+            {isDictation ? "Nhập các bài này" : "Nhập vào bộ này"}
           </Button>
         </Group>
 
@@ -138,11 +159,14 @@ export function FlashcardImportPanel({ setId }: FlashcardImportPanelProps) {
           <Stack gap="xs">
             <Alert color={report.committed ? "teal" : "blue"} variant="light">
               <Text size="sm">
-                {report.committed
-                  ? `Đã nhập ${report.acceptedCount} thẻ.`
-                  : `Sẽ nhập ${report.acceptedCount} thẻ.`}
+                {`${report.committed ? "Đã nhập" : "Sẽ nhập"} ${report.acceptedCount} ${
+                  isDictation ? "bài" : "thẻ"
+                }`}
+                {report.sentenceCount !== undefined &&
+                  ` (${report.sentenceCount} câu)`}
+                {". "}
                 {report.rejectedCount > 0 &&
-                  ` Bỏ qua ${report.rejectedCount} dòng.`}
+                  `Bỏ qua ${report.rejectedCount} ${isDictation ? "clip" : "dòng"}.`}
               </Text>
             </Alert>
 
@@ -151,15 +175,19 @@ export function FlashcardImportPanel({ setId }: FlashcardImportPanelProps) {
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th w={80}>Dòng</Table.Th>
-                    <Table.Th>Từ</Table.Th>
+                    <Table.Th>{isDictation ? "Clip" : "Từ"}</Table.Th>
                     <Table.Th>Lý do</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {report.rejections.map((rejection) => (
-                    <Table.Tr key={`${rejection.index}-${rejection.lemma}`}>
+                    <Table.Tr
+                      key={`${rejection.index}-${rejection.lemma ?? rejection.clipId}`}
+                    >
                       <Table.Td>{rejection.index}</Table.Td>
-                      <Table.Td>{rejection.lemma || "—"}</Table.Td>
+                      <Table.Td>
+                        {rejection.lemma || rejection.clipId || "—"}
+                      </Table.Td>
                       <Table.Td>{rejection.reason}</Table.Td>
                     </Table.Tr>
                   ))}

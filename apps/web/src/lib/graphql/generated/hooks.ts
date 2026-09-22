@@ -112,7 +112,7 @@ export type ArchiveContentMutation = { archiveContent: { id: string, slug: strin
 
 export type DictationLessonFieldsFragment = { id: string, slug: string, title: string, topic: string, targetLevel: string | null, sentenceCount: number, completedSentenceCount: number, totalDurationSeconds: number, lastPractisedAt: string | null };
 
-export type DictationSentenceFieldsFragment = { id: string, orderNo: number, audioUrl: string, audioDurationSeconds: number, hintWordCount: number, hintFirstLetters: string | null, hintRevealWord: string | null, hintPartialTranscript: string | null, bestAccuracyPercent: number | null };
+export type DictationSentenceFieldsFragment = { id: string, orderNo: number, audioUrl: string, audioDurationSeconds: number, hintWordCount: number, hintFirstLetters: string | null, hintRevealWord: string | null, hintPartialTranscript: string | null, audioStartMs: number | null, audioEndMs: number | null, bestAccuracyPercent: number | null };
 
 export type DictationLessonsQueryVariables = Exact<{
   topic?: string | null | undefined;
@@ -129,7 +129,7 @@ export type DictationLessonDetailQueryVariables = Exact<{
 }>;
 
 
-export type DictationLessonDetailQuery = { dictationLesson: { lesson: { id: string, slug: string, title: string, topic: string, targetLevel: string | null, sentenceCount: number, completedSentenceCount: number, totalDurationSeconds: number, lastPractisedAt: string | null }, sentences: Array<{ id: string, orderNo: number, audioUrl: string, audioDurationSeconds: number, hintWordCount: number, hintFirstLetters: string | null, hintRevealWord: string | null, hintPartialTranscript: string | null, bestAccuracyPercent: number | null }> } };
+export type DictationLessonDetailQuery = { dictationLesson: { lesson: { id: string, slug: string, title: string, topic: string, targetLevel: string | null, sentenceCount: number, completedSentenceCount: number, totalDurationSeconds: number, lastPractisedAt: string | null }, sentences: Array<{ id: string, orderNo: number, audioUrl: string, audioDurationSeconds: number, hintWordCount: number, hintFirstLetters: string | null, hintRevealWord: string | null, hintPartialTranscript: string | null, audioStartMs: number | null, audioEndMs: number | null, bestAccuracyPercent: number | null }> } };
 
 export type SubmitDictationMutationVariables = Exact<{
   sentenceId: string | number;
@@ -520,6 +520,8 @@ export const DictationSentenceFieldsFragmentDoc = gql`
   hintFirstLetters
   hintRevealWord
   hintPartialTranscript
+  audioStartMs
+  audioEndMs
   bestAccuracyPercent
 }
     `;

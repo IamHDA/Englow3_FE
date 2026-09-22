@@ -224,6 +224,9 @@ export type DictationSentenceResponse = {
   hintFirstLetters: string | null;
   hintRevealWord: string | null;
   hintPartialTranscript: string | null;
+  /** Both null means the file is this sentence; see the typeDefs. */
+  audioStartMs: number | null;
+  audioEndMs: number | null;
   bestAccuracyPercent: number | null;
 };
 

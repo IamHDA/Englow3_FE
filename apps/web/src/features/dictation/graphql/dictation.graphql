@@ -19,6 +19,8 @@ fragment DictationSentenceFields on DictationSentence {
   hintFirstLetters
   hintRevealWord
   hintPartialTranscript
+  audioStartMs
+  audioEndMs
   bestAccuracyPercent
 }
 

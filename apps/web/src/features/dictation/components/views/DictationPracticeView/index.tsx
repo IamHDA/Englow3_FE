@@ -94,6 +94,8 @@ export function DictationPracticeView({
     durationSeconds: practice.currentSentence
       ? practice.currentSentence.audioDurationSeconds
       : 5,
+    audioStartMs: practice.currentSentence?.audioStartMs,
+    audioEndMs: practice.currentSentence?.audioEndMs,
   });
 
   if (loading && lesson === undefined) {

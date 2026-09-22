@@ -209,6 +209,12 @@ export function AdminContentView() {
           </Group>
         </Card>
 
+        {/* Bài nghe không cần chọn sẵn bài nào: một shadowing batch tự tạo ra
+            bài của nó, mỗi clip một bài. */}
+        {kind === ContentKind.DICTATION_LESSON && (
+          <FlashcardImportPanel kind="dictation" />
+        )}
+
         {/* Chỉ với bộ thẻ, và chỉ bộ còn nháp: import từ chối mọi thứ đã xuất
             bản, nên đưa một bộ đã publish vào đây chỉ để nhận lỗi. */}
         {kind === ContentKind.FLASHCARD_SET && draftSets.length > 0 && (

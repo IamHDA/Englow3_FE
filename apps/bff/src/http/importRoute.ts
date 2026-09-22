@@ -42,6 +42,19 @@ export function importRoute(): Router {
       ),
   );
 
+  router.post(
+    "/admin/dictation/import/validate",
+    express.text({ type: "*/*", limit: MAX_IMPORT_BYTES }),
+    (req, res) => forward(req, res, "/api/admin/dictation/import/validate"),
+  );
+
+  // No set id: a shadowing batch creates its own lessons, one per clip.
+  router.post(
+    "/admin/dictation/import",
+    express.text({ type: "*/*", limit: MAX_IMPORT_BYTES }),
+    (req, res) => forward(req, res, "/api/admin/dictation/import"),
+  );
+
   return router;
 }
 

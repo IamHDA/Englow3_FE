@@ -15,10 +15,13 @@ name: CI
 # forever on "Expected — Waiting for status to be reported". Skipping docs pays
 # off for deploys, not for a two-minute validation run.
 on:
+  # testing is where work lands before dev, so it is the branch where a break is
+  # cheapest to find. It was not watched at all, which made it the one branch
+  # people push to and nothing checks.
   push:
-    branches: [main, dev]
+    branches: [main, dev, testing]
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, testing]
 
 concurrency:
   # Keyed on the branch name, not on the PR number: `head_ref` is set only on

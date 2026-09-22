@@ -245,6 +245,14 @@ export const learningTypeDefs = `#graphql
     hintFirstLetters: String
     hintRevealWord: String
     hintPartialTranscript: String
+    """
+    Where this sentence begins inside audioUrl, for a lesson cut from one long
+    recording. Null on both means the file is this sentence and nothing else,
+    which is what a lesson with a clip per line has always meant - so a player
+    that ignores them keeps working on older content.
+    """
+    audioStartMs: Int
+    audioEndMs: Int
     """The learner's best attempt on this line so far. Null if never tried."""
     bestAccuracyPercent: Float
   }

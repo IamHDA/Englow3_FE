@@ -3,7 +3,10 @@ export interface FlashcardImportReport {
   committed: boolean;
   acceptedCount: number;
   rejectedCount: number;
-  rejections: { index: number; lemma: string; reason: string }[];
+  /** The backend names the row by lemma for cards and by clip id for dictation. */
+  rejections: { index: number; lemma?: string; clipId?: string; reason: string }[];
+  /** Dictation only: lines across every lesson in the batch. */
+  sentenceCount?: number;
 }
 
 const BFF_REST_URL = (
@@ -59,4 +62,19 @@ export function importFlashcards(setId: string, json: string, token: string) {
     json,
     token,
   );
+}
+
+/**
+ * A shadowing batch, which creates its own lessons rather than filling one.
+ *
+ * Reported with a sentence count as well as a lesson count: thirty clips of
+ * four lines and thirty of forty are the same number of lessons and very
+ * different amounts of content.
+ */
+export function validateDictationImport(json: string, token: string) {
+  return post("/admin/dictation/import/validate", json, token);
+}
+
+export function importDictation(json: string, token: string) {
+  return post("/admin/dictation/import", json, token);
 }
