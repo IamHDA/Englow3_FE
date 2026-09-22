@@ -61,7 +61,7 @@ describe("Mutation.startSpeakingAttempt", () => {
     expect(() =>
       speakingResolvers.Mutation.startSpeakingAttempt(
         {},
-        { promptId: "p-1", contentType: "audio/wav" },
+        { promptId: "p-1", contentType: "audio/wav", contentLength: 1024 },
         ctx,
       ),
     ).toThrow("Missing or invalid access token");
@@ -79,11 +79,34 @@ describe("Mutation.startSpeakingAttempt", () => {
 
     await speakingResolvers.Mutation.startSpeakingAttempt(
       {},
-      { promptId: "p-1", contentType: "audio/mpeg" },
+      { promptId: "p-1", contentType: "audio/mpeg", contentLength: 1024 },
       ctx,
     );
 
-    expect(startAttempt).toHaveBeenCalledWith("p-1", "audio/mpeg");
+    expect(startAttempt).toHaveBeenCalledWith("p-1", "audio/mpeg", 1024);
+  });
+
+  /**
+   * The size travels as declared. Clamping it here would produce a signature
+   * bound to one number and a body of another, which fails at the bucket with
+   * an error about signatures rather than about size - the backend refuses an
+   * oversized request itself, with a message that says so.
+   */
+  it("forwards an oversized length rather than clamping it", async () => {
+    const startAttempt = vi.fn().mockResolvedValue({ attemptId: "a-1" });
+    const ctx = makeContext({ startAttempt });
+
+    await speakingResolvers.Mutation.startSpeakingAttempt(
+      {},
+      {
+        promptId: "p-1",
+        contentType: "audio/wav",
+        contentLength: 999_000_000,
+      },
+      ctx,
+    );
+
+    expect(startAttempt).toHaveBeenCalledWith("p-1", "audio/wav", 999_000_000);
   });
 });
 

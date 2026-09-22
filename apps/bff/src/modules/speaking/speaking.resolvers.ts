@@ -41,11 +41,15 @@ export const speakingResolvers = {
   Mutation: {
     startSpeakingAttempt: (
       _: unknown,
-      args: { promptId: string; contentType: string },
+      args: { promptId: string; contentType: string; contentLength: number },
       ctx: GraphQLContext,
     ) => {
       ctx.requireToken();
-      return ctx.apis.speakingApi.startAttempt(args.promptId, args.contentType);
+      return ctx.apis.speakingApi.startAttempt(
+        args.promptId,
+        args.contentType,
+        args.contentLength,
+      );
     },
     // The content type is forwarded as given. Defaulting an unsupported one to
     // something the backend accepts would upload audio that is not what it

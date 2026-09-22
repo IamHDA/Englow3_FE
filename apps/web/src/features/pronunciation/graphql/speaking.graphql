@@ -82,8 +82,16 @@ query SpeakingAttempts($promptId: ID!) {
   }
 }
 
-mutation StartSpeakingAttempt($promptId: ID!, $contentType: String!) {
-  startSpeakingAttempt(promptId: $promptId, contentType: $contentType) {
+mutation StartSpeakingAttempt(
+  $promptId: ID!
+  $contentType: String!
+  $contentLength: Int!
+) {
+  startSpeakingAttempt(
+    promptId: $promptId
+    contentType: $contentType
+    contentLength: $contentLength
+  ) {
     attemptId
     uploadUrl
     contentType

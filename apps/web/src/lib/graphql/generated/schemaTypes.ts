@@ -897,6 +897,7 @@ export type MutationStartQuizAttemptArgs = {
 };
 
 export type MutationStartSpeakingAttemptArgs = {
+  contentLength: Scalars["Int"]["input"];
   contentType: Scalars["String"]["input"];
   promptId: Scalars["ID"]["input"];
 };

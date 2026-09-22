@@ -1,7 +1,10 @@
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
+import {
+  corsMiddleware,
+  rateLimitMiddleware,
+} from "../src/config/middleware.js";
 import { createContext } from "../src/graphql/context.js";
 import { formatError } from "../src/graphql/errors.js";
 import { resolvers, typeDefs } from "../src/graphql/schema.js";
@@ -14,8 +17,9 @@ const server = new ApolloServer({
   includeStacktraceInErrorResponses: false,
 });
 
-app.use(cors());
-app.use(express.json());
+app.use(corsMiddleware());
+app.use(rateLimitMiddleware());
+app.use(express.json({ limit: "128kb" }));
 
 let isStarted = false;
 

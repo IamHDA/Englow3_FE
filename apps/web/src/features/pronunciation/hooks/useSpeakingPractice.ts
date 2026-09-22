@@ -150,7 +150,14 @@ export function useSpeakingPractice({
 
     try {
       const ticket = await startAttempt({
-        variables: { promptId, contentType: WAV_CONTENT_TYPE },
+        variables: {
+          promptId,
+          contentType: WAV_CONTENT_TYPE,
+          // Khai đúng kích thước ngay từ đầu. Backend ràng số này vào chữ ký
+          // của URL, nên URL trả về chỉ nhận đúng chừng ấy byte - không có
+          // cách nào đẩy file to hơn qua đường ký sẵn.
+          contentLength: wav.size,
+        },
       });
       const upload = ticket.data?.startSpeakingAttempt;
       if (upload === undefined) {

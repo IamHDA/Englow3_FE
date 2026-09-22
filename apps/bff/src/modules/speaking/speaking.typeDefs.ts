@@ -120,7 +120,17 @@ export const speakingTypeDefs = `#graphql
     checked now rather than at assessment time, so an unusable one is refused
     before the learner records anything.
     """
-    startSpeakingAttempt(promptId: ID!, contentType: String!): SpeakingUploadTicket!
+    startSpeakingAttempt(
+      promptId: ID!
+      contentType: String!
+      """
+      Exactly how many bytes will be uploaded. The backend binds this into the
+      signature, so the URL it returns will not accept a body of any other
+      size - a presigned PUT never passes through a server we control, and
+      this is the only place a limit can be applied.
+      """
+      contentLength: Int!
+    ): SpeakingUploadTicket!
 
     """
     The upload is done; queue the assessment. Refused with

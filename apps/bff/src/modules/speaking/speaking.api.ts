@@ -37,10 +37,11 @@ export class SpeakingApi {
   startAttempt(
     promptId: string,
     contentType: string,
+    contentLength: number,
   ): Promise<SpeakingUploadTicketResponse> {
     return this.client.post(
       `${SPEAKING_BASE_PATH}/prompts/${encodeURIComponent(promptId)}/attempts`,
-      { contentType },
+      { contentType, contentLength },
     );
   }
 

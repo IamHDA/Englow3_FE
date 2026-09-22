@@ -1218,6 +1218,7 @@ export type SpeakingAttemptsQuery = {
 export type StartSpeakingAttemptMutationVariables = Exact<{
   promptId: string | number;
   contentType: string;
+  contentLength: number;
 }>;
 
 export type StartSpeakingAttemptMutation = {
@@ -6529,6 +6530,17 @@ export const StartSpeakingAttemptDocument = {
             },
           },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentLength" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -6551,6 +6563,14 @@ export const StartSpeakingAttemptDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "contentType" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentLength" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentLength" },
                 },
               },
             ],

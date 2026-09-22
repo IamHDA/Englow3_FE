@@ -1221,6 +1221,7 @@ export type SpeakingAttemptsQuery = {
 export type StartSpeakingAttemptMutationVariables = Exact<{
   promptId: string | number;
   contentType: string;
+  contentLength: number;
 }>;
 
 export type StartSpeakingAttemptMutation = {
@@ -5312,8 +5313,16 @@ export type SpeakingAttemptsQueryResult = ApolloReactCommon.QueryResult<
   SpeakingAttemptsQueryVariables
 >;
 export const StartSpeakingAttemptDocument = gql`
-  mutation StartSpeakingAttempt($promptId: ID!, $contentType: String!) {
-    startSpeakingAttempt(promptId: $promptId, contentType: $contentType) {
+  mutation StartSpeakingAttempt(
+    $promptId: ID!
+    $contentType: String!
+    $contentLength: Int!
+  ) {
+    startSpeakingAttempt(
+      promptId: $promptId
+      contentType: $contentType
+      contentLength: $contentLength
+    ) {
       attemptId
       uploadUrl
       contentType
@@ -5343,6 +5352,7 @@ export type StartSpeakingAttemptMutationFn = (
  *   variables: {
  *      promptId: // value for 'promptId'
  *      contentType: // value for 'contentType'
+ *      contentLength: // value for 'contentLength'
  *   },
  * });
  */

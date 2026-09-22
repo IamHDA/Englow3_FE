@@ -20,11 +20,21 @@ export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
  * after sign-in with no max-age.
  */
 export function forgetSessionOnBrowserClose() {
+  // Rewriting a cookie replaces every attribute, not just max-age: anything not
+  // restated here is dropped. Supabase writes the session cookie with Secure on
+  // HTTPS, and an earlier version of this function left it off - which quietly
+  // downgraded the one person who had unticked "remember me" to a token that
+  // travels over plain HTTP.
+  //
+  // Conditional on the current scheme because a Secure cookie is simply not
+  // stored on http://localhost, which would log every developer straight out.
+  const secure = window.location.protocol === "https:" ? "; secure" : "";
+
   document.cookie
     .split("; ")
     .filter((entry) => entry.includes("-auth-token"))
     .forEach((entry) => {
       const [name, ...rest] = entry.split("=");
-      document.cookie = `${name}=${rest.join("=")}; path=/; samesite=lax`;
+      document.cookie = `${name}=${rest.join("=")}; path=/; samesite=lax${secure}`;
     });
 }
