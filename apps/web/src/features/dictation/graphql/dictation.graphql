@@ -56,6 +56,7 @@ mutation SubmitDictation($sentenceId: ID!, $response: String!) {
     accuracyPercent
     correctWordCount
     totalWordCount
+    cleared
   }
 }
 
@@ -99,9 +100,10 @@ query DictationStats($periodDays: Int) {
 query DictationMistakes {
   dictationMistakes {
     sentenceId
-    text
     audioUrl
     audioDurationSeconds
+    audioStartMs
+    audioEndMs
     lessonId
     lessonTitle
     bestAccuracyPercent

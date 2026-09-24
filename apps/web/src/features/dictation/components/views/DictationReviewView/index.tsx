@@ -15,7 +15,12 @@ import Link from "next/link";
 
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
-import { useDictationMistakesQuery } from "@/lib/graphql/generated/hooks";
+import { useCallback } from "react";
+
+import {
+  useDictationMistakesQuery,
+  useSubmitDictationMutation,
+} from "@/lib/graphql/generated/hooks";
 
 import { DictationMistakeQueue } from "../../blocks/DictationMistakeQueue";
 
@@ -32,7 +37,25 @@ export function DictationReviewView() {
     fetchPolicy: "cache-and-network",
   });
 
+  const [submitDictation] = useSubmitDictationMutation();
+
   const mistakes = data?.dictationMistakes ?? [];
+
+  /**
+   * Chấm trên server, như màn luyện tập. Trước đây màn này chấm ngay trong
+   * trình duyệt rồi thôi - không lượt làm nào được ghi, nên câu đã ôn xong vẫn
+   * quay lại ở lần mở sau. Trả về null khi gọi hỏng, để block nói thẳng là chưa
+   * chấm được thay vì tự bịa ra một kết quả.
+   */
+  const checkSentence = useCallback(
+    async (sentenceId: string, typed: string) => {
+      const response = await submitDictation({
+        variables: { sentenceId, response: typed },
+      }).catch(() => null);
+      return response?.data?.submitDictation ?? null;
+    },
+    [submitDictation],
+  );
 
   return (
     <Container size="md" py="xl">
@@ -64,7 +87,7 @@ export function DictationReviewView() {
         ) : loading && mistakes.length === 0 ? (
           <Skeleton height={420} radius="md" />
         ) : (
-          <DictationMistakeQueue mistakes={mistakes} />
+          <DictationMistakeQueue mistakes={mistakes} onCheck={checkSentence} />
         )}
       </Stack>
     </Container>

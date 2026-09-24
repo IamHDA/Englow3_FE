@@ -412,6 +412,7 @@ export type SubmitDictationMutation = {
     accuracyPercent: number;
     correctWordCount: number;
     totalWordCount: number;
+    cleared: boolean;
   };
 };
 
@@ -461,9 +462,10 @@ export type DictationMistakesQueryVariables = Exact<{ [key: string]: never }>;
 export type DictationMistakesQuery = {
   dictationMistakes: Array<{
     sentenceId: string;
-    text: string;
     audioUrl: string;
     audioDurationSeconds: number;
+    audioStartMs: number | null;
+    audioEndMs: number | null;
     lessonId: string;
     lessonTitle: string;
     bestAccuracyPercent: number;
@@ -2991,6 +2993,7 @@ export const SubmitDictationDocument = gql`
       accuracyPercent
       correctWordCount
       totalWordCount
+      cleared
     }
   }
 `;
@@ -3175,9 +3178,10 @@ export const DictationMistakesDocument = gql`
   query DictationMistakes {
     dictationMistakes {
       sentenceId
-      text
       audioUrl
       audioDurationSeconds
+      audioStartMs
+      audioEndMs
       lessonId
       lessonTitle
       bestAccuracyPercent

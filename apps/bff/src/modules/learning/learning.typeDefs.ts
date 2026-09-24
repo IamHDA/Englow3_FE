@@ -271,6 +271,11 @@ export const learningTypeDefs = `#graphql
     accuracyPercent: Float!
     correctWordCount: Int!
     totalWordCount: Int!
+    """
+    Whether the line now counts as done, by the server's one rule. Sent so no
+    screen compares the accuracy to a threshold of its own.
+    """
+    cleared: Boolean!
   }
 
   type FlashcardDailyActivity {
@@ -420,16 +425,20 @@ export const learningTypeDefs = `#graphql
   """
   One line to practise again.
 
-  Carries the correct text, unlike DictationSentence which has no transcript
-  field at all. Not a hole in that rule: every row here is a line the learner
-  has already committed an answer to.
+  No transcript, like DictationSentence. It used to carry one - every row is a
+  line the learner has already answered - but the screen then graded in the
+  browser and never told the server, so reviewed lines were never recorded and
+  came back on the next visit. Review now submits like practice does, and the
+  answer arrives in that response, after one has been committed.
   """
   type MistakeSentence {
     sentenceId: ID!
-    text: String!
     """Pre-signed and short-lived."""
     audioUrl: String!
     audioDurationSeconds: Int!
+    "Where the line sits inside audioUrl, for a lesson cut from one passage."
+    audioStartMs: Int
+    audioEndMs: Int
     lessonId: ID!
     lessonTitle: String!
     """Their best attempt so far - the reason this line is still in the queue."""

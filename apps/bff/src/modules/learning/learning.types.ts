@@ -245,6 +245,7 @@ export type DictationSubmissionResponse = {
   accuracyPercent: number;
   correctWordCount: number;
   totalWordCount: number;
+  cleared: boolean;
 };
 
 export type SearchDictationLessonsParams = {
@@ -399,10 +400,11 @@ export type SearchContentParams = {
 // GET /api/dictation/mistakes
 export type MistakeSentenceResponse = {
   sentenceId: string;
-  /** The correct sentence. Safe here: every row is a line the learner has already answered. */
-  text: string;
   audioUrl: string;
   audioDurationSeconds: number;
+  /** Both null means the file is this line; see the typeDefs. */
+  audioStartMs: number | null;
+  audioEndMs: number | null;
   lessonId: string;
   lessonTitle: string;
   bestAccuracyPercent: number;

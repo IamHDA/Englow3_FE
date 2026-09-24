@@ -409,6 +409,7 @@ export type SubmitDictationMutation = {
     accuracyPercent: number;
     correctWordCount: number;
     totalWordCount: number;
+    cleared: boolean;
   };
 };
 
@@ -458,9 +459,10 @@ export type DictationMistakesQueryVariables = Exact<{ [key: string]: never }>;
 export type DictationMistakesQuery = {
   dictationMistakes: Array<{
     sentenceId: string;
-    text: string;
     audioUrl: string;
     audioDurationSeconds: number;
+    audioStartMs: number | null;
+    audioEndMs: number | null;
     lessonId: string;
     lessonTitle: string;
     bestAccuracyPercent: number;
@@ -3816,6 +3818,7 @@ export const SubmitDictationDocument = {
                   kind: "Field",
                   name: { kind: "Name", value: "totalWordCount" },
                 },
+                { kind: "Field", name: { kind: "Name", value: "cleared" } },
               ],
             },
           },
@@ -3999,12 +4002,16 @@ export const DictationMistakesDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "sentenceId" } },
-                { kind: "Field", name: { kind: "Name", value: "text" } },
                 { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "audioDurationSeconds" },
                 },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "audioStartMs" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "audioEndMs" } },
                 { kind: "Field", name: { kind: "Name", value: "lessonId" } },
                 { kind: "Field", name: { kind: "Name", value: "lessonTitle" } },
                 {

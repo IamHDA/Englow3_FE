@@ -22,18 +22,26 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { computeWordDiff } from "../../../utils/diff";
-import type { MistakeSentence } from "../../../types";
+import type { DictationSubmission, MistakeSentence } from "../../../types";
 import { DictationAudioPlayer } from "../DictationAudioPlayer";
 import { DictationInputArea } from "../DictationInputArea";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 
 interface DictationMistakeQueueProps {
   mistakes: MistakeSentence[];
+  /**
+   * Chấm một câu trên server. Block không tự gọi - view giữ ranh giới dữ liệu.
+   * Null nghĩa là gọi hỏng.
+   */
+  onCheck: (
+    sentenceId: string,
+    typed: string,
+  ) => Promise<DictationSubmission | null>;
 }
 
 export function DictationMistakeQueue({
   mistakes,
+  onCheck,
 }: DictationMistakeQueueProps) {
   const { isVi } = useLanguage();
   const [queue, setQueue] = useState<MistakeSentence[]>(mistakes);
@@ -41,6 +49,9 @@ export function DictationMistakeQueue({
   const [inputVal, setInputVal] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [result, setResult] = useState<DictationSubmission | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [checkFailed, setCheckFailed] = useState(false);
 
   const currentItem = queue[currentIndex];
 
@@ -50,18 +61,28 @@ export function DictationMistakeQueue({
   const audio = useDictationAudio({
     audioUrl: currentItem ? currentItem.audioUrl : null,
     durationSeconds: currentItem ? currentItem.audioDurationSeconds : 5,
+    // Câu cắt ra từ một bản ghi dài: phát đúng đoạn của nó, không phải cả bài.
+    audioStartMs: currentItem?.audioStartMs,
+    audioEndMs: currentItem?.audioEndMs,
   });
 
-  const handleCheck = () => {
-    if (!currentItem) return;
-    const diff = computeWordDiff(currentItem.text, inputVal);
-    const correct = diff.accuracyPercent === 100;
-    setIsCorrect(correct);
-    setIsChecked(true);
+  const handleCheck = async () => {
+    if (!currentItem || checking) return;
+    setChecking(true);
+    setCheckFailed(false);
+    const submitted = await onCheck(currentItem.sentenceId, inputVal);
+    setChecking(false);
 
-    if (correct) {
-      // Remove from queue after a short delay or allow next
+    if (!submitted) {
+      // Không chấm được thì nói thế, không đoán. Người học gõ lại được ngay.
+      setCheckFailed(true);
+      return;
     }
+    setResult(submitted);
+    // "Đạt" theo đúng một quy tắc của server. Trước đây chỗ này đòi 100%,
+    // trong khi mọi màn khác tính 80% là xong.
+    setIsCorrect(submitted.cleared);
+    setIsChecked(true);
   };
 
   const handleNext = () => {
@@ -75,17 +96,21 @@ export function DictationMistakeQueue({
     } else {
       setCurrentIndex((prev) => (prev + 1) % queue.length);
     }
-    setInputVal("");
-    setIsChecked(false);
-    setIsCorrect(false);
+    resetTurn();
   };
 
   const handleSkip = () => {
     setCurrentIndex((prev) => (prev + 1) % queue.length);
+    resetTurn();
+  };
+
+  function resetTurn() {
     setInputVal("");
     setIsChecked(false);
     setIsCorrect(false);
-  };
+    setResult(null);
+    setCheckFailed(false);
+  }
 
   if (queue.length === 0) {
     return (
@@ -202,14 +227,26 @@ export function DictationMistakeQueue({
             </Text>
           </Text>
         )}
-        {isChecked && (
+        {/* Đáp án chỉ có sau khi nộp - nó tới trong kết quả chấm, không nằm
+            sẵn trong danh sách. */}
+        {isChecked && result && (
           <Text size="xs" fw={600} c="teal.9" mt="xs">
             {isVi
-              ? `Đáp án chuẩn: “${currentItem.text}”`
-              : `Correct answer: "${currentItem.text}"`}
+              ? `Đáp án chuẩn: “${result.correctText}” (${Math.round(result.accuracyPercent)}%)`
+              : `Correct answer: "${result.correctText}" (${Math.round(result.accuracyPercent)}%)`}
           </Text>
         )}
       </Alert>
+
+      {checkFailed && (
+        <Alert color="warn" radius="md">
+          <Text size="sm">
+            {isVi
+              ? "Chưa chấm được câu này. Kiểm tra kết nối rồi bấm kiểm tra lại."
+              : "Could not check this one. Check your connection and try again."}
+          </Text>
+        </Alert>
+      )}
 
       {/* Audio Player */}
       <DictationAudioPlayer
@@ -229,9 +266,9 @@ export function DictationMistakeQueue({
       <DictationInputArea
         value={inputVal}
         onChange={setInputVal}
-        onCheckAnswer={handleCheck}
+        onCheckAnswer={() => void handleCheck()}
         onSkip={handleSkip}
-        disabled={isChecked}
+        disabled={isChecked || checking}
       />
 
       {/* Checked Result Feedback */}
