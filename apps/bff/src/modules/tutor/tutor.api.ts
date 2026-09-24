@@ -32,9 +32,7 @@ export class TutorApi {
     return this.client.post(`${TUTOR_BASE_PATH}/messages`, params);
   }
 
-  archiveConversation(
-    id: string,
-  ): Promise<TutorConversationSummaryResponse> {
+  archiveConversation(id: string): Promise<TutorConversationSummaryResponse> {
     return this.client.delete(
       `${TUTOR_BASE_PATH}/conversations/${encodeURIComponent(id)}`,
     );

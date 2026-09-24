@@ -204,7 +204,11 @@ describe("Mutation.reportTutorMessage", () => {
       ctx,
     );
 
-    expect(reportMessage).toHaveBeenCalledWith("c1", "m1", "That rule is wrong.");
+    expect(reportMessage).toHaveBeenCalledWith(
+      "c1",
+      "m1",
+      "That rule is wrong.",
+    );
   });
 });
 

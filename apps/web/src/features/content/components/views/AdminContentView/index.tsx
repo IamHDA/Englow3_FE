@@ -222,7 +222,10 @@ export function AdminContentView() {
             <Select
               label="Nhập thẻ vào bộ nháp"
               placeholder="Chọn một bộ còn nháp"
-              data={draftSets.map((set) => ({ value: set.id, label: set.title }))}
+              data={draftSets.map((set) => ({
+                value: set.id,
+                label: set.title,
+              }))}
               value={importingInto}
               onChange={setImportingInto}
               radius="md"

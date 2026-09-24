@@ -164,7 +164,12 @@ describe("useTutorChat", () => {
     fetchConversation.mockResolvedValue(
       polled([
         QUESTION,
-        message("m2", TutorMessageRole.ASSISTANT, TutorMessageStatus.FAILED, null),
+        message(
+          "m2",
+          TutorMessageRole.ASSISTANT,
+          TutorMessageStatus.FAILED,
+          null,
+        ),
       ]),
     );
 

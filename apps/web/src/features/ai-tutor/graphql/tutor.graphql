@@ -37,7 +37,11 @@ query TutorConversation($id: ID!) {
   }
 }
 
-mutation SendTutorMessage($conversationId: ID, $message: String!, $topic: String) {
+mutation SendTutorMessage(
+  $conversationId: ID
+  $message: String!
+  $topic: String
+) {
   sendTutorMessage(
     conversationId: $conversationId
     message: $message
@@ -58,7 +62,11 @@ mutation ArchiveTutorConversation($id: ID!) {
   }
 }
 
-mutation ReportTutorMessage($conversationId: ID!, $messageId: ID!, $note: String) {
+mutation ReportTutorMessage(
+  $conversationId: ID!
+  $messageId: ID!
+  $note: String
+) {
   reportTutorMessage(
     conversationId: $conversationId
     messageId: $messageId

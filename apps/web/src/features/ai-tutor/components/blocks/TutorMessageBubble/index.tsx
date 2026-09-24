@@ -11,7 +11,11 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { IconAlertTriangle, IconFlag, IconFlagFilled } from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconFlag,
+  IconFlagFilled,
+} from "@tabler/icons-react";
 import React from "react";
 
 import {

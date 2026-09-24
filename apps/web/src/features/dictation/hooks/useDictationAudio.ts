@@ -41,7 +41,11 @@ export function useDictationAudio({
 
   /** Cửa sổ của câu, tính bằng giây. Chỉ có khi cả hai mốc cùng có. */
   const window_ = useMemo(() => {
-    if (audioStartMs == null || audioEndMs == null || audioEndMs <= audioStartMs) {
+    if (
+      audioStartMs == null ||
+      audioEndMs == null ||
+      audioEndMs <= audioStartMs
+    ) {
       return null;
     }
     return { start: audioStartMs / 1000, end: audioEndMs / 1000 };
@@ -84,9 +88,11 @@ export function useDictationAudio({
       if (!audioUrl) {
         // Không có file: giữ lại thanh tiến trình chạy theo đồng hồ, vì đó là
         // phản hồi duy nhất còn lại cho người học.
-        startedAtRef.current = Date.now() - (offsetSeconds * 1000) / playbackSpeed;
+        startedAtRef.current =
+          Date.now() - (offsetSeconds * 1000) / playbackSpeed;
         timerRef.current = setInterval(() => {
-          const elapsed = ((Date.now() - startedAtRef.current) / 1000) * playbackSpeed;
+          const elapsed =
+            ((Date.now() - startedAtRef.current) / 1000) * playbackSpeed;
           if (elapsed >= durationRef.current) {
             setCurrentTime(durationRef.current);
             setIsPlaying(false);

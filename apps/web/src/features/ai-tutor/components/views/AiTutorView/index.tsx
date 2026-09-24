@@ -27,8 +27,16 @@ import { TutorStarters } from "../../blocks/TutorStarters";
 import { useTutorChat } from "../../../hooks/useTutorChat";
 
 export function AiTutorView() {
-  const { conversationId, messages, sending, waiting, error, send, open, reset } =
-    useTutorChat();
+  const {
+    conversationId,
+    messages,
+    sending,
+    waiting,
+    error,
+    send,
+    open,
+    reset,
+  } = useTutorChat();
 
   const { data, refetch } = useTutorConversationsQuery({
     fetchPolicy: "cache-and-network",

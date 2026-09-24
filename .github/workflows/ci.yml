@@ -49,6 +49,13 @@ jobs:
 
   quality:
     runs-on: ubuntu-latest
+    # The web build refuses to start without these, and CI has no Vercel
+    # project to pull them from. Placeholders are enough: nothing is contacted
+    # during the build, and a real key in a workflow file would be a real key
+    # in the repository.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
     strategy:
       # A broken mobile typecheck should not hide the state of web and bff.
       # Each app is a separate check, so branch protection can require them

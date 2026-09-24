@@ -92,10 +92,14 @@ async function forward(req: Request, res: Response, path: string) {
     // The backend's own body is passed through, including on a refusal: its
     // rejection report is the whole point of the endpoint, and summarising it
     // here would lose the rows an author needs to fix.
-    res.status(response.status).type("application/json").send(await response.text());
-  } catch {
     res
-      .status(502)
-      .json({ code: "BACKEND_UNREACHABLE", message: "Could not reach the backend service" });
+      .status(response.status)
+      .type("application/json")
+      .send(await response.text());
+  } catch {
+    res.status(502).json({
+      code: "BACKEND_UNREACHABLE",
+      message: "Could not reach the backend service",
+    });
   }
 }

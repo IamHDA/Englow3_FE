@@ -4,7 +4,12 @@ export interface FlashcardImportReport {
   acceptedCount: number;
   rejectedCount: number;
   /** The backend names the row by lemma for cards and by clip id for dictation. */
-  rejections: { index: number; lemma?: string; clipId?: string; reason: string }[];
+  rejections: {
+    index: number;
+    lemma?: string;
+    clipId?: string;
+    reason: string;
+  }[];
   /** Dictation only: lines across every lesson in the batch. */
   sentenceCount?: number;
 }
