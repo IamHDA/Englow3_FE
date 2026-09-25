@@ -601,7 +601,7 @@ export const translations: Record<Language, AppTranslations> = {
       reviewHintSpace: "Nhấn phím cách hoặc bấm vào thẻ để xem nghĩa và ví dụ",
     },
     pronunciation: {
-      title: "Luyện phát âm chuẩn AI",
+      title: "Luyện phát âm",
       subtitle:
         "Phân tích sóng âm giọng nói theo thời gian thực, đối chiếu khẩu hình chuẩn và chấm điểm chi tiết từng âm vị IPA.",
       ipaBadge: "Chấm điểm âm vị",
@@ -1104,7 +1104,7 @@ export const translations: Record<Language, AppTranslations> = {
         "Press Space or click card to reveal definition and examples",
     },
     pronunciation: {
-      title: "AI Pronunciation Coach",
+      title: "Pronunciation",
       subtitle:
         "Real-time acoustic speech analysis, native mouth positioning comparison, and phoneme-level IPA scoring.",
       ipaBadge: "Phoneme Scoring",
