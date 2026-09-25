@@ -1,17 +1,30 @@
 import { Container } from "@mantine/core";
 
+import { HomeCtaBand } from "@/features/home/components/blocks/HomeCtaBand";
+import { HomeFeatures } from "@/features/home/components/blocks/HomeFeatures";
+import { HomeFooter } from "@/features/home/components/blocks/HomeFooter";
 import { HomeHero } from "@/features/home/components/blocks/HomeHero";
-import { HomeStats } from "@/features/home/components/blocks/HomeStats";
-import { homeStats } from "@/features/home/constants/homeStats";
+import { HomeHighlights } from "@/features/home/components/blocks/HomeHighlights";
+import { HomeSteps } from "@/features/home/components/blocks/HomeSteps";
+import { HOME_FEATURES_ID } from "@/features/home/constants/homeSections";
 
 import classes from "./HomeView.module.css";
 
 export function HomeView() {
   return (
     <div className={classes.page}>
-      <Container size={1440} px={{ base: "md", md: 60 }}>
-        <HomeHero />
-        <HomeStats stats={homeStats} />
+      <div className={classes.heroBackdrop}>
+        <Container size={1280} px={{ base: "md", md: 48 }}>
+          <HomeHero />
+          <HomeHighlights />
+        </Container>
+      </div>
+
+      <Container size={1280} px={{ base: "md", md: 48 }}>
+        <HomeFeatures id={HOME_FEATURES_ID} />
+        <HomeSteps />
+        <HomeCtaBand />
+        <HomeFooter />
       </Container>
     </div>
   );

@@ -1,0 +1,16 @@
+.footer {
+  padding-block: 28px;
+  border-top: 1px solid var(--mantine-color-ink-1);
+}
+
+.tagline {
+  font-family: var(--font-lora), serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--mantine-color-ink-6);
+}
+
+.meta {
+  font-size: 13px;
+  color: var(--mantine-color-ink-5);
+}

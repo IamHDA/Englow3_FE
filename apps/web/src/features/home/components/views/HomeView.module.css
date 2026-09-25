@@ -1,8 +1,29 @@
 /*
- * A plain div: this is a full-bleed background behind the Container, and
+ * Plain divs: these are full-bleed backgrounds behind the Containers, and
  * background colour is a CSS concern. Box would add nothing over a div here.
  */
 .page {
   flex: 1;
-  background-color: #f5f5f5;
+  background-color: var(--mantine-color-ink-0);
+}
+
+/* The hero sits on a soft wash of the two brand colours, fading into the page. */
+.heroBackdrop {
+  background:
+    radial-gradient(
+      ellipse at 85% 0%,
+      rgba(245, 166, 35, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 0% 30%,
+      rgba(59, 111, 212, 0.1),
+      transparent 50%
+    ),
+    linear-gradient(
+      180deg,
+      var(--mantine-color-white),
+      var(--mantine-color-ink-0)
+    );
+  padding-bottom: 16px;
 }

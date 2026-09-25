@@ -249,16 +249,36 @@ export interface DictationTranslations {
   reviewMistakes: string;
 }
 
+export interface HomeCopyItem {
+  title: string;
+  description: string;
+}
+
 export interface HomeTranslations {
+  heroBadge: string;
   heroTitle: string;
+  /** The half of the title set in the brand accent. */
+  heroTitleAccent: string;
   heroQuote: string;
   heroDescription: string;
   heroCta: string;
+  heroSecondaryCta: string;
   heroImageAlt: string;
-  statsAria: string;
-  activeLearners: string;
-  scoreImprovement: string;
-  userRating: string;
+  highlightsAria: string;
+  /** What the product covers - facts about it, not usage figures. */
+  highlights: { value: string; label: string }[];
+  featuresEyebrow: string;
+  featuresTitle: string;
+  featuresSubtitle: string;
+  /** In the order HomeFeatures pairs with icons. */
+  features: HomeCopyItem[];
+  stepsEyebrow: string;
+  stepsTitle: string;
+  steps: HomeCopyItem[];
+  ctaTitle: string;
+  ctaSubtitle: string;
+  footerTagline: string;
+  footerProject: string;
 }
 
 export interface AuthTranslations {
@@ -818,17 +838,81 @@ export const translations: Record<Language, AppTranslations> = {
       loadListError: "Không thể tải danh sách đề thi",
     },
     home: {
-      heroTitle: "Chinh phục tiếng Anh cùng Englow3",
+      heroBadge: "Luyện thi IELTS · TOEIC theo lộ trình của riêng bạn",
+      heroTitle: "Chinh phục tiếng Anh",
+      heroTitleAccent: "cùng Englow3",
       heroQuote: "Con đường của riêng bạn, tương lai trong tay bạn",
       heroDescription:
-        "Nâng tầm khả năng nói lưu loát với chấm điểm phát âm AI theo thời gian thực, chat bot cá nhân hóa, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
+        "Học từ vựng theo cấp độ CEFR, luyện nghe chép chính tả, chấm phát âm bằng AI và làm đề thi thử IELTS/TOEIC - tất cả gói trong một lộ trình mỗi ngày dành riêng cho bạn.",
       heroCta: "Bắt đầu học ngay",
+      heroSecondaryCta: "Khám phá tính năng",
       heroImageAlt:
         "Không gian học tập Englow3 với phân tích phát âm, bộ thẻ ghi nhớ và trình theo dõi tiến độ hàng ngày",
-      statsAria: "Englow3 qua những con số",
-      activeLearners: "Học viên hoạt động",
-      scoreImprovement: "Cải thiện điểm số",
-      userRating: "Đánh giá người dùng",
+      highlightsAria: "Englow3 bao gồm những gì",
+      highlights: [
+        { value: "A1 → C1", label: "Từ vựng theo 5 cấp độ CEFR" },
+        { value: "IELTS · TOEIC", label: "Đề thi thử đúng định dạng" },
+        { value: "4 kỹ năng", label: "Nghe · Nói · Đọc · Viết" },
+        { value: "SRS", label: "Ôn lại đúng lúc sắp quên" },
+      ],
+      featuresEyebrow: "Tính năng",
+      featuresTitle: "Mọi thứ bạn cần để luyện tiếng Anh mỗi ngày",
+      featuresSubtitle:
+        "Mỗi công cụ tập trung vào một kỹ năng, và tất cả cùng đổ về một lộ trình.",
+      features: [
+        {
+          title: "Luyện phát âm với AI",
+          description:
+            "Ghi âm một câu, nhận điểm chi tiết đến từng âm IPA và biết chính xác âm nào cần sửa.",
+        },
+        {
+          title: "Thẻ ghi nhớ 3D",
+          description:
+            "Học từ vựng theo cấp độ, ôn lại bằng thuật toán lặp lại ngắt quãng để nhớ lâu hơn.",
+        },
+        {
+          title: "Nghe chép chính tả",
+          description:
+            "Nghe từng câu, gõ lại và thấy ngay từ nào nghe sai. Câu sai được gom lại để ôn.",
+        },
+        {
+          title: "Thi thử IELTS & TOEIC",
+          description:
+            "Làm đề đúng định dạng, có bấm giờ, chấm điểm tự động và xem lại từng câu.",
+        },
+        {
+          title: "Gia sư AI",
+          description:
+            "Hỏi về ngữ pháp, từ vựng hay nhờ sửa câu - gia sư trả lời ngay, bất cứ lúc nào.",
+        },
+        {
+          title: "Lộ trình hằng ngày",
+          description:
+            "Mỗi ngày một danh sách vừa sức: thẻ đến hạn, bài nghe dở và bài trắc nghiệm chưa đạt.",
+        },
+      ],
+      stepsEyebrow: "Bắt đầu",
+      stepsTitle: "Ba bước để vào guồng",
+      steps: [
+        {
+          title: "Tạo tài khoản",
+          description: "Đăng ký bằng email, chưa tới một phút.",
+        },
+        {
+          title: "Chọn mục tiêu",
+          description:
+            "Cho biết bạn học để làm gì, trình độ hiện tại và kỹ năng muốn tập trung.",
+        },
+        {
+          title: "Học mỗi ngày",
+          description:
+            "Làm theo lộ trình hằng ngày, thi thử để đo tiến bộ và điều chỉnh mục tiêu.",
+        },
+      ],
+      ctaTitle: "Sẵn sàng bắt đầu lộ trình của riêng bạn?",
+      ctaSubtitle: "Chỉ mất một phút để đặt mục tiêu. Englow3 lo phần còn lại.",
+      footerTagline: "Con đường của riêng bạn, tương lai trong tay bạn.",
+      footerProject: "Đồ án tốt nghiệp",
     },
     auth: {
       loginTitle: "Chào mừng trở lại",
@@ -1259,17 +1343,84 @@ export const translations: Record<Language, AppTranslations> = {
       loadListError: "Failed to load exam list",
     },
     home: {
-      heroTitle: "Master English with Englow3",
+      heroBadge: "IELTS · TOEIC practice on a path of your own",
+      heroTitle: "Master English",
+      heroTitleAccent: "with Englow3",
       heroQuote: "Your unique path, your future in your hands",
       heroDescription:
-        "Elevate your fluency with real-time AI pronunciation scoring, personalized tutor, 3D flashcards, dictation challenges, and full IELTS/TOEIC mock exams.",
+        "Learn vocabulary by CEFR level, practise dictation, get AI pronunciation scores and sit IELTS/TOEIC mock exams - all in one daily path built for you.",
       heroCta: "Get Started Now",
+      heroSecondaryCta: "Explore features",
       heroImageAlt:
         "Englow3 learning platform with pronunciation analytics, flashcard sets, and daily progress tracking",
-      statsAria: "Englow3 by the numbers",
-      activeLearners: "Active Learners",
-      scoreImprovement: "Score Improvement",
-      userRating: "User Rating",
+      highlightsAria: "What Englow3 covers",
+      highlights: [
+        { value: "A1 → C1", label: "Vocabulary across 5 CEFR levels" },
+        { value: "IELTS · TOEIC", label: "Mock exams in the real format" },
+        {
+          value: "4 skills",
+          label: "Listening · Speaking · Reading · Writing",
+        },
+        { value: "SRS", label: "Review just before you forget" },
+      ],
+      featuresEyebrow: "Features",
+      featuresTitle: "Everything you need to practise English every day",
+      featuresSubtitle:
+        "Each tool focuses on one skill, and all of them feed a single path.",
+      features: [
+        {
+          title: "AI pronunciation practice",
+          description:
+            "Record a sentence, get a score down to each IPA sound and see exactly which one to fix.",
+        },
+        {
+          title: "3D flashcards",
+          description:
+            "Learn vocabulary by level and review with spaced repetition so it sticks.",
+        },
+        {
+          title: "Dictation",
+          description:
+            "Listen to each sentence, type it and see which words you misheard. Misses are saved for review.",
+        },
+        {
+          title: "IELTS & TOEIC mock exams",
+          description:
+            "Sit papers in the real format, timed, marked automatically, with every answer to review.",
+        },
+        {
+          title: "AI tutor",
+          description:
+            "Ask about grammar or vocabulary, or have a sentence corrected - answered on the spot, any time.",
+        },
+        {
+          title: "Daily path",
+          description:
+            "A manageable list each day: cards due, dictation in progress and quizzes still to pass.",
+        },
+      ],
+      stepsEyebrow: "Getting started",
+      stepsTitle: "Three steps to get going",
+      steps: [
+        {
+          title: "Create an account",
+          description: "Sign up with your email in under a minute.",
+        },
+        {
+          title: "Set your goal",
+          description:
+            "Tell us why you are learning, your current level and the skills to focus on.",
+        },
+        {
+          title: "Learn every day",
+          description:
+            "Follow your daily path, sit mock exams to measure progress and adjust your goal.",
+        },
+      ],
+      ctaTitle: "Ready to start a path of your own?",
+      ctaSubtitle: "Setting your goal takes a minute. Englow3 does the rest.",
+      footerTagline: "Your unique path, your future in your hands.",
+      footerProject: "Graduation project",
     },
     auth: {
       loginTitle: "Welcome Back",

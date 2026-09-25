@@ -1,65 +1,126 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 40px;
+  padding-block: 48px 24px;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.badge {
+  align-self: flex-start;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0;
+  height: auto;
+  padding-block: 6px;
+  max-width: 100%;
+}
+
+/* Mantine cuts a badge label to one line with an ellipsis; this one is a
+   sentence and has to wrap on a phone instead. */
+.badgeLabel {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.35;
+}
+
 .title {
   font-size: 40px;
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--mantine-color-ink-7);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--mantine-color-navy-9);
+}
+
+.titleAccent {
+  background: linear-gradient(
+    100deg,
+    var(--mantine-color-orange-5),
+    var(--mantine-color-orange-6)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .quote {
-  font-size: 20px;
-  line-height: 1;
+  font-family: var(--font-lora), serif;
+  font-size: 19px;
+  line-height: 1.35;
   color: var(--mantine-color-ink-6);
 }
 
-.quote em {
-  font-style: italic;
-}
-
 .description {
-  max-width: 689px;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.6;
+  max-width: 620px;
+  font-size: 16px;
+  line-height: 1.7;
   color: var(--mantine-color-ink-7);
 }
 
 .cta {
-  height: 64px;
-  width: 100%;
-  max-width: 300px;
-  padding-inline: 33px;
-  border-radius: 20px;
+  height: 56px;
+  padding-inline: 28px;
+  font-size: 17px;
+  box-shadow: 0 10px 24px -10px rgba(240, 138, 12, 0.7);
 }
 
-.ctaLabel {
-  font-size: 18px;
-  font-weight: 700;
+.secondary {
+  height: 56px;
+  padding-inline: 26px;
+  font-size: 17px;
+  color: var(--mantine-color-navy-9);
+}
+
+.visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.glow {
+  position: absolute;
+  inset: 8% 6%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 40%,
+    rgba(245, 166, 35, 0.28),
+    rgba(59, 111, 212, 0.18) 55%,
+    transparent 72%
+  );
+  filter: blur(18px);
 }
 
 .illustration {
+  position: relative;
   width: 100%;
-  max-width: 533px;
+  max-width: 520px;
   height: auto;
 }
 
 @media (min-width: $mantine-breakpoint-md) {
+  .hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 56px;
+    padding-block: 88px 40px;
+  }
+
   .title {
     font-size: 60px;
   }
 
   .quote {
-    font-size: 40px;
+    font-size: 24px;
   }
 
-  .cta {
-    height: 70px;
-  }
-
-  .ctaLabel {
-    font-size: 20px;
-  }
-
-  .illustration {
-    flex: 0 0 auto;
+  .description {
+    font-size: 17px;
   }
 }

@@ -1,0 +1,64 @@
+.band {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 64px;
+  padding: 36px 28px;
+  border-radius: 28px;
+  /* Blue light rather than orange: orange over navy mixes to brown. The
+     orange stays on the button, where it is the thing to press. */
+  background:
+    radial-gradient(
+      circle at 88% 0%,
+      rgba(132, 162, 225, 0.45),
+      transparent 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--mantine-color-navy-9),
+      var(--mantine-color-navy-7)
+    );
+  color: var(--mantine-color-white);
+}
+
+.copy {
+  max-width: 620px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--mantine-color-white);
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--mantine-color-navy-0);
+}
+
+.cta {
+  flex-shrink: 0;
+  height: 56px;
+  padding-inline: 28px;
+  font-size: 17px;
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .band {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48px 56px;
+    margin-bottom: 88px;
+  }
+
+  .title {
+    font-size: 34px;
+  }
+}
