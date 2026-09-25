@@ -3,9 +3,7 @@ import type { ReactNode } from "react";
 
 import { AdminShell } from "@/features/admin";
 import { getServerSession } from "@/features/auth/server/getServerSession";
-
-/** Who may enter the administration area. The backend checks every call too. */
-const ADMIN_AREA_ROLES = new Set(["ADMIN", "STAFF"]);
+import { isBackOfficeRole } from "@/features/auth/types";
 
 /**
  * The administration area. A learner who types /admin is sent home before any
@@ -17,7 +15,8 @@ export default async function AdminLayout({
   children: ReactNode;
 }) {
   const session = await getServerSession();
-  if (!session?.role || !ADMIN_AREA_ROLES.has(session.role)) {
+  // The backend checks every call too; this keeps a learner out of the frame.
+  if (!isBackOfficeRole(session?.role)) {
     redirect("/");
   }
   return <AdminShell>{children}</AdminShell>;

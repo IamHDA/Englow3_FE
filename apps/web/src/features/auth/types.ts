@@ -9,6 +9,25 @@ import type { User } from "@supabase/supabase-js";
  * được.
  */
 export const ADMIN_ROLE = "ADMIN";
+export const STAFF_ROLE = "STAFF";
+
+/**
+ * Who works in the administration area: administrators review and publish,
+ * staff author and submit. Everyone else is a learner.
+ */
+export function isBackOfficeRole(role: string | null | undefined): boolean {
+  return role === ADMIN_ROLE || role === STAFF_ROLE;
+}
+
+/**
+ * Where a role lands after signing in when nothing else asked for a page.
+ * Back-office roles go to the administration overview - their work is there,
+ * not in the learner's study screens. A learner stays where they were, so
+ * signing in from an exam page leaves them on that exam; null means "stay".
+ */
+export function homeForRole(role: string | null | undefined): string | null {
+  return isBackOfficeRole(role) ? "/admin" : null;
+}
 
 /**
  * Ai đang đăng nhập - chỉ vậy thôi.

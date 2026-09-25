@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { homeForRole, toAuthSession } from "@/features/auth/types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /** Only a same-origin path is safe to redirect to; anything else falls back to "/". */
@@ -10,13 +11,20 @@ function safeNext(next: string | null): string {
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = safeNext(searchParams.get("next"));
+  const requested = searchParams.get("next");
+  const next = safeNext(requested);
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      // A link that names its page (the password reset) goes there. One that
+      // does not - a Google sign-in, a confirmation email - lands where the
+      // role's work is, as signing in with a password does.
+      const home = requested
+        ? null
+        : homeForRole(toAuthSession(data.user)?.role);
+      return NextResponse.redirect(`${origin}${home ?? next}`);
     }
   }
 

@@ -18,6 +18,8 @@ vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
 // whether the header asked for it.
 vi.mock("@/features/auth", () => ({
   ADMIN_ROLE: "ADMIN",
+  isBackOfficeRole: (role: string | null) =>
+    role === "ADMIN" || role === "STAFF",
   useAuth: () => ({ session: auth.session, signOut: vi.fn() }),
   AuthModal: ({ opened }: { opened: boolean }) =>
     opened ? <div role="dialog">login form</div> : null,

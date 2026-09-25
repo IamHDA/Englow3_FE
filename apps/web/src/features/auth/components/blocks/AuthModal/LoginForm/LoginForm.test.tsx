@@ -8,8 +8,9 @@ import { theme } from "@/lib/mantine/theme";
 import { LoginForm } from "./index";
 
 const refresh = vi.fn();
+const push = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ refresh }),
+  useRouter: () => ({ refresh, push }),
 }));
 
 const signInWithPassword = vi.fn();
@@ -54,6 +55,7 @@ beforeEach(() => {
   notificationsShow.mockReset();
   notificationsUpdate.mockReset();
   refresh.mockReset();
+  push.mockReset();
 });
 
 describe("LoginForm", () => {
@@ -164,5 +166,48 @@ describe("LoginForm", () => {
 
     expect(onLeave).toHaveBeenCalled();
     expect(resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+
+  // Each role lands where its work is.
+  it.each([
+    ["ADMIN", "/admin"],
+    ["STAFF", "/admin"],
+  ])("sends %s to the administration area", async (role, home) => {
+    signInWithPassword.mockResolvedValue({
+      data: {
+        user: { id: "u1", email: "admin@example.com", app_metadata: { role } },
+      },
+      error: null,
+    });
+    const user = userEvent.setup();
+    renderForm();
+
+    await user.type(screen.getByLabelText("Email"), "admin@example.com");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password123");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith(home));
+  });
+
+  it("leaves a learner on the page they signed in from", async () => {
+    signInWithPassword.mockResolvedValue({
+      data: {
+        user: {
+          id: "u2",
+          email: "learner@example.com",
+          app_metadata: { role: "LEARNER" },
+        },
+      },
+      error: null,
+    });
+    const user = userEvent.setup();
+    renderForm();
+
+    await user.type(screen.getByLabelText("Email"), "learner@example.com");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password123");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
+
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+    expect(push).not.toHaveBeenCalled();
   });
 });

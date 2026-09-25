@@ -4,7 +4,7 @@ import { Avatar, Menu, Text, UnstyledButton } from "@mantine/core";
 import { ChevronDown, LogOut, Settings, ShieldCheck, User } from "lucide-react";
 import Link from "next/link";
 
-import { ADMIN_ROLE, useAuth } from "@/features/auth";
+import { isBackOfficeRole, useAuth } from "@/features/auth";
 import { useOnboardingGuard } from "@/features/onboarding";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -64,7 +64,7 @@ export function SiteHeaderUserMenu({
         </Menu.Item>
         {/* Chỉ là lối tắt cho người có quyền - layout /admin tự chặn người
             không đủ quyền, nên ẩn nút không phải là chốt chặn. */}
-        {(session?.role === ADMIN_ROLE || session?.role === "STAFF") && (
+        {isBackOfficeRole(session?.role) && (
           <>
             <Menu.Divider />
             <Menu.Item

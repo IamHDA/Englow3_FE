@@ -8,5 +8,5 @@ export { AuthProvider } from "./provider";
 export { ForgotPasswordView } from "./components/views/ForgotPasswordView";
 export { ResetPasswordView } from "./components/views/ResetPasswordView";
 export { useAuth } from "./hooks/useAuth";
-export { ADMIN_ROLE } from "./types";
+export { ADMIN_ROLE, STAFF_ROLE, homeForRole, isBackOfficeRole } from "./types";
 export type { AuthSession } from "./types";

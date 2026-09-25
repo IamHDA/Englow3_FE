@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
+import { homeForRole, toAuthSession } from "@/features/auth/types";
 import { forgetSessionOnBrowserClose, supabase } from "@/lib/supabase/client";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -50,7 +51,7 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   });
 
   async function onSubmit({ email, password, rememberMe }: LoginValues) {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -65,8 +66,15 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
     if (!rememberMe) {
       forgetSessionOnBrowserClose();
     }
-    router.refresh();
     onSuccess();
+    // Each role lands where its work is: staff and administrators in the
+    // administration area, a learner on the page they signed in from.
+    const home = homeForRole(toAuthSession(data?.user)?.role);
+    if (home) {
+      router.push(home);
+    } else {
+      router.refresh();
+    }
   }
 
   return (
