@@ -107,9 +107,15 @@ export function ExamFilters({
           />
         </Box>
 
+        {/* One row that scrolls sideways on a phone, instead of five tabs
+            wrapping onto three lines and pushing the exams off the screen. */}
         <Tabs
           value={filters.tabId}
           onChange={(val) => onFilterChange({ tabId: val || "all", page: 0 })}
+          styles={{
+            root: { maxWidth: "100%", overflowX: "auto" },
+            list: { flexWrap: "nowrap", whiteSpace: "nowrap" },
+          }}
         >
           <Tabs.List>
             {examTypeTabs.map((tab) => (

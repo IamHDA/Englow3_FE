@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Alert,
-  Badge,
-  Box,
-  Button,
-  Container,
-  Group,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Alert, Badge, Box, Button, Group, Stack, Text } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
@@ -23,6 +14,7 @@ import { useSpeakingPractice } from "../../../hooks/useSpeakingPractice";
 import { PronunciationPracticeSkeleton } from "../../blocks/PronunciationPracticeSkeleton";
 import { PronunciationScoreCard } from "../../blocks/PronunciationScoreCard";
 import { PronunciationVoiceRecorder } from "../../blocks/PronunciationVoiceRecorder";
+import { Page } from "@/shared/components/Page";
 
 interface PronunciationPracticeViewProps {
   promptId: string;
@@ -40,7 +32,7 @@ export function PronunciationPracticeView({
 
   if (error !== undefined && prompt === undefined) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <Alert
           color="warn"
           title={
@@ -51,7 +43,7 @@ export function PronunciationPracticeView({
             ? "Câu này có thể đã bị gỡ, hoặc backend đang không phản hồi."
             : "It may have been withdrawn, or the backend is not responding."}
         </Alert>
-      </Container>
+      </Page>
     );
   }
 
@@ -92,7 +84,7 @@ function Practice({
   });
 
   return (
-    <Container size="md" py="xl">
+    <Page width="focus">
       <Stack gap="xl">
         <Group justify="space-between" align="center">
           <Button
@@ -143,6 +135,6 @@ function Practice({
           <PronunciationScoreCard attempt={attempt} onRetry={reset} />
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

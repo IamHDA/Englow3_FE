@@ -1,0 +1,46 @@
+.page {
+  width: 100%;
+  margin-inline: auto;
+  padding: 20px var(--mantine-spacing-md) 48px;
+}
+
+.page[data-width="wide"] {
+  max-width: 1200px;
+}
+
+.page[data-width="focus"] {
+  max-width: 880px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--mantine-color-navy-9);
+  letter-spacing: -0.01em;
+}
+
+/* On a phone the actions take their own line, full width, under the title. */
+.headerRow {
+  flex-wrap: wrap;
+}
+
+.actions {
+  width: 100%;
+}
+
+@media (min-width: $mantine-breakpoint-sm) {
+  .actions {
+    width: auto;
+  }
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .page {
+    padding: 32px 32px 64px;
+  }
+
+  .title {
+    font-size: 30px;
+  }
+}

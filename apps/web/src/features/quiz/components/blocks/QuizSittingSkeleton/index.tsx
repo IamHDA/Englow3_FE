@@ -1,11 +1,12 @@
 "use client";
 
-import { Container, Grid, Skeleton, Stack } from "@mantine/core";
+import { Grid, Skeleton, Stack } from "@mantine/core";
 import React from "react";
+import { Page } from "@/shared/components/Page";
 
 export function QuizSittingSkeleton() {
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="lg">
         <Skeleton height={40} radius="md" />
         <Grid gap="md">
@@ -17,6 +18,6 @@ export function QuizSittingSkeleton() {
           </Grid.Col>
         </Grid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

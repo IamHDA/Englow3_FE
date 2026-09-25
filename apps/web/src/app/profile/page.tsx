@@ -1,7 +1,7 @@
-import { Container } from "@mantine/core";
 import type { Metadata } from "next";
 
 import { ProfileView } from "@/features/account";
+import { Page } from "@/shared/components/Page";
 
 export const metadata: Metadata = {
   title: "Hồ sơ của tôi | Englow3",
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function ProfilePage() {
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <ProfileView />
-    </Container>
+    </Page>
   );
 }

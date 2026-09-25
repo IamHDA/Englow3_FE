@@ -4,7 +4,6 @@ import {
   Alert,
   Anchor,
   Badge,
-  Container,
   Group,
   Paper,
   SimpleGrid,
@@ -30,6 +29,7 @@ import { OVERVIEW_KINDS } from "@/features/admin/constants/contentKinds";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useAdminOverviewQuery } from "@/lib/graphql/generated/hooks";
+import { Page, PageHeader } from "@/shared/components/Page";
 
 type StatCardProps = {
   label: string;
@@ -98,11 +98,9 @@ export function AdminOverviewView() {
 
   if (!overview) {
     return (
-      <Container size="xl" py="xl">
+      <Page>
         <Stack gap="lg">
-          <Title order={1} size="h2" c="navy.9">
-            Tổng quan
-          </Title>
+          <PageHeader title="Tổng quan" />
           {error && !loading ? (
             <Alert color="warn" title="Không tải được số liệu">
               Kiểm tra kết nối rồi tải lại trang.
@@ -118,7 +116,7 @@ export function AdminOverviewView() {
             </>
           )}
         </Stack>
-      </Container>
+      </Page>
     );
   }
 
@@ -131,11 +129,9 @@ export function AdminOverviewView() {
   const withDrafts = overview.content.filter((row) => row.drafts > 0);
 
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="lg">
-        <Title order={1} size="h2" c="navy.9">
-          Tổng quan
-        </Title>
+        <PageHeader title="Tổng quan" />
 
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
           <StatCard
@@ -292,6 +288,6 @@ export function AdminOverviewView() {
           </Stack>
         </Paper>
       </Stack>
-    </Container>
+    </Page>
   );
 }

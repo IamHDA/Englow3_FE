@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Container, Stack } from "@mantine/core";
+import { Alert, Stack } from "@mantine/core";
 import { lessonStatus, progressPercent } from "../../../lessonProgress";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -22,6 +22,7 @@ import { DictationLessonGrid } from "../../blocks/DictationLessonGrid";
 import { DictationLessonList } from "../../blocks/DictationLessonList";
 import { DictationMissedWordsTable } from "../../blocks/DictationMissedWordsTable";
 import { DictationStatsOverview } from "../../blocks/DictationStatsOverview";
+import { Page } from "@/shared/components/Page";
 
 interface DictationLibraryViewProps {
   initialTab?: "lessons" | "stats";
@@ -127,7 +128,7 @@ export function DictationLibraryView({
         : "No lessons match these filters. Try another topic, level or status.";
 
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
         <DictationHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -195,6 +196,6 @@ export function DictationLibraryView({
           )
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

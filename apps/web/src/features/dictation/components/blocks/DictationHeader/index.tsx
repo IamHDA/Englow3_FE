@@ -1,16 +1,7 @@
 "use client";
 
-import {
-  Anchor,
-  Breadcrumbs,
-  Group,
-  Stack,
-  Tabs,
-  Text,
-  Title,
-} from "@mantine/core";
-import { BarChart3, BookOpen, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { BarChart3, BookOpen } from "lucide-react";
+import { PageHeader, PageTabs } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface DictationHeaderProps {
@@ -25,57 +16,26 @@ export function DictationHeader({
   const { t } = useLanguage();
 
   return (
-    <Stack gap="md" pt="md" pb="sm">
-      <Breadcrumbs
-        separator={
-          <ChevronRight size={14} color="var(--mantine-color-ink-4)" />
-        }
-        styles={{ breadcrumb: { fontSize: 13 } }}
-      >
-        <Anchor component={Link} href="/" c="ink.6" fw={500}>
-          {t.nav.home}
-        </Anchor>
-        <Anchor component={Link} href="/study/dictation" c="ink.6" fw={500}>
-          {t.nav.study}
-        </Anchor>
-        <Text c="navy.9" fw={600} size="xs">
-          {t.dictation.title}
-        </Text>
-      </Breadcrumbs>
-
-      <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
-        <Title order={1} size="h2" c="ink.9" fw={700}>
-          {t.dictation.title}
-        </Title>
-
-        <Tabs
+    <PageHeader
+      title={t.dictation.title}
+      actions={
+        <PageTabs
           value={activeTab}
-          onChange={(val) =>
-            onTabChange((val as "lessons" | "stats") || "lessons")
-          }
-          variant="pills"
-          radius="md"
-        >
-          <Tabs.List>
-            <Tabs.Tab
-              value="lessons"
-              leftSection={<BookOpen size={16} />}
-              fw={600}
-              c={activeTab === "lessons" ? "white" : "ink.7"}
-            >
-              {t.dictation.lessonsTab}
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="stats"
-              leftSection={<BarChart3 size={16} />}
-              fw={600}
-              c={activeTab === "stats" ? "white" : "ink.7"}
-            >
-              {t.dictation.statsTab}
-            </Tabs.Tab>
-          </Tabs.List>
-        </Tabs>
-      </Group>
-    </Stack>
+          onChange={onTabChange}
+          tabs={[
+            {
+              value: "lessons",
+              label: t.dictation.lessonsTab,
+              icon: <BookOpen size={16} />,
+            },
+            {
+              value: "stats",
+              label: t.dictation.statsTab,
+              icon: <BarChart3 size={16} />,
+            },
+          ]}
+        />
+      }
+    />
   );
 }

@@ -10,7 +10,6 @@ import {
   Select,
   SimpleGrid,
   Stack,
-  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -84,11 +83,6 @@ export function ProfileForm({
           <Title order={3} fz={20} fw={700} c="ink.9">
             {t.account.personalInfoTab}
           </Title>
-          <Text size="sm" c="ink.6">
-            {isVi
-              ? "Cập nhật thông tin chi tiết của bạn để cá nhân hóa lộ trình học"
-              : "Update your personal details to customize your learning journey"}
-          </Text>
         </Stack>
 
         <Divider />

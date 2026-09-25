@@ -4,15 +4,12 @@ import {
   Alert,
   Button,
   Card,
-  Container,
   Grid,
-  Group,
   ScrollArea,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
-import { IconPlus, IconSparkles } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import React, { useEffect, useRef } from "react";
 
 import {
@@ -25,6 +22,7 @@ import { TutorConversationList } from "../../blocks/TutorConversationList";
 import { TutorMessageBubble } from "../../blocks/TutorMessageBubble";
 import { TutorStarters } from "../../blocks/TutorStarters";
 import { useTutorChat } from "../../../hooks/useTutorChat";
+import { Page, PageHeader } from "@/shared/components/Page";
 
 export function AiTutorView() {
   const {
@@ -70,21 +68,21 @@ export function AiTutorView() {
   }
 
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="lg">
-        <Group justify="space-between" align="flex-end">
-          <Group gap="xs">
-            <IconSparkles size={24} />
-            <Title order={2}>Gia sư AI</Title>
-          </Group>
-          <Button
-            variant="light"
-            leftSection={<IconPlus size={16} />}
-            onClick={reset}
-          >
-            Cuộc trò chuyện mới
-          </Button>
-        </Group>
+        <PageHeader
+          title="Gia sư AI"
+          actions={
+            <Button
+              variant="light"
+              leftSection={<IconPlus size={16} />}
+              onClick={reset}
+              fullWidth
+            >
+              Cuộc trò chuyện mới
+            </Button>
+          }
+        />
 
         <Grid>
           <Grid.Col span={{ base: 12, md: 3 }}>
@@ -136,6 +134,6 @@ export function AiTutorView() {
           </Grid.Col>
         </Grid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Alert,
-  Container,
-  Grid,
-  Group,
-  SegmentedControl,
-  Skeleton,
-  Stack,
-} from "@mantine/core";
+import { Alert, Grid, Skeleton, Stack } from "@mantine/core";
 import { IconCompass, IconSparkles } from "@tabler/icons-react";
 import React, { useState } from "react";
 
@@ -24,6 +16,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { Page, PageHeader, PageTabs } from "@/shared/components/Page";
 
 /** Một trang bài kiểm tra. Phân trang thật sẽ cần khi thư viện vượt con số này. */
 const QUIZ_PAGE_SIZE = 50;
@@ -53,8 +46,30 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
   const path = pathData?.dailyPath;
 
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
+        <PageHeader
+          title={isVi ? "Lộ trình học" : "Learning path"}
+          actions={
+            <PageTabs
+              value={activeTab}
+              onChange={setActiveTab}
+              tabs={[
+                {
+                  value: "roadmap",
+                  label: isVi ? "Hôm nay" : "Today",
+                  icon: <IconCompass size={16} />,
+                },
+                {
+                  value: "quizzes",
+                  label: isVi ? "Trắc nghiệm" : "Quizzes",
+                  icon: <IconSparkles size={16} />,
+                },
+              ]}
+            />
+          }
+        />
+
         {path ? (
           <DailyStreakBanner
             streakDays={path.streakDays}
@@ -66,37 +81,6 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
         ) : (
           <Skeleton height={180} radius="lg" />
         )}
-
-        {/* Tab switch */}
-        <Group justify="center">
-          <SegmentedControl
-            size="md"
-            value={activeTab}
-            onChange={(val) => setActiveTab(val as "roadmap" | "quizzes")}
-            data={[
-              {
-                value: "roadmap",
-                label: (
-                  <Group gap="xs" wrap="nowrap">
-                    <IconCompass size={18} />
-                    <span>{isVi ? "Lộ trình hôm nay" : "Today's Roadmap"}</span>
-                  </Group>
-                ),
-              },
-              {
-                value: "quizzes",
-                label: (
-                  <Group gap="xs" wrap="nowrap">
-                    <IconSparkles size={18} />
-                    <span>
-                      {isVi ? "Kho thử thách trắc nghiệm" : "Quiz Challenges"}
-                    </span>
-                  </Group>
-                ),
-              },
-            ]}
-          />
-        </Group>
 
         {activeTab === "roadmap" ? (
           <Grid gap="md">
@@ -132,6 +116,6 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
           <QuizCatalogue quizzes={data?.quizzes.items ?? []} />
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

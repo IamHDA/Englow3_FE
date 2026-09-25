@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Container,
-  Group,
-  Progress,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Box, Button, Group, Progress, Stack, Text } from "@mantine/core";
 import { IconArrowLeft, IconClock } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
@@ -25,6 +17,7 @@ import { Flashcard3DCard } from "../../blocks/Flashcard3DCard";
 import { FlashcardSessionSummary } from "../../blocks/FlashcardSessionSummary";
 import { FlashcardStudyControls } from "../../blocks/FlashcardStudyControls";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { Page } from "@/shared/components/Page";
 
 interface FlashcardStudyViewProps {
   setId: string;
@@ -82,12 +75,12 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
 
   if (isCompleted) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <FlashcardSessionSummary
           summary={summaryData}
           onRestart={restartStudy}
         />
-      </Container>
+      </Page>
     );
   }
 
@@ -96,7 +89,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
   }
 
   return (
-    <Container size="md" py="xl">
+    <Page width="focus">
       <Stack gap="xl">
         {/* Top Navigation & Status Bar */}
         <Group justify="space-between" align="center">
@@ -156,6 +149,6 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
           onRate={rateCard}
         />
       </Stack>
-    </Container>
+    </Page>
   );
 }

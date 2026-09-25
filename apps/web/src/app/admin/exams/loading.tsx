@@ -1,13 +1,14 @@
-import { Container, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 
 import { AdminExamTableSkeleton } from "@/features/exam";
+import { Page } from "@/shared/components/Page";
 
 export default function Loading() {
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="lg">
         <AdminExamTableSkeleton />
       </Stack>
-    </Container>
+    </Page>
   );
 }

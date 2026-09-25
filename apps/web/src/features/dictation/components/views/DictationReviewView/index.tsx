@@ -3,7 +3,6 @@
 import {
   Alert,
   Button,
-  Container,
   Group,
   Paper,
   Skeleton,
@@ -23,6 +22,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 
 import { DictationMistakeQueue } from "../../blocks/DictationMistakeQueue";
+import { Page } from "@/shared/components/Page";
 
 /**
  * Những câu người học hay sai, trên toàn bộ bài học chứ không riêng một bài.
@@ -58,7 +58,7 @@ export function DictationReviewView() {
   );
 
   return (
-    <Container size="md" py="xl">
+    <Page width="focus">
       <Stack gap="lg">
         <Paper radius="md" p="md" withBorder bg="white">
           <Group justify="space-between" align="center">
@@ -90,6 +90,6 @@ export function DictationReviewView() {
           <DictationMistakeQueue mistakes={mistakes} onCheck={checkSentence} />
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

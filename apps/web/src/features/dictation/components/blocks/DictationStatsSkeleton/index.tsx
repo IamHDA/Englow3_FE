@@ -1,10 +1,11 @@
 "use client";
 
-import { Container, Paper, SimpleGrid, Skeleton, Stack } from "@mantine/core";
+import { Paper, SimpleGrid, Skeleton, Stack } from "@mantine/core";
+import { Page } from "@/shared/components/Page";
 
 export function DictationStatsSkeleton() {
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="lg">
         <Skeleton height={28} width={260} radius="md" />
 
@@ -26,6 +27,6 @@ export function DictationStatsSkeleton() {
           </Paper>
         </SimpleGrid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

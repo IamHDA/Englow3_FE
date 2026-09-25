@@ -1,11 +1,12 @@
 "use client";
 
-import { Container, Grid, Skeleton, Stack } from "@mantine/core";
+import { Grid, Skeleton, Stack } from "@mantine/core";
 import React from "react";
+import { Page } from "@/shared/components/Page";
 
 export function DailyPathSkeleton() {
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
         <Skeleton height={180} radius="lg" />
         <Grid gap="md">
@@ -17,6 +18,6 @@ export function DailyPathSkeleton() {
           </Grid.Col>
         </Grid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

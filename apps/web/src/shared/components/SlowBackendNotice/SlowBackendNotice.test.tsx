@@ -21,15 +21,15 @@ afterEach(() => {
 });
 
 describe("SlowBackendNotice", () => {
-  it("says nothing about an ordinary request", () => {
+  it("says nothing about an ordinary request", async () => {
     render(<SlowBackendNotice />);
 
-    act(() => beginRequest());
-    act(() => {
+    await act(async () => beginRequest());
+    await act(async () => {
       vi.advanceTimersByTime(2000);
     });
-    act(() => endRequest());
-    act(() => {
+    await act(async () => endRequest());
+    await act(async () => {
       vi.advanceTimersByTime(10_000);
     });
 
@@ -38,11 +38,11 @@ describe("SlowBackendNotice", () => {
 
   // The backend's host sleeps when idle and takes up to a minute to wake;
   // without a word, every screen sat on a skeleton and looked broken.
-  it("explains a long wait, and clears it when the data arrives", () => {
+  it("explains a long wait, and clears it when the data arrives", async () => {
     render(<SlowBackendNotice />);
 
-    act(() => beginRequest());
-    act(() => {
+    await act(async () => beginRequest());
+    await act(async () => {
       vi.advanceTimersByTime(6000);
     });
 
@@ -50,7 +50,7 @@ describe("SlowBackendNotice", () => {
       expect.objectContaining({ id: "slow-backend", loading: true }),
     );
 
-    act(() => endRequest());
+    await act(async () => endRequest());
 
     expect(hide).toHaveBeenCalledWith("slow-backend");
   });

@@ -97,9 +97,6 @@ export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
                 <Title order={3} fz={18} fw={700} c="ink.9">
                   {t.account.accountPasswordTitle}
                 </Title>
-                <Text size="xs" c="ink.6">
-                  {t.account.accountPasswordDesc}
-                </Text>
               </Stack>
             </Group>
 

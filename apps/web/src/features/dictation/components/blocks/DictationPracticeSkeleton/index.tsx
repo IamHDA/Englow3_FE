@@ -1,10 +1,11 @@
 "use client";
 
-import { Container, Paper, Skeleton, Stack } from "@mantine/core";
+import { Paper, Skeleton, Stack } from "@mantine/core";
+import { Page } from "@/shared/components/Page";
 
 export function DictationPracticeSkeleton() {
   return (
-    <Container size="md" py="xl">
+    <Page width="focus">
       <Stack gap="lg">
         {/* Top bar */}
         <Paper radius="md" p="md" withBorder>
@@ -40,6 +41,6 @@ export function DictationPracticeSkeleton() {
           </Stack>
         </Paper>
       </Stack>
-    </Container>
+    </Page>
   );
 }

@@ -8,7 +8,6 @@ import {
   Stack,
   Text,
   ThemeIcon,
-  Title,
 } from "@mantine/core";
 import { IconFlame, IconSparkles, IconTrophy } from "@tabler/icons-react";
 import React from "react";
@@ -62,10 +61,6 @@ export function DailyStreakBanner({
                 </Text>
               </Group>
             )}
-
-            <Title order={2} fw={800} c="white">
-              {isVi ? "Lộ trình học tập mỗi ngày" : "Your Daily Learning Path"}
-            </Title>
 
             <Group gap="lg" mt="xs">
               <Group gap="xs">

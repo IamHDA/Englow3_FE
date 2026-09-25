@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Box, Button, Card, Container, Grid, Stack, Text } from "@mantine/core";
+import { Box, Button, Card, Grid, Stack, Text } from "@mantine/core";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -30,6 +30,7 @@ import { SubmitModal } from "../../blocks/SubmitModal";
 import { ExamResultView } from "../../blocks/ExamResultView";
 
 import type { ExamAttemptResult } from "../../../types";
+import { Page } from "@/shared/components/Page";
 
 interface ExamSittingViewProps {
   examId: string;
@@ -260,7 +261,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
   if (error) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <Stack align="center" gap="md" py={60}>
           <AlertCircle size={40} color="var(--mantine-color-warn-6)" />
           <Text size="lg" fw={700} c="navy.9">
@@ -279,7 +280,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
             {t.exam.returnToLibrary}
           </Button>
         </Stack>
-      </Container>
+      </Page>
     );
   }
 
@@ -329,7 +330,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         }}
       />
 
-      <Container size="xl" py="lg">
+      <Page>
         <Grid gap="lg">
           <Grid.Col span={{ base: 12, md: 8, lg: 8.5 }}>
             {currentSection &&
@@ -377,7 +378,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
             />
           </Grid.Col>
         </Grid>
-      </Container>
+      </Page>
 
       <SubmitModal
         opened={submitModalOpen}

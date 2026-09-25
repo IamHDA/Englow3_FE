@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Container,
-  Group,
-  Paper,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -29,6 +20,7 @@ import { DictationDiffResult } from "../../blocks/DictationDiffResult";
 import { DictationHintDrawer } from "../../blocks/DictationHintDrawer";
 import { DictationInputArea } from "../../blocks/DictationInputArea";
 import { DictationSessionSummary } from "../../blocks/DictationSessionSummary";
+import { Page } from "@/shared/components/Page";
 
 interface DictationPracticeViewProps {
   lessonId: string;
@@ -104,7 +96,7 @@ export function DictationPracticeView({
 
   if (error || lesson === undefined) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <Stack align="center" gap="md" py={60}>
           <Text fw={700}>
             {isVi ? "Không tải được bài nghe" : "Could not load the lesson"}
@@ -113,13 +105,13 @@ export function DictationPracticeView({
             {isVi ? "Quay lại thư viện" : "Back to the library"}
           </Button>
         </Stack>
-      </Container>
+      </Page>
     );
   }
 
   if (practice.isCompleted) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <DictationSessionSummary
           summary={practice.summaryData}
           onRestart={practice.restartPractice}
@@ -127,12 +119,12 @@ export function DictationPracticeView({
             router.push(`/study/dictation/${lesson.slug || lesson.id}/review`);
           }}
         />
-      </Container>
+      </Page>
     );
   }
 
   return (
-    <Container size="md" py="xl">
+    <Page width="focus">
       <Stack gap="lg">
         {/* Top Header Navigation Bar */}
         <Paper radius="md" p="md" withBorder bg="white">
@@ -218,6 +210,6 @@ export function DictationPracticeView({
           />
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

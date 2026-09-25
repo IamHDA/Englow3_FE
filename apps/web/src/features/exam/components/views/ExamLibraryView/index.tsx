@@ -4,13 +4,11 @@ import { useMemo, useState } from "react";
 import {
   Button,
   Center,
-  Container,
   Group,
   Pagination,
   SimpleGrid,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
 
 import { useExamLibraryQuery } from "@/lib/graphql/generated/hooks";
@@ -27,6 +25,7 @@ import type {
   ExamType,
   TargetLevel,
 } from "@/lib/graphql/generated/schemaTypes";
+import { Page, PageHeader } from "@/shared/components/Page";
 
 const PAGE_SIZE = 8;
 
@@ -115,17 +114,9 @@ export function ExamLibraryView() {
   const endItem = Math.min((currentPage + 1) * PAGE_SIZE, totalItems);
 
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="xl">
-        <Title
-          order={1}
-          size="h1"
-          c="navy.9"
-          lh={1.15}
-          style={{ letterSpacing: "-0.02em" }}
-        >
-          {t.exam.title}
-        </Title>
+        <PageHeader title={t.exam.title} />
 
         {/* Filter Toolbar */}
         <ExamFilters
@@ -162,7 +153,7 @@ export function ExamLibraryView() {
           />
         ) : (
           <Stack gap="xl">
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
               {sortedItems.map((exam) => (
                 <ExamCard key={exam.id} exam={exam} />
               ))}
@@ -197,6 +188,6 @@ export function ExamLibraryView() {
           </Stack>
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Container, Stack } from "@mantine/core";
+import { Alert, Stack } from "@mantine/core";
 import React from "react";
 
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
@@ -13,6 +13,7 @@ import { PronunciationHeader } from "../../blocks/PronunciationHeader";
 import { PronunciationLessonGrid } from "../../blocks/PronunciationLessonGrid";
 import { PronunciationLibrarySkeleton } from "../../blocks/PronunciationLibrarySkeleton";
 import { PronunciationPhonemeMap } from "../../blocks/PronunciationPhonemeMap";
+import { Page } from "@/shared/components/Page";
 
 /** Một trang câu luyện. Phân trang thật sẽ cần khi thư viện vượt con số này. */
 const PROMPT_PAGE_SIZE = 50;
@@ -27,7 +28,7 @@ export function PronunciationLibraryView() {
   const prompts = data?.speakingPrompts.items ?? [];
 
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
         <PronunciationHeader />
 
@@ -48,6 +49,6 @@ export function PronunciationLibraryView() {
 
         <PronunciationPhonemeMap sounds={IPA_CHART} />
       </Stack>
-    </Container>
+    </Page>
   );
 }

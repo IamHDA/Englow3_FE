@@ -13,8 +13,21 @@ type Listener = () => void;
 let pending = 0;
 const listeners = new Set<Listener>();
 
+let emitScheduled = false;
+
+/**
+ * Tells subscribers after the current task, never during it. Apollo starts
+ * some requests while a view is still rendering, and a subscriber updated in
+ * that moment is a state change inside someone else's render - React warns,
+ * and rightly. Several changes in one task become one notification.
+ */
 function emit() {
-  for (const listener of listeners) listener();
+  if (emitScheduled) return;
+  emitScheduled = true;
+  queueMicrotask(() => {
+    emitScheduled = false;
+    for (const listener of listeners) listener();
+  });
 }
 
 export function beginRequest() {

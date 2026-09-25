@@ -2,7 +2,6 @@
 
 import {
   Alert,
-  Container,
   Group,
   Paper,
   SegmentedControl,
@@ -28,6 +27,7 @@ import { FlashcardHistoryTable } from "../../blocks/FlashcardHistoryTable";
 import { FlashcardSetGrid } from "../../blocks/FlashcardSetGrid";
 import { FlashcardSetList } from "../../blocks/FlashcardSetList";
 import { FlashcardStatsOverview } from "../../blocks/FlashcardStatsOverview";
+import { Page } from "@/shared/components/Page";
 
 /** Một trang bộ thẻ. Phân trang thật sẽ cần tới khi thư viện vượt quá con số này. */
 const PAGE_SIZE = 50;
@@ -114,7 +114,7 @@ export function FlashcardDashboardView({
   }
 
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
         <FlashcardHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -193,6 +193,6 @@ export function FlashcardDashboardView({
           )
         )}
       </Stack>
-    </Container>
+    </Page>
   );
 }

@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Card,
-  Container,
   Grid,
   Group,
   Stack,
@@ -41,6 +40,7 @@ import { ReorderQuestion } from "../../blocks/ReorderQuestion";
 import { RewriteQuestion } from "../../blocks/RewriteQuestion";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { Page } from "@/shared/components/Page";
 
 interface QuizSittingViewProps {
   quizId: string;
@@ -140,7 +140,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
 
   if (error) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <Stack align="center" gap="md" py={60}>
           <Text fw={700} c="dark.9">
             {isVi ? "Không tải được bài kiểm tra" : "Could not load the quiz"}
@@ -154,7 +154,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             {isVi ? "Quay lại lộ trình" : "Back to the path"}
           </Button>
         </Stack>
-      </Container>
+      </Page>
     );
   }
 
@@ -162,7 +162,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
   // là lúc backend bắt đầu tính giờ, nên người học phải là người bấm.
   if (attemptId === null) {
     return (
-      <Container size="sm" py="xl">
+      <Page width="focus">
         <Card withBorder padding="xl" radius="md">
           <Stack gap="md" align="center">
             <Title order={2} fz="h3" ta="center">
@@ -178,7 +178,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             </Button>
           </Stack>
         </Card>
-      </Container>
+      </Page>
     );
   }
 
@@ -190,7 +190,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
   // duyệt không còn giữ đáp án để tự tính nữa.
   if (isSubmitted && scored) {
     return (
-      <Container size="md" py="xl">
+      <Page width="focus">
         <QuizResultSummary
           result={{
             quizId: scored.quizId,
@@ -223,7 +223,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
           }}
           onRestart={restartQuiz}
         />
-      </Container>
+      </Page>
     );
   }
 
@@ -232,7 +232,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
   }
 
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="lg">
         {/* Top Header */}
         <Group justify="space-between" align="center">
@@ -384,6 +384,6 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
           </Grid.Col>
         </Grid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

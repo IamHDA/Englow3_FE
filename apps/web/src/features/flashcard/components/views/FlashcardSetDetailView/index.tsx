@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   Alert,
-  Container,
   Group,
   Progress,
   Stack,
@@ -30,6 +29,7 @@ import { FlashcardReviewStatus } from "@/lib/graphql/generated";
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useFlashcardSetDetailQuery } from "@/lib/graphql/generated/hooks";
 import { FlashcardStudySkeleton } from "../../blocks/FlashcardStudySkeleton";
+import { Page } from "@/shared/components/Page";
 
 interface FlashcardSetDetailViewProps {
   setId: string;
@@ -48,7 +48,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
 
   if (error || !data) {
     return (
-      <Container size="lg" py="xl">
+      <Page>
         <Alert
           color="warn"
           title={isVi ? "Không tải được bộ thẻ" : "Could not load deck"}
@@ -57,7 +57,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
             ? "Kiểm tra kết nối tới backend rồi tải lại trang."
             : "Check the backend connection and reload."}
         </Alert>
-      </Container>
+      </Page>
     );
   }
 
@@ -82,7 +82,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
   };
 
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
         {/* Navigation & Header */}
         <Group justify="space-between" align="center">
@@ -275,6 +275,6 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
           </Stack>
         </Card>
       </Stack>
-    </Container>
+    </Page>
   );
 }

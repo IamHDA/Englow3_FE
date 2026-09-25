@@ -3,7 +3,6 @@
 import {
   Alert,
   Card,
-  Container,
   Group,
   Pagination,
   ScrollArea,
@@ -12,7 +11,6 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Search, ShieldAlert } from "lucide-react";
@@ -43,6 +41,7 @@ import { ContentReviewTable } from "../../blocks/ContentReviewTable";
 import { FlashcardImportPanel } from "../../blocks/FlashcardImportPanel";
 import { ContentReviewTableSkeleton } from "../../blocks/ContentReviewTable/ContentReviewTableSkeleton";
 import { RejectContentModal } from "../../blocks/RejectContentModal";
+import { Page, PageHeader } from "@/shared/components/Page";
 
 /** BFF trả mã này khi backend đáp 403. */
 const FORBIDDEN_CODE = "FORBIDDEN";
@@ -159,12 +158,10 @@ export function AdminContentView({
   const totalPages = data?.adminContent.totalPages ?? 0;
 
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="lg">
         <Stack gap={4}>
-          <Title order={1} size="h2" c="navy.9">
-            Quản lý nội dung học
-          </Title>
+          <PageHeader title="Quản lý nội dung học" />
           {/* Staff need to know the approval is not theirs; an admin does not
               need the page described to them. */}
           {!canReview && (
@@ -352,6 +349,6 @@ export function AdminContentView({
           );
         }}
       />
-    </Container>
+    </Page>
   );
 }

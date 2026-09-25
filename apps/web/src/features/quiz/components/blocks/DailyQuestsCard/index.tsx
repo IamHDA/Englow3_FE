@@ -76,9 +76,6 @@ export function DailyQuestsCard({ quests }: DailyQuestsCardProps) {
                         {isVi ? labels.vi : labels.en}
                       </Text>
                     </Group>
-                    <Text fz={10} c="dimmed">
-                      {isVi ? labels.descriptionVi : labels.descriptionEn}
-                    </Text>
                   </Stack>
 
                   {/*

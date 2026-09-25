@@ -55,35 +55,25 @@ export const TASK_UNIT_LABELS: Record<
   },
 };
 
-export const QUEST_LABELS: Record<
-  DailyQuestKind,
-  { vi: string; en: string; descriptionVi: string; descriptionEn: string }
-> = {
-  [DailyQuestKind.REVIEW_DUE_CARDS]: {
-    vi: "Trả hết thẻ đến hạn hôm nay",
-    en: "Clear today's due cards",
-    descriptionVi: "Mốc này lớn dần nếu lịch ôn đẩy thêm thẻ tới hạn giữa buổi",
-    descriptionEn: "The target grows if the schedule makes more cards due",
-  },
-  [DailyQuestKind.PASS_A_QUIZ]: {
-    vi: "Đạt điểm qua một bài trắc nghiệm",
-    en: "Pass one quiz",
-    descriptionVi: "Tính theo điểm qua của riêng từng bài",
-    descriptionEn: "Measured against each quiz's own pass mark",
-  },
-  [DailyQuestKind.TYPE_SENTENCES]: {
-    vi: "Chép lại câu nghe được",
-    en: "Transcribe sentences",
-    descriptionVi: "Đúng hay sai đều tính - quan trọng là có gõ",
-    descriptionEn: "Right or wrong both count - what matters is doing them",
-  },
-  [DailyQuestKind.PRACTISE_EVERY_DAY]: {
-    vi: "Học đủ bảy ngày gần nhất",
-    en: "Study on all of the last seven days",
-    descriptionVi: "Mọi hoạt động đều tính, kể cả làm đề thi thử",
-    descriptionEn: "Any activity counts, including a mock exam",
-  },
-};
+export const QUEST_LABELS: Record<DailyQuestKind, { vi: string; en: string }> =
+  {
+    [DailyQuestKind.REVIEW_DUE_CARDS]: {
+      vi: "Trả hết thẻ đến hạn hôm nay",
+      en: "Clear today's due cards",
+    },
+    [DailyQuestKind.PASS_A_QUIZ]: {
+      vi: "Đạt điểm qua một bài trắc nghiệm",
+      en: "Pass one quiz",
+    },
+    [DailyQuestKind.TYPE_SENTENCES]: {
+      vi: "Chép lại câu nghe được",
+      en: "Transcribe sentences",
+    },
+    [DailyQuestKind.PRACTISE_EVERY_DAY]: {
+      vi: "Học đủ bảy ngày gần nhất",
+      en: "Study on all of the last seven days",
+    },
+  };
 
 /**
  * Tên cấp bậc. Cấp là số thật, tính từ điểm kinh nghiệm thật; danh hiệu chỉ là

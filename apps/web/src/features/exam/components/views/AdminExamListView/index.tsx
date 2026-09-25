@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Alert,
-  Card,
-  Container,
-  Group,
-  Pagination,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Alert, Card, Group, Pagination, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { ShieldAlert } from "lucide-react";
 import { useState } from "react";
@@ -40,6 +31,7 @@ import {
   useRejectExamMutation,
   useSubmitExamForReviewMutation,
 } from "@/lib/graphql/generated/hooks";
+import { Page, PageHeader } from "@/shared/components/Page";
 
 const INITIAL_FILTERS: AdminExamFiltersState = {
   status: null,
@@ -140,12 +132,10 @@ export function AdminExamListView() {
   const totalPages = data?.adminExams.totalPages ?? 0;
 
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="lg">
         <Stack gap={4}>
-          <Title order={1} size="h2" c="navy.9">
-            Quản lý đề thi
-          </Title>
+          <PageHeader title="Quản lý đề thi" />
           {!canReview && (
             <Text size="sm" c="ink.6">
               Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.
@@ -254,6 +244,6 @@ export function AdminExamListView() {
           );
         }}
       />
-    </Container>
+    </Page>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import { Container, Grid, Skeleton, Stack } from "@mantine/core";
+import { Grid, Skeleton, Stack } from "@mantine/core";
 import React from "react";
+import { Page } from "@/shared/components/Page";
 
 export function FlashcardDashboardSkeleton() {
   return (
-    <Container size="lg" py="xl">
+    <Page>
       <Stack gap="xl">
         <Skeleton height={50} radius="md" />
         <Skeleton height={160} radius="lg" />
@@ -18,6 +19,6 @@ export function FlashcardDashboardSkeleton() {
           ))}
         </Grid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

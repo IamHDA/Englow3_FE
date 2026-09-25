@@ -9,7 +9,7 @@ import {
 
 export function ExamLibrarySkeleton() {
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
       {Array.from({ length: 8 }).map((_, idx) => (
         <Card key={idx} withBorder radius="lg" p="lg" mih={280}>
           <Group justify="space-between" align="center" mb="xs">

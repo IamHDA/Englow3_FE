@@ -1,8 +1,7 @@
 "use client";
 
-import { Group, SegmentedControl, Stack, Title } from "@mantine/core";
 import { IconCards, IconChartBar } from "@tabler/icons-react";
-import React from "react";
+import { PageHeader, PageTabs } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface FlashcardHeaderProps {
@@ -17,37 +16,26 @@ export function FlashcardHeader({
   const { t } = useLanguage();
 
   return (
-    <Stack gap="xs">
-      <Group justify="space-between" align="flex-end" wrap="wrap">
-        <Title order={2} fw={800} c="dark.9">
-          {t.flashcard.title}
-        </Title>
-
-        <SegmentedControl
+    <PageHeader
+      title={t.flashcard.title}
+      actions={
+        <PageTabs
           value={activeTab}
-          onChange={(val) => onTabChange(val as "decks" | "stats")}
-          data={[
+          onChange={onTabChange}
+          tabs={[
             {
               value: "decks",
-              label: (
-                <Group gap="xs" wrap="nowrap">
-                  <IconCards size={16} />
-                  <span>{t.flashcard.decksTab}</span>
-                </Group>
-              ),
+              label: t.flashcard.decksTab,
+              icon: <IconCards size={16} />,
             },
             {
               value: "stats",
-              label: (
-                <Group gap="xs" wrap="nowrap">
-                  <IconChartBar size={16} />
-                  <span>{t.flashcard.statsTab}</span>
-                </Group>
-              ),
+              label: t.flashcard.statsTab,
+              icon: <IconChartBar size={16} />,
             },
           ]}
         />
-      </Group>
-    </Stack>
+      }
+    />
   );
 }

@@ -1,14 +1,10 @@
 "use client";
 
-import { Title } from "@mantine/core";
+import { PageHeader } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 export function PronunciationHeader() {
   const { t } = useLanguage();
 
-  return (
-    <Title order={2} fw={800} c="dark.9">
-      {t.pronunciation.title}
-    </Title>
-  );
+  return <PageHeader title={t.pronunciation.title} />;
 }

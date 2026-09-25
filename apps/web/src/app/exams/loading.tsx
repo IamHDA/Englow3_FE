@@ -1,11 +1,10 @@
 import { ExamLibrarySkeleton } from "@/features/exam";
+import { Page } from "@/shared/components/Page";
 
 export default function MockTestLoading() {
   return (
-    <div
-      style={{ maxWidth: 1360, margin: "0 auto", padding: "36px 24px 80px" }}
-    >
+    <Page>
       <ExamLibrarySkeleton />
-    </div>
+    </Page>
   );
 }

@@ -39,11 +39,10 @@ export function PronunciationLessonGrid({
 
   return (
     <Stack gap="md">
-      <Group justify="space-between" align="center" wrap="wrap">
-        <Text fw={700} fz="lg" c="dark.9">
-          {isVi ? "Danh sách bài luyện phát âm" : "Pronunciation Lessons"}
-        </Text>
-
+      {/* A filter with one option is no filter: offer it only when there
+          are categories to choose between. The page title already says what
+          this list is. */}
+      {categories.length > 2 && (
         <SegmentedControl
           size="xs"
           value={selectedCategory}
@@ -53,7 +52,7 @@ export function PronunciationLessonGrid({
             label: c === "ALL" ? (isVi ? "Tất cả bài học" : "All Lessons") : c,
           }))}
         />
-      </Group>
+      )}
 
       {/* Không có câu nào thì nói thế - trước đây chỉ còn tiêu đề trơ trọi. */}
       {filteredPrompts.length === 0 && (

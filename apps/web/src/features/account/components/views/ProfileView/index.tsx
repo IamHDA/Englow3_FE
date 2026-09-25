@@ -1,27 +1,15 @@
 "use client";
 
-import {
-  Alert,
-  Grid,
-  Group,
-  Paper,
-  Stack,
-  Tabs,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Alert, Grid, Paper, Stack, Tabs, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   AlertCircle,
   CheckCircle2,
-  ChevronRight,
   GraduationCap,
-  Home,
   ShieldCheck,
   User,
   UserX,
 } from "lucide-react";
-import Link from "next/link";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { type Gender } from "@/lib/graphql/generated";
@@ -36,6 +24,7 @@ import { ProfileSkeleton } from "../../blocks/ProfileSkeleton";
 import { ProfileTargetCard } from "../../blocks/ProfileTargetCard";
 
 import classes from "./ProfileView.module.css";
+import { PageHeader } from "@/shared/components/Page";
 
 export function ProfileView() {
   const { profile, loading, hasError, refresh } = useAccountProfile();
@@ -121,26 +110,7 @@ export function ProfileView() {
 
   return (
     <Stack gap="lg" className={classes.viewContainer}>
-      {/* Breadcrumbs Navigation */}
-      <Group gap={6} align="center" className={classes.breadcrumb}>
-        <Link href="/" className={classes.breadcrumbLink}>
-          <Home size={14} />
-          <span>{t.nav.home}</span>
-        </Link>
-        <ChevronRight size={14} className={classes.breadcrumbSeparator} />
-        <Text size="xs" fw={600} c="ink.5">
-          {t.nav.account}
-        </Text>
-        <ChevronRight size={14} className={classes.breadcrumbSeparator} />
-        <Text size="xs" fw={700} c="navy.8">
-          {t.account.title}
-        </Text>
-      </Group>
-
-      {/* Page Heading */}
-      <Title order={1} fz={{ base: 24, md: 28 }} fw={800} c="ink.9">
-        {t.account.title}
-      </Title>
+      <PageHeader title={t.account.title} />
 
       {/* 2-Column Responsive Layout */}
       <Grid gap="xl" align="flex-start">
