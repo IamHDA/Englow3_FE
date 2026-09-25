@@ -114,8 +114,10 @@ export function AccountProvider({
 
     notifications.show({
       color: "warn",
-      title: "Lỗi lấy thông tin người dùng",
-      message: "Vui lòng đăng nhập lại",
+      // Not "please sign in again": the session is fine, it is the server
+      // that did not answer, and signing in again would not help.
+      title: "Không tải được thông tin tài khoản",
+      message: "Máy chủ chưa phản hồi. Tải lại trang sau ít phút.",
     });
   }, [value.hasError]);
 

@@ -23,7 +23,9 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0;
-  background-color: var(--mantine-color-white);
+  /* A light grey page so white cards stand apart from it, as in Study4 -
+     white on white left every screen looking flat. */
+  background-color: var(--mantine-color-ink-0);
   color: var(--mantine-color-ink-7);
   -webkit-font-smoothing: antialiased;
 }
@@ -39,4 +41,13 @@ nextjs-portal,
 [data-nextjs-dev-indicator],
 [data-next-badge] {
   display: none !important;
+}
+
+/* Comfortable touch targets on a phone: nothing tappable under 44px tall. */
+@media (max-width: 48em) {
+  .mantine-Button-root:not([data-size="xs"]):not([data-size="compact-xs"]):not(
+      [data-size="compact-sm"]
+    ) {
+    min-height: 44px;
+  }
 }

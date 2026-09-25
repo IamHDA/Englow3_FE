@@ -133,7 +133,9 @@ export function ExamLibraryView() {
           <Center py={64}>
             <Stack align="center" gap="sm">
               <Text c="red.6" fw={600}>
-                {t.exam.loadListError}: {error.message}
+                {/* The server's own message is English and for developers;
+                    the learner gets ours, and the retry below. */}
+                {t.exam.loadListError}
               </Text>
               <Button
                 variant="filled"
