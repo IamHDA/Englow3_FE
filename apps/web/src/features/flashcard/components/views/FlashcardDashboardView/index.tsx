@@ -4,8 +4,10 @@ import {
   Alert,
   Container,
   Group,
+  Paper,
   SegmentedControl,
   Stack,
+  Text,
 } from "@mantine/core";
 import { useMemo, useState } from "react";
 import { FlashcardDashboardSkeleton } from "../../blocks/FlashcardDashboardSkeleton";
@@ -142,7 +144,21 @@ export function FlashcardDashboardView({
               onViewModeChange={setViewMode}
             />
 
-            {viewMode === "grid" ? (
+            {filteredSets.length === 0 && !error ? (
+              // Trống thì nói vì sao: chưa có bộ nào, hay bộ lọc loại hết.
+              // Trước đây chỗ này để trắng, trông như trang tải hỏng.
+              <Paper withBorder radius="md" p="xl">
+                <Text ta="center" c="dimmed" fz="sm">
+                  {sets.length === 0
+                    ? isVi
+                      ? "Chưa có bộ thẻ nào được phát hành. Quay lại sau nhé."
+                      : "No flashcard sets have been published yet. Check back soon."
+                    : isVi
+                      ? "Không có bộ thẻ nào khớp bộ lọc. Thử đổi từ khoá hoặc chủ đề."
+                      : "No sets match these filters. Try another search or topic."}
+                </Text>
+              </Paper>
+            ) : viewMode === "grid" ? (
               <FlashcardSetGrid sets={filteredSets} />
             ) : (
               <FlashcardSetList sets={filteredSets} />

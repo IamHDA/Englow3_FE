@@ -22,9 +22,18 @@ import type { DictationLesson } from "../../../types";
 
 interface DictationLessonListProps {
   lessons: DictationLesson[];
+  /**
+   * What to say when there is nothing to show. The view knows whether that is
+   * because nothing is published yet or because the filters ruled it all out;
+   * this block does not.
+   */
+  emptyMessage: string;
 }
 
-export function DictationLessonList({ lessons }: DictationLessonListProps) {
+export function DictationLessonList({
+  lessons,
+  emptyMessage,
+}: DictationLessonListProps) {
   const { isVi } = useLanguage();
 
   if (lessons.length === 0) {
@@ -37,7 +46,7 @@ export function DictationLessonList({ lessons }: DictationLessonListProps) {
         style={{ textAlign: "center" }}
       >
         <Text c="ink.6" size="sm">
-          Không tìm thấy bài học nào phù hợp.
+          {emptyMessage}
         </Text>
       </Paper>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Stack } from "@mantine/core";
+import { Alert, Container, Stack } from "@mantine/core";
 import { lessonStatus, progressPercent } from "../../../lessonProgress";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -58,7 +58,7 @@ export function DictationLibraryView({
     ? toStatsData(statsData.dictationStats, period, isVi)
     : null;
 
-  const { data, loading } = useDictationLessonsQuery({
+  const { data, loading, error } = useDictationLessonsQuery({
     variables: { size: PAGE_SIZE },
     fetchPolicy: "cache-and-network",
   });
@@ -115,6 +115,17 @@ export function DictationLibraryView({
     return <DictationLibrarySkeleton />;
   }
 
+  // Trước đây luôn là "không có bài nào khớp bộ lọc", kể cả khi chưa lọc gì và
+  // thư viện chỉ đơn giản là chưa có bài.
+  const emptyMessage =
+    lessons.length === 0
+      ? isVi
+        ? "Chưa có bài nghe nào được phát hành. Quay lại sau nhé."
+        : "No listening lessons have been published yet. Check back soon."
+      : isVi
+        ? "Không có bài nào khớp bộ lọc. Thử đổi chủ đề, trình độ hoặc trạng thái."
+        : "No lessons match these filters. Try another topic, level or status.";
+
   return (
     <Container size="lg" py="xl">
       <Stack gap="xl">
@@ -139,10 +150,29 @@ export function DictationLibraryView({
               onViewModeChange={setViewMode}
             />
 
+            {error && lessons.length === 0 && (
+              <Alert
+                color="warn"
+                title={
+                  isVi ? "Không tải được bài học" : "Could not load lessons"
+                }
+              >
+                {isVi
+                  ? "Kiểm tra kết nối rồi tải lại trang."
+                  : "Check your connection and reload the page."}
+              </Alert>
+            )}
+
             {viewMode === "grid" ? (
-              <DictationLessonGrid lessons={filteredLessons} />
+              <DictationLessonGrid
+                lessons={filteredLessons}
+                emptyMessage={emptyMessage}
+              />
             ) : (
-              <DictationLessonList lessons={filteredLessons} />
+              <DictationLessonList
+                lessons={filteredLessons}
+                emptyMessage={emptyMessage}
+              />
             )}
           </Stack>
         ) : (

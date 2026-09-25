@@ -77,7 +77,7 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
               {
                 value: "roadmap",
                 label: (
-                  <Group gap="xs">
+                  <Group gap="xs" wrap="nowrap">
                     <IconCompass size={18} />
                     <span>{isVi ? "Lộ trình hôm nay" : "Today's Roadmap"}</span>
                   </Group>
@@ -86,7 +86,7 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
               {
                 value: "quizzes",
                 label: (
-                  <Group gap="xs">
+                  <Group gap="xs" wrap="nowrap">
                     <IconSparkles size={18} />
                     <span>
                       {isVi ? "Kho thử thách trắc nghiệm" : "Quiz Challenges"}

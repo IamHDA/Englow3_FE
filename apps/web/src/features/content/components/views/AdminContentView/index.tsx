@@ -6,6 +6,7 @@ import {
   Container,
   Group,
   Pagination,
+  ScrollArea,
   SegmentedControl,
   Select,
   Stack,
@@ -162,21 +163,25 @@ export function AdminContentView() {
           </Text>
         </Stack>
 
-        <Group justify="center">
-          <SegmentedControl
-            size="md"
-            value={kind}
-            onChange={(next) => {
-              setKind(next as ContentKind);
-              // Đổi loại thì về trang đầu - giữ trang 3 của loại cũ sẽ ra rỗng.
-              setPage(0);
-            }}
-            data={KIND_TABS.map((value) => ({
-              value,
-              label: CONTENT_KIND_LABELS[value],
-            }))}
-          />
-        </Group>
+        {/* Bốn tab dài hơn màn điện thoại: cho cuộn ngang thay vì tràn ra
+            ngoài và che mất tab cuối. */}
+        <ScrollArea type="auto" scrollbarSize={4} offsetScrollbars="x">
+          <Group justify="center" wrap="nowrap" miw="max-content" mx="auto">
+            <SegmentedControl
+              size="md"
+              value={kind}
+              onChange={(next) => {
+                setKind(next as ContentKind);
+                // Đổi loại thì về trang đầu - giữ trang 3 của loại cũ sẽ ra rỗng.
+                setPage(0);
+              }}
+              data={KIND_TABS.map((value) => ({
+                value,
+                label: CONTENT_KIND_LABELS[value],
+              }))}
+            />
+          </Group>
+        </ScrollArea>
 
         <Card radius="lg" withBorder p="md">
           <Group gap="md" align="flex-end">

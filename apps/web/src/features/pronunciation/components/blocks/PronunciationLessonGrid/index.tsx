@@ -62,6 +62,17 @@ export function PronunciationLessonGrid({
         />
       </Group>
 
+      {/* Không có câu nào thì nói thế - trước đây chỉ còn tiêu đề trơ trọi. */}
+      {filteredPrompts.length === 0 && (
+        <Card withBorder radius="md" p="xl">
+          <Text ta="center" c="dimmed" fz="sm">
+            {isVi
+              ? "Chưa có câu luyện phát âm nào được phát hành. Trong lúc chờ, bạn có thể nghe mẫu từng âm ở bảng IPA bên dưới."
+              : "No pronunciation prompts have been published yet. Meanwhile, you can hear each sound in the IPA chart below."}
+          </Text>
+        </Card>
+      )}
+
       <Grid gap="md">
         {filteredPrompts.map((prompt) => (
           <Grid.Col key={prompt.id} span={{ base: 12, sm: 6, lg: 4 }}>

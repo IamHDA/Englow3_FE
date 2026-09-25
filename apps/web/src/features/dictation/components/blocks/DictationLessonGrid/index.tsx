@@ -24,9 +24,18 @@ import type { DictationLesson } from "../../../types";
 
 interface DictationLessonGridProps {
   lessons: DictationLesson[];
+  /**
+   * What to say when there is nothing to show. The view knows whether that is
+   * because nothing is published yet or because the filters ruled it all out;
+   * this block does not.
+   */
+  emptyMessage: string;
 }
 
-export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
+export function DictationLessonGrid({
+  lessons,
+  emptyMessage,
+}: DictationLessonGridProps) {
   const { isVi } = useLanguage();
 
   if (lessons.length === 0) {
@@ -39,8 +48,7 @@ export function DictationLessonGrid({ lessons }: DictationLessonGridProps) {
         style={{ textAlign: "center" }}
       >
         <Text c="ink.6" size="sm">
-          Không tìm thấy bài học nào phù hợp với bộ lọc. Hãy thử thay đổi chủ đề
-          hoặc cấp độ.
+          {emptyMessage}
         </Text>
       </Card>
     );

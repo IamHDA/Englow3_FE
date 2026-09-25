@@ -48,7 +48,7 @@ export function FlashcardHeader({
             {
               value: "decks",
               label: (
-                <Group gap="xs">
+                <Group gap="xs" wrap="nowrap">
                   <IconCards size={16} />
                   <span>{t.flashcard.decksTab}</span>
                 </Group>
@@ -57,7 +57,7 @@ export function FlashcardHeader({
             {
               value: "stats",
               label: (
-                <Group gap="xs">
+                <Group gap="xs" wrap="nowrap">
                   <IconChartBar size={16} />
                   <span>{t.flashcard.statsTab}</span>
                 </Group>
