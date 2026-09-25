@@ -59,6 +59,7 @@ export function ResetPasswordForm() {
     >
       <PasswordInput
         {...register("password")}
+        autoComplete="new-password"
         label="Mật khẩu mới"
         placeholder="Nhập mật khẩu mới"
         error={errors.password?.message}

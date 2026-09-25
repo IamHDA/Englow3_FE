@@ -166,6 +166,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <TextInput
         {...register("email")}
+        type="email"
+        autoComplete="email"
         label={t.auth.emailLabel}
         placeholder={t.auth.emailPlaceholder}
         error={errors.email?.message}
@@ -174,6 +176,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <PasswordInput
         {...register("password")}
+        autoComplete="new-password"
         label={
           <>
             {t.auth.passwordLabel}

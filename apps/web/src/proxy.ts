@@ -11,16 +11,40 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 /**
+ * Pages that only make sense with an account. A guest who reaches one - by a
+ * bookmark or a typed URL, since the header already stops clicks - is sent
+ * to the landing page, where they can sign in, rather than shown a screen
+ * whose every request would fail.
+ */
+const MEMBER_ONLY_PREFIXES = [
+  "/study",
+  "/exams",
+  "/ai-tutor",
+  "/dictation",
+  "/profile",
+  "/admin",
+];
+
+function isMemberOnly(pathname: string): boolean {
+  return MEMBER_ONLY_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+/**
  * Refreshes the Supabase session cookie on every navigation. Without this,
  * a Server Component reading cookies via next/headers can see a stale
  * access token that expired between page loads. `getUser()` (not
  * `getSession()`) is what actually triggers the refresh here - it revalidates
  * against Supabase, and the `setAll` below writes the renewed cookie back.
  *
- * Does not redirect or protect any route yet - there is no authenticated
- * route group to protect. This only keeps the session fresh.
+ * It is also the one place that turns guests away from member-only pages.
+ *
+ * Lives in src/ as proxy.ts on purpose. With an src/app directory Next.js
+ * only looks for this file inside src/, and Next 16 renamed middleware to
+ * proxy; at the project root under its old name it was never run at all.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(supabaseUrl!, supabaseAnonKey!, {
@@ -38,7 +62,21 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user && isMemberOnly(request.nextUrl.pathname)) {
+    const landing = request.nextUrl.clone();
+    landing.pathname = "/";
+    landing.search = "";
+    const redirect = NextResponse.redirect(landing);
+    // Carry over whatever getUser() just wrote, e.g. a cleared stale token.
+    for (const cookie of response.cookies.getAll()) {
+      redirect.cookies.set(cookie);
+    }
+    return redirect;
+  }
 
   return response;
 }

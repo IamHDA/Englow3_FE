@@ -15,10 +15,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, type ReactNode } from "react";
+import { Fragment, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
-import { useAuth } from "@/features/auth";
+import { AuthModal, useAuth } from "@/features/auth";
 import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import {
@@ -68,7 +68,21 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   // Chặn điều hướng tới các trang chức năng khi chưa onboarding xong; nút nhắc
   // ở header dùng `requiresOnboarding` trực tiếp để quyết định có hiện không.
   const { requiresOnboarding } = useOnboarding();
-  const guardNavigation = useOnboardingGuard();
+  const guardOnboarding = useOnboardingGuard();
+
+  // Khách chưa đăng nhập: mọi mục chức năng đều cần tài khoản, nên bấm vào thì
+  // mở form đăng nhập tại chỗ thay vì đưa tới một trang không dùng được.
+  // Một modal duy nhất, đặt ngoài Drawer, dùng chung cho cả nút "Đăng nhập".
+  const [loginOpened, login] = useDisclosure(false);
+
+  function guardNavigation(event: MouseEvent) {
+    if (!session) {
+      event.preventDefault();
+      login.open();
+      return;
+    }
+    guardOnboarding(event);
+  }
 
   return (
     <Fragment>
@@ -165,7 +179,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                 />
               </>
             ) : (
-              <SiteHeaderLoginButton />
+              <SiteHeaderLoginButton onClick={login.open} />
             )}
           </Group>
 
@@ -238,10 +252,18 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               avatarUrl={profile?.avatarUrl ?? null}
             />
           ) : (
-            <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
+            <SiteHeaderLoginButton
+              onClick={() => {
+                drawer.close();
+                login.open();
+              }}
+              fullWidth
+            />
           )}
         </Stack>
       </Drawer>
+
+      <AuthModal opened={loginOpened} onClose={login.close} />
     </Fragment>
   );
 }

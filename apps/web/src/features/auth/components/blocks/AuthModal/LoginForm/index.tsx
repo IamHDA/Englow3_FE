@@ -119,6 +119,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     >
       <TextInput
         {...register("email")}
+        type="email"
+        autoComplete="email"
         label={t.auth.emailLabel}
         placeholder={t.auth.emailPlaceholder}
         error={errors.email?.message}
@@ -127,6 +129,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
       <PasswordInput
         {...register("password")}
+        autoComplete="current-password"
         label={t.auth.passwordLabel}
         placeholder={t.auth.passwordPlaceholder}
         error={errors.password?.message}

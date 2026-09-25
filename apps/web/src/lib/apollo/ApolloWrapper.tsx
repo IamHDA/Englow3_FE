@@ -68,7 +68,15 @@ function makeClient() {
     defaultOptions: {
       watchQuery: {
         fetchPolicy: "cache-first",
-        nextFetchPolicy: "cache-first",
+        // After the first fetch, settle on the cache - except for a query that
+        // asked for "network-only". That is a promise to go to the server every
+        // time, and a blanket "cache-first" here quietly broke it: the second
+        // run of a lazy query came from the cache. Onboarding saved each step
+        // and then re-read the old step, so the popup never moved on.
+        nextFetchPolicy: (currentFetchPolicy) =>
+          currentFetchPolicy === "network-only"
+            ? "network-only"
+            : "cache-first",
       },
       query: {
         fetchPolicy: "cache-first",

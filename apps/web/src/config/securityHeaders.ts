@@ -26,28 +26,41 @@
  * that is wrong in whichever environment nobody checked. These directives
  * limit exfiltration rather than execution, so the looser setting costs less
  * than a broken page.
+ *
+ * Local development is the one place those services are plain http - the BFF
+ * on :4000, object storage on :9000 - and "https:" alone blocked every request
+ * the app made, so no screen could load data locally. `next dev` also needs
+ * eval for React's debugging. Both are added for development only; a
+ * production build gets exactly the policy above.
  */
-const CONTENT_SECURITY_POLICY = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
-  // Mantine writes styles into the document at runtime.
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https:",
-  // blob: is the recording the learner just made, played back before upload.
-  "media-src 'self' blob: https:",
-  "font-src 'self' data:",
-  "connect-src 'self' https: wss:",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  // The modern replacement for X-Frame-Options; both are sent because older
-  // browsers honour only the latter.
-  "frame-ancestors 'none'",
-  "upgrade-insecure-requests",
-].join("; ");
+export function contentSecurityPolicy(development: boolean): string {
+  const local = development ? " http://localhost:* ws://localhost:*" : "";
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${development ? " 'unsafe-eval'" : ""}`,
+    // Mantine writes styles into the document at runtime.
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob: https:${local}`,
+    // blob: is the recording the learner just made, played back before upload.
+    `media-src 'self' blob: https:${local}`,
+    "font-src 'self' data:",
+    `connect-src 'self' https: wss:${local}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    // The modern replacement for X-Frame-Options; both are sent because older
+    // browsers honour only the latter.
+    "frame-ancestors 'none'",
+    // Would rewrite the local http services to https, which they do not serve.
+    ...(development ? [] : ["upgrade-insecure-requests"]),
+  ].join("; ");
+}
 
 export const SECURITY_HEADERS = [
-  { key: "Content-Security-Policy", value: CONTENT_SECURITY_POLICY },
+  {
+    key: "Content-Security-Policy",
+    value: contentSecurityPolicy(process.env.NODE_ENV === "development"),
+  },
 
   /**
    * Nothing here is meant to be framed, and clickjacking a page that can start
