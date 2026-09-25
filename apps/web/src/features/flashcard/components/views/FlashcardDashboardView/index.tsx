@@ -128,8 +128,8 @@ export function FlashcardDashboardView({
 
             <FlashcardHeroCard
               dueCount={totalDueCount}
-              streakDays={stats?.dailyStreakDays ?? 0}
-              retentionPercent={stats?.retentionRatePercent ?? 0}
+              streakDays={stats?.dailyStreakDays ?? null}
+              retentionPercent={stats?.retentionRatePercent ?? null}
               primarySetSlug={filteredSets[0]?.slug ?? sets[0]?.slug ?? ""}
             />
 
@@ -173,7 +173,14 @@ export function FlashcardDashboardView({
                   onChange={(next) =>
                     setPeriod(next as keyof typeof STATS_PERIOD_DAYS)
                   }
-                  data={Object.keys(STATS_PERIOD_DAYS)}
+                  // The keys are internal ids; the labels are what a learner
+                  // reads, in their language.
+                  data={[
+                    { value: "7 Days", label: isVi ? "7 ngày" : "7 days" },
+                    { value: "30 Days", label: isVi ? "30 ngày" : "30 days" },
+                    { value: "3 Months", label: isVi ? "3 tháng" : "3 months" },
+                    { value: "All Time", label: isVi ? "Tất cả" : "All time" },
+                  ]}
                   radius="md"
                   size="sm"
                 />

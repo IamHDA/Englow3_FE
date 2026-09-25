@@ -156,11 +156,13 @@ export function AdminContentView() {
           <Title order={1} size="h2" c="navy.9">
             Quản lý nội dung học
           </Title>
-          <Text size="sm" c="ink.6">
-            {canReview
-              ? "Bộ thẻ từ, bài trắc nghiệm, bài nghe chép và câu luyện nói ở mọi trạng thái, kèm việc duyệt."
-              : "Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại."}
-          </Text>
+          {/* Staff need to know the approval is not theirs; an admin does not
+              need the page described to them. */}
+          {!canReview && (
+            <Text size="sm" c="ink.6">
+              Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.
+            </Text>
+          )}
         </Stack>
 
         {/* Bốn tab dài hơn màn điện thoại: cho cuộn ngang thay vì tràn ra

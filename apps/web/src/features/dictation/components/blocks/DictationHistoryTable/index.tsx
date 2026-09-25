@@ -33,11 +33,6 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
               {t.dictation.historyTitle}
             </Title>
           </Group>
-          <Text size="xs" c="ink.5">
-            {isVi
-              ? "Xem lại các phiên làm bài gần đây"
-              : "Review your recent practice sessions"}
-          </Text>
         </Group>
 
         <ScrollArea>
@@ -56,6 +51,17 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
+              {history.length === 0 && (
+                <Table.Tr>
+                  <Table.Td colSpan={8}>
+                    <Text size="sm" c="ink.5" ta="center" py="md">
+                      {isVi
+                        ? "Chưa có buổi luyện tập nào."
+                        : "No sessions yet."}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
+              )}
               {history.map((h) => (
                 <Table.Tr key={h.id}>
                   <Table.Td>

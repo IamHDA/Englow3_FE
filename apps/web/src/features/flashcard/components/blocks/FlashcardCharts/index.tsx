@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Card, Grid, Group, Progress, Stack, Text } from "@mantine/core";
+import { Box, Card, Group, Stack, Text } from "@mantine/core";
 import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { FlashcardStatsData } from "../../../types";
@@ -9,136 +9,73 @@ interface FlashcardChartsProps {
   stats: FlashcardStatsData;
 }
 
+/**
+ * Cards reviewed per day over the chosen period.
+ *
+ * There was a "memory stages" panel beside this one - 184 mastered, 96 in
+ * review, and so on - that was the same four figures for every learner,
+ * including one who had never studied. The API has nothing to fill it with, so
+ * it is gone rather than kept as decoration that looks like data.
+ */
 export function FlashcardCharts({ stats }: FlashcardChartsProps) {
   const { isVi } = useLanguage();
-  const maxCards = Math.max(...stats.activityDays.map((d) => d.cardsCount), 80);
+  const maxCards = Math.max(...stats.activityDays.map((d) => d.cardsCount), 1);
+  const hasActivity = stats.activityDays.some((d) => d.cardsCount > 0);
 
   return (
-    <Grid gap="md">
-      {/* Weekly Activity Bars */}
-      <Grid.Col span={{ base: 12, md: 7 }}>
-        <Card withBorder padding="lg" radius="md" h="100%">
-          <Stack justify="space-between" h="100%">
-            <Box>
-              <Text fw={700} fz="sm" c="dark.9">
-                {isVi
-                  ? "Số lượng thẻ ôn tập theo ngày (7 ngày qua)"
-                  : "Cards Reviewed Daily (Past 7 Days)"}
-              </Text>
-              <Text fz="xs" c="dimmed">
-                {isVi
-                  ? "Đo lường tính kiên định và tần suất tiếp xúc Flashcard"
-                  : "Track daily study consistency and review volume"}
-              </Text>
-            </Box>
+    <Card withBorder padding="lg" radius="md">
+      <Stack gap="md">
+        <Box>
+          {/* Not "past 7 days": the period is whichever the learner picked. */}
+          <Text fw={700} fz="sm" c="dark.9">
+            {isVi ? "Số thẻ ôn tập theo ngày" : "Cards reviewed per day"}
+          </Text>
+        </Box>
 
-            <Group
-              align="flex-end"
-              justify="space-around"
-              h={180}
-              mt="md"
-              px="xs"
-            >
-              {stats.activityDays.map((item, idx) => {
-                const heightPercent = Math.round(
-                  (item.cardsCount / maxCards) * 100,
-                );
-                return (
-                  <Stack key={idx} align="center" gap={4} style={{ flex: 1 }}>
-                    <Text fz="xs" fw={700} c="indigo">
-                      {item.cardsCount}
-                    </Text>
-                    <Box
-                      w="70%"
-                      maw={36}
-                      h={`${heightPercent}%`}
-                      bg="indigo.5"
-                      style={{
-                        borderRadius: "4px 4px 0 0",
-                        minHeight: 12,
-                        transition: "height 0.3s ease",
-                      }}
-                    />
-                    <Text fz="xs" c="dimmed" fw={600}>
-                      {item.day}
-                    </Text>
-                  </Stack>
-                );
-              })}
-            </Group>
-          </Stack>
-        </Card>
-      </Grid.Col>
-
-      {/* Memory Stage Breakdown */}
-      <Grid.Col span={{ base: 12, md: 5 }}>
-        <Card withBorder padding="lg" radius="md" h="100%">
-          <Stack gap="md">
-            <Box>
-              <Text fw={700} fz="sm" c="dark.9">
-                {isVi ? "Trạng thái lưu trữ não bộ" : "Memory Retention Stages"}
-              </Text>
-              <Text fz="xs" c="dimmed">
-                {isVi
-                  ? "Phân bổ từ vựng theo chu kỳ trí nhớ Ebbinghaus"
-                  : "Vocabulary distribution based on Ebbinghaus forgetting curve"}
-              </Text>
-            </Box>
-
-            <Stack gap="sm">
-              <Box>
-                <Group justify="space-between" mb={2}>
-                  <Text fz="xs" fw={600}>
-                    {isVi ? "Đã khắc sâu (> 1 tháng)" : "Mastered (> 1 month)"}
-                  </Text>
-                  <Text fz="xs" fw={700} c="teal">
-                    {isVi ? "184 từ (54%)" : "184 cards (54%)"}
-                  </Text>
-                </Group>
-                <Progress value={54} color="teal" size="sm" radius="xl" />
-              </Box>
-
-              <Box>
-                <Group justify="space-between" mb={2}>
-                  <Text fz="xs" fw={600}>
-                    {isVi ? "Đang củng cố (4 - 7 ngày)" : "Review (4 - 7 days)"}
-                  </Text>
+        {hasActivity ? (
+          <Group align="flex-end" justify="space-around" h={180} px="xs">
+            {stats.activityDays.map((item, idx) => {
+              const heightPercent = Math.round(
+                (item.cardsCount / maxCards) * 100,
+              );
+              return (
+                <Stack
+                  key={idx}
+                  align="center"
+                  justify="flex-end"
+                  gap={4}
+                  h="100%"
+                  style={{ flex: 1 }}
+                >
                   <Text fz="xs" fw={700} c="indigo">
-                    {isVi ? "96 từ (28%)" : "96 cards (28%)"}
+                    {item.cardsCount}
                   </Text>
-                </Group>
-                <Progress value={28} color="indigo" size="sm" radius="xl" />
-              </Box>
-
-              <Box>
-                <Group justify="space-between" mb={2}>
-                  <Text fz="xs" fw={600}>
-                    {isVi
-                      ? "Bộ nhớ ngắn hạn (1 - 2 ngày)"
-                      : "Short-term (1 - 2 days)"}
+                  <Box
+                    w="70%"
+                    maw={36}
+                    h={`${heightPercent}%`}
+                    bg="indigo.5"
+                    style={{
+                      borderRadius: "4px 4px 0 0",
+                      minHeight: item.cardsCount > 0 ? 6 : 2,
+                      transition: "height 0.3s ease",
+                    }}
+                  />
+                  <Text fz="xs" c="dimmed" fw={600}>
+                    {item.day}
                   </Text>
-                  <Text fz="xs" fw={700} c="orange">
-                    {isVi ? "42 từ (12%)" : "42 cards (12%)"}
-                  </Text>
-                </Group>
-                <Progress value={12} color="orange" size="sm" radius="xl" />
-              </Box>
-
-              <Box>
-                <Group justify="space-between" mb={2}>
-                  <Text fz="xs" fw={600}>
-                    {isVi ? "Từ mới tinh (< 1 ngày)" : "New (< 1 day)"}
-                  </Text>
-                  <Text fz="xs" fw={700} c="gray">
-                    {isVi ? "20 từ (6%)" : "20 cards (6%)"}
-                  </Text>
-                </Group>
-                <Progress value={6} color="gray" size="sm" radius="xl" />
-              </Box>
-            </Stack>
-          </Stack>
-        </Card>
-      </Grid.Col>
-    </Grid>
+                </Stack>
+              );
+            })}
+          </Group>
+        ) : (
+          <Text size="sm" c="dimmed" ta="center" py={48}>
+            {isVi
+              ? "Chưa có lượt ôn tập nào trong khoảng thời gian này."
+              : "No reviews in this period yet."}
+          </Text>
+        )}
+      </Stack>
+    </Card>
   );
 }

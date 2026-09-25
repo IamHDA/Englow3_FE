@@ -35,14 +35,16 @@ export function DictationHardSentences({
               {t.dictation.difficultSentencesTitle}
             </Title>
           </Group>
-          <Text size="xs" c="ink.5">
-            {isVi
-              ? "Dựa trên tỉ lệ gõ đúng trung bình thấp nhất"
-              : "Ranked by lowest average accuracy"}
-          </Text>
         </Group>
 
         <Stack gap="xs">
+          {sentences.length === 0 && (
+            <Text size="sm" c="ink.5" ta="center" py="md">
+              {isVi
+                ? "Chưa có câu nào khó với bạn."
+                : "No sentences giving you trouble yet."}
+            </Text>
+          )}
           {sentences.map((s) => (
             <Card key={s.id} radius="md" p="md" withBorder bg="ink.0">
               <Flex

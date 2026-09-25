@@ -2,7 +2,6 @@
 
 import {
   Badge,
-  Box,
   Button,
   Card,
   Grid,
@@ -43,28 +42,35 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
   return (
     <Stack gap="md">
       <Group justify="space-between" align="center" wrap="wrap">
-        <Box>
-          <Text fw={800} fz="lg" c="dark.9">
-            {isVi ? "Kho bài tập trắc nghiệm" : "Quiz Challenge Library"}
-          </Text>
-          <Text fz="xs" c="dimmed">
-            {isVi
-              ? "Lựa chọn chủ đề để kiểm tra nhanh và đánh giá lỗ hổng kiến thức"
-              : "Select a topic to test comprehension and identify knowledge gaps"}
-          </Text>
-        </Box>
+        <Text fw={800} fz="lg" c="dark.9">
+          {isVi ? "Kho bài tập trắc nghiệm" : "Quiz Challenge Library"}
+        </Text>
 
-        <SegmentedControl
-          size="xs"
-          value={selectedCategory}
-          onChange={setSelectedCategory}
-          data={categories.map((c) => ({
-            value: c,
-            label:
-              c === "ALL" ? (isVi ? "Tất cả chủ đề" : "All Categories") : c,
-          }))}
-        />
+        {/* One option is no choice: only offer the filter when there are
+            categories to pick between. */}
+        {categories.length > 2 && (
+          <SegmentedControl
+            size="xs"
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            data={categories.map((c) => ({
+              value: c,
+              label:
+                c === "ALL" ? (isVi ? "Tất cả chủ đề" : "All Categories") : c,
+            }))}
+          />
+        )}
       </Group>
+
+      {filteredQuizzes.length === 0 && (
+        <Card withBorder radius="md" p="xl">
+          <Text ta="center" c="dimmed" fz="sm">
+            {isVi
+              ? "Chưa có bài trắc nghiệm nào được phát hành. Quay lại sau nhé."
+              : "No quizzes have been published yet. Check back soon."}
+          </Text>
+        </Card>
+      )}
 
       <Grid gap="md">
         {filteredQuizzes.map((quiz) => (

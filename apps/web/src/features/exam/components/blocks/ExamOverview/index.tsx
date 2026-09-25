@@ -80,11 +80,6 @@ export function ExamOverview({ exam, starting, onStart }: ExamOverviewProps) {
                     {exam.certificateVariant ? exam.certificateVariant : ""}
                   </Badge>
                 )}
-                {exam.targetLevel && (
-                  <Badge color="orange" variant="light" size="md" radius="sm">
-                    Level {exam.targetLevel}
-                  </Badge>
-                )}
               </Group>
               <Title
                 order={1}

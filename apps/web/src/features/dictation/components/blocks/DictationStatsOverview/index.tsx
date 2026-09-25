@@ -71,11 +71,6 @@ export function DictationStatsOverview({
           <Title order={2} size="h3" fw={700} c="ink.9">
             {isVi ? "Thống kê quá trình học" : "Dictation Statistics"}
           </Title>
-          <Text size="xs" c="ink.6">
-            {isVi
-              ? "Theo dõi sự tiến bộ về khả năng nghe và gõ chính tả theo thời gian."
-              : "Track your listening comprehension and typing precision over time."}
-          </Text>
         </Stack>
 
         <SegmentedControl

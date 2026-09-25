@@ -180,15 +180,3 @@ export function getSortOptions(
     { value: "SCORE_DESC", label: scoreDescLabel || "Điểm cao nhất" },
   ];
 }
-
-export const CEFR_COLOR_MAP: Record<
-  string,
-  { bg: string; fg: string; border: string }
-> = {
-  A1: { bg: "#EEF2FF", fg: "#3730A3", border: "#C7D2FE" },
-  A2: { bg: "#ECFDF5", fg: "#065F46", border: "#A7F3D0" },
-  B1: { bg: "#F0F9FF", fg: "#0369A1", border: "#BAE6FD" },
-  B2: { bg: "#FEF3C7", fg: "#92400E", border: "#FDE68A" },
-  C1: { bg: "#FCE7F3", fg: "#9D174D", border: "#FBCFE8" },
-  C2: { bg: "#F3E8FF", fg: "#6B21A8", border: "#E9D5FF" },
-};

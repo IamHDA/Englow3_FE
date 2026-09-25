@@ -93,6 +93,9 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
             color={isOnboardingComplete ? "teal" : "orange"}
             variant="light"
             size="sm"
+            // Never shrunk to "ĐÃ SẴN SÀNG ..." beside the avatar.
+            style={{ flexShrink: 0 }}
+            styles={{ label: { overflow: "visible" } }}
             leftSection={
               isOnboardingComplete ? (
                 <CheckCircle2 size={12} />
@@ -131,12 +134,12 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
         <Stack gap="xs">
           <Group gap="xs" align="center" wrap="nowrap">
             <Mail size={15} className={classes.infoIcon} />
-            <Text size="xs" c="ink.7" truncate>
+            {/* The whole row goes to the address: a "verified" badge sat
+                beside it, the same for every account, and cut the address
+                itself short. */}
+            <Text size="xs" c="ink.7" truncate title={profile.email}>
               {profile.email}
             </Text>
-            <Badge color="teal" variant="dot" size="xs" ml="auto">
-              {isVi ? "Đã xác thực" : "Verified"}
-            </Badge>
           </Group>
 
           {genderLabel && (

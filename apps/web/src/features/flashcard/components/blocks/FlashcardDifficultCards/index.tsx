@@ -61,6 +61,17 @@ export function FlashcardDifficultCards({
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
+            {cards.length === 0 && (
+              <Table.Tr>
+                <Table.Td colSpan={5}>
+                  <Text fz="sm" c="dimmed" ta="center" py="md">
+                    {isVi
+                      ? "Chưa có từ nào bạn hay quên."
+                      : "No words you keep forgetting yet."}
+                  </Text>
+                </Table.Td>
+              </Table.Tr>
+            )}
             {cards.map((item) => (
               <Table.Tr key={item.id}>
                 <Table.Td>

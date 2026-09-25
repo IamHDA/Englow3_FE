@@ -69,15 +69,10 @@ export function AiTutorView() {
     <Container size="xl" py="xl">
       <Stack gap="lg">
         <Group justify="space-between" align="flex-end">
-          <Stack gap={4}>
-            <Group gap="xs">
-              <IconSparkles size={24} />
-              <Title order={2}>Gia sư AI</Title>
-            </Group>
-            <Text c="dimmed" size="sm">
-              Hỏi về từ vựng, ngữ pháp, phát âm, hoặc nhờ sửa câu.
-            </Text>
-          </Stack>
+          <Group gap="xs">
+            <IconSparkles size={24} />
+            <Title order={2}>Gia sư AI</Title>
+          </Group>
           <Button
             variant="light"
             leftSection={<IconPlus size={16} />}

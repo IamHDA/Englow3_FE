@@ -40,8 +40,8 @@ export function PronunciationPhonemeMap({
             </Text>
             <Text fz="xs" c="dimmed">
               {isVi
-                ? "Nhấp vào từng âm để nghe phát âm mẫu và kiểm tra độ thuần thục"
-                : "Click any sound symbol to listen to standard native pronunciation"}
+                ? "Nhấp vào từng âm để nghe phát âm mẫu"
+                : "Click a sound to hear it"}
             </Text>
           </Box>
         </Group>

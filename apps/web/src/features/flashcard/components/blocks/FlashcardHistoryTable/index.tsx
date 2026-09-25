@@ -20,9 +20,6 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
               Lịch sử các phiên học gần đây
             </Text>
           </Group>
-          <Text fz="xs" c="dimmed">
-            Ghi nhận tự động sau mỗi phiên ôn tập
-          </Text>
         </Group>
 
         <Table verticalSpacing="xs" horizontalSpacing="sm" highlightOnHover>
@@ -36,6 +33,15 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
+            {history.length === 0 && (
+              <Table.Tr>
+                <Table.Td colSpan={5}>
+                  <Text fz="sm" c="dimmed" ta="center" py="md">
+                    Chưa có phiên học nào.
+                  </Text>
+                </Table.Td>
+              </Table.Tr>
+            )}
             {history.map((row) => (
               <Table.Tr key={row.id}>
                 <Table.Td>

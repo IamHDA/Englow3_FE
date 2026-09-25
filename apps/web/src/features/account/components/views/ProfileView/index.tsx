@@ -138,14 +138,9 @@ export function ProfileView() {
       </Group>
 
       {/* Page Heading */}
-      <Stack gap={2}>
-        <Title order={1} fz={{ base: 24, md: 28 }} fw={800} c="ink.9">
-          {t.account.title}
-        </Title>
-        <Text size="sm" c="ink.6">
-          {t.account.subtitle}
-        </Text>
-      </Stack>
+      <Title order={1} fz={{ base: 24, md: 28 }} fw={800} c="ink.9">
+        {t.account.title}
+      </Title>
 
       {/* 2-Column Responsive Layout */}
       <Grid gap="xl" align="flex-start">

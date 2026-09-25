@@ -62,11 +62,6 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                   ? "Lộ trình & Mục tiêu học tập"
                   : "Learning Roadmap & Targets"}
               </Title>
-              <Text size="sm" c="ink.6">
-                {isVi
-                  ? "Các mục tiêu được AI sử dụng để đề xuất bài tập, đề thi thử và chủ đề luyện nói phù hợp"
-                  : "Goals used by AI to recommend tailored exercises, mock tests, and speaking topics"}
-              </Text>
             </Stack>
 
             <Button

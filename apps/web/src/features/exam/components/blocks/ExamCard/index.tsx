@@ -11,7 +11,6 @@ import { Clock, FileText, Play } from "lucide-react";
 import Link from "next/link";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { CEFR_COLOR_MAP } from "../../../constants/examLibrary";
 import type { ExamListItem } from "../../../types";
 import classes from "./ExamCard.module.css";
 
@@ -21,13 +20,6 @@ type ExamCardProps = {
 
 export function ExamCard({ exam }: ExamCardProps) {
   const { t } = useLanguage();
-  const level = exam.targetLevel ?? "B1";
-  const colors = CEFR_COLOR_MAP[level] ?? {
-    bg: "#F1F5F9",
-    fg: "#334155",
-    border: "#CBD5E1",
-  };
-
   const durationMinutes = Math.round(exam.durationSeconds / 60);
 
   // Status badge config
@@ -60,19 +52,7 @@ export function ExamCard({ exam }: ExamCardProps) {
 
   return (
     <Card withBorder radius="lg" p="lg" className={classes.card}>
-      <Group justify="space-between" align="center" mb="xs">
-        <Badge
-          size="md"
-          radius="xl"
-          variant="outline"
-          style={{
-            background: colors.bg,
-            color: colors.fg,
-            borderColor: colors.border,
-          }}
-        >
-          {level}
-        </Badge>
+      <Group justify="flex-end" align="center" mb="xs">
         <Badge size="sm" radius="xl" variant="dot" color={statusBadgeColor}>
           {statusLabel}
         </Badge>

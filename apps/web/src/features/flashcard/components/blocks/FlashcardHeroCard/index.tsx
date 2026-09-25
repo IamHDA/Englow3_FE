@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Badge,
   Button,
   Card,
   Grid,
@@ -15,7 +14,6 @@ import {
   IconCalendarTime,
   IconFlame,
   IconPlayerPlay,
-  IconSparkles,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
@@ -23,8 +21,12 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface FlashcardHeroCardProps {
   dueCount: number;
-  streakDays: number;
-  retentionPercent: number;
+  /**
+   * Null until the stats have been loaded - they are fetched for the stats tab
+   * only. Shown as 0 they read as "you have no streak", which may be false.
+   */
+  streakDays: number | null;
+  retentionPercent: number | null;
   primarySetSlug: string;
 }
 
@@ -49,16 +51,7 @@ export function FlashcardHeroCard({
       <Grid align="center" gap="xl">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="sm">
-            <Group gap="xs">
-              <Badge
-                variant="filled"
-                color="white"
-                c="indigo.8"
-                size="sm"
-                fw={700}
-              >
-                {isVi ? "LẶP LẠI NGẮT QUÃNG" : "SPACED REPETITION"}
-              </Badge>
+            {streakDays !== null && streakDays > 0 && (
               <Group gap={4}>
                 <IconFlame size={18} color="#FDE047" />
                 <Text fz="xs" fw={700} c="yellow.2">
@@ -67,7 +60,7 @@ export function FlashcardHeroCard({
                     : `${streakDays}-day streak`}
                 </Text>
               </Group>
-            </Group>
+            )}
 
             <Text fz={{ base: 22, sm: 26 }} fw={800} lh={1.2}>
               {dueCount > 0
@@ -77,12 +70,6 @@ export function FlashcardHeroCard({
                 : isVi
                   ? "Hôm nay chưa có thẻ nào đến hạn ôn."
                   : "Nothing is due for review today."}
-            </Text>
-
-            <Text fz="sm" c="indigo.1" maw={520}>
-              {isVi
-                ? "Thuật toán SRS tính toán đường cong quên lãng để tối ưu thời điểm ôn lại trước khi kiến thức bị phai mờ."
-                : "The SRS algorithm calculates your forgetting curve to optimize review timing before memory fades."}
             </Text>
 
             <Group mt="xs">
@@ -148,33 +135,26 @@ export function FlashcardHeroCard({
               </Text>
             </Group>
 
-            <Group justify="space-between">
-              <Group gap="xs">
-                <ThemeIcon variant="white" color="indigo" size="sm" radius="xl">
-                  <IconBrain size={14} />
-                </ThemeIcon>
-                <Text fz="xs" fw={600} c="white">
-                  {isVi ? "Tỷ lệ nhớ chuẩn:" : "Retention rate:"}
+            {retentionPercent !== null && (
+              <Group justify="space-between">
+                <Group gap="xs">
+                  <ThemeIcon
+                    variant="white"
+                    color="indigo"
+                    size="sm"
+                    radius="xl"
+                  >
+                    <IconBrain size={14} />
+                  </ThemeIcon>
+                  <Text fz="xs" fw={600} c="white">
+                    {isVi ? "Tỷ lệ nhớ:" : "Retention rate:"}
+                  </Text>
+                </Group>
+                <Text fz="sm" fw={800} c="white">
+                  {retentionPercent}%
                 </Text>
               </Group>
-              <Text fz="sm" fw={800} c="white">
-                {retentionPercent}%
-              </Text>
-            </Group>
-
-            <Group justify="space-between">
-              <Group gap="xs">
-                <ThemeIcon variant="white" color="indigo" size="sm" radius="xl">
-                  <IconSparkles size={14} />
-                </ThemeIcon>
-                <Text fz="xs" fw={600} c="white">
-                  {isVi ? "Trí nhớ dài hạn:" : "Memory optimization:"}
-                </Text>
-              </Group>
-              <Badge variant="outline" color="white" size="xs">
-                {isVi ? "Tối ưu hóa" : "Optimized"}
-              </Badge>
-            </Group>
+            )}
           </Stack>
         </Grid.Col>
       </Grid>

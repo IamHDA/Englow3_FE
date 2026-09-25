@@ -35,11 +35,6 @@ export function DictationMissedWordsTable({
               {t.dictation.mistakesTitle}
             </Title>
           </Group>
-          <Text size="xs" c="ink.5">
-            {isVi
-              ? "Bấm một từ để xem ngữ cảnh câu mẫu chứa từ đó"
-              : "Click a word to view its example sentence context"}
-          </Text>
         </Group>
 
         <ScrollArea>
@@ -59,6 +54,17 @@ export function DictationMissedWordsTable({
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
+              {words.length === 0 && (
+                <Table.Tr>
+                  <Table.Td colSpan={5}>
+                    <Text size="sm" c="ink.5" ta="center" py="md">
+                      {isVi
+                        ? "Chưa có từ nào bạn hay gõ sai."
+                        : "No words you keep mistyping yet."}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
+              )}
               {words.map((w) => {
                 const isSelected = selectedWord === w.word;
 

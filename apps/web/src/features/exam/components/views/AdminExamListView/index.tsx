@@ -146,11 +146,11 @@ export function AdminExamListView() {
           <Title order={1} size="h2" c="navy.9">
             Quản lý đề thi
           </Title>
-          <Text size="sm" c="ink.6">
-            {canReview
-              ? "Danh sách đầy đủ gồm cả bản nháp, đề chờ duyệt và đề đã lưu trữ."
-              : "Danh sách đầy đủ. Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại."}
-          </Text>
+          {!canReview && (
+            <Text size="sm" c="ink.6">
+              Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.
+            </Text>
+          )}
         </Stack>
 
         <AdminExamFilters value={filters} onChange={handleFiltersChange} />

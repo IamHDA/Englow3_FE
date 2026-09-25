@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Badge,
   Card,
   Grid,
   Group,
@@ -52,43 +51,21 @@ export function DailyStreakBanner({
       <Grid align="center" gap="xl">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="xs">
-            <Group gap="xs">
-              <Badge
-                variant="filled"
-                color="yellow"
-                size="sm"
-                c="dark.9"
-                fw={700}
-              >
-                {isVi ? "LỘ TRÌNH HẰNG NGÀY" : "DAILY LEARNING PATH"}
-              </Badge>
-              {/* Chuỗi 0 ngày không phải là chuỗi - không dán ngọn lửa lên nó. */}
-              {streakDays > 0 && (
-                <Group gap={4}>
-                  <IconFlame size={18} color="#FBBF24" />
-                  <Text fz="xs" fw={700} c="yellow.2">
-                    {isVi
-                      ? `Chuỗi ${streakDays} ngày liên tiếp`
-                      : `${streakDays}-day streak`}
-                  </Text>
-                </Group>
-              )}
-            </Group>
+            {/* Chuỗi 0 ngày không phải là chuỗi - không dán ngọn lửa lên nó. */}
+            {streakDays > 0 && (
+              <Group gap={4}>
+                <IconFlame size={18} color="#FBBF24" />
+                <Text fz="xs" fw={700} c="yellow.2">
+                  {isVi
+                    ? `Chuỗi ${streakDays} ngày liên tiếp`
+                    : `${streakDays}-day streak`}
+                </Text>
+              </Group>
+            )}
 
             <Title order={2} fw={800} c="white">
               {isVi ? "Lộ trình học tập mỗi ngày" : "Your Daily Learning Path"}
             </Title>
-
-            {/*
-              Bản cũ hứa "hệ thống AI tự động đề xuất dựa trên điểm yếu". Lộ
-              trình này chạy bằng luật: thẻ đến hạn theo lịch ôn, bài nghe còn
-              câu chưa đạt, bài trắc nghiệm chưa qua. Nói đúng cái nó làm.
-            */}
-            <Text fz="sm" c="indigo.1" maw={560}>
-              {isVi
-                ? "Lộ trình xếp theo việc bạn đang còn dở: thẻ đến hạn ôn trước, rồi tới bài nghe chưa đạt và bài trắc nghiệm chưa qua điểm."
-                : "Built from what you still owe: cards the review schedule has made due first, then dictation lessons and quizzes you have not finished."}
-            </Text>
 
             <Group gap="lg" mt="xs">
               <Group gap="xs">
