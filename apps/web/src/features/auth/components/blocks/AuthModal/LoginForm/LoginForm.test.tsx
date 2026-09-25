@@ -38,12 +38,13 @@ vi.mock("@mantine/notifications", () => ({
 
 function renderForm() {
   const onSuccess = vi.fn();
+  const onLeave = vi.fn();
   render(
     <MantineProvider theme={theme}>
-      <LoginForm onSuccess={onSuccess} />
+      <LoginForm onSuccess={onSuccess} onLeave={onLeave} />
     </MantineProvider>,
   );
-  return { onSuccess };
+  return { onSuccess, onLeave };
 }
 
 beforeEach(() => {
@@ -98,9 +99,14 @@ describe("LoginForm", () => {
     expect(onSuccess).toHaveBeenCalled();
   });
 
+  // Supabase's own text is English and written for developers; the learner
+  // gets a sentence in Vietnamese, keyed on the error code.
   it("shows a toast when Supabase rejects the credentials", async () => {
     signInWithPassword.mockResolvedValue({
-      error: { message: "Invalid login credentials" },
+      error: {
+        message: "Invalid login credentials",
+        code: "invalid_credentials",
+      },
     });
     const user = userEvent.setup();
     renderForm();
@@ -113,7 +119,7 @@ describe("LoginForm", () => {
       expect(notificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "warn",
-          message: "Invalid login credentials",
+          message: "Email hoặc mật khẩu không đúng.",
         }),
       ),
     );
@@ -145,40 +151,18 @@ describe("LoginForm", () => {
     expect(forgetSessionOnBrowserClose).not.toHaveBeenCalled();
   });
 
-  it("sends a reset email from the forgot password link", async () => {
-    resetPasswordForEmail.mockResolvedValue({ error: null });
+  // Forgot password is a page of its own now, with room to say what happened
+  // and to resend. The link goes there and closes this modal; it sends nothing.
+  it("links to the forgot password page and closes the modal", async () => {
     const user = userEvent.setup();
-    renderForm();
+    const { onLeave } = renderForm();
 
-    await user.type(screen.getByLabelText("Email"), "learner@example.com");
-    await user.click(screen.getByRole("button", { name: "Quên mật khẩu?" }));
+    const link = screen.getByRole("link", { name: "Quên mật khẩu?" });
+    expect(link).toHaveAttribute("href", "/auth/forgot");
 
-    await waitFor(() =>
-      expect(resetPasswordForEmail).toHaveBeenCalledWith(
-        "learner@example.com",
-        expect.objectContaining({
-          redirectTo: expect.stringContaining(
-            "/auth/callback?next=/auth/reset",
-          ),
-        }),
-      ),
-    );
-    await waitFor(() =>
-      expect(notificationsUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ color: "green" }),
-      ),
-    );
-  });
+    await user.click(link);
 
-  it("rejects the forgot password click without a valid email", async () => {
-    const user = userEvent.setup();
-    renderForm();
-
-    await user.click(screen.getByRole("button", { name: "Quên mật khẩu?" }));
-
-    expect(
-      await screen.findByText("Nhập email hợp lệ trước khi lấy lại mật khẩu"),
-    ).toBeInTheDocument();
+    expect(onLeave).toHaveBeenCalled();
     expect(resetPasswordForEmail).not.toHaveBeenCalled();
   });
 });

@@ -80,7 +80,7 @@ export function AuthModal({
 
       <Box pt={26} px={40}>
         {isLogin ? (
-          <LoginForm onSuccess={handleClose} />
+          <LoginForm onSuccess={handleClose} onLeave={handleClose} />
         ) : (
           <RegisterForm onSuccess={handleClose} />
         )}

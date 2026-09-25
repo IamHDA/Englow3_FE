@@ -165,7 +165,12 @@ describe("RegisterForm", () => {
   });
 
   it("shows a toast when Supabase rejects the sign up", async () => {
-    signUp.mockResolvedValue({ error: { message: "Email already in use" } });
+    signUp.mockResolvedValue({
+      error: {
+        message: "User already registered",
+        code: "user_already_exists",
+      },
+    });
     const user = userEvent.setup();
     renderForm();
 
@@ -176,7 +181,8 @@ describe("RegisterForm", () => {
       expect(notificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "warn",
-          message: "Email already in use",
+          message:
+            "Email này đã có tài khoản. Hãy đăng nhập, hoặc dùng Quên mật khẩu.",
         }),
       ),
     );

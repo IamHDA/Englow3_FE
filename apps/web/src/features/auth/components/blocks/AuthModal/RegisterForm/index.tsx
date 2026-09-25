@@ -25,6 +25,7 @@ import {
   getGenderOptions,
 } from "@/features/auth/constants/authOptions";
 import { Gender } from "@/lib/graphql/generated";
+import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { supabase } from "@/lib/supabase/client";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -121,7 +122,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       notifications.show({
         color: "warn",
         title: "Không thể tạo tài khoản",
-        message: error.message,
+        message: authErrorMessage(error),
       });
       return;
     }

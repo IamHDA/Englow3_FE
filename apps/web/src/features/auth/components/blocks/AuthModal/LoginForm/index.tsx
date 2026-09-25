@@ -12,10 +12,12 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { forgetSessionOnBrowserClose, supabase } from "@/lib/supabase/client";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -31,16 +33,16 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 type LoginFormProps = {
   onSuccess: () => void;
+  /** Leaving the modal for another page - the forgot-password one. */
+  onLeave: () => void;
 };
 
-export function LoginForm({ onSuccess }: LoginFormProps) {
+export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   const router = useRouter();
   const { t } = useLanguage();
   const {
     register,
     handleSubmit,
-    getValues,
-    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -56,7 +58,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       notifications.show({
         color: "warn",
         title: "Không thể đăng nhập",
-        message: error.message,
+        message: authErrorMessage(error),
       });
       return;
     }
@@ -65,48 +67,6 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     }
     router.refresh();
     onSuccess();
-  }
-
-  async function handleForgotPassword() {
-    const email = getValues("email");
-    if (!z.string().email().safeParse(email).success) {
-      setError("email", {
-        type: "manual",
-        message: "Nhập email hợp lệ trước khi lấy lại mật khẩu",
-      });
-      return;
-    }
-    const notificationId = notifications.show({
-      loading: true,
-      autoClose: false,
-      withCloseButton: false,
-      title: "Đang gửi email",
-      message: "Vui lòng đợi trong giây láts...",
-    });
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
-    });
-    if (error) {
-      notifications.update({
-        id: notificationId,
-        loading: false,
-        autoClose: true,
-        withCloseButton: true,
-        color: "warn",
-        title: "Không thể gửi email",
-        message: error.message,
-      });
-      return;
-    }
-    notifications.update({
-      id: notificationId,
-      loading: false,
-      autoClose: true,
-      withCloseButton: true,
-      color: "green",
-      title: "Đã gửi email",
-      message: "Kiểm tra hộp thư để đặt lại mật khẩu.",
-    });
   }
 
   return (
@@ -150,12 +110,15 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           color="navy.9"
           size="xs"
         />
+        {/* A page of its own: the reset flow needs room to say what happened
+            and to offer a resend, which a toast over this modal did not. */}
         <UnstyledButton
-          type="button"
+          component={Link}
+          href="/auth/forgot"
           fz={14}
           fw={600}
           c="navy.9"
-          onClick={() => handleForgotPassword()}
+          onClick={onLeave}
         >
           {t.auth.forgotPassword}
         </UnstyledButton>
