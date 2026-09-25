@@ -5,7 +5,6 @@ import {
   Button,
   Center,
   Container,
-  Flex,
   Group,
   Pagination,
   SimpleGrid,
@@ -118,63 +117,15 @@ export function ExamLibraryView() {
   return (
     <Container size="xl" py="xl">
       <Stack gap="xl">
-        {/* Header Banner */}
-        <Flex
-          justify="space-between"
-          align={{ base: "flex-start", sm: "flex-end" }}
-          direction={{ base: "column", sm: "row" }}
-          gap="lg"
+        <Title
+          order={1}
+          size="h1"
+          c="navy.9"
+          lh={1.15}
+          style={{ letterSpacing: "-0.02em" }}
         >
-          <Stack gap={6} maw={640}>
-            <Text size="xs" fw={700} tt="uppercase" lts="0.12em" c="orange.6">
-              {t.exam.mockTestBadge}
-            </Text>
-            <Title
-              order={1}
-              size="h1"
-              c="navy.9"
-              lh={1.15}
-              style={{ letterSpacing: "-0.02em" }}
-            >
-              {t.exam.title}
-            </Title>
-            <Text size="sm" c="dimmed" lh={1.6}>
-              {t.exam.subtitle}
-            </Text>
-          </Stack>
-
-          <Group gap="xl" wrap="nowrap">
-            <Stack gap={2} align="flex-end">
-              <Text
-                fw={800}
-                size="xl"
-                c="navy.9"
-                style={{ fontVariantNumeric: "tabular-nums" }}
-              >
-                {totalItems}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {t.exam.officialExamsUnit}
-              </Text>
-            </Stack>
-            <Stack gap={2} align="flex-end">
-              <Text fw={800} size="xl" c="navy.9">
-                100%
-              </Text>
-              <Text size="xs" c="dimmed">
-                {t.exam.autoGradingLabel}
-              </Text>
-            </Stack>
-            <Stack gap={2} align="flex-end">
-              <Text fw={800} size="xl" c="navy.9">
-                AI
-              </Text>
-              <Text size="xs" c="dimmed">
-                {t.exam.aiAnalysisLabel}
-              </Text>
-            </Stack>
-          </Group>
-        </Flex>
+          {t.exam.title}
+        </Title>
 
         {/* Filter Toolbar */}
         <ExamFilters

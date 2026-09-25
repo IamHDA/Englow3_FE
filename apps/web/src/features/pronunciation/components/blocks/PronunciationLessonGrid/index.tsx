@@ -40,16 +40,9 @@ export function PronunciationLessonGrid({
   return (
     <Stack gap="md">
       <Group justify="space-between" align="center" wrap="wrap">
-        <Box>
-          <Text fw={700} fz="lg" c="dark.9">
-            {isVi ? "Danh sách bài luyện phát âm" : "Pronunciation Lessons"}
-          </Text>
-          <Text fz="xs" c="dimmed">
-            {isVi
-              ? "Chọn một câu để ghi âm và nhận điểm phát âm"
-              : "Pick a sentence to record and get a pronunciation score"}
-          </Text>
-        </Box>
+        <Text fw={700} fz="lg" c="dark.9">
+          {isVi ? "Danh sách bài luyện phát âm" : "Pronunciation Lessons"}
+        </Text>
 
         <SegmentedControl
           size="xs"

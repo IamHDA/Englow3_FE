@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Badge,
-  Box,
-  Group,
-  SegmentedControl,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Group, SegmentedControl, Stack, Title } from "@mantine/core";
 import { IconCards, IconChartBar } from "@tabler/icons-react";
 import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -27,19 +19,9 @@ export function FlashcardHeader({
   return (
     <Stack gap="xs">
       <Group justify="space-between" align="flex-end" wrap="wrap">
-        <Box>
-          <Group gap="xs" align="center">
-            <Title order={2} fw={800} c="dark.9">
-              {t.flashcard.title}
-            </Title>
-            <Badge variant="filled" color="indigo" size="sm">
-              {t.flashcard.srsBadge}
-            </Badge>
-          </Group>
-          <Text c="dimmed" fz="sm" mt={4}>
-            {t.flashcard.subtitle}
-          </Text>
-        </Box>
+        <Title order={2} fw={800} c="dark.9">
+          {t.flashcard.title}
+        </Title>
 
         <SegmentedControl
           value={activeTab}

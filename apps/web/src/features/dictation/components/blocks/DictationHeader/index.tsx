@@ -2,7 +2,6 @@
 
 import {
   Anchor,
-  Badge,
   Breadcrumbs,
   Group,
   Stack,
@@ -10,7 +9,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { BarChart3, BookOpen, ChevronRight, Headphones } from "lucide-react";
+import { BarChart3, BookOpen, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -45,25 +44,9 @@ export function DictationHeader({
       </Breadcrumbs>
 
       <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
-        <Stack gap={4}>
-          <Group gap="xs" align="center">
-            <Badge
-              leftSection={<Headphones size={13} />}
-              variant="light"
-              color="navy"
-              size="md"
-              radius="sm"
-            >
-              {t.dictation.listeningBadge}
-            </Badge>
-          </Group>
-          <Title order={1} size="h2" c="ink.9" fw={700}>
-            {t.dictation.title}
-          </Title>
-          <Text size="sm" c="ink.6">
-            {t.dictation.subtitle}
-          </Text>
-        </Stack>
+        <Title order={1} size="h2" c="ink.9" fw={700}>
+          {t.dictation.title}
+        </Title>
 
         <Tabs
           value={activeTab}
