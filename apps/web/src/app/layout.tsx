@@ -10,6 +10,7 @@ import {
 import { Notifications } from "@mantine/notifications";
 import type { Metadata } from "next";
 import { Lora, Work_Sans } from "next/font/google";
+import { Suspense } from "react";
 
 import { AccountProvider } from "@/features/account";
 import { getAccountProfile } from "@/features/account/server/getAccountProfile";
@@ -17,6 +18,8 @@ import { AuthProvider } from "@/features/auth";
 import { getServerSession } from "@/features/auth/server/getServerSession";
 import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
+import { NavigationProgress } from "@/shared/components/NavigationProgress";
+import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
 import { theme } from "@/lib/mantine/theme";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
@@ -62,12 +65,18 @@ export default async function RootLayout({
       <body suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light">
           <Notifications position="top-right" zIndex={1000} />
+          {/* useSearchParams inside needs a Suspense boundary of its own, or
+              every page would render client-side only. */}
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           <ApolloWrapper>
             <AuthProvider initialSession={session}>
               <AccountProvider initialProfile={initialProfile}>
                 <LanguageProvider>
                   <OnboardingProvider>
                     <SiteHeader />
+                    <SlowBackendNotice />
                     <main>{children}</main>
                     <OnboardingGate />
                   </OnboardingProvider>

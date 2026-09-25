@@ -1,0 +1,28 @@
+.track {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    var(--mantine-color-orange-5),
+    var(--mantine-color-orange-6)
+  );
+  box-shadow: 0 0 8px rgba(240, 138, 12, 0.6);
+  transition:
+    transform 200ms ease-out,
+    opacity 300ms ease 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: opacity 300ms ease;
+  }
+}

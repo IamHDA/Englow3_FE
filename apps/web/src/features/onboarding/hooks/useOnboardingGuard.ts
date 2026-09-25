@@ -6,6 +6,7 @@ import { createElement, type MouseEvent } from "react";
 
 import { ONBOARDING_REQUIRED_NOTIFICATION_ID } from "@/features/onboarding/constants/onboardingSteps";
 import { useOnboarding } from "@/features/onboarding/hooks/useOnboarding";
+import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
 
 /**
  * Chặn điều hướng/hành động khi chưa onboarding, kèm thông báo.
@@ -26,6 +27,9 @@ export function useOnboardingGuard() {
     if (!requiresOnboarding) return;
 
     event?.preventDefault();
+    // The link will not navigate after all; take down the progress bar that
+    // its click started.
+    cancelNavigationProgress();
 
     notifications.show({
       id: ONBOARDING_REQUIRED_NOTIFICATION_ID,

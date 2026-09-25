@@ -21,6 +21,7 @@ import { useAccountProfile } from "@/features/account";
 import { AuthModal, useAuth } from "@/features/auth";
 import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
+import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
 import {
   getPrimaryLinks,
   getStudyLinks,
@@ -78,6 +79,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   function guardNavigation(event: MouseEvent) {
     if (!session) {
       event.preventDefault();
+      cancelNavigationProgress();
       login.open();
       return;
     }

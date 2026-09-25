@@ -38,7 +38,11 @@ export function AiTutorView() {
     reset,
   } = useTutorChat();
 
-  const { data, refetch } = useTutorConversationsQuery({
+  const {
+    data,
+    loading: conversationsLoading,
+    refetch,
+  } = useTutorConversationsQuery({
     fetchPolicy: "cache-and-network",
   });
   const [reportMessage] = useReportTutorMessageMutation();
@@ -86,6 +90,7 @@ export function AiTutorView() {
           <Grid.Col span={{ base: 12, md: 3 }}>
             <Card withBorder radius="md" p="xs">
               <TutorConversationList
+                loading={conversationsLoading}
                 conversations={data?.tutorConversations ?? []}
                 activeId={conversationId}
                 onOpen={(id) => void open(id)}

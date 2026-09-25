@@ -1,6 +1,6 @@
 "use client";
 
-import { HttpLink } from "@apollo/client";
+import { ApolloLink, HttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import {
   ApolloClient,
@@ -8,8 +8,11 @@ import {
   InMemoryCache,
 } from "@apollo/client-integration-nextjs";
 
+import { finalize } from "rxjs";
+
 import { env } from "@/config/env";
 import { supabase } from "@/lib/supabase/client";
+import { beginRequest, endRequest } from "@/shared/network/pendingRequests";
 
 let cachedAccessToken: string | null = null;
 let tokenExpiresAt = 0;
@@ -50,6 +53,14 @@ function makeClient() {
     };
   });
 
+  // Counts every operation from start to finish - success, error or
+  // cancellation alike - so the app can say so when the backend is slow to
+  // answer, rather than leave a skeleton up with no explanation.
+  const pendingLink = new ApolloLink((operation, forward) => {
+    beginRequest();
+    return forward(operation).pipe(finalize(endRequest));
+  });
+
   return new ApolloClient({
     cache: new InMemoryCache({
       typePolicies: {
@@ -64,7 +75,7 @@ function makeClient() {
         },
       },
     }),
-    link: authLink.concat(httpLink),
+    link: ApolloLink.from([pendingLink, authLink, httpLink]),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: "cache-first",
