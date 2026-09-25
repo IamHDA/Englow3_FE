@@ -1,25 +1,16 @@
-import {
-  Badge,
-  Button,
-  Card,
-  Divider,
-  Group,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { Clock, FileText, Play } from "lucide-react";
-import Link from "next/link";
+import { Clock, FileText, Layers } from "lucide-react";
+
+import { LibraryCard } from "@/shared/components/LibraryCard";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { ExamListItem } from "../../../types";
-import classes from "./ExamCard.module.css";
 
 type ExamCardProps = {
   exam: ExamListItem;
 };
 
 export function ExamCard({ exam }: ExamCardProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const durationMinutes = Math.round(exam.durationSeconds / 60);
 
   // Status badge config
@@ -31,7 +22,6 @@ export function ExamCard({ exam }: ExamCardProps) {
     : isStarted
       ? t.exam.inProgress
       : t.exam.notStarted;
-  const statusBadgeColor = isDone ? "teal" : isStarted ? "yellow" : "gray";
 
   // Derive skill labels based on variant or certificate
   const skills: string[] = [];
@@ -50,102 +40,51 @@ export function ExamCard({ exam }: ExamCardProps) {
     ? `${exam.certificateType} ${exam.certificateVariant ?? ""}`.trim()
     : t.exam.mockTestFallback;
 
+  const best =
+    exam.bestScorePercentage != null
+      ? Math.round(exam.bestScorePercentage)
+      : null;
+
   return (
-    <Card withBorder radius="lg" p="lg" className={classes.card}>
-      <Group justify="flex-end" align="center" mb="xs">
-        <Badge size="sm" radius="xl" variant="dot" color={statusBadgeColor}>
-          {statusLabel}
-        </Badge>
-      </Group>
-
-      <Stack gap={4}>
-        <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts="0.08em">
-          {seriesName}
-        </Text>
-        <Text
-          fw={700}
-          size="md"
-          c="navy.9"
-          lineClamp={2}
-          title={exam.title}
-          lh={1.35}
-        >
-          {exam.title}
-        </Text>
-      </Stack>
-
-      <Group gap={6} mt={6} mb="xs">
-        {skills.map((skill) => (
-          <Badge key={skill} size="sm" variant="light" color="gray" radius="sm">
-            {skill}
-          </Badge>
-        ))}
-      </Group>
-
-      <Stack gap="xs" mt="auto" pt="xs">
-        <Divider color="gray.2" />
-
-        <Group gap="md">
-          <Group gap={5}>
-            <FileText
-              size={14}
-              aria-hidden="true"
-              color="var(--mantine-color-gray-6)"
-            />
-            <Text size="xs" c="dimmed">
-              {exam.questionCount} {t.exam.questionsUnit}
-            </Text>
-          </Group>
-          <Group gap={5}>
-            <Clock
-              size={14}
-              aria-hidden="true"
-              color="var(--mantine-color-gray-6)"
-            />
-            <Text size="xs" c="dimmed">
-              {durationMinutes} {t.exam.minutesUnit}
-            </Text>
-          </Group>
-        </Group>
-
-        <Group justify="space-between" align="center" pt={4}>
-          <Stack gap={1}>
-            <Text size="xs" c="dimmed">
-              {exam.bestScorePercentage != null
-                ? t.exam.bestScoreLabel
-                : t.exam.maxScoreLabel}
-            </Text>
-            <Text
-              fw={700}
-              size="sm"
-              c="navy.9"
-              style={{ fontVariantNumeric: "tabular-nums" }}
-            >
-              {exam.bestScorePercentage != null
-                ? `${Math.round(exam.bestScorePercentage)}%`
-                : `${exam.maxRawScore} ${t.exam.pointsUnit}`}
-            </Text>
-          </Stack>
-
-          <Button
-            component={Link}
-            href={`/exams/${exam.id}`}
-            size="xs"
-            radius="xl"
-            color={isDone ? "gray" : isStarted ? "orange" : "blue"}
-            variant={isDone ? "outline" : "filled"}
-            rightSection={
-              <Play size={12} fill="currentColor" aria-hidden="true" />
-            }
-          >
-            {isDone
-              ? t.exam.retakeAction
-              : isStarted
-                ? t.exam.continueAction
-                : t.exam.startAction}
-          </Button>
-        </Group>
-      </Stack>
-    </Card>
+    <LibraryCard
+      eyebrow={seriesName}
+      status={
+        isDone
+          ? { label: statusLabel, color: "teal" }
+          : isStarted
+            ? { label: statusLabel, color: "orange" }
+            : undefined
+      }
+      title={exam.title}
+      meta={[
+        {
+          icon: <FileText size={15} />,
+          label: `${exam.questionCount} ${t.exam.questionsUnit}`,
+        },
+        {
+          icon: <Clock size={15} />,
+          label: `${durationMinutes} ${t.exam.minutesUnit}`,
+        },
+        { icon: <Layers size={15} />, label: skills.join(" · ") },
+      ]}
+      progress={
+        best != null
+          ? { value: best, label: t.exam.bestScoreLabel, color: "navy" }
+          : undefined
+      }
+      action={{
+        label: isDone
+          ? isVi
+            ? "Làm lại"
+            : "Retake"
+          : isStarted
+            ? isVi
+              ? "Tiếp tục"
+              : "Continue"
+            : t.exam.startExam,
+        href: `/exams/${exam.id}`,
+        emphasis: isStarted ? "continue" : "default",
+      }}
+    />
   );
 }

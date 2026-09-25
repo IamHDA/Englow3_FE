@@ -1,26 +1,10 @@
 "use client";
 
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Grid,
-  Group,
-  Progress,
-  Stack,
-  Text,
-} from "@mantine/core";
-import {
-  IconBook,
-  IconClock,
-  IconEye,
-  IconPlayerPlay,
-} from "@tabler/icons-react";
-import Link from "next/link";
+import { SimpleGrid } from "@mantine/core";
+import { IconBook, IconClock } from "@tabler/icons-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import React from "react";
 import { FlashcardSet } from "../../../types";
+import { LibraryCard } from "@/shared/components/LibraryCard";
 
 interface FlashcardSetGridProps {
   sets: FlashcardSet[];
@@ -53,99 +37,60 @@ export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
   const { isVi } = useLanguage();
 
   return (
-    <Grid gap="md">
-      {sets.map((set) => (
-        <Grid.Col key={set.id} span={{ base: 12, sm: 6, lg: 4 }}>
-          <Card
-            withBorder
-            padding="lg"
-            radius="md"
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease",
+    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+      {sets.map((set) => {
+        const mastered = masteredPercent(set);
+        return (
+          <LibraryCard
+            key={set.id}
+            eyebrow={set.topic}
+            level={set.targetLevel}
+            status={
+              set.dueCount > 0
+                ? {
+                    label: isVi
+                      ? `${set.dueCount} thẻ cần ôn`
+                      : `${set.dueCount} due`,
+                    color: "orange",
+                  }
+                : undefined
+            }
+            title={set.name}
+            meta={[
+              {
+                icon: <IconBook size={15} />,
+                label: isVi
+                  ? `${set.cardCount} từ vựng`
+                  : `${set.cardCount} words`,
+              },
+              {
+                icon: <IconClock size={15} />,
+                label: formatLastStudied(set.lastStudiedAt, isVi),
+              },
+            ]}
+            progress={{
+              value: mastered,
+              label: isVi ? "Đã thuộc" : "Mastered",
             }}
-          >
-            <Stack gap="xs">
-              <Group justify="space-between" align="flex-start">
-                <Badge variant="light" color="indigo" size="sm">
-                  {set.topic}
-                </Badge>
-                {set.dueCount > 0 ? (
-                  <Badge variant="filled" color="orange" size="xs">
-                    {set.dueCount} thẻ cần ôn
-                  </Badge>
-                ) : (
-                  <Badge variant="light" color="teal" size="xs">
-                    Đã hoàn thành
-                  </Badge>
-                )}
-              </Group>
-
-              <Text fw={700} fz="md" c="dark.9" lineClamp={2}>
-                {set.name}
-              </Text>
-
-              <Text fz="xs" c="dimmed" lineClamp={2}>
-                {set.description}
-              </Text>
-
-              <Box mt="xs">
-                <Group justify="space-between" mb={4}>
-                  <Text fz="xs" c="dimmed">
-                    Đã thuần thục:
-                  </Text>
-                  <Text fz="xs" fw={700} c="indigo">
-                    {masteredPercent(set)}%
-                  </Text>
-                </Group>
-                <Progress
-                  value={masteredPercent(set)}
-                  color="indigo"
-                  size="sm"
-                  radius="xl"
-                />
-              </Box>
-
-              <Group justify="space-between" mt="xs" c="dimmed" fz="xs">
-                <Group gap={4}>
-                  <IconBook size={14} />
-                  <span>{set.cardCount} từ vựng</span>
-                </Group>
-                <Group gap={4}>
-                  <IconClock size={14} />
-                  <span>{formatLastStudied(set.lastStudiedAt, isVi)}</span>
-                </Group>
-              </Group>
-            </Stack>
-
-            <Group mt="md" justify="space-between">
-              <Button
-                component={Link}
-                href={`/study/flashcards/${set.slug}`}
-                variant="light"
-                color="gray"
-                size="xs"
-                leftSection={<IconEye size={14} />}
-              >
-                Chi tiết
-              </Button>
-              <Button
-                component={Link}
-                href={`/study/flashcards/${set.slug}/study`}
-                variant="filled"
-                color="indigo"
-                size="xs"
-                leftSection={<IconPlayerPlay size={14} />}
-              >
-                Học ngay
-              </Button>
-            </Group>
-          </Card>
-        </Grid.Col>
-      ))}
-    </Grid>
+            secondaryAction={{
+              label: isVi ? "Chi tiết" : "Details",
+              href: `/study/flashcards/${set.slug}`,
+            }}
+            action={{
+              label:
+                set.dueCount > 0
+                  ? isVi
+                    ? "Ôn ngay"
+                    : "Review"
+                  : isVi
+                    ? "Học"
+                    : "Study",
+              href: `/study/flashcards/${set.slug}/study`,
+              emphasis: set.dueCount > 0 ? "continue" : "default",
+            }}
+          />
+        );
+      })}
+    </SimpleGrid>
   );
 }

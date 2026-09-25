@@ -1,20 +1,10 @@
 "use client";
 
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Grid,
-  Group,
-  SegmentedControl,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Card, SegmentedControl, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconMicrophone } from "@tabler/icons-react";
-import Link from "next/link";
 import React, { useMemo, useState } from "react";
 import type { SpeakingPrompt } from "../../../types";
+import { LibraryCard } from "@/shared/components/LibraryCard";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface PronunciationLessonGridProps {
@@ -65,87 +55,39 @@ export function PronunciationLessonGrid({
         </Card>
       )}
 
-      <Grid gap="md">
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
         {filteredPrompts.map((prompt) => (
-          <Grid.Col key={prompt.id} span={{ base: 12, sm: 6, lg: 4 }}>
-            <Card
-              withBorder
-              padding="lg"
-              radius="md"
-              style={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <Stack gap="xs">
-                <Group justify="space-between" align="center">
-                  <Badge variant="light" color="indigo" size="xs">
-                    {prompt.category}
-                  </Badge>
-                  {prompt.targetLevel !== null && (
-                    <Badge variant="dot" color="teal" size="xs">
-                      {prompt.targetLevel}
-                    </Badge>
-                  )}
-                </Group>
-
-                <Text fw={700} fz="md" c="dark.9" lineClamp={2}>
-                  {prompt.title}
-                </Text>
-
-                {prompt.phonemeTarget !== null && (
-                  <Box
-                    p="xs"
-                    style={{
-                      backgroundColor: "var(--mantine-color-indigo-0)",
-                      borderRadius: "var(--mantine-radius-sm)",
-                    }}
-                  >
-                    <Text fz="xs" c="indigo.8" fw={700}>
-                      {isVi ? "Trọng tâm:" : "Focus:"} {prompt.phonemeTarget}
-                    </Text>
-                  </Box>
-                )}
-
-                <Text fz="xs" c="dark.8" fs="italic" lineClamp={2}>
-                  &ldquo;{prompt.referenceText}&rdquo;
-                </Text>
-
-                <Text fz="xs" c="dimmed" lineClamp={2}>
-                  {prompt.translationVi}
-                </Text>
-
-                {/* Null cho tới khi người học chấm xong lần đầu - không phải 0. */}
-                {prompt.bestScorePercent !== null && (
-                  <Group gap="xs" mt="xs">
-                    <Badge variant="light" color="teal" size="xs">
-                      {isVi ? "Điểm cao nhất:" : "Best Score:"}{" "}
-                      {Math.round(prompt.bestScorePercent)}/100
-                    </Badge>
-                  </Group>
-                )}
-              </Stack>
-
-              <Group mt="md">
-                <Button
-                  component={Link}
-                  href={`/study/pronunciation/${prompt.id}`}
-                  variant="filled"
-                  color="indigo"
-                  fullWidth
-                  size="xs"
-                  leftSection={<IconMicrophone size={16} />}
-                >
-                  {isVi ? "Bắt đầu luyện phát âm" : "Start Practice"}
-                </Button>
-              </Group>
-            </Card>
-          </Grid.Col>
+          <LibraryCard
+            key={prompt.id}
+            eyebrow={prompt.category}
+            level={prompt.targetLevel}
+            title={prompt.title}
+            meta={
+              prompt.phonemeTarget !== null
+                ? [
+                    {
+                      icon: <IconMicrophone size={15} />,
+                      label: `${isVi ? "Âm" : "Sound"} ${prompt.phonemeTarget}`,
+                    },
+                  ]
+                : []
+            }
+            // Null until the first attempt is scored - not 0.
+            progress={
+              prompt.bestScorePercent !== null
+                ? {
+                    value: prompt.bestScorePercent,
+                    label: isVi ? "Điểm cao nhất" : "Best score",
+                  }
+                : undefined
+            }
+            action={{
+              label: isVi ? "Luyện ngay" : "Practise",
+              href: `/study/pronunciation/${prompt.id}`,
+            }}
+          />
         ))}
-      </Grid>
+      </SimpleGrid>
     </Stack>
   );
 }

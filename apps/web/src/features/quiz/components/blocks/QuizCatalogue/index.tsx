@@ -1,24 +1,17 @@
 "use client";
 
 import {
-  Badge,
-  Button,
   Card,
-  Grid,
   Group,
   SegmentedControl,
+  SimpleGrid,
   Stack,
   Text,
 } from "@mantine/core";
-import {
-  IconClock,
-  IconHelpCircle,
-  IconPlayerPlay,
-  IconTrophy,
-} from "@tabler/icons-react";
-import Link from "next/link";
+import { IconClock, IconHelpCircle } from "@tabler/icons-react";
 import React, { useMemo, useState } from "react";
 import type { QuizSummary } from "../../../types";
+import { LibraryCard } from "@/shared/components/LibraryCard";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface QuizCatalogueProps {
@@ -72,95 +65,42 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
         </Card>
       )}
 
-      <Grid gap="md">
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
         {filteredQuizzes.map((quiz) => (
-          <Grid.Col key={quiz.id} span={{ base: 12, sm: 6, lg: 4 }}>
-            <Card
-              withBorder
-              padding="lg"
-              radius="md"
-              style={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Stack gap="xs">
-                <Group justify="space-between">
-                  <Badge variant="light" color="indigo" size="xs">
-                    {quiz.category}
-                  </Badge>
-                  <Badge
-                    variant="dot"
-                    color={
-                      quiz.targetLevel === "C1" || quiz.targetLevel === "C2"
-                        ? "red"
-                        : quiz.targetLevel === "B1" || quiz.targetLevel === "B2"
-                          ? "orange"
-                          : "teal"
-                    }
-                    size="xs"
-                  >
-                    {quiz.targetLevel ?? (isVi ? "Mọi trình độ" : "All levels")}
-                  </Badge>
-                </Group>
-
-                <Text fw={700} fz="md" c="dark.9" lineClamp={2}>
-                  {quiz.title}
-                </Text>
-
-                <Text fz="xs" c="dimmed" lineClamp={2}>
-                  {quiz.description}
-                </Text>
-
-                <Group gap="md" c="dimmed" fz="xs" mt="xs">
-                  <Group gap={4}>
-                    <IconHelpCircle size={14} />
-                    <span>
-                      {quiz.questionCount} {isVi ? "câu hỏi" : "questions"}
-                    </span>
-                  </Group>
-                  <Group gap={4}>
-                    <IconClock size={14} />
-                    <span>
-                      {Math.round(quiz.timeLimitSeconds / 60)}{" "}
-                      {isVi ? "phút" : "mins"}
-                    </span>
-                  </Group>
-                </Group>
-
-                {quiz.bestScorePercent !== undefined && (
-                  <Group gap="xs" mt={4}>
-                    <IconTrophy
-                      size={14}
-                      color="var(--mantine-color-yellow-6)"
-                    />
-                    <Text fz="xs" fw={600} c="yellow.8">
-                      {isVi ? "Điểm cao nhất:" : "Best Score:"}{" "}
-                      {quiz.bestScorePercent}%
-                    </Text>
-                  </Group>
-                )}
-              </Stack>
-
-              <Group mt="md">
-                <Button
-                  component={Link}
-                  href={`/study/quiz/${quiz.id}`}
-                  variant="filled"
-                  color="indigo"
-                  fullWidth
-                  size="xs"
-                  leftSection={<IconPlayerPlay size={14} />}
-                >
-                  {isVi ? "Bắt đầu làm bài" : "Start Quiz"}
-                </Button>
-              </Group>
-            </Card>
-          </Grid.Col>
+          <LibraryCard
+            key={quiz.id}
+            eyebrow={quiz.category}
+            level={quiz.targetLevel}
+            title={quiz.title}
+            meta={[
+              {
+                icon: <IconHelpCircle size={15} />,
+                label: isVi
+                  ? `${quiz.questionCount} câu hỏi`
+                  : `${quiz.questionCount} questions`,
+              },
+              {
+                icon: <IconClock size={15} />,
+                label: isVi
+                  ? `${Math.round(quiz.timeLimitSeconds / 60)} phút`
+                  : `${Math.round(quiz.timeLimitSeconds / 60)} min`,
+              },
+            ]}
+            progress={
+              quiz.bestScorePercent != null
+                ? {
+                    value: quiz.bestScorePercent,
+                    label: isVi ? "Điểm cao nhất" : "Best score",
+                  }
+                : undefined
+            }
+            action={{
+              label: isVi ? "Làm bài" : "Start",
+              href: `/study/quiz/${quiz.id}`,
+            }}
+          />
         ))}
-      </Grid>
+      </SimpleGrid>
     </Stack>
   );
 }
