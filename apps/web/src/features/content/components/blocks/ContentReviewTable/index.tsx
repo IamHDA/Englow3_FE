@@ -103,6 +103,9 @@ export function ContentReviewTable({
                       color={CONTENT_STATUS_COLORS[item.status]}
                       variant="light"
                       radius="sm"
+                      // A narrow column cut "BẢN NHÁP" to "BẢN ...".
+                      style={{ flexShrink: 0 }}
+                      styles={{ label: { overflow: "visible" } }}
                     >
                       {CONTENT_STATUS_LABELS[item.status]}
                     </Badge>

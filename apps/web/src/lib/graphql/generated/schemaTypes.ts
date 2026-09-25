@@ -11,6 +11,28 @@ export type Scalars = {
   DateTime: { input: string; output: string };
 };
 
+/**
+ * The administrator's landing page: what is waiting on a decision, how much is
+ * live, and whether anyone is using it.
+ */
+export type AdminOverview = {
+  __typename?: "AdminOverview";
+  /** Learners who did anything within the period, each counted once. */
+  activeLearners: Scalars["Int"]["output"];
+  cardReviews: Scalars["Int"]["output"];
+  content: Array<OverviewContentCounts>;
+  dictationSentences: Scalars["Int"]["output"];
+  examsSubmitted: Scalars["Int"]["output"];
+  learners: Scalars["Int"]["output"];
+  /** Learners who signed up within the period. */
+  newLearners: Scalars["Int"]["output"];
+  /** Items of every kind waiting on review. */
+  pendingReviewTotal: Scalars["Int"]["output"];
+  /** Days the activity figures cover. */
+  periodDays: Scalars["Int"]["output"];
+  quizzesSubmitted: Scalars["Int"]["output"];
+};
+
 export type AttemptOptionReview = {
   __typename?: "AttemptOptionReview";
   correct: Scalars["Boolean"]["output"];
@@ -995,6 +1017,23 @@ export enum OnboardingStep {
   TARGET_SKILLS = "TARGET_SKILLS",
 }
 
+export type OverviewContentCounts = {
+  __typename?: "OverviewContentCounts";
+  drafts: Scalars["Int"]["output"];
+  kind: OverviewContentKind;
+  pendingReview: Scalars["Int"]["output"];
+  published: Scalars["Int"]["output"];
+};
+
+/** Everything the overview counts: the four kinds of authored content, and exams. */
+export enum OverviewContentKind {
+  DICTATION_LESSON = "DICTATION_LESSON",
+  EXAM = "EXAM",
+  FLASHCARD_SET = "FLASHCARD_SET",
+  QUIZ = "QUIZ",
+  SPEAKING_PROMPT = "SPEAKING_PROMPT",
+}
+
 export type Query = {
   __typename?: "Query";
   /**
@@ -1009,6 +1048,8 @@ export type Query = {
    * backend restricts it to ADMIN. Sorted newest first by the backend.
    */
   adminExams: ExamPage;
+  /** Staff and administrators only. */
+  adminOverview: AdminOverview;
   /**
    * The paper to sit, reachable only through an open attempt. There is no
    * lookup by exam id: the answer key is stripped per attempt, and handing out

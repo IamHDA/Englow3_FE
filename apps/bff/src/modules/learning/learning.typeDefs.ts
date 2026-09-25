@@ -449,6 +449,45 @@ export const learningTypeDefs = `#graphql
   }
 
   """
+  Everything the overview counts: the four kinds of authored content, and exams.
+  """
+  enum OverviewContentKind {
+    FLASHCARD_SET
+    QUIZ
+    DICTATION_LESSON
+    SPEAKING_PROMPT
+    EXAM
+  }
+
+  type OverviewContentCounts {
+    kind: OverviewContentKind!
+    drafts: Int!
+    pendingReview: Int!
+    published: Int!
+  }
+
+  """
+  The administrator's landing page: what is waiting on a decision, how much is
+  live, and whether anyone is using it.
+  """
+  type AdminOverview {
+    content: [OverviewContentCounts!]!
+    """Items of every kind waiting on review."""
+    pendingReviewTotal: Int!
+    learners: Int!
+    """Learners who signed up within the period."""
+    newLearners: Int!
+    """Learners who did anything within the period, each counted once."""
+    activeLearners: Int!
+    cardReviews: Int!
+    dictationSentences: Int!
+    quizzesSubmitted: Int!
+    examsSubmitted: Int!
+    """Days the activity figures cover."""
+    periodDays: Int!
+  }
+
+  """
   The four kinds of authored content. They share one review workflow, so this
   schema presents one surface over four backend resources rather than four
   copies of the same six operations.
@@ -580,6 +619,9 @@ export const learningTypeDefs = `#graphql
       page: Int = 0
       size: Int = 20
     ): ContentReviewPage!
+
+    """Staff and administrators only."""
+    adminOverview: AdminOverview!
   }
 
   extend type Mutation {

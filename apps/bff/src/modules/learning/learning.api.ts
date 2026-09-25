@@ -1,6 +1,7 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   ContentKind,
+  AdminOverviewResponse,
   ContentReviewPageResponse,
   ContentReviewResponse,
   DailyPathResponse,
@@ -200,6 +201,10 @@ export class LearningApi {
   /** No parameters: the only path anyone can read is their own, taken from the token. */
   getDailyPath(): Promise<DailyPathResponse> {
     return this.client.get(DAILY_PATH_BASE_PATH);
+  }
+
+  getAdminOverview(): Promise<AdminOverviewResponse> {
+    return this.client.get("/api/admin/overview");
   }
 
   /** The authoring list, at every status. Omitting status asks for all of them. */

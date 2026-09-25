@@ -35,6 +35,28 @@ export type UpdateProfileMutation = {
   };
 };
 
+export type AdminOverviewQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AdminOverviewQuery = {
+  adminOverview: {
+    pendingReviewTotal: number;
+    learners: number;
+    newLearners: number;
+    activeLearners: number;
+    cardReviews: number;
+    dictationSentences: number;
+    quizzesSubmitted: number;
+    examsSubmitted: number;
+    periodDays: number;
+    content: Array<{
+      kind: Types.OverviewContentKind;
+      drafts: number;
+      pendingReview: number;
+      published: number;
+    }>;
+  };
+};
+
 export type TutorMessageFieldsFragment = {
   id: string;
   orderNo: number;
@@ -2308,6 +2330,76 @@ export const UpdateProfileDocument = {
   UpdateProfileMutation,
   UpdateProfileMutationVariables
 >;
+export const AdminOverviewDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AdminOverview" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminOverview" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "content" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "drafts" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "pendingReview" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "published" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "pendingReviewTotal" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "learners" } },
+                { kind: "Field", name: { kind: "Name", value: "newLearners" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "activeLearners" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "cardReviews" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "dictationSentences" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "quizzesSubmitted" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "examsSubmitted" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "periodDays" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminOverviewQuery, AdminOverviewQueryVariables>;
 export const TutorConversationsDocument = {
   kind: "Document",
   definitions: [

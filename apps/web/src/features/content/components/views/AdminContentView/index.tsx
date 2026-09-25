@@ -92,9 +92,18 @@ const STATUS_OPTIONS = [
  * nên bốn màn gần-giống-nhau sẽ là bốn chỗ phải sửa mỗi lần quy trình đổi.
  * `kind` chỉ đi vào query và vào nhãn.
  */
-export function AdminContentView() {
-  const [kind, setKind] = useState<ContentKind>(ContentKind.FLASHCARD_SET);
-  const [status, setStatus] = useState<ContentStatus | null>(null);
+type AdminContentViewProps = {
+  /** Mở thẳng một tab - ô "chờ duyệt" ở trang tổng quan dẫn tới đây. */
+  initialKind?: ContentKind;
+  initialStatus?: ContentStatus | null;
+};
+
+export function AdminContentView({
+  initialKind = ContentKind.FLASHCARD_SET,
+  initialStatus = null,
+}: AdminContentViewProps = {}) {
+  const [kind, setKind] = useState<ContentKind>(initialKind);
+  const [status, setStatus] = useState<ContentStatus | null>(initialStatus);
   const [title, setTitle] = useState("");
   const [page, setPage] = useState(0);
   const [busyId, setBusyId] = useState<string | null>(null);

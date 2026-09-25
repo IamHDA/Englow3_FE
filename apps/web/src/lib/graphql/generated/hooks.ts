@@ -38,6 +38,28 @@ export type UpdateProfileMutation = {
   };
 };
 
+export type AdminOverviewQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AdminOverviewQuery = {
+  adminOverview: {
+    pendingReviewTotal: number;
+    learners: number;
+    newLearners: number;
+    activeLearners: number;
+    cardReviews: number;
+    dictationSentences: number;
+    quizzesSubmitted: number;
+    examsSubmitted: number;
+    periodDays: number;
+    content: Array<{
+      kind: Types.OverviewContentKind;
+      drafts: number;
+      pendingReview: number;
+      published: number;
+    }>;
+  };
+};
+
 export type TutorMessageFieldsFragment = {
   id: string;
   orderNo: number;
@@ -1960,6 +1982,118 @@ export type UpdateProfileMutationOptions =
     UpdateProfileMutation,
     UpdateProfileMutationVariables
   >;
+export const AdminOverviewDocument = gql`
+  query AdminOverview {
+    adminOverview {
+      content {
+        kind
+        drafts
+        pendingReview
+        published
+      }
+      pendingReviewTotal
+      learners
+      newLearners
+      activeLearners
+      cardReviews
+      dictationSentences
+      quizzesSubmitted
+      examsSubmitted
+      periodDays
+    }
+  }
+`;
+
+/**
+ * __useAdminOverviewQuery__
+ *
+ * To run a query within a React component, call `useAdminOverviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOverviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminOverviewQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAdminOverviewQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminOverviewQuery,
+    AdminOverviewQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminOverviewQuery,
+    AdminOverviewQueryVariables
+  >(AdminOverviewDocument, options);
+}
+export function useAdminOverviewLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminOverviewQuery,
+    AdminOverviewQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminOverviewQuery,
+    AdminOverviewQueryVariables
+  >(AdminOverviewDocument, options);
+}
+export function useAdminOverviewSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminOverviewQuery,
+    AdminOverviewQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminOverviewQuery,
+  AdminOverviewQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminOverviewSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminOverviewQuery,
+        AdminOverviewQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminOverviewQuery | undefined,
+  AdminOverviewQueryVariables
+>;
+export function useAdminOverviewSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminOverviewQuery,
+        AdminOverviewQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminOverviewQuery,
+    AdminOverviewQueryVariables
+  >(AdminOverviewDocument, options as any);
+}
+export type AdminOverviewQueryHookResult = ReturnType<
+  typeof useAdminOverviewQuery
+>;
+export type AdminOverviewLazyQueryHookResult = ReturnType<
+  typeof useAdminOverviewLazyQuery
+>;
+export type AdminOverviewSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOverviewSuspenseQuery
+>;
+export type AdminOverviewQueryResult = ApolloReactCommon.QueryResult<
+  AdminOverviewQuery,
+  AdminOverviewQueryVariables
+>;
 export const TutorConversationsDocument = gql`
   query TutorConversations {
     tutorConversations {

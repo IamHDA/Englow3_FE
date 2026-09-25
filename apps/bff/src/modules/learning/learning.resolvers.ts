@@ -102,6 +102,10 @@ export const learningResolvers = {
       ctx.requireToken();
       return ctx.apis.learningApi.getDailyPath();
     },
+    adminOverview: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.learningApi.getAdminOverview();
+    },
     adminContent: (
       _: unknown,
       args: SearchContentParams,

@@ -62,17 +62,17 @@ export function SiteHeaderUserMenu({
         >
           {t.nav.settings}
         </Menu.Item>
-        {/* Chỉ là lối tắt cho người có quyền - trang /admin/exams vẫn tự xử
-            lý khi backend trả 403, nên ẩn nút không phải là chốt chặn. */}
-        {session?.role === ADMIN_ROLE && (
+        {/* Chỉ là lối tắt cho người có quyền - layout /admin tự chặn người
+            không đủ quyền, nên ẩn nút không phải là chốt chặn. */}
+        {(session?.role === ADMIN_ROLE || session?.role === "STAFF") && (
           <>
             <Menu.Divider />
             <Menu.Item
               component={Link}
-              href="/admin/exams"
+              href="/admin"
               leftSection={<ShieldCheck aria-hidden="true" size={16} />}
             >
-              Quản lý đề thi
+              Trang quản trị
             </Menu.Item>
           </>
         )}

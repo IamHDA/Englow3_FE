@@ -1,0 +1,19 @@
+query AdminOverview {
+  adminOverview {
+    content {
+      kind
+      drafts
+      pendingReview
+      published
+    }
+    pendingReviewTotal
+    learners
+    newLearners
+    activeLearners
+    cardReviews
+    dictationSentences
+    quizzesSubmitted
+    examsSubmitted
+    periodDays
+  }
+}

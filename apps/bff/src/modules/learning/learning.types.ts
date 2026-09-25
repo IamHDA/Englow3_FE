@@ -314,6 +314,30 @@ export type DictationStatsResponse = {
 };
 
 // GET /api/daily-path
+// mirrors AdminOverviewResponse from GET /api/admin/overview
+export type AdminOverviewResponse = {
+  content: {
+    kind:
+      | "FLASHCARD_SET"
+      | "QUIZ"
+      | "DICTATION_LESSON"
+      | "SPEAKING_PROMPT"
+      | "EXAM";
+    drafts: number;
+    pendingReview: number;
+    published: number;
+  }[];
+  pendingReviewTotal: number;
+  learners: number;
+  newLearners: number;
+  activeLearners: number;
+  cardReviews: number;
+  dictationSentences: number;
+  quizzesSubmitted: number;
+  examsSubmitted: number;
+  periodDays: number;
+};
+
 export type DailyPathResponse = {
   streakDays: number;
   /** Derived from activity on every read, not stored - see the backend's ExperiencePoints. */

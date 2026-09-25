@@ -23,6 +23,7 @@ import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
 import { theme } from "@/lib/mantine/theme";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
+import { HideInAdmin } from "@/shared/components/SiteHeader/HideInAdmin";
 
 const lora = Lora({
   variable: "--font-lora",
@@ -75,7 +76,9 @@ export default async function RootLayout({
               <AccountProvider initialProfile={initialProfile}>
                 <LanguageProvider>
                   <OnboardingProvider>
-                    <SiteHeader />
+                    <HideInAdmin>
+                      <SiteHeader />
+                    </HideInAdmin>
                     <SlowBackendNotice />
                     <main>{children}</main>
                     <OnboardingGate />

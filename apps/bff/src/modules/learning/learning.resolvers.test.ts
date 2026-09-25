@@ -374,3 +374,38 @@ describe("adminContent for speaking prompts", () => {
     expect(approveContent).toHaveBeenCalledWith("SPEAKING_PROMPT", "p-1");
   });
 });
+
+describe("Query.adminOverview", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const getAdminOverview = vi.fn();
+    const ctx = makeContext({ getAdminOverview }, unauthenticated());
+
+    expect(() => learningResolvers.Query.adminOverview({}, {}, ctx)).toThrow(
+      "Missing or invalid access token",
+    );
+    expect(getAdminOverview).not.toHaveBeenCalled();
+  });
+
+  it("returns the backend's overview as it is", async () => {
+    const overview = {
+      content: [
+        { kind: "FLASHCARD_SET", drafts: 5, pendingReview: 1, published: 2 },
+      ],
+      pendingReviewTotal: 1,
+      learners: 3,
+      newLearners: 1,
+      activeLearners: 2,
+      cardReviews: 40,
+      dictationSentences: 12,
+      quizzesSubmitted: 4,
+      examsSubmitted: 1,
+      periodDays: 7,
+    };
+    const getAdminOverview = vi.fn().mockResolvedValue(overview);
+    const ctx = makeContext({ getAdminOverview });
+
+    await expect(
+      learningResolvers.Query.adminOverview({}, {}, ctx),
+    ).resolves.toEqual(overview);
+  });
+});
