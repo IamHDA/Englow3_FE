@@ -34,9 +34,9 @@ function isMemberOnly(pathname: string): boolean {
 /**
  * Refreshes the Supabase session cookie on every navigation. Without this,
  * a Server Component reading cookies via next/headers can see a stale
- * access token that expired between page loads. `getUser()` (not
- * `getSession()`) is what actually triggers the refresh here - it revalidates
- * against Supabase, and the `setAll` below writes the renewed cookie back.
+ * access token that expired between page loads. `getClaims()` refreshes an
+ * expired session and verifies the token, and the `setAll` below writes the
+ * renewed cookie back.
  *
  * It is also the one place that turns guests away from member-only pages.
  *
@@ -62,16 +62,19 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims, not getUser: it verifies the token's signature locally against
+  // the project's cached JWKS, where getUser asked the Auth server on every
+  // single navigation - a round trip to Supabase before any page could start.
+  // It still refreshes an expired session, which is what this file is for.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims ?? null;
 
   if (!user && isMemberOnly(request.nextUrl.pathname)) {
     const landing = request.nextUrl.clone();
     landing.pathname = "/";
     landing.search = "";
     const redirect = NextResponse.redirect(landing);
-    // Carry over whatever getUser() just wrote, e.g. a cleared stale token.
+    // Carry over whatever getClaims() just wrote, e.g. a cleared stale token.
     for (const cookie of response.cookies.getAll()) {
       redirect.cookies.set(cookie);
     }

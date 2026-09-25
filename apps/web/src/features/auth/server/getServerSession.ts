@@ -14,7 +14,7 @@ import { toAuthSession, type AuthSession } from "@/features/auth/types";
  *     if (!session) redirect("/");
  *
  * Dùng `getSession()` (đọc cookie, không gọi mạng) chứ không phải `getUser()`:
- * middleware.ts đã gọi `getUser()` trên gần như mọi request nên cookie tới đây
+ * proxy.ts đã gọi `getClaims()` (xác thực chữ ký token) trên gần như mọi request nên cookie tới đây
  * đã được xác thực rồi, gọi lại là thừa một vòng mạng mỗi lần render.
  */
 export async function getServerSession(): Promise<AuthSession | null> {
