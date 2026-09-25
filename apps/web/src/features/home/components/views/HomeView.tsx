@@ -1,7 +1,7 @@
 import { Container } from "@mantine/core";
 
 import { HomeCtaBand } from "@/features/home/components/blocks/HomeCtaBand";
-import { HomeFeatures } from "@/features/home/components/blocks/HomeFeatures";
+import { HomeShowcase } from "@/features/home/components/blocks/HomeShowcase";
 import { HomeFooter } from "@/features/home/components/blocks/HomeFooter";
 import { HomeHero } from "@/features/home/components/blocks/HomeHero";
 import { HomeHighlights } from "@/features/home/components/blocks/HomeHighlights";
@@ -21,7 +21,7 @@ export function HomeView() {
       </div>
 
       <Container size={1280} px={{ base: "md", md: 48 }}>
-        <HomeFeatures id={HOME_FEATURES_ID} />
+        <HomeShowcase id={HOME_FEATURES_ID} />
         <HomeSteps />
         <HomeCtaBand />
         <HomeFooter />

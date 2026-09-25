@@ -2,9 +2,13 @@
 
 import { Badge, Button, Group, Text, Title } from "@mantine/core";
 import { Sparkles } from "lucide-react";
-import Image from "next/image";
 
 import { HomeCtaButton } from "@/features/home/components/blocks/HomeCtaButton";
+import {
+  FlashcardMock,
+  ScoreChip,
+  StreakChip,
+} from "@/features/home/components/blocks/HomeMocks";
 import { HOME_FEATURES_ID } from "@/features/home/constants/homeSections";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -59,16 +63,19 @@ export function HomeHero() {
         </Group>
       </div>
 
+      {/* The product itself rather than a picture of it: a card being
+          studied, with the streak it builds. */}
       <div className={classes.visual}>
         <div className={classes.glow} aria-hidden="true" />
-        <Image
-          src="/englow3_hero.png"
-          alt={t.home.heroImageAlt}
-          width={533}
-          height={490}
-          className={classes.illustration}
-          priority
-        />
+        <div className={classes.previewCard}>
+          <FlashcardMock />
+        </div>
+        <div className={classes.previewChip}>
+          <StreakChip />
+        </div>
+        <div className={classes.previewScore}>
+          <ScoreChip />
+        </div>
       </div>
     </section>
   );

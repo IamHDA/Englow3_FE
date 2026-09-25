@@ -1,0 +1,77 @@
+.greeting {
+  font-size: 24px;
+}
+
+.streak {
+  height: 40px;
+  padding-inline: 14px;
+  font-size: 14px;
+}
+
+.continueCard {
+  color: var(--mantine-color-white);
+  background:
+    radial-gradient(
+      circle at 92% 0%,
+      rgba(132, 162, 225, 0.4),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      var(--mantine-color-navy-9),
+      var(--mantine-color-navy-7)
+    );
+  padding: 28px;
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.continueButton {
+  align-self: flex-start;
+}
+
+.taskRow {
+  display: block;
+  padding: 10px;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 120ms ease;
+}
+
+.taskRow:hover {
+  background-color: var(--mantine-color-ink-0);
+}
+
+.shortcut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 8px;
+  min-height: 112px;
+  text-align: center;
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-ink-1);
+  border-radius: var(--mantine-radius-lg);
+  box-shadow: var(--mantine-shadow-xs);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.shortcut:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .greeting {
+    font-size: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shortcut,
+  .shortcut:hover {
+    transition: none;
+    transform: none;
+  }
+}
