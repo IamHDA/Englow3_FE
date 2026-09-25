@@ -40,7 +40,9 @@ import { ReorderQuestion } from "../../blocks/ReorderQuestion";
 import { RewriteQuestion } from "../../blocks/RewriteQuestion";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
+import { isWellFormedId } from "@/shared/network/loadError";
 
 interface QuizSittingViewProps {
   quizId: string;
@@ -138,22 +140,24 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
 
   const error = startError ?? paperError ?? submitError;
 
-  if (error) {
+  // Nothing is fetched before Start, so an id that cannot name a quiz is
+  // caught here; one that is well formed but missing comes back from Start as
+  // NOT_FOUND and lands in the same state.
+  const malformedId = !isWellFormedId(quizId);
+
+  if (error || malformedId) {
     return (
       <Page width="focus">
-        <Stack align="center" gap="md" py={60}>
-          <Text fw={700} c="dark.9">
-            {isVi ? "Không tải được bài kiểm tra" : "Could not load the quiz"}
-          </Text>
-          <Text fz="sm" c="dimmed" ta="center">
-            {isVi
-              ? "Kiểm tra kết nối tới backend rồi thử lại."
-              : "Check the backend connection and try again."}
-          </Text>
-          <Button component={Link} href="/study/daily-path" variant="default">
-            {isVi ? "Quay lại lộ trình" : "Back to the path"}
-          </Button>
-        </Stack>
+        <LoadErrorState
+          error={error}
+          kind={malformedId ? "not-found" : undefined}
+          thing={{ vi: "bài kiểm tra", en: "quiz" }}
+          back={{
+            href: "/study/quiz",
+            label: isVi ? "Về danh sách bài kiểm tra" : "Back to quizzes",
+          }}
+          onRetry={attemptId === null ? handleStart : undefined}
+        />
       </Page>
     );
   }

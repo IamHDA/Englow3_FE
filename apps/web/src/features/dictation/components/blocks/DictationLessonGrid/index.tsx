@@ -89,7 +89,7 @@ export function DictationLessonGrid({
                   : isVi
                     ? "Bắt đầu"
                     : "Start",
-              href: `/study/dictation/${lesson.slug || lesson.id}`,
+              href: `/study/dictation/${lesson.id}`,
               emphasis: started ? "continue" : "default",
             }}
           />

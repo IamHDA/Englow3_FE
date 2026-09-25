@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Badge, Button, Group, Paper, Stack, Title } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -20,6 +20,7 @@ import { DictationDiffResult } from "../../blocks/DictationDiffResult";
 import { DictationHintDrawer } from "../../blocks/DictationHintDrawer";
 import { DictationInputArea } from "../../blocks/DictationInputArea";
 import { DictationSessionSummary } from "../../blocks/DictationSessionSummary";
+import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 
 interface DictationPracticeViewProps {
@@ -49,7 +50,7 @@ export function DictationPracticeView({
   const { isVi } = useLanguage();
   const [hintDrawerOpen, setHintDrawerOpen] = useState(false);
 
-  const { data, loading, error } = useDictationLessonDetailQuery({
+  const { data, loading, error, refetch } = useDictationLessonDetailQuery({
     variables: { id: lessonId },
     fetchPolicy: "cache-and-network",
   });
@@ -97,14 +98,15 @@ export function DictationPracticeView({
   if (error || lesson === undefined) {
     return (
       <Page width="focus">
-        <Stack align="center" gap="md" py={60}>
-          <Text fw={700}>
-            {isVi ? "Không tải được bài nghe" : "Could not load the lesson"}
-          </Text>
-          <Button component={Link} href="/study/dictation" variant="default">
-            {isVi ? "Quay lại thư viện" : "Back to the library"}
-          </Button>
-        </Stack>
+        <LoadErrorState
+          error={error}
+          thing={{ vi: "bài nghe", en: "lesson" }}
+          back={{
+            href: "/study/dictation",
+            label: isVi ? "Về thư viện bài nghe" : "Back to lessons",
+          }}
+          onRetry={() => void refetch()}
+        />
       </Page>
     );
   }
@@ -116,7 +118,7 @@ export function DictationPracticeView({
           summary={practice.summaryData}
           onRestart={practice.restartPractice}
           onReviewMistakes={() => {
-            router.push(`/study/dictation/${lesson.slug || lesson.id}/review`);
+            router.push(`/study/dictation/${lesson.id}/review`);
           }}
         />
       </Page>

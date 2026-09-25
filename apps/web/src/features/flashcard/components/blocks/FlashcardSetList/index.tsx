@@ -111,7 +111,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                 <Group gap="xs" justify="flex-end">
                   <Button
                     component={Link}
-                    href={`/study/flashcards/${set.slug}`}
+                    href={`/study/flashcards/${set.id}`}
                     variant="subtle"
                     color="gray"
                     size="xs"
@@ -121,7 +121,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                   </Button>
                   <Button
                     component={Link}
-                    href={`/study/flashcards/${set.slug}/study`}
+                    href={`/study/flashcards/${set.id}/study`}
                     variant="filled"
                     color="indigo"
                     size="xs"

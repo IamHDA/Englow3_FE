@@ -31,6 +31,7 @@ import {
   useRejectExamMutation,
   useSubmitExamForReviewMutation,
 } from "@/lib/graphql/generated/hooks";
+import { backendCodeOf, errorCodeOf } from "@/shared/network/loadError";
 import { Page, PageHeader } from "@/shared/components/Page";
 
 const INITIAL_FILTERS: AdminExamFiltersState = {
@@ -42,29 +43,8 @@ const INITIAL_FILTERS: AdminExamFiltersState = {
 /** BFF trả mã này khi backend đáp 403 - tài khoản không có vai trò cần thiết. */
 const FORBIDDEN_CODE = "FORBIDDEN";
 
-function backendCodeOf(error: unknown): string | null {
-  if (
-    error != null &&
-    typeof error === "object" &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors)
-  ) {
-    const code = error.graphQLErrors[0]?.extensions?.backendCode;
-    return typeof code === "string" ? code : null;
-  }
-  return null;
-}
-
 function isForbidden(error: unknown): boolean {
-  if (
-    error != null &&
-    typeof error === "object" &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors)
-  ) {
-    return error.graphQLErrors[0]?.extensions?.code === FORBIDDEN_CODE;
-  }
-  return false;
+  return errorCodeOf(error) === FORBIDDEN_CODE;
 }
 
 export function AdminExamListView() {

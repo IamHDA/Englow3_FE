@@ -41,34 +41,14 @@ import { ContentReviewTable } from "../../blocks/ContentReviewTable";
 import { FlashcardImportPanel } from "../../blocks/FlashcardImportPanel";
 import { ContentReviewTableSkeleton } from "../../blocks/ContentReviewTable/ContentReviewTableSkeleton";
 import { RejectContentModal } from "../../blocks/RejectContentModal";
+import { backendCodeOf, errorCodeOf } from "@/shared/network/loadError";
 import { Page, PageHeader } from "@/shared/components/Page";
 
 /** BFF trả mã này khi backend đáp 403. */
 const FORBIDDEN_CODE = "FORBIDDEN";
 
-function backendCodeOf(error: unknown): string | null {
-  if (
-    error != null &&
-    typeof error === "object" &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors)
-  ) {
-    const code = error.graphQLErrors[0]?.extensions?.backendCode;
-    return typeof code === "string" ? code : null;
-  }
-  return null;
-}
-
 function isForbidden(error: unknown): boolean {
-  if (
-    error != null &&
-    typeof error === "object" &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors)
-  ) {
-    return error.graphQLErrors[0]?.extensions?.code === FORBIDDEN_CODE;
-  }
-  return false;
+  return errorCodeOf(error) === FORBIDDEN_CODE;
 }
 
 const KIND_TABS = [

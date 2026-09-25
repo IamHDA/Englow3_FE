@@ -14,6 +14,7 @@ import { useSpeakingPractice } from "../../../hooks/useSpeakingPractice";
 import { PronunciationPracticeSkeleton } from "../../blocks/PronunciationPracticeSkeleton";
 import { PronunciationScoreCard } from "../../blocks/PronunciationScoreCard";
 import { PronunciationVoiceRecorder } from "../../blocks/PronunciationVoiceRecorder";
+import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 
 interface PronunciationPracticeViewProps {
@@ -24,7 +25,7 @@ export function PronunciationPracticeView({
   promptId,
 }: PronunciationPracticeViewProps) {
   const { isVi } = useLanguage();
-  const { data, loading, error } = useSpeakingPromptQuery({
+  const { data, loading, error, refetch } = useSpeakingPromptQuery({
     variables: { id: promptId },
   });
 
@@ -33,16 +34,15 @@ export function PronunciationPracticeView({
   if (error !== undefined && prompt === undefined) {
     return (
       <Page width="focus">
-        <Alert
-          color="warn"
-          title={
-            isVi ? "Không mở được câu luyện" : "Could not open this prompt"
-          }
-        >
-          {isVi
-            ? "Câu này có thể đã bị gỡ, hoặc backend đang không phản hồi."
-            : "It may have been withdrawn, or the backend is not responding."}
-        </Alert>
+        <LoadErrorState
+          error={error}
+          thing={{ vi: "câu luyện phát âm", en: "prompt" }}
+          back={{
+            href: "/study/pronunciation",
+            label: isVi ? "Về danh sách câu luyện" : "Back to prompts",
+          }}
+          onRetry={() => void refetch()}
+        />
       </Page>
     );
   }

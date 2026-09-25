@@ -27,14 +27,14 @@ interface FlashcardHeroCardProps {
    */
   streakDays: number | null;
   retentionPercent: number | null;
-  primarySetSlug: string;
+  primarySetId: string;
 }
 
 export function FlashcardHeroCard({
   dueCount,
   streakDays,
   retentionPercent,
-  primarySetSlug,
+  primarySetId,
 }: FlashcardHeroCardProps) {
   const { isVi } = useLanguage();
 
@@ -76,10 +76,10 @@ export function FlashcardHeroCard({
               {/* Không có bộ nào thì slug rỗng và link thành
                   /study/flashcards//study - một trang lỗi. Nói rõ lý do thay vì
                   dẫn tới đó. */}
-              {primarySetSlug ? (
+              {primarySetId ? (
                 <Button
                   component={Link}
-                  href={`/study/flashcards/${primarySetSlug}/study`}
+                  href={`/study/flashcards/${primarySetId}/study`}
                   size="md"
                   variant="white"
                   color="indigo"

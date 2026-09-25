@@ -130,7 +130,7 @@ export function FlashcardDashboardView({
               dueCount={totalDueCount}
               streakDays={stats?.dailyStreakDays ?? null}
               retentionPercent={stats?.retentionRatePercent ?? null}
-              primarySetSlug={filteredSets[0]?.slug ?? sets[0]?.slug ?? ""}
+              primarySetId={filteredSets[0]?.id ?? sets[0]?.id ?? ""}
             />
 
             <FlashcardFilters

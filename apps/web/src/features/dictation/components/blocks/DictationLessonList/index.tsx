@@ -137,7 +137,7 @@ export function DictationLessonList({
                   <Table.Td style={{ textAlign: "right" }}>
                     <Button
                       component={Link}
-                      href={`/study/dictation/${lesson.slug || lesson.id}`}
+                      href={`/study/dictation/${lesson.id}`}
                       variant={ctaVariant}
                       color="navy"
                       size="xs"

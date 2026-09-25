@@ -74,7 +74,7 @@ export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
             }}
             secondaryAction={{
               label: isVi ? "Chi tiết" : "Details",
-              href: `/study/flashcards/${set.slug}`,
+              href: `/study/flashcards/${set.id}`,
             }}
             action={{
               label:
@@ -85,7 +85,7 @@ export function FlashcardSetGrid({ sets }: FlashcardSetGridProps) {
                   : isVi
                     ? "Học"
                     : "Study",
-              href: `/study/flashcards/${set.slug}/study`,
+              href: `/study/flashcards/${set.id}/study`,
               emphasis: set.dueCount > 0 ? "continue" : "default",
             }}
           />

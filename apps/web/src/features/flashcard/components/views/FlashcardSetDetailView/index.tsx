@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Card,
-  Alert,
   Group,
   Progress,
   Stack,
@@ -29,6 +28,7 @@ import { FlashcardReviewStatus } from "@/lib/graphql/generated";
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useFlashcardSetDetailQuery } from "@/lib/graphql/generated/hooks";
 import { FlashcardStudySkeleton } from "../../blocks/FlashcardStudySkeleton";
+import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 
 interface FlashcardSetDetailViewProps {
@@ -37,7 +37,7 @@ interface FlashcardSetDetailViewProps {
 
 export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
   const { isVi } = useLanguage();
-  const { data, loading, error } = useFlashcardSetDetailQuery({
+  const { data, loading, error, refetch } = useFlashcardSetDetailQuery({
     variables: { id: setId },
     fetchPolicy: "cache-and-network",
   });
@@ -49,14 +49,15 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
   if (error || !data) {
     return (
       <Page>
-        <Alert
-          color="warn"
-          title={isVi ? "Không tải được bộ thẻ" : "Could not load deck"}
-        >
-          {isVi
-            ? "Kiểm tra kết nối tới backend rồi tải lại trang."
-            : "Check the backend connection and reload."}
-        </Alert>
+        <LoadErrorState
+          error={error}
+          thing={{ vi: "bộ thẻ", en: "deck" }}
+          back={{
+            href: "/study/flashcards",
+            label: isVi ? "Về thư viện bộ thẻ" : "Back to decks",
+          }}
+          onRetry={() => void refetch()}
+        />
       </Page>
     );
   }
@@ -98,7 +99,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
 
           <Button
             component={Link}
-            href={`/study/flashcards/${set.slug}/study`}
+            href={`/study/flashcards/${set.id}/study`}
             size="md"
             variant="filled"
             color="indigo"

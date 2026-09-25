@@ -20,6 +20,7 @@ import {
   useSetLearningGoalMutation,
   usePlacementExamLazyQuery,
 } from "@/lib/graphql/generated/hooks";
+import { backendCodeOf } from "@/shared/network/loadError";
 
 import type {
   CefrLevel,
@@ -32,21 +33,14 @@ import type {
 /**
  * Mã miền BFF gửi kèm ở `extensions.backendCode`. Thông báo gốc của Spring đã
  * bị chặn lại từ BFF nên đây là thứ duy nhất đủ ổn định để bắt lỗi theo trường
- * hợp cụ thể.
+ * hợp cụ thể. Trước đây hàm này đọc `error.graphQLErrors` - Apollo Client 4 đã
+ * bỏ thuộc tính đó, nên mọi lỗi đều rơi về câu chung chung.
  */
 function messageForError(error: unknown): string {
-  if (
-    error != null &&
-    typeof error === "object" &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors)
-  ) {
-    const backendCode = error.graphQLErrors[0]?.extensions?.backendCode;
-    if (typeof backendCode === "string") {
-      return ONBOARDING_ERROR_MESSAGES[backendCode] ?? ONBOARDING_GENERIC_ERROR;
-    }
-  }
-  return ONBOARDING_GENERIC_ERROR;
+  const backendCode = backendCodeOf(error);
+  return backendCode === null
+    ? ONBOARDING_GENERIC_ERROR
+    : (ONBOARDING_ERROR_MESSAGES[backendCode] ?? ONBOARDING_GENERIC_ERROR);
 }
 
 /**

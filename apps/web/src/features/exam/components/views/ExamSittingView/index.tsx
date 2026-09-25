@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Box, Button, Card, Grid, Stack, Text } from "@mantine/core";
-import { AlertCircle, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Box, Card, Grid, Text } from "@mantine/core";
 
 import {
   useAttemptPaperQuery,
@@ -30,6 +28,7 @@ import { SubmitModal } from "../../blocks/SubmitModal";
 import { ExamResultView } from "../../blocks/ExamResultView";
 
 import type { ExamAttemptResult } from "../../../types";
+import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 
 interface ExamSittingViewProps {
@@ -262,24 +261,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   if (error) {
     return (
       <Page width="focus">
-        <Stack align="center" gap="md" py={60}>
-          <AlertCircle size={40} color="var(--mantine-color-warn-6)" />
-          <Text size="lg" fw={700} c="navy.9">
-            {t.exam.failedLoadExam}
-          </Text>
-          <Text size="sm" c="ink.5" ta="center">
-            {t.exam.failedLoadExamDesc}
-          </Text>
-          <Button
-            component={Link}
-            href="/exams"
-            variant="default"
-            radius="xl"
-            leftSection={<ArrowLeft size={16} />}
-          >
-            {t.exam.returnToLibrary}
-          </Button>
-        </Stack>
+        <LoadErrorState
+          error={error}
+          thing={{ vi: "đề thi", en: "exam" }}
+          back={{ href: "/exams", label: t.exam.returnToLibrary }}
+        />
       </Page>
     );
   }

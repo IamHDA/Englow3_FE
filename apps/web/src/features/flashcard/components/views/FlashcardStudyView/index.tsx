@@ -17,6 +17,7 @@ import { Flashcard3DCard } from "../../blocks/Flashcard3DCard";
 import { FlashcardSessionSummary } from "../../blocks/FlashcardSessionSummary";
 import { FlashcardStudyControls } from "../../blocks/FlashcardStudyControls";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 
 interface FlashcardStudyViewProps {
@@ -28,11 +29,15 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
 
   // Hàng chờ do backend xếp: thẻ tới hạn trước, thẻ chưa gặp sau. Chỉ lấy một
   // lần cho cả phiên - lấy lại giữa chừng sẽ xáo thứ tự dưới chân người học.
-  const { data: queueData, loading: queueLoading } =
-    useFlashcardStudyQueueQuery({
-      variables: { setId },
-      fetchPolicy: "network-only",
-    });
+  const {
+    data: queueData,
+    loading: queueLoading,
+    error: queueError,
+    refetch: refetchQueue,
+  } = useFlashcardStudyQueueQuery({
+    variables: { setId },
+    fetchPolicy: "network-only",
+  });
   const { data: setData } = useFlashcardSetDetailQuery({
     variables: { id: setId },
   });
@@ -73,6 +78,22 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
     return <FlashcardStudySkeleton />;
   }
 
+  if (queueError && cards.length === 0) {
+    return (
+      <Page width="focus">
+        <LoadErrorState
+          error={queueError}
+          thing={{ vi: "bộ thẻ", en: "deck" }}
+          back={{
+            href: "/study/flashcards",
+            label: isVi ? "Về thư viện bộ thẻ" : "Back to decks",
+          }}
+          onRetry={() => void refetchQueue()}
+        />
+      </Page>
+    );
+  }
+
   if (isCompleted) {
     return (
       <Page width="focus">
@@ -84,8 +105,31 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
     );
   }
 
+  // Nothing due and nothing new: say so, rather than the blank page this
+  // used to be.
   if (!currentCard) {
-    return null;
+    return (
+      <Page width="focus">
+        <Stack align="center" gap="md" py={60}>
+          <Text size="lg" fw={700} c="navy.9" ta="center">
+            {isVi ? "Chưa có thẻ nào cần ôn" : "Nothing to review yet"}
+          </Text>
+          <Text size="sm" c="ink.6" ta="center" maw={420}>
+            {isVi
+              ? "Bạn đã ôn hết các thẻ đến hạn của bộ này. Quay lại sau khi có thẻ tới lượt ôn."
+              : "You have reviewed every card that is due in this deck. Come back when more are due."}
+          </Text>
+          <Button
+            component={Link}
+            href={`/study/flashcards/${setId}`}
+            variant="default"
+            leftSection={<IconArrowLeft size={16} />}
+          >
+            {isVi ? "Về bộ thẻ" : "Back to the deck"}
+          </Button>
+        </Stack>
+      </Page>
+    );
   }
 
   return (
@@ -95,7 +139,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
         <Group justify="space-between" align="center">
           <Button
             component={Link}
-            href={`/study/flashcards/${set?.slug ?? setId}`}
+            href={`/study/flashcards/${setId}`}
             variant="subtle"
             color="gray"
             size="sm"
