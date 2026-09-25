@@ -1113,6 +1113,7 @@ export type LearningPurposesQuery = {
 };
 
 export type OnboardingStateFieldsFragment = {
+  step: Types.OnboardingStep;
   learningPurposeIds: Array<number>;
   certificateLearner: boolean | null;
   targetCertificateType: string | null;
@@ -1128,6 +1129,7 @@ export type SelectLearningPurposesMutationVariables = Exact<{
 
 export type SelectLearningPurposesMutation = {
   selectLearningPurposes: {
+    step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
     certificateLearner: boolean | null;
     targetCertificateType: string | null;
@@ -1144,6 +1146,7 @@ export type SetCertificateTargetMutationVariables = Exact<{
 
 export type SetCertificateTargetMutation = {
   setCertificateTarget: {
+    step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
     certificateLearner: boolean | null;
     targetCertificateType: string | null;
@@ -1160,6 +1163,7 @@ export type SetCurrentLevelMutationVariables = Exact<{
 
 export type SetCurrentLevelMutation = {
   setCurrentLevel: {
+    step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
     certificateLearner: boolean | null;
     targetCertificateType: string | null;
@@ -1176,6 +1180,7 @@ export type SetLearningGoalMutationVariables = Exact<{
 
 export type SetLearningGoalMutation = {
   setLearningGoal: {
+    step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
     certificateLearner: boolean | null;
     targetCertificateType: string | null;
@@ -1192,6 +1197,7 @@ export type SelectTargetSkillsMutationVariables = Exact<{
 
 export type SelectTargetSkillsMutation = {
   selectTargetSkills: {
+    step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
     certificateLearner: boolean | null;
     targetCertificateType: string | null;
@@ -1208,6 +1214,7 @@ export type CompleteOnboardingMutationVariables = Exact<{
 
 export type CompleteOnboardingMutation = {
   completeOnboarding: {
+    step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
     certificateLearner: boolean | null;
     targetCertificateType: string | null;
@@ -2014,6 +2021,7 @@ export const OnboardingStateFieldsFragmentDoc = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },
@@ -6417,6 +6425,7 @@ export const SelectLearningPurposesDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },
@@ -6503,6 +6512,7 @@ export const SetCertificateTargetDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },
@@ -6589,6 +6599,7 @@ export const SetCurrentLevelDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },
@@ -6675,6 +6686,7 @@ export const SetLearningGoalDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },
@@ -6767,6 +6779,7 @@ export const SelectTargetSkillsDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },
@@ -6827,6 +6840,7 @@ export const CompleteOnboardingDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          { kind: "Field", name: { kind: "Name", value: "step" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "learningPurposeIds" },

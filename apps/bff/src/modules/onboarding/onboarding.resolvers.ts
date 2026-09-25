@@ -10,11 +10,11 @@ import type {
 
 /**
  * The backend leaves the collection fields null before the learner has touched
- * them; the schema promises lists. `step` is dropped here on purpose -
- * Me.onboardingStep is the one place the step is read from.
+ * them; the schema promises lists.
  */
 function toOnboardingState(state: OnboardingStateResponse) {
   return {
+    step: state.step,
     learningPurposeIds: state.learningPurposeIds ?? [],
     certificateLearner: state.certificateLearner,
     targetCertificateType: state.targetCertificateType,

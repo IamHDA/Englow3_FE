@@ -15,8 +15,6 @@ export type LearningSkill =
 
 // mirrors GET /api/onboarding/current-state exactly as the backend returns it.
 // Every write endpoint under /api/onboarding answers with this same shape.
-// `step` is recorded here for completeness but not exposed on OnboardingState -
-// Me.onboardingStep is the single GraphQL source of truth, see onboarding.typeDefs.ts.
 export type OnboardingStateResponse = {
   step: OnboardingStep;
   learningPurposeIds: number[] | null;

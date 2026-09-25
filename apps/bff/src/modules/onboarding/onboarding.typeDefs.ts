@@ -30,6 +30,11 @@ export const onboardingTypeDefs = `#graphql
   }
 
   type OnboardingState {
+    """
+    The step after this write. Every onboarding write answers with it, so the
+    client can move to the next screen without reading Me again.
+    """
+    step: OnboardingStep!
     learningPurposeIds: [Int!]!
     certificateLearner: Boolean
     targetCertificateType: String
@@ -65,7 +70,7 @@ export const onboardingTypeDefs = `#graphql
     Records the purposes and advances the step. Which step comes next is the
     backend's decision: a learner who picked the certificate purpose goes to
     CERTIFICATE_TARGET, everyone else skips straight to CURRENT_LEVEL. Read the
-    new step from Me.onboardingStep rather than assuming either branch.
+    new step from the result's step rather than assuming either branch.
     """
     selectLearningPurposes(purposeIds: [Int!]!): OnboardingState!
 

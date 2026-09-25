@@ -25,6 +25,7 @@ import type {
   CefrLevel,
   LearningGoalInput,
   LearningSkill,
+  OnboardingStateFieldsFragment,
   TargetCertificate,
 } from "@/lib/graphql/generated";
 
@@ -52,13 +53,14 @@ function messageForError(error: unknown): string {
  * Sáu hành động ghi của onboarding, gom về một chỗ cho `OnboardingGate` phát
  * xuống từng bước.
  *
- * Mỗi hành động chạy xong đều gọi `refresh()`: bước kế tiếp do backend quyết
- * định (người luyện chứng chỉ đi qua CERTIFICATE_TARGET, người khác nhảy thẳng
- * tới CURRENT_LEVEL) và nó nằm ở `Me.onboardingStep`, không nằm trong kết quả
- * mutation - đọc lại hồ sơ là cách duy nhất biết đang ở đâu.
+ * Bước kế tiếp do backend quyết định (người luyện chứng chỉ đi qua
+ * CERTIFICATE_TARGET, người khác nhảy thẳng tới CURRENT_LEVEL) và nằm ngay
+ * trong kết quả mutation. Ghi thẳng kết quả đó vào hồ sơ thay vì đọc lại
+ * `CurrentUser`: đọc lại tốn thêm hai lượt tới backend mỗi bước, và đó là lý do
+ * chuyển bước từng chậm.
  */
 export function useOnboardingActions() {
-  const { refresh } = useAccountProfile();
+  const { applyOnboardingState } = useAccountProfile();
   const { close } = useOnboarding();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -81,21 +83,24 @@ export function useOnboardingActions() {
     placementState.loading;
 
   /**
-   * Chạy mutation rồi đọc lại hồ sơ. Lỗi được giữ lại thành lời tiếng Việt chứ
-   * không ném tiếp - popup onboarding không có nơi nào bắt được.
+   * Chạy mutation rồi ghi trạng thái mới vào hồ sơ. Lỗi được giữ lại thành lời
+   * tiếng Việt chứ không ném tiếp - popup onboarding không có nơi nào bắt được.
    */
   const run = useCallback(
-    async (mutate: () => Promise<unknown>) => {
+    async (
+      mutate: () => Promise<OnboardingStateFieldsFragment | null | undefined>,
+    ) => {
       setErrorMessage(null);
+      let state: OnboardingStateFieldsFragment | null | undefined;
       try {
-        await mutate();
+        state = await mutate();
       } catch (error) {
         setErrorMessage(messageForError(error));
         return;
       }
-      await refresh();
+      if (state) applyOnboardingState(state);
     },
-    [refresh],
+    [applyOnboardingState],
   );
 
   return {
@@ -103,21 +108,36 @@ export function useOnboardingActions() {
     errorMessage,
     submitLearningPurposes: useCallback(
       (purposeIds: number[]) =>
-        run(() => selectPurposes({ variables: { purposeIds } })),
+        run(async () => {
+          const { data } = await selectPurposes({ variables: { purposeIds } });
+          return data?.selectLearningPurposes;
+        }),
       [run, selectPurposes],
     ),
     submitCertificateTarget: useCallback(
       (certificateType: TargetCertificate) =>
-        run(() => setCertificate({ variables: { certificateType } })),
+        run(async () => {
+          const { data } = await setCertificate({
+            variables: { certificateType },
+          });
+          return data?.setCertificateTarget;
+        }),
       [run, setCertificate],
     ),
     submitCurrentLevel: useCallback(
-      (level: CefrLevel) => run(() => setLevel({ variables: { level } })),
+      (level: CefrLevel) =>
+        run(async () => {
+          const { data } = await setLevel({ variables: { level } });
+          return data?.setCurrentLevel;
+        }),
       [run, setLevel],
     ),
     submitLearningGoal: useCallback(
       (input: LearningGoalInput) =>
-        run(() => setGoal({ variables: { input } })),
+        run(async () => {
+          const { data } = await setGoal({ variables: { input } });
+          return data?.setLearningGoal;
+        }),
       [run, setGoal],
     ),
     /**
@@ -145,7 +165,8 @@ export function useOnboardingActions() {
       (skills: LearningSkill[]) =>
         run(async () => {
           await selectSkills({ variables: { skills } });
-          await complete();
+          const { data } = await complete();
+          return data?.completeOnboarding;
         }),
       [run, selectSkills, complete],
     ),

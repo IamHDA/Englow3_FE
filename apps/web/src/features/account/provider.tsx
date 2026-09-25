@@ -15,6 +15,7 @@ import { useAuth } from "@/features/auth";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useCurrentUserLazyQuery } from "@/lib/graphql/generated/hooks";
+import type { OnboardingStateFieldsFragment } from "@/lib/graphql/generated";
 
 import type { AccountProfileResult } from "@/features/account/types";
 
@@ -26,6 +27,12 @@ type AccountContextValue = AccountProfileResult & {
    * dụ đóng popup onboarding) có thể đã đổi `onboardingStep` phía server.
    */
   refresh: () => Promise<void>;
+  /**
+   * Ghi kết quả của một mutation onboarding vào hồ sơ đang có. Mỗi mutation đã
+   * trả về bước kế tiếp, nên không cần gọi lại cả `CurrentUser` (hai lượt tới
+   * backend) chỉ để biết đang ở bước nào.
+   */
+  applyOnboardingState: (state: OnboardingStateFieldsFragment) => void;
 };
 
 export const AccountContext = createContext<AccountContextValue | null>(null);
@@ -102,11 +109,41 @@ export function AccountProvider({
     };
   }, [session?.userId, loadProfile]);
 
+  const applyOnboardingState = useCallback(
+    (state: OnboardingStateFieldsFragment) => {
+      setFetched((current) =>
+        current.profile == null
+          ? current
+          : {
+              ...current,
+              profile: {
+                ...current.profile,
+                onboardingStep: state.step,
+                onboardingState: {
+                  certificateLearner: state.certificateLearner,
+                  currentLevel: state.currentLevel,
+                  targetCertificateType: state.targetCertificateType,
+                  targetScore: state.targetScore,
+                  targetDate: state.targetDate,
+                  targetSkills: state.targetSkills,
+                },
+              },
+            },
+      );
+    },
+    [],
+  );
+
   // Chưa đăng nhập thì không có hồ sơ - suy ra chứ không lưu, nên không bao giờ
   // sót lại tên của người vừa đăng xuất.
   const value = useMemo<AccountContextValue>(
-    () => ({ ...(session ? fetched : NO_PROFILE), loading, refresh }),
-    [session, fetched, loading, refresh],
+    () => ({
+      ...(session ? fetched : NO_PROFILE),
+      loading,
+      refresh,
+      applyOnboardingState,
+    }),
+    [session, fetched, loading, refresh, applyOnboardingState],
   );
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 fragment OnboardingStateFields on OnboardingState {
+  step
   learningPurposeIds
   certificateLearner
   targetCertificateType
