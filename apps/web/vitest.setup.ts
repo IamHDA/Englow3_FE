@@ -1,4 +1,12 @@
 import "@testing-library/jest-dom/vitest";
+import { configure } from "@testing-library/react";
+
+// findBy*/waitFor give up after one second by default. With the whole suite
+// running in parallel a Mantine-heavy render can take longer than that on a
+// busy machine, and a test that passes alone fails in the full run - the
+// dictation mistake queue did. Three seconds is slack, not a slower suite: a
+// passing wait still returns the moment the text appears.
+configure({ asyncUtilTimeout: 3000 });
 
 // Mantine probes matchMedia while computing responsive styles; jsdom has no
 // implementation.
