@@ -46,6 +46,17 @@ export const learningGoalSchema = z
         path: ["targetScore"],
         message: `Mốc điểm ${values.certificateType} nằm trong khoảng ${range.min} - ${range.max}`,
       });
+      return;
+    }
+    // Cùng luật với backend: IELTS đi theo nửa band, TOEIC theo bước 5. Không
+    // chặn ở đây thì 6.3 chỉ bị từ chối sau khi đã gửi đi.
+    const steps = (score - range.min) / range.step;
+    if (Math.abs(steps - Math.round(steps)) > 1e-9) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["targetScore"],
+        message: `Mốc điểm ${values.certificateType} đi theo bước ${range.step}`,
+      });
     }
   });
 

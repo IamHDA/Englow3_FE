@@ -157,6 +157,10 @@ export const ONBOARDING_ERROR_MESSAGES: Record<string, string> = {
     "Bài quiz xếp trình độ chưa mở. Hãy tự chọn một mức cho tới khi có.",
   TARGET_SCORE_NOT_APPLICABLE:
     "Chỉ người học luyện chứng chỉ mới đặt được mốc điểm.",
+  TARGET_SCORE_OUT_OF_RANGE:
+    "Điểm mục tiêu không đúng thang điểm: IELTS từ 0 đến 9 (bước 0.5), TOEIC từ 10 đến 990 (bước 5).",
+  CURRENT_SCORE_OUT_OF_RANGE:
+    "Điểm hiện tại không đúng thang điểm: IELTS từ 0 đến 9 (bước 0.5), TOEIC từ 10 đến 990 (bước 5).",
   ONBOARDING_LEVEL_REQUIRED: "Cần chọn trình độ hiện tại trước đã.",
   ONBOARDING_PURPOSE_REQUIRED: "Cần chọn ít nhất một mục đích học.",
   ONBOARDING_CERTIFICATE_TARGET_REQUIRED:

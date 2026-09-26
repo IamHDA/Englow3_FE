@@ -10,6 +10,20 @@ import {
 
 import { POLL_INTERVAL_MS, POLL_TIMEOUT_MS } from "../constants/tutorChat";
 import type { TutorMessage } from "../types";
+import { backendCodeOf } from "@/shared/network/loadError";
+
+/**
+ * Lý do backend từ chối, nói bằng lời. Trước đây mọi lỗi đều thành "không gửi
+ * được", kể cả khi đã hết lượt hôm nay - người học bấm lại mãi mà không biết vì
+ * sao.
+ */
+const TUTOR_SEND_ERRORS: Record<string, string> = {
+  TUTOR_DAILY_LIMIT_REACHED:
+    "Bạn đã dùng hết lượt hỏi gia sư AI hôm nay. Quay lại vào ngày mai nhé.",
+  TUTOR_REPLY_PENDING: "Đợi gia sư trả lời xong câu trước rồi hỏi tiếp nhé.",
+  TUTOR_CONVERSATION_ARCHIVED:
+    "Cuộc trò chuyện này đã được lưu trữ. Hãy bắt đầu cuộc mới.",
+};
 
 /**
  * Một cuộc hội thoại với gia sư.
@@ -143,8 +157,11 @@ export function useTutorChat(initialConversationId?: string) {
 
         stopPolling();
         await poll(result.conversation.id);
-      } catch {
-        setError("Không gửi được câu hỏi. Thử lại giúp mình nhé.");
+      } catch (sendError) {
+        setError(
+          TUTOR_SEND_ERRORS[backendCodeOf(sendError) ?? ""] ??
+            "Không gửi được câu hỏi. Thử lại giúp mình nhé.",
+        );
       } finally {
         setSending(false);
       }
