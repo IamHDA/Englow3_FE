@@ -37,6 +37,7 @@ export const ADMIN_EXAMS_PAGE_SIZE = 20;
 export const ADMIN_EXAM_ERROR_MESSAGES: Record<string, string> = {
   EXAM_NOT_DRAFT: "Chỉ phát hành được đề đang ở trạng thái bản nháp.",
   EXAM_NOT_EDITABLE: "Chỉ sửa được đề đang là bản nháp hoặc bị trả lại.",
+  STORAGE_UNAVAILABLE: "Kho lưu trữ tệp đang lỗi. Thử tải lên lại sau ít phút.",
   EXAM_NOT_SUBMITTABLE:
     "Chỉ gửi duyệt được đề đang là bản nháp hoặc bị trả lại.",
   EXAM_NOT_PENDING_REVIEW:

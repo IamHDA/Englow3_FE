@@ -106,7 +106,12 @@ export const CONTENT_ERROR_MESSAGES: Record<string, string> = {
   REVIEW_NOTE_REQUIRED: "Phải ghi rõ lý do khi trả lại.",
 
   FLASHCARD_SET_EMPTY: "Bộ thẻ chưa có thẻ nào.",
-  FLASHCARD_SET_NOT_DRAFT: "Chỉ phát hành được bộ thẻ đang là bản nháp.",
+  FLASHCARD_SET_NOT_DRAFT:
+    "Bộ thẻ này không còn là bản nháp nên không phát hành hay nhập thêm được.",
+  FLASHCARD_SET_NOT_EDITABLE:
+    "Bộ thẻ đang chờ duyệt hoặc đã lưu trữ nên không thêm thẻ được.",
+  FLASHCARD_SET_LIVE_ADMIN_ONLY:
+    "Bộ thẻ đã phát hành - chỉ quản trị viên được thêm thẻ.",
   FLASHCARD_SET_NOT_SUBMITTABLE:
     "Chỉ gửi duyệt được bộ thẻ đang là bản nháp hoặc bị trả lại.",
   FLASHCARD_SET_NOT_PENDING_REVIEW:
@@ -126,6 +131,10 @@ export const CONTENT_ERROR_MESSAGES: Record<string, string> = {
 
   DICTATION_LESSON_EMPTY: "Bài nghe chép chưa có câu nào.",
   DICTATION_LESSON_NOT_DRAFT: "Chỉ phát hành được bài đang là bản nháp.",
+  DICTATION_LESSON_NOT_EDITABLE:
+    "Bài đang chờ duyệt hoặc đã lưu trữ nên không thêm câu được.",
+  DICTATION_LESSON_LIVE_ADMIN_ONLY:
+    "Bài đã phát hành - chỉ quản trị viên được thêm câu.",
   DICTATION_LESSON_NOT_SUBMITTABLE:
     "Chỉ gửi duyệt được bài đang là bản nháp hoặc bị trả lại.",
   DICTATION_LESSON_NOT_PENDING_REVIEW:
