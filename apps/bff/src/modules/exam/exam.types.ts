@@ -60,3 +60,107 @@ export type SearchExamsParams = {
   page?: number;
   size?: number;
 };
+
+// mirrors LearnerExamCardResponse from GET /api/exams
+export type LearnerExamItemResponse = {
+  id: string;
+  title: string;
+  description: string;
+  examType: ExamType;
+  certificateType: CertificateType | null;
+  certificateVariant: CertificateVariant | null;
+  targetLevel: TargetLevel | null;
+  durationSeconds: number;
+  maxRawScore: number;
+  passScore: number | null;
+  questionCount: number;
+  status: ExamStatus;
+  publishedAt: string | null;
+};
+
+export type LearnerExamPageResponse = {
+  items: LearnerExamItemResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type SearchLearnerExamsParams = {
+  examType?: ExamType;
+  certificateType?: CertificateType;
+  certificateVariant?: CertificateVariant;
+  targetLevel?: TargetLevel;
+  title?: string;
+  page?: number;
+  size?: number;
+};
+
+export type QuestionOptionDto = {
+  id: string;
+  content: string;
+  orderNo: number;
+  correct: boolean;
+  explanation: string | null;
+};
+
+export type QuestionDto = {
+  id: string;
+  questionType: string;
+  content: string;
+  difficultyLevel: string;
+  skillType: string;
+  questionCategory: string | null;
+  orderNo: number;
+  maxRawScore: number;
+  explanation: string | null;
+  options: QuestionOptionDto[];
+};
+
+export type QuestionSetDto = {
+  id: string;
+  title: string | null;
+  instruction: string | null;
+  orderNo: number;
+  content: string | null;
+  audioObjectKey: string | null;
+  imageObjectKey: string | null;
+  questions: QuestionDto[];
+};
+
+export type SectionPartDto = {
+  id: string;
+  orderNo: number;
+  title: string;
+  instruction: string | null;
+  content: string | null;
+  audioObjectKey: string | null;
+  imageObjectKey: string | null;
+  questionSets: QuestionSetDto[];
+};
+
+export type ExamSectionDto = {
+  id: string;
+  sectionType: string;
+  orderNo: number;
+  maxRawScore: number;
+  scoredByCriteria: boolean;
+  timeLimitSeconds: number | null;
+  parts: SectionPartDto[];
+};
+
+export type ExamPaperResponse = {
+  id: string;
+  title: string;
+  description: string;
+  examType: ExamType;
+  certificateType: CertificateType | null;
+  certificateVariant: CertificateVariant | null;
+  targetLevel: TargetLevel | null;
+  durationSeconds: number;
+  maxRawScore: number;
+  passScore: number | null;
+  status: ExamStatus;
+  versionNumber: number;
+  sections: ExamSectionDto[];
+};

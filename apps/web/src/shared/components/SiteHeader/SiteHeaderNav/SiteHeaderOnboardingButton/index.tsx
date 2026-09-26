@@ -4,6 +4,7 @@ import { Button } from "@mantine/core";
 import { Sparkles } from "lucide-react";
 
 import { useOnboarding } from "@/features/onboarding";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 type SiteHeaderOnboardingButtonProps = {
   /** Called after the popup opens, so the mobile drawer can close itself. */
@@ -17,6 +18,7 @@ export function SiteHeaderOnboardingButton({
   fullWidth,
 }: SiteHeaderOnboardingButtonProps) {
   const { open } = useOnboarding();
+  const { t } = useLanguage();
 
   return (
     <Button
@@ -31,7 +33,7 @@ export function SiteHeaderOnboardingButton({
       fw={700}
       leftSection={<Sparkles aria-hidden="true" size={16} />}
     >
-      Hoàn tất thiết lập
+      {t.nav.completeOnboarding}
     </Button>
   );
 }

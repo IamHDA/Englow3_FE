@@ -4,6 +4,7 @@ import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 import { AuthModal } from "@/features/auth";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./SiteHeaderLoginButton.module.css";
 
@@ -17,6 +18,7 @@ export function SiteHeaderLoginButton({
   onNavigate,
   fullWidth,
 }: SiteHeaderLoginButtonProps) {
+  const { t } = useLanguage();
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -34,7 +36,7 @@ export function SiteHeaderLoginButton({
         fw={700}
         className={classes.root}
       >
-        Đăng nhập
+        {t.nav.login}
       </Button>
       <AuthModal opened={opened} onClose={close} />
     </>

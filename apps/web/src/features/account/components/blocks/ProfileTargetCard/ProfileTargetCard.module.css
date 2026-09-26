@@ -1,0 +1,18 @@
+.cardPaper {
+  background-color: var(--mantine-color-body);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.statBox {
+  background-color: var(--mantine-color-ink-0);
+  border-color: var(--mantine-color-ink-2);
+}
+
+.statIcon {
+  color: var(--mantine-color-ink-5);
+}
+
+.tuneButton {
+  margin-top: 4px;
+  font-weight: 600;
+}

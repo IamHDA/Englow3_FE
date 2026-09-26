@@ -1,0 +1,25 @@
+.tabContainer {
+  width: 100%;
+}
+
+.paper {
+  background-color: var(--mantine-color-body);
+}
+
+.highlightBox {
+  background-color: var(--mantine-color-ink-0);
+  border-color: var(--mantine-color-ink-2);
+}
+
+.sectionIcon {
+  color: var(--mantine-color-navy-8);
+}
+
+.skillPill {
+  background-color: var(--mantine-color-navy-0);
+  border-color: var(--mantine-color-navy-2);
+}
+
+.skillIcon {
+  color: var(--mantine-color-navy-7);
+}

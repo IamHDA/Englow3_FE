@@ -20,3 +20,11 @@ export type UserInformationResponse = {
   bannerUrl: string | null;
   onboardingStep: OnboardingStep;
 };
+
+// mirrors PUT /api/user/me/profile request body
+export type UpdateProfileInput = {
+  fullName: string;
+  displayName: string;
+  gender?: Gender | null;
+  birthDate?: string | null; // "YYYY-MM-DD"
+};

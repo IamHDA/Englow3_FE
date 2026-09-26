@@ -128,3 +128,123 @@ describe("Mutation.archiveExam", () => {
     expect(archiveAsAdmin).toHaveBeenCalledWith("exam-1");
   });
 });
+
+describe("Query.exams", () => {
+  it("fails before calling the backend when there is no token", async () => {
+    const searchAsLearner = vi.fn();
+    const ctx = makeContext(
+      vi.fn(),
+      {
+        requireToken: () => {
+          throw new GraphQLError("Missing or invalid access token", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        },
+      },
+      { searchAsLearner },
+    );
+
+    await expect(examResolvers.Query.exams({}, {}, ctx)).rejects.toThrow(
+      "Missing or invalid access token",
+    );
+    expect(searchAsLearner).not.toHaveBeenCalled();
+  });
+
+  it("forwards filters and decorates items with bestScore and attemptStatus", async () => {
+    const searchAsLearner = vi.fn().mockResolvedValue({
+      items: [{ id: "exam-1", title: "Test 1" }],
+      page: 0,
+      size: 20,
+      totalItems: 1,
+      totalPages: 1,
+    });
+    const ctx = makeContext(vi.fn(), {}, { searchAsLearner });
+
+    const res = await examResolvers.Query.exams(
+      {},
+      { certificateType: "TOEIC", targetLevel: "B1", page: 0, size: 20 },
+      ctx,
+    );
+
+    expect(searchAsLearner).toHaveBeenCalledWith({
+      certificateType: "TOEIC",
+      targetLevel: "B1",
+      page: 0,
+      size: 20,
+    });
+    expect(res.items[0]).toEqual({
+      id: "exam-1",
+      title: "Test 1",
+      bestScore: null,
+      attemptStatus: "NOT_STARTED",
+    });
+  });
+});
+
+describe("Query.exam", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const getByIdAsLearner = vi.fn();
+    const ctx = makeContext(
+      vi.fn(),
+      {
+        requireToken: () => {
+          throw new GraphQLError("Missing or invalid access token", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        },
+      },
+      { getByIdAsLearner },
+    );
+
+    expect(() => examResolvers.Query.exam({}, { id: "exam-1" }, ctx)).toThrow(
+      "Missing or invalid access token",
+    );
+    expect(getByIdAsLearner).not.toHaveBeenCalled();
+  });
+
+  it("forwards id to getByIdAsLearner", async () => {
+    const getByIdAsLearner = vi
+      .fn()
+      .mockResolvedValue({ id: "exam-1", title: "Detail" });
+    const ctx = makeContext(vi.fn(), {}, { getByIdAsLearner });
+
+    const res = await examResolvers.Query.exam({}, { id: "exam-1" }, ctx);
+
+    expect(getByIdAsLearner).toHaveBeenCalledWith("exam-1");
+    expect(res).toEqual({ id: "exam-1", title: "Detail" });
+  });
+});
+
+describe("Query.examPaper", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const getPaperAsLearner = vi.fn();
+    const ctx = makeContext(
+      vi.fn(),
+      {
+        requireToken: () => {
+          throw new GraphQLError("Missing or invalid access token", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        },
+      },
+      { getPaperAsLearner },
+    );
+
+    expect(() =>
+      examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(getPaperAsLearner).not.toHaveBeenCalled();
+  });
+
+  it("forwards id to getPaperAsLearner", async () => {
+    const getPaperAsLearner = vi
+      .fn()
+      .mockResolvedValue({ id: "exam-1", sections: [] });
+    const ctx = makeContext(vi.fn(), {}, { getPaperAsLearner });
+
+    const res = await examResolvers.Query.examPaper({}, { id: "exam-1" }, ctx);
+
+    expect(getPaperAsLearner).toHaveBeenCalledWith("exam-1");
+    expect(res).toEqual({ id: "exam-1", sections: [] });
+  });
+});
