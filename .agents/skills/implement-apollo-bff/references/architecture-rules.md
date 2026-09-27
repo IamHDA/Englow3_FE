@@ -34,13 +34,15 @@ A resolver that starts branching on domain state - checking a status before allo
 
 Never write against an assumed endpoint shape.
 
-Ask for the real thing, listing what is missing: method and path, path and query parameters, request body fields and types, response fields with nullability, error codes and statuses, pagination shape for lists, and for async endpoints what the immediate response contains.
+The repo already generates it: `apps/bff/src/generated/backend-openapi.ts` is `openapi-typescript`'s output from the backend's live `/v3/api-docs` (`pnpm --filter bff run generate:backend`, pointed at `BACKEND_URL`). Check `paths["/api/..."]["method"]` there before anything else - regenerate first if it looks stale, and only ask the user when the generated types still don't settle it.
 
-Accept the controller source, an OpenAPI excerpt, a captured response, or the DTO definitions. Prose is not sufficient for field names and nullability.
+That happens in two cases: the endpoint genuinely doesn't exist on the backend yet, or a field is typed too loosely to trust - Springdoc renders a handful of backend fields as plain `string` where the real value is a fixed set (tutor role/status, exam `attemptStatus`, content review status, admin overview `kind`, speaking's `@JsonRawValue` tips/phonemes are the ones found so far; each gets a documented `Omit<Generated, "field"> & { field: TheRealUnion }` override rather than trusting the loose type). In either case, ask for what's missing, listing: method and path, path and query parameters, request body fields and types, response fields with nullability, error codes and statuses, pagination shape for lists, and for async endpoints what the immediate response contains. Accept the controller source, an OpenAPI excerpt, a captured response, or the DTO definitions - prose is not sufficient for field names and nullability.
 
-Record what you were given as the module's REST types. That file is the boundary: everything else in the module depends on it, so when the backend changes, exactly one file needs updating and TypeScript reports the rest.
+Record what you were given (or derived) as the module's REST types. That file is the boundary: everything else in the module depends on it, so when the backend changes, exactly one file needs updating and TypeScript reports the rest.
 
 If the endpoint does not exist yet, stop and say so. Building the BFF half first means building it twice, and the second version will differ in field names.
+
+Springdoc also collides `operationId` across the admin controllers (the same verb - approve, reject, publish... - defined on five different admin resources gets `_1".."_5` suffixes by encounter order, not by which resource it is), which is why the generated types are read through `paths["/api/..."]["method"]` and never through the shorter `operations[...]`.
 
 ## Module structure
 
@@ -65,22 +67,22 @@ Sharing an enum across two contexts couples them: the day one side gains a value
 
 ## Authentication
 
-The frontend obtains a token and sends it to the BFF. The BFF verifies it to build the current user and to fail unauthenticated requests early. The BFF forwards the same token to the backend, which verifies it again and performs the real authorization.
+The frontend obtains a token and sends it to the BFF. **The BFF does not verify the JWT at all** - it only checks that a bearer token is present (`ctx.requireToken()`, called at the top of any resolver that needs one) and forwards that same token, unchanged, to the backend, which is the sole verifier and decides authorization. This is deliberate, not an oversight: every request here is authenticated by a Bearer header rather than a cookie, so there is no session for the BFF to own, and the backend already has to verify on every call regardless of what the BFF does. Re-verifying the signature here would be a second copy of a check that only the backend's answer can make binding.
 
-Two consequences:
+Consequences:
 
-- A BFF-side check is a convenience, never a guarantee. Never treat a resolver-level check as the security boundary.
-- Token verification runs on every request, so the verification key material must be cached in memory with a sensible refresh. Fetching it per request adds a network round trip to every call and makes the BFF fail whenever the identity provider is slow.
+- A BFF-side check is presence only, never a guarantee about the token's validity. Never treat it as the security boundary, and never build a "current user" object from an unverified token.
+- If a future need ever justifies verifying the JWT in the BFF itself (e.g. to branch UI-only behavior on claims without a round trip), that's a real addition - a `shared/auth/` module, cached JWKS with a refresh interval so the identity provider isn't hit every request - not something to retrofit quietly into `requireToken`.
 
 Never log tokens, and never place them in a GraphQL response or an error extension.
 
 ## Per-request state
 
-Context, API clients, and DataLoaders are constructed per request.
+Context and API clients are constructed per request (`createContext` calls `createBackendClient(req.headers)` fresh every time). The same applies to any DataLoader, if one is ever added.
 
-This is not a style preference. A DataLoader caches by key for its lifetime; if it outlives the request, one user's data is served to the next user whose query asks for the same ID. The same applies to any client that carries a token.
+This is not a style preference. A DataLoader caches by key for its lifetime; if it outlives the request, one user's data is served to the next user whose query asks for the same ID. The same applies to any client that carries a token - which every `*Api` client here does, via the shared `BackendClient`.
 
-Nothing in the BFF should hold cross-request state except configuration and the verification key cache.
+Nothing in the BFF should hold cross-request state except configuration (`config/env.ts`, read once at startup).
 
 ## Aggregate queries and partial failure
 
@@ -105,7 +107,7 @@ The HTTP timeout for these calls is the timeout for _starting_ the work, not for
 
 ## Errors
 
-The backend should return a stable error contract - a code, a message, a request identifier. The BFF maps that code to a GraphQL error code and passes the identifier through so a report can be traced across both systems.
+Mapping is centralized, not per-resolver: `graphql/errors.ts`'s `formatError` (wired once into `ApolloServer` in `app.ts`) is the one place a `BackendError` becomes a client-facing error. A resolver just lets a `BackendError` (or anything else) throw or reject - it does not catch and translate its own errors. `formatError` maps the backend's HTTP status to a GraphQL code (`STATUS_TO_CODE`; unreached backend = status `0` = `BACKEND_UNAVAILABLE`), attaches the backend's own domain code as `extensions.backendCode` and its trace id as `extensions.traceId`, and replaces `.message` with a fixed safe string per code - the raw backend message never reaches the client. An error that isn't a recognized client code (Apollo's own parse/validation codes, or `UNAUTHENTICATED`/`FORBIDDEN`) collapses to a generic `INTERNAL_SERVER_ERROR`; `logServerErrors` is what keeps the real detail, server-side only.
 
 Never surface: stack traces, internal URLs or host names, SQL or table names, provider payloads, tokens.
 
@@ -115,9 +117,9 @@ An unmapped backend error becomes a generic internal error, not a passthrough of
 
 A GraphQL endpoint lets the client compose its own query, which is the point and also the risk. Nested fields that resolve through other fields can be made arbitrarily deep and expensive.
 
-At minimum: limit query depth, limit overall complexity or cost, and cap page sizes rather than trusting the requested value. Disable introspection in production; leave it on in development.
+**As of this writing, only two of these exist**: a capped request body (`express.json({ limit: "128kb" })`) and an IP-keyed rate limiter (`config/middleware.ts` - itself reviewed and documented as instance-local, not a global quota, see its own comment). There is no query depth limit, no complexity/cost limit, and no explicit introspection toggle anywhere in `app.ts` - Apollo Server 4 does not disable introspection by environment on its own, so it is on wherever this runs. Page size *is* capped, but per-argument (`clampPageSize`, `shared/graphql/pagination.ts`), not as a schema-wide complexity budget.
 
-These are cheap to add and hard to retrofit after the schema is large.
+Treat this as a known gap, not a settled decision: if a change meaningfully grows the schema's nesting or the audience able to reach it, raise the missing depth/complexity limit and the open introspection with the user rather than assuming either is already handled. These are cheap to add and hard to retrofit after the schema is large - which is exactly the state it's approaching now, at ten modules.
 
 ## When not to add to the BFF
 
