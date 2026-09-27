@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { Role } from "@/lib/graphql/generated";
 
 import {
   GENDER_OPTIONS,
@@ -89,30 +90,34 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
             />
           </Box>
 
-          <Badge
-            color={isOnboardingComplete ? "teal" : "orange"}
-            variant="light"
-            size="sm"
-            // Never shrunk to "ĐÃ SẴN SÀNG ..." beside the avatar.
-            style={{ flexShrink: 0 }}
-            styles={{ label: { overflow: "visible" } }}
-            leftSection={
-              isOnboardingComplete ? (
-                <CheckCircle2 size={12} />
-              ) : (
-                <Sparkles size={12} />
-              )
-            }
-          >
-            {isOnboardingComplete
-              ? isVi
-                ? "Đã sẵn sàng học"
-                : "Ready to Learn"
-              : isVi
-                ? (ONBOARDING_STEP_LABELS[profile.onboardingStep] ??
-                  "Đang thiết lập")
-                : "Setting up"}
-          </Badge>
+          {/* Chỉ LEARNER mới có onboarding - badge này báo đúng một việc đó,
+              nên STAFF/ADMIN không có gì để báo. */}
+          {profile.role === Role.LEARNER && (
+            <Badge
+              color={isOnboardingComplete ? "teal" : "orange"}
+              variant="light"
+              size="sm"
+              // Never shrunk to "ĐÃ SẴN SÀNG ..." beside the avatar.
+              style={{ flexShrink: 0 }}
+              styles={{ label: { overflow: "visible" } }}
+              leftSection={
+                isOnboardingComplete ? (
+                  <CheckCircle2 size={12} />
+                ) : (
+                  <Sparkles size={12} />
+                )
+              }
+            >
+              {isOnboardingComplete
+                ? isVi
+                  ? "Đã sẵn sàng học"
+                  : "Ready to Learn"
+                : isVi
+                  ? (ONBOARDING_STEP_LABELS[profile.onboardingStep] ??
+                    "Đang thiết lập")
+                  : "Setting up"}
+            </Badge>
+          )}
         </Group>
 
         <Stack gap={4}>
