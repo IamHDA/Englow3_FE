@@ -77,6 +77,33 @@ describe("POST /rest/admin/flashcards/import/validate", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  // A header the backend would refuse anyway is refused here, the same way the
+  // GraphQL side refuses it - one answer to "is this a token" for both.
+  it("refuses a header that is not a bearer token without calling the backend", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const base = await start();
+
+    const response = await call(base, { token: "Basic abc" });
+
+    expect(response.status).toBe(401);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("sends the backend a request id the BFF made", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response("{}", { status: 200 }));
+    const base = await start();
+
+    await call(base, { token: "Bearer token" });
+
+    const headers = fetchSpy.mock.calls.at(-1)?.[1]?.headers as Record<
+      string,
+      string
+    >;
+    expect(headers["x-request-id"]).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
   it("forwards the learner's token to the backend", async () => {
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")

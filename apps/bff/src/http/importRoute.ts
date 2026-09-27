@@ -1,6 +1,6 @@
 import express, { type Request, type Response, type Router } from "express";
 
-import { env } from "../config/env.js";
+import { createBackendClient } from "../shared/http/backendClient.js";
 
 /**
  * The largest batch that will be forwarded.
@@ -61,12 +61,12 @@ export function importRoute(): Router {
 /**
  * Sends the file on as multipart, which is what the backend's endpoint takes.
  *
- * The learner's token rides along unread: authorisation is the backend's to
- * decide, and a BFF that checked the role itself would be a second place for
- * that answer to be wrong.
+ * The learner's token rides along with no more than a check that one is there:
+ * authorisation is the backend's to decide, and a BFF that checked the role
+ * itself would be a second place for that answer to be wrong.
  */
 async function forward(req: Request, res: Response, path: string) {
-  const token = req.headers.authorization;
+  const { token, client } = createBackendClient(req.headers);
   if (!token) {
     res.status(401).json({ code: "UNAUTHENTICATED", message: "Missing token" });
     return;
@@ -82,12 +82,7 @@ async function forward(req: Request, res: Response, path: string) {
   );
 
   try {
-    const response = await fetch(`${env.backendUrl}${path}`, {
-      method: "POST",
-      headers: { authorization: token },
-      body: form,
-      signal: AbortSignal.timeout(env.backendTimeoutMs),
-    });
+    const response = await client.send("POST", path, form);
 
     // The backend's own body is passed through, including on a refusal: its
     // rejection report is the whole point of the endpoint, and summarising it
