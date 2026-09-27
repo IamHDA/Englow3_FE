@@ -50,18 +50,14 @@ export function PronunciationVoiceRecorder({
   onStartRecord,
   onStopRecord,
 }: PronunciationVoiceRecorderProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const isRecording = phase === "recording";
   const isBusy = phase === "uploading" || phase === "assessing";
 
   const busyLabel =
     phase === "uploading"
-      ? isVi
-        ? "Đang tải bản ghi lên..."
-        : "Uploading your recording..."
-      : isVi
-        ? "Đang chấm..."
-        : "Scoring...";
+      ? t.pronunciation.uploadingLabel
+      : t.pronunciation.scoringLabel;
 
   return (
     <Card withBorder padding="xl" radius="lg">
@@ -69,7 +65,7 @@ export function PronunciationVoiceRecorder({
         <Stack gap={6}>
           <Group gap="xs">
             <Text fz="xs" fw={700} c="dimmed">
-              {isVi ? "ĐỌC CÂU NÀY" : "SAY THIS"}
+              {t.pronunciation.sayThisLabel}
             </Text>
             {prompt.phonemeTarget !== null && (
               <Badge variant="light" color="indigo" size="xs">
@@ -104,7 +100,7 @@ export function PronunciationVoiceRecorder({
             leftSection={<IconVolume size={16} />}
             onClick={() => onPlayReference(false)}
           >
-            {isVi ? "Nghe câu mẫu" : "Hear it"}
+            {t.pronunciation.hearItButton}
           </Button>
           <Button
             variant="subtle"
@@ -114,7 +110,7 @@ export function PronunciationVoiceRecorder({
             leftSection={<IconVolume2 size={16} />}
             onClick={() => onPlayReference(true)}
           >
-            {isVi ? "Nghe chậm" : "Slowly"}
+            {t.pronunciation.slowlyButton}
           </Button>
         </Group>
 
@@ -125,7 +121,7 @@ export function PronunciationVoiceRecorder({
             style={{ borderRadius: 8 }}
           >
             <Text fz="xs" fw={700} c="indigo.8" mb={4}>
-              {isVi ? "Mẹo phát âm" : "Tips"}
+              {t.pronunciation.tipsLabel}
             </Text>
             <List size="xs" spacing={4} c="indigo.9">
               {prompt.tips.map((tip) => (
@@ -140,8 +136,7 @@ export function PronunciationVoiceRecorder({
         <Stack gap="sm" align="center">
           {isRecording && (
             <Badge color="red" variant="light" size="lg" radius="sm">
-              {isVi ? "Đang ghi" : "Recording"} ·{" "}
-              {formatSeconds(recordingSeconds)}
+              {t.pronunciation.recordingBadge} · {formatSeconds(recordingSeconds)}
             </Badge>
           )}
 
@@ -167,22 +162,18 @@ export function PronunciationVoiceRecorder({
               onClick={isRecording ? onStopRecord : onStartRecord}
             >
               {isRecording
-                ? isVi
-                  ? "Dừng và chấm"
-                  : "Stop and score"
-                : isVi
-                  ? "Bắt đầu ghi âm"
-                  : "Start recording"}
+                ? t.pronunciation.stopAndScoreButton
+                : t.pronunciation.startRecording}
             </Button>
           )}
 
           {localAudioUrl !== null && !isRecording && (
             <Stack gap={4} align="center">
               <Text fz="xs" c="dimmed">
-                {isVi ? "Nghe lại bản vừa ghi" : "Play back what you recorded"}
+                {t.pronunciation.playbackHint}
               </Text>
               <audio controls src={localAudioUrl}>
-                {isVi ? "Bản ghi của bạn" : "Your recording"}
+                {t.pronunciation.yourRecordingFallback}
               </audio>
             </Stack>
           )}

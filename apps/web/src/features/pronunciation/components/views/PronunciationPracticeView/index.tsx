@@ -24,7 +24,7 @@ interface PronunciationPracticeViewProps {
 export function PronunciationPracticeView({
   promptId,
 }: PronunciationPracticeViewProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const { data, loading, error, refetch } = useSpeakingPromptQuery({
     variables: { id: promptId },
   });
@@ -39,7 +39,7 @@ export function PronunciationPracticeView({
           thing={{ vi: "câu luyện phát âm", en: "prompt" }}
           back={{
             href: "/study/pronunciation",
-            label: isVi ? "Về danh sách câu luyện" : "Back to prompts",
+            label: t.pronunciation.backToPromptsButton,
           }}
           onRetry={() => void refetch()}
         />
@@ -67,7 +67,7 @@ function Practice({
     ReturnType<typeof useSpeakingPromptQuery>["data"]
   >["speakingPrompt"];
 }) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const {
     phase,
     recordingSeconds,
@@ -95,7 +95,7 @@ function Practice({
             size="sm"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Quay lại thư viện phát âm" : "Back to library"}
+            {t.pronunciation.backToLibraryButton}
           </Button>
 
           <Stack gap={2} align="center">
@@ -123,7 +123,7 @@ function Practice({
         {errorMessage !== null && (
           <Alert
             color="warn"
-            title={isVi ? "Chưa xong" : "Not finished"}
+            title={t.pronunciation.notFinishedTitle}
             withCloseButton
             onClose={reset}
           >

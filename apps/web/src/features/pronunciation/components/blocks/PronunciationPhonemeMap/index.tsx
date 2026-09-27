@@ -13,7 +13,7 @@ interface PronunciationPhonemeMapProps {
 export function PronunciationPhonemeMap({
   sounds,
 }: PronunciationPhonemeMapProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const handleSpeak = (symbol: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -34,14 +34,10 @@ export function PronunciationPhonemeMap({
         <Group justify="space-between" align="center">
           <Box>
             <Text fw={700} fz="md" c="dark.9">
-              {isVi
-                ? "Bảng âm vị học quốc tế IPA"
-                : "International Phonetic Alphabet (IPA) Chart"}
+              {t.pronunciation.ipaChartTitle}
             </Text>
             <Text fz="xs" c="dimmed">
-              {isVi
-                ? "Nhấp vào từng âm để nghe phát âm mẫu"
-                : "Click a sound to hear it"}
+              {t.pronunciation.ipaChartSubtitle}
             </Text>
           </Box>
         </Group>
@@ -49,7 +45,7 @@ export function PronunciationPhonemeMap({
         {/* Vowels */}
         <Stack gap="xs">
           <Text fz="xs" fw={700} c="indigo">
-            {isVi ? "NGUYÊN ÂM:" : "VOWELS:"}
+            {t.pronunciation.vowelsHeading}
           </Text>
           <SimpleGrid cols={{ base: 3, sm: 4, md: 6 }} spacing="xs">
             {vowels.map((item, idx) => (
@@ -82,7 +78,7 @@ export function PronunciationPhonemeMap({
         {/* Consonants */}
         <Stack gap="xs" mt="sm">
           <Text fz="xs" fw={700} c="indigo">
-            {isVi ? "PHỤ ÂM:" : "CONSONANTS:"}
+            {t.pronunciation.consonantsHeading}
           </Text>
           <SimpleGrid cols={{ base: 3, sm: 4, md: 6 }} spacing="xs">
             {consonants.map((item, idx) => (

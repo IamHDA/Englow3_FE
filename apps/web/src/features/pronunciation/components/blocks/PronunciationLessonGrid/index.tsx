@@ -14,7 +14,7 @@ interface PronunciationLessonGridProps {
 export function PronunciationLessonGrid({
   prompts,
 }: PronunciationLessonGridProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const categories = useMemo(() => {
@@ -39,7 +39,7 @@ export function PronunciationLessonGrid({
           onChange={setSelectedCategory}
           data={categories.map((c) => ({
             value: c,
-            label: c === "ALL" ? (isVi ? "Tất cả bài học" : "All Lessons") : c,
+            label: c === "ALL" ? t.pronunciation.allLessonsSegment : c,
           }))}
         />
       )}
@@ -48,9 +48,7 @@ export function PronunciationLessonGrid({
       {filteredPrompts.length === 0 && (
         <Card withBorder radius="md" p="xl">
           <Text ta="center" c="dimmed" fz="sm">
-            {isVi
-              ? "Chưa có câu luyện phát âm nào được phát hành. Trong lúc chờ, bạn có thể nghe mẫu từng âm ở bảng IPA bên dưới."
-              : "No pronunciation prompts have been published yet. Meanwhile, you can hear each sound in the IPA chart below."}
+            {t.pronunciation.noPromptsPublished}
           </Text>
         </Card>
       )}
@@ -67,7 +65,7 @@ export function PronunciationLessonGrid({
                 ? [
                     {
                       icon: <IconMicrophone size={15} />,
-                      label: `${isVi ? "Âm" : "Sound"} ${prompt.phonemeTarget}`,
+                      label: `${t.pronunciation.soundPrefix} ${prompt.phonemeTarget}`,
                     },
                   ]
                 : []
@@ -77,12 +75,12 @@ export function PronunciationLessonGrid({
               prompt.bestScorePercent !== null
                 ? {
                     value: prompt.bestScorePercent,
-                    label: isVi ? "Điểm cao nhất" : "Best score",
+                    label: t.pronunciation.bestScoreLabel,
                   }
                 : undefined
             }
             action={{
-              label: isVi ? "Luyện ngay" : "Practise",
+              label: t.pronunciation.practiceNowButton,
               href: `/study/pronunciation/${prompt.id}`,
             }}
           />

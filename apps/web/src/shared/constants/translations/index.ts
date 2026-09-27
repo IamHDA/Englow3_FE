@@ -304,6 +304,40 @@ export interface PronunciationTranslations {
   consonants: string;
   diphthongs: string;
   lessonsList: string;
+  allLessonsSegment: string;
+  noPromptsPublished: string;
+  soundPrefix: string;
+  bestScoreLabel: string;
+  practiceNowButton: string;
+  ipaChartTitle: string;
+  ipaChartSubtitle: string;
+  vowelsHeading: string;
+  consonantsHeading: string;
+  noPhonemeDetail: string;
+  pronunciationScoreTitle: string;
+  scoringExplanation: string;
+  recordAgainButton: string;
+  completenessLabel: string;
+  referenceLabel: string;
+  recognizedLabel: string;
+  wordByWordLabel: string;
+  hoverWordHint: string;
+  yourRecordingLabel: string;
+  yourRecordingFallback: string;
+  notScoredTitle: string;
+  uploadingLabel: string;
+  scoringLabel: string;
+  sayThisLabel: string;
+  hearItButton: string;
+  slowlyButton: string;
+  tipsLabel: string;
+  recordingBadge: string;
+  stopAndScoreButton: string;
+  playbackHint: string;
+  couldNotLoadPrompts: string;
+  backToPromptsButton: string;
+  backToLibraryButton: string;
+  notFinishedTitle: string;
 }
 
 export interface DailyPathTranslations {
@@ -1016,6 +1050,42 @@ export const translations: Record<Language, AppTranslations> = {
       consonants: "Phụ âm",
       diphthongs: "Nguyên âm đôi",
       lessonsList: "Danh sách bài học phát âm",
+      allLessonsSegment: "Tất cả bài học",
+      noPromptsPublished:
+        "Chưa có câu luyện phát âm nào được phát hành. Trong lúc chờ, bạn có thể nghe mẫu từng âm ở bảng IPA bên dưới.",
+      soundPrefix: "Âm",
+      bestScoreLabel: "Điểm cao nhất",
+      practiceNowButton: "Luyện ngay",
+      ipaChartTitle: "Bảng âm vị học quốc tế IPA",
+      ipaChartSubtitle: "Nhấp vào từng âm để nghe phát âm mẫu",
+      vowelsHeading: "NGUYÊN ÂM:",
+      consonantsHeading: "PHỤ ÂM:",
+      noPhonemeDetail: "Không có chi tiết âm vị",
+      pronunciationScoreTitle: "Điểm phát âm",
+      scoringExplanation:
+        "Chấm bằng cách so bản ghi của bạn với câu mẫu, không phải bằng cảm tính.",
+      recordAgainButton: "Ghi lại",
+      completenessLabel: "Đầy đủ",
+      referenceLabel: "CÂU MẪU",
+      recognizedLabel: "MÁY NGHE ĐƯỢC",
+      wordByWordLabel: "TỪNG TỪ",
+      hoverWordHint: "Di chuột lên một từ để xem điểm từng âm vị.",
+      yourRecordingLabel: "BẢN GHI CỦA BẠN",
+      yourRecordingFallback: "Bản ghi của bạn",
+      notScoredTitle: "Không chấm được",
+      uploadingLabel: "Đang tải bản ghi lên...",
+      scoringLabel: "Đang chấm...",
+      sayThisLabel: "ĐỌC CÂU NÀY",
+      hearItButton: "Nghe câu mẫu",
+      slowlyButton: "Nghe chậm",
+      tipsLabel: "Mẹo phát âm",
+      recordingBadge: "Đang ghi",
+      stopAndScoreButton: "Dừng và chấm",
+      playbackHint: "Nghe lại bản vừa ghi",
+      couldNotLoadPrompts: "Không tải được danh sách",
+      backToPromptsButton: "Về danh sách câu luyện",
+      backToLibraryButton: "Quay lại thư viện phát âm",
+      notFinishedTitle: "Chưa xong",
     },
     dailyPath: {
       title: "Lộ trình học tập mỗi ngày",
@@ -1776,6 +1846,42 @@ export const translations: Record<Language, AppTranslations> = {
       consonants: "Consonants",
       diphthongs: "Diphthongs",
       lessonsList: "Pronunciation Lessons",
+      allLessonsSegment: "All Lessons",
+      noPromptsPublished:
+        "No pronunciation prompts have been published yet. Meanwhile, you can hear each sound in the IPA chart below.",
+      soundPrefix: "Sound",
+      bestScoreLabel: "Best score",
+      practiceNowButton: "Practise",
+      ipaChartTitle: "International Phonetic Alphabet (IPA) Chart",
+      ipaChartSubtitle: "Click a sound to hear it",
+      vowelsHeading: "VOWELS:",
+      consonantsHeading: "CONSONANTS:",
+      noPhonemeDetail: "No phoneme detail",
+      pronunciationScoreTitle: "Pronunciation score",
+      scoringExplanation:
+        "Scored by comparing your recording against the sentence, not by opinion.",
+      recordAgainButton: "Record again",
+      completenessLabel: "Completeness",
+      referenceLabel: "REFERENCE",
+      recognizedLabel: "WHAT WAS HEARD",
+      wordByWordLabel: "WORD BY WORD",
+      hoverWordHint: "Hover a word for its phoneme scores.",
+      yourRecordingLabel: "YOUR RECORDING",
+      yourRecordingFallback: "Your recording",
+      notScoredTitle: "Not scored",
+      uploadingLabel: "Uploading your recording...",
+      scoringLabel: "Scoring...",
+      sayThisLabel: "SAY THIS",
+      hearItButton: "Hear it",
+      slowlyButton: "Slowly",
+      tipsLabel: "Tips",
+      recordingBadge: "Recording",
+      stopAndScoreButton: "Stop and score",
+      playbackHint: "Play back what you recorded",
+      couldNotLoadPrompts: "Could not load prompts",
+      backToPromptsButton: "Back to prompts",
+      backToLibraryButton: "Back to library",
+      notFinishedTitle: "Not finished",
     },
     dailyPath: {
       title: "Adaptive Daily Learning Path",

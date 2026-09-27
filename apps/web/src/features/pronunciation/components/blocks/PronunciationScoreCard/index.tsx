@@ -59,7 +59,7 @@ function ScoreTile({ label, value }: { label: string; value: number | null }) {
 
 /** Màu theo điểm của từng từ; từ không có điểm để nguyên màu chữ thường. */
 function WordChip({ word }: { word: SpeakingWord }) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const accuracy = word.accuracyPercent;
   const phonemes = word.phonemes
     .map(
@@ -68,12 +68,7 @@ function WordChip({ word }: { word: SpeakingWord }) {
     )
     .join("  ");
 
-  const label =
-    phonemes === ""
-      ? isVi
-        ? "Không có chi tiết âm vị"
-        : "No phoneme detail"
-      : phonemes;
+  const label = phonemes === "" ? t.pronunciation.noPhonemeDetail : phonemes;
 
   return (
     <Tooltip label={label} withArrow multiline maw={280}>
@@ -95,7 +90,7 @@ export function PronunciationScoreCard({
   attempt,
   onRetry,
 }: PronunciationScoreCardProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const overall = attempt.pronunciationPercent;
 
   return (
@@ -121,12 +116,10 @@ export function PronunciationScoreCard({
             />
             <Stack gap={2}>
               <Text fw={800} fz="lg" c="dark.9">
-                {isVi ? "Điểm phát âm" : "Pronunciation score"}
+                {t.pronunciation.pronunciationScoreTitle}
               </Text>
               <Text fz="xs" c="dimmed" maw={360}>
-                {isVi
-                  ? "Chấm bằng cách so bản ghi của bạn với câu mẫu, không phải bằng cảm tính."
-                  : "Scored by comparing your recording against the sentence, not by opinion."}
+                {t.pronunciation.scoringExplanation}
               </Text>
             </Stack>
           </Group>
@@ -138,25 +131,25 @@ export function PronunciationScoreCard({
             leftSection={<IconRotateClockwise size={16} />}
             onClick={onRetry}
           >
-            {isVi ? "Ghi lại" : "Record again"}
+            {t.pronunciation.recordAgainButton}
           </Button>
         </Group>
 
         <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="sm">
           <ScoreTile
-            label={isVi ? "Chính xác" : "Accuracy"}
+            label={t.dictation.accuracyScore}
             value={attempt.accuracyPercent}
           />
           <ScoreTile
-            label={isVi ? "Trôi chảy" : "Fluency"}
+            label={t.pronunciation.fluencyScore}
             value={attempt.fluencyPercent}
           />
           <ScoreTile
-            label={isVi ? "Đầy đủ" : "Completeness"}
+            label={t.pronunciation.completenessLabel}
             value={attempt.completenessPercent}
           />
           <ScoreTile
-            label={isVi ? "Ngữ điệu" : "Prosody"}
+            label={t.pronunciation.intonationScore}
             value={attempt.prosodyPercent}
           />
         </SimpleGrid>
@@ -167,14 +160,14 @@ export function PronunciationScoreCard({
         */}
         <Stack gap={6}>
           <Text fz="xs" fw={700} c="dimmed">
-            {isVi ? "CÂU MẪU" : "REFERENCE"}
+            {t.pronunciation.referenceLabel}
           </Text>
           <Text fz="sm" c="dark.8">
             {attempt.referenceText}
           </Text>
 
           <Text fz="xs" fw={700} c="dimmed" mt="xs">
-            {isVi ? "MÁY NGHE ĐƯỢC" : "WHAT WAS HEARD"}
+            {t.pronunciation.recognizedLabel}
           </Text>
           <Text fz="sm" c="dark.8" fs="italic">
             {attempt.recognizedText ?? "—"}
@@ -184,7 +177,7 @@ export function PronunciationScoreCard({
         {attempt.words.length > 0 && (
           <Stack gap={6}>
             <Text fz="xs" fw={700} c="dimmed">
-              {isVi ? "TỪNG TỪ" : "WORD BY WORD"}
+              {t.pronunciation.wordByWordLabel}
             </Text>
             <Group gap={6}>
               {attempt.words.map((word) => (
@@ -192,9 +185,7 @@ export function PronunciationScoreCard({
               ))}
             </Group>
             <Text fz={10} c="dimmed">
-              {isVi
-                ? "Di chuột lên một từ để xem điểm từng âm vị."
-                : "Hover a word for its phoneme scores."}
+              {t.pronunciation.hoverWordHint}
             </Text>
           </Stack>
         )}
@@ -202,16 +193,16 @@ export function PronunciationScoreCard({
         {attempt.audioUrl !== "" && (
           <Box>
             <Text fz="xs" fw={700} c="dimmed" mb={6}>
-              {isVi ? "BẢN GHI CỦA BẠN" : "YOUR RECORDING"}
+              {t.pronunciation.yourRecordingLabel}
             </Text>
             <audio controls preload="none" src={attempt.audioUrl}>
-              {isVi ? "Bản ghi của bạn" : "Your recording"}
+              {t.pronunciation.yourRecordingFallback}
             </audio>
           </Box>
         )}
 
         {attempt.errorCode !== null && (
-          <Alert color="warn" title={isVi ? "Không chấm được" : "Not scored"}>
+          <Alert color="warn" title={t.pronunciation.notScoredTitle}>
             <Text fz="sm">{attempt.errorCode}</Text>
           </Alert>
         )}
