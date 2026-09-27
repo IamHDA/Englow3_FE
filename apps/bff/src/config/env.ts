@@ -22,11 +22,41 @@ export function parseAllowedOrigins(configured: string | undefined): string[] {
     .filter((origin) => origin !== "");
 }
 
+/**
+ * A blank string counts as missing - `FOO=` in a `.env` file is almost always
+ * someone forgetting the value, not choosing an empty one on purpose.
+ */
+export function requiredString(name: string, raw: string | undefined, fallback?: string): string {
+  const value = raw === undefined || raw === "" ? fallback : raw;
+  if (value === undefined) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+export function requiredUrl(name: string, raw: string | undefined, fallback?: string): string {
+  const value = requiredString(name, raw, fallback);
+  try {
+    new URL(value);
+  } catch {
+    throw new Error(`Environment variable ${name} must be a valid URL, got "${value}"`);
+  }
+  return value;
+}
+
+export function positiveInt(name: string, raw: string | undefined, fallback?: number): number {
+  const value = raw === undefined || raw === "" ? fallback : Number(raw);
+  if (value === undefined || !Number.isInteger(value) || value <= 0) {
+    throw new Error(`Environment variable ${name} must be a positive integer, got "${raw ?? fallback}"`);
+  }
+  return value;
+}
+
 export const env = {
-  port: Number(process.env.PORT ?? 4000),
-  backendUrl: process.env.BACKEND_URL ?? "http://localhost:8080",
+  port: positiveInt("PORT", process.env.PORT, 4000),
+  backendUrl: requiredUrl("BACKEND_URL", process.env.BACKEND_URL, "http://localhost:8080"),
   // Covers starting the backend call, not finishing async backend work.
-  backendTimeoutMs: Number(process.env.BACKEND_TIMEOUT_MS ?? 10000),
+  backendTimeoutMs: positiveInt("BACKEND_TIMEOUT_MS", process.env.BACKEND_TIMEOUT_MS, 10000),
   allowedOrigins: parseAllowedOrigins(process.env.CORS_ALLOWED_ORIGINS),
 
   /**
@@ -36,6 +66,6 @@ export const env = {
    * service control, and every real screen makes several calls to draw one
    * page. The speaking practice screen alone polls while an assessment runs.
    */
-  rateLimitWindowMs: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000),
-  rateLimitMax: Number(process.env.RATE_LIMIT_MAX ?? 300),
+  rateLimitWindowMs: positiveInt("RATE_LIMIT_WINDOW_MS", process.env.RATE_LIMIT_WINDOW_MS, 60_000),
+  rateLimitMax: positiveInt("RATE_LIMIT_MAX", process.env.RATE_LIMIT_MAX, 300),
 };
