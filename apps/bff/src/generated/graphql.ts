@@ -351,7 +351,7 @@ export type ExamAttempt = {
    */
   expiresAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
-  maxRawScore?: Maybe<Scalars['Float']['output']>;
+  maxRawScore: Scalars['Float']['output'];
   questionCount: Scalars['Int']['output'];
   /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
   questions: Array<AttemptQuestionReview>;
@@ -1014,7 +1014,7 @@ export type MutationUpdateProfileArgs = {
 
 export type OnboardingState = {
   __typename?: 'OnboardingState';
-  certificateLearner?: Maybe<Scalars['Boolean']['output']>;
+  certificateLearner: Scalars['Boolean']['output'];
   currentLevel?: Maybe<CefrLevel>;
   learningPurposeIds: Array<Scalars['Int']['output']>;
   /**
@@ -2089,7 +2089,7 @@ export type ExamAttemptResolvers<ContextType = GraphQLContext, ParentType extend
   examTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expiresAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  maxRawScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  maxRawScore?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   questionCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   questions?: Resolver<Array<ResolversTypes['AttemptQuestionReview']>, ParentType, ContextType>;
   rawScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -2373,7 +2373,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
 }>;
 
 export type OnboardingStateResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['OnboardingState'] = ResolversParentTypes['OnboardingState']> = ResolversObject<{
-  certificateLearner?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  certificateLearner?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   currentLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
   learningPurposeIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   step?: Resolver<ResolversTypes['OnboardingStep'], ParentType, ContextType>;

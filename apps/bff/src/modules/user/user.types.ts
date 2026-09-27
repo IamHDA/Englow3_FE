@@ -1,15 +1,7 @@
-import type { Gender, OnboardingStep, Role } from "../../generated/graphql.js";
+import type { paths } from "../../generated/backend-openapi.js";
 
-// mirrors GET /api/user/me exactly as the backend returns it
-export type UserInformationResponse = {
-  id: string;
-  email: string;
-  fullName: string;
-  displayName: string;
-  gender: Gender | null;
-  birthDate: string | null; // "YYYY-MM-DD"
-  avatarUrl: string | null;
-  bannerUrl: string | null;
-  onboardingStep: OnboardingStep;
-  role: Role;
-};
+// Derived from the endpoint's own contract (Phase 07C), not hand-mirrored -
+// GET /api/user/me and PUT /api/user/me/profile answer with the same shape,
+// so one canonical path stands in for both.
+export type UserInformationResponse =
+  paths["/api/user/me"]["get"]["responses"][200]["content"]["application/json"];

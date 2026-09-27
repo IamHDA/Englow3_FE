@@ -1,217 +1,72 @@
-import type {
-  CertificateType,
-  CertificateVariant,
-  ExamAttemptStatus,
-  ExamStatus,
-  ExamType,
-  LearnerAttemptStatus,
-  TargetLevel,
-} from "../../generated/graphql.js";
+import type { LearnerAttemptStatus } from "../../generated/graphql.js";
+import type { paths } from "../../generated/backend-openapi.js";
 
-// mirrors GET /api/admin/exams exactly as the backend returns it
-export type ExamListItemResponse = {
-  id: string;
-  title: string;
-  examType: ExamType;
-  // null on a paper with no certificate (e.g. a PLACEMENT exam) - the
-  // backend's own Exam.requireCoherentCertificate allows that combination.
-  certificateType: CertificateType | null;
-  certificateVariant: CertificateVariant | null;
-  targetLevel: TargetLevel | null;
-  status: ExamStatus;
-  versionNumber: number;
-  createdByUserId: string;
-  publishedAt: string | null; // ISO-8601 instant, null until published
-  createdAt: string; // ISO-8601 instant
-  submittedForReviewAt: string | null;
-  // Why the paper came back. On the list because that is where its author reads it.
-  reviewNote: string | null;
-};
+// mirrors GET /api/admin/exams/{id}/... etc. Admin-side exam list/detail.
+export type ExamPageResponse =
+  paths["/api/admin/exams"]["get"]["responses"][200]["content"]["application/json"];
+export type ExamListItemResponse = ExamPageResponse["items"][number];
 
 // mirrors ExamResponse (POST create/publish/archive, PUT update) exactly as the backend returns it
-export type ExamResponse = {
-  id: string;
-  title: string;
-  description: string;
-  examType: ExamType;
-  certificateType: CertificateType | null;
-  certificateVariant: CertificateVariant | null;
-  targetLevel: TargetLevel | null;
-  durationSeconds: number;
-  maxRawScore: number;
-  passScore: number | null;
-  status: ExamStatus;
-  versionNumber: number;
-  createdByUserId: string;
-  publishedAt: string | null; // ISO-8601 instant, null until published
-  submittedForReviewAt: string | null;
-  reviewedByUserId: string | null;
-  reviewedAt: string | null;
-  reviewNote: string | null;
-};
+export type ExamResponse =
+  paths["/api/admin/exams"]["post"]["responses"][201]["content"]["application/json"];
 
-// mirrors com.englow3.shared.page.PageResponse exactly as the backend returns it
-export type ExamPageResponse = {
-  items: ExamListItemResponse[];
-  page: number;
-  size: number;
-  totalItems: number;
-  totalPages: number;
-};
+// mirrors GET /api/exams (learner search) - returns published exams
+type RawLearnerExamPageResponse =
+  paths["/api/exams"]["get"]["responses"][200]["content"]["application/json"];
+type RawLearnerExamItemResponse = RawLearnerExamPageResponse["items"][number];
 
-// mirrors LearnerExamCardResponse from GET /api/exams
-export type LearnerExamItemResponse = {
-  id: string;
-  title: string;
-  description: string;
-  examType: ExamType;
-  certificateType: CertificateType | null;
-  certificateVariant: CertificateVariant | null;
-  targetLevel: TargetLevel | null;
-  durationSeconds: number;
-  maxRawScore: number;
-  passScore: number | null;
-  questionCount: number;
-  status: ExamStatus;
-  publishedAt: string | null;
-  /** Per learner. Null until they have finished a sitting. */
-  bestScorePercentage: number | null;
+/**
+ * `attemptStatus` is computed as a plain `String` on the backend (see
+ * LearnerExamListItemResult.java: `hasLiveAttempt ? IN_PROGRESS : ...`), not
+ * the Java enum, so OpenAPI can only say `string`. Reasserted here as the
+ * fixed set of values that expression actually produces.
+ */
+export type LearnerExamItemResponse = Omit<
+  RawLearnerExamItemResponse,
+  "attemptStatus"
+> & {
   attemptStatus: LearnerAttemptStatus;
 };
-
-export type LearnerExamPageResponse = {
+// mirrors LearnerExamCardResponse from GET /api/exams
+export type LearnerExamPageResponse = Omit<
+  RawLearnerExamPageResponse,
+  "items"
+> & {
   items: LearnerExamItemResponse[];
-  page: number;
-  size: number;
-  totalItems: number;
-  totalPages: number;
 };
 
 // The paper the learner sits, from GET /api/exam-attempts/{attemptId}/paper.
 // It deliberately carries no `correct` flag and no explanation: the backend
 // strips both so the answer key never reaches the browser mid-attempt. They
 // come back afterwards on the attempt result instead.
-export type QuestionOptionDto = {
-  id: string;
-  content: string;
-  orderNo: number;
-};
-
-export type QuestionDto = {
-  id: string;
-  questionType: string;
-  content: string;
-  difficultyLevel: string;
-  skillType: string;
-  questionCategory: string | null;
-  orderNo: number;
-  maxRawScore: number;
-  options: QuestionOptionDto[];
-};
-
+export type ExamPaperResponse =
+  paths["/api/exam-attempts/{id}/paper"]["get"]["responses"][200]["content"]["application/json"];
+export type ExamSectionDto = ExamPaperResponse["sections"][number];
+export type SectionPartDto = ExamSectionDto["parts"][number];
 // The backend resolves object keys into pre-signed URLs before answering, so
 // what arrives here is already fetchable and expires on its own.
-export type QuestionSetDto = {
-  id: string;
-  title: string | null;
-  instruction: string | null;
-  orderNo: number;
-  content: string | null;
-  audioUrl: string | null;
-  imageUrl: string | null;
-  questions: QuestionDto[];
-};
-
-export type SectionPartDto = {
-  id: string;
-  orderNo: number;
-  title: string;
-  instruction: string | null;
-  content: string | null;
-  audioUrl: string | null;
-  imageUrl: string | null;
-  questionSets: QuestionSetDto[];
-};
-
-export type ExamSectionDto = {
-  id: string;
-  sectionType: string;
-  orderNo: number;
-  maxRawScore: number;
-  scoredByCriteria: boolean;
-  timeLimitSeconds: number | null;
-  parts: SectionPartDto[];
-};
-
-export type ExamPaperResponse = {
-  id: string;
-  title: string;
-  description: string;
-  examType: ExamType;
-  certificateType: CertificateType | null;
-  certificateVariant: CertificateVariant | null;
-  targetLevel: TargetLevel | null;
-  durationSeconds: number;
-  maxRawScore: number;
-  passScore: number | null;
-  versionNumber: number;
-  sections: ExamSectionDto[];
-};
-
-export type AttemptOptionReviewDto = {
-  optionId: string;
-  correct: boolean;
-  explanation: string | null;
-};
-
-export type AttemptQuestionReviewDto = {
-  questionId: string;
-  selectedOptionIds: string[];
-  correctOptionIds: string[];
-  correct: boolean;
-  awardedRawScore: number;
-  explanation: string | null;
-  options: AttemptOptionReviewDto[];
-};
+export type QuestionSetDto = SectionPartDto["questionSets"][number];
+export type QuestionDto = QuestionSetDto["questions"][number];
+export type QuestionOptionDto = QuestionDto["options"][number];
 
 // mirrors ExamAttemptResponse - the shape POST /api/exams/{id}/attempts,
 // POST /api/exam-attempts/{id}/submit and GET /api/exam-attempts/{id}/result
 // all answer with. The scoring fields stay null while the attempt is
-// IN_PROGRESS, and `questions` is empty until it is scored.
-export type ExamAttemptResponse = {
-  id: string;
-  examId: string;
-  status: ExamAttemptStatus;
-  startedAt: string; // ISO-8601 instant
-  expiresAt: string; // ISO-8601 instant - the deadline the UI counts down to
-  submittedAt: string | null;
-  scoredAt: string | null;
-  rawScore: number | null;
-  maxRawScore: number | null;
-  scorePercentage: number | null;
-  correctAnswerCount: number | null;
-  questionCount: number;
-  /** True when the backend handed back an attempt that was already open. */
-  resumed: boolean;
-  /** Null except on a history row - a sitting knows its own paper's name. */
-  examTitle: string | null;
-  questions: AttemptQuestionReviewDto[];
-};
+// IN_PROGRESS, and `questions` is empty until it is scored. The backend
+// answers 200 (resumed) or 201 (new attempt) on start - same shape either way.
+type StartExamAttemptOp = paths["/api/exams/{id}/attempts"]["post"];
+export type ExamAttemptResponse =
+  | StartExamAttemptOp["responses"][200]["content"]["application/json"]
+  | StartExamAttemptOp["responses"][201]["content"]["application/json"];
+export type AttemptQuestionReviewDto = ExamAttemptResponse["questions"][number];
+export type AttemptOptionReviewDto =
+  AttemptQuestionReviewDto["options"][number];
 
-export type ExamAttemptPageResponse = {
-  items: ExamAttemptResponse[];
-  page: number;
-  size: number;
-  totalItems: number;
-  totalPages: number;
-};
+// GET /api/exam-attempts - the learner's own sittings, newest first
+export type ExamAttemptPageResponse =
+  paths["/api/exam-attempts"]["get"]["responses"][200]["content"]["application/json"];
 
 // mirrors POST /api/exam-attempts/{id}/submit request body
-export type SubmitExamAttemptRequest = {
-  answers: SubmittedAnswer[];
-};
-
-export type SubmittedAnswer = {
-  questionId: string;
-  selectedOptionIds: string[];
-};
+export type SubmitExamAttemptRequest =
+  paths["/api/exam-attempts/{id}/submit"]["post"]["requestBody"]["content"]["application/json"];
+export type SubmittedAnswer = SubmitExamAttemptRequest["answers"][number];

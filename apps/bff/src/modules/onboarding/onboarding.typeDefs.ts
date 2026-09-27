@@ -36,7 +36,7 @@ export const onboardingTypeDefs = /* GraphQL */ `
     """
     step: OnboardingStep!
     learningPurposeIds: [Int!]!
-    certificateLearner: Boolean
+    certificateLearner: Boolean!
     targetCertificateType: String
     currentLevel: CefrLevel
     targetScore: Float

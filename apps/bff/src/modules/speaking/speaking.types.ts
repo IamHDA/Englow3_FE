@@ -1,44 +1,43 @@
-import type { SpeakingAttemptStatus } from "../../generated/graphql.js";
+import type { paths } from "../../generated/backend-openapi.js";
 
-// mirrors GET /api/speaking/prompts exactly as the backend returns it
-export type SpeakingPromptResponse = {
-  id: string;
-  slug: string;
-  title: string;
-  category: string;
-  targetLevel: string | null;
-  /** What the learner is asked to say. The accuracy score is accuracy against this. */
-  referenceText: string;
-  ipaTranscript: string | null;
-  translationVi: string | null;
-  phonemeTarget: string | null;
-  /** Coaching notes, sent as a JSON array rather than a string of JSON. */
+// GET /api/speaking/prompts
+type RawSpeakingPromptPageResponse =
+  paths["/api/speaking/prompts"]["get"]["responses"][200]["content"]["application/json"];
+type RawSpeakingPromptResponse = RawSpeakingPromptPageResponse["items"][number];
+
+/**
+ * `tips` is `@JsonRawValue String tips` on the backend (see
+ * SpeakingPromptResponse.java) - a real JSON array on the wire, sent as
+ * coaching notes rather than a string of JSON, but invisible as such to
+ * springdoc/OpenAPI. Reasserted here as the array it actually is.
+ */
+export type SpeakingPromptResponse = Omit<RawSpeakingPromptResponse, "tips"> & {
   tips: string[];
-  /** This learner's own best, null until they have finished one. */
-  bestScorePercent: number | null;
 };
-
-export type SpeakingPromptPageResponse = {
+export type SpeakingPromptPageResponse = Omit<
+  RawSpeakingPromptPageResponse,
+  "items"
+> & {
   items: SpeakingPromptResponse[];
-  page: number;
-  size: number;
-  totalItems: number;
-  totalPages: number;
 };
 
-export type SpeakingPhonemeScore = {
-  phoneme: string;
-  accuracy: number | null;
-};
+// mirrors POST /api/speaking/prompts/{id}/attempts
+export type SpeakingUploadTicketResponse =
+  paths["/api/speaking/prompts/{id}/attempts"]["post"]["responses"][201]["content"]["application/json"];
 
-export type SpeakingWordResponse = {
-  orderNo: number;
-  word: string;
-  accuracyPercent: number | null;
-  /** The provider's own label: Mispronunciation, Omission, Insertion, None. */
-  errorType: string | null;
-  offsetMs: number | null;
-  durationMs: number | null;
+export type SpeakingPhonemeScore = { phoneme: string; accuracy: number | null };
+
+type RawSpeakingAttemptResponse =
+  paths["/api/speaking/attempts/{id}"]["get"]["responses"][200]["content"]["application/json"];
+type RawSpeakingWordResponse = RawSpeakingAttemptResponse["words"][number];
+
+/**
+ * The backend writes `phonemes` with `@JsonRawValue` (see WordResponse.java) so
+ * the wire is a real JSON array, but that annotation is invisible to
+ * springdoc/OpenAPI, which can only describe the record component's own Java
+ * type: `String`. Reasserted here as the array it actually is.
+ */
+export type SpeakingWordResponse = Omit<RawSpeakingWordResponse, "phonemes"> & {
   phonemes: SpeakingPhonemeScore[];
 };
 
@@ -48,33 +47,10 @@ export type SpeakingWordResponse = {
  * and turning a missing measurement into a zero would tell a learner they
  * scored nothing when nothing was measured.
  */
-export type SpeakingAttemptResponse = {
-  id: string;
-  speakingPromptId: string;
-  promptTitle: string;
-  referenceText: string;
-  status: SpeakingAttemptStatus;
-  /** Pre-signed and short-lived; the backend resolves the object key. */
-  audioUrl: string;
-  recognizedText: string | null;
-  accuracyPercent: number | null;
-  fluencyPercent: number | null;
-  completenessPercent: number | null;
-  prosodyPercent: number | null;
-  pronunciationPercent: number | null;
-  /** Why no score will arrive, when none will. */
-  errorCode: string | null;
-  createdAt: string;
-  assessedAt: string | null;
+export type SpeakingAttemptResponse = Omit<
+  RawSpeakingAttemptResponse,
+  "words"
+> & {
   /** Empty while the assessment is still queued. */
   words: SpeakingWordResponse[];
-};
-
-// mirrors POST /api/speaking/prompts/{id}/attempts
-export type SpeakingUploadTicketResponse = {
-  attemptId: string;
-  /** A presigned PUT straight to object storage - the audio never passes through this BFF. */
-  uploadUrl: string;
-  contentType: string;
-  expiresInSeconds: number;
 };

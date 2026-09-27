@@ -291,7 +291,7 @@ export const examTypeDefs = /* GraphQL */ `
     scoredAt: DateTime
     """Null until the attempt is scored."""
     rawScore: Float
-    maxRawScore: Float
+    maxRawScore: Float!
     scorePercentage: Float
     correctAnswerCount: Int
     questionCount: Int!
