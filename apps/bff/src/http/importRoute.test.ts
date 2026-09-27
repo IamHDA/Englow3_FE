@@ -29,7 +29,11 @@ function start(): Promise<string> {
 function call(
   base: string,
   options: { token?: string; body?: string } = {},
-): Promise<{ status: number; body: string }> {
+): Promise<{
+  status: number;
+  body: string;
+  headers: http.IncomingHttpHeaders;
+}> {
   const url = new URL(`${base}/rest/admin/flashcards/import/validate`);
 
   return new Promise((resolve, reject) => {
@@ -48,7 +52,11 @@ function call(
         let body = "";
         response.on("data", (chunk) => (body += chunk));
         response.on("end", () =>
-          resolve({ status: response.statusCode ?? 0, body }),
+          resolve({
+            status: response.statusCode ?? 0,
+            body,
+            headers: response.headers,
+          }),
         );
       },
     );
@@ -89,19 +97,20 @@ describe("POST /rest/admin/flashcards/import/validate", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("sends the backend a request id the BFF made", async () => {
+  it("sends the backend a request id the BFF made, and hands it back on the response", async () => {
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response("{}", { status: 200 }));
     const base = await start();
 
-    await call(base, { token: "Bearer token" });
+    const response = await call(base, { token: "Bearer token" });
 
     const headers = fetchSpy.mock.calls.at(-1)?.[1]?.headers as Record<
       string,
       string
     >;
     expect(headers["x-request-id"]).toMatch(/^[0-9a-f-]{36}$/);
+    expect(response.headers["x-request-id"]).toBe(headers["x-request-id"]);
   });
 
   it("forwards the learner's token to the backend", async () => {
@@ -171,6 +180,9 @@ describe("POST /rest/admin/flashcards/import/validate", () => {
       where: "rest /rest/admin/flashcards/import/validate",
       status: 500,
       traceId: "t-1",
+      backendMethod: "POST",
+      backendPath: "/api/admin/flashcards/import/validate",
+      durationMs: expect.any(Number),
     });
   });
 });

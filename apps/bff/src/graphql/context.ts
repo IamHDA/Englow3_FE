@@ -37,8 +37,10 @@ export type GraphQLContext = {
 // and reusing it across requests would leak one user's session into another's.
 export async function createContext({
   req,
+  res,
 }: ExpressContextFunctionArgument): Promise<GraphQLContext> {
   const { token, requestId, client } = createBackendClient(req.headers);
+  res.setHeader("x-request-id", requestId);
 
   return {
     token,

@@ -27,6 +27,9 @@ export function logServerError({
       status: backend?.status,
       backendCode: backend?.code,
       traceId: backend?.traceId,
+      backendMethod: backend?.method,
+      backendPath: backend?.path,
+      durationMs: backend?.durationMs,
       // A BackendError's stack only points at the client; the backend's own
       // trace id is the way into the other side.
       stack: !backend && error instanceof Error ? error.stack : undefined,

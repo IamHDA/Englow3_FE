@@ -41,6 +41,7 @@ export class BackendClient {
   async send(method: string, path: string, body?: unknown): Promise<Response> {
     // A FormData body sets its own multipart content-type, boundary included.
     const upload = body instanceof FormData;
+    const start = Date.now();
     try {
       return await fetch(`${this.baseUrl}${path}`, {
         method,
@@ -63,7 +64,15 @@ export class BackendClient {
     } catch {
       // Connection refused, DNS failure, or the timeout above firing - the
       // backend was never reached, so there is no HTTP status to report.
-      throw new BackendError("Failed to reach the backend service", 0);
+      throw new BackendError(
+        "Failed to reach the backend service",
+        0,
+        undefined,
+        undefined,
+        method,
+        path,
+        Date.now() - start,
+      );
     }
   }
 
@@ -72,9 +81,15 @@ export class BackendClient {
     path: string,
     body?: unknown,
   ): Promise<T> {
+    const start = Date.now();
     const response = await this.send(method, path, body);
     if (!response.ok) {
-      throw await BackendError.fromResponse(response);
+      throw await BackendError.fromResponse(
+        response,
+        method,
+        path,
+        Date.now() - start,
+      );
     }
     return (await response.json()) as T;
   }
@@ -86,6 +101,11 @@ function extractBearerToken(header: string | undefined): string | null {
   return token || null;
 }
 
+// Matches what randomUUID() produces, so only a well-formed id is ever
+// adopted - never an arbitrary string a client typed into the backend's logs.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
  * The one way an incoming request becomes a backend client, so GraphQL and REST
  * agree on whose token goes out and which request id it travels under. The token
@@ -94,11 +114,16 @@ function extractBearerToken(header: string | undefined): string | null {
  *
  * The request id is made here, one per incoming request, so every backend call a
  * GraphQL operation fans out into shares it. A caller's own `x-request-id` is
- * not adopted: it would put whatever a client typed into the backend's logs.
+ * reused when it is a UUID (so a trace that starts upstream keeps its id end to
+ * end); anything else is replaced rather than forwarded into the backend's logs.
  */
 export function createBackendClient(headers: IncomingHttpHeaders) {
   const token = extractBearerToken(headers.authorization);
-  const requestId = randomUUID();
+  const incomingRequestId = headers["x-request-id"];
+  const requestId =
+    typeof incomingRequestId === "string" && UUID_RE.test(incomingRequestId)
+      ? incomingRequestId
+      : randomUUID();
 
   return {
     token,

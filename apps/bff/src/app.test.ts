@@ -26,6 +26,9 @@ it("serves GraphQL and REST from the one app both entry points use", async () =>
     body: JSON.stringify({ query: "{ health }" }),
   });
   expect(await graphql.json()).toEqual({ data: { health: "ok" } });
+  expect(graphql.headers.get("x-request-id")).toMatch(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+  );
 
   // Refused by the route itself for want of a token, so no backend is reached.
   const rest = await fetch(`${base}/rest/admin/flashcards/import/validate`, {

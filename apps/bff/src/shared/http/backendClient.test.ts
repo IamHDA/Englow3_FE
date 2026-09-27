@@ -71,6 +71,9 @@ describe("BackendClient", () => {
       status: 401,
       code: "UNAUTHENTICATED",
       message: "no token",
+      method: "GET",
+      path: "/api/user/me",
+      durationMs: expect.any(Number),
     });
   });
 
@@ -173,7 +176,7 @@ describe("createBackendClient", () => {
     });
   });
 
-  it("makes a request id per request instead of adopting the caller's", async () => {
+  it("makes one request id per request, shared by every backend call it fans out into", async () => {
     // A fresh Response per call: a body can only be read once.
     const fetchMock = vi
       .fn()
@@ -182,7 +185,7 @@ describe("createBackendClient", () => {
     const uuid =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
-    const first = createBackendClient({ "x-request-id": "from-the-caller" });
+    const first = createBackendClient({});
     await first.client.get("/a");
     await first.client.get("/b");
     await createBackendClient({}).client.get("/c");
@@ -195,6 +198,25 @@ describe("createBackendClient", () => {
     expect(b).toBe(a); // one request, one id, however many backend calls
     expect(c).toMatch(uuid);
     expect(c).not.toBe(a);
+  });
+
+  it("reuses the caller's x-request-id when it is a well-formed UUID", () => {
+    const { requestId } = createBackendClient({
+      "x-request-id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    });
+
+    expect(requestId).toBe("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+  });
+
+  it("replaces a caller's x-request-id that is not a UUID instead of forwarding it as-is", () => {
+    const { requestId } = createBackendClient({
+      "x-request-id": "from-the-caller",
+    });
+
+    expect(requestId).not.toBe("from-the-caller");
+    expect(requestId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
   });
 
   it("treats anything but a bearer token as no token", () => {

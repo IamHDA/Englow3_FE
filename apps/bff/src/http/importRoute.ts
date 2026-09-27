@@ -69,6 +69,7 @@ export function importRoute(): Router {
  */
 async function forward(req: Request, res: Response, path: string) {
   const { token, requestId, client } = createBackendClient(req.headers);
+  res.setHeader("x-request-id", requestId);
   if (!token) {
     res.status(401).json({ code: "UNAUTHENTICATED", message: "Missing token" });
     return;
@@ -84,6 +85,7 @@ async function forward(req: Request, res: Response, path: string) {
   );
 
   const where = `rest ${req.baseUrl}${req.path}`;
+  const start = Date.now();
   try {
     const response = await client.send("POST", path, form);
 
@@ -91,7 +93,12 @@ async function forward(req: Request, res: Response, path: string) {
     // server's own account of what broke, which is for the log and not the
     // author. The trace id is kept so the two sides can be lined up.
     if (response.status >= 500) {
-      const failure = await BackendError.fromResponse(response);
+      const failure = await BackendError.fromResponse(
+        response,
+        "POST",
+        path,
+        Date.now() - start,
+      );
       logServerError({ requestId, where, error: failure });
       res.status(response.status).json({
         code: "INTERNAL_SERVER_ERROR",
