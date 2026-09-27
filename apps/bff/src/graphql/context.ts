@@ -1,8 +1,12 @@
 import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import { GraphQLError } from "graphql";
 
+import { ContentManagementApi } from "../modules/contentManagement/contentManagement.api.js";
+import { DictationApi } from "../modules/dictation/dictation.api.js";
 import { ExamApi } from "../modules/exam/exam.api.js";
-import { LearningApi } from "../modules/learning/learning.api.js";
+import { FlashcardApi } from "../modules/flashcard/flashcard.api.js";
+import { ProgressApi } from "../modules/progress/progress.api.js";
+import { QuizApi } from "../modules/quiz/quiz.api.js";
 import { SpeakingApi } from "../modules/speaking/speaking.api.js";
 import { TutorApi } from "../modules/tutor/tutor.api.js";
 import { OnboardingApi } from "../modules/onboarding/onboarding.api.js";
@@ -19,7 +23,11 @@ export type GraphQLContext = {
     userApi: UserApi;
     onboardingApi: OnboardingApi;
     examApi: ExamApi;
-    learningApi: LearningApi;
+    flashcardApi: FlashcardApi;
+    quizApi: QuizApi;
+    dictationApi: DictationApi;
+    progressApi: ProgressApi;
+    contentManagementApi: ContentManagementApi;
     speakingApi: SpeakingApi;
     tutorApi: TutorApi;
   };
@@ -47,7 +55,11 @@ export async function createContext({
       userApi: new UserApi(client),
       onboardingApi: new OnboardingApi(client),
       examApi: new ExamApi(client),
-      learningApi: new LearningApi(client),
+      flashcardApi: new FlashcardApi(client),
+      quizApi: new QuizApi(client),
+      dictationApi: new DictationApi(client),
+      progressApi: new ProgressApi(client),
+      contentManagementApi: new ContentManagementApi(client),
       speakingApi: new SpeakingApi(client),
       tutorApi: new TutorApi(client),
     },

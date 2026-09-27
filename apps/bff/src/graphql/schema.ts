@@ -1,8 +1,16 @@
 import { dateScalar, dateTimeScalar } from "./scalars.js";
+import { contentManagementResolvers } from "../modules/contentManagement/contentManagement.resolvers.js";
+import { contentManagementTypeDefs } from "../modules/contentManagement/contentManagement.typeDefs.js";
+import { dictationResolvers } from "../modules/dictation/dictation.resolvers.js";
+import { dictationTypeDefs } from "../modules/dictation/dictation.typeDefs.js";
 import { examResolvers } from "../modules/exam/exam.resolvers.js";
 import { examTypeDefs } from "../modules/exam/exam.typeDefs.js";
-import { learningResolvers } from "../modules/learning/learning.resolvers.js";
-import { learningTypeDefs } from "../modules/learning/learning.typeDefs.js";
+import { flashcardResolvers } from "../modules/flashcard/flashcard.resolvers.js";
+import { flashcardTypeDefs } from "../modules/flashcard/flashcard.typeDefs.js";
+import { progressResolvers } from "../modules/progress/progress.resolvers.js";
+import { progressTypeDefs } from "../modules/progress/progress.typeDefs.js";
+import { quizResolvers } from "../modules/quiz/quiz.resolvers.js";
+import { quizTypeDefs } from "../modules/quiz/quiz.typeDefs.js";
 import { speakingResolvers } from "../modules/speaking/speaking.resolvers.js";
 import { speakingTypeDefs } from "../modules/speaking/speaking.typeDefs.js";
 import { tutorResolvers } from "../modules/tutor/tutor.resolvers.js";
@@ -30,7 +38,11 @@ export const typeDefs = [
   userTypeDefs,
   onboardingTypeDefs,
   examTypeDefs,
-  learningTypeDefs,
+  flashcardTypeDefs,
+  quizTypeDefs,
+  dictationTypeDefs,
+  progressTypeDefs,
+  contentManagementTypeDefs,
   speakingTypeDefs,
   tutorTypeDefs,
 ];
@@ -43,7 +55,11 @@ export const resolvers = {
     ...userResolvers.Query,
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
-    ...learningResolvers.Query,
+    ...flashcardResolvers.Query,
+    ...quizResolvers.Query,
+    ...dictationResolvers.Query,
+    ...progressResolvers.Query,
+    ...contentManagementResolvers.Query,
     ...speakingResolvers.Query,
     ...tutorResolvers.Query,
   },
@@ -51,7 +67,10 @@ export const resolvers = {
     ...userResolvers.Mutation,
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
-    ...learningResolvers.Mutation,
+    ...flashcardResolvers.Mutation,
+    ...quizResolvers.Mutation,
+    ...dictationResolvers.Mutation,
+    ...contentManagementResolvers.Mutation,
     ...speakingResolvers.Mutation,
     ...tutorResolvers.Mutation,
   },
