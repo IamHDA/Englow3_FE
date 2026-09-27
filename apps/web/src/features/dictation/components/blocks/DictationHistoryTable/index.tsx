@@ -21,7 +21,7 @@ interface DictationHistoryTableProps {
 }
 
 export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <Paper radius="md" p="lg" withBorder bg="white">
@@ -39,14 +39,14 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
           <Table verticalSpacing="md" horizontalSpacing="md" highlightOnHover>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>{isVi ? "Thời gian" : "Date"}</Table.Th>
-                <Table.Th>{isVi ? "Bài học" : "Lesson"}</Table.Th>
-                <Table.Th>{isVi ? "Số câu" : "Sentences"}</Table.Th>
-                <Table.Th>{isVi ? "Độ chính xác" : "Accuracy"}</Table.Th>
-                <Table.Th>{isVi ? "Thời lượng" : "Duration"}</Table.Th>
-                <Table.Th>{isVi ? "Gợi ý dùng" : "Hints"}</Table.Th>
+                <Table.Th>{t.dictation.dateColumn}</Table.Th>
+                <Table.Th>{t.dictation.lessonColumn}</Table.Th>
+                <Table.Th>{t.dictation.sentencesColumn}</Table.Th>
+                <Table.Th>{t.dictation.accuracyScore}</Table.Th>
+                <Table.Th>{t.dictation.durationColumn}</Table.Th>
+                <Table.Th>{t.dictation.hintsColumn}</Table.Th>
                 <Table.Th style={{ textAlign: "right" }}>
-                  {isVi ? "Xem lại" : "Action"}
+                  {t.dictation.actionColumn}
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
@@ -55,9 +55,7 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
                 <Table.Tr>
                   <Table.Td colSpan={8}>
                     <Text size="sm" c="ink.5" ta="center" py="md">
-                      {isVi
-                        ? "Chưa có buổi luyện tập nào."
-                        : "No sessions yet."}
+                      {t.dictation.noSessionsYet}
                     </Text>
                   </Table.Td>
                 </Table.Tr>
@@ -104,7 +102,7 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
                       radius="md"
                       leftSection={<Eye size={13} />}
                     >
-                      {isVi ? "Chi tiết" : "Details"}
+                      {t.dictation.detailsButton}
                     </Button>
                   </Table.Td>
                 </Table.Tr>

@@ -29,7 +29,7 @@ export function DictationInputArea({
   onSkip,
   disabled = false,
 }: DictationInputAreaProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
   const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -70,7 +70,7 @@ export function DictationInputArea({
           {/* Shortcuts & Word count */}
           <Group gap="xs">
             <Text size="xs" fw={600} c="ink.6">
-              {isVi ? `${wordCount} từ đã gõ` : `${wordCount} words typed`}
+              {t.dictation.wordsTypedCount.replace("{count}", String(wordCount))}
             </Text>
             <Text size="xs" c="ink.4">
               •
@@ -78,7 +78,7 @@ export function DictationInputArea({
             <Group gap={4} visibleFrom="sm">
               <Kbd size="xs">Ctrl</Kbd> + <Kbd size="xs">Enter</Kbd>
               <Text size="xs" c="ink.5">
-                {isVi ? "để kiểm tra" : "to check"}
+                {t.dictation.toCheckHint}
               </Text>
             </Group>
           </Group>
@@ -93,7 +93,7 @@ export function DictationInputArea({
               disabled={disabled}
               leftSection={<SkipForward size={14} />}
             >
-              {isVi ? "Bỏ qua" : "Skip"}
+              {t.dictation.skipButton}
             </Button>
 
             <Button

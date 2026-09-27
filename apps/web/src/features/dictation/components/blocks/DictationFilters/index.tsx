@@ -23,37 +23,6 @@ interface DictationFiltersProps {
   onViewModeChange: (mode: "grid" | "list") => void;
 }
 
-const EN_TOPICS: Record<string, string> = {
-  ALL: "All Topics",
-  "Daily Conversation": "Daily Conversation",
-  "Business English": "Business English",
-  "IELTS Speaking & Listening": "IELTS Speaking & Listening",
-  "Academic English": "Academic English",
-};
-
-const EN_LEVELS: Record<string, string> = {
-  ALL: "All Levels",
-  Beginner: "Beginner",
-  Elementary: "Elementary",
-  Intermediate: "Intermediate",
-  "Upper Intermediate": "Upper Intermediate",
-  Advanced: "Advanced",
-};
-
-const EN_STATUSES: Record<string, string> = {
-  ALL: "All Statuses",
-  "Not started": "Not started",
-  "In progress": "In progress",
-  Completed: "Completed",
-};
-
-const EN_SORTS: Record<string, string> = {
-  recent: "Recently Studied",
-  popular: "Most Popular",
-  easiest: "Easiest to Hardest",
-  hardest: "Hardest to Easiest",
-};
-
 export function DictationFilters({
   selectedTopic,
   onTopicChange,
@@ -70,22 +39,22 @@ export function DictationFilters({
 
   const topicsData = DICTATION_TOPICS.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : EN_TOPICS[item.value] || item.value,
+    label: isVi ? item.labelVi : item.labelEn,
   }));
 
   const levelsData = DICTATION_LEVELS.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : EN_LEVELS[item.value] || item.value,
+    label: isVi ? item.labelVi : item.labelEn,
   }));
 
   const statusesData = DICTATION_STATUSES.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : EN_STATUSES[item.value] || item.value,
+    label: isVi ? item.labelVi : item.labelEn,
   }));
 
   const sortsData = DICTATION_SORTS.map((item) => ({
     value: item.value,
-    label: isVi ? item.label : EN_SORTS[item.value] || item.label,
+    label: isVi ? item.labelVi : item.labelEn,
   }));
 
   return (
@@ -108,7 +77,7 @@ export function DictationFilters({
             value={selectedTopic}
             onChange={(val) => onTopicChange(val || "ALL")}
             style={{ flex: 1, minWidth: 150 }}
-            aria-label={isVi ? "Lọc theo chủ đề" : "Filter by topic"}
+            aria-label={t.dictation.filterByTopicAria}
           />
 
           <Select
@@ -117,7 +86,7 @@ export function DictationFilters({
             value={selectedLevel}
             onChange={(val) => onLevelChange(val || "ALL")}
             style={{ flex: 1, minWidth: 150 }}
-            aria-label={isVi ? "Lọc theo cấp độ" : "Filter by level"}
+            aria-label={t.dictation.filterByLevelAria}
           />
 
           <Select
@@ -126,7 +95,7 @@ export function DictationFilters({
             value={selectedStatus}
             onChange={(val) => onStatusChange(val || "ALL")}
             style={{ flex: 1, minWidth: 140 }}
-            aria-label={isVi ? "Lọc theo trạng thái" : "Filter by status"}
+            aria-label={t.dictation.filterByStatusAria}
           />
 
           <Select
@@ -135,7 +104,7 @@ export function DictationFilters({
             value={selectedSort}
             onChange={(val) => onSortChange(val || "recent")}
             style={{ flex: 1, minWidth: 150 }}
-            aria-label={isVi ? "Sắp xếp bài học" : "Sort lessons"}
+            aria-label={t.dictation.sortLessonsAria}
           />
         </Flex>
 

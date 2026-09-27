@@ -30,34 +30,32 @@ export function DictationHintDrawer({
   isOpen,
   onToggle,
 }: DictationHintDrawerProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const hints = [
     {
       key: "wordCount",
-      label: isVi ? "Xem số lượng từ trong câu" : "Word count in sentence",
-      value: isVi
-        ? `${sentence.hintWordCount} từ`
-        : `${sentence.hintWordCount} words`,
+      label: t.dictation.hintWordCountLabel,
+      value: `${sentence.hintWordCount} ${t.dictation.wordsUnit}`,
     },
     {
       key: "firstLetters",
-      label: isVi ? "Gợi ý các chữ cái đầu tiên" : "First letter of each word",
+      label: t.dictation.hintFirstLettersLabel,
       value: sentence.hintFirstLetters,
     },
     {
       key: "revealWord",
-      label: isVi ? "Mở khóa 1 từ khóa quan trọng" : "Reveal 1 key word",
+      label: t.dictation.hintRevealWordLabel,
       value: sentence.hintRevealWord,
     },
     {
       key: "translation",
-      label: isVi ? "Xem bản dịch tiếng Việt" : "Vietnamese translation",
+      label: t.dictation.hintTranslationLabel,
       value: null,
     },
     {
       key: "partialTranscript",
-      label: isVi ? "Xem trích đoạn đầu của câu" : "Sentence opening excerpt",
+      label: t.dictation.hintPartialTranscriptLabel,
       value: sentence.hintPartialTranscript,
     },
   ];
@@ -73,13 +71,7 @@ export function DictationHintDrawer({
           leftSection={<Lightbulb size={16} />}
           fw={600}
         >
-          {isOpen
-            ? isVi
-              ? "Thu gọn gợi ý"
-              : "Collapse hints"
-            : isVi
-              ? "Bạn cần gợi ý?"
-              : "Need a hint?"}
+          {isOpen ? t.dictation.collapseHints : t.dictation.needHint}
         </Button>
 
         <Badge
@@ -87,18 +79,14 @@ export function DictationHintDrawer({
           color={hintsUsedCount > 0 ? "orange" : "gray"}
           size="sm"
         >
-          {isVi
-            ? `Đã dùng: ${hintsUsedCount} gợi ý`
-            : `Used: ${hintsUsedCount} hints`}
+          {t.dictation.hintsUsedBadge.replace("{count}", String(hintsUsedCount))}
         </Badge>
       </Group>
 
       <Collapse expanded={isOpen}>
         <Stack gap="xs" mt="sm">
           <Text size="xs" c="ink.5" style={{ fontStyle: "italic" }}>
-            {isVi
-              ? "* Mỗi gợi ý được mở sẽ tính vào số gợi ý đã dùng trong thống kê buổi học."
-              : "* Each unlocked hint counts toward the hints used in session stats."}
+            {t.dictation.hintsCounterNote}
           </Text>
 
           {hints.map((h) => {
@@ -137,7 +125,7 @@ export function DictationHintDrawer({
                       onClick={() => onRevealHint(h.key)}
                       leftSection={<Lock size={11} />}
                     >
-                      {isVi ? "Mở xem" : "Unlock"}
+                      {t.dictation.unlockHint}
                     </Button>
                   )}
                 </Group>

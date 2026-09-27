@@ -45,7 +45,7 @@ export function DictationLibraryView({
     "7 Days" | "30 Days" | "3 Months" | "All Time"
   >("7 Days");
 
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
 
   // Chỉ gọi khi người dùng mở tab thống kê - xem danh sách bài thì không phải
   // trả giá cho một lượt tổng hợp mình chưa nhìn tới.
@@ -120,12 +120,8 @@ export function DictationLibraryView({
   // thư viện chỉ đơn giản là chưa có bài.
   const emptyMessage =
     lessons.length === 0
-      ? isVi
-        ? "Chưa có bài nghe nào được phát hành. Quay lại sau nhé."
-        : "No listening lessons have been published yet. Check back soon."
-      : isVi
-        ? "Không có bài nào khớp bộ lọc. Thử đổi chủ đề, trình độ hoặc trạng thái."
-        : "No lessons match these filters. Try another topic, level or status.";
+      ? t.dictation.noLessonsPublished
+      : t.dictation.noLessonsMatchFilters;
 
   return (
     <Page>
@@ -152,15 +148,8 @@ export function DictationLibraryView({
             />
 
             {error && lessons.length === 0 && (
-              <Alert
-                color="warn"
-                title={
-                  isVi ? "Không tải được bài học" : "Could not load lessons"
-                }
-              >
-                {isVi
-                  ? "Kiểm tra kết nối rồi tải lại trang."
-                  : "Check your connection and reload the page."}
+              <Alert color="warn" title={t.dictation.couldNotLoadLessons}>
+                {t.dictation.checkConnectionReload}
               </Alert>
             )}
 

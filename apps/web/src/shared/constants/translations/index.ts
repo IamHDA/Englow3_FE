@@ -305,6 +305,118 @@ export interface DictationTranslations {
   sentencesCompleted: string;
   studyDuration: string;
   reviewMistakes: string;
+  replaysBadge: string;
+  back5Aria: string;
+  pauseAria: string;
+  playAudioAria: string;
+  forward5Aria: string;
+  speedLabel: string;
+  chartsEmptyState: string;
+  sentencesPerDayLabel: string;
+  sentencesPracticedSuffix: string;
+  perfectScoreTitle: string;
+  wordsNeedCorrection: string;
+  accuracyDetail: string;
+  legendCorrect: string;
+  legendIncorrect: string;
+  legendMissing: string;
+  fullSentenceLabel: string;
+  tokensToFixLabel: string;
+  mistakesOnlySegment: string;
+  fullSentenceSegment: string;
+  noErrorsDetected: string;
+  replayAudioButton: string;
+  finishAndViewResults: string;
+  filterByTopicAria: string;
+  filterByLevelAria: string;
+  filterByStatusAria: string;
+  sortLessonsAria: string;
+  noHardSentences: string;
+  avgAccuracyPrefix: string;
+  attemptsSuffix: string;
+  practiceButton: string;
+  hintWordCountLabel: string;
+  wordsUnit: string;
+  hintFirstLettersLabel: string;
+  hintRevealWordLabel: string;
+  hintTranslationLabel: string;
+  hintPartialTranscriptLabel: string;
+  collapseHints: string;
+  needHint: string;
+  hintsUsedBadge: string;
+  hintsCounterNote: string;
+  unlockHint: string;
+  dateColumn: string;
+  lessonColumn: string;
+  sentencesColumn: string;
+  durationColumn: string;
+  hintsColumn: string;
+  actionColumn: string;
+  noSessionsYet: string;
+  detailsButton: string;
+  wordsTypedCount: string;
+  toCheckHint: string;
+  skipButton: string;
+  minutesUnit: string;
+  notPractisedYet: string;
+  practisedToday: string;
+  practisedYesterday: string;
+  daysAgoSuffix: string;
+  sentenceCountSuffix: string;
+  practiceAgainShort: string;
+  continueButton: string;
+  topicColumn: string;
+  difficultyColumn: string;
+  progressColumn: string;
+  wordColumn: string;
+  missesColumn: string;
+  correctColumn: string;
+  noMissedWords: string;
+  exampleLabel: string;
+  timesUnit: string;
+  allMistakesClearedTitle: string;
+  allMistakesClearedDescription: string;
+  backToLessonsButton: string;
+  mistakePracticeBadge: string;
+  queueCountLabel: string;
+  queuePositionLabel: string;
+  bestAttemptSummary: string;
+  clearMistakeHint: string;
+  lastTypedPrefix: string;
+  correctAnswerReveal: string;
+  checkFailedMessage: string;
+  clearedFeedback: string;
+  notQuiteFeedback: string;
+  continueToNextButton: string;
+  tryNextButton: string;
+  reviewMistakesCount: string;
+  hintsUnit: string;
+  perfectSentencesLabel: string;
+  sentencesWithMistakesLabel: string;
+  sentencesToReviewTitle: string;
+  startReviewingMistakes: string;
+  zeroMistakesMessage: string;
+  yourInputShort: string;
+  correctAnswerShort: string;
+  backToLessonCatalog: string;
+  completedLessonsLabel: string;
+  lessonsUnit: string;
+  averageAccuracyLabel: string;
+  overallSentencesUnit: string;
+  listeningHoursLabel: string;
+  focusedPracticeUnit: string;
+  sentencesPracticedLabel: string;
+  sentencesCompletedUnit: string;
+  statsPageTitle: string;
+  period7Days: string;
+  period30Days: string;
+  period3Months: string;
+  periodAllTime: string;
+  noLessonsPublished: string;
+  noLessonsMatchFilters: string;
+  couldNotLoadLessons: string;
+  checkConnectionReload: string;
+  backToLibraryButton: string;
 }
 
 export interface HomeCopyItem {
@@ -822,6 +934,123 @@ export const translations: Record<Language, AppTranslations> = {
       sentencesCompleted: "Câu đã hoàn thành",
       studyDuration: "Thời gian luyện tập",
       reviewMistakes: "Xem lại các từ chưa đúng",
+      replaysBadge: "Đã nghe lại: {count} lần",
+      back5Aria: "Lùi lại 5 giây",
+      pauseAria: "Tạm dừng",
+      playAudioAria: "Phát âm thanh",
+      forward5Aria: "Tua tới 5 giây",
+      speedLabel: "Tốc độ",
+      chartsEmptyState: "Chưa có dữ liệu. Luyện vài câu để thấy biểu đồ.",
+      sentencesPerDayLabel: "Số câu / ngày",
+      sentencesPracticedSuffix: "câu đã luyện",
+      perfectScoreTitle: "Xuất sắc! Bạn đã gõ đúng 100%",
+      wordsNeedCorrection: "{count} từ cần chú ý sửa lại",
+      accuracyDetail: "Độ chính xác: {percent}% ({correct} / {total} từ đúng)",
+      legendCorrect: "Từ đúng",
+      legendIncorrect: "Từ sai",
+      legendMissing: "Từ còn thiếu",
+      fullSentenceLabel: "Toàn bộ câu mẫu:",
+      tokensToFixLabel: "Các từ cần sửa:",
+      mistakesOnlySegment: "Chỉ từ lỗi",
+      fullSentenceSegment: "Cả câu mẫu",
+      noErrorsDetected: "Không có từ lỗi nào cần sửa!",
+      replayAudioButton: "Nghe lại câu này",
+      finishAndViewResults: "Hoàn thành & Xem kết quả",
+      filterByTopicAria: "Lọc theo chủ đề",
+      filterByLevelAria: "Lọc theo cấp độ",
+      filterByStatusAria: "Lọc theo trạng thái",
+      sortLessonsAria: "Sắp xếp bài học",
+      noHardSentences: "Chưa có câu nào khó với bạn.",
+      avgAccuracyPrefix: "Chính xác TB",
+      attemptsSuffix: "lần thử",
+      practiceButton: "Luyện tập",
+      hintWordCountLabel: "Xem số lượng từ trong câu",
+      wordsUnit: "từ",
+      hintFirstLettersLabel: "Gợi ý các chữ cái đầu tiên",
+      hintRevealWordLabel: "Mở khóa 1 từ khóa quan trọng",
+      hintTranslationLabel: "Xem bản dịch tiếng Việt",
+      hintPartialTranscriptLabel: "Xem trích đoạn đầu của câu",
+      collapseHints: "Thu gọn gợi ý",
+      needHint: "Bạn cần gợi ý?",
+      hintsUsedBadge: "Đã dùng: {count} gợi ý",
+      hintsCounterNote:
+        "* Mỗi gợi ý được mở sẽ tính vào số gợi ý đã dùng trong thống kê buổi học.",
+      unlockHint: "Mở xem",
+      dateColumn: "Thời gian",
+      lessonColumn: "Bài học",
+      sentencesColumn: "Số câu",
+      durationColumn: "Thời lượng",
+      hintsColumn: "Gợi ý dùng",
+      actionColumn: "Xem lại",
+      noSessionsYet: "Chưa có buổi luyện tập nào.",
+      detailsButton: "Chi tiết",
+      wordsTypedCount: "{count} từ đã gõ",
+      toCheckHint: "để kiểm tra",
+      skipButton: "Bỏ qua",
+      minutesUnit: "phút",
+      notPractisedYet: "Chưa luyện",
+      practisedToday: "Hôm nay",
+      practisedYesterday: "Hôm qua",
+      daysAgoSuffix: "ngày trước",
+      sentenceCountSuffix: "câu",
+      practiceAgainShort: "Luyện lại",
+      continueButton: "Tiếp tục",
+      topicColumn: "Chủ đề",
+      difficultyColumn: "Độ khó",
+      progressColumn: "Tiến độ",
+      wordColumn: "Từ vựng",
+      missesColumn: "Số lần gõ sai",
+      correctColumn: "Số lần gõ đúng",
+      noMissedWords: "Chưa có từ nào bạn hay gõ sai.",
+      exampleLabel: "Ví dụ:",
+      timesUnit: "lần",
+      allMistakesClearedTitle: "Xuất sắc! Bạn đã vượt qua tất cả câu sai!",
+      allMistakesClearedDescription:
+        "Không còn câu nào bạn hay sai. Cứ luyện tiếp, danh sách này sẽ tự cập nhật.",
+      backToLessonsButton: "Quay lại thư viện bài học",
+      mistakePracticeBadge: "Luyện tập câu sai",
+      queueCountLabel: "{count} câu cần ôn tập trong danh sách",
+      queuePositionLabel: "Câu {current} / {total}",
+      bestAttemptSummary: "Tốt nhất {percent}% sau {count} lần thử",
+      clearMistakeHint:
+        "Nghe lại và gõ đúng để gỡ câu này khỏi danh sách câu sai.",
+      lastTypedPrefix: "Lần trước bạn gõ: ",
+      correctAnswerReveal: 'Đáp án chuẩn: "{text}" ({percent}%)',
+      checkFailedMessage:
+        "Chưa chấm được câu này. Kiểm tra kết nối rồi bấm kiểm tra lại.",
+      clearedFeedback: "Chính xác! Câu này sẽ được gỡ khỏi danh sách lỗi.",
+      notQuiteFeedback: "Chưa hoàn toàn chính xác. Hãy nghe lại lần nữa nhé!",
+      continueToNextButton: "Tiếp tục gỡ câu tiếp theo",
+      tryNextButton: "Thử lại câu tiếp theo",
+      reviewMistakesCount: "Luyện câu sai ({count})",
+      hintsUnit: "gợi ý",
+      perfectSentencesLabel: "Câu chuẩn xác 100%:",
+      sentencesWithMistakesLabel: "Câu có từ chưa chuẩn:",
+      sentencesToReviewTitle: "Các câu có lỗi cần ôn tập ({count})",
+      startReviewingMistakes: "Bắt đầu ôn tập câu sai",
+      zeroMistakesMessage: "Tuyệt vời! Bạn không mắc phải lỗi nào trong bài học này.",
+      yourInputShort: "Bạn đã gõ:",
+      correctAnswerShort: "Đáp án đúng:",
+      backToLessonCatalog: "Về danh sách bài học",
+      completedLessonsLabel: "Bài học đã hoàn thành",
+      lessonsUnit: "bài",
+      averageAccuracyLabel: "Độ chính xác trung bình",
+      overallSentencesUnit: "trên tổng số câu",
+      listeningHoursLabel: "Thời gian luyện nghe",
+      focusedPracticeUnit: "luyện tập trung",
+      sentencesPracticedLabel: "Số câu đã thực hành",
+      sentencesCompletedUnit: "câu hoàn thành",
+      statsPageTitle: "Thống kê quá trình học",
+      period7Days: "7 ngày qua",
+      period30Days: "30 ngày qua",
+      period3Months: "3 tháng qua",
+      periodAllTime: "Tất cả",
+      noLessonsPublished: "Chưa có bài nghe nào được phát hành. Quay lại sau nhé.",
+      noLessonsMatchFilters:
+        "Không có bài nào khớp bộ lọc. Thử đổi chủ đề, trình độ hoặc trạng thái.",
+      couldNotLoadLessons: "Không tải được bài học",
+      checkConnectionReload: "Kiểm tra kết nối rồi tải lại trang.",
+      backToLibraryButton: "Trở về Thư viện",
     },
     exam: {
       title: "Thư viện đề thi thử",
@@ -1386,6 +1615,124 @@ export const translations: Record<Language, AppTranslations> = {
       sentencesCompleted: "Completed Sentences",
       studyDuration: "Practice Duration",
       reviewMistakes: "Review Missed Words",
+      replaysBadge: "Replays: {count}",
+      back5Aria: "Back 5 seconds",
+      pauseAria: "Pause",
+      playAudioAria: "Play audio",
+      forward5Aria: "Forward 5 seconds",
+      speedLabel: "Speed",
+      chartsEmptyState: "No data yet. Practise a few sentences to see the chart.",
+      sentencesPerDayLabel: "Sentences / day",
+      sentencesPracticedSuffix: "sentences practiced",
+      perfectScoreTitle: "Outstanding! 100% Accuracy",
+      wordsNeedCorrection: "{count} words need correction",
+      accuracyDetail: "Accuracy: {percent}% ({correct} / {total} words correct)",
+      legendCorrect: "Correct",
+      legendIncorrect: "Incorrect",
+      legendMissing: "Missing",
+      fullSentenceLabel: "Full Target Sentence:",
+      tokensToFixLabel: "Tokens to Fix:",
+      mistakesOnlySegment: "Mistakes only",
+      fullSentenceSegment: "Full sentence",
+      noErrorsDetected: "No errors detected!",
+      replayAudioButton: "Replay Audio",
+      finishAndViewResults: "Finish & View Results",
+      filterByTopicAria: "Filter by topic",
+      filterByLevelAria: "Filter by level",
+      filterByStatusAria: "Filter by status",
+      sortLessonsAria: "Sort lessons",
+      noHardSentences: "No sentences giving you trouble yet.",
+      avgAccuracyPrefix: "Avg. Accuracy",
+      attemptsSuffix: "attempts",
+      practiceButton: "Practice",
+      hintWordCountLabel: "Word count in sentence",
+      wordsUnit: "words",
+      hintFirstLettersLabel: "First letter of each word",
+      hintRevealWordLabel: "Reveal 1 key word",
+      hintTranslationLabel: "Vietnamese translation",
+      hintPartialTranscriptLabel: "Sentence opening excerpt",
+      collapseHints: "Collapse hints",
+      needHint: "Need a hint?",
+      hintsUsedBadge: "Used: {count} hints",
+      hintsCounterNote:
+        "* Each unlocked hint counts toward the hints used in session stats.",
+      unlockHint: "Unlock",
+      dateColumn: "Date",
+      lessonColumn: "Lesson",
+      sentencesColumn: "Sentences",
+      durationColumn: "Duration",
+      hintsColumn: "Hints",
+      actionColumn: "Action",
+      noSessionsYet: "No sessions yet.",
+      detailsButton: "Details",
+      wordsTypedCount: "{count} words typed",
+      toCheckHint: "to check",
+      skipButton: "Skip",
+      minutesUnit: "mins",
+      notPractisedYet: "Not started",
+      practisedToday: "Today",
+      practisedYesterday: "Yesterday",
+      daysAgoSuffix: "days ago",
+      sentenceCountSuffix: "sentences",
+      practiceAgainShort: "Practise again",
+      continueButton: "Continue",
+      topicColumn: "Topic",
+      difficultyColumn: "Difficulty",
+      progressColumn: "Progress",
+      wordColumn: "Word",
+      missesColumn: "Misses",
+      correctColumn: "Correct",
+      noMissedWords: "No words you keep mistyping yet.",
+      exampleLabel: "Example:",
+      timesUnit: "times",
+      allMistakesClearedTitle: "Great job! You cleared all mistakes!",
+      allMistakesClearedDescription:
+        "No sentences are giving you trouble. Keep practising and this list will fill itself.",
+      backToLessonsButton: "Back to lessons",
+      mistakePracticeBadge: "Mistake Practice",
+      queueCountLabel: "{count} sentences to review in queue",
+      queuePositionLabel: "Sentence {current} / {total}",
+      bestAttemptSummary: "Best {percent}% over {count} attempts",
+      clearMistakeHint:
+        "Listen and type accurately to clear this sentence from mistakes.",
+      lastTypedPrefix: "Last time you typed: ",
+      correctAnswerReveal: 'Correct answer: "{text}" ({percent}%)',
+      checkFailedMessage:
+        "Could not check this one. Check your connection and try again.",
+      clearedFeedback: "Correct! This sentence has been cleared from mistakes.",
+      notQuiteFeedback: "Not quite right. Please listen and try again!",
+      continueToNextButton: "Continue to next sentence",
+      tryNextButton: "Try next sentence",
+      reviewMistakesCount: "Review Mistakes ({count})",
+      hintsUnit: "hints",
+      perfectSentencesLabel: "100% Accurate Sentences:",
+      sentencesWithMistakesLabel: "Sentences with Mistakes:",
+      sentencesToReviewTitle: "Sentences to Review ({count})",
+      startReviewingMistakes: "Review Mistakes",
+      zeroMistakesMessage: "Awesome! You completed this session with zero mistakes.",
+      yourInputShort: "Your Input:",
+      correctAnswerShort: "Correct Answer:",
+      backToLessonCatalog: "Back to Lesson Catalog",
+      completedLessonsLabel: "Completed Lessons",
+      lessonsUnit: "lessons",
+      averageAccuracyLabel: "Average Accuracy",
+      overallSentencesUnit: "overall sentences",
+      listeningHoursLabel: "Listening Hours",
+      focusedPracticeUnit: "focused practice",
+      sentencesPracticedLabel: "Sentences Practiced",
+      sentencesCompletedUnit: "completed",
+      statsPageTitle: "Dictation Statistics",
+      period7Days: "Past 7 Days",
+      period30Days: "Past 30 Days",
+      period3Months: "Past 3 Months",
+      periodAllTime: "All Time",
+      noLessonsPublished:
+        "No listening lessons have been published yet. Check back soon.",
+      noLessonsMatchFilters:
+        "No lessons match these filters. Try another topic, level or status.",
+      couldNotLoadLessons: "Could not load lessons",
+      checkConnectionReload: "Check your connection and reload the page.",
+      backToLibraryButton: "Back to Library",
     },
     exam: {
       title: "Exam Library",

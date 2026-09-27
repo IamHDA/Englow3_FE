@@ -26,34 +26,34 @@ export function DictationStatsOverview({
   period,
   onPeriodChange,
 }: DictationStatsOverviewProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const cards = [
     {
-      label: isVi ? "Bài học đã hoàn thành" : "Completed Lessons",
+      label: t.dictation.completedLessonsLabel,
       value: stats.lessonsCompleted,
-      unit: isVi ? "bài" : "lessons",
+      unit: t.dictation.lessonsUnit,
       icon: Award,
       color: "navy",
     },
     {
-      label: isVi ? "Độ chính xác trung bình" : "Average Accuracy",
+      label: t.dictation.averageAccuracyLabel,
       value: `${stats.averageAccuracyPercent}%`,
-      unit: isVi ? "trên tổng số câu" : "overall sentences",
+      unit: t.dictation.overallSentencesUnit,
       icon: Target,
       color: "teal",
     },
     {
-      label: isVi ? "Thời gian luyện nghe" : "Listening Hours",
+      label: t.dictation.listeningHoursLabel,
       value: `${stats.listeningHours}h`,
-      unit: isVi ? "luyện tập trung" : "focused practice",
+      unit: t.dictation.focusedPracticeUnit,
       icon: Clock,
       color: "orange",
     },
     {
-      label: isVi ? "Số câu đã thực hành" : "Sentences Practiced",
+      label: t.dictation.sentencesPracticedLabel,
       value: stats.sentencesPracticed,
-      unit: isVi ? "câu hoàn thành" : "completed",
+      unit: t.dictation.sentencesCompletedUnit,
       icon: Headphones,
       color: "ink.7",
     },
@@ -69,7 +69,7 @@ export function DictationStatsOverview({
       >
         <Stack gap={2}>
           <Title order={2} size="h3" fw={700} c="ink.9">
-            {isVi ? "Thống kê quá trình học" : "Dictation Statistics"}
+            {t.dictation.statsPageTitle}
           </Title>
         </Stack>
 
@@ -80,13 +80,10 @@ export function DictationStatsOverview({
             onPeriodChange(v as "7 Days" | "30 Days" | "3 Months" | "All Time")
           }
           data={[
-            { label: isVi ? "7 ngày qua" : "Past 7 Days", value: "7 Days" },
-            { label: isVi ? "30 ngày qua" : "Past 30 Days", value: "30 Days" },
-            {
-              label: isVi ? "3 tháng qua" : "Past 3 Months",
-              value: "3 Months",
-            },
-            { label: isVi ? "Tất cả" : "All Time", value: "All Time" },
+            { label: t.dictation.period7Days, value: "7 Days" },
+            { label: t.dictation.period30Days, value: "30 Days" },
+            { label: t.dictation.period3Months, value: "3 Months" },
+            { label: t.dictation.periodAllTime, value: "All Time" },
           ]}
         />
       </Flex>

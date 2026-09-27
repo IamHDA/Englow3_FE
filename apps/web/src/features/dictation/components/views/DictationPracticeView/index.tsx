@@ -47,7 +47,7 @@ export function DictationPracticeView({
   lessonId,
 }: DictationPracticeViewProps) {
   const router = useRouter();
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const [hintDrawerOpen, setHintDrawerOpen] = useState(false);
 
   const { data, loading, error, refetch } = useDictationLessonDetailQuery({
@@ -103,7 +103,7 @@ export function DictationPracticeView({
           thing={{ vi: "bài nghe", en: "lesson" }}
           back={{
             href: "/study/dictation",
-            label: isVi ? "Về thư viện bài nghe" : "Back to lessons",
+            label: t.dictation.backToLessonsButton,
           }}
           onRetry={() => void refetch()}
         />
@@ -141,7 +141,7 @@ export function DictationPracticeView({
                 radius="md"
                 leftSection={<ArrowLeft size={14} />}
               >
-                {isVi ? "Trở về Thư viện" : "Back to Library"}
+                {t.dictation.backToLibraryButton}
               </Button>
 
               <Title order={2} size="h5" fw={700} c="ink.9">
@@ -154,9 +154,9 @@ export function DictationPracticeView({
                 {lesson.targetLevel ?? ""}
               </Badge>
               <Badge size="sm" variant="filled" color="orange">
-                {isVi
-                  ? `Câu ${practice.currentIndex + 1} / ${practice.totalSentences}`
-                  : `Sentence ${practice.currentIndex + 1} / ${practice.totalSentences}`}
+                {t.dictation.queuePositionLabel
+                  .replace("{current}", String(practice.currentIndex + 1))
+                  .replace("{total}", String(practice.totalSentences))}
               </Badge>
             </Group>
           </Group>

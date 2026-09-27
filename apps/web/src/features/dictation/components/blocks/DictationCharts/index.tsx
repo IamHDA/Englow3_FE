@@ -10,7 +10,7 @@ interface DictationChartsProps {
 }
 
 export function DictationCharts({ stats }: DictationChartsProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
   const accData = stats.accuracyOverTime;
   const activityData = stats.practiceActivity;
 
@@ -53,9 +53,7 @@ export function DictationCharts({ stats }: DictationChartsProps) {
 
   const maxActivity = Math.max(...activityData.map((a) => a.sentencesCount), 1);
   const hasActivity = activityData.some((a) => a.sentencesCount > 0);
-  const emptyText = isVi
-    ? "Chưa có dữ liệu. Luyện vài câu để thấy biểu đồ."
-    : "No data yet. Practise a few sentences to see the chart.";
+  const emptyText = t.dictation.chartsEmptyState;
 
   return (
     <Grid gap="md">
@@ -199,7 +197,7 @@ export function DictationCharts({ stats }: DictationChartsProps) {
                 </Title>
               </Group>
               <Text size="xs" c="ink.5">
-                {isVi ? "Số câu / ngày" : "Sentences / day"}
+                {t.dictation.sentencesPerDayLabel}
               </Text>
             </Group>
 
@@ -226,7 +224,7 @@ export function DictationCharts({ stats }: DictationChartsProps) {
                   return (
                     <Tooltip
                       key={i}
-                      label={`${act.dayLabel}: ${act.sentencesCount} ${isVi ? "câu đã luyện" : "sentences practiced"}`}
+                      label={`${act.dayLabel}: ${act.sentencesCount} ${t.dictation.sentencesPracticedSuffix}`}
                       withArrow
                     >
                       <Stack gap={6} align="center" style={{ flex: 1 }}>

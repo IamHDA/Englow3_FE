@@ -39,29 +39,29 @@ export function DictationSessionSummary({
   onRestart,
   onReviewMistakes,
 }: DictationSessionSummaryProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const kpiCards = [
     {
-      label: isVi ? "Độ chính xác tổng quan" : "Overall Accuracy",
+      label: t.dictation.overallAccuracy,
       value: `${summary.overallAccuracyPercent}%`,
       icon: Trophy,
       color: "orange",
     },
     {
-      label: isVi ? "Số từ gõ đúng" : "Words Correct",
+      label: t.dictation.wordsCorrect,
       value: summary.wordsCorrectRatio,
       icon: CheckCircle2,
       color: "teal",
     },
     {
-      label: isVi ? "Câu đã hoàn thành" : "Sentences Completed",
+      label: t.dictation.sentencesCompleted,
       value: `${summary.sentencesCompletedCount}`,
       icon: Sparkles,
       color: "navy",
     },
     {
-      label: isVi ? "Thời gian luyện tập" : "Study Duration",
+      label: t.dictation.studyDuration,
       value: summary.studyDurationFormatted,
       icon: Clock,
       color: "ink.7",
@@ -83,16 +83,14 @@ export function DictationSessionSummary({
         <Group justify="space-between" align="center" wrap="wrap" gap="md">
           <Stack gap={4}>
             <Badge color="teal" variant="filled" size="sm" radius="sm">
-              {isVi ? "Đã hoàn thành phiên học" : "Session Completed"}
+              {t.dictation.sessionCompletedBadge}
             </Badge>
             <Title order={2} size="h2" fw={700} style={{ color: "#FFFFFF" }}>
-              {isVi
-                ? "Hoàn thành bài luyện nghe chép chính tả!"
-                : "Dictation Session Completed!"}
+              {t.dictation.sessionCompletedTitle}
             </Title>
             <Text size="sm" style={{ color: "#C5CBD7" }}>
-              {summary.sentencesCompletedCount} {isVi ? "câu" : "sentences"} ·{" "}
-              {summary.lessonTitle} ({summary.lessonLevel})
+              {summary.sentencesCompletedCount} {t.dictation.sentenceCountSuffix}{" "}
+              · {summary.lessonTitle} ({summary.lessonLevel})
             </Text>
           </Stack>
 
@@ -106,7 +104,7 @@ export function DictationSessionSummary({
               leftSection={<RotateCcw size={15} />}
               fw={600}
             >
-              {isVi ? "Luyện tập lại" : "Practice Again"}
+              {t.dictation.practiceAgain}
             </Button>
             {summary.mistakes.length > 0 && (
               <Button
@@ -118,9 +116,10 @@ export function DictationSessionSummary({
                 rightSection={<ArrowRight size={15} />}
                 fw={600}
               >
-                {isVi
-                  ? `Luyện câu sai (${summary.mistakes.length})`
-                  : `Review Mistakes (${summary.mistakes.length})`}
+                {t.dictation.reviewMistakesCount.replace(
+                  "{count}",
+                  String(summary.mistakes.length),
+                )}
               </Button>
             )}
           </Group>
@@ -158,57 +157,55 @@ export function DictationSessionSummary({
           >
             <Stack gap="md">
               <Title order={4} size="h5" fw={700} c="ink.9">
-                {isVi ? "Chi tiết phiên học" : "Session Metrics"}
+                {t.dictation.sessionMetricsTitle}
               </Title>
 
               <Stack gap="xs">
                 <Group justify="space-between">
                   <Text size="sm" c="ink.6">
-                    {isVi ? "Số lần nghe lại:" : "Audio Replays:"}
+                    {t.dictation.replaysCount}:
                   </Text>
                   <Text size="sm" fw={700} c="ink.9">
-                    {summary.metrics.replays} {isVi ? "lần" : "times"}
+                    {summary.metrics.replays} {t.dictation.timesUnit}
                   </Text>
                 </Group>
                 <Group justify="space-between">
                   <Text size="sm" c="ink.6">
-                    {isVi ? "Số gợi ý đã dùng:" : "Hints Utilized:"}
+                    {t.dictation.hintsUsedCount}:
                   </Text>
                   <Text size="sm" fw={700} c="orange.8">
-                    {summary.metrics.hintsUsed} {isVi ? "gợi ý" : "hints"}
+                    {summary.metrics.hintsUsed} {t.dictation.hintsUnit}
                   </Text>
                 </Group>
                 <Group justify="space-between">
                   <Text size="sm" c="ink.6">
-                    {isVi ? "Câu chuẩn xác 100%:" : "100% Accurate Sentences:"}
+                    {t.dictation.perfectSentencesLabel}
                   </Text>
                   <Text size="sm" fw={700} c="teal.8">
                     {summary.metrics.perfectSentences} /{" "}
                     {summary.sentencesCompletedCount}{" "}
-                    {isVi ? "câu" : "sentences"}
+                    {t.dictation.sentenceCountSuffix}
                   </Text>
                 </Group>
                 <Group justify="space-between">
                   <Text size="sm" c="ink.6">
-                    {isVi
-                      ? "Câu có từ chưa chuẩn:"
-                      : "Sentences with Mistakes:"}
+                    {t.dictation.sentencesWithMistakesLabel}
                   </Text>
                   <Text size="sm" fw={700} c="warn.8">
                     {summary.metrics.sentencesWithMistakes}{" "}
-                    {isVi ? "câu" : "sentences"}
+                    {t.dictation.sentenceCountSuffix}
                   </Text>
                 </Group>
               </Stack>
 
               <Title order={4} size="h5" fw={700} c="ink.9" mt="xs">
-                {isVi ? "Phân bổ độ chính xác" : "Accuracy Breakdown"}
+                {t.dictation.accuracyBreakdown}
               </Title>
               <Progress.Root size="xl" radius="xl">
                 <Progress.Section
                   value={summary.breakdown.correctPercent}
                   color="teal"
-                  title={isVi ? "Từ gõ đúng" : "Correct"}
+                  title={t.dictation.legendCorrect}
                 >
                   <Progress.Label>
                     {summary.breakdown.correctPercent}%
@@ -217,7 +214,7 @@ export function DictationSessionSummary({
                 <Progress.Section
                   value={summary.breakdown.incorrectPercent}
                   color="warn"
-                  title={isVi ? "Từ gõ sai" : "Incorrect"}
+                  title={t.dictation.legendIncorrect}
                 >
                   {summary.breakdown.incorrectPercent > 5 && (
                     <Progress.Label>
@@ -228,7 +225,7 @@ export function DictationSessionSummary({
                 <Progress.Section
                   value={summary.breakdown.missingPercent}
                   color="orange"
-                  title={isVi ? "Từ còn thiếu" : "Missing"}
+                  title={t.dictation.legendMissing}
                 >
                   {summary.breakdown.missingPercent > 5 && (
                     <Progress.Label>
@@ -249,7 +246,7 @@ export function DictationSessionSummary({
                     }}
                   />
                   <Text size="xs" c="ink.6">
-                    {isVi ? "Đúng" : "Correct"}:{" "}
+                    {t.dictation.legendCorrect}:{" "}
                     {summary.breakdown.correctPercent}%
                   </Text>
                 </Group>
@@ -263,7 +260,7 @@ export function DictationSessionSummary({
                     }}
                   />
                   <Text size="xs" c="ink.6">
-                    {isVi ? "Sai" : "Incorrect"}:{" "}
+                    {t.dictation.legendIncorrect}:{" "}
                     {summary.breakdown.incorrectPercent}%
                   </Text>
                 </Group>
@@ -277,7 +274,7 @@ export function DictationSessionSummary({
                     }}
                   />
                   <Text size="xs" c="ink.6">
-                    {isVi ? "Thiếu" : "Missing"}:{" "}
+                    {t.dictation.legendMissing}:{" "}
                     {summary.breakdown.missingPercent}%
                   </Text>
                 </Group>
@@ -298,9 +295,10 @@ export function DictationSessionSummary({
             <Stack gap="md">
               <Group justify="space-between" align="center">
                 <Title order={4} size="h5" fw={700} c="ink.9">
-                  {isVi
-                    ? `Các câu có lỗi cần ôn tập (${summary.mistakes.length})`
-                    : `Sentences to Review (${summary.mistakes.length})`}
+                  {t.dictation.sentencesToReviewTitle.replace(
+                    "{count}",
+                    String(summary.mistakes.length),
+                  )}
                 </Title>
                 {summary.mistakes.length > 0 && (
                   <Button
@@ -310,7 +308,7 @@ export function DictationSessionSummary({
                     radius="md"
                     onClick={onReviewMistakes}
                   >
-                    {isVi ? "Bắt đầu ôn tập câu sai" : "Review Mistakes"}
+                    {t.dictation.startReviewingMistakes}
                   </Button>
                 )}
               </Group>
@@ -324,9 +322,7 @@ export function DictationSessionSummary({
                   style={{ textAlign: "center" }}
                 >
                   <Text size="sm" c="teal.9" fw={600}>
-                    {isVi
-                      ? "Tuyệt vời! Bạn không mắc phải lỗi nào trong bài học này."
-                      : "Awesome! You completed this session with zero mistakes."}
+                    {t.dictation.zeroMistakesMessage}
                   </Text>
                 </Card>
               ) : (
@@ -343,7 +339,7 @@ export function DictationSessionSummary({
                       </Group>
                       <Stack gap={2}>
                         <Text size="xs" c="ink.6">
-                          {isVi ? "Bạn đã gõ:" : "Your Input:"}{" "}
+                          {t.dictation.yourInputShort}{" "}
                           <span
                             style={{
                               color: "var(--mantine-color-warn-8)",
@@ -354,7 +350,7 @@ export function DictationSessionSummary({
                           </span>
                         </Text>
                         <Text size="xs" c="ink.6">
-                          {isVi ? "Đáp án đúng:" : "Correct Answer:"}{" "}
+                          {t.dictation.correctAnswerShort}{" "}
                           <span
                             style={{
                               color: "var(--mantine-color-teal-8)",
@@ -390,7 +386,7 @@ export function DictationSessionSummary({
             radius="md"
             leftSection={<ArrowLeft size={15} />}
           >
-            {isVi ? "Về danh sách bài học" : "Back to Lesson Catalog"}
+            {t.dictation.backToLessonCatalog}
           </Button>
 
           <Group gap="xs">
@@ -401,7 +397,7 @@ export function DictationSessionSummary({
               onClick={onRestart}
               leftSection={<RotateCcw size={15} />}
             >
-              {isVi ? "Luyện lại từ đầu" : "Practice Again"}
+              {t.dictation.practiceAgain}
             </Button>
             {summary.mistakes.length > 0 && (
               <Button
@@ -413,9 +409,10 @@ export function DictationSessionSummary({
                 rightSection={<ArrowRight size={15} />}
                 fw={600}
               >
-                {isVi
-                  ? `Luyện câu sai (${summary.mistakes.length})`
-                  : `Review Mistakes (${summary.mistakes.length})`}
+                {t.dictation.reviewMistakesCount.replace(
+                  "{count}",
+                  String(summary.mistakes.length),
+                )}
               </Button>
             )}
           </Group>
