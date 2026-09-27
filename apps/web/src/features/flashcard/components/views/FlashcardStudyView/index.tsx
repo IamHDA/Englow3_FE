@@ -25,7 +25,7 @@ interface FlashcardStudyViewProps {
 }
 
 export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   // Hàng chờ do backend xếp: thẻ tới hạn trước, thẻ chưa gặp sau. Chỉ lấy một
   // lần cho cả phiên - lấy lại giữa chừng sẽ xáo thứ tự dưới chân người học.
@@ -86,7 +86,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
           thing={{ vi: "bộ thẻ", en: "deck" }}
           back={{
             href: "/study/flashcards",
-            label: isVi ? "Về thư viện bộ thẻ" : "Back to decks",
+            label: t.flashcard.backToDecksButton,
           }}
           onRetry={() => void refetchQueue()}
         />
@@ -112,12 +112,10 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
       <Page width="focus">
         <Stack align="center" gap="md" py={60}>
           <Text size="lg" fw={700} c="navy.9" ta="center">
-            {isVi ? "Chưa có thẻ nào cần ôn" : "Nothing to review yet"}
+            {t.flashcard.nothingToReviewTitle}
           </Text>
           <Text size="sm" c="ink.6" ta="center" maw={420}>
-            {isVi
-              ? "Bạn đã ôn hết các thẻ đến hạn của bộ này. Quay lại sau khi có thẻ tới lượt ôn."
-              : "You have reviewed every card that is due in this deck. Come back when more are due."}
+            {t.flashcard.nothingToReviewDescription}
           </Text>
           <Button
             component={Link}
@@ -125,7 +123,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
             variant="default"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Về bộ thẻ" : "Back to the deck"}
+            {t.flashcard.backToDeckButton}
           </Button>
         </Stack>
       </Page>
@@ -145,7 +143,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
             size="sm"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Thoát phiên học" : "Exit session"}
+            {t.flashcard.exitSessionButton}
           </Button>
 
           <Stack gap={2} align="center">
@@ -153,9 +151,9 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
               {set?.name ?? ""}
             </Text>
             <Text fz="xs" c="dimmed">
-              {isVi
-                ? `Thẻ số ${currentIndex + 1} trên ${totalCards}`
-                : `Card ${currentIndex + 1} of ${totalCards}`}
+              {t.flashcard.cardPositionLabel
+                .replace("{current}", String(currentIndex + 1))
+                .replace("{total}", String(totalCards))}
             </Text>
           </Stack>
 

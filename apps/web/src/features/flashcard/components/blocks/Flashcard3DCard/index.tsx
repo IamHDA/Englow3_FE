@@ -38,7 +38,7 @@ export function Flashcard3DCard({
   onFlip,
   onSpeak,
 }: Flashcard3DCardProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <Box className={styles.cardContainer} onClick={onFlip}>
@@ -58,14 +58,13 @@ export function Flashcard3DCard({
             <Group gap="xs">
               {card.lapseCount > 1 && (
                 <Badge variant="dot" color="red" size="sm">
-                  {isVi
-                    ? `Cần ôn lại (${card.lapseCount} lần sai)`
-                    : `Needs review (${card.lapseCount} misses)`}
+                  {t.flashcard.needsReviewBadge.replace(
+                    "{count}",
+                    String(card.lapseCount),
+                  )}
                 </Badge>
               )}
-              <Tooltip
-                label={isVi ? "Nghe phát âm chuẩn" : "Listen to native audio"}
-              >
+              <Tooltip label={t.flashcard.listenNativeAudioTooltip}>
                 <ActionIcon
                   variant="subtle"
                   color="indigo"
@@ -75,7 +74,7 @@ export function Flashcard3DCard({
                     e.stopPropagation();
                     onSpeak(card.lemma);
                   }}
-                  aria-label={isVi ? "Nghe phát âm" : "Listen audio"}
+                  aria-label={t.flashcard.listenAudioAria}
                 >
                   <IconVolume size={20} />
                 </ActionIcon>
@@ -107,7 +106,7 @@ export function Flashcard3DCard({
                   e.stopPropagation();
                   onSpeak(card.lemma);
                 }}
-                aria-label={isVi ? "Phát âm từ" : "Pronounce word"}
+                aria-label={t.flashcard.pronounceWordAria}
               >
                 <IconVolume2 size={14} />
               </ActionIcon>
@@ -118,9 +117,7 @@ export function Flashcard3DCard({
           <Group justify="center" align="center" gap={6} c="dimmed">
             <IconFlipHorizontal size={16} />
             <Text fz="xs" fw={500}>
-              {isVi
-                ? "Nhấn phím cách hoặc bấm vào thẻ để xem nghĩa & ví dụ"
-                : "Press Space or tap card to flip and view definition"}
+              {t.flashcard.flipHintFooter}
             </Text>
           </Group>
         </Card>
@@ -154,7 +151,7 @@ export function Flashcard3DCard({
                 e.stopPropagation();
                 onSpeak(card.lemma);
               }}
-              aria-label={isVi ? "Nghe lại" : "Listen again"}
+              aria-label={t.flashcard.listenAgainAria}
             >
               <IconVolume size={18} />
             </ActionIcon>
@@ -174,7 +171,7 @@ export function Flashcard3DCard({
               }}
             >
               <Text fz="sm" c="dimmed" fw={600} mb={2}>
-                {isVi ? "NGHĨA TIẾNG VIỆT:" : "VIETNAMESE MEANING:"}
+                {t.flashcard.vietnameseMeaningLabel}
               </Text>
               <Text fz="lg" fw={700} c="indigo.9">
                 {card.definitionVi}
@@ -184,7 +181,7 @@ export function Flashcard3DCard({
             {/* English Definition */}
             <Box>
               <Text fz="xs" c="dimmed" fw={600}>
-                {isVi ? "ĐỊNH NGHĨA ANH - ANH:" : "ENGLISH DEFINITION:"}
+                {t.flashcard.englishDefinitionLabel}
               </Text>
               <Text fz="sm" fw={500} c="dark.7">
                 {card.definitionEn}
@@ -204,7 +201,7 @@ export function Flashcard3DCard({
               </ThemeIcon>
               <Box style={{ flex: 1 }}>
                 <Text fz="xs" c="dimmed" fw={600}>
-                  {isVi ? "VÍ DỤ NGỮ CẢNH:" : "CONTEXT EXAMPLE:"}
+                  {t.flashcard.contextExampleLabel}
                 </Text>
                 <Text fz="sm" c="dark.8" fs="italic">
                   &ldquo;{card.exampleSentence}&rdquo;
@@ -226,7 +223,7 @@ export function Flashcard3DCard({
                 </ThemeIcon>
                 <Box style={{ flex: 1 }}>
                   <Text fz="xs" c="amber.9" fw={600}>
-                    {isVi ? "MẸO GHI NHỚ:" : "MEMORY MNEMONIC:"}
+                    {t.flashcard.memoryMnemonicLabel}
                   </Text>
                   <Text fz="xs" c="dimmed">
                     {card.mnemonicTipVi}
@@ -240,9 +237,7 @@ export function Flashcard3DCard({
           <Group justify="center" align="center" gap={6} c="dimmed">
             <IconSparkles size={14} />
             <Text fz="xs" fw={500}>
-              {isVi
-                ? "Đánh giá mức độ ghi nhớ ở bên dưới để hệ thống lặp lại khoa học"
-                : "Rate your retention below for optimal spaced repetition"}
+              {t.flashcard.rateRetentionFooter}
             </Text>
           </Group>
         </Card>

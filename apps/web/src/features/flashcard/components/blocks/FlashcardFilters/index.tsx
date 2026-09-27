@@ -34,17 +34,14 @@ export function FlashcardFilters({
   viewMode,
   onViewModeChange,
 }: FlashcardFiltersProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
 
   const topics = [
-    { key: "ALL", label: isVi ? "Tất cả" : "All" },
+    { key: "ALL", label: t.flashcard.allTopicsChip },
     { key: "IELTS", label: "IELTS" },
     { key: "TOEIC", label: "TOEIC" },
-    {
-      key: "Daily Conversation",
-      label: isVi ? "Giao tiếp hàng ngày" : "Daily Conversation",
-    },
-    { key: "Travel", label: isVi ? "Du lịch" : "Travel" },
+    { key: "Daily Conversation", label: t.flashcard.dailyConversationChip },
+    { key: "Travel", label: t.flashcard.travelChip },
   ];
 
   return (
@@ -73,22 +70,22 @@ export function FlashcardFilters({
           />
 
           <Group gap={4}>
-            <Tooltip label={isVi ? "Xem dạng lưới" : "Grid view"}>
+            <Tooltip label={t.flashcard.gridViewTooltip}>
               <ActionIcon
                 variant={viewMode === "grid" ? "filled" : "subtle"}
                 color="indigo"
                 onClick={() => onViewModeChange("grid")}
-                aria-label={isVi ? "Dạng lưới" : "Grid view"}
+                aria-label={t.flashcard.gridViewAria}
               >
                 <IconLayoutGrid size={18} />
               </ActionIcon>
             </Tooltip>
-            <Tooltip label={isVi ? "Xem dạng danh sách" : "List view"}>
+            <Tooltip label={t.flashcard.listViewTooltip}>
               <ActionIcon
                 variant={viewMode === "list" ? "filled" : "subtle"}
                 color="indigo"
                 onClick={() => onViewModeChange("list")}
-                aria-label={isVi ? "Dạng danh sách" : "List view"}
+                aria-label={t.flashcard.listViewAria}
               >
                 <IconList size={18} />
               </ActionIcon>

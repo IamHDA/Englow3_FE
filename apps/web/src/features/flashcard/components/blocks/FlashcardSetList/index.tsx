@@ -14,49 +14,27 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import Link from "next/link";
 import React from "react";
 import { FlashcardSet } from "../../../types";
+import { formatLastStudied, masteredPercent } from "../../../setProgress";
 
 interface FlashcardSetListProps {
   sets: FlashcardSet[];
 }
 
-/**
- * Derived, not stored: the backend reports how many cards are mastered, and the
- * bar wants a proportion. Computing it here keeps one number in the API instead
- * of two that can disagree.
- */
-/**
- * The backend reports an instant; the card wants "3 days ago". Null means the
- * learner has never opened this set, which is not the same as "0 days ago".
- */
-function formatLastStudied(value: string | null, isVi: boolean): string {
-  if (!value) return isVi ? "Chưa học" : "Not started";
-
-  const days = Math.floor((Date.now() - Date.parse(value)) / 86_400_000);
-  if (days <= 0) return isVi ? "Hôm nay" : "Today";
-  if (days === 1) return isVi ? "Hôm qua" : "Yesterday";
-  return isVi ? `${days} ngày trước` : `${days} days ago`;
-}
-
-function masteredPercent(set: FlashcardSet): number {
-  if (set.cardCount === 0) return 0;
-  return Math.round((set.masteredCount / set.cardCount) * 100);
-}
-
 export function FlashcardSetList({ sets }: FlashcardSetListProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <Card withBorder padding={0} radius="md">
       <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Bộ từ vựng</Table.Th>
-            <Table.Th>Chủ đề</Table.Th>
-            <Table.Th>Số từ</Table.Th>
-            <Table.Th>Tiến độ</Table.Th>
-            <Table.Th>Cần ôn hôm nay</Table.Th>
-            <Table.Th>Lần học cuối</Table.Th>
-            <Table.Th ta="right">Hành động</Table.Th>
+            <Table.Th>{t.flashcard.setNameColumn}</Table.Th>
+            <Table.Th>{t.dictation.topicColumn}</Table.Th>
+            <Table.Th>{t.flashcard.cardCountColumn}</Table.Th>
+            <Table.Th>{t.dictation.progressColumn}</Table.Th>
+            <Table.Th>{t.flashcard.dueTodayColumn}</Table.Th>
+            <Table.Th>{t.flashcard.lastStudiedColumn}</Table.Th>
+            <Table.Th ta="right">{t.dictation.actionColumn}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -76,7 +54,9 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                 </Badge>
               </Table.Td>
               <Table.Td>
-                <Text fz="xs">{set.cardCount} từ</Text>
+                <Text fz="xs">
+                  {set.cardCount} {t.flashcard.wordsCountSuffix}
+                </Text>
               </Table.Td>
               <Table.Td style={{ minWidth: 120 }}>
                 <Group gap="xs">
@@ -94,17 +74,17 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
               <Table.Td>
                 {set.dueCount > 0 ? (
                   <Badge variant="filled" color="orange" size="xs">
-                    {set.dueCount} thẻ
+                    {set.dueCount} {t.flashcard.cardsUnit}
                   </Badge>
                 ) : (
                   <Badge variant="light" color="teal" size="xs">
-                    0 thẻ
+                    0 {t.flashcard.cardsUnit}
                   </Badge>
                 )}
               </Table.Td>
               <Table.Td>
                 <Text fz="xs" c="dimmed">
-                  {formatLastStudied(set.lastStudiedAt, isVi)}
+                  {formatLastStudied(set.lastStudiedAt, t)}
                 </Text>
               </Table.Td>
               <Table.Td>
@@ -117,7 +97,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                     size="xs"
                     leftSection={<IconEye size={14} />}
                   >
-                    Xem
+                    {t.flashcard.viewButton}
                   </Button>
                   <Button
                     component={Link}
@@ -127,7 +107,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                     size="xs"
                     leftSection={<IconPlayerPlay size={14} />}
                   >
-                    Học
+                    {t.flashcard.studyButton}
                   </Button>
                 </Group>
               </Table.Td>

@@ -198,6 +198,85 @@ export interface FlashcardTranslations {
   ratingHardHint: string;
   ratingGoodHint: string;
   ratingEasyHint: string;
+  needsReviewBadge: string;
+  listenNativeAudioTooltip: string;
+  listenAudioAria: string;
+  pronounceWordAria: string;
+  flipHintFooter: string;
+  listenAgainAria: string;
+  vietnameseMeaningLabel: string;
+  englishDefinitionLabel: string;
+  contextExampleLabel: string;
+  memoryMnemonicLabel: string;
+  rateRetentionFooter: string;
+  cardsReviewedPerDay: string;
+  noReviewsInPeriod: string;
+  priorityWordsBadge: string;
+  deckColumn: string;
+  missesColumnShort: string;
+  lastReviewColumn: string;
+  audioColumn: string;
+  noForgottenWords: string;
+  missCountBadge: string;
+  allTopicsChip: string;
+  dailyConversationChip: string;
+  travelChip: string;
+  gridViewTooltip: string;
+  gridViewAria: string;
+  listViewTooltip: string;
+  listViewAria: string;
+  streakDaysBanner: string;
+  cardsDueTodayMessage: string;
+  nothingDueTodayMessage: string;
+  startReviewCount: string;
+  learnNewCardsButton: string;
+  noSetsToStudyButton: string;
+  dueTodayLabel: string;
+  cardsUnit: string;
+  retentionRateLabel: string;
+  notStudiedYet: string;
+  studiedToday: string;
+  studiedYesterday: string;
+  daysAgoSuffix: string;
+  wordsCountSuffix: string;
+  dueCardsBadge: string;
+  reviewButton: string;
+  studyButton: string;
+  noSetsPublished: string;
+  noSetsMatchFilters: string;
+  couldNotLoadSets: string;
+  period7DaysShort: string;
+  period30DaysShort: string;
+  period3MonthsShort: string;
+  periodAllTimeShort: string;
+  backToDecksButton: string;
+  studyDeckNowButton: string;
+  cardsDueTodayBadge: string;
+  completedForTodayBadge: string;
+  totalCardsLabel: string;
+  lastStudiedLabel: string;
+  masteredColonLabel: string;
+  deckWordListTitle: string;
+  clickSpeakerHint: string;
+  ipaColumn: string;
+  partOfSpeechColumn: string;
+  definitionColumn: string;
+  englishMeaningColumn: string;
+  statusColumn: string;
+  reviewStatusBadge: string;
+  learningStatusBadge: string;
+  newStatusBadge: string;
+  listenWordAria: string;
+  exitSessionButton: string;
+  cardPositionLabel: string;
+  nothingToReviewTitle: string;
+  nothingToReviewDescription: string;
+  backToDeckButton: string;
+  setNameColumn: string;
+  cardCountColumn: string;
+  dueTodayColumn: string;
+  lastStudiedColumn: string;
+  viewButton: string;
 }
 
 export interface PronunciationTranslations {
@@ -828,6 +907,88 @@ export const translations: Record<Language, AppTranslations> = {
       ratingHardHint: "Khó (2 ngày)",
       ratingGoodHint: "Nhớ tốt (4 ngày)",
       ratingEasyHint: "Rất dễ (7 ngày)",
+      needsReviewBadge: "Cần ôn lại ({count} lần sai)",
+      listenNativeAudioTooltip: "Nghe phát âm chuẩn",
+      listenAudioAria: "Nghe phát âm",
+      pronounceWordAria: "Phát âm từ",
+      flipHintFooter: "Nhấn phím cách hoặc bấm vào thẻ để xem nghĩa & ví dụ",
+      listenAgainAria: "Nghe lại",
+      vietnameseMeaningLabel: "NGHĨA TIẾNG VIỆT:",
+      englishDefinitionLabel: "ĐỊNH NGHĨA ANH - ANH:",
+      contextExampleLabel: "VÍ DỤ NGỮ CẢNH:",
+      memoryMnemonicLabel: "MẸO GHI NHỚ:",
+      rateRetentionFooter:
+        "Đánh giá mức độ ghi nhớ ở bên dưới để hệ thống lặp lại khoa học",
+      cardsReviewedPerDay: "Số thẻ ôn tập theo ngày",
+      noReviewsInPeriod: "Chưa có lượt ôn tập nào trong khoảng thời gian này.",
+      priorityWordsBadge: "{count} từ cần ưu tiên",
+      deckColumn: "Bộ từ",
+      missesColumnShort: "Số lần chưa nhớ",
+      lastReviewColumn: "Lần xem cuối",
+      audioColumn: "Phát âm",
+      noForgottenWords: "Chưa có từ nào bạn hay quên.",
+      missCountBadge: "{count} lần",
+      allTopicsChip: "Tất cả",
+      dailyConversationChip: "Giao tiếp hàng ngày",
+      travelChip: "Du lịch",
+      gridViewTooltip: "Xem dạng lưới",
+      gridViewAria: "Dạng lưới",
+      listViewTooltip: "Xem dạng danh sách",
+      listViewAria: "Dạng danh sách",
+      streakDaysBanner: "Chuỗi {count} ngày liên tiếp",
+      cardsDueTodayMessage: "Hôm nay bạn có {count} thẻ đến hạn cần ôn tập!",
+      nothingDueTodayMessage: "Hôm nay chưa có thẻ nào đến hạn ôn.",
+      startReviewCount: "Bắt đầu ôn ngay ({count} thẻ)",
+      learnNewCardsButton: "Học thẻ mới",
+      noSetsToStudyButton: "Chưa có bộ thẻ nào để học",
+      dueTodayLabel: "Thẻ đến hạn hôm nay:",
+      cardsUnit: "thẻ",
+      retentionRateLabel: "Tỷ lệ nhớ:",
+      notStudiedYet: "Chưa học",
+      studiedToday: "Hôm nay",
+      studiedYesterday: "Hôm qua",
+      daysAgoSuffix: "ngày trước",
+      wordsCountSuffix: "từ vựng",
+      dueCardsBadge: "{count} thẻ cần ôn",
+      reviewButton: "Ôn ngay",
+      studyButton: "Học",
+      noSetsPublished: "Chưa có bộ thẻ nào được phát hành. Quay lại sau nhé.",
+      noSetsMatchFilters:
+        "Không có bộ thẻ nào khớp bộ lọc. Thử đổi từ khoá hoặc chủ đề.",
+      couldNotLoadSets: "Không tải được bộ thẻ",
+      period7DaysShort: "7 ngày",
+      period30DaysShort: "30 ngày",
+      period3MonthsShort: "3 tháng",
+      periodAllTimeShort: "Tất cả",
+      backToDecksButton: "Quay lại danh sách bộ thẻ",
+      studyDeckNowButton: "Học ngay bộ từ này",
+      cardsDueTodayBadge: "{count} từ cần ôn tập hôm nay",
+      completedForTodayBadge: "Đã hoàn thành mục tiêu hôm nay",
+      totalCardsLabel: "Tổng số từ:",
+      lastStudiedLabel: "Lần học gần nhất:",
+      masteredColonLabel: "Đã thuộc:",
+      deckWordListTitle: "Danh sách từ vựng trong bộ ({count} thẻ)",
+      clickSpeakerHint: "Bấm vào biểu tượng loa để nghe phát âm chuẩn bản xứ",
+      ipaColumn: "Phiên âm IPA",
+      partOfSpeechColumn: "Từ loại",
+      definitionColumn: "Nghĩa",
+      englishMeaningColumn: "Định nghĩa tiếng Anh",
+      statusColumn: "Trạng thái",
+      reviewStatusBadge: "Ôn tập",
+      learningStatusBadge: "Đang học",
+      newStatusBadge: "Từ mới",
+      listenWordAria: "Nghe từ {word}",
+      exitSessionButton: "Thoát phiên học",
+      cardPositionLabel: "Thẻ số {current} trên {total}",
+      nothingToReviewTitle: "Chưa có thẻ nào cần ôn",
+      nothingToReviewDescription:
+        "Bạn đã ôn hết các thẻ đến hạn của bộ này. Quay lại sau khi có thẻ tới lượt ôn.",
+      backToDeckButton: "Về bộ thẻ",
+      setNameColumn: "Bộ từ vựng",
+      cardCountColumn: "Số từ",
+      dueTodayColumn: "Cần ôn hôm nay",
+      lastStudiedColumn: "Lần học cuối",
+      viewButton: "Xem",
     },
     pronunciation: {
       title: "Luyện phát âm",
@@ -1507,6 +1668,87 @@ export const translations: Record<Language, AppTranslations> = {
       ratingHardHint: "Hard (2 days)",
       ratingGoodHint: "Good (4 days)",
       ratingEasyHint: "Easy (7 days)",
+      needsReviewBadge: "Needs review ({count} misses)",
+      listenNativeAudioTooltip: "Listen to native audio",
+      listenAudioAria: "Listen audio",
+      pronounceWordAria: "Pronounce word",
+      flipHintFooter: "Press Space or tap card to flip and view definition",
+      listenAgainAria: "Listen again",
+      vietnameseMeaningLabel: "VIETNAMESE MEANING:",
+      englishDefinitionLabel: "ENGLISH DEFINITION:",
+      contextExampleLabel: "CONTEXT EXAMPLE:",
+      memoryMnemonicLabel: "MEMORY MNEMONIC:",
+      rateRetentionFooter: "Rate your retention below for optimal spaced repetition",
+      cardsReviewedPerDay: "Cards reviewed per day",
+      noReviewsInPeriod: "No reviews in this period yet.",
+      priorityWordsBadge: "{count} priority words",
+      deckColumn: "Deck",
+      missesColumnShort: "Misses",
+      lastReviewColumn: "Last Review",
+      audioColumn: "Audio",
+      noForgottenWords: "No words you keep forgetting yet.",
+      missCountBadge: "{count} times",
+      allTopicsChip: "All",
+      dailyConversationChip: "Daily Conversation",
+      travelChip: "Travel",
+      gridViewTooltip: "Grid view",
+      gridViewAria: "Grid view",
+      listViewTooltip: "List view",
+      listViewAria: "List view",
+      streakDaysBanner: "{count}-day streak",
+      cardsDueTodayMessage: "You have {count} cards due for review today!",
+      nothingDueTodayMessage: "Nothing is due for review today.",
+      startReviewCount: "Start Review ({count} cards)",
+      learnNewCardsButton: "Learn new cards",
+      noSetsToStudyButton: "No sets to study yet",
+      dueTodayLabel: "Due today:",
+      cardsUnit: "cards",
+      retentionRateLabel: "Retention rate:",
+      notStudiedYet: "Not started",
+      studiedToday: "Today",
+      studiedYesterday: "Yesterday",
+      daysAgoSuffix: "days ago",
+      wordsCountSuffix: "words",
+      dueCardsBadge: "{count} due",
+      reviewButton: "Review",
+      studyButton: "Study",
+      noSetsPublished: "No flashcard sets have been published yet. Check back soon.",
+      noSetsMatchFilters:
+        "No sets match these filters. Try another search or topic.",
+      couldNotLoadSets: "Could not load flashcard sets",
+      period7DaysShort: "7 days",
+      period30DaysShort: "30 days",
+      period3MonthsShort: "3 months",
+      periodAllTimeShort: "All time",
+      backToDecksButton: "Back to Decks",
+      studyDeckNowButton: "Study Deck Now",
+      cardsDueTodayBadge: "{count} cards due today",
+      completedForTodayBadge: "Completed for today",
+      totalCardsLabel: "Total cards:",
+      lastStudiedLabel: "Last studied:",
+      masteredColonLabel: "Mastered:",
+      deckWordListTitle: "Card list in deck ({count} cards)",
+      clickSpeakerHint: "Click speaker icon to listen to native pronunciation",
+      ipaColumn: "IPA",
+      partOfSpeechColumn: "Part of Speech",
+      definitionColumn: "Definition",
+      englishMeaningColumn: "English Meaning",
+      statusColumn: "Status",
+      reviewStatusBadge: "Review",
+      learningStatusBadge: "Learning",
+      newStatusBadge: "New",
+      listenWordAria: "Listen to {word}",
+      exitSessionButton: "Exit session",
+      cardPositionLabel: "Card {current} of {total}",
+      nothingToReviewTitle: "Nothing to review yet",
+      nothingToReviewDescription:
+        "You have reviewed every card that is due in this deck. Come back when more are due.",
+      backToDeckButton: "Back to the deck",
+      setNameColumn: "Deck",
+      cardCountColumn: "Cards",
+      dueTodayColumn: "Due Today",
+      lastStudiedColumn: "Last Studied",
+      viewButton: "View",
     },
     pronunciation: {
       title: "Pronunciation",

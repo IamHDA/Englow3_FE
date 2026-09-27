@@ -36,7 +36,7 @@ export function FlashcardHeroCard({
   retentionPercent,
   primarySetId,
 }: FlashcardHeroCardProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <Card
@@ -55,21 +55,21 @@ export function FlashcardHeroCard({
               <Group gap={4}>
                 <IconFlame size={18} color="#FDE047" />
                 <Text fz="xs" fw={700} c="yellow.2">
-                  {isVi
-                    ? `Chuỗi ${streakDays} ngày liên tiếp`
-                    : `${streakDays}-day streak`}
+                  {t.flashcard.streakDaysBanner.replace(
+                    "{count}",
+                    String(streakDays),
+                  )}
                 </Text>
               </Group>
             )}
 
             <Text fz={{ base: 22, sm: 26 }} fw={800} lh={1.2}>
               {dueCount > 0
-                ? isVi
-                  ? `Hôm nay bạn có ${dueCount} thẻ đến hạn cần ôn tập!`
-                  : `You have ${dueCount} cards due for review today!`
-                : isVi
-                  ? "Hôm nay chưa có thẻ nào đến hạn ôn."
-                  : "Nothing is due for review today."}
+                ? t.flashcard.cardsDueTodayMessage.replace(
+                    "{count}",
+                    String(dueCount),
+                  )
+                : t.flashcard.nothingDueTodayMessage}
             </Text>
 
             <Group mt="xs">
@@ -88,12 +88,11 @@ export function FlashcardHeroCard({
                   leftSection={<IconPlayerPlay size={18} />}
                 >
                   {dueCount > 0
-                    ? isVi
-                      ? `Bắt đầu ôn ngay (${dueCount} thẻ)`
-                      : `Start Review (${dueCount} cards)`
-                    : isVi
-                      ? "Học thẻ mới"
-                      : "Learn new cards"}
+                    ? t.flashcard.startReviewCount.replace(
+                        "{count}",
+                        String(dueCount),
+                      )
+                    : t.flashcard.learnNewCardsButton}
                 </Button>
               ) : (
                 <Button
@@ -104,7 +103,7 @@ export function FlashcardHeroCard({
                   fw={700}
                   disabled
                 >
-                  {isVi ? "Chưa có bộ thẻ nào để học" : "No sets to study yet"}
+                  {t.flashcard.noSetsToStudyButton}
                 </Button>
               )}
             </Group>
@@ -127,11 +126,11 @@ export function FlashcardHeroCard({
                   <IconCalendarTime size={14} />
                 </ThemeIcon>
                 <Text fz="xs" fw={600} c="white">
-                  {isVi ? "Thẻ đến hạn hôm nay:" : "Due today:"}
+                  {t.flashcard.dueTodayLabel}
                 </Text>
               </Group>
               <Text fz="sm" fw={800} c="white">
-                {dueCount} {isVi ? "thẻ" : "cards"}
+                {dueCount} {t.flashcard.cardsUnit}
               </Text>
             </Group>
 
@@ -147,7 +146,7 @@ export function FlashcardHeroCard({
                     <IconBrain size={14} />
                   </ThemeIcon>
                   <Text fz="xs" fw={600} c="white">
-                    {isVi ? "Tỷ lệ nhớ:" : "Retention rate:"}
+                    {t.flashcard.retentionRateLabel}
                   </Text>
                 </Group>
                 <Text fz="sm" fw={800} c="white">

@@ -30,13 +30,14 @@ import { useFlashcardSetDetailQuery } from "@/lib/graphql/generated/hooks";
 import { FlashcardStudySkeleton } from "../../blocks/FlashcardStudySkeleton";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
+import { masteredPercent as computeMasteredPercent } from "../../../setProgress";
 
 interface FlashcardSetDetailViewProps {
   setId: string;
 }
 
 export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
   const { data, loading, error, refetch } = useFlashcardSetDetailQuery({
     variables: { id: setId },
     fetchPolicy: "cache-and-network",
@@ -54,7 +55,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
           thing={{ vi: "bộ thẻ", en: "deck" }}
           back={{
             href: "/study/flashcards",
-            label: isVi ? "Về thư viện bộ thẻ" : "Back to decks",
+            label: t.flashcard.backToDecksButton,
           }}
           onRetry={() => void refetch()}
         />
@@ -64,15 +65,10 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
 
   const set = data.flashcardSet.set;
   const cards = data.flashcardSet.cards;
-  const masteredPercent =
-    set.cardCount === 0
-      ? 0
-      : Math.round((set.masteredCount / set.cardCount) * 100);
+  const masteredPercent = computeMasteredPercent(set);
   const lastStudiedLabel = set.lastStudiedAt
     ? new Date(set.lastStudiedAt).toLocaleDateString(isVi ? "vi-VN" : "en-GB")
-    : isVi
-      ? "Chưa học"
-      : "Not started";
+    : t.flashcard.notStudiedYet;
 
   const handleSpeak = (text: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -94,7 +90,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
             color="gray"
             leftSection={<IconArrowLeft size={18} />}
           >
-            {isVi ? "Quay lại danh sách bộ thẻ" : "Back to Decks"}
+            {t.flashcard.backToDecksButton}
           </Button>
 
           <Button
@@ -106,7 +102,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
             radius="md"
             leftSection={<IconPlayerPlay size={18} />}
           >
-            {isVi ? "Học ngay bộ từ này" : "Study Deck Now"}
+            {t.flashcard.studyDeckNowButton}
           </Button>
         </Group>
 
@@ -121,15 +117,14 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                   </Badge>
                   {set.dueCount > 0 ? (
                     <Badge variant="filled" color="orange" size="sm">
-                      {isVi
-                        ? `${set.dueCount} từ cần ôn tập hôm nay`
-                        : `${set.dueCount} cards due today`}
+                      {t.flashcard.cardsDueTodayBadge.replace(
+                        "{count}",
+                        String(set.dueCount),
+                      )}
                     </Badge>
                   ) : (
                     <Badge variant="light" color="teal" size="sm">
-                      {isVi
-                        ? "Đã hoàn thành mục tiêu hôm nay"
-                        : "Completed for today"}
+                      {t.flashcard.completedForTodayBadge}
                     </Badge>
                   )}
                 </Group>
@@ -147,23 +142,22 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
               <Group gap="xs">
                 <IconBook size={16} color="var(--mantine-color-indigo-6)" />
                 <Text fz="sm">
-                  {isVi ? "Tổng số từ:" : "Total cards:"}{" "}
+                  {t.flashcard.totalCardsLabel}{" "}
                   <b>
-                    {set.cardCount} {isVi ? "từ" : "cards"}
+                    {set.cardCount} {t.flashcard.cardsUnit}
                   </b>
                 </Text>
               </Group>
               <Group gap="xs">
                 <IconClock size={16} color="var(--mantine-color-blue-6)" />
                 <Text fz="sm">
-                  {isVi ? "Lần học gần nhất:" : "Last studied:"}{" "}
-                  <b>{lastStudiedLabel}</b>
+                  {t.flashcard.lastStudiedLabel} <b>{lastStudiedLabel}</b>
                 </Text>
               </Group>
               <Box style={{ flex: 1, maxWidth: 240 }}>
                 <Group justify="space-between" mb={2}>
                   <Text fz="xs" c="dimmed">
-                    {isVi ? "Đã thuộc:" : "Mastered:"}
+                    {t.flashcard.masteredColonLabel}
                   </Text>
                   <Text fz="xs" fw={700} c="indigo">
                     {masteredPercent}%
@@ -185,29 +179,26 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
           <Stack gap="sm">
             <Group justify="space-between" align="center">
               <Text fw={700} fz="md" c="dark.9">
-                {isVi
-                  ? `Danh sách từ vựng trong bộ (${cards.length} thẻ)`
-                  : `Card list in deck (${cards.length} cards)`}
+                {t.flashcard.deckWordListTitle.replace(
+                  "{count}",
+                  String(cards.length),
+                )}
               </Text>
               <Text fz="xs" c="dimmed">
-                {isVi
-                  ? "Bấm vào biểu tượng loa để nghe phát âm chuẩn bản xứ"
-                  : "Click speaker icon to listen to native pronunciation"}
+                {t.flashcard.clickSpeakerHint}
               </Text>
             </Group>
 
             <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>{isVi ? "Từ vựng" : "Word"}</Table.Th>
-                  <Table.Th>{isVi ? "Phiên âm IPA" : "IPA"}</Table.Th>
-                  <Table.Th>{isVi ? "Từ loại" : "Part of Speech"}</Table.Th>
-                  <Table.Th>{isVi ? "Nghĩa" : "Definition"}</Table.Th>
-                  <Table.Th>
-                    {isVi ? "Định nghĩa tiếng Anh" : "English Meaning"}
-                  </Table.Th>
-                  <Table.Th>{isVi ? "Trạng thái" : "Status"}</Table.Th>
-                  <Table.Th ta="right">{isVi ? "Nghe" : "Audio"}</Table.Th>
+                  <Table.Th>{t.dictation.wordColumn}</Table.Th>
+                  <Table.Th>{t.flashcard.ipaColumn}</Table.Th>
+                  <Table.Th>{t.flashcard.partOfSpeechColumn}</Table.Th>
+                  <Table.Th>{t.flashcard.definitionColumn}</Table.Th>
+                  <Table.Th>{t.flashcard.englishMeaningColumn}</Table.Th>
+                  <Table.Th>{t.flashcard.statusColumn}</Table.Th>
+                  <Table.Th ta="right">{t.flashcard.audioColumn}</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -239,22 +230,22 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                     <Table.Td>
                       {card.status === FlashcardReviewStatus.MASTERED && (
                         <Badge color="teal" variant="light" size="xs">
-                          {isVi ? "Đã thuộc" : "Mastered"}
+                          {t.flashcard.mastered}
                         </Badge>
                       )}
                       {card.status === FlashcardReviewStatus.REVIEW && (
                         <Badge color="indigo" variant="light" size="xs">
-                          {isVi ? "Ôn tập" : "Review"}
+                          {t.flashcard.reviewStatusBadge}
                         </Badge>
                       )}
                       {card.status === FlashcardReviewStatus.LEARNING && (
                         <Badge color="blue" variant="light" size="xs">
-                          {isVi ? "Đang học" : "Learning"}
+                          {t.flashcard.learningStatusBadge}
                         </Badge>
                       )}
                       {card.status === FlashcardReviewStatus.NEW && (
                         <Badge color="gray" variant="light" size="xs">
-                          {isVi ? "Từ mới" : "New"}
+                          {t.flashcard.newStatusBadge}
                         </Badge>
                       )}
                     </Table.Td>
@@ -264,7 +255,10 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                         color="indigo"
                         size="sm"
                         onClick={() => handleSpeak(card.lemma)}
-                        aria-label={`Nghe từ ${card.lemma}`}
+                        aria-label={t.flashcard.listenWordAria.replace(
+                          "{word}",
+                          card.lemma,
+                        )}
                       >
                         <IconVolume size={16} />
                       </ActionIcon>

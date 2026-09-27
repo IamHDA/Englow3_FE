@@ -23,7 +23,7 @@ export function FlashcardDifficultCards({
   cards,
   onSpeak,
 }: FlashcardDifficultCardsProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
 
   const handleSpeak = (word: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -44,20 +44,21 @@ export function FlashcardDifficultCards({
             </Text>
           </Group>
           <Badge variant="light" color="red" size="sm">
-            {isVi
-              ? `${cards.length} từ cần ưu tiên`
-              : `${cards.length} priority words`}
+            {t.flashcard.priorityWordsBadge.replace(
+              "{count}",
+              String(cards.length),
+            )}
           </Badge>
         </Group>
 
         <Table verticalSpacing="xs" horizontalSpacing="sm" highlightOnHover>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>{isVi ? "Từ vựng" : "Word"}</Table.Th>
-              <Table.Th>{isVi ? "Bộ từ" : "Deck"}</Table.Th>
-              <Table.Th>{isVi ? "Số lần chưa nhớ" : "Misses"}</Table.Th>
-              <Table.Th>{isVi ? "Lần xem cuối" : "Last Review"}</Table.Th>
-              <Table.Th ta="right">{isVi ? "Phát âm" : "Audio"}</Table.Th>
+              <Table.Th>{t.dictation.wordColumn}</Table.Th>
+              <Table.Th>{t.flashcard.deckColumn}</Table.Th>
+              <Table.Th>{t.flashcard.missesColumnShort}</Table.Th>
+              <Table.Th>{t.flashcard.lastReviewColumn}</Table.Th>
+              <Table.Th ta="right">{t.flashcard.audioColumn}</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -65,9 +66,7 @@ export function FlashcardDifficultCards({
               <Table.Tr>
                 <Table.Td colSpan={5}>
                   <Text fz="sm" c="dimmed" ta="center" py="md">
-                    {isVi
-                      ? "Chưa có từ nào bạn hay quên."
-                      : "No words you keep forgetting yet."}
+                    {t.flashcard.noForgottenWords}
                   </Text>
                 </Table.Td>
               </Table.Tr>
@@ -86,7 +85,10 @@ export function FlashcardDifficultCards({
                 </Table.Td>
                 <Table.Td>
                   <Badge color="red" variant="filled" size="xs">
-                    {isVi ? `${item.missCount} lần` : `${item.missCount} times`}
+                    {t.flashcard.missCountBadge.replace(
+                      "{count}",
+                      String(item.missCount),
+                    )}
                   </Badge>
                 </Table.Td>
                 <Table.Td>
