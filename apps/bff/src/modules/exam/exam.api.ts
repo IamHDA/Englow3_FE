@@ -3,6 +3,7 @@ import type {
   QueryExamsArgs,
 } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
+import { toQueryString } from "../../shared/http/queryParams.js";
 import type {
   ExamAttemptPageResponse,
   ExamAttemptResponse,
@@ -23,18 +24,17 @@ export class ExamApi {
 
   /** Learner search on the backend (/api/exams) - returns published exams. */
   searchAsLearner(params: QueryExamsArgs): Promise<LearnerExamPageResponse> {
-    const query = new URLSearchParams();
-    if (params.examType) query.set("examType", params.examType);
-    if (params.certificateType)
-      query.set("certificateType", params.certificateType);
-    if (params.certificateVariant)
-      query.set("certificateVariant", params.certificateVariant);
-    if (params.targetLevel) query.set("targetLevel", params.targetLevel);
-    if (params.title) query.set("title", params.title);
-    query.set("page", String(params.page ?? 0));
-    query.set("size", String(params.size ?? 20));
+    const query = toQueryString({
+      examType: params.examType,
+      certificateType: params.certificateType,
+      certificateVariant: params.certificateVariant,
+      targetLevel: params.targetLevel,
+      title: params.title,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
 
-    return this.client.get(`${EXAM_BASE_PATH}?${query.toString()}`);
+    return this.client.get(`${EXAM_BASE_PATH}?${query}`);
   }
 
   /** The placement paper to sit. 404 when the deployment has none published. */
@@ -87,14 +87,15 @@ export class ExamApi {
 
   /** Admin-only on the backend (@PreAuthorize hasRole ADMIN) - it answers 403 for anyone else. */
   searchAsAdmin(params: QueryAdminExamsArgs): Promise<ExamPageResponse> {
-    const query = new URLSearchParams();
-    if (params.status) query.set("status", params.status);
-    if (params.examType) query.set("examType", params.examType);
-    if (params.title) query.set("title", params.title);
-    query.set("page", String(params.page ?? 0));
-    query.set("size", String(params.size ?? 20));
+    const query = toQueryString({
+      status: params.status,
+      examType: params.examType,
+      title: params.title,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
 
-    return this.client.get(`${ADMIN_EXAM_BASE_PATH}?${query.toString()}`);
+    return this.client.get(`${ADMIN_EXAM_BASE_PATH}?${query}`);
   }
 
   /** Admin-only on the backend. Refuses a non-draft or an incomplete paper - see Exam.publish(). */

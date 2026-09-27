@@ -1,7 +1,5 @@
 import type { Resolvers } from "../../generated/graphql.js";
-
-/** The backend trusts the requested size; the cap belongs here so a client cannot ask for the whole table. */
-const MAX_PAGE_SIZE = 100;
+import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 export const dictationResolvers = {
   Query: {
@@ -9,7 +7,7 @@ export const dictationResolvers = {
       ctx.requireToken();
       return ctx.apis.dictationApi.searchDictationLessons({
         ...args,
-        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+        size: clampPageSize(args.size),
       });
     },
     dictationLesson: (_, args, ctx) => {

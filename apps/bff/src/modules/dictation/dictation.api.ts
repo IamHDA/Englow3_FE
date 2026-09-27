@@ -1,5 +1,6 @@
 import type { QueryDictationLessonsArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
+import { toQueryString } from "../../shared/http/queryParams.js";
 import type {
   DictationLessonDetailResponse,
   DictationLessonPageResponse,
@@ -16,15 +17,14 @@ export class DictationApi {
   searchDictationLessons(
     params: QueryDictationLessonsArgs,
   ): Promise<DictationLessonPageResponse> {
-    const query = new URLSearchParams();
-    if (params.topic) query.set("topic", params.topic);
-    if (params.title) query.set("title", params.title);
-    query.set("page", String(params.page ?? 0));
-    query.set("size", String(params.size ?? 20));
+    const query = toQueryString({
+      topic: params.topic,
+      title: params.title,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
 
-    return this.client.get(
-      `${DICTATION_BASE_PATH}/lessons?${query.toString()}`,
-    );
+    return this.client.get(`${DICTATION_BASE_PATH}/lessons?${query}`);
   }
 
   getDictationLesson(id: string): Promise<DictationLessonDetailResponse> {

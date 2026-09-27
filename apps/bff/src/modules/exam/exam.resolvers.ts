@@ -1,7 +1,5 @@
 import type { Resolvers } from "../../generated/graphql.js";
-
-/** The backend trusts the requested size; the cap belongs here so a client cannot ask for the whole table. */
-const MAX_PAGE_SIZE = 100;
+import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 export const examResolvers = {
   Query: {
@@ -12,14 +10,14 @@ export const examResolvers = {
       // the page passes through untouched.
       return ctx.apis.examApi.searchAsLearner({
         ...args,
-        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+        size: clampPageSize(args.size),
       });
     },
     adminExams: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.searchAsAdmin({
         ...args,
-        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+        size: clampPageSize(args.size),
       });
     },
     exam: (_, args, ctx) => {
@@ -38,7 +36,7 @@ export const examResolvers = {
       ctx.requireToken();
       return ctx.apis.examApi.listAttempts(
         args.page ?? 0,
-        Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+        clampPageSize(args.size),
       );
     },
     examAttempt: (_, args, ctx) => {

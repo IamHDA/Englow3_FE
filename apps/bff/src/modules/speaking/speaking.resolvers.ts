@@ -1,7 +1,5 @@
 import type { Resolvers } from "../../generated/graphql.js";
-
-/** The backend trusts the requested size; the cap belongs here so a client cannot ask for the whole table. */
-const MAX_PAGE_SIZE = 100;
+import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 export const speakingResolvers = {
   Query: {
@@ -9,7 +7,7 @@ export const speakingResolvers = {
       ctx.requireToken();
       return ctx.apis.speakingApi.searchPrompts({
         ...args,
-        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+        size: clampPageSize(args.size),
       });
     },
     speakingPrompt: (_, args, ctx) => {

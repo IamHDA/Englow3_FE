@@ -3,6 +3,7 @@ import type {
   QueryAdminContentArgs,
 } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
+import { toQueryString } from "../../shared/http/queryParams.js";
 import type {
   AdminOverviewResponse,
   ContentReviewPageResponse,
@@ -60,13 +61,14 @@ export class ContentManagementApi {
   searchContentForAuthoring(
     params: QueryAdminContentArgs,
   ): Promise<ContentReviewPageResponse> {
-    const query = new URLSearchParams();
-    if (params.status) query.set("status", params.status);
-    if (params.title) query.set("title", params.title);
-    query.set("page", String(params.page ?? 0));
-    query.set("size", String(params.size ?? 20));
+    const query = toQueryString({
+      status: params.status,
+      title: params.title,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
 
-    const path = `${ADMIN_CONTENT_PATHS[params.kind]}?${query.toString()}`;
+    const path = `${ADMIN_CONTENT_PATHS[params.kind]}?${query}`;
     if (params.kind !== "SPEAKING_PROMPT") {
       return this.client.get(path);
     }

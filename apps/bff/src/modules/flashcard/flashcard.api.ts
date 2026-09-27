@@ -1,5 +1,6 @@
 import type { QueryFlashcardSetsArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
+import { toQueryString } from "../../shared/http/queryParams.js";
 import type {
   FlashcardResponse,
   FlashcardReviewResponse,
@@ -17,13 +18,14 @@ export class FlashcardApi {
   searchFlashcardSets(
     params: QueryFlashcardSetsArgs,
   ): Promise<FlashcardSetPageResponse> {
-    const query = new URLSearchParams();
-    if (params.topic) query.set("topic", params.topic);
-    if (params.title) query.set("title", params.title);
-    query.set("page", String(params.page ?? 0));
-    query.set("size", String(params.size ?? 20));
+    const query = toQueryString({
+      topic: params.topic,
+      title: params.title,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
 
-    return this.client.get(`${FLASHCARD_BASE_PATH}/sets?${query.toString()}`);
+    return this.client.get(`${FLASHCARD_BASE_PATH}/sets?${query}`);
   }
 
   getFlashcardSet(id: string): Promise<FlashcardSetDetailResponse> {
