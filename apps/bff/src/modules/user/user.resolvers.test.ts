@@ -1,40 +1,18 @@
-import { GraphQLError } from "graphql";
 import { describe, expect, it, vi } from "vitest";
 
 import { userResolvers } from "./user.resolvers.js";
 import type { UserInformationResponse } from "./user.types.js";
-import type { GraphQLContext } from "../../graphql/context.js";
-
-function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: { getMe: vi.fn() } as any,
-      onboardingApi: {} as any,
-      examApi: {} as any,
-      learningApi: {} as any,
-      speakingApi: {} as any,
-      tutorApi: {} as any,
-    },
-    ...overrides,
-  };
-}
+import { makeContext } from "../../test/makeContext.js";
 
 describe("Query.me", () => {
   it("fails before calling the backend when there is no token", () => {
-    const ctx = makeContext({
-      requireToken: () => {
-        throw new GraphQLError("Missing or invalid access token", {
-          extensions: { code: "UNAUTHENTICATED" },
-        });
-      },
-    });
+    const getMe = vi.fn();
+    const ctx = makeContext({ token: null, apis: { userApi: { getMe } } });
 
     expect(() => userResolvers.Query.me({}, {}, ctx)).toThrow(
       "Missing or invalid access token",
     );
-    expect(ctx.apis.userApi.getMe).not.toHaveBeenCalled();
+    expect(getMe).not.toHaveBeenCalled();
   });
 
   it("returns the UserApi response directly", async () => {
@@ -51,16 +29,7 @@ describe("Query.me", () => {
       onboardingStep: "LEARNING_PURPOSES",
     };
     const getMe = vi.fn().mockResolvedValue(me);
-    const ctx = makeContext({
-      apis: {
-        userApi: { getMe } as any,
-        onboardingApi: {} as any,
-        examApi: {} as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
-      },
-    });
+    const ctx = makeContext({ apis: { userApi: { getMe } } });
 
     const result = await userResolvers.Query.me({}, {}, ctx);
 
@@ -71,13 +40,7 @@ describe("Query.me", () => {
 
 describe("Mutation.updateProfile", () => {
   it("fails before calling the backend when there is no token", () => {
-    const ctx = makeContext({
-      requireToken: () => {
-        throw new GraphQLError("Missing or invalid access token", {
-          extensions: { code: "UNAUTHENTICATED" },
-        });
-      },
-    });
+    const ctx = makeContext({ token: null });
 
     expect(() =>
       userResolvers.Mutation.updateProfile(
@@ -107,16 +70,7 @@ describe("Mutation.updateProfile", () => {
       onboardingStep: "COMPLETED",
     };
     const updateProfile = vi.fn().mockResolvedValue(updated);
-    const ctx = makeContext({
-      apis: {
-        userApi: { updateProfile } as any,
-        onboardingApi: {} as any,
-        examApi: {} as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
-      },
-    });
+    const ctx = makeContext({ apis: { userApi: { updateProfile } } });
 
     const input = {
       fullName: "Nguyen Van B",

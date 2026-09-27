@@ -1,42 +1,15 @@
-import { GraphQLError } from "graphql";
 import { describe, expect, it, vi } from "vitest";
 
 import { speakingResolvers } from "./speaking.resolvers.js";
-import type { GraphQLContext } from "../../graphql/context.js";
-
-function makeContext(
-  speakingApiOverrides: Record<string, unknown> = {},
-  overrides: Partial<GraphQLContext> = {},
-): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: {} as any,
-      onboardingApi: {} as any,
-      examApi: {} as any,
-      learningApi: {} as any,
-      speakingApi: speakingApiOverrides as any,
-      tutorApi: {} as any,
-    },
-    ...overrides,
-  };
-}
-
-function unauthenticated(): Partial<GraphQLContext> {
-  return {
-    requireToken: () => {
-      throw new GraphQLError("Missing or invalid access token", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
-    },
-  };
-}
+import { makeContext } from "../../test/makeContext.js";
 
 describe("Query.speakingPrompts", () => {
   it("fails before calling the backend when there is no token", () => {
     const searchPrompts = vi.fn();
-    const ctx = makeContext({ searchPrompts }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { speakingApi: { searchPrompts } },
+    });
 
     expect(() => speakingResolvers.Query.speakingPrompts({}, {}, ctx)).toThrow(
       "Missing or invalid access token",
@@ -46,7 +19,7 @@ describe("Query.speakingPrompts", () => {
 
   it("caps the page size so a client cannot ask for the whole table", async () => {
     const searchPrompts = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext({ searchPrompts });
+    const ctx = makeContext({ apis: { speakingApi: { searchPrompts } } });
 
     await speakingResolvers.Query.speakingPrompts({}, { size: 5000 }, ctx);
 
@@ -57,7 +30,10 @@ describe("Query.speakingPrompts", () => {
 describe("Mutation.startSpeakingAttempt", () => {
   it("fails before calling the backend when there is no token", () => {
     const startAttempt = vi.fn();
-    const ctx = makeContext({ startAttempt }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { speakingApi: { startAttempt } },
+    });
 
     expect(() =>
       speakingResolvers.Mutation.startSpeakingAttempt(
@@ -76,7 +52,7 @@ describe("Mutation.startSpeakingAttempt", () => {
    */
   it("forwards an unsupported format rather than correcting it", async () => {
     const startAttempt = vi.fn().mockResolvedValue({ attemptId: "a-1" });
-    const ctx = makeContext({ startAttempt });
+    const ctx = makeContext({ apis: { speakingApi: { startAttempt } } });
 
     await speakingResolvers.Mutation.startSpeakingAttempt(
       {},
@@ -95,7 +71,7 @@ describe("Mutation.startSpeakingAttempt", () => {
    */
   it("forwards an oversized length rather than clamping it", async () => {
     const startAttempt = vi.fn().mockResolvedValue({ attemptId: "a-1" });
-    const ctx = makeContext({ startAttempt });
+    const ctx = makeContext({ apis: { speakingApi: { startAttempt } } });
 
     await speakingResolvers.Mutation.startSpeakingAttempt(
       {},
@@ -114,7 +90,10 @@ describe("Mutation.startSpeakingAttempt", () => {
 describe("Mutation.submitSpeakingAttempt", () => {
   it("fails before calling the backend when there is no token", () => {
     const submitAttempt = vi.fn();
-    const ctx = makeContext({ submitAttempt }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { speakingApi: { submitAttempt } },
+    });
 
     expect(() =>
       speakingResolvers.Mutation.submitSpeakingAttempt(
@@ -128,7 +107,7 @@ describe("Mutation.submitSpeakingAttempt", () => {
 
   it("asks the backend to queue the assessment", async () => {
     const submitAttempt = vi.fn().mockResolvedValue({ status: "QUEUED" });
-    const ctx = makeContext({ submitAttempt });
+    const ctx = makeContext({ apis: { speakingApi: { submitAttempt } } });
 
     await speakingResolvers.Mutation.submitSpeakingAttempt(
       {},

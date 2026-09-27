@@ -1,42 +1,15 @@
-import { GraphQLError } from "graphql";
 import { describe, expect, it, vi } from "vitest";
 
 import { learningResolvers } from "./learning.resolvers.js";
-import type { GraphQLContext } from "../../graphql/context.js";
-
-function makeContext(
-  learningApiOverrides: Record<string, unknown> = {},
-  overrides: Partial<GraphQLContext> = {},
-): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: {} as any,
-      onboardingApi: {} as any,
-      examApi: {} as any,
-      learningApi: learningApiOverrides as any,
-      speakingApi: {} as any,
-      tutorApi: {} as any,
-    },
-    ...overrides,
-  };
-}
-
-function unauthenticated(): Partial<GraphQLContext> {
-  return {
-    requireToken: () => {
-      throw new GraphQLError("Missing or invalid access token", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
-    },
-  };
-}
+import { makeContext } from "../../test/makeContext.js";
 
 describe("Query.flashcardSets", () => {
   it("fails before calling the backend when there is no token", () => {
     const searchFlashcardSets = vi.fn();
-    const ctx = makeContext({ searchFlashcardSets }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { searchFlashcardSets } },
+    });
 
     expect(() => learningResolvers.Query.flashcardSets({}, {}, ctx)).toThrow(
       "Missing or invalid access token",
@@ -46,7 +19,7 @@ describe("Query.flashcardSets", () => {
 
   it("caps the page size so a client cannot ask for the whole table", async () => {
     const searchFlashcardSets = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext({ searchFlashcardSets });
+    const ctx = makeContext({ apis: { learningApi: { searchFlashcardSets } } });
 
     await learningResolvers.Query.flashcardSets({}, { size: 5000 }, ctx);
 
@@ -55,7 +28,7 @@ describe("Query.flashcardSets", () => {
 
   it("forwards the filters as given", async () => {
     const searchFlashcardSets = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext({ searchFlashcardSets });
+    const ctx = makeContext({ apis: { learningApi: { searchFlashcardSets } } });
 
     await learningResolvers.Query.flashcardSets(
       {},
@@ -75,7 +48,7 @@ describe("Query.flashcardSets", () => {
 describe("Query.flashcardStudyQueue", () => {
   it("caps the queue length", async () => {
     const getStudyQueue = vi.fn().mockResolvedValue([]);
-    const ctx = makeContext({ getStudyQueue });
+    const ctx = makeContext({ apis: { learningApi: { getStudyQueue } } });
 
     await learningResolvers.Query.flashcardStudyQueue(
       {},
@@ -90,7 +63,7 @@ describe("Query.flashcardStudyQueue", () => {
   it("passes the backend's ordering through untouched", async () => {
     const queue = [{ id: "due-card" }, { id: "unseen-card" }];
     const getStudyQueue = vi.fn().mockResolvedValue(queue);
-    const ctx = makeContext({ getStudyQueue });
+    const ctx = makeContext({ apis: { learningApi: { getStudyQueue } } });
 
     const result = await learningResolvers.Query.flashcardStudyQueue(
       {},
@@ -105,7 +78,10 @@ describe("Query.flashcardStudyQueue", () => {
 describe("Mutation.rateFlashcard", () => {
   it("fails before calling the backend when there is no token", () => {
     const rateFlashcard = vi.fn();
-    const ctx = makeContext({ rateFlashcard }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { rateFlashcard } },
+    });
 
     expect(() =>
       learningResolvers.Mutation.rateFlashcard(
@@ -121,7 +97,7 @@ describe("Mutation.rateFlashcard", () => {
     const rateFlashcard = vi
       .fn()
       .mockResolvedValue({ flashcardId: "card-1", status: "LEARNING" });
-    const ctx = makeContext({ rateFlashcard });
+    const ctx = makeContext({ apis: { learningApi: { rateFlashcard } } });
 
     const result = await learningResolvers.Mutation.rateFlashcard(
       {},
@@ -140,7 +116,7 @@ describe("Mutation.rateFlashcard", () => {
 describe("Query.quizzes", () => {
   it("caps the page size so a client cannot ask for the whole table", async () => {
     const searchQuizzes = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext({ searchQuizzes });
+    const ctx = makeContext({ apis: { learningApi: { searchQuizzes } } });
 
     await learningResolvers.Query.quizzes({}, { size: 5000 }, ctx);
 
@@ -151,7 +127,10 @@ describe("Query.quizzes", () => {
 describe("Query.quizPaper", () => {
   it("fails before calling the backend when there is no token", () => {
     const getQuizPaper = vi.fn();
-    const ctx = makeContext({ getQuizPaper }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { getQuizPaper } },
+    });
 
     expect(() =>
       learningResolvers.Query.quizPaper({}, { attemptId: "attempt-1" }, ctx),
@@ -167,7 +146,7 @@ describe("Query.quizPaper", () => {
       ],
     };
     const getQuizPaper = vi.fn().mockResolvedValue(paper);
-    const ctx = makeContext({ getQuizPaper });
+    const ctx = makeContext({ apis: { learningApi: { getQuizPaper } } });
 
     const result = await learningResolvers.Query.quizPaper(
       {},
@@ -185,7 +164,7 @@ describe("Mutation.submitQuizAttempt", () => {
     const submitQuizAttempt = vi
       .fn()
       .mockResolvedValue({ id: "attempt-1", status: "SCORED" });
-    const ctx = makeContext({ submitQuizAttempt });
+    const ctx = makeContext({ apis: { learningApi: { submitQuizAttempt } } });
     const answers = [{ questionId: "q1", response: "opt-b" }];
 
     await learningResolvers.Mutation.submitQuizAttempt(
@@ -201,7 +180,10 @@ describe("Mutation.submitQuizAttempt", () => {
 describe("Mutation.submitDictation", () => {
   it("fails before calling the backend when there is no token", () => {
     const submitDictation = vi.fn();
-    const ctx = makeContext({ submitDictation }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { submitDictation } },
+    });
 
     expect(() =>
       learningResolvers.Mutation.submitDictation(
@@ -218,7 +200,7 @@ describe("Mutation.submitDictation", () => {
     const submitDictation = vi
       .fn()
       .mockResolvedValue({ sentenceId: "s-1", accuracyPercent: 0 });
-    const ctx = makeContext({ submitDictation });
+    const ctx = makeContext({ apis: { learningApi: { submitDictation } } });
 
     await learningResolvers.Mutation.submitDictation(
       {},
@@ -233,7 +215,10 @@ describe("Mutation.submitDictation", () => {
 describe("Query.dailyPath", () => {
   it("fails before calling the backend when there is no token", () => {
     const getDailyPath = vi.fn();
-    const ctx = makeContext({ getDailyPath }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { getDailyPath } },
+    });
 
     expect(() => learningResolvers.Query.dailyPath({}, {}, ctx)).toThrow(
       "Missing or invalid access token",
@@ -249,7 +234,7 @@ describe("Query.dailyPath", () => {
     const getDailyPath = vi
       .fn()
       .mockResolvedValue({ streakDays: 3, tasks: [], quests: [] });
-    const ctx = makeContext({ getDailyPath });
+    const ctx = makeContext({ apis: { learningApi: { getDailyPath } } });
 
     const path = await learningResolvers.Query.dailyPath({}, {}, ctx);
 
@@ -261,7 +246,10 @@ describe("Query.dailyPath", () => {
 describe("Query.adminContent", () => {
   it("fails before calling the backend when there is no token", () => {
     const searchContentForAuthoring = vi.fn();
-    const ctx = makeContext({ searchContentForAuthoring }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { searchContentForAuthoring } },
+    });
 
     expect(() =>
       learningResolvers.Query.adminContent({}, { kind: "QUIZ" } as never, ctx),
@@ -271,7 +259,9 @@ describe("Query.adminContent", () => {
 
   it("caps the page size and forwards the kind", async () => {
     const searchContentForAuthoring = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext({ searchContentForAuthoring });
+    const ctx = makeContext({
+      apis: { learningApi: { searchContentForAuthoring } },
+    });
 
     await learningResolvers.Query.adminContent(
       {},
@@ -288,7 +278,9 @@ describe("Query.adminContent", () => {
   /** No status means every status, which is what makes one endpoint serve the queue and the full list. */
   it("leaves status out rather than defaulting it", async () => {
     const searchContentForAuthoring = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext({ searchContentForAuthoring });
+    const ctx = makeContext({
+      apis: { learningApi: { searchContentForAuthoring } },
+    });
 
     await learningResolvers.Query.adminContent(
       {},
@@ -306,7 +298,10 @@ describe("Query.adminContent", () => {
 describe("Mutation.rejectContent", () => {
   it("fails before calling the backend when there is no token", () => {
     const rejectContent = vi.fn();
-    const ctx = makeContext({ rejectContent }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { rejectContent } },
+    });
 
     expect(() =>
       learningResolvers.Mutation.rejectContent(
@@ -324,7 +319,7 @@ describe("Mutation.rejectContent", () => {
    */
   it("forwards a blank note rather than short-circuiting it", async () => {
     const rejectContent = vi.fn().mockResolvedValue({ status: "REJECTED" });
-    const ctx = makeContext({ rejectContent });
+    const ctx = makeContext({ apis: { learningApi: { rejectContent } } });
 
     await learningResolvers.Mutation.rejectContent(
       {},
@@ -346,7 +341,9 @@ describe("adminContent for speaking prompts", () => {
     const searchContentForAuthoring = vi.fn().mockResolvedValue({
       items: [{ id: "p-1", title: "Seat vs sit", itemCount: null }],
     });
-    const ctx = makeContext({ searchContentForAuthoring });
+    const ctx = makeContext({
+      apis: { learningApi: { searchContentForAuthoring } },
+    });
 
     const page = await learningResolvers.Query.adminContent(
       {},
@@ -363,7 +360,7 @@ describe("adminContent for speaking prompts", () => {
 
   it("forwards the kind to the review actions unchanged", async () => {
     const approveContent = vi.fn().mockResolvedValue({ status: "PUBLISHED" });
-    const ctx = makeContext({ approveContent });
+    const ctx = makeContext({ apis: { learningApi: { approveContent } } });
 
     await learningResolvers.Mutation.approveContent(
       {},
@@ -378,7 +375,10 @@ describe("adminContent for speaking prompts", () => {
 describe("Query.adminOverview", () => {
   it("fails before calling the backend when there is no token", () => {
     const getAdminOverview = vi.fn();
-    const ctx = makeContext({ getAdminOverview }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { learningApi: { getAdminOverview } },
+    });
 
     expect(() => learningResolvers.Query.adminOverview({}, {}, ctx)).toThrow(
       "Missing or invalid access token",
@@ -402,7 +402,7 @@ describe("Query.adminOverview", () => {
       periodDays: 7,
     };
     const getAdminOverview = vi.fn().mockResolvedValue(overview);
-    const ctx = makeContext({ getAdminOverview });
+    const ctx = makeContext({ apis: { learningApi: { getAdminOverview } } });
 
     await expect(
       learningResolvers.Query.adminOverview({}, {}, ctx),

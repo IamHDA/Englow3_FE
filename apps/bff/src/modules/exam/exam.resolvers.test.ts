@@ -1,38 +1,14 @@
-import { GraphQLError } from "graphql";
 import { describe, expect, it, vi } from "vitest";
 
 import { examResolvers } from "./exam.resolvers.js";
-import type { GraphQLContext } from "../../graphql/context.js";
-
-function makeContext(
-  searchAsAdmin = vi.fn(),
-  overrides: Partial<GraphQLContext> = {},
-  examApiOverrides: Record<string, unknown> = {},
-): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: {} as any,
-      onboardingApi: {} as any,
-      examApi: { searchAsAdmin, ...examApiOverrides } as any,
-      learningApi: {} as any,
-      speakingApi: {} as any,
-      tutorApi: {} as any,
-    },
-    ...overrides,
-  };
-}
+import { makeContext } from "../../test/makeContext.js";
 
 describe("Query.adminExams", () => {
   it("fails before calling the backend when there is no token", () => {
     const searchAsAdmin = vi.fn();
-    const ctx = makeContext(searchAsAdmin, {
-      requireToken: () => {
-        throw new GraphQLError("Missing or invalid access token", {
-          extensions: { code: "UNAUTHENTICATED" },
-        });
-      },
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { searchAsAdmin } },
     });
 
     expect(() => examResolvers.Query.adminExams({}, {}, ctx)).toThrow(
@@ -43,7 +19,7 @@ describe("Query.adminExams", () => {
 
   it("forwards the filters and pagination as given", async () => {
     const searchAsAdmin = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext(searchAsAdmin);
+    const ctx = makeContext({ apis: { examApi: { searchAsAdmin } } });
 
     await examResolvers.Query.adminExams(
       {},
@@ -62,7 +38,7 @@ describe("Query.adminExams", () => {
 
   it("caps the page size so a client cannot ask for the whole table", async () => {
     const searchAsAdmin = vi.fn().mockResolvedValue({ items: [] });
-    const ctx = makeContext(searchAsAdmin);
+    const ctx = makeContext({ apis: { examApi: { searchAsAdmin } } });
 
     await examResolvers.Query.adminExams({}, { size: 5000 }, ctx);
 
@@ -73,17 +49,10 @@ describe("Query.adminExams", () => {
 describe("Mutation.publishExam", () => {
   it("fails before calling the backend when there is no token", () => {
     const publishAsAdmin = vi.fn();
-    const ctx = makeContext(
-      vi.fn(),
-      {
-        requireToken: () => {
-          throw new GraphQLError("Missing or invalid access token", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        },
-      },
-      { publishAsAdmin },
-    );
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { publishAsAdmin } },
+    });
 
     expect(() =>
       examResolvers.Mutation.publishExam({}, { id: "exam-1" }, ctx),
@@ -93,7 +62,7 @@ describe("Mutation.publishExam", () => {
 
   it("forwards the id to the backend", async () => {
     const publishAsAdmin = vi.fn().mockResolvedValue({ id: "exam-1" });
-    const ctx = makeContext(vi.fn(), {}, { publishAsAdmin });
+    const ctx = makeContext({ apis: { examApi: { publishAsAdmin } } });
 
     await examResolvers.Mutation.publishExam({}, { id: "exam-1" }, ctx);
 
@@ -104,17 +73,10 @@ describe("Mutation.publishExam", () => {
 describe("Mutation.archiveExam", () => {
   it("fails before calling the backend when there is no token", () => {
     const archiveAsAdmin = vi.fn();
-    const ctx = makeContext(
-      vi.fn(),
-      {
-        requireToken: () => {
-          throw new GraphQLError("Missing or invalid access token", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        },
-      },
-      { archiveAsAdmin },
-    );
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { archiveAsAdmin } },
+    });
 
     expect(() =>
       examResolvers.Mutation.archiveExam({}, { id: "exam-1" }, ctx),
@@ -124,7 +86,7 @@ describe("Mutation.archiveExam", () => {
 
   it("forwards the id to the backend", async () => {
     const archiveAsAdmin = vi.fn().mockResolvedValue({ id: "exam-1" });
-    const ctx = makeContext(vi.fn(), {}, { archiveAsAdmin });
+    const ctx = makeContext({ apis: { examApi: { archiveAsAdmin } } });
 
     await examResolvers.Mutation.archiveExam({}, { id: "exam-1" }, ctx);
 
@@ -135,17 +97,10 @@ describe("Mutation.archiveExam", () => {
 describe("Query.exams", () => {
   it("fails before calling the backend when there is no token", async () => {
     const searchAsLearner = vi.fn();
-    const ctx = makeContext(
-      vi.fn(),
-      {
-        requireToken: () => {
-          throw new GraphQLError("Missing or invalid access token", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        },
-      },
-      { searchAsLearner },
-    );
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { searchAsLearner } },
+    });
 
     await expect(examResolvers.Query.exams({}, {}, ctx)).rejects.toThrow(
       "Missing or invalid access token",
@@ -173,7 +128,7 @@ describe("Query.exams", () => {
       totalItems: 1,
       totalPages: 1,
     });
-    const ctx = makeContext(vi.fn(), {}, { searchAsLearner });
+    const ctx = makeContext({ apis: { examApi: { searchAsLearner } } });
 
     const res = await examResolvers.Query.exams(
       {},
@@ -199,17 +154,10 @@ describe("Query.exams", () => {
 describe("Query.exam", () => {
   it("fails before calling the backend when there is no token", () => {
     const getByIdAsLearner = vi.fn();
-    const ctx = makeContext(
-      vi.fn(),
-      {
-        requireToken: () => {
-          throw new GraphQLError("Missing or invalid access token", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        },
-      },
-      { getByIdAsLearner },
-    );
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { getByIdAsLearner } },
+    });
 
     expect(() => examResolvers.Query.exam({}, { id: "exam-1" }, ctx)).toThrow(
       "Missing or invalid access token",
@@ -221,7 +169,7 @@ describe("Query.exam", () => {
     const getByIdAsLearner = vi
       .fn()
       .mockResolvedValue({ id: "exam-1", title: "Detail" });
-    const ctx = makeContext(vi.fn(), {}, { getByIdAsLearner });
+    const ctx = makeContext({ apis: { examApi: { getByIdAsLearner } } });
 
     const res = await examResolvers.Query.exam({}, { id: "exam-1" }, ctx);
 
@@ -233,17 +181,10 @@ describe("Query.exam", () => {
 describe("Query.attemptPaper", () => {
   it("fails before calling the backend when there is no token", () => {
     const getAttemptPaper = vi.fn();
-    const ctx = makeContext(
-      vi.fn(),
-      {
-        requireToken: () => {
-          throw new GraphQLError("Missing or invalid access token", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        },
-      },
-      { getAttemptPaper },
-    );
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { getAttemptPaper } },
+    });
 
     expect(() =>
       examResolvers.Query.attemptPaper({}, { attemptId: "attempt-1" }, ctx),
@@ -255,7 +196,7 @@ describe("Query.attemptPaper", () => {
     const getAttemptPaper = vi
       .fn()
       .mockResolvedValue({ id: "exam-1", sections: [] });
-    const ctx = makeContext(vi.fn(), {}, { getAttemptPaper });
+    const ctx = makeContext({ apis: { examApi: { getAttemptPaper } } });
 
     const res = await examResolvers.Query.attemptPaper(
       {},
@@ -271,17 +212,10 @@ describe("Query.attemptPaper", () => {
 describe("Mutation.startExamAttempt", () => {
   it("fails before calling the backend when there is no token", () => {
     const startAttempt = vi.fn();
-    const ctx = makeContext(
-      vi.fn(),
-      {
-        requireToken: () => {
-          throw new GraphQLError("Missing or invalid access token", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        },
-      },
-      { startAttempt },
-    );
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { startAttempt } },
+    });
 
     expect(() =>
       examResolvers.Mutation.startExamAttempt({}, { examId: "exam-1" }, ctx),
@@ -293,7 +227,7 @@ describe("Mutation.startExamAttempt", () => {
     const startAttempt = vi
       .fn()
       .mockResolvedValue({ id: "attempt-1", resumed: true });
-    const ctx = makeContext(vi.fn(), {}, { startAttempt });
+    const ctx = makeContext({ apis: { examApi: { startAttempt } } });
 
     const res = await examResolvers.Mutation.startExamAttempt(
       {},
@@ -312,7 +246,7 @@ describe("Mutation.submitExamAttempt", () => {
     const submitAttempt = vi
       .fn()
       .mockResolvedValue({ id: "attempt-1", status: "SCORED" });
-    const ctx = makeContext(vi.fn(), {}, { submitAttempt });
+    const ctx = makeContext({ apis: { examApi: { submitAttempt } } });
     const answers = [{ questionId: "q-1", selectedOptionIds: ["o-1"] }];
 
     const res = await examResolvers.Mutation.submitExamAttempt(
@@ -326,18 +260,13 @@ describe("Mutation.submitExamAttempt", () => {
   });
 });
 
-const NO_TOKEN: Partial<GraphQLContext> = {
-  requireToken: () => {
-    throw new GraphQLError("Missing or invalid access token", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
-  },
-};
-
 describe("Mutation.rejectExam", () => {
   it("fails before calling the backend when there is no token", () => {
     const rejectAsAdmin = vi.fn();
-    const ctx = makeContext(vi.fn(), NO_TOKEN, { rejectAsAdmin });
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { rejectAsAdmin } },
+    });
 
     expect(() =>
       examResolvers.Mutation.rejectExam({}, { id: "e-1", note: "no" }, ctx),
@@ -352,7 +281,7 @@ describe("Mutation.rejectExam", () => {
    */
   it("forwards a blank note rather than short-circuiting it", async () => {
     const rejectAsAdmin = vi.fn().mockResolvedValue({ status: "REJECTED" });
-    const ctx = makeContext(vi.fn(), {}, { rejectAsAdmin });
+    const ctx = makeContext({ apis: { examApi: { rejectAsAdmin } } });
 
     await examResolvers.Mutation.rejectExam(
       {},
@@ -367,7 +296,10 @@ describe("Mutation.rejectExam", () => {
 describe("Mutation.submitExamForReview", () => {
   it("fails before calling the backend when there is no token", () => {
     const submitForReviewAsAdmin = vi.fn();
-    const ctx = makeContext(vi.fn(), NO_TOKEN, { submitForReviewAsAdmin });
+    const ctx = makeContext({
+      token: null,
+      apis: { examApi: { submitForReviewAsAdmin } },
+    });
 
     expect(() =>
       examResolvers.Mutation.submitExamForReview({}, { id: "e-1" }, ctx),
@@ -379,7 +311,7 @@ describe("Mutation.submitExamForReview", () => {
     const submitForReviewAsAdmin = vi
       .fn()
       .mockResolvedValue({ status: "PENDING_REVIEW" });
-    const ctx = makeContext(vi.fn(), {}, { submitForReviewAsAdmin });
+    const ctx = makeContext({ apis: { examApi: { submitForReviewAsAdmin } } });
 
     await examResolvers.Mutation.submitExamForReview({}, { id: "e-1" }, ctx);
 
