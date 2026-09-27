@@ -27,7 +27,7 @@ interface DailyPathViewProps {
 
 export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
   const [activeTab, setActiveTab] = useState<"roadmap" | "quizzes">(initialTab);
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const { data } = useQuizzesQuery({
     variables: { size: QUIZ_PAGE_SIZE },
@@ -49,7 +49,7 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
     <Page>
       <Stack gap="xl">
         <PageHeader
-          title={isVi ? "Lộ trình học" : "Learning path"}
+          title={t.dailyPath.pageTitle}
           actions={
             <PageTabs
               value={activeTab}
@@ -57,12 +57,12 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
               tabs={[
                 {
                   value: "roadmap",
-                  label: isVi ? "Hôm nay" : "Today",
+                  label: t.dailyPath.roadmapTab,
                   icon: <IconCompass size={16} />,
                 },
                 {
                   value: "quizzes",
-                  label: isVi ? "Trắc nghiệm" : "Quizzes",
+                  label: t.dailyPath.quizCatalogueTab,
                   icon: <IconSparkles size={16} />,
                 },
               ]}
@@ -86,17 +86,8 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
           <Grid gap="md">
             <Grid.Col span={{ base: 12, md: 8 }}>
               {pathError && !path ? (
-                <Alert
-                  color="warn"
-                  title={
-                    isVi
-                      ? "Không tải được lộ trình"
-                      : "Could not load your path"
-                  }
-                >
-                  {isVi
-                    ? "Kiểm tra kết nối tới backend rồi tải lại trang."
-                    : "Check the connection to the backend and reload."}
+                <Alert color="warn" title={t.dailyPath.couldNotLoadPath}>
+                  {t.dictation.checkConnectionReload}
                 </Alert>
               ) : path ? (
                 <DailyPathRoadmap tasks={path.tasks} />

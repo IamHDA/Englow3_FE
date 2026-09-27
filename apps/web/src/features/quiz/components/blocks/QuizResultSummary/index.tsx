@@ -35,14 +35,16 @@ export function QuizResultSummary({
   result,
   onRestart,
 }: QuizResultSummaryProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const isPassed = result.isPassed;
   const statusColor = isPassed ? "teal" : "orange";
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
-    return isVi ? `${m} phút ${s} giây` : `${m}m ${s}s`;
+    return t.quiz.durationFormat
+      .replace("{m}", String(m))
+      .replace("{s}", String(s));
   };
 
   return (
@@ -56,25 +58,13 @@ export function QuizResultSummary({
 
           <Stack align="center" gap={4}>
             <Badge size="lg" variant="filled" color={statusColor}>
-              {isPassed
-                ? isVi
-                  ? "ĐẠT YÊU CẦU"
-                  : "PASSED"
-                : isVi
-                  ? "CHƯA ĐẠT"
-                  : "NEEDS RETAKE"}
+              {isPassed ? t.quiz.passedBadge : t.quiz.needsRetakeBadge}
             </Badge>
             <Text fz="xl" fw={800} ta="center">
               {result.quizTitle}
             </Text>
             <Text fz="sm" c="dimmed" ta="center">
-              {isPassed
-                ? isVi
-                  ? "Chúc mừng bạn đã vượt qua bài kiểm tra với số điểm ấn tượng!"
-                  : "Congratulations! You have passed the quiz with a great score."
-                : isVi
-                  ? "Bạn chưa đạt điểm tối thiểu để mở khóa bài tiếp theo. Hãy xem lại lời giải chi tiết bên dưới nhé!"
-                  : "You have not reached the passing score for this quiz. Review the explanations below and try again!"}
+              {isPassed ? t.quiz.passedMessage : t.quiz.failedMessage}
             </Text>
           </Stack>
 
@@ -95,10 +85,9 @@ export function QuizResultSummary({
               <Group gap="xs">
                 <IconCheck size={18} color="var(--mantine-color-teal-6)" />
                 <Text fz="sm">
-                  {isVi ? "Điểm số:" : "Score:"}{" "}
+                  {t.quiz.scoreLabel}{" "}
                   <b>
-                    {result.score} / {result.totalPoints}{" "}
-                    {isVi ? "điểm" : "pts"}
+                    {result.score} / {result.totalPoints} {t.quiz.pointsUnit}
                   </b>
                 </Text>
               </Group>
@@ -106,7 +95,7 @@ export function QuizResultSummary({
               <Group gap="xs">
                 <IconClock size={18} color="var(--mantine-color-blue-6)" />
                 <Text fz="sm">
-                  {isVi ? "Thời gian làm:" : "Time spent:"}{" "}
+                  {t.quiz.timeSpentLabel}{" "}
                   <b>{formatTime(result.timeSpentSeconds)}</b>
                 </Text>
               </Group>
@@ -114,8 +103,7 @@ export function QuizResultSummary({
               <Group gap="xs">
                 <IconFlame size={18} color="var(--mantine-color-orange-6)" />
                 <Text fz="sm">
-                  {isVi ? "Kinh nghiệm:" : "Experience:"}{" "}
-                  <b>+{result.score * 10} XP</b>
+                  {t.quiz.experienceLabel} <b>+{result.score * 10} XP</b>
                 </Text>
               </Group>
             </Stack>
@@ -128,7 +116,7 @@ export function QuizResultSummary({
               variant="default"
               leftSection={<IconArrowLeft size={18} />}
             >
-              {isVi ? "Về Lộ trình học" : "Back to Daily Path"}
+              {t.quiz.backToRoadmap}
             </Button>
             <Button
               variant="filled"
@@ -136,7 +124,7 @@ export function QuizResultSummary({
               onClick={onRestart}
               leftSection={<IconRotateClockwise size={18} />}
             >
-              {isVi ? "Làm lại bài kiểm tra" : "Retake Quiz"}
+              {t.quiz.retakeQuiz}
             </Button>
           </Group>
         </Stack>
@@ -145,9 +133,10 @@ export function QuizResultSummary({
       {/* Question by Question Detailed Review */}
       <Stack gap="md">
         <Text fw={700} fz="lg" c="dark.9">
-          {isVi
-            ? `Xem lại đáp án & Giải thích chi tiết (${result.reviews.length} câu)`
-            : `Detailed Review & Explanations (${result.reviews.length} questions)`}
+          {t.quiz.detailedReviewTitle.replace(
+            "{count}",
+            String(result.reviews.length),
+          )}
         </Text>
 
         {result.reviews.map((rev, idx) => (
@@ -160,16 +149,12 @@ export function QuizResultSummary({
                     color={rev.isCorrect ? "teal" : "red"}
                     size="md"
                   >
-                    {isVi ? `Câu ${idx + 1}:` : `Question ${idx + 1}:`}{" "}
+                    {t.quiz.questionPrefix.replace("{n}", String(idx + 1))}{" "}
                     {rev.isCorrect
-                      ? isVi
-                        ? "Đúng"
-                        : "Correct"
-                      : isVi
-                        ? "Sai"
-                        : "Incorrect"}{" "}
+                      ? t.quiz.correctLabel
+                      : t.quiz.incorrectLabel}{" "}
                     (+{rev.pointsEarned}/{rev.pointsPossible}{" "}
-                    {isVi ? "đ" : "pts"})
+                    {t.quiz.pointsAbbrev})
                   </Badge>
                   <Badge variant="outline" color="gray" size="xs">
                     {rev.type}
@@ -191,7 +176,7 @@ export function QuizResultSummary({
               <Group gap="xl" wrap="wrap">
                 <Box>
                   <Text fz="xs" c="dimmed" fw={700}>
-                    {isVi ? "CÂU TRẢ LỜI CỦA BẠN:" : "YOUR ANSWER:"}
+                    {t.quiz.yourAnswerLabel}
                   </Text>
                   <Text
                     fz="sm"
@@ -206,7 +191,7 @@ export function QuizResultSummary({
                 {!rev.isCorrect && (
                   <Box>
                     <Text fz="xs" c="dimmed" fw={700}>
-                      {isVi ? "ĐÁP ÁN CHÍNH XÁC:" : "CORRECT ANSWER:"}
+                      {t.quiz.correctAnswerLabel}
                     </Text>
                     <Text
                       fz="sm"
@@ -242,9 +227,7 @@ export function QuizResultSummary({
                   </ThemeIcon>
                   <Box>
                     <Text fz="xs" fw={700} c="indigo.9">
-                      {isVi
-                        ? "GIẢI THÍCH NGỮ PHÁP / KIẾN THỨC:"
-                        : "EXPLANATION & GRAMMAR NOTE:"}
+                      {t.quiz.explanationNoteLabel}
                     </Text>
                     <Text fz="xs" c="dark.8" style={{ whiteSpace: "pre-line" }}>
                       {rev.explanation}

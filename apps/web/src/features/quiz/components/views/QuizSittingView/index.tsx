@@ -51,7 +51,7 @@ interface QuizSittingViewProps {
 type ScoredAttempt = SubmitQuizAttemptMutation["submitQuizAttempt"];
 
 export function QuizSittingView({ quizId }: QuizSittingViewProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [scored, setScored] = useState<ScoredAttempt | null>(null);
@@ -154,7 +154,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
           thing={{ vi: "bài kiểm tra", en: "quiz" }}
           back={{
             href: "/study/quiz",
-            label: isVi ? "Về danh sách bài kiểm tra" : "Back to quizzes",
+            label: t.quiz.backToQuizzesButton,
           }}
           onRetry={attemptId === null ? handleStart : undefined}
         />
@@ -170,15 +170,13 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
         <Card withBorder padding="xl" radius="md">
           <Stack gap="md" align="center">
             <Title order={2} fz="h3" ta="center">
-              {isVi ? "Sẵn sàng làm bài?" : "Ready to start?"}
+              {t.quiz.readyToStartTitle}
             </Title>
             <Text fz="sm" c="dimmed" ta="center">
-              {isVi
-                ? "Đồng hồ bắt đầu chạy ngay khi bạn bấm. Bấm lại lần nữa sẽ quay về đúng lượt đang dở, không tạo lượt mới."
-                : "The clock starts when you press. Pressing again returns to the same attempt rather than opening a new one."}
+              {t.quiz.startExplanation}
             </Text>
             <Button onClick={handleStart} loading={starting} size="md">
-              {isVi ? "Bắt đầu" : "Start"}
+              {t.common.start}
             </Button>
           </Stack>
         </Card>
@@ -248,7 +246,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             size="sm"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Thoát bài kiểm tra" : "Exit Quiz"}
+            {t.quiz.exitQuizButton}
           </Button>
 
           <Stack gap={2} align="center">
@@ -271,9 +269,9 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                 {/* Question Info Header */}
                 <Group justify="space-between" align="center">
                   <Badge variant="filled" color="indigo" size="lg">
-                    {isVi
-                      ? `Câu hỏi ${currentIndex + 1} / ${totalQuestions}`
-                      : `Question ${currentIndex + 1} of ${totalQuestions}`}
+                    {t.quiz.questionPositionLabel
+                      .replace("{current}", String(currentIndex + 1))
+                      .replace("{total}", String(totalQuestions))}
                   </Badge>
 
                   <Group gap="xs">
@@ -281,7 +279,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                       {currentQuestion.type}
                     </Badge>
                     <Badge variant="dot" color="teal" size="sm">
-                      {currentQuestion.points} {isVi ? "điểm" : "pts"}
+                      {currentQuestion.points} {t.quiz.pointsUnit}
                     </Badge>
                   </Group>
                 </Group>
@@ -353,7 +351,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                     onClick={prevQuestion}
                     leftSection={<IconChevronLeft size={16} />}
                   >
-                    {isVi ? "Câu trước" : "Previous"}
+                    {t.quiz.prevQuestion}
                   </Button>
 
                   <Button
@@ -364,7 +362,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                     onClick={nextQuestion}
                     rightSection={<IconChevronRight size={16} />}
                   >
-                    {isVi ? "Câu tiếp theo" : "Next"}
+                    {t.quiz.nextQuestion}
                   </Button>
                 </Group>
               </Stack>

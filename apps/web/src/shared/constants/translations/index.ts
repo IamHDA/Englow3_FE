@@ -357,6 +357,28 @@ export interface DailyPathTranslations {
   nextMilestone: string;
   allQuizzes: string;
   quizDifficulty: string;
+  doneToday: string;
+  doneTodayPercent: string;
+  cardNoun: string;
+  cardsNoun: string;
+  sentenceNoun: string;
+  sentencesNoun: string;
+  doneTodayCount: string;
+  remainingLabel: string;
+  alreadyDoneTodaySuffix: string;
+  nothingOutstandingTitle: string;
+  nothingOutstandingDescription: string;
+  roadmapMapTitle: string;
+  roadmapMapSubtitle: string;
+  stagePrefix: string;
+  completePercentLabel: string;
+  practiceAgainButton: string;
+  startNowButton: string;
+  openButton: string;
+  todaysGoalsTitle: string;
+  resetsDaily: string;
+  pageTitle: string;
+  couldNotLoadPath: string;
 }
 
 export interface QuizTranslations {
@@ -377,6 +399,43 @@ export interface QuizTranslations {
   xpEarned: string;
   retakeQuiz: string;
   backToRoadmap: string;
+  timeRemainingCaps: string;
+  questionPaletteLabel: string;
+  answeredLabel: string;
+  unflagButton: string;
+  flagButton: string;
+  confirmSubmitTitle: string;
+  unansweredWarningLong: string;
+  allAnsweredMessage: string;
+  keepWorkingButton: string;
+  confirmSubmitButton: string;
+  catalogueTitle: string;
+  allCategoriesSegment: string;
+  noQuizzesPublished: string;
+  questionsCountSuffix: string;
+  minutesUnitShort: string;
+  passedBadge: string;
+  needsRetakeBadge: string;
+  passedMessage: string;
+  failedMessage: string;
+  scoreLabel: string;
+  pointsUnit: string;
+  timeSpentLabel: string;
+  durationFormat: string;
+  experienceLabel: string;
+  detailedReviewTitle: string;
+  questionPrefix: string;
+  correctLabel: string;
+  incorrectLabel: string;
+  pointsAbbrev: string;
+  yourAnswerLabel: string;
+  correctAnswerLabel: string;
+  explanationNoteLabel: string;
+  backToQuizzesButton: string;
+  readyToStartTitle: string;
+  startExplanation: string;
+  exitQuizButton: string;
+  questionPositionLabel: string;
 }
 
 export interface DictationTranslations {
@@ -562,6 +621,31 @@ export interface HomeTranslations {
   ctaSubtitle: string;
   footerTagline: string;
   footerProject: string;
+  mockCardsDue: string;
+  mockAcquireDefinition: string;
+  mockRatingAgain: string;
+  mockRatingGood: string;
+  mockRatingEasy: string;
+  mockYouTyped: string;
+  mockResultLabel: string;
+  mockStreakLabel: string;
+  mockDueSuffix: string;
+  greetingWithName: string;
+  greetingGeneric: string;
+  levelLabel: string;
+  streakDaysLabel: string;
+  finishGoalSetupTitle: string;
+  finishGoalSetupDescription: string;
+  setupNowButton: string;
+  pathLoadErrorMessage: string;
+  upNextBadge: string;
+  nothingWaitingTitle: string;
+  nothingWaitingDescription: string;
+  chooseLessonButton: string;
+  todaySectionTitle: string;
+  fullPathButton: string;
+  practiceSectionTitle: string;
+  xpToNextLevel: string;
 }
 
 export interface AuthTranslations {
@@ -1105,6 +1189,30 @@ export const translations: Record<Language, AppTranslations> = {
       nextMilestone: "Cột mốc tiếp theo",
       allQuizzes: "Tất cả bài tập",
       quizDifficulty: "Độ khó",
+      doneToday: "Đã làm hôm nay",
+      doneTodayPercent: "Đã làm hôm nay - {percent}%",
+      cardNoun: "thẻ",
+      cardsNoun: "thẻ",
+      sentenceNoun: "câu",
+      sentencesNoun: "câu",
+      doneTodayCount: "Hôm nay đã xong {count} {noun}{accuracy}",
+      remainingLabel: "Còn {remaining} {unit}",
+      alreadyDoneTodaySuffix: "{base} - đã làm {count} hôm nay",
+      nothingOutstandingTitle: "Không còn việc nào đang dở",
+      nothingOutstandingDescription:
+        "Chưa có thẻ nào đến hạn, chưa có bài nào bỏ giữa. Mở thư viện chọn thêm bộ thẻ hoặc bài nghe để lộ trình có việc.",
+      roadmapMapTitle: "Bản đồ chặng đường học tập",
+      roadmapMapSubtitle:
+        "Việc đang dở của chính bạn, thẻ đến hạn xếp trước vì chỉ lịch ôn mới có kỳ hạn",
+      stagePrefix: "Trạm {n}",
+      completePercentLabel: "Đã xong {percent}%",
+      practiceAgainButton: "Luyện lại",
+      startNowButton: "Bắt đầu ngay",
+      openButton: "Mở",
+      todaysGoalsTitle: "Mục tiêu hôm nay",
+      resetsDaily: "Tính lại mỗi ngày",
+      pageTitle: "Lộ trình học",
+      couldNotLoadPath: "Không tải được lộ trình",
     },
     quiz: {
       questionNumber: "Câu hỏi",
@@ -1124,6 +1232,48 @@ export const translations: Record<Language, AppTranslations> = {
       xpEarned: "Điểm thưởng nhận được",
       retakeQuiz: "Làm lại bài này",
       backToRoadmap: "Trở về lộ trình chính",
+      timeRemainingCaps: "THỜI GIAN CÒN LẠI:",
+      questionPaletteLabel: "BẢNG CÂU HỎI:",
+      answeredLabel: "Đã làm",
+      unflagButton: "Bỏ đánh dấu xem lại",
+      flagButton: "Đánh dấu xem lại",
+      confirmSubmitTitle: "Xác nhận nộp bài kiểm tra",
+      unansweredWarningLong:
+        "Bạn còn {count} câu chưa làm. Bạn có chắc chắn muốn nộp bài ngay bây giờ?",
+      allAnsweredMessage:
+        "Bạn đã hoàn thành tất cả các câu hỏi! Bạn có muốn nộp bài để xem điểm và lời giải chi tiết ngay bây giờ không?",
+      keepWorkingButton: "Tiếp tục làm bài",
+      confirmSubmitButton: "Xác nhận nộp bài",
+      catalogueTitle: "Kho bài tập trắc nghiệm",
+      allCategoriesSegment: "Tất cả chủ đề",
+      noQuizzesPublished:
+        "Chưa có bài trắc nghiệm nào được phát hành. Quay lại sau nhé.",
+      questionsCountSuffix: "câu hỏi",
+      minutesUnitShort: "phút",
+      passedBadge: "ĐẠT YÊU CẦU",
+      needsRetakeBadge: "CHƯA ĐẠT",
+      passedMessage: "Chúc mừng bạn đã vượt qua bài kiểm tra với số điểm ấn tượng!",
+      failedMessage:
+        "Bạn chưa đạt điểm tối thiểu để mở khóa bài tiếp theo. Hãy xem lại lời giải chi tiết bên dưới nhé!",
+      scoreLabel: "Điểm số:",
+      pointsUnit: "điểm",
+      timeSpentLabel: "Thời gian làm:",
+      durationFormat: "{m} phút {s} giây",
+      experienceLabel: "Kinh nghiệm:",
+      detailedReviewTitle: "Xem lại đáp án & Giải thích chi tiết ({count} câu)",
+      questionPrefix: "Câu {n}:",
+      correctLabel: "Đúng",
+      incorrectLabel: "Sai",
+      pointsAbbrev: "đ",
+      yourAnswerLabel: "CÂU TRẢ LỜI CỦA BẠN:",
+      correctAnswerLabel: "ĐÁP ÁN CHÍNH XÁC:",
+      explanationNoteLabel: "GIẢI THÍCH NGỮ PHÁP / KIẾN THỨC:",
+      backToQuizzesButton: "Về danh sách bài kiểm tra",
+      readyToStartTitle: "Sẵn sàng làm bài?",
+      startExplanation:
+        "Đồng hồ bắt đầu chạy ngay khi bạn bấm. Bấm lại lần nữa sẽ quay về đúng lượt đang dở, không tạo lượt mới.",
+      exitQuizButton: "Thoát bài kiểm tra",
+      questionPositionLabel: "Câu hỏi {current} / {total}",
     },
     dictation: {
       title: "Luyện nghe chép chính tả",
@@ -1490,6 +1640,33 @@ export const translations: Record<Language, AppTranslations> = {
       ctaSubtitle: "Chỉ mất một phút để đặt mục tiêu. Englow3 lo phần còn lại.",
       footerTagline: "Con đường của riêng bạn, tương lai trong tay bạn.",
       footerProject: "Đồ án tốt nghiệp",
+      mockCardsDue: "12 thẻ đến hạn",
+      mockAcquireDefinition: "đạt được, thu được",
+      mockRatingAgain: "Quên",
+      mockRatingGood: "Nhớ",
+      mockRatingEasy: "Dễ",
+      mockYouTyped: "Bạn đã gõ",
+      mockResultLabel: "Kết quả",
+      mockStreakLabel: "7 ngày liên tiếp",
+      mockDueSuffix: "{count} đến hạn",
+      greetingWithName: "Chào {name}!",
+      greetingGeneric: "Chào bạn!",
+      levelLabel: "Cấp {level}",
+      streakDaysLabel: "{count} ngày liên tiếp",
+      finishGoalSetupTitle: "Hoàn tất thiết lập mục tiêu",
+      finishGoalSetupDescription:
+        "Chọn mục tiêu và trình độ để lộ trình hằng ngày có việc cho bạn.",
+      setupNowButton: "Thiết lập ngay",
+      pathLoadErrorMessage:
+        "Chưa tải được lộ trình hôm nay. Tải lại trang sau ít phút.",
+      upNextBadge: "Học tiếp",
+      nothingWaitingTitle: "Hôm nay chưa có việc nào đang chờ",
+      nothingWaitingDescription: "Chọn một bộ thẻ hoặc một bài nghe để bắt đầu.",
+      chooseLessonButton: "Chọn bài học",
+      todaySectionTitle: "Hôm nay",
+      fullPathButton: "Xem lộ trình",
+      practiceSectionTitle: "Luyện tập",
+      xpToNextLevel: "Còn {remaining} XP để lên cấp {next}",
     },
     auth: {
       loginTitle: "Chào mừng trở lại",
@@ -1902,6 +2079,30 @@ export const translations: Record<Language, AppTranslations> = {
       nextMilestone: "Next Milestone",
       allQuizzes: "All Exercises",
       quizDifficulty: "Difficulty",
+      doneToday: "Done today",
+      doneTodayPercent: "Done today - {percent}%",
+      cardNoun: "card",
+      cardsNoun: "cards",
+      sentenceNoun: "sentence",
+      sentencesNoun: "sentences",
+      doneTodayCount: "{count} {noun} done today{accuracy}",
+      remainingLabel: "{remaining} {unit}",
+      alreadyDoneTodaySuffix: "{base} - {count} already done today",
+      nothingOutstandingTitle: "Nothing outstanding",
+      nothingOutstandingDescription:
+        "No cards are due and nothing is half-finished. Pick up a new set or lesson from the library to give the path something to plan.",
+      roadmapMapTitle: "Learning Roadmap",
+      roadmapMapSubtitle:
+        "Your own outstanding work. Due cards come first - only the review schedule has a deadline",
+      stagePrefix: "Stage {n}",
+      completePercentLabel: "{percent}% complete",
+      practiceAgainButton: "Practise again",
+      startNowButton: "Start now",
+      openButton: "Open",
+      todaysGoalsTitle: "Today's Goals",
+      resetsDaily: "Resets daily",
+      pageTitle: "Learning path",
+      couldNotLoadPath: "Could not load your path",
     },
     quiz: {
       questionNumber: "Question",
@@ -1922,6 +2123,47 @@ export const translations: Record<Language, AppTranslations> = {
       xpEarned: "Experience Points Earned",
       retakeQuiz: "Retake Quiz",
       backToRoadmap: "Back to Daily Path",
+      timeRemainingCaps: "TIME REMAINING:",
+      questionPaletteLabel: "QUESTION PALETTE:",
+      answeredLabel: "Answered",
+      unflagButton: "Unflag question",
+      flagButton: "Flag for review",
+      confirmSubmitTitle: "Confirm Quiz Submission",
+      unansweredWarningLong:
+        "You have {count} unanswered questions. Are you sure you want to submit now?",
+      allAnsweredMessage:
+        "You have answered all questions. Would you like to submit and view your detailed results now?",
+      keepWorkingButton: "Keep Working",
+      confirmSubmitButton: "Confirm Submit",
+      catalogueTitle: "Quiz Challenge Library",
+      allCategoriesSegment: "All Categories",
+      noQuizzesPublished: "No quizzes have been published yet. Check back soon.",
+      questionsCountSuffix: "questions",
+      minutesUnitShort: "min",
+      passedBadge: "PASSED",
+      needsRetakeBadge: "NEEDS RETAKE",
+      passedMessage: "Congratulations! You have passed the quiz with a great score.",
+      failedMessage:
+        "You have not reached the passing score for this quiz. Review the explanations below and try again!",
+      scoreLabel: "Score:",
+      pointsUnit: "pts",
+      timeSpentLabel: "Time spent:",
+      durationFormat: "{m}m {s}s",
+      experienceLabel: "Experience:",
+      detailedReviewTitle: "Detailed Review & Explanations ({count} questions)",
+      questionPrefix: "Question {n}:",
+      correctLabel: "Correct",
+      incorrectLabel: "Incorrect",
+      pointsAbbrev: "pts",
+      yourAnswerLabel: "YOUR ANSWER:",
+      correctAnswerLabel: "CORRECT ANSWER:",
+      explanationNoteLabel: "EXPLANATION & GRAMMAR NOTE:",
+      backToQuizzesButton: "Back to quizzes",
+      readyToStartTitle: "Ready to start?",
+      startExplanation:
+        "The clock starts when you press. Pressing again returns to the same attempt rather than opening a new one.",
+      exitQuizButton: "Exit Quiz",
+      questionPositionLabel: "Question {current} of {total}",
     },
     dictation: {
       title: "Audio Dictation Practice",
@@ -2292,6 +2534,32 @@ export const translations: Record<Language, AppTranslations> = {
       ctaSubtitle: "Setting your goal takes a minute. Englow3 does the rest.",
       footerTagline: "Your unique path, your future in your hands.",
       footerProject: "Graduation project",
+      mockCardsDue: "12 cards due",
+      mockAcquireDefinition: "to gain, to obtain",
+      mockRatingAgain: "Again",
+      mockRatingGood: "Good",
+      mockRatingEasy: "Easy",
+      mockYouTyped: "You typed",
+      mockResultLabel: "Result",
+      mockStreakLabel: "7-day streak",
+      mockDueSuffix: "{count} due",
+      greetingWithName: "Hi {name}!",
+      greetingGeneric: "Welcome back!",
+      levelLabel: "Level {level}",
+      streakDaysLabel: "{count}-day streak",
+      finishGoalSetupTitle: "Finish setting your goal",
+      finishGoalSetupDescription:
+        "Pick a goal and level so your daily path has work for you.",
+      setupNowButton: "Set up now",
+      pathLoadErrorMessage: "Could not load today's path. Reload in a moment.",
+      upNextBadge: "Up next",
+      nothingWaitingTitle: "Nothing waiting for you today",
+      nothingWaitingDescription: "Pick a flashcard set or a listening lesson to begin.",
+      chooseLessonButton: "Choose a lesson",
+      todaySectionTitle: "Today",
+      fullPathButton: "Full path",
+      practiceSectionTitle: "Practice",
+      xpToNextLevel: "{remaining} XP to level {next}",
     },
     auth: {
       loginTitle: "Welcome Back",

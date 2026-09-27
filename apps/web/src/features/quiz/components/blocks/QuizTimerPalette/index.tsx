@@ -48,7 +48,7 @@ export function QuizTimerPalette({
   onSubmit,
   submitting,
 }: QuizTimerPaletteProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const [opened, { open, close }] = useDisclosure(false);
 
   const currentQ = questions[currentIndex];
@@ -94,7 +94,7 @@ export function QuizTimerPalette({
                 <IconClock size={16} />
               </ThemeIcon>
               <Text fz="xs" fw={700} c={isTimeCritical ? "red.9" : "indigo.9"}>
-                {isVi ? "THỜI GIAN CÒN LẠI:" : "TIME REMAINING:"}
+                {t.quiz.timeRemainingCaps}
               </Text>
             </Group>
             <Text
@@ -111,11 +111,10 @@ export function QuizTimerPalette({
           <Box>
             <Group justify="space-between" mb="xs">
               <Text fz="xs" fw={700} c="dimmed">
-                {isVi ? "BẢNG CÂU HỎI:" : "QUESTION PALETTE:"}
+                {t.quiz.questionPaletteLabel}
               </Text>
               <Text fz="xs" fw={600} c="indigo">
-                {answeredCount}/{questions.length}{" "}
-                {isVi ? "Đã làm" : "Answered"}
+                {answeredCount}/{questions.length} {t.quiz.answeredLabel}
               </Text>
             </Group>
 
@@ -192,12 +191,8 @@ export function QuizTimerPalette({
                 leftSection={<IconFlag size={16} />}
               >
                 {isCurrentFlagged
-                  ? isVi
-                    ? "Bỏ đánh dấu xem lại"
-                    : "Unflag question"
-                  : isVi
-                    ? "Đánh dấu xem lại"
-                    : "Flag for review"}
+                  ? t.quiz.unflagButton
+                  : t.quiz.flagButton}
               </Button>
             )}
 
@@ -209,7 +204,7 @@ export function QuizTimerPalette({
               onClick={open}
               leftSection={<IconSend size={16} />}
             >
-              {isVi ? "Nộp bài kiểm tra" : "Submit Quiz"}
+              {t.quiz.submitExam}
             </Button>
           </Stack>
         </Stack>
@@ -219,7 +214,7 @@ export function QuizTimerPalette({
       <Modal
         opened={opened}
         onClose={close}
-        title={isVi ? "Xác nhận nộp bài kiểm tra" : "Confirm Quiz Submission"}
+        title={t.quiz.confirmSubmitTitle}
         centered
       >
         <Stack gap="md">
@@ -229,22 +224,19 @@ export function QuizTimerPalette({
                 <IconAlertTriangle size={18} />
               </ThemeIcon>
               <Text fz="sm">
-                {isVi
-                  ? `Bạn còn ${questions.length - answeredCount} câu chưa làm. Bạn có chắc chắn muốn nộp bài ngay bây giờ?`
-                  : `You have ${questions.length - answeredCount} unanswered questions. Are you sure you want to submit now?`}
+                {t.quiz.unansweredWarningLong.replace(
+                  "{count}",
+                  String(questions.length - answeredCount),
+                )}
               </Text>
             </Group>
           ) : (
-            <Text fz="sm">
-              {isVi
-                ? "Bạn đã hoàn thành tất cả các câu hỏi! Bạn có muốn nộp bài để xem điểm và lời giải chi tiết ngay bây giờ không?"
-                : "You have answered all questions. Would you like to submit and view your detailed results now?"}
-            </Text>
+            <Text fz="sm">{t.quiz.allAnsweredMessage}</Text>
           )}
 
           <Group justify="flex-end" mt="md">
             <Button variant="subtle" color="gray" onClick={close}>
-              {isVi ? "Tiếp tục làm bài" : "Keep Working"}
+              {t.quiz.keepWorkingButton}
             </Button>
             <Button
               variant="filled"
@@ -252,7 +244,7 @@ export function QuizTimerPalette({
               onClick={handleConfirmSubmit}
               loading={submitting}
             >
-              {isVi ? "Xác nhận nộp bài" : "Confirm Submit"}
+              {t.quiz.confirmSubmitButton}
             </Button>
           </Group>
         </Stack>
