@@ -48,7 +48,7 @@ export type ExamResponse =
   paths["/api/admin/exams"]["post"]["responses"][201]["content"]["application/json"];
 ```
 
-Reach for `Omit<Generated, "field"> & { field: TheRealUnion }` only for the under-typed cases above - and note *why* next to the override, so the next reader doesn't "fix" it back to the generated type. That file is still the record of what the backend actually returns; it is just derived instead of retyped by hand, so a real backend change breaks compilation instead of drifting silently.
+Reach for `Omit<Generated, "field"> & { field: TheRealUnion }` only for the under-typed cases above - and note _why_ next to the override, so the next reader doesn't "fix" it back to the generated type. That file is still the record of what the backend actually returns; it is just derived instead of retyped by hand, so a real backend change breaks compilation instead of drifting silently.
 
 ## Where code goes
 
@@ -87,15 +87,15 @@ A domain enum therefore has exactly one home: the module of the bounded context 
 
 ## Responsibilities
 
-| Part          | Holds                                       | Never holds                                                              |
-| ------------- | -------------------------------------------- | ------------------------------------------------------------------------ |
-| `typeDefs`    | The frontend contract                       | REST paths, business rules                                               |
-| `resolver`    | Args, auth check, call, map                 | Business rules, retries, orchestration logic that belongs to the backend |
-| `api`         | One module's REST calls                     | GraphQL shaping                                                          |
-| `mapper`      | REST response to GraphQL model              | Calls, mutation of data                                                  |
-| `loader`      | Batching within one request                 | Cache shared across users or requests                                    |
-| `context`     | Token, request id, per-request API clients  | Workflow, JWT verification (not done here - see Authentication)          |
-| `shared/http` | Base URL, headers, timeout, error parsing   | Anything module-specific                                                 |
+| Part          | Holds                                      | Never holds                                                              |
+| ------------- | ------------------------------------------ | ------------------------------------------------------------------------ |
+| `typeDefs`    | The frontend contract                      | REST paths, business rules                                               |
+| `resolver`    | Args, auth check, call, map                | Business rules, retries, orchestration logic that belongs to the backend |
+| `api`         | One module's REST calls                    | GraphQL shaping                                                          |
+| `mapper`      | REST response to GraphQL model             | Calls, mutation of data                                                  |
+| `loader`      | Batching within one request                | Cache shared across users or requests                                    |
+| `context`     | Token, request id, per-request API clients | Workflow, JWT verification (not done here - see Authentication)          |
+| `shared/http` | Base URL, headers, timeout, error parsing  | Anything module-specific                                                 |
 
 ## Rules that always hold
 

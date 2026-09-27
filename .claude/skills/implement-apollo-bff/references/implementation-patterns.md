@@ -56,15 +56,20 @@ The schema serves the screen, not the backend. It may rename, omit, and add disp
 
 ```typescript
 export const examTypeDefs = /* GraphQL */ `
-  enum ExamStatus { DRAFT PENDING_REVIEW PUBLISHED ARCHIVED }
+  enum ExamStatus {
+    DRAFT
+    PENDING_REVIEW
+    PUBLISHED
+    ARCHIVED
+  }
 
   type Exam {
     id: ID!
     title: String!
     status: ExamStatus!
     questionCount: Int!
-    publishedAt: DateTime          # nullable - mirrors the backend
-    creator: Learner               # nullable - resolved separately, may fail
+    publishedAt: DateTime # nullable - mirrors the backend
+    creator: Learner # nullable - resolved separately, may fail
   }
 
   type ExamPage {
@@ -140,7 +145,9 @@ export class ExamApi {
   }
 
   publishAsAdmin(id: string): Promise<ExamResponse> {
-    return this.client.post(`/api/admin/exams/${encodeURIComponent(id)}/publish`);
+    return this.client.post(
+      `/api/admin/exams/${encodeURIComponent(id)}/publish`,
+    );
   }
 }
 ```
@@ -167,11 +174,20 @@ export class BackendClient {
     return this.request<T>("POST", path, body);
   }
 
-  private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  private async request<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+  ): Promise<T> {
     const start = Date.now();
     const response = await this.send(method, path, body); // throws on unreachable
     if (!response.ok) {
-      throw await BackendError.fromResponse(response, method, path, Date.now() - start);
+      throw await BackendError.fromResponse(
+        response,
+        method,
+        path,
+        Date.now() - start,
+      );
     }
     return (await response.json()) as T;
   }
@@ -280,14 +296,15 @@ export const onboardingResolvers = {
     // Nullable in the schema: if this call fails, graphql-js resolves the
     // field to null and adds an entry to the `errors` array rather than
     // failing the whole `me` query - the rest of Me still renders.
-    onboardingState: (_parent, __, ctx) => ctx.apis.onboardingApi.getCurrentState(),
+    onboardingState: (_parent, __, ctx) =>
+      ctx.apis.onboardingApi.getCurrentState(),
   },
 } satisfies Resolvers;
 ```
 
 No `try`/`catch`, no `Promise.allSettled` - the degradation is free once the field is modeled as its own resolver on the parent type rather than as a property the parent's own resolver has to fill in.
 
-Reach for `Promise.allSettled` instead only when several independent calls must combine into *one* payload that isn't naturally split into separate parent-type fields (a true single-object aggregate). No query in this repo has needed that yet, so treat the shape below as guidance for when it comes up, not as a pattern already proven here:
+Reach for `Promise.allSettled` instead only when several independent calls must combine into _one_ payload that isn't naturally split into separate parent-type fields (a true single-object aggregate). No query in this repo has needed that yet, so treat the shape below as guidance for when it comes up, not as a pattern already proven here:
 
 ```typescript
 const [progress, profile] = await Promise.allSettled([
@@ -360,7 +377,11 @@ export function formatError(formatted: GraphQLFormattedError, error: unknown) {
     const code = codeForStatus(original.status);
     return {
       message: SAFE_MESSAGES[code], // never original.message - that's the raw backend body
-      extensions: { code, backendCode: original.code, traceId: original.traceId },
+      extensions: {
+        code,
+        backendCode: original.code,
+        traceId: original.traceId,
+      },
     };
   }
   // ...Apollo's own codes pass through; anything else collapses to INTERNAL_SERVER_ERROR

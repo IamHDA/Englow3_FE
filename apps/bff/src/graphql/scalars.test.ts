@@ -11,7 +11,10 @@ describe("Date scalar", () => {
   );
 
   it.each([
-    ["2026-99-99", "the doc's own example of nonsense that a regex alone lets through"],
+    [
+      "2026-99-99",
+      "the doc's own example of nonsense that a regex alone lets through",
+    ],
     ["2026-02-30", "February never has 30 days"],
     ["2023-02-29", "2023 is not a leap year"],
     ["2026-04-31", "April has 30 days"],
@@ -38,15 +41,27 @@ describe("DateTime scalar", () => {
   });
 
   it.each([
-    ["2026-09-06T10:15:30", "no zone designator - ambiguous, the backend never sends this"],
-    ["2026-09-06T10:15:30+02:00", "a numeric offset - this scalar only accepts Z"],
+    [
+      "2026-09-06T10:15:30",
+      "no zone designator - ambiguous, the backend never sends this",
+    ],
+    [
+      "2026-09-06T10:15:30+02:00",
+      "a numeric offset - this scalar only accepts Z",
+    ],
     ["2026-09-06T10:15:30+00:00", "still an offset, even at zero"],
     ["2026-13-06T10:15:30Z", "no month 13"],
     ["2026-09-06T24:00:00Z", "hour 24 does not exist"],
     ["2026-09-06T10:60:30Z", "minute 60 does not exist"],
     ["2026-09-06T10:15:60Z", "second 60 does not exist"],
-    ["2026/09/06 10:15:30", "not ISO-8601 at all, but Date.parse used to accept it"],
-    ["September 6, 2026", "a format Date.parse is permissive about but the contract is not"],
+    [
+      "2026/09/06 10:15:30",
+      "not ISO-8601 at all, but Date.parse used to accept it",
+    ],
+    [
+      "September 6, 2026",
+      "a format Date.parse is permissive about but the contract is not",
+    ],
   ])("rejects %s (%s)", (value) => {
     expect(() => dateTimeScalar.serialize(value)).toThrow();
   });
