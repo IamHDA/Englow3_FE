@@ -1,40 +1,8 @@
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
-import express from "express";
+import { createApp } from "./app.js";
 import { env } from "./config/env.js";
-import { corsMiddleware, rateLimitMiddleware } from "./config/middleware.js";
-import { createContext } from "./graphql/context.js";
-import { formatError } from "./graphql/errors.js";
-import { resolvers, typeDefs } from "./graphql/schema.js";
-import { importRoute } from "./http/importRoute.js";
 
 export async function startServer() {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    formatError,
-    // Apollo defaults this to true outside NODE_ENV=production, which would
-    // put internal file paths in every client-visible error. Off always -
-    // debug from server logs, not the response.
-    includeStacktraceInErrorResponses: false,
-  });
-  await server.start();
-
-  const app = express();
-  app.use(
-    "/graphql",
-    corsMiddleware(),
-    rateLimitMiddleware(),
-    // The default 100kb body cap is stated rather than inherited: a GraphQL
-    // document is kilobytes, and nothing here should accept a megabyte of it.
-    express.json({ limit: "128kb" }),
-    expressMiddleware(server, { context: createContext }),
-  );
-
-  // Content import goes over REST. A generated batch is a multi-megabyte file,
-  // and raising the GraphQL body cap for every query to carry one upload would
-  // be paying for the exception on every request.
-  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), importRoute());
+  const app = await createApp();
 
   app.listen(env.port, () => {
     console.log(`BFF ready at http://localhost:${env.port}/graphql`);

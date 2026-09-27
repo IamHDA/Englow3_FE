@@ -1,38 +1,11 @@
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
-import express, { Request, Response, NextFunction } from "express";
-import {
-  corsMiddleware,
-  rateLimitMiddleware,
-} from "../src/config/middleware.js";
-import { createContext } from "../src/graphql/context.js";
-import { formatError } from "../src/graphql/errors.js";
-import { resolvers, typeDefs } from "../src/graphql/schema.js";
+import type { Request, Response } from "express";
 
-const app = express();
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  formatError,
-  includeStacktraceInErrorResponses: false,
-});
+import { createApp } from "../src/app.js";
 
-app.use(corsMiddleware());
-app.use(rateLimitMiddleware());
-app.use(express.json({ limit: "128kb" }));
+// One promise, created when the instance loads: two requests arriving together
+// on a cold start both wait on the same start() instead of each calling it.
+const app = createApp();
 
-let isStarted = false;
-
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-  if (!isStarted) {
-    await server.start();
-    isStarted = true;
-  }
-  return (expressMiddleware(server, { context: createContext }) as any)(
-    req,
-    res,
-    next,
-  );
-});
-
-export default app;
+export default async function handler(req: Request, res: Response) {
+  return (await app)(req, res);
+}
