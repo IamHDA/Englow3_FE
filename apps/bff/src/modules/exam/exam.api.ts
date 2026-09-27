@@ -1,3 +1,7 @@
+import type {
+  QueryAdminExamsArgs,
+  QueryExamsArgs,
+} from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   ExamAttemptPageResponse,
@@ -7,8 +11,6 @@ import type {
   ExamResponse,
   LearnerExamItemResponse,
   LearnerExamPageResponse,
-  SearchExamsParams,
-  SearchLearnerExamsParams,
   SubmittedAnswer,
 } from "./exam.types.js";
 
@@ -20,9 +22,7 @@ export class ExamApi {
   constructor(private readonly client: BackendClient) {}
 
   /** Learner search on the backend (/api/exams) - returns published exams. */
-  searchAsLearner(
-    params: SearchLearnerExamsParams,
-  ): Promise<LearnerExamPageResponse> {
+  searchAsLearner(params: QueryExamsArgs): Promise<LearnerExamPageResponse> {
     const query = new URLSearchParams();
     if (params.examType) query.set("examType", params.examType);
     if (params.certificateType)
@@ -86,7 +86,7 @@ export class ExamApi {
   }
 
   /** Admin-only on the backend (@PreAuthorize hasRole ADMIN) - it answers 403 for anyone else. */
-  searchAsAdmin(params: SearchExamsParams): Promise<ExamPageResponse> {
+  searchAsAdmin(params: QueryAdminExamsArgs): Promise<ExamPageResponse> {
     const query = new URLSearchParams();
     if (params.status) query.set("status", params.status);
     if (params.examType) query.set("examType", params.examType);

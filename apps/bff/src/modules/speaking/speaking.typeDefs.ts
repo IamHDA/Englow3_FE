@@ -1,4 +1,4 @@
-export const speakingTypeDefs = `#graphql
+export const speakingTypeDefs = /* GraphQL */ `
   """
   Where one recording stands. There is no RUNNING: whether a worker currently
   has the job in hand is the queue's business, and QUEUED is all a learner

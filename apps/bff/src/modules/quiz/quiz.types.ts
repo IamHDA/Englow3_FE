@@ -1,9 +1,9 @@
+import type {
+  QuizAttemptStatus,
+  QuizQuestionType,
+} from "../../generated/graphql.js";
+
 // mirrors the quiz module's REST contract exactly as the backend returns it.
-
-export type QuizQuestionType =
-  "MULTIPLE_CHOICE" | "FILL_BLANK" | "REWRITE" | "REORDER" | "MATCHING";
-
-export type QuizAttemptStatus = "IN_PROGRESS" | "SCORED" | "EXPIRED";
 
 // GET /api/quizzes
 export type QuizSummaryResponse = {
@@ -102,11 +102,4 @@ export type QuizAttemptResponse = {
 
 export type SubmitQuizAttemptRequest = {
   answers: { questionId: string; response: string }[];
-};
-
-export type SearchQuizzesParams = {
-  category?: string;
-  title?: string;
-  page?: number;
-  size?: number;
 };

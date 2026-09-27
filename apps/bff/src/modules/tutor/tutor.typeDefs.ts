@@ -1,4 +1,4 @@
-export const tutorTypeDefs = `#graphql
+export const tutorTypeDefs = /* GraphQL */ `
   enum TutorMessageRole {
     USER
     ASSISTANT

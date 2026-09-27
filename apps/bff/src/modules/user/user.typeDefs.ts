@@ -1,4 +1,4 @@
-export const userTypeDefs = `#graphql
+export const userTypeDefs = /* GraphQL */ `
   enum Gender {
     MALE
     FEMALE

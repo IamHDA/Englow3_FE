@@ -1,6 +1,7 @@
-export type TutorMessageRole = "USER" | "ASSISTANT";
-
-export type TutorMessageStatus = "PENDING" | "READY" | "FAILED";
+import type {
+  TutorMessageRole,
+  TutorMessageStatus,
+} from "../../generated/graphql.js";
 
 // mirrors GET /api/tutor/conversations/{id} exactly as the backend returns it
 export type TutorMessageResponse = {
@@ -34,11 +35,4 @@ export type TutorConversationSummaryResponse = {
 export type TutorConversationResponse = {
   conversation: TutorConversationSummaryResponse;
   messages: TutorMessageResponse[];
-};
-
-export type SendTutorMessageParams = {
-  /** Null starts a new thread. Sending a message is one thing the learner does. */
-  conversationId?: string | null;
-  message: string;
-  topic?: string | null;
 };

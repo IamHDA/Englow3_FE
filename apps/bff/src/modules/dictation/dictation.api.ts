@@ -1,3 +1,4 @@
+import type { QueryDictationLessonsArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   DictationLessonDetailResponse,
@@ -5,7 +6,6 @@ import type {
   DictationStatsResponse,
   DictationSubmissionResponse,
   MistakeSentenceResponse,
-  SearchDictationLessonsParams,
 } from "./dictation.types.js";
 
 const DICTATION_BASE_PATH = "/api/dictation";
@@ -14,7 +14,7 @@ export class DictationApi {
   constructor(private readonly client: BackendClient) {}
 
   searchDictationLessons(
-    params: SearchDictationLessonsParams,
+    params: QueryDictationLessonsArgs,
   ): Promise<DictationLessonPageResponse> {
     const query = new URLSearchParams();
     if (params.topic) query.set("topic", params.topic);

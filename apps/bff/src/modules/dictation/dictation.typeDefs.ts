@@ -1,4 +1,4 @@
-export const dictationTypeDefs = `#graphql
+export const dictationTypeDefs = /* GraphQL */ `
   type DictationLesson {
     id: ID!
     slug: String!

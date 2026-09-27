@@ -1,9 +1,9 @@
+import type { QueryQuizzesArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   QuizAttemptResponse,
   QuizPageResponse,
   QuizPaperResponse,
-  SearchQuizzesParams,
   SubmitQuizAttemptRequest,
 } from "./quiz.types.js";
 
@@ -13,7 +13,7 @@ const QUIZ_ATTEMPT_BASE_PATH = "/api/quiz-attempts";
 export class QuizApi {
   constructor(private readonly client: BackendClient) {}
 
-  searchQuizzes(params: SearchQuizzesParams): Promise<QuizPageResponse> {
+  searchQuizzes(params: QueryQuizzesArgs): Promise<QuizPageResponse> {
     const query = new URLSearchParams();
     if (params.category) query.set("category", params.category);
     if (params.title) query.set("title", params.title);

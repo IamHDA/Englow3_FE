@@ -1,10 +1,12 @@
+import type {
+  ContentKind,
+  QueryAdminContentArgs,
+} from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   AdminOverviewResponse,
-  ContentKind,
   ContentReviewPageResponse,
   ContentReviewResponse,
-  SearchContentParams,
   SpeakingPromptReviewPageResponse,
   SpeakingPromptReviewResponse,
 } from "./contentManagement.types.js";
@@ -56,7 +58,7 @@ export class ContentManagementApi {
 
   /** The authoring list, at every status. Omitting status asks for all of them. */
   searchContentForAuthoring(
-    params: SearchContentParams,
+    params: QueryAdminContentArgs,
   ): Promise<ContentReviewPageResponse> {
     const query = new URLSearchParams();
     if (params.status) query.set("status", params.status);

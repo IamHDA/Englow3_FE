@@ -1,4 +1,4 @@
-export const progressTypeDefs = `#graphql
+export const progressTypeDefs = /* GraphQL */ `
   enum DailyTaskKind {
     """Cards the spaced-repetition schedule says are due."""
     FLASHCARD_REVIEW

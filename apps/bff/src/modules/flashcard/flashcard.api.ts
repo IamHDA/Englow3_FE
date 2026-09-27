@@ -1,3 +1,4 @@
+import type { QueryFlashcardSetsArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
   FlashcardResponse,
@@ -6,7 +7,6 @@ import type {
   FlashcardSetPageResponse,
   FlashcardStatsResponse,
   RateFlashcardRequest,
-  SearchFlashcardSetsParams,
 } from "./flashcard.types.js";
 
 const FLASHCARD_BASE_PATH = "/api/flashcards";
@@ -15,7 +15,7 @@ export class FlashcardApi {
   constructor(private readonly client: BackendClient) {}
 
   searchFlashcardSets(
-    params: SearchFlashcardSetsParams,
+    params: QueryFlashcardSetsArgs,
   ): Promise<FlashcardSetPageResponse> {
     const query = new URLSearchParams();
     if (params.topic) query.set("topic", params.topic);

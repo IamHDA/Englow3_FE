@@ -1,10 +1,10 @@
-import type { GraphQLContext } from "../../graphql/context.js";
+import type { Resolvers } from "../../generated/graphql.js";
 
 export const progressResolvers = {
   Query: {
-    dailyPath: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+    dailyPath: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.progressApi.getDailyPath();
     },
   },
-};
+} satisfies Resolvers;

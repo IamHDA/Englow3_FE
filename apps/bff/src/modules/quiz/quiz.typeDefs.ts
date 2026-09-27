@@ -1,4 +1,4 @@
-export const quizTypeDefs = `#graphql
+export const quizTypeDefs = /* GraphQL */ `
   enum QuizQuestionType {
     MULTIPLE_CHOICE
     FILL_BLANK

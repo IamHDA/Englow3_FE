@@ -1,17 +1,9 @@
-import type { OnboardingStep } from "../user/user.types.js";
-
-export type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-
-export type TargetCertificate = "IELTS" | "TOEIC";
-
-export type LearningSkill =
-  | "LISTENING"
-  | "READING"
-  | "WRITING"
-  | "SPEAKING"
-  | "GRAMMAR"
-  | "VOCABULARY"
-  | "PRONUNCIATION";
+import type {
+  CefrLevel,
+  LearningSkill,
+  OnboardingStep,
+  TargetCertificate,
+} from "../../generated/graphql.js";
 
 // mirrors GET /api/onboarding/current-state exactly as the backend returns it.
 // Every write endpoint under /api/onboarding answers with this same shape.

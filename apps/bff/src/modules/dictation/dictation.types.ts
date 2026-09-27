@@ -57,13 +57,6 @@ export type DictationSubmissionResponse = {
   cleared: boolean;
 };
 
-export type SearchDictationLessonsParams = {
-  topic?: string;
-  title?: string;
-  page?: number;
-  size?: number;
-};
-
 // GET /api/dictation/stats
 export type DictationStatsResponse = {
   periodDays: number;

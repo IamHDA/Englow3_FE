@@ -11,9 +11,9 @@ describe("Query.flashcardSets", () => {
       apis: { flashcardApi: { searchFlashcardSets } },
     });
 
-    expect(() => flashcardResolvers.Query.flashcardSets({}, {}, ctx)).toThrow(
-      "Missing or invalid access token",
-    );
+    expect(() =>
+      flashcardResolvers.Query.flashcardSets({}, { page: 0, size: 20 }, ctx),
+    ).toThrow("Missing or invalid access token");
     expect(searchFlashcardSets).not.toHaveBeenCalled();
   });
 
@@ -23,9 +23,13 @@ describe("Query.flashcardSets", () => {
       apis: { flashcardApi: { searchFlashcardSets } },
     });
 
-    await flashcardResolvers.Query.flashcardSets({}, { size: 5000 }, ctx);
+    await flashcardResolvers.Query.flashcardSets(
+      {},
+      { page: 0, size: 5000 },
+      ctx,
+    );
 
-    expect(searchFlashcardSets).toHaveBeenCalledWith({ size: 100 });
+    expect(searchFlashcardSets).toHaveBeenCalledWith({ page: 0, size: 100 });
   });
 
   it("forwards the filters as given", async () => {
@@ -71,7 +75,7 @@ describe("Query.flashcardStudyQueue", () => {
 
     const result = await flashcardResolvers.Query.flashcardStudyQueue(
       {},
-      { setId: "set-1" },
+      { setId: "set-1", limit: 20 },
       ctx,
     );
 

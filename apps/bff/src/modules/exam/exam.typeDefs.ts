@@ -1,4 +1,4 @@
-export const examTypeDefs = `#graphql
+export const examTypeDefs = /* GraphQL */ `
   """
   DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. There is
   no locked-style dead end: a rejected paper is editable, or its author could

@@ -1,14 +1,12 @@
-// Exam-domain enums. Deliberately not shared with the user/onboarding domain:
-// the backend keeps com.englow3.exam.entity.CertificateType separate from
-// com.englow3.user.entity.CertificateType because there the value is a
-// learner's goal, here it is one half of what identifies a paper.
-// DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back.
-export type ExamStatus =
-  "DRAFT" | "PENDING_REVIEW" | "REJECTED" | "PUBLISHED" | "ARCHIVED";
-export type ExamType = "PLACEMENT" | "MOCK";
-export type CertificateType = "IELTS" | "TOEIC";
-export type CertificateVariant = "LR" | "SW" | "ACADEMIC" | "GENERAL";
-export type TargetLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+import type {
+  CertificateType,
+  CertificateVariant,
+  ExamAttemptStatus,
+  ExamStatus,
+  ExamType,
+  LearnerAttemptStatus,
+  TargetLevel,
+} from "../../generated/graphql.js";
 
 // mirrors GET /api/admin/exams exactly as the backend returns it
 export type ExamListItemResponse = {
@@ -61,15 +59,6 @@ export type ExamPageResponse = {
   totalPages: number;
 };
 
-/** Every filter is optional - an absent one is not a filter, matching SearchExamRequest. */
-export type SearchExamsParams = {
-  status?: ExamStatus;
-  examType?: ExamType;
-  title?: string;
-  page?: number;
-  size?: number;
-};
-
 // mirrors LearnerExamCardResponse from GET /api/exams
 export type LearnerExamItemResponse = {
   id: string;
@@ -87,7 +76,7 @@ export type LearnerExamItemResponse = {
   publishedAt: string | null;
   /** Per learner. Null until they have finished a sitting. */
   bestScorePercentage: number | null;
-  attemptStatus: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  attemptStatus: LearnerAttemptStatus;
 };
 
 export type LearnerExamPageResponse = {
@@ -96,16 +85,6 @@ export type LearnerExamPageResponse = {
   size: number;
   totalItems: number;
   totalPages: number;
-};
-
-export type SearchLearnerExamsParams = {
-  examType?: ExamType;
-  certificateType?: CertificateType;
-  certificateVariant?: CertificateVariant;
-  targetLevel?: TargetLevel;
-  title?: string;
-  page?: number;
-  size?: number;
 };
 
 // The paper the learner sits, from GET /api/exam-attempts/{attemptId}/paper.
@@ -178,8 +157,6 @@ export type ExamPaperResponse = {
   versionNumber: number;
   sections: ExamSectionDto[];
 };
-
-export type ExamAttemptStatus = "IN_PROGRESS" | "SCORED" | "EXPIRED";
 
 export type AttemptOptionReviewDto = {
   optionId: string;

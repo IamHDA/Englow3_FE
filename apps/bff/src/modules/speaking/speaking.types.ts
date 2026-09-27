@@ -1,5 +1,4 @@
-export type SpeakingAttemptStatus =
-  "AWAITING_UPLOAD" | "QUEUED" | "ASSESSED" | "FAILED";
+import type { SpeakingAttemptStatus } from "../../generated/graphql.js";
 
 // mirrors GET /api/speaking/prompts exactly as the backend returns it
 export type SpeakingPromptResponse = {
@@ -78,11 +77,4 @@ export type SpeakingUploadTicketResponse = {
   uploadUrl: string;
   contentType: string;
   expiresInSeconds: number;
-};
-
-export type SearchSpeakingPromptsParams = {
-  category?: string | null;
-  title?: string | null;
-  page?: number;
-  size?: number;
 };

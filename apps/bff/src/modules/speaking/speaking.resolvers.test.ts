@@ -11,9 +11,9 @@ describe("Query.speakingPrompts", () => {
       apis: { speakingApi: { searchPrompts } },
     });
 
-    expect(() => speakingResolvers.Query.speakingPrompts({}, {}, ctx)).toThrow(
-      "Missing or invalid access token",
-    );
+    expect(() =>
+      speakingResolvers.Query.speakingPrompts({}, { page: 0, size: 20 }, ctx),
+    ).toThrow("Missing or invalid access token");
     expect(searchPrompts).not.toHaveBeenCalled();
   });
 
@@ -21,9 +21,13 @@ describe("Query.speakingPrompts", () => {
     const searchPrompts = vi.fn().mockResolvedValue({ items: [] });
     const ctx = makeContext({ apis: { speakingApi: { searchPrompts } } });
 
-    await speakingResolvers.Query.speakingPrompts({}, { size: 5000 }, ctx);
+    await speakingResolvers.Query.speakingPrompts(
+      {},
+      { page: 0, size: 5000 },
+      ctx,
+    );
 
-    expect(searchPrompts).toHaveBeenCalledWith({ size: 100 });
+    expect(searchPrompts).toHaveBeenCalledWith({ page: 0, size: 100 });
   });
 });
 

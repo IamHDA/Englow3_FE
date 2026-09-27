@@ -1,6 +1,6 @@
+import type { QuerySpeakingPromptsArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
-  SearchSpeakingPromptsParams,
   SpeakingAttemptResponse,
   SpeakingPromptPageResponse,
   SpeakingPromptResponse,
@@ -13,7 +13,7 @@ export class SpeakingApi {
   constructor(private readonly client: BackendClient) {}
 
   searchPrompts(
-    params: SearchSpeakingPromptsParams,
+    params: QuerySpeakingPromptsArgs,
   ): Promise<SpeakingPromptPageResponse> {
     const query = new URLSearchParams();
     if (params.category) query.set("category", params.category);

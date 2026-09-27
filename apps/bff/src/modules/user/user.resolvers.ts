@@ -1,21 +1,16 @@
-import type { GraphQLContext } from "../../graphql/context.js";
-import type { UpdateProfileInput } from "./user.types.js";
+import type { Resolvers } from "../../generated/graphql.js";
 
 export const userResolvers = {
   Query: {
-    me: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+    me: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.userApi.getMe();
     },
   },
   Mutation: {
-    updateProfile: (
-      _: unknown,
-      { input }: { input: UpdateProfileInput },
-      ctx: GraphQLContext,
-    ) => {
+    updateProfile: (_, { input }, ctx) => {
       ctx.requireToken();
       return ctx.apis.userApi.updateProfile(input);
     },
   },
-};
+} satisfies Resolvers;

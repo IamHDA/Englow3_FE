@@ -1,4 +1,4 @@
-export const contentManagementTypeDefs = `#graphql
+export const contentManagementTypeDefs = /* GraphQL */ `
   """
   Everything the overview counts: the four kinds of authored content, and exams.
   """

@@ -1,4 +1,4 @@
-export const onboardingTypeDefs = `#graphql
+export const onboardingTypeDefs = /* GraphQL */ `
   enum CefrLevel {
     A1
     A2

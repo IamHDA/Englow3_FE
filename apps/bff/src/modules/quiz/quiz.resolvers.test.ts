@@ -8,9 +8,9 @@ describe("Query.quizzes", () => {
     const searchQuizzes = vi.fn().mockResolvedValue({ items: [] });
     const ctx = makeContext({ apis: { quizApi: { searchQuizzes } } });
 
-    await quizResolvers.Query.quizzes({}, { size: 5000 }, ctx);
+    await quizResolvers.Query.quizzes({}, { page: 0, size: 5000 }, ctx);
 
-    expect(searchQuizzes).toHaveBeenCalledWith({ size: 100 });
+    expect(searchQuizzes).toHaveBeenCalledWith({ page: 0, size: 100 });
   });
 });
 

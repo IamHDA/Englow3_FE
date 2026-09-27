@@ -1,8 +1,6 @@
+import type { UpdateProfileInput } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
-import type {
-  UpdateProfileInput,
-  UserInformationResponse,
-} from "./user.types.js";
+import type { UserInformationResponse } from "./user.types.js";
 
 const USER_BASE_PATH = "/api/user";
 

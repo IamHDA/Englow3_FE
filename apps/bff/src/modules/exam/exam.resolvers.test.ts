@@ -11,9 +11,9 @@ describe("Query.adminExams", () => {
       apis: { examApi: { searchAsAdmin } },
     });
 
-    expect(() => examResolvers.Query.adminExams({}, {}, ctx)).toThrow(
-      "Missing or invalid access token",
-    );
+    expect(() =>
+      examResolvers.Query.adminExams({}, { page: 0, size: 20 }, ctx),
+    ).toThrow("Missing or invalid access token");
     expect(searchAsAdmin).not.toHaveBeenCalled();
   });
 
@@ -40,9 +40,9 @@ describe("Query.adminExams", () => {
     const searchAsAdmin = vi.fn().mockResolvedValue({ items: [] });
     const ctx = makeContext({ apis: { examApi: { searchAsAdmin } } });
 
-    await examResolvers.Query.adminExams({}, { size: 5000 }, ctx);
+    await examResolvers.Query.adminExams({}, { page: 0, size: 5000 }, ctx);
 
-    expect(searchAsAdmin).toHaveBeenCalledWith({ size: 100 });
+    expect(searchAsAdmin).toHaveBeenCalledWith({ page: 0, size: 100 });
   });
 });
 
@@ -102,9 +102,9 @@ describe("Query.exams", () => {
       apis: { examApi: { searchAsLearner } },
     });
 
-    await expect(examResolvers.Query.exams({}, {}, ctx)).rejects.toThrow(
-      "Missing or invalid access token",
-    );
+    await expect(
+      examResolvers.Query.exams({}, { page: 0, size: 20 }, ctx),
+    ).rejects.toThrow("Missing or invalid access token");
     expect(searchAsLearner).not.toHaveBeenCalled();
   });
 

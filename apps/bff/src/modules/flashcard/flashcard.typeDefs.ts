@@ -1,4 +1,4 @@
-export const flashcardTypeDefs = `#graphql
+export const flashcardTypeDefs = /* GraphQL */ `
   enum FlashcardReviewStatus {
     NEW
     LEARNING

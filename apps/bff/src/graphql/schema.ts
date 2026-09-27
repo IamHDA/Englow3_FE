@@ -20,7 +20,7 @@ import { onboardingTypeDefs } from "../modules/onboarding/onboarding.typeDefs.js
 import { userResolvers } from "../modules/user/user.resolvers.js";
 import { userTypeDefs } from "../modules/user/user.typeDefs.js";
 
-const rootTypeDefs = `#graphql
+const rootTypeDefs = /* GraphQL */ `
   scalar Date
   scalar DateTime
 

@@ -1,8 +1,9 @@
+import type {
+  FlashcardReviewStatus,
+  ReviewRating,
+} from "../../generated/graphql.js";
+
 // mirrors the flashcard module's REST contract exactly as the backend returns it.
-
-export type FlashcardReviewStatus = "NEW" | "LEARNING" | "REVIEW" | "MASTERED";
-
-export type ReviewRating = "AGAIN" | "HARD" | "GOOD" | "EASY";
 
 // GET /api/flashcards/sets
 export type FlashcardSetResponse = {
@@ -71,13 +72,6 @@ export type FlashcardReviewResponse = {
 export type RateFlashcardRequest = {
   rating: ReviewRating;
   timeSpentSeconds: number;
-};
-
-export type SearchFlashcardSetsParams = {
-  topic?: string;
-  title?: string;
-  page?: number;
-  size?: number;
 };
 
 // GET /api/flashcards/stats

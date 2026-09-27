@@ -1,3 +1,9 @@
+import type {
+  DailyQuestKind,
+  DailyTaskKind,
+  DailyTaskStatus,
+} from "../../generated/graphql.js";
+
 // mirrors the progress module's REST contract exactly as the backend returns it.
 
 // GET /api/daily-path
@@ -9,8 +15,8 @@ export type DailyPathResponse = {
   xpIntoLevel: number;
   levelCostXp: number;
   tasks: {
-    kind: "FLASHCARD_REVIEW" | "DICTATION" | "QUIZ";
-    status: "COMPLETED" | "CURRENT" | "UPCOMING";
+    kind: DailyTaskKind;
+    status: DailyTaskStatus;
     targetId: string;
     title: string;
     order: number;
@@ -20,11 +26,7 @@ export type DailyPathResponse = {
     xpReward: number;
   }[];
   quests: {
-    kind:
-      | "REVIEW_DUE_CARDS"
-      | "PASS_A_QUIZ"
-      | "TYPE_SENTENCES"
-      | "PRACTISE_EVERY_DAY";
+    kind: DailyQuestKind;
     progress: number;
     target: number;
     completed: boolean;
