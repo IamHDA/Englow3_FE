@@ -3,8 +3,8 @@ import { expressMiddleware } from "@apollo/server/express4";
 import express from "express";
 
 import { corsMiddleware, rateLimitMiddleware } from "./config/middleware.js";
-import { createContext } from "./graphql/context.js";
-import { formatError } from "./graphql/errors.js";
+import { createContext, type GraphQLContext } from "./graphql/context.js";
+import { formatError, logServerErrors } from "./graphql/errors.js";
 import { resolvers, typeDefs } from "./graphql/schema.js";
 import { importRoute } from "./http/importRoute.js";
 
@@ -14,10 +14,11 @@ import { importRoute } from "./http/importRoute.js";
  * in both - which is the point: `/rest` once existed locally and not deployed.
  */
 export async function createApp() {
-  const apollo = new ApolloServer({
+  const apollo = new ApolloServer<GraphQLContext>({
     typeDefs,
     resolvers,
     formatError,
+    plugins: [logServerErrors],
     // Apollo defaults this to true outside NODE_ENV=production, which would
     // put internal file paths in every client-visible error. Off always -
     // debug from server logs, not the response.

@@ -18,6 +18,7 @@ export function makeContext({
 } = {}): GraphQLContext {
   return {
     token,
+    requestId: "req-test",
     requireToken: () => {
       if (!token) {
         throw new GraphQLError("Missing or invalid access token", {

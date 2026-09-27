@@ -1,6 +1,8 @@
 import express, { type Request, type Response, type Router } from "express";
 
 import { createBackendClient } from "../shared/http/backendClient.js";
+import { BackendError } from "../shared/http/backendError.js";
+import { logServerError } from "../shared/http/logServerError.js";
 
 /**
  * The largest batch that will be forwarded.
@@ -66,7 +68,7 @@ export function importRoute(): Router {
  * itself would be a second place for that answer to be wrong.
  */
 async function forward(req: Request, res: Response, path: string) {
-  const { token, client } = createBackendClient(req.headers);
+  const { token, requestId, client } = createBackendClient(req.headers);
   if (!token) {
     res.status(401).json({ code: "UNAUTHENTICATED", message: "Missing token" });
     return;
@@ -81,17 +83,33 @@ async function forward(req: Request, res: Response, path: string) {
     "import.json",
   );
 
+  const where = `rest ${req.baseUrl}${req.path}`;
   try {
     const response = await client.send("POST", path, form);
 
-    // The backend's own body is passed through, including on a refusal: its
-    // rejection report is the whole point of the endpoint, and summarising it
-    // here would lose the rows an author needs to fix.
+    // A 5xx is the backend failing, not the file being refused: its body is a
+    // server's own account of what broke, which is for the log and not the
+    // author. The trace id is kept so the two sides can be lined up.
+    if (response.status >= 500) {
+      const failure = await BackendError.fromResponse(response);
+      logServerError({ requestId, where, error: failure });
+      res.status(response.status).json({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+        traceId: failure.traceId,
+      });
+      return;
+    }
+
+    // Anything else is passed through as the backend wrote it, including on a
+    // refusal: its rejection report is the whole point of the endpoint, and
+    // summarising it here would lose the rows an author needs to fix.
     res
       .status(response.status)
       .type("application/json")
       .send(await response.text());
-  } catch {
+  } catch (error) {
+    logServerError({ requestId, where, error });
     res.status(502).json({
       code: "BACKEND_UNREACHABLE",
       message: "Could not reach the backend service",

@@ -11,6 +11,8 @@ import { createBackendClient } from "../shared/http/backendClient.js";
 
 export type GraphQLContext = {
   token: string | null;
+  /** The id this request's backend calls travel under, so a log line can be tied back to it. */
+  requestId: string;
   /** Fails unauthenticated callers early. Not the authorization boundary - the backend still verifies. */
   requireToken: () => string;
   apis: {
@@ -28,10 +30,11 @@ export type GraphQLContext = {
 export async function createContext({
   req,
 }: ExpressContextFunctionArgument): Promise<GraphQLContext> {
-  const { token, client } = createBackendClient(req.headers);
+  const { token, requestId, client } = createBackendClient(req.headers);
 
   return {
     token,
+    requestId,
     requireToken: () => {
       if (!token) {
         throw new GraphQLError("Missing or invalid access token", {

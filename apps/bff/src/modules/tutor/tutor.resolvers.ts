@@ -1,3 +1,5 @@
+import { GraphQLError } from "graphql";
+
 import type { GraphQLContext } from "../../graphql/context.js";
 import type { SendTutorMessageParams } from "./tutor.types.js";
 
@@ -35,8 +37,9 @@ export const tutorResolvers = {
     ) => {
       ctx.requireToken();
       if (args.message.length > MAX_MESSAGE_LENGTH) {
-        throw new Error(
+        throw new GraphQLError(
           `A message may be at most ${MAX_MESSAGE_LENGTH} characters`,
+          { extensions: { code: "BAD_USER_INPUT" } },
         );
       }
       return ctx.apis.tutorApi.sendMessage(args);

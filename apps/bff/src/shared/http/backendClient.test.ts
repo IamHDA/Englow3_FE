@@ -191,6 +191,7 @@ describe("createBackendClient", () => {
       ([, init]) => init.headers["x-request-id"],
     );
     expect(a).toMatch(uuid);
+    expect(first.requestId).toBe(a);
     expect(b).toBe(a); // one request, one id, however many backend calls
     expect(c).toMatch(uuid);
     expect(c).not.toBe(a);

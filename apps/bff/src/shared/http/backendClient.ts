@@ -98,13 +98,16 @@ function extractBearerToken(header: string | undefined): string | null {
  */
 export function createBackendClient(headers: IncomingHttpHeaders) {
   const token = extractBearerToken(headers.authorization);
+  const requestId = randomUUID();
+
   return {
     token,
+    requestId,
     client: new BackendClient(
       env.backendUrl,
       env.backendTimeoutMs,
       token ?? undefined,
-      randomUUID(),
+      requestId,
     ),
   };
 }

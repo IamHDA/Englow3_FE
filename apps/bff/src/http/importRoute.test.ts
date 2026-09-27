@@ -136,11 +136,41 @@ describe("POST /rest/admin/flashcards/import/validate", () => {
   });
 
   it("says the backend is unreachable rather than failing silently", async () => {
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("ECONNREFUSED"));
     const base = await start();
 
     const response = await call(base, { token: "Bearer token" });
 
     expect(response.status).toBe(502);
+    expect(logged).toHaveBeenCalledTimes(1);
+  });
+
+  // A refusal is the file's fault and its report is passed on. A 5xx is the
+  // backend's, and what it says about itself is for the log, not the author.
+  it("does not pass a backend 5xx body through, and logs it", async () => {
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        '{"message":"NullPointerException at com.englow3.ImportService","traceId":"t-1"}',
+        { status: 500 },
+      ),
+    );
+    const base = await start();
+
+    const response = await call(base, { token: "Bearer token" });
+
+    expect(response.status).toBe(500);
+    expect(response.body).not.toContain("NullPointerException");
+    expect(JSON.parse(response.body)).toEqual({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "An unexpected error occurred",
+      traceId: "t-1",
+    });
+    expect(JSON.parse(logged.mock.calls[0][0] as string)).toMatchObject({
+      where: "rest /rest/admin/flashcards/import/validate",
+      status: 500,
+      traceId: "t-1",
+    });
   });
 });

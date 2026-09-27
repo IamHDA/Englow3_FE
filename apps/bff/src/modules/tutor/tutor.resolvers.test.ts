@@ -127,7 +127,12 @@ describe("Mutation.sendTutorMessage", () => {
         { message: "x".repeat(4_001) },
         ctx,
       ),
-    ).toThrow("at most 4000 characters");
+    ).toThrow(
+      expect.objectContaining({
+        message: expect.stringContaining("at most 4000 characters"),
+        extensions: { code: "BAD_USER_INPUT" },
+      }),
+    );
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
