@@ -21,12 +21,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { Role } from "@/lib/graphql/generated";
+import { OnboardingStep, Role } from "@/lib/graphql/generated";
+import type { AppTranslations } from "@/shared/constants/translations";
 
-import {
-  GENDER_OPTIONS,
-  ONBOARDING_STEP_LABELS,
-} from "../../../constants/profile";
 import type { AccountProfile } from "../../../types";
 
 import classes from "./ProfileHeader.module.css";
@@ -35,19 +32,42 @@ type ProfileHeaderProps = {
   profile: NonNullable<AccountProfile>;
 };
 
+/**
+ * The badge only ever shows this for a step that isn't COMPLETED (see
+ * isOnboardingComplete below), but the switch stays exhaustive so a new step
+ * added to the enum fails to compile here instead of falling through silently.
+ */
+function onboardingStepLabel(
+  step: OnboardingStep,
+  t: AppTranslations,
+): string {
+  switch (step) {
+    case OnboardingStep.LEARNING_PURPOSES:
+      return t.account.onboardingStepLearningPurposes;
+    case OnboardingStep.CERTIFICATE_TARGET:
+      return t.account.onboardingStepCertificateTarget;
+    case OnboardingStep.CURRENT_LEVEL:
+      return t.account.currentLevelLabel;
+    case OnboardingStep.LEARNING_GOAL:
+      return t.account.onboardingStepLearningGoal;
+    case OnboardingStep.TARGET_SKILLS:
+      return t.account.targetSkillsLabel;
+    case OnboardingStep.COMPLETED:
+      return t.account.onboardingReady;
+  }
+}
+
 export function ProfileHeader({ profile }: ProfileHeaderProps) {
   const [copied, setCopied] = useState(false);
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
-  const genderLabel = isVi
-    ? (GENDER_OPTIONS.find((opt) => opt.value === profile.gender)?.label ??
-      null)
-    : profile.gender === "MALE"
-      ? "Male"
+  const genderLabel =
+    profile.gender === "MALE"
+      ? t.account.male
       : profile.gender === "FEMALE"
-        ? "Female"
-        : profile.gender
-          ? "Other"
+        ? t.account.female
+        : profile.gender === "OTHER"
+          ? t.account.otherGender
           : null;
 
   const isOnboardingComplete = profile.onboardingStep === "COMPLETED";
@@ -84,10 +104,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
               radius="xl"
               className={classes.avatar}
             />
-            <Box
-              className={classes.onlineDot}
-              title={isVi ? "Đang hoạt động" : "Online"}
-            />
+            <Box className={classes.onlineDot} title={t.account.activeNow} />
           </Box>
 
           {/* Chỉ LEARNER mới có onboarding - badge này báo đúng một việc đó,
@@ -109,13 +126,8 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
               }
             >
               {isOnboardingComplete
-                ? isVi
-                  ? "Đã sẵn sàng học"
-                  : "Ready to Learn"
-                : isVi
-                  ? (ONBOARDING_STEP_LABELS[profile.onboardingStep] ??
-                    "Đang thiết lập")
-                  : "Setting up"}
+                ? t.account.onboardingReady
+                : onboardingStepLabel(profile.onboardingStep, t)}
             </Badge>
           )}
         </Group>
@@ -150,7 +162,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
           {genderLabel && (
             <Group gap="xs" align="center" justify="space-between">
               <Text size="xs" c="ink.5">
-                {isVi ? "Giới tính:" : "Gender:"}
+                {t.account.gender}:
               </Text>
               <Text size="xs" fw={600} c="ink.8">
                 {genderLabel}
@@ -162,7 +174,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
             <Group gap={4} align="center">
               <Hash size={13} className={classes.infoIcon} />
               <Text size="xs" c="ink.5">
-                {isVi ? "Mã học viên:" : "Student ID:"}
+                {t.account.studentId}:
               </Text>
             </Group>
             <Group
@@ -170,7 +182,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
               align="center"
               className={classes.clickableId}
               onClick={handleCopyId}
-              title={isVi ? "Nhấn để sao chép mã" : "Click to copy ID"}
+              title={t.account.clickToCopyId}
             >
               <Text size="xs" fw={600} c="ink.7">
                 {profile.id.slice(0, 8)}...
@@ -178,7 +190,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
               <Copy size={12} className={classes.infoIcon} />
               {copied && (
                 <Text size="xs" c="teal.7" fw={700}>
-                  {isVi ? "Đã chép!" : "Copied!"}
+                  {t.common.copied}
                 </Text>
               )}
             </Group>

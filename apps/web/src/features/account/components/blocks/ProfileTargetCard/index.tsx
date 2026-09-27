@@ -15,7 +15,7 @@ import {
 import { Award, BookOpen, ChevronRight, Sparkles, Target } from "lucide-react";
 
 import { useOnboarding } from "@/features/onboarding";
-import { SKILL_LABELS } from "../../../constants/profile";
+import { skillLabel } from "../../../constants/profile";
 import type { AccountProfile } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -27,14 +27,12 @@ type ProfileTargetCardProps = {
 
 export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
   const { open } = useOnboarding();
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const state = profile.onboardingState;
 
-  const certificate =
-    state?.targetCertificateType ?? (isVi ? "Chưa chọn" : "None");
+  const certificate = state?.targetCertificateType ?? t.account.certificateNotSelected;
   const targetScore = state?.targetScore ?? "--";
-  const currentLevel =
-    state?.currentLevel ?? (isVi ? "Chưa đánh giá" : "Not assessed");
+  const currentLevel = state?.currentLevel ?? t.account.levelNotAssessed;
   const targetSkills = state?.targetSkills ?? [];
 
   return (
@@ -46,7 +44,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
               <Target size={16} />
             </ThemeIcon>
             <Title order={3} fz={16} fw={700} c="ink.9">
-              {isVi ? "Mục tiêu học tập" : "Learning Targets"}
+              {t.account.learningTargetsCardTitle}
             </Title>
           </Group>
 
@@ -62,7 +60,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
             <Group gap={6} align="center">
               <Award size={14} className={classes.statIcon} />
               <Text size="xs" c="ink.5">
-                {isVi ? "Mục tiêu điểm" : "Target Score"}
+                {t.account.targetScoreLabel}
               </Text>
             </Group>
             <Text size="sm" fw={800} c="navy.9" mt={2}>
@@ -74,7 +72,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
             <Group gap={6} align="center">
               <BookOpen size={14} className={classes.statIcon} />
               <Text size="xs" c="ink.5">
-                {isVi ? "Trình độ hiện tại" : "Current Level"}
+                {t.account.currentLevelLabel}
               </Text>
             </Group>
             <Text size="sm" fw={800} c="teal.8" mt={2}>
@@ -86,7 +84,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
         {targetSkills.length > 0 && (
           <Stack gap={6}>
             <Text size="xs" fw={600} c="ink.6">
-              {isVi ? "Kỹ năng trọng tâm:" : "Key Focus Skills:"}
+              {t.account.targetSkillsLabel}:
             </Text>
             <Group gap={6} wrap="wrap">
               {targetSkills.map((skill) => (
@@ -98,7 +96,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
                   radius="sm"
                   leftSection={<Sparkles size={10} />}
                 >
-                  {isVi ? (SKILL_LABELS[skill] ?? skill) : skill}
+                  {skillLabel(skill, t)}
                 </Badge>
               ))}
             </Group>
@@ -115,7 +113,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
           onClick={open}
           className={classes.tuneButton}
         >
-          {isVi ? "Cập nhật mục tiêu học" : "Update Learning Goals"}
+          {t.account.updateLearningGoalsButton}
         </Button>
       </Stack>
     </Paper>

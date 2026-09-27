@@ -46,6 +46,16 @@ export interface CommonTranslations {
   inProgress: string;
   locked: string;
   status: string;
+  copied: string;
+  /** "{thing}" is replaced with the caller's item name, e.g. "deck", "lesson". */
+  notFoundTitle: string;
+  /** "{Thing}" is the capitalized item name - only the vi wording actually uses it. */
+  notFoundDescription: string;
+  loadErrorTitle: string;
+  loadErrorDescription: string;
+  languageSwitcherTooltip: string;
+  languageSwitcherMenuLabel: string;
+  reset: string;
 }
 
 export interface AccountTranslations {
@@ -98,6 +108,48 @@ export interface AccountTranslations {
   activeNow: string;
   supabaseAuthNotice: string;
   secureSession: string;
+  onboardingReady: string;
+  onboardingStepLearningPurposes: string;
+  onboardingStepCertificateTarget: string;
+  onboardingStepLearningGoal: string;
+  studentId: string;
+  clickToCopyId: string;
+  learningTargetsCardTitle: string;
+  targetScoreLabel: string;
+  /** Also the onboarding CURRENT_LEVEL step's badge label - same text either way. */
+  currentLevelLabel: string;
+  /** Also the onboarding TARGET_SKILLS step's badge label - same text either way. */
+  targetSkillsLabel: string;
+  certificateNotSelected: string;
+  levelNotAssessed: string;
+  updateLearningGoalsButton: string;
+  skillListening: string;
+  skillReading: string;
+  skillWriting: string;
+  skillSpeaking: string;
+  skillGrammar: string;
+  skillVocabulary: string;
+  skillPronunciation: string;
+  notConfigured: string;
+  targetScoreEmpty: string;
+  learningRoadmapTitle: string;
+  targetCertificateLabel: string;
+  goalPrefix: string;
+  cefrEvaluationBadge: string;
+  targetDeadlineLabel: string;
+  flexibleDeadline: string;
+  adaptiveScheduleBadge: string;
+  prioritySkillsTitle: string;
+  noSkillsSelectedHint: string;
+  profileLoadErrorTitle: string;
+  profileLoadErrorDescription: string;
+  notSignedInTitle: string;
+  notSignedInDescription: string;
+  saveErrorFallback: string;
+  fullNamePlaceholder: string;
+  displayNamePlaceholder: string;
+  selectGenderPlaceholder: string;
+  emailFieldDescription: string;
 }
 
 export interface FlashcardTranslations {
@@ -140,6 +192,12 @@ export interface FlashcardTranslations {
   memoryStages: string;
   newCardsBadge: string;
   reviewHintSpace: string;
+  flipPrompt: string;
+  assessRetentionLabel: string;
+  ratingAgainHint: string;
+  ratingHardHint: string;
+  ratingGoodHint: string;
+  ratingEasyHint: string;
 }
 
 export interface PronunciationTranslations {
@@ -500,6 +558,15 @@ export const translations: Record<Language, AppTranslations> = {
       inProgress: "Đang thực hiện",
       locked: "Chưa mở khóa",
       status: "Trạng thái",
+      copied: "Đã chép!",
+      notFoundTitle: "Không tìm thấy {thing}",
+      notFoundDescription:
+        "{Thing} không tồn tại hoặc đã bị gỡ. Hãy chọn lại từ thư viện.",
+      loadErrorTitle: "Không tải được {thing}",
+      loadErrorDescription: "Máy chủ chưa phản hồi. Thử lại sau ít phút.",
+      languageSwitcherTooltip: "Đổi ngôn ngữ giao diện",
+      languageSwitcherMenuLabel: "Ngôn ngữ giao diện",
+      reset: "Đặt lại",
     },
     account: {
       title: "Hồ sơ cá nhân",
@@ -556,6 +623,50 @@ export const translations: Record<Language, AppTranslations> = {
       activeNow: "Đang hoạt động",
       supabaseAuthNotice: "Đăng nhập an toàn qua hệ thống Englow3",
       secureSession: "Phiên bảo mật",
+      onboardingReady: "Đã sẵn sàng học",
+      onboardingStepLearningPurposes: "Mục tiêu học tập",
+      onboardingStepCertificateTarget: "Chứng chỉ mục tiêu",
+      onboardingStepLearningGoal: "Mục tiêu điểm số",
+      studentId: "Mã học viên",
+      clickToCopyId: "Nhấn để sao chép mã",
+      learningTargetsCardTitle: "Mục tiêu học tập",
+      targetScoreLabel: "Mục tiêu điểm",
+      currentLevelLabel: "Trình độ hiện tại",
+      targetSkillsLabel: "Kỹ năng trọng tâm",
+      certificateNotSelected: "Chưa chọn",
+      levelNotAssessed: "Chưa đánh giá",
+      updateLearningGoalsButton: "Cập nhật mục tiêu học",
+      skillListening: "Nghe",
+      skillReading: "Đọc",
+      skillWriting: "Viết",
+      skillSpeaking: "Nói",
+      skillGrammar: "Ngữ pháp",
+      skillVocabulary: "Từ vựng",
+      skillPronunciation: "Phát âm",
+      notConfigured: "Chưa thiết lập",
+      targetScoreEmpty: "Chưa có",
+      learningRoadmapTitle: "Lộ trình & Mục tiêu học tập",
+      targetCertificateLabel: "Chứng chỉ hướng tới",
+      goalPrefix: "Mục tiêu",
+      cefrEvaluationBadge: "Đánh giá năng lực",
+      targetDeadlineLabel: "Thời hạn mục tiêu",
+      flexibleDeadline: "Linh hoạt",
+      adaptiveScheduleBadge: "Lộ trình thích ứng",
+      prioritySkillsTitle: "Kỹ năng tập trung rèn luyện",
+      noSkillsSelectedHint:
+        'Chưa chọn kỹ năng cụ thể. Bấm "Cập nhật mục tiêu học" để chọn.',
+      profileLoadErrorTitle: "Không thể tải hồ sơ",
+      profileLoadErrorDescription:
+        "Đã có lỗi xảy ra khi tải thông tin hồ sơ. Vui lòng kiểm tra lại kết nối mạng hoặc đăng nhập lại.",
+      notSignedInTitle: "Chưa đăng nhập",
+      notSignedInDescription:
+        "Vui lòng đăng nhập để xem và chỉnh sửa thông tin hồ sơ cá nhân của bạn.",
+      saveErrorFallback: "Đã có lỗi xảy ra khi lưu hồ sơ",
+      fullNamePlaceholder: "Ví dụ: Nguyễn Văn A",
+      displayNamePlaceholder: "Ví dụ: An Nguyen",
+      selectGenderPlaceholder: "Chọn giới tính",
+      emailFieldDescription:
+        "Email dùng để đăng nhập và nhận thông báo, không thể thay đổi tại đây",
     },
     flashcard: {
       title: "Thẻ ghi nhớ 3D",
@@ -599,6 +710,12 @@ export const translations: Record<Language, AppTranslations> = {
       memoryStages: "Trạng thái lưu trữ não bộ",
       newCardsBadge: "Từ mới tinh",
       reviewHintSpace: "Nhấn phím cách hoặc bấm vào thẻ để xem nghĩa và ví dụ",
+      flipPrompt: "Lật thẻ xem đáp án",
+      assessRetentionLabel: "ĐÁNH GIÁ MỨC ĐỘ GHI NHỚ (Phím tắt 1 - 4):",
+      ratingAgainHint: "Chưa nhớ (< 1 ngày)",
+      ratingHardHint: "Khó (2 ngày)",
+      ratingGoodHint: "Nhớ tốt (4 ngày)",
+      ratingEasyHint: "Rất dễ (7 ngày)",
     },
     pronunciation: {
       title: "Luyện phát âm",
@@ -1000,6 +1117,15 @@ export const translations: Record<Language, AppTranslations> = {
       inProgress: "In Progress",
       locked: "Locked",
       status: "Status",
+      copied: "Copied!",
+      notFoundTitle: "This {thing} does not exist",
+      notFoundDescription:
+        "It may have been removed, or the link is wrong. Pick one from the library instead.",
+      loadErrorTitle: "Could not load this {thing}",
+      loadErrorDescription: "The server did not answer. Try again in a few minutes.",
+      languageSwitcherTooltip: "Switch UI language",
+      languageSwitcherMenuLabel: "Interface Language",
+      reset: "Reset",
     },
     account: {
       title: "My Profile",
@@ -1058,6 +1184,50 @@ export const translations: Record<Language, AppTranslations> = {
       supabaseAuthNotice:
         "Authenticated securely via Englow3 security services",
       secureSession: "Secure Session",
+      onboardingReady: "Ready to Learn",
+      onboardingStepLearningPurposes: "Learning Purposes",
+      onboardingStepCertificateTarget: "Certificate Target",
+      onboardingStepLearningGoal: "Score Goal",
+      studentId: "Student ID",
+      clickToCopyId: "Click to copy ID",
+      learningTargetsCardTitle: "Learning Targets",
+      targetScoreLabel: "Target Score",
+      currentLevelLabel: "Current Level",
+      targetSkillsLabel: "Target Skills",
+      certificateNotSelected: "None",
+      levelNotAssessed: "Not assessed",
+      updateLearningGoalsButton: "Update Learning Goals",
+      skillListening: "Listening",
+      skillReading: "Reading",
+      skillWriting: "Writing",
+      skillSpeaking: "Speaking",
+      skillGrammar: "Grammar",
+      skillVocabulary: "Vocabulary",
+      skillPronunciation: "Pronunciation",
+      notConfigured: "Not configured",
+      targetScoreEmpty: "None",
+      learningRoadmapTitle: "Learning Roadmap & Targets",
+      targetCertificateLabel: "Target Certificate",
+      goalPrefix: "Goal",
+      cefrEvaluationBadge: "CEFR Evaluation",
+      targetDeadlineLabel: "Target Deadline",
+      flexibleDeadline: "Flexible",
+      adaptiveScheduleBadge: "Adaptive Schedule",
+      prioritySkillsTitle: "Priority Focus Skills",
+      noSkillsSelectedHint:
+        'No specific skills selected yet. Click "Update Learning Goals" to configure.',
+      profileLoadErrorTitle: "Could not load profile",
+      profileLoadErrorDescription:
+        "An error occurred while loading profile details. Please verify your connection or sign in again.",
+      notSignedInTitle: "Not Signed In",
+      notSignedInDescription:
+        "Please sign in to view and edit your profile settings.",
+      saveErrorFallback: "Error saving profile",
+      fullNamePlaceholder: "e.g. John Doe",
+      displayNamePlaceholder: "e.g. jdoe",
+      selectGenderPlaceholder: "Select gender",
+      emailFieldDescription:
+        "Email is used for account login and notifications, cannot be edited here",
     },
     flashcard: {
       title: "3D Flashcards",
@@ -1102,6 +1272,12 @@ export const translations: Record<Language, AppTranslations> = {
       newCardsBadge: "New Cards",
       reviewHintSpace:
         "Press Space or click card to reveal definition and examples",
+      flipPrompt: "Flip card to reveal answer",
+      assessRetentionLabel: "ASSESS RETENTION LEVEL (Keys 1 - 4):",
+      ratingAgainHint: "Again (< 1 day)",
+      ratingHardHint: "Hard (2 days)",
+      ratingGoodHint: "Good (4 days)",
+      ratingEasyHint: "Easy (7 days)",
     },
     pronunciation: {
       title: "Pronunciation",

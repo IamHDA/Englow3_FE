@@ -11,13 +11,13 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
-  const { setLanguage, isVi } = useLanguage();
+  const { setLanguage, isVi, t } = useLanguage();
 
   return (
     <Menu position="bottom-end" shadow="md" width={170} withinPortal>
       <Menu.Target>
         <Tooltip
-          label={isVi ? "Đổi ngôn ngữ giao diện" : "Switch UI language"}
+          label={t.common.languageSwitcherTooltip}
           withArrow
           position="bottom"
         >
@@ -41,7 +41,7 @@ export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
         <Menu.Label>
           <Group gap={6}>
             <Globe size={13} />
-            <span>{isVi ? "Ngôn ngữ giao diện" : "Interface Language"}</span>
+            <span>{t.common.languageSwitcherMenuLabel}</span>
           </Group>
         </Menu.Label>
 
