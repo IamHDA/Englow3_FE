@@ -99,7 +99,10 @@ export function DictationAudioPlayer({
             </Text>
             {replayCount > 0 && (
               <Badge variant="light" color="orange" size="sm" radius="sm">
-                {t.dictation.replaysBadge.replace("{count}", String(replayCount))}
+                {t.dictation.replaysBadge.replace(
+                  "{count}",
+                  String(replayCount),
+                )}
               </Badge>
             )}
           </Group>
@@ -123,7 +126,9 @@ export function DictationAudioPlayer({
               size={52}
               radius="xl"
               onClick={onTogglePlay}
-              title={isPlaying ? t.dictation.pauseAria : t.dictation.playAudioAria}
+              title={
+                isPlaying ? t.dictation.pauseAria : t.dictation.playAudioAria
+              }
               aria-label={
                 isPlaying ? t.dictation.pauseAria : t.dictation.playAudioAria
               }

@@ -190,9 +190,7 @@ export function QuizTimerPalette({
                 onClick={() => onToggleFlag(currentQ.id)}
                 leftSection={<IconFlag size={16} />}
               >
-                {isCurrentFlagged
-                  ? t.quiz.unflagButton
-                  : t.quiz.flagButton}
+                {isCurrentFlagged ? t.quiz.unflagButton : t.quiz.flagButton}
               </Button>
             )}
 

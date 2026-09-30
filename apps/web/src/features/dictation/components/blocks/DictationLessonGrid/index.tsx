@@ -58,7 +58,9 @@ export function DictationLessonGrid({
             eyebrow={lesson.topic}
             level={lesson.targetLevel}
             status={
-              completed ? { label: t.common.completed, color: "teal" } : undefined
+              completed
+                ? { label: t.common.completed, color: "teal" }
+                : undefined
             }
             title={lesson.title}
             meta={[

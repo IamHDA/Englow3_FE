@@ -115,7 +115,9 @@ export function DictationLessonList({
                   <Table.Td>
                     <Badge size="xs" variant="outline" color="ink.6">
                       {lesson.targetLevel ??
-                        (isVi ? ALL_LEVELS_LABEL.labelVi : ALL_LEVELS_LABEL.labelEn)}
+                        (isVi
+                          ? ALL_LEVELS_LABEL.labelVi
+                          : ALL_LEVELS_LABEL.labelEn)}
                     </Badge>
                   </Table.Td>
                   <Table.Td>

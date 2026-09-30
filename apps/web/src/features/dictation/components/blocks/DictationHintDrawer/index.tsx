@@ -79,7 +79,10 @@ export function DictationHintDrawer({
           color={hintsUsedCount > 0 ? "orange" : "gray"}
           size="sm"
         >
-          {t.dictation.hintsUsedBadge.replace("{count}", String(hintsUsedCount))}
+          {t.dictation.hintsUsedBadge.replace(
+            "{count}",
+            String(hintsUsedCount),
+          )}
         </Badge>
       </Group>
 

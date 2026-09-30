@@ -1252,7 +1252,8 @@ export const translations: Record<Language, AppTranslations> = {
       minutesUnitShort: "phút",
       passedBadge: "ĐẠT YÊU CẦU",
       needsRetakeBadge: "CHƯA ĐẠT",
-      passedMessage: "Chúc mừng bạn đã vượt qua bài kiểm tra với số điểm ấn tượng!",
+      passedMessage:
+        "Chúc mừng bạn đã vượt qua bài kiểm tra với số điểm ấn tượng!",
       failedMessage:
         "Bạn chưa đạt điểm tối thiểu để mở khóa bài tiếp theo. Hãy xem lại lời giải chi tiết bên dưới nhé!",
       scoreLabel: "Điểm số:",
@@ -1409,7 +1410,8 @@ export const translations: Record<Language, AppTranslations> = {
       sentencesWithMistakesLabel: "Câu có từ chưa chuẩn:",
       sentencesToReviewTitle: "Các câu có lỗi cần ôn tập ({count})",
       startReviewingMistakes: "Bắt đầu ôn tập câu sai",
-      zeroMistakesMessage: "Tuyệt vời! Bạn không mắc phải lỗi nào trong bài học này.",
+      zeroMistakesMessage:
+        "Tuyệt vời! Bạn không mắc phải lỗi nào trong bài học này.",
       yourInputShort: "Bạn đã gõ:",
       correctAnswerShort: "Đáp án đúng:",
       backToLessonCatalog: "Về danh sách bài học",
@@ -1426,7 +1428,8 @@ export const translations: Record<Language, AppTranslations> = {
       period30Days: "30 ngày qua",
       period3Months: "3 tháng qua",
       periodAllTime: "Tất cả",
-      noLessonsPublished: "Chưa có bài nghe nào được phát hành. Quay lại sau nhé.",
+      noLessonsPublished:
+        "Chưa có bài nghe nào được phát hành. Quay lại sau nhé.",
       noLessonsMatchFilters:
         "Không có bài nào khớp bộ lọc. Thử đổi chủ đề, trình độ hoặc trạng thái.",
       couldNotLoadLessons: "Không tải được bài học",
@@ -1661,7 +1664,8 @@ export const translations: Record<Language, AppTranslations> = {
         "Chưa tải được lộ trình hôm nay. Tải lại trang sau ít phút.",
       upNextBadge: "Học tiếp",
       nothingWaitingTitle: "Hôm nay chưa có việc nào đang chờ",
-      nothingWaitingDescription: "Chọn một bộ thẻ hoặc một bài nghe để bắt đầu.",
+      nothingWaitingDescription:
+        "Chọn một bộ thẻ hoặc một bài nghe để bắt đầu.",
       chooseLessonButton: "Chọn bài học",
       todaySectionTitle: "Hôm nay",
       fullPathButton: "Xem lộ trình",
@@ -1759,7 +1763,8 @@ export const translations: Record<Language, AppTranslations> = {
       notFoundDescription:
         "It may have been removed, or the link is wrong. Pick one from the library instead.",
       loadErrorTitle: "Could not load this {thing}",
-      loadErrorDescription: "The server did not answer. Try again in a few minutes.",
+      loadErrorDescription:
+        "The server did not answer. Try again in a few minutes.",
       languageSwitcherTooltip: "Switch UI language",
       languageSwitcherMenuLabel: "Interface Language",
       reset: "Reset",
@@ -1925,7 +1930,8 @@ export const translations: Record<Language, AppTranslations> = {
       englishDefinitionLabel: "ENGLISH DEFINITION:",
       contextExampleLabel: "CONTEXT EXAMPLE:",
       memoryMnemonicLabel: "MEMORY MNEMONIC:",
-      rateRetentionFooter: "Rate your retention below for optimal spaced repetition",
+      rateRetentionFooter:
+        "Rate your retention below for optimal spaced repetition",
       cardsReviewedPerDay: "Cards reviewed per day",
       noReviewsInPeriod: "No reviews in this period yet.",
       priorityWordsBadge: "{count} priority words",
@@ -1959,7 +1965,8 @@ export const translations: Record<Language, AppTranslations> = {
       dueCardsBadge: "{count} due",
       reviewButton: "Review",
       studyButton: "Study",
-      noSetsPublished: "No flashcard sets have been published yet. Check back soon.",
+      noSetsPublished:
+        "No flashcard sets have been published yet. Check back soon.",
       noSetsMatchFilters:
         "No sets match these filters. Try another search or topic.",
       couldNotLoadSets: "Could not load flashcard sets",
@@ -2137,12 +2144,14 @@ export const translations: Record<Language, AppTranslations> = {
       confirmSubmitButton: "Confirm Submit",
       catalogueTitle: "Quiz Challenge Library",
       allCategoriesSegment: "All Categories",
-      noQuizzesPublished: "No quizzes have been published yet. Check back soon.",
+      noQuizzesPublished:
+        "No quizzes have been published yet. Check back soon.",
       questionsCountSuffix: "questions",
       minutesUnitShort: "min",
       passedBadge: "PASSED",
       needsRetakeBadge: "NEEDS RETAKE",
-      passedMessage: "Congratulations! You have passed the quiz with a great score.",
+      passedMessage:
+        "Congratulations! You have passed the quiz with a great score.",
       failedMessage:
         "You have not reached the passing score for this quiz. Review the explanations below and try again!",
       scoreLabel: "Score:",
@@ -2211,12 +2220,14 @@ export const translations: Record<Language, AppTranslations> = {
       playAudioAria: "Play audio",
       forward5Aria: "Forward 5 seconds",
       speedLabel: "Speed",
-      chartsEmptyState: "No data yet. Practise a few sentences to see the chart.",
+      chartsEmptyState:
+        "No data yet. Practise a few sentences to see the chart.",
       sentencesPerDayLabel: "Sentences / day",
       sentencesPracticedSuffix: "sentences practiced",
       perfectScoreTitle: "Outstanding! 100% Accuracy",
       wordsNeedCorrection: "{count} words need correction",
-      accuracyDetail: "Accuracy: {percent}% ({correct} / {total} words correct)",
+      accuracyDetail:
+        "Accuracy: {percent}% ({correct} / {total} words correct)",
       legendCorrect: "Correct",
       legendIncorrect: "Incorrect",
       legendMissing: "Missing",
@@ -2299,7 +2310,8 @@ export const translations: Record<Language, AppTranslations> = {
       sentencesWithMistakesLabel: "Sentences with Mistakes:",
       sentencesToReviewTitle: "Sentences to Review ({count})",
       startReviewingMistakes: "Review Mistakes",
-      zeroMistakesMessage: "Awesome! You completed this session with zero mistakes.",
+      zeroMistakesMessage:
+        "Awesome! You completed this session with zero mistakes.",
       yourInputShort: "Your Input:",
       correctAnswerShort: "Correct Answer:",
       backToLessonCatalog: "Back to Lesson Catalog",
@@ -2554,7 +2566,8 @@ export const translations: Record<Language, AppTranslations> = {
       pathLoadErrorMessage: "Could not load today's path. Reload in a moment.",
       upNextBadge: "Up next",
       nothingWaitingTitle: "Nothing waiting for you today",
-      nothingWaitingDescription: "Pick a flashcard set or a listening lesson to begin.",
+      nothingWaitingDescription:
+        "Pick a flashcard set or a listening lesson to begin.",
       chooseLessonButton: "Choose a lesson",
       todaySectionTitle: "Today",
       fullPathButton: "Full path",

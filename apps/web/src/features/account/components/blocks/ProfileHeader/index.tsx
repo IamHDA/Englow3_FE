@@ -37,10 +37,7 @@ type ProfileHeaderProps = {
  * isOnboardingComplete below), but the switch stays exhaustive so a new step
  * added to the enum fails to compile here instead of falling through silently.
  */
-function onboardingStepLabel(
-  step: OnboardingStep,
-  t: AppTranslations,
-): string {
+function onboardingStepLabel(step: OnboardingStep, t: AppTranslations): string {
   switch (step) {
     case OnboardingStep.LEARNING_PURPOSES:
       return t.account.onboardingStepLearningPurposes;

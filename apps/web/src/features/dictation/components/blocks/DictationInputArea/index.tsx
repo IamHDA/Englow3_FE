@@ -70,7 +70,10 @@ export function DictationInputArea({
           {/* Shortcuts & Word count */}
           <Group gap="xs">
             <Text size="xs" fw={600} c="ink.6">
-              {t.dictation.wordsTypedCount.replace("{count}", String(wordCount))}
+              {t.dictation.wordsTypedCount.replace(
+                "{count}",
+                String(wordCount),
+              )}
             </Text>
             <Text size="xs" c="ink.4">
               •

@@ -136,7 +136,8 @@ export function PronunciationVoiceRecorder({
         <Stack gap="sm" align="center">
           {isRecording && (
             <Badge color="red" variant="light" size="lg" radius="sm">
-              {t.pronunciation.recordingBadge} · {formatSeconds(recordingSeconds)}
+              {t.pronunciation.recordingBadge} ·{" "}
+              {formatSeconds(recordingSeconds)}
             </Badge>
           )}
 

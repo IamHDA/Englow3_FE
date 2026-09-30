@@ -146,10 +146,7 @@ export function LearnerHomeView() {
             leftSection={<Flame size={18} aria-hidden="true" />}
             className={classes.streak}
           >
-            {t.home.streakDaysLabel.replace(
-              "{count}",
-              String(path.streakDays),
-            )}
+            {t.home.streakDaysLabel.replace("{count}", String(path.streakDays))}
           </Badge>
         )}
       </Group>

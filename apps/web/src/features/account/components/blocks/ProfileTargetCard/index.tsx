@@ -30,7 +30,8 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
   const { t } = useLanguage();
   const state = profile.onboardingState;
 
-  const certificate = state?.targetCertificateType ?? t.account.certificateNotSelected;
+  const certificate =
+    state?.targetCertificateType ?? t.account.certificateNotSelected;
   const targetScore = state?.targetScore ?? "--";
   const currentLevel = state?.currentLevel ?? t.account.levelNotAssessed;
   const targetSkills = state?.targetSkills ?? [];

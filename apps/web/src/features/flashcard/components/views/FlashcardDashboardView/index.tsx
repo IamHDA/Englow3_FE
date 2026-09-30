@@ -174,8 +174,14 @@ export function FlashcardDashboardView({
                   data={[
                     { value: "7 Days", label: t.flashcard.period7DaysShort },
                     { value: "30 Days", label: t.flashcard.period30DaysShort },
-                    { value: "3 Months", label: t.flashcard.period3MonthsShort },
-                    { value: "All Time", label: t.flashcard.periodAllTimeShort },
+                    {
+                      value: "3 Months",
+                      label: t.flashcard.period3MonthsShort,
+                    },
+                    {
+                      value: "All Time",
+                      label: t.flashcard.periodAllTimeShort,
+                    },
                   ]}
                   radius="md"
                   size="sm"

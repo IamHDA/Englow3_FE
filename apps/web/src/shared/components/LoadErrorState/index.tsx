@@ -38,8 +38,9 @@ export function LoadErrorState({
   const name = isVi ? thing.vi : thing.en;
   const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
 
-  const title = (notFound ? t.common.notFoundTitle : t.common.loadErrorTitle)
-    .replace("{thing}", name);
+  const title = (
+    notFound ? t.common.notFoundTitle : t.common.loadErrorTitle
+  ).replace("{thing}", name);
   const description = notFound
     ? t.common.notFoundDescription.replace("{Thing}", capitalizedName)
     : t.common.loadErrorDescription;

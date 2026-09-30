@@ -89,8 +89,9 @@ export function DictationSessionSummary({
               {t.dictation.sessionCompletedTitle}
             </Title>
             <Text size="sm" style={{ color: "#C5CBD7" }}>
-              {summary.sentencesCompletedCount} {t.dictation.sentenceCountSuffix}{" "}
-              · {summary.lessonTitle} ({summary.lessonLevel})
+              {summary.sentencesCompletedCount}{" "}
+              {t.dictation.sentenceCountSuffix} · {summary.lessonTitle} (
+              {summary.lessonLevel})
             </Text>
           </Stack>
 
