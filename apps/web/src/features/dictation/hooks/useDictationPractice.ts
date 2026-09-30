@@ -292,6 +292,7 @@ export function useDictationPractice(
     submissionError,
     clearSubmissionError,
     setReplayCount: updateReplayCount,
+    startSession: startClock,
     diffResult,
     hintsUsedCount,
     revealedHints,

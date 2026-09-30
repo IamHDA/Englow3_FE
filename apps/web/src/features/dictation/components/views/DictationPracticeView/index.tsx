@@ -188,10 +188,22 @@ export function DictationPracticeView({
           duration={audio.duration}
           playbackSpeed={audio.playbackSpeed}
           replayCount={audio.replayCount}
-          onTogglePlay={audio.togglePlay}
-          onReplay={audio.replay}
-          onBack5={audio.back5}
-          onForward5={audio.forward5}
+          onTogglePlay={() => {
+            practice.startSession();
+            audio.togglePlay();
+          }}
+          onReplay={() => {
+            practice.startSession();
+            audio.replay();
+          }}
+          onBack5={() => {
+            practice.startSession();
+            audio.back5();
+          }}
+          onForward5={() => {
+            practice.startSession();
+            audio.forward5();
+          }}
           onChangeSpeed={audio.changeSpeed}
         />
 
