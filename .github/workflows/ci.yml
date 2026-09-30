@@ -43,7 +43,7 @@ jobs:
     # the same whole-repo check three times.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - run: pnpm format:check
 
@@ -55,7 +55,7 @@ jobs:
     # matrix, where it would run for web and mobile too.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - run: pnpm --filter bff codegen
       - name: Generated types are up to date
@@ -82,7 +82,7 @@ jobs:
       matrix:
         app: [web, bff, mobile]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/quality-gate
         with:
