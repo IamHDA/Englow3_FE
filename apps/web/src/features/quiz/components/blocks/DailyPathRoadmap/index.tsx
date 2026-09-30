@@ -27,6 +27,7 @@ import {
   DailyTaskStatus,
 } from "@/lib/graphql/generated/schemaTypes";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import type { AppTranslations } from "@/shared/constants/translations";
 import {
   TASK_KIND_HREFS,
   TASK_KIND_LABELS,
@@ -49,55 +50,58 @@ const KIND_ICONS = {
  * không nhận sẵn một chuỗi từ server: cùng một dữ liệu phải đọc được ở cả hai
  * ngôn ngữ.
  */
-function subtitleFor(task: DailyTask, isVi: boolean): string {
+function subtitleFor(
+  task: DailyTask,
+  isVi: boolean,
+  t: AppTranslations,
+): string {
+  // TASK_UNIT_LABELS is per-item bilingual data (like a catalog), not app
+  // copy, so it stays keyed by isVi rather than moving into t.
   const unit = TASK_UNIT_LABELS[task.kind];
 
   if (task.status === DailyTaskStatus.COMPLETED) {
     const done = task.unitsDoneToday;
     if (task.kind === DailyTaskKind.QUIZ) {
       return task.completionPercent == null
-        ? isVi
-          ? "Đã làm hôm nay"
-          : "Done today"
-        : isVi
-          ? `Đã làm hôm nay - ${task.completionPercent}%`
-          : `Done today - ${task.completionPercent}%`;
+        ? t.dailyPath.doneToday
+        : t.dailyPath.doneTodayPercent.replace(
+            "{percent}",
+            String(task.completionPercent),
+          );
     }
-    const noun = isVi
-      ? task.kind === DailyTaskKind.FLASHCARD_REVIEW
-        ? "thẻ"
-        : "câu"
-      : task.kind === DailyTaskKind.FLASHCARD_REVIEW
+    const noun =
+      task.kind === DailyTaskKind.FLASHCARD_REVIEW
         ? done === 1
-          ? "card"
-          : "cards"
+          ? t.dailyPath.cardNoun
+          : t.dailyPath.cardsNoun
         : done === 1
-          ? "sentence"
-          : "sentences";
+          ? t.dailyPath.sentenceNoun
+          : t.dailyPath.sentencesNoun;
     const accuracy =
       task.completionPercent == null ? "" : ` - ${task.completionPercent}%`;
-    return isVi
-      ? `Hôm nay đã xong ${done} ${noun}${accuracy}`
-      : `${done} ${noun} done today${accuracy}`;
+    return t.dailyPath.doneTodayCount
+      .replace("{count}", String(done))
+      .replace("{noun}", noun)
+      .replace("{accuracy}", accuracy);
   }
 
   const remaining = task.unitsRemaining;
   const unitText = isVi ? unit.vi : remaining === 1 ? unit.en : unit.enPlural;
-  const base = isVi
-    ? `Còn ${remaining} ${unitText}`
-    : `${remaining} ${unitText}`;
+  const base = t.dailyPath.remainingLabel
+    .replace("{remaining}", String(remaining))
+    .replace("{unit}", unitText);
 
   // Chỉ nói "đã làm được N hôm nay" khi thực sự có - dòng "0 hôm nay" là nhiễu.
   if (task.unitsDoneToday > 0) {
-    return isVi
-      ? `${base} - đã làm ${task.unitsDoneToday} hôm nay`
-      : `${base} - ${task.unitsDoneToday} already done today`;
+    return t.dailyPath.alreadyDoneTodaySuffix
+      .replace("{base}", base)
+      .replace("{count}", String(task.unitsDoneToday));
   }
   return base;
 }
 
 export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
 
   if (tasks.length === 0) {
     return (
@@ -107,12 +111,10 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
             <IconCheck size={22} />
           </ThemeIcon>
           <Text fw={700} fz="sm" c="dark.9">
-            {isVi ? "Không còn việc nào đang dở" : "Nothing outstanding"}
+            {t.dailyPath.nothingOutstandingTitle}
           </Text>
           <Text fz="xs" c="dimmed" ta="center" maw={360}>
-            {isVi
-              ? "Chưa có thẻ nào đến hạn, chưa có bài nào bỏ giữa. Mở thư viện chọn thêm bộ thẻ hoặc bài nghe để lộ trình có việc."
-              : "No cards are due and nothing is half-finished. Pick up a new set or lesson from the library to give the path something to plan."}
+            {t.dailyPath.nothingOutstandingDescription}
           </Text>
         </Stack>
       </Card>
@@ -124,12 +126,10 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
       <Stack gap="lg">
         <Box>
           <Text fw={800} fz="lg" c="dark.9">
-            {isVi ? "Bản đồ chặng đường học tập" : "Learning Roadmap"}
+            {t.dailyPath.roadmapMapTitle}
           </Text>
           <Text fz="xs" c="dimmed">
-            {isVi
-              ? "Việc đang dở của chính bạn, thẻ đến hạn xếp trước vì chỉ lịch ôn mới có kỳ hạn"
-              : "Your own outstanding work. Due cards come first - only the review schedule has a deadline"}
+            {t.dailyPath.roadmapMapSubtitle}
           </Text>
         </Box>
 
@@ -184,7 +184,11 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
                             isCompleted ? "teal" : isCurrent ? "indigo" : "gray"
                           }
                         >
-                          {isVi ? `Trạm ${idx + 1}` : `Stage ${idx + 1}`}:{" "}
+                          {t.dailyPath.stagePrefix.replace(
+                            "{n}",
+                            String(idx + 1),
+                          )}
+                          :{" "}
                           {isVi
                             ? TASK_KIND_LABELS[task.kind].vi
                             : TASK_KIND_LABELS[task.kind].en}
@@ -201,7 +205,7 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
                         {task.title}
                       </Text>
                       <Text fz="xs" c="dimmed">
-                        {subtitleFor(task, isVi)}
+                        {subtitleFor(task, isVi, t)}
                       </Text>
                     </Stack>
                   </Group>
@@ -211,9 +215,10 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
                     {task.completionPercent != null && !isCompleted && (
                       <Stack gap={2} w={96}>
                         <Text fz={10} c="dimmed" ta="right">
-                          {isVi
-                            ? `Đã xong ${task.completionPercent}%`
-                            : `${task.completionPercent}% complete`}
+                          {t.dailyPath.completePercentLabel.replace(
+                            "{percent}",
+                            String(task.completionPercent),
+                          )}
                         </Text>
                         <Progress
                           value={task.completionPercent}
@@ -241,16 +246,10 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
                       }
                     >
                       {isCompleted
-                        ? isVi
-                          ? "Luyện lại"
-                          : "Practise again"
+                        ? t.dailyPath.practiceAgainButton
                         : isCurrent
-                          ? isVi
-                            ? "Bắt đầu ngay"
-                            : "Start now"
-                          : isVi
-                            ? "Mở"
-                            : "Open"}
+                          ? t.dailyPath.startNowButton
+                          : t.dailyPath.openButton}
                     </Button>
                   </Group>
                 </Group>

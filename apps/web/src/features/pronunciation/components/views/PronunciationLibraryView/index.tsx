@@ -19,7 +19,7 @@ import { Page } from "@/shared/components/Page";
 const PROMPT_PAGE_SIZE = 50;
 
 export function PronunciationLibraryView() {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const { data, loading, error } = useSpeakingPromptsQuery({
     variables: { size: PROMPT_PAGE_SIZE },
     fetchPolicy: "cache-and-network",
@@ -33,13 +33,8 @@ export function PronunciationLibraryView() {
         <PronunciationHeader />
 
         {error && prompts.length === 0 ? (
-          <Alert
-            color="warn"
-            title={isVi ? "Không tải được danh sách" : "Could not load prompts"}
-          >
-            {isVi
-              ? "Kiểm tra kết nối tới backend rồi tải lại trang."
-              : "Check the connection to the backend and reload."}
+          <Alert color="warn" title={t.pronunciation.couldNotLoadPrompts}>
+            {t.dictation.checkConnectionReload}
           </Alert>
         ) : loading && prompts.length === 0 ? (
           <PronunciationLibrarySkeleton />

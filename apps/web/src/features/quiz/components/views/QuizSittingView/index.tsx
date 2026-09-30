@@ -19,8 +19,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
-import { useMemo, useRef, useState } from "react";
-import { useExamTimer } from "@/features/exam/hooks/useExamTimer";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuizEngine } from "../../../hooks/useQuizEngine";
 import { QuizItem } from "../../../types";
 import { encodeAnswer, toQuizQuestion } from "./answerEncoding";
@@ -51,13 +50,45 @@ interface QuizSittingViewProps {
 }
 
 type ScoredAttempt = SubmitQuizAttemptMutation["submitQuizAttempt"];
+type StoredQuizProgress = {
+  answers: Record<string, unknown>;
+  flaggedIds: string[];
+  currentIndex: number;
+};
+
+function progressKey(attemptId: string): string {
+  return `englow3:quiz-progress:${attemptId}`;
+}
+
+function readProgress(attemptId: string): StoredQuizProgress | null {
+  try {
+    const value = sessionStorage.getItem(progressKey(attemptId));
+    if (value === null) return null;
+    const parsed = JSON.parse(value) as Partial<StoredQuizProgress>;
+    if (
+      typeof parsed.answers !== "object" ||
+      parsed.answers === null ||
+      !Array.isArray(parsed.flaggedIds) ||
+      typeof parsed.currentIndex !== "number"
+    ) {
+      return null;
+    }
+    return {
+      answers: parsed.answers,
+      flaggedIds: parsed.flaggedIds,
+      currentIndex: parsed.currentIndex,
+    };
+  } catch {
+    return null;
+  }
+}
 
 export function QuizSittingView({ quizId }: QuizSittingViewProps) {
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
+  const [attemptExpiresAt, setAttemptExpiresAt] = useState<string | null>(null);
   const [scored, setScored] = useState<ScoredAttempt | null>(null);
-  const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [sendFailed, setSendFailed] = useState(false);
   const pending = useRef(false);
 
@@ -79,7 +110,10 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     fetchPolicy: "network-only",
   });
 
-  const paper = paperData?.quizPaper;
+  const paper =
+    paperData?.quizPaper?.attemptId === attemptId
+      ? paperData.quizPaper
+      : undefined;
 
   /**
    * The shape the question blocks were written against, built from the paper.
@@ -93,7 +127,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
       category: "",
       level: "Intermediate",
       description: paper?.description ?? "",
-      timeLimitMinutes: Math.round((paper?.timeLimitSeconds ?? 0) / 60),
+      timeLimitMinutes: Math.ceil((paper?.timeLimitSeconds ?? 0) / 60),
       passingScorePercent: 0,
       questions: (paper?.questions ?? []).map(toQuizQuestion),
     }),
@@ -107,23 +141,40 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     answers,
     flaggedIds,
     isSubmitted,
+    timeRemainingFormatted,
+    timeRemainingSeconds,
     setAnswer,
+    restoreProgress,
     toggleFlag,
     nextQuestion,
     prevQuestion,
     jumpToQuestion,
     submitQuiz,
     restartQuiz,
-  } = useQuizEngine({ quiz, timerEnabled: false });
-
-  const {
-    formattedTime: timeRemainingFormatted,
-    remainingSeconds: timeRemainingSeconds,
-  } = useExamTimer({
-    expiresAt,
-    isActive: attemptId !== null && scored === null,
+  } = useQuizEngine({
+    quiz,
+    isActive: attemptId !== null && paper !== undefined,
+    expiresAt: paper?.expiresAt ?? attemptExpiresAt,
+    onExpire: () => undefined,
   });
-  const expired = expiresAt !== null && timeRemainingSeconds === 0;
+
+  useEffect(() => {
+    if (attemptId === null || paper === undefined || isSubmitted) return;
+    try {
+      sessionStorage.setItem(
+        progressKey(attemptId),
+        JSON.stringify({ answers, flaggedIds, currentIndex }),
+      );
+    } catch {
+      // Session storage can be unavailable in restricted browser contexts.
+    }
+  }, [attemptId, paper, isSubmitted, answers, flaggedIds, currentIndex]);
+
+  const expired =
+    attemptId !== null &&
+    (paper?.expiresAt ?? attemptExpiresAt) !== null &&
+    timeRemainingSeconds === 0 &&
+    scored === null;
 
   /** Sends every question, including the ones left alone - a missing answer is wrong, not absent. */
   async function handleSubmit() {
@@ -151,6 +202,11 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
       resetSubmit();
       setScored(response.data.submitQuizAttempt);
       submitQuiz();
+      try {
+        sessionStorage.removeItem(progressKey(attemptId));
+      } catch {
+        // Ignore unavailable session storage.
+      }
     } else {
       setSendFailed(true);
     }
@@ -164,11 +220,33 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
       () => null,
     );
     if (response?.data) {
-      restartQuiz();
-      setAttemptId(response.data.startQuizAttempt.id);
-      setExpiresAt(response.data.startQuizAttempt.expiresAt);
+      const attempt = response.data.startQuizAttempt;
+      const restored = readProgress(attempt.id);
+      restoreProgress(
+        restored ?? { answers: {}, flaggedIds: [], currentIndex: 0 },
+      );
+      setAttemptExpiresAt(attempt.expiresAt);
+      setAttemptId(attempt.id);
     }
     pending.current = false;
+  }
+
+  async function handleRetake() {
+    if (pending.current) return;
+    if (attemptId !== null) {
+      try {
+        sessionStorage.removeItem(progressKey(attemptId));
+      } catch {
+        // Ignore unavailable session storage.
+      }
+    }
+    setAttemptId(null);
+    setAttemptExpiresAt(null);
+    setScored(null);
+    setSendFailed(false);
+    resetSubmit();
+    restartQuiz();
+    await handleStart();
   }
 
   const error = startError ?? (paper === undefined ? paperError : undefined);
@@ -187,7 +265,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
           thing={{ vi: "bài kiểm tra", en: "quiz" }}
           back={{
             href: "/study/quiz",
-            label: isVi ? "Về danh sách bài kiểm tra" : "Back to quizzes",
+            label: t.quiz.backToQuizzesButton,
           }}
           onRetry={
             attemptId === null
@@ -207,15 +285,13 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
         <Card withBorder padding="xl" radius="md">
           <Stack gap="md" align="center">
             <Title order={2} fz="h3" ta="center">
-              {isVi ? "Sẵn sàng làm bài?" : "Ready to start?"}
+              {t.quiz.readyToStartTitle}
             </Title>
             <Text fz="sm" c="dimmed" ta="center">
-              {isVi
-                ? "Đồng hồ bắt đầu chạy ngay khi bạn bấm. Hãy nộp bài trước khi hết giờ. Bấm bắt đầu lần nữa sẽ quay về lượt đang dở."
-                : "The clock starts when you press. Submit before time runs out. Pressing Start again resumes your active attempt."}
+              {t.quiz.startExplanation}
             </Text>
             <Button onClick={handleStart} loading={starting} size="md">
-              {isVi ? "Bắt đầu" : "Start"}
+              {t.common.start}
             </Button>
           </Stack>
         </Card>
@@ -262,14 +338,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
               explanation: review.explanation,
             })),
           }}
-          onRestart={() => {
-            resetSubmit();
-            restartQuiz();
-            setScored(null);
-            setAttemptId(null);
-            setExpiresAt(null);
-            setSendFailed(false);
-          }}
+          onRestart={() => void handleRetake()}
         />
       </Page>
     );
@@ -308,14 +377,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             <Button
               variant="subtle"
               disabled={submitting}
-              onClick={() => {
-                if (pending.current) return;
-                resetSubmit();
-                restartQuiz();
-                setAttemptId(null);
-                setExpiresAt(null);
-                setSendFailed(false);
-              }}
+              onClick={() => void handleRetake()}
             >
               {isVi ? "Bắt đầu lượt mới" : "Start a new attempt"}
             </Button>
@@ -331,7 +393,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             size="sm"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Thoát bài kiểm tra" : "Exit Quiz"}
+            {t.quiz.exitQuizButton}
           </Button>
 
           <Stack gap={2} align="center">
@@ -354,9 +416,9 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                 {/* Question Info Header */}
                 <Group justify="space-between" align="center">
                   <Badge variant="filled" color="indigo" size="lg">
-                    {isVi
-                      ? `Câu hỏi ${currentIndex + 1} / ${totalQuestions}`
-                      : `Question ${currentIndex + 1} of ${totalQuestions}`}
+                    {t.quiz.questionPositionLabel
+                      .replace("{current}", String(currentIndex + 1))
+                      .replace("{total}", String(totalQuestions))}
                   </Badge>
 
                   <Group gap="xs">
@@ -364,7 +426,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                       {currentQuestion.type}
                     </Badge>
                     <Badge variant="dot" color="teal" size="sm">
-                      {currentQuestion.points} {isVi ? "điểm" : "pts"}
+                      {currentQuestion.points} {t.quiz.pointsUnit}
                     </Badge>
                   </Group>
                 </Group>
@@ -441,7 +503,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                     onClick={prevQuestion}
                     leftSection={<IconChevronLeft size={16} />}
                   >
-                    {isVi ? "Câu trước" : "Previous"}
+                    {t.quiz.prevQuestion}
                   </Button>
 
                   <Button
@@ -452,7 +514,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                     onClick={nextQuestion}
                     rightSection={<IconChevronRight size={16} />}
                   >
-                    {isVi ? "Câu tiếp theo" : "Next"}
+                    {t.quiz.nextQuestion}
                   </Button>
                 </Group>
               </Stack>

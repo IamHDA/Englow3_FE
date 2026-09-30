@@ -40,7 +40,7 @@ export function DictationDiffResult({
   onListenAgain,
   isLastSentence,
 }: DictationDiffResultProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
   const [revealMode, setRevealMode] = useState<"mistakes" | "full">("mistakes");
 
   const isPerfect = diff.mistakesCount === 0;
@@ -72,17 +72,17 @@ export function DictationDiffResult({
             <Stack gap={2}>
               <Title order={3} size="h4" fw={700} c="ink.9">
                 {isPerfect
-                  ? isVi
-                    ? "Xuất sắc! Bạn đã gõ đúng 100%"
-                    : "Outstanding! 100% Accuracy"
-                  : isVi
-                    ? `${diff.mistakesCount} từ cần chú ý sửa lại`
-                    : `${diff.mistakesCount} words need correction`}
+                  ? t.dictation.perfectScoreTitle
+                  : t.dictation.wordsNeedCorrection.replace(
+                      "{count}",
+                      String(diff.mistakesCount),
+                    )}
               </Title>
               <Text size="xs" c="ink.6">
-                {isVi
-                  ? `Độ chính xác: ${diff.accuracyPercent}% (${diff.correctWordsCount} / ${diff.totalWordsCount} từ đúng)`
-                  : `Accuracy: ${diff.accuracyPercent}% (${diff.correctWordsCount} / ${diff.totalWordsCount} words correct)`}
+                {t.dictation.accuracyDetail
+                  .replace("{percent}", String(diff.accuracyPercent))
+                  .replace("{correct}", String(diff.correctWordsCount))
+                  .replace("{total}", String(diff.totalWordsCount))}
               </Text>
             </Stack>
           </Group>
@@ -99,7 +99,7 @@ export function DictationDiffResult({
             }
             variant="filled"
           >
-            {diff.accuracyPercent}% {isVi ? "Chính xác" : "Accuracy"}
+            {diff.accuracyPercent}% {t.dictation.accuracyScore}
           </Badge>
         </Group>
 
@@ -220,7 +220,7 @@ export function DictationDiffResult({
                 }}
               />
               <Text size="xs" c="ink.6">
-                {isVi ? "Từ đúng" : "Correct"}
+                {t.dictation.legendCorrect}
               </Text>
             </Group>
             <Group gap={4}>
@@ -233,7 +233,7 @@ export function DictationDiffResult({
                 }}
               />
               <Text size="xs" c="ink.6">
-                {isVi ? "Từ sai" : "Incorrect"}
+                {t.dictation.legendIncorrect}
               </Text>
             </Group>
             <Group gap={4}>
@@ -246,7 +246,7 @@ export function DictationDiffResult({
                 }}
               />
               <Text size="xs" c="ink.6">
-                {isVi ? "Từ còn thiếu" : "Missing"}
+                {t.dictation.legendMissing}
               </Text>
             </Group>
           </Group>
@@ -262,12 +262,8 @@ export function DictationDiffResult({
               style={{ textTransform: "uppercase" }}
             >
               {revealMode === "full"
-                ? isVi
-                  ? "Toàn bộ câu mẫu:"
-                  : "Full Target Sentence:"
-                : isVi
-                  ? "Các từ cần sửa:"
-                  : "Tokens to Fix:"}
+                ? t.dictation.fullSentenceLabel
+                : t.dictation.tokensToFixLabel}
             </Text>
 
             <SegmentedControl
@@ -276,10 +272,10 @@ export function DictationDiffResult({
               onChange={(val) => setRevealMode(val as "mistakes" | "full")}
               data={[
                 {
-                  label: isVi ? "Chỉ từ lỗi" : "Mistakes only",
+                  label: t.dictation.mistakesOnlySegment,
                   value: "mistakes",
                 },
-                { label: isVi ? "Cả câu mẫu" : "Full sentence", value: "full" },
+                { label: t.dictation.fullSentenceSegment, value: "full" },
               ]}
             />
           </Group>
@@ -292,9 +288,7 @@ export function DictationDiffResult({
             <Stack gap="xs">
               {diff.fixes.length === 0 ? (
                 <Text size="sm" c="teal.8" fw={500}>
-                  {isVi
-                    ? "Không có từ lỗi nào cần sửa!"
-                    : "No errors detected!"}
+                  {t.dictation.noErrorsDetected}
                 </Text>
               ) : (
                 diff.fixes.map((fix, i) => (
@@ -337,7 +331,7 @@ export function DictationDiffResult({
               onClick={onListenAgain}
               leftSection={<Volume2 size={15} />}
             >
-              {isVi ? "Nghe lại câu này" : "Replay Audio"}
+              {t.dictation.replayAudioButton}
             </Button>
             <Button
               variant="default"
@@ -346,7 +340,7 @@ export function DictationDiffResult({
               onClick={onTryAgain}
               leftSection={<RotateCcw size={15} />}
             >
-              {isVi ? "Gõ lại thử thách" : "Try Again"}
+              {t.common.retry}
             </Button>
           </Group>
 
@@ -360,12 +354,8 @@ export function DictationDiffResult({
             fw={600}
           >
             {isLastSentence
-              ? isVi
-                ? "Hoàn thành & Xem kết quả"
-                : "Finish & View Results"
-              : isVi
-                ? "Câu tiếp theo →"
-                : "Next Sentence →"}
+              ? t.dictation.finishAndViewResults
+              : `${t.dictation.nextSentence} →`}
           </Button>
         </Flex>
       </Stack>

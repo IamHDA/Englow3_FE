@@ -14,12 +14,21 @@ export class BackendError extends Error {
     readonly status: number,
     readonly code?: string,
     readonly traceId?: string,
+    /** The backend call this came from, for the log - never the BFF's own route. */
+    readonly method?: string,
+    readonly path?: string,
+    readonly durationMs?: number,
   ) {
     super(message);
     this.name = "BackendError";
   }
 
-  static async fromResponse(response: Response): Promise<BackendError> {
+  static async fromResponse(
+    response: Response,
+    method?: string,
+    path?: string,
+    durationMs?: number,
+  ): Promise<BackendError> {
     let body: ApiErrorResponse | undefined;
     try {
       body = (await response.json()) as ApiErrorResponse;
@@ -32,6 +41,9 @@ export class BackendError extends Error {
       response.status,
       body?.code,
       body?.traceId,
+      method,
+      path,
+      durationMs,
     );
   }
 }

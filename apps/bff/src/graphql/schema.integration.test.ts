@@ -1,32 +1,11 @@
 import { ApolloServer } from "@apollo/server";
-import { GraphQLError } from "graphql";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import type { GraphQLContext } from "./context.js";
 import { formatError } from "./errors.js";
 import { resolvers, typeDefs } from "./schema.js";
 import type { UserInformationResponse } from "../modules/user/user.types.js";
 import { BackendError } from "../shared/http/backendError.js";
-
-function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: { getMe: vi.fn() } as any,
-      onboardingApi: { getCurrentState: vi.fn() } as any,
-      examApi: {
-        searchAsAdmin: vi.fn(),
-        publishAsAdmin: vi.fn(),
-        archiveAsAdmin: vi.fn(),
-      } as any,
-      learningApi: {} as any,
-      speakingApi: {} as any,
-      tutorApi: {} as any,
-    },
-    ...overrides,
-  };
-}
+import { makeContext } from "../test/makeContext.js";
 
 const ME: UserInformationResponse = {
   id: "u1",
@@ -52,12 +31,8 @@ describe("me query - schema wiring and partial failure", () => {
     const getCurrentState = vi.fn();
     const ctx = makeContext({
       apis: {
-        userApi: { getMe } as any,
-        onboardingApi: { getCurrentState } as any,
-        examApi: {} as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
+        userApi: { getMe },
+        onboardingApi: { getCurrentState },
       },
     });
 
@@ -82,12 +57,8 @@ describe("me query - schema wiring and partial failure", () => {
       .mockRejectedValue(new BackendError("boom", 500));
     const ctx = makeContext({
       apis: {
-        userApi: { getMe } as any,
-        onboardingApi: { getCurrentState } as any,
-        examApi: {} as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
+        userApi: { getMe },
+        onboardingApi: { getCurrentState },
       },
     });
 
@@ -120,18 +91,10 @@ describe("me query - schema wiring and partial failure", () => {
   it("fails the whole query without calling the backend when unauthenticated", async () => {
     const getMe = vi.fn();
     const ctx = makeContext({
-      requireToken: () => {
-        throw new GraphQLError("Missing or invalid access token", {
-          extensions: { code: "UNAUTHENTICATED" },
-        });
-      },
+      token: null,
       apis: {
-        userApi: { getMe } as any,
-        onboardingApi: { getCurrentState: vi.fn() } as any,
-        examApi: {} as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
+        userApi: { getMe },
+        onboardingApi: { getCurrentState: vi.fn() },
       },
     });
 
@@ -175,12 +138,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
     });
     const ctx = makeContext({
       apis: {
-        userApi: {} as any,
-        onboardingApi: {} as any,
-        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
+        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() },
       },
     });
 
@@ -218,12 +176,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
       );
     const ctx = makeContext({
       apis: {
-        userApi: {} as any,
-        onboardingApi: {} as any,
-        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
+        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() },
       },
     });
 
@@ -251,12 +204,7 @@ describe("updateProfile mutation - schema wiring", () => {
     const updateProfile = vi.fn().mockResolvedValue(ME);
     const ctx = makeContext({
       apis: {
-        userApi: { updateProfile } as any,
-        onboardingApi: {} as any,
-        examApi: {} as any,
-        learningApi: {} as any,
-        speakingApi: {} as any,
-        tutorApi: {} as any,
+        userApi: { updateProfile },
       },
     });
 

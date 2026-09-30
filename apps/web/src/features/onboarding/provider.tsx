@@ -33,6 +33,9 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const step = profile?.onboardingStep ?? null;
   const requiresOnboarding =
     profile != null &&
+    // Onboarding là khái niệm riêng của người học - STAFF/ADMIN không có mục
+    // tiêu học tập nên `onboardingStep` của họ không phản ánh gì cả và không
+    // bao giờ được đẩy sang COMPLETED.
     profile.role === Role.LEARNER &&
     step != null &&
     step !== OnboardingStep.COMPLETED &&

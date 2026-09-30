@@ -1,42 +1,15 @@
-import { GraphQLError } from "graphql";
 import { describe, expect, it, vi } from "vitest";
 
 import { tutorResolvers } from "./tutor.resolvers.js";
-import type { GraphQLContext } from "../../graphql/context.js";
-
-function makeContext(
-  tutorApiOverrides: Record<string, unknown> = {},
-  overrides: Partial<GraphQLContext> = {},
-): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: {} as any,
-      onboardingApi: {} as any,
-      examApi: {} as any,
-      learningApi: {} as any,
-      speakingApi: {} as any,
-      tutorApi: tutorApiOverrides as any,
-    },
-    ...overrides,
-  };
-}
-
-function unauthenticated(): Partial<GraphQLContext> {
-  return {
-    requireToken: () => {
-      throw new GraphQLError("Missing or invalid access token", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
-    },
-  };
-}
+import { makeContext } from "../../test/makeContext.js";
 
 describe("Query.tutorConversations", () => {
   it("fails before calling the backend when there is no token", () => {
     const getConversations = vi.fn();
-    const ctx = makeContext({ getConversations }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { tutorApi: { getConversations } },
+    });
 
     expect(() => tutorResolvers.Query.tutorConversations({}, {}, ctx)).toThrow(
       "Missing or invalid access token",
@@ -47,7 +20,9 @@ describe("Query.tutorConversations", () => {
   it("returns what the backend returned", async () => {
     const threads = [{ id: "c1", title: "What is a gerund?" }];
     const ctx = makeContext({
-      getConversations: vi.fn().mockResolvedValue(threads),
+      apis: {
+        tutorApi: { getConversations: vi.fn().mockResolvedValue(threads) },
+      },
     });
 
     await expect(
@@ -59,7 +34,10 @@ describe("Query.tutorConversations", () => {
 describe("Query.tutorConversation", () => {
   it("fails before calling the backend when there is no token", () => {
     const getConversation = vi.fn();
-    const ctx = makeContext({ getConversation }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { tutorApi: { getConversation } },
+    });
 
     expect(() =>
       tutorResolvers.Query.tutorConversation({}, { id: "c1" }, ctx),
@@ -69,7 +47,7 @@ describe("Query.tutorConversation", () => {
 
   it("asks for the thread the caller named", () => {
     const getConversation = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ getConversation });
+    const ctx = makeContext({ apis: { tutorApi: { getConversation } } });
 
     tutorResolvers.Query.tutorConversation({}, { id: "c1" }, ctx);
 
@@ -80,7 +58,10 @@ describe("Query.tutorConversation", () => {
 describe("Mutation.sendTutorMessage", () => {
   it("fails before calling the backend when there is no token", () => {
     const sendMessage = vi.fn();
-    const ctx = makeContext({ sendMessage }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { tutorApi: { sendMessage } },
+    });
 
     expect(() =>
       tutorResolvers.Mutation.sendTutorMessage(
@@ -97,7 +78,7 @@ describe("Mutation.sendTutorMessage", () => {
   // a question they never asked.
   it("forwards the message exactly as it was typed", () => {
     const sendMessage = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ sendMessage });
+    const ctx = makeContext({ apis: { tutorApi: { sendMessage } } });
 
     tutorResolvers.Mutation.sendTutorMessage(
       {},
@@ -113,7 +94,7 @@ describe("Mutation.sendTutorMessage", () => {
 
   it("starts a new thread when no conversation is named", () => {
     const sendMessage = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ sendMessage });
+    const ctx = makeContext({ apis: { tutorApi: { sendMessage } } });
 
     tutorResolvers.Mutation.sendTutorMessage({}, { message: "hello" }, ctx);
 
@@ -122,7 +103,7 @@ describe("Mutation.sendTutorMessage", () => {
 
   it("continues an existing thread when one is named", () => {
     const sendMessage = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ sendMessage });
+    const ctx = makeContext({ apis: { tutorApi: { sendMessage } } });
 
     tutorResolvers.Mutation.sendTutorMessage(
       {},
@@ -138,7 +119,7 @@ describe("Mutation.sendTutorMessage", () => {
   // conversation costs from here on, not just this one request.
   it("refuses a message longer than the backend would take", () => {
     const sendMessage = vi.fn();
-    const ctx = makeContext({ sendMessage });
+    const ctx = makeContext({ apis: { tutorApi: { sendMessage } } });
 
     expect(() =>
       tutorResolvers.Mutation.sendTutorMessage(
@@ -146,13 +127,18 @@ describe("Mutation.sendTutorMessage", () => {
         { message: "x".repeat(4_001) },
         ctx,
       ),
-    ).toThrow("at most 4000 characters");
+    ).toThrow(
+      expect.objectContaining({
+        message: expect.stringContaining("at most 4000 characters"),
+        extensions: { code: "BAD_USER_INPUT" },
+      }),
+    );
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it("accepts a message exactly at the limit", () => {
     const sendMessage = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ sendMessage });
+    const ctx = makeContext({ apis: { tutorApi: { sendMessage } } });
 
     tutorResolvers.Mutation.sendTutorMessage(
       {},
@@ -167,7 +153,10 @@ describe("Mutation.sendTutorMessage", () => {
 describe("Mutation.reportTutorMessage", () => {
   it("fails before calling the backend when there is no token", () => {
     const reportMessage = vi.fn();
-    const ctx = makeContext({ reportMessage }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { tutorApi: { reportMessage } },
+    });
 
     expect(() =>
       tutorResolvers.Mutation.reportTutorMessage(
@@ -183,7 +172,7 @@ describe("Mutation.reportTutorMessage", () => {
   // order to say so.
   it("sends a report with no note", () => {
     const reportMessage = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ reportMessage });
+    const ctx = makeContext({ apis: { tutorApi: { reportMessage } } });
 
     tutorResolvers.Mutation.reportTutorMessage(
       {},
@@ -196,7 +185,7 @@ describe("Mutation.reportTutorMessage", () => {
 
   it("passes the learner's note through", () => {
     const reportMessage = vi.fn().mockResolvedValue({});
-    const ctx = makeContext({ reportMessage });
+    const ctx = makeContext({ apis: { tutorApi: { reportMessage } } });
 
     tutorResolvers.Mutation.reportTutorMessage(
       {},
@@ -215,7 +204,10 @@ describe("Mutation.reportTutorMessage", () => {
 describe("Mutation.archiveTutorConversation", () => {
   it("fails before calling the backend when there is no token", () => {
     const archiveConversation = vi.fn();
-    const ctx = makeContext({ archiveConversation }, unauthenticated());
+    const ctx = makeContext({
+      token: null,
+      apis: { tutorApi: { archiveConversation } },
+    });
 
     expect(() =>
       tutorResolvers.Mutation.archiveTutorConversation({}, { id: "c1" }, ctx),

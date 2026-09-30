@@ -1,105 +1,50 @@
-import type { GraphQLContext } from "../../graphql/context.js";
-import type { UserInformationResponse } from "../user/user.types.js";
-import type {
-  CefrLevel,
-  LearningSkill,
-  OnboardingStateResponse,
-  SetLearningGoalRequest,
-  TargetCertificate,
-} from "./onboarding.types.js";
-
-/**
- * The backend leaves the collection fields null before the learner has touched
- * them; the schema promises lists.
- */
-function toOnboardingState(state: OnboardingStateResponse) {
-  return {
-    step: state.step,
-    learningPurposeIds: state.learningPurposeIds ?? [],
-    certificateLearner: state.certificateLearner,
-    targetCertificateType: state.targetCertificateType,
-    currentLevel: state.currentLevel,
-    targetScore: state.targetScore,
-    targetDate: state.targetDate,
-    targetSkills: state.targetSkills ?? [],
-  };
-}
+import type { Resolvers } from "../../generated/graphql.js";
 
 export const onboardingResolvers = {
   Query: {
-    learningPurposes: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+    learningPurposes: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.onboardingApi.getLearningPurposes();
     },
   },
   Mutation: {
-    selectLearningPurposes: async (
-      _: unknown,
-      { purposeIds }: { purposeIds: number[] },
-      ctx: GraphQLContext,
-    ) => {
+    selectLearningPurposes: (_, { purposeIds }, ctx) => {
       ctx.requireToken();
-      return toOnboardingState(
-        await ctx.apis.onboardingApi.selectLearningPurposes({ purposeIds }),
-      );
+      return ctx.apis.onboardingApi.selectLearningPurposes({ purposeIds });
     },
-    setCertificateTarget: async (
-      _: unknown,
-      { certificateType }: { certificateType: TargetCertificate },
-      ctx: GraphQLContext,
-    ) => {
+    setCertificateTarget: (_, { certificateType }, ctx) => {
       ctx.requireToken();
-      return toOnboardingState(
-        await ctx.apis.onboardingApi.setCertificateTarget({ certificateType }),
-      );
+      return ctx.apis.onboardingApi.setCertificateTarget({ certificateType });
     },
-    setCurrentLevel: async (
-      _: unknown,
-      { level }: { level: CefrLevel },
-      ctx: GraphQLContext,
-    ) => {
+    setCurrentLevel: (_, { level }, ctx) => {
       ctx.requireToken();
-      return toOnboardingState(
-        await ctx.apis.onboardingApi.setCurrentLevel({ level }),
-      );
+      return ctx.apis.onboardingApi.setCurrentLevel({ level });
     },
-    setLearningGoal: async (
-      _: unknown,
-      { input }: { input: SetLearningGoalRequest },
-      ctx: GraphQLContext,
-    ) => {
+    setLearningGoal: (_, { input }, ctx) => {
       ctx.requireToken();
-      return toOnboardingState(
-        await ctx.apis.onboardingApi.setLearningGoal(input),
-      );
+      // GraphQL lets a client send an explicit null for these; the REST body
+      // only has a word for "omitted" - same result once JSON.stringify drops
+      // an undefined property, so this is a type-level translation only.
+      return ctx.apis.onboardingApi.setLearningGoal({
+        ...input,
+        targetScore: input.targetScore ?? undefined,
+        targetDate: input.targetDate ?? undefined,
+      });
     },
-    selectTargetSkills: async (
-      _: unknown,
-      { skills }: { skills: LearningSkill[] },
-      ctx: GraphQLContext,
-    ) => {
+    selectTargetSkills: (_, { skills }, ctx) => {
       ctx.requireToken();
-      return toOnboardingState(
-        await ctx.apis.onboardingApi.selectTargetSkills({ skills }),
-      );
+      return ctx.apis.onboardingApi.selectTargetSkills({ skills });
     },
-    completeOnboarding: async (
-      _: unknown,
-      __: unknown,
-      ctx: GraphQLContext,
-    ) => {
+    completeOnboarding: (_, __, ctx) => {
       ctx.requireToken();
-      return toOnboardingState(await ctx.apis.onboardingApi.complete());
+      return ctx.apis.onboardingApi.complete();
     },
   },
   Me: {
     // Nullable in the schema: if this call fails, graphql-js resolves the
     // field to null and adds an entry to the `errors` array rather than
     // failing the whole `me` query - the rest of Me still renders.
-    onboardingState: async (
-      _parent: UserInformationResponse,
-      __: unknown,
-      ctx: GraphQLContext,
-    ) => toOnboardingState(await ctx.apis.onboardingApi.getCurrentState()),
+    onboardingState: (_parent, __, ctx) =>
+      ctx.apis.onboardingApi.getCurrentState(),
   },
-};
+} satisfies Resolvers;

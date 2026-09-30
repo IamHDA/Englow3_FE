@@ -91,7 +91,7 @@ export function AdminExamListView() {
     id: string,
     action: () => Promise<unknown>,
     successMessage: string,
-  ) {
+  ): Promise<boolean> {
     if (actionPending.current) return false;
     actionPending.current = true;
     setBusyExamId(id);
@@ -223,13 +223,14 @@ export function AdminExamListView() {
         }}
         onConfirm={async (note) => {
           const target = rejecting;
-          if (target === null) return;
+          if (target === null) return false;
           const succeeded = await runAction(
             target.id,
             () => rejectExam({ variables: { id: target.id, note } }),
             "Đã trả lại đề kèm lý do.",
           );
           if (succeeded) setRejecting(null);
+          return succeeded;
         }}
       />
     </Page>

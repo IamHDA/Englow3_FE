@@ -7,6 +7,7 @@ import React from "react";
 
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
+import { SpeakingAttemptStatus } from "@/lib/graphql/generated/schemaTypes";
 import { useSpeakingPromptQuery } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -24,7 +25,7 @@ interface PronunciationPracticeViewProps {
 export function PronunciationPracticeView({
   promptId,
 }: PronunciationPracticeViewProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const { data, loading, error, refetch } = useSpeakingPromptQuery({
     variables: { id: promptId },
   });
@@ -39,7 +40,7 @@ export function PronunciationPracticeView({
           thing={{ vi: "câu luyện phát âm", en: "prompt" }}
           back={{
             href: "/study/pronunciation",
-            label: isVi ? "Về danh sách câu luyện" : "Back to prompts",
+            label: t.pronunciation.backToPromptsButton,
           }}
           onRetry={() => void refetch().catch(() => undefined)}
         />
@@ -67,18 +68,18 @@ function Practice({
     ReturnType<typeof useSpeakingPromptQuery>["data"]
   >["speakingPrompt"];
 }) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const {
     phase,
     recordingSeconds,
     attempt,
     errorMessage,
     localAudioUrl,
+    checkAssessmentAgain,
     startRecording,
     stopRecording,
     reset,
     playReference,
-    retryAssessment,
   } = useSpeakingPractice({
     promptId,
     referenceText: prompt.referenceText,
@@ -96,7 +97,7 @@ function Practice({
             size="sm"
             leftSection={<IconArrowLeft size={16} />}
           >
-            {isVi ? "Quay lại thư viện phát âm" : "Back to library"}
+            {t.pronunciation.backToLibraryButton}
           </Button>
 
           <Stack gap={2} align="center">
@@ -122,18 +123,22 @@ function Practice({
         />
 
         {errorMessage !== null && (
-          <Alert
-            color="warn"
-            title={isVi ? "Chưa xong" : "Not finished"}
-            withCloseButton
-            onClose={reset}
-          >
-            {errorMessage}
-            {attempt && (
-              <Button variant="subtle" onClick={retryAssessment}>
-                {isVi ? "Lấy kết quả lại" : "Retry result"}
-              </Button>
-            )}
+          <Alert color="warn" title={t.pronunciation.notFinishedTitle}>
+            <Stack gap="sm" align="flex-start">
+              <Text>{errorMessage}</Text>
+              {attempt !== null &&
+                attempt.status !== SpeakingAttemptStatus.FAILED && (
+                  <Button variant="light" onClick={checkAssessmentAgain}>
+                    {t.pronunciation.checkResultAgainButton}
+                  </Button>
+                )}
+              {(attempt === null ||
+                attempt.status === SpeakingAttemptStatus.FAILED) && (
+                <Button variant="light" onClick={reset}>
+                  {t.pronunciation.recordAgainButton}
+                </Button>
+              )}
+            </Stack>
           </Alert>
         )}
 

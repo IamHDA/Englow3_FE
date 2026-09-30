@@ -29,7 +29,7 @@ import { PageHeader } from "@/shared/components/Page";
 export function ProfileView() {
   const { profile, loading, hasError, refresh } = useAccountProfile();
   const [updateProfile, { loading: isSubmitting }] = useUpdateProfileMutation();
-  const { t, isVi } = useLanguage();
+  const { t } = useLanguage();
 
   if (loading && !profile) {
     return <ProfileSkeleton />;
@@ -40,13 +40,11 @@ export function ProfileView() {
       <Paper radius="lg" withBorder p="xl" className={classes.errorPaper}>
         <Alert
           icon={<AlertCircle size={20} />}
-          title={isVi ? "Không thể tải hồ sơ" : "Could not load profile"}
+          title={t.account.profileLoadErrorTitle}
           color="warn"
           radius="md"
         >
-          {isVi
-            ? "Đã có lỗi xảy ra khi tải thông tin hồ sơ. Vui lòng kiểm tra lại kết nối mạng hoặc đăng nhập lại."
-            : "An error occurred while loading profile details. Please verify your connection or sign in again."}
+          {t.account.profileLoadErrorDescription}
         </Alert>
       </Paper>
     );
@@ -58,12 +56,10 @@ export function ProfileView() {
         <Stack align="center" gap="md" py="xl">
           <UserX size={48} className={classes.unauthIcon} />
           <Title order={3} fw={700} c="ink.9">
-            {isVi ? "Chưa đăng nhập" : "Not Signed In"}
+            {t.account.notSignedInTitle}
           </Title>
           <Text size="sm" c="ink.6" ta="center">
-            {isVi
-              ? "Vui lòng đăng nhập để xem và chỉnh sửa thông tin hồ sơ cá nhân của bạn."
-              : "Please sign in to view and edit your profile settings."}
+            {t.account.notSignedInDescription}
           </Text>
         </Stack>
       </Paper>
@@ -94,11 +90,7 @@ export function ProfileView() {
       }
     } catch (err: unknown) {
       const message =
-        err instanceof Error
-          ? err.message
-          : isVi
-            ? "Đã có lỗi xảy ra khi lưu hồ sơ"
-            : "Error saving profile";
+        err instanceof Error ? err.message : t.account.saveErrorFallback;
       notifications.show({
         color: "warn",
         icon: <AlertCircle size={18} />,

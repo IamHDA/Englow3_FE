@@ -1,39 +1,94 @@
 /**
  * Chỉ còn nhãn bộ lọc và tuỳ chọn sắp xếp - những thứ thuộc về giao diện. Mọi
  * dữ liệu của người học đều lấy từ backend.
+ *
+ * Mỗi lựa chọn mang cả hai nhãn thay vì một `label` VI-only kèm bảng tra tiếng
+ * Anh riêng ở nơi dùng: `value` không phải backend enum, chỉ là filter param
+ * tự chọn, và nhãn của nó là dữ liệu của chính lựa chọn đó - hợp lý hơn khi đi
+ * cùng `value`/`labelVi`/`labelEn` một chỗ thay vì lặp lại `value` ở một bảng
+ * tra tiếng Anh khác dễ lệch khỏi danh sách gốc (như DICTATION_SORTS's "recent
+ * sort" values từng không khớp bảng tiếng Anh cũ, rơi về nhãn tiếng Việt).
  */
-export const DICTATION_TOPICS: Array<{ value: string; label: string }> = [
-  { value: "ALL", label: "Tất cả chủ đề" },
-  { value: "Daily Conversation", label: "Giao tiếp hàng ngày" },
-  { value: "Travel", label: "Du lịch & Sân bay" },
-  { value: "Work", label: "Công sở & Họp" },
-  { value: "IELTS", label: "Luyện thi IELTS" },
-  { value: "TOEIC", label: "Luyện thi TOEIC" },
-  { value: "News", label: "Bản tin thời sự" },
-  { value: "Academic English", label: "Tiếng Anh học thuật" },
+export const DICTATION_TOPICS: Array<{
+  value: string;
+  labelVi: string;
+  labelEn: string;
+}> = [
+  { value: "ALL", labelVi: "Tất cả chủ đề", labelEn: "All Topics" },
+  {
+    value: "Daily Conversation",
+    labelVi: "Giao tiếp hàng ngày",
+    labelEn: "Daily Conversation",
+  },
+  { value: "Travel", labelVi: "Du lịch & Sân bay", labelEn: "Travel" },
+  { value: "Work", labelVi: "Công sở & Họp", labelEn: "Work" },
+  { value: "IELTS", labelVi: "Luyện thi IELTS", labelEn: "IELTS" },
+  { value: "TOEIC", labelVi: "Luyện thi TOEIC", labelEn: "TOEIC" },
+  { value: "News", labelVi: "Bản tin thời sự", labelEn: "News" },
+  {
+    value: "Academic English",
+    labelVi: "Tiếng Anh học thuật",
+    labelEn: "Academic English",
+  },
 ];
 
-export const DICTATION_LEVELS: Array<{ value: string; label: string }> = [
-  { value: "ALL", label: "Mọi trình độ" },
-  { value: "Beginner", label: "Người mới bắt đầu" },
-  { value: "Elementary", label: "Sơ cấp" },
-  { value: "Intermediate", label: "Trung cấp" },
-  { value: "Upper Intermediate", label: "Trung cấp nâng cao" },
-  { value: "Advanced", label: "Nâng cao" },
+export const DICTATION_LEVELS: Array<{
+  value: string;
+  labelVi: string;
+  labelEn: string;
+}> = [
+  { value: "ALL", labelVi: "Mọi trình độ", labelEn: "All Levels" },
+  {
+    value: "Beginner",
+    labelVi: "Người mới bắt đầu",
+    labelEn: "Beginner",
+  },
+  { value: "Elementary", labelVi: "Sơ cấp", labelEn: "Elementary" },
+  { value: "Intermediate", labelVi: "Trung cấp", labelEn: "Intermediate" },
+  {
+    value: "Upper Intermediate",
+    labelVi: "Trung cấp nâng cao",
+    labelEn: "Upper Intermediate",
+  },
+  { value: "Advanced", labelVi: "Nâng cao", labelEn: "Advanced" },
 ];
 
-export const DICTATION_STATUSES: Array<{ value: string; label: string }> = [
-  { value: "ALL", label: "Tất cả trạng thái" },
-  { value: "Not started", label: "Chưa bắt đầu" },
-  { value: "In progress", label: "Đang học" },
-  { value: "Completed", label: "Đã hoàn thành" },
+export const DICTATION_STATUSES: Array<{
+  value: string;
+  labelVi: string;
+  labelEn: string;
+}> = [
+  { value: "ALL", labelVi: "Tất cả trạng thái", labelEn: "All Statuses" },
+  {
+    value: "Not started",
+    labelVi: "Chưa bắt đầu",
+    labelEn: "Not started",
+  },
+  { value: "In progress", labelVi: "Đang học", labelEn: "In progress" },
+  { value: "Completed", labelVi: "Đã hoàn thành", labelEn: "Completed" },
 ];
 
-export const DICTATION_SORTS: Array<{ value: string; label: string }> = [
-  { value: "recent", label: "Học gần đây nhất" },
-  { value: "difficulty", label: "Độ khó tăng dần" },
-  { value: "progress", label: "Tiến độ học tập" },
-  { value: "newest", label: "Bài học mới nhất" },
+export const DICTATION_SORTS: Array<{
+  value: string;
+  labelVi: string;
+  labelEn: string;
+}> = [
+  {
+    value: "recent",
+    labelVi: "Học gần đây nhất",
+    labelEn: "Recently Studied",
+  },
+  {
+    value: "difficulty",
+    labelVi: "Độ khó tăng dần",
+    labelEn: "Easiest to Hardest",
+  },
+  {
+    value: "progress",
+    labelVi: "Tiến độ học tập",
+    labelEn: "Study Progress",
+  },
+  { value: "newest", labelVi: "Bài học mới nhất", labelEn: "Newest First" },
 ];
 
 export const DEFAULT_WAVEFORM_BARS = [

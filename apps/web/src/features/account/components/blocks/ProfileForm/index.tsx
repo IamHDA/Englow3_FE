@@ -34,7 +34,7 @@ export function ProfileForm({
   isSubmitting,
   onSubmit,
 }: ProfileFormProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
   const defaultValues: ProfileFormValues = {
     fullName: profile.fullName ?? "",
     displayName: profile.displayName ?? "",
@@ -43,9 +43,9 @@ export function ProfileForm({
   };
 
   const genderOptions = [
-    { value: "MALE", label: isVi ? "Nam" : "Male" },
-    { value: "FEMALE", label: isVi ? "Nữ" : "Female" },
-    { value: "OTHER", label: isVi ? "Khác" : "Other" },
+    { value: "MALE", label: t.account.male },
+    { value: "FEMALE", label: t.account.female },
+    { value: "OTHER", label: t.account.otherGender },
   ];
 
   const {
@@ -91,7 +91,7 @@ export function ProfileForm({
           <TextInput
             {...register("fullName")}
             label={t.account.fullName}
-            placeholder={isVi ? "Ví dụ: Nguyễn Văn A" : "e.g. John Doe"}
+            placeholder={t.account.fullNamePlaceholder}
             required
             leftSection={<User size={16} aria-hidden="true" />}
             error={errors.fullName?.message}
@@ -101,7 +101,7 @@ export function ProfileForm({
           <TextInput
             {...register("displayName")}
             label={t.account.displayName}
-            placeholder={isVi ? "Ví dụ: An Nguyen" : "e.g. jdoe"}
+            placeholder={t.account.displayNamePlaceholder}
             required
             leftSection={<AtSign size={16} aria-hidden="true" />}
             error={errors.displayName?.message}
@@ -114,7 +114,7 @@ export function ProfileForm({
             render={({ field }) => (
               <Select
                 label={t.account.gender}
-                placeholder={isVi ? "Chọn giới tính" : "Select gender"}
+                placeholder={t.account.selectGenderPlaceholder}
                 data={genderOptions}
                 value={field.value ?? null}
                 onChange={(val) => field.onChange(val || null)}
@@ -140,11 +140,7 @@ export function ProfileForm({
           value={profile.email}
           disabled
           leftSection={<Mail size={16} aria-hidden="true" />}
-          description={
-            isVi
-              ? "Email dùng để đăng nhập và nhận thông báo, không thể thay đổi tại đây"
-              : "Email is used for account login and notifications, cannot be edited here"
-          }
+          description={t.account.emailFieldDescription}
           classNames={{ input: classes.input, label: classes.label }}
         />
 
@@ -161,7 +157,7 @@ export function ProfileForm({
             disabled={!isDirty || isSubmitting}
             onClick={handleReset}
           >
-            {isVi ? "Đặt lại" : "Reset"}
+            {t.common.reset}
           </Button>
 
           <Button

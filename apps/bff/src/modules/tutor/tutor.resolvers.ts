@@ -1,5 +1,6 @@
-import type { GraphQLContext } from "../../graphql/context.js";
-import type { SendTutorMessageParams } from "./tutor.types.js";
+import { GraphQLError } from "graphql";
+
+import type { Resolvers } from "../../generated/graphql.js";
 
 /**
  * The longest question that will be forwarded. Matches the backend's own limit
@@ -11,15 +12,11 @@ const MAX_MESSAGE_LENGTH = 4_000;
 
 export const tutorResolvers = {
   Query: {
-    tutorConversations: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+    tutorConversations: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.tutorApi.getConversations();
     },
-    tutorConversation: (
-      _: unknown,
-      args: { id: string },
-      ctx: GraphQLContext,
-    ) => {
+    tutorConversation: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.tutorApi.getConversation(args.id);
     },
@@ -28,32 +25,21 @@ export const tutorResolvers = {
     // The message is forwarded as typed. Trimming or truncating it here would
     // send the tutor something the learner did not write, and they would be
     // reading an answer to a question they never asked.
-    sendTutorMessage: (
-      _: unknown,
-      args: SendTutorMessageParams,
-      ctx: GraphQLContext,
-    ) => {
+    sendTutorMessage: (_, args, ctx) => {
       ctx.requireToken();
       if (args.message.length > MAX_MESSAGE_LENGTH) {
-        throw new Error(
+        throw new GraphQLError(
           `A message may be at most ${MAX_MESSAGE_LENGTH} characters`,
+          { extensions: { code: "BAD_USER_INPUT" } },
         );
       }
       return ctx.apis.tutorApi.sendMessage(args);
     },
-    archiveTutorConversation: (
-      _: unknown,
-      args: { id: string },
-      ctx: GraphQLContext,
-    ) => {
+    archiveTutorConversation: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.tutorApi.archiveConversation(args.id);
     },
-    reportTutorMessage: (
-      _: unknown,
-      args: { conversationId: string; messageId: string; note?: string | null },
-      ctx: GraphQLContext,
-    ) => {
+    reportTutorMessage: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.tutorApi.reportMessage(
         args.conversationId,
@@ -62,4 +48,4 @@ export const tutorResolvers = {
       );
     },
   },
-};
+} satisfies Resolvers;

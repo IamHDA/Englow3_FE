@@ -1,4 +1,4 @@
-export const onboardingTypeDefs = `#graphql
+export const onboardingTypeDefs = /* GraphQL */ `
   enum CefrLevel {
     A1
     A2
@@ -36,7 +36,7 @@ export const onboardingTypeDefs = `#graphql
     """
     step: OnboardingStep!
     learningPurposeIds: [Int!]!
-    certificateLearner: Boolean
+    certificateLearner: Boolean!
     targetCertificateType: String
     currentLevel: CefrLevel
     targetScore: Float

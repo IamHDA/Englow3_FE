@@ -1,6 +1,6 @@
+import type { MutationSendTutorMessageArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
-  SendTutorMessageParams,
   TutorConversationResponse,
   TutorConversationSummaryResponse,
   TutorMessageResponse,
@@ -27,7 +27,7 @@ export class TutorApi {
    * however long a provider takes.
    */
   sendMessage(
-    params: SendTutorMessageParams,
+    params: MutationSendTutorMessageArgs,
   ): Promise<TutorConversationResponse> {
     return this.client.post(`${TUTOR_BASE_PATH}/messages`, params);
   }

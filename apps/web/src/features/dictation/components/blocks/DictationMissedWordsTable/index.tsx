@@ -22,7 +22,7 @@ interface DictationMissedWordsTableProps {
 export function DictationMissedWordsTable({
   words,
 }: DictationMissedWordsTableProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 
   return (
@@ -41,15 +41,15 @@ export function DictationMissedWordsTable({
           <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>{isVi ? "Từ vựng" : "Word"}</Table.Th>
+                <Table.Th>{t.dictation.wordColumn}</Table.Th>
                 <Table.Th style={{ textAlign: "center" }}>
-                  {isVi ? "Số lần gõ sai" : "Misses"}
+                  {t.dictation.missesColumn}
                 </Table.Th>
                 <Table.Th style={{ textAlign: "center" }}>
-                  {isVi ? "Số lần gõ đúng" : "Correct"}
+                  {t.dictation.correctColumn}
                 </Table.Th>
                 <Table.Th style={{ textAlign: "right" }}>
-                  {isVi ? "Độ chính xác" : "Accuracy"}
+                  {t.dictation.accuracyScore}
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
@@ -58,9 +58,7 @@ export function DictationMissedWordsTable({
                 <Table.Tr>
                   <Table.Td colSpan={5}>
                     <Text size="sm" c="ink.5" ta="center" py="md">
-                      {isVi
-                        ? "Chưa có từ nào bạn hay gõ sai."
-                        : "No words you keep mistyping yet."}
+                      {t.dictation.noMissedWords}
                     </Text>
                   </Table.Td>
                 </Table.Tr>
@@ -90,19 +88,19 @@ export function DictationMissedWordsTable({
                             c="navy.9"
                             style={{ fontStyle: "italic" }}
                           >
-                            {isVi ? "Ví dụ:" : "Example:"} “{w.exampleSentence}”
+                            {t.dictation.exampleLabel} “{w.exampleSentence}”
                           </Text>
                         )}
                       </Stack>
                     </Table.Td>
                     <Table.Td style={{ textAlign: "center" }}>
                       <Badge color="warn" variant="light" size="sm">
-                        {w.missedCount} {isVi ? "lần" : "times"}
+                        {w.missedCount} {t.dictation.timesUnit}
                       </Badge>
                     </Table.Td>
                     <Table.Td style={{ textAlign: "center" }}>
                       <Badge color="teal" variant="light" size="sm">
-                        {w.correctCount} {isVi ? "lần" : "times"}
+                        {w.correctCount} {t.dictation.timesUnit}
                       </Badge>
                     </Table.Td>
                     <Table.Td style={{ textAlign: "right" }}>

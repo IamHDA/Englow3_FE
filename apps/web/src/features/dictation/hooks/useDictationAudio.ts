@@ -21,8 +21,6 @@ interface UseDictationAudioOptions {
   audioEndMs?: number | null;
 }
 
-/** Nhịp cập nhật khi không có audio thật để bám theo. */
-
 export function useDictationAudio({
   audioUrl,
   durationSeconds = 5,
@@ -150,6 +148,8 @@ export function useDictationAudio({
     playAudio();
   }, [playAudio]);
 
+  const resetReplayCount = useCallback(() => setReplayCount(0), []);
+
   /**
    * Tua thật, không chỉ đổi con số.
    *
@@ -189,7 +189,6 @@ export function useDictationAudio({
   }, [stopAudio, audioUrl, audioStartMs, audioEndMs]);
 
   return {
-    resetReplayCount: () => setReplayCount(0),
     error,
     isPlaying,
     currentTime,
@@ -198,6 +197,7 @@ export function useDictationAudio({
     replayCount,
     togglePlay,
     replay,
+    resetReplayCount,
     back5,
     forward5,
     changeSpeed,

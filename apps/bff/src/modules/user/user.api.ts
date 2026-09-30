@@ -1,6 +1,6 @@
+import type { UpdateProfileInput } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
-  UpdateProfileInput,
   UserInformationResponse,
   UserTourStatusResponse,
 } from "./user.types.js";

@@ -18,7 +18,7 @@ interface FlashcardChartsProps {
  * it is gone rather than kept as decoration that looks like data.
  */
 export function FlashcardCharts({ stats }: FlashcardChartsProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const maxCards = Math.max(...stats.activityDays.map((d) => d.cardsCount), 1);
   const hasActivity = stats.activityDays.some((d) => d.cardsCount > 0);
 
@@ -28,7 +28,7 @@ export function FlashcardCharts({ stats }: FlashcardChartsProps) {
         <Box>
           {/* Not "past 7 days": the period is whichever the learner picked. */}
           <Text fw={700} fz="sm" c="dark.9">
-            {isVi ? "Số thẻ ôn tập theo ngày" : "Cards reviewed per day"}
+            {t.flashcard.cardsReviewedPerDay}
           </Text>
         </Box>
 
@@ -70,9 +70,7 @@ export function FlashcardCharts({ stats }: FlashcardChartsProps) {
           </Group>
         ) : (
           <Text size="sm" c="dimmed" ta="center" py={48}>
-            {isVi
-              ? "Chưa có lượt ôn tập nào trong khoảng thời gian này."
-              : "No reviews in this period yet."}
+            {t.flashcard.noReviewsInPeriod}
           </Text>
         )}
       </Stack>

@@ -30,15 +30,26 @@ const paper = {
 vi.mock("@/lib/graphql/generated/hooks", () => ({
   useStartQuizAttemptMutation: () => [start, { loading: false }],
   useSubmitQuizAttemptMutation: () => [submit, { loading: false, reset }],
-  useQuizPaperQuery: ({ skip }: { skip: boolean }) => ({
-    data: skip ? undefined : { quizPaper: paper },
+  useQuizPaperQuery: ({
+    skip,
+    variables,
+  }: {
+    skip: boolean;
+    variables: { attemptId: string };
+  }) => ({
+    data: skip
+      ? undefined
+      : { quizPaper: { ...paper, attemptId: variables.attemptId } },
     loading: false,
     refetch: vi.fn(),
   }),
 }));
-vi.mock("@/shared/hooks/useLanguage", () => ({
-  useLanguage: () => ({ isVi: false }),
-}));
+vi.mock("@/shared/hooks/useLanguage", async () => {
+  const { translations } = await vi.importActual<
+    typeof import("@/shared/constants/translations")
+  >("@/shared/constants/translations");
+  return { useLanguage: () => ({ isVi: false, t: translations.en }) };
+});
 vi.mock("@/shared/components/Page", () => ({
   Page: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -118,9 +129,7 @@ describe("quiz attempt UX", () => {
     await user.click(screen.getByRole("button", { name: "Choose A" }));
     await user.click(screen.getByRole("button", { name: "Submit test" }));
     await user.click(await screen.findByRole("button", { name: "Retake" }));
-    expect(screen.getByRole("button", { name: "Start" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Start" }));
-    expect(start).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(start).toHaveBeenCalledTimes(2));
     expect(
       screen.getByRole("button", { name: "Choose A" }),
     ).toBeInTheDocument();

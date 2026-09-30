@@ -25,7 +25,7 @@ export type UpdateProfileMutation = {
     bannerUrl: string | null;
     onboardingStep: Types.OnboardingStep;
     onboardingState: {
-      certificateLearner: boolean | null;
+      certificateLearner: boolean;
       currentLevel: Types.CefrLevel | null;
       targetCertificateType: string | null;
       targetScore: number | null;
@@ -647,7 +647,7 @@ export type ExamAttemptFieldsFragment = {
   submittedAt: string | null;
   scoredAt: string | null;
   rawScore: number | null;
-  maxRawScore: number | null;
+  maxRawScore: number;
   scorePercentage: number | null;
   correctAnswerCount: number | null;
   questionCount: number;
@@ -683,7 +683,7 @@ export type StartExamAttemptMutation = {
     submittedAt: string | null;
     scoredAt: string | null;
     rawScore: number | null;
-    maxRawScore: number | null;
+    maxRawScore: number;
     scorePercentage: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
@@ -764,7 +764,7 @@ export type SubmitExamAttemptMutation = {
     submittedAt: string | null;
     scoredAt: string | null;
     rawScore: number | null;
-    maxRawScore: number | null;
+    maxRawScore: number;
     scorePercentage: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
@@ -800,7 +800,7 @@ export type ExamAttemptResultQuery = {
     submittedAt: string | null;
     scoredAt: string | null;
     rawScore: number | null;
-    maxRawScore: number | null;
+    maxRawScore: number;
     scorePercentage: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
@@ -842,7 +842,7 @@ export type ExamAttemptHistoryQuery = {
       submittedAt: string | null;
       scoredAt: string | null;
       rawScore: number | null;
-      maxRawScore: number | null;
+      maxRawScore: number;
       scorePercentage: number | null;
       correctAnswerCount: number | null;
       questionCount: number;
@@ -1115,7 +1115,7 @@ export type LearningPurposesQuery = {
 export type OnboardingStateFieldsFragment = {
   step: Types.OnboardingStep;
   learningPurposeIds: Array<number>;
-  certificateLearner: boolean | null;
+  certificateLearner: boolean;
   targetCertificateType: string | null;
   currentLevel: Types.CefrLevel | null;
   targetScore: number | null;
@@ -1131,7 +1131,7 @@ export type SelectLearningPurposesMutation = {
   selectLearningPurposes: {
     step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
-    certificateLearner: boolean | null;
+    certificateLearner: boolean;
     targetCertificateType: string | null;
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
@@ -1148,7 +1148,7 @@ export type SetCertificateTargetMutation = {
   setCertificateTarget: {
     step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
-    certificateLearner: boolean | null;
+    certificateLearner: boolean;
     targetCertificateType: string | null;
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
@@ -1165,7 +1165,7 @@ export type SetCurrentLevelMutation = {
   setCurrentLevel: {
     step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
-    certificateLearner: boolean | null;
+    certificateLearner: boolean;
     targetCertificateType: string | null;
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
@@ -1182,7 +1182,7 @@ export type SetLearningGoalMutation = {
   setLearningGoal: {
     step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
-    certificateLearner: boolean | null;
+    certificateLearner: boolean;
     targetCertificateType: string | null;
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
@@ -1199,7 +1199,7 @@ export type SelectTargetSkillsMutation = {
   selectTargetSkills: {
     step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
-    certificateLearner: boolean | null;
+    certificateLearner: boolean;
     targetCertificateType: string | null;
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
@@ -1216,7 +1216,7 @@ export type CompleteOnboardingMutation = {
   completeOnboarding: {
     step: Types.OnboardingStep;
     learningPurposeIds: Array<number>;
-    certificateLearner: boolean | null;
+    certificateLearner: boolean;
     targetCertificateType: string | null;
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
@@ -1648,7 +1648,7 @@ export type CurrentUserQuery = {
     onboardingStep: Types.OnboardingStep;
     role: Types.Role;
     onboardingState: {
-      certificateLearner: boolean | null;
+      certificateLearner: boolean;
       currentLevel: Types.CefrLevel | null;
       targetCertificateType: string | null;
       targetScore: number | null;

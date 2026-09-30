@@ -85,6 +85,37 @@ describe("useQuizEngine", () => {
     expect(result.current.flaggedIds).not.toContain("q1");
   });
 
+  it("restores a saved attempt without losing answers or position", () => {
+    const { result } = renderHook(() => useQuizEngine({ quiz: mockQuiz }));
+
+    act(() => {
+      result.current.restoreProgress({
+        answers: { q1: "opt-b" },
+        flaggedIds: ["q2"],
+        currentIndex: 1,
+      });
+    });
+
+    expect(result.current.answers).toEqual({ q1: "opt-b" });
+    expect(result.current.flaggedIds).toEqual(["q2"]);
+    expect(result.current.currentIndex).toBe(1);
+  });
+
+  it("uses the server expiration as the authoritative submit deadline", () => {
+    const onExpire = vi.fn();
+    const { result } = renderHook(() =>
+      useQuizEngine({
+        quiz: mockQuiz,
+        isActive: true,
+        expiresAt: new Date(Date.now() - 1_000).toISOString(),
+        onExpire,
+      }),
+    );
+
+    expect(result.current.timeRemainingSeconds).toBe(0);
+    expect(onExpire).toHaveBeenCalledTimes(1);
+  });
+
   it("submits quiz and computes accurate score and reviews", () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() =>

@@ -43,9 +43,27 @@ jobs:
     # the same whole-repo check three times.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - run: pnpm format:check
+
+  codegen:
+    # The bff's resolver types are generated from its SDL and the result is
+    # committed. Nothing else notices when the SDL changes and the file does
+    # not: typecheck runs against the stale types and passes. Only bff has a
+    # generator, so this is its own job rather than a step in the quality-gate
+    # matrix, where it would run for web and mobile too.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter bff codegen
+      - name: Generated types are up to date
+        run: |
+          git diff --exit-code -- apps/bff/src/generated || {
+            echo "::error::apps/bff/src/generated is out of date. Run 'pnpm --filter bff codegen' and commit the result."
+            exit 1
+          }
 
   quality:
     runs-on: ubuntu-latest
@@ -64,7 +82,7 @@ jobs:
       matrix:
         app: [web, bff, mobile]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/quality-gate
         with:

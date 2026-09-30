@@ -50,7 +50,7 @@ export function FlashcardDashboardView({
   const [selectedSort, setSelectedSort] = useState("due");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
   const [period, setPeriod] =
     useState<keyof typeof STATS_PERIOD_DAYS>("7 Days");
 
@@ -121,8 +121,8 @@ export function FlashcardDashboardView({
         {activeTab === "decks" ? (
           <>
             {error && sets.length === 0 && (
-              <Alert color="warn" title="Không tải được bộ thẻ">
-                Kiểm tra kết nối tới backend rồi tải lại trang.
+              <Alert color="warn" title={t.flashcard.couldNotLoadSets}>
+                {t.dictation.checkConnectionReload}
               </Alert>
             )}
 
@@ -150,12 +150,8 @@ export function FlashcardDashboardView({
               <Paper withBorder radius="md" p="xl">
                 <Text ta="center" c="dimmed" fz="sm">
                   {sets.length === 0
-                    ? isVi
-                      ? "Chưa có bộ thẻ nào được phát hành. Quay lại sau nhé."
-                      : "No flashcard sets have been published yet. Check back soon."
-                    : isVi
-                      ? "Không có bộ thẻ nào khớp bộ lọc. Thử đổi từ khoá hoặc chủ đề."
-                      : "No sets match these filters. Try another search or topic."}
+                    ? t.flashcard.noSetsPublished
+                    : t.flashcard.noSetsMatchFilters}
                 </Text>
               </Paper>
             ) : viewMode === "grid" ? (
@@ -176,10 +172,16 @@ export function FlashcardDashboardView({
                   // The keys are internal ids; the labels are what a learner
                   // reads, in their language.
                   data={[
-                    { value: "7 Days", label: isVi ? "7 ngày" : "7 days" },
-                    { value: "30 Days", label: isVi ? "30 ngày" : "30 days" },
-                    { value: "3 Months", label: isVi ? "3 tháng" : "3 months" },
-                    { value: "All Time", label: isVi ? "Tất cả" : "All time" },
+                    { value: "7 Days", label: t.flashcard.period7DaysShort },
+                    { value: "30 Days", label: t.flashcard.period30DaysShort },
+                    {
+                      value: "3 Months",
+                      label: t.flashcard.period3MonthsShort,
+                    },
+                    {
+                      value: "All Time",
+                      label: t.flashcard.periodAllTimeShort,
+                    },
                   ]}
                   radius="md"
                   size="sm"

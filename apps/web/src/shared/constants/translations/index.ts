@@ -46,6 +46,16 @@ export interface CommonTranslations {
   inProgress: string;
   locked: string;
   status: string;
+  copied: string;
+  /** "{thing}" is replaced with the caller's item name, e.g. "deck", "lesson". */
+  notFoundTitle: string;
+  /** "{Thing}" is the capitalized item name - only the vi wording actually uses it. */
+  notFoundDescription: string;
+  loadErrorTitle: string;
+  loadErrorDescription: string;
+  languageSwitcherTooltip: string;
+  languageSwitcherMenuLabel: string;
+  reset: string;
 }
 
 export interface AccountTranslations {
@@ -98,6 +108,48 @@ export interface AccountTranslations {
   activeNow: string;
   supabaseAuthNotice: string;
   secureSession: string;
+  onboardingReady: string;
+  onboardingStepLearningPurposes: string;
+  onboardingStepCertificateTarget: string;
+  onboardingStepLearningGoal: string;
+  studentId: string;
+  clickToCopyId: string;
+  learningTargetsCardTitle: string;
+  targetScoreLabel: string;
+  /** Also the onboarding CURRENT_LEVEL step's badge label - same text either way. */
+  currentLevelLabel: string;
+  /** Also the onboarding TARGET_SKILLS step's badge label - same text either way. */
+  targetSkillsLabel: string;
+  certificateNotSelected: string;
+  levelNotAssessed: string;
+  updateLearningGoalsButton: string;
+  skillListening: string;
+  skillReading: string;
+  skillWriting: string;
+  skillSpeaking: string;
+  skillGrammar: string;
+  skillVocabulary: string;
+  skillPronunciation: string;
+  notConfigured: string;
+  targetScoreEmpty: string;
+  learningRoadmapTitle: string;
+  targetCertificateLabel: string;
+  goalPrefix: string;
+  cefrEvaluationBadge: string;
+  targetDeadlineLabel: string;
+  flexibleDeadline: string;
+  adaptiveScheduleBadge: string;
+  prioritySkillsTitle: string;
+  noSkillsSelectedHint: string;
+  profileLoadErrorTitle: string;
+  profileLoadErrorDescription: string;
+  notSignedInTitle: string;
+  notSignedInDescription: string;
+  saveErrorFallback: string;
+  fullNamePlaceholder: string;
+  displayNamePlaceholder: string;
+  selectGenderPlaceholder: string;
+  emailFieldDescription: string;
 }
 
 export interface FlashcardTranslations {
@@ -140,6 +192,91 @@ export interface FlashcardTranslations {
   memoryStages: string;
   newCardsBadge: string;
   reviewHintSpace: string;
+  flipPrompt: string;
+  assessRetentionLabel: string;
+  ratingAgainHint: string;
+  ratingHardHint: string;
+  ratingGoodHint: string;
+  ratingEasyHint: string;
+  needsReviewBadge: string;
+  listenNativeAudioTooltip: string;
+  listenAudioAria: string;
+  pronounceWordAria: string;
+  flipHintFooter: string;
+  listenAgainAria: string;
+  vietnameseMeaningLabel: string;
+  englishDefinitionLabel: string;
+  contextExampleLabel: string;
+  memoryMnemonicLabel: string;
+  rateRetentionFooter: string;
+  cardsReviewedPerDay: string;
+  noReviewsInPeriod: string;
+  priorityWordsBadge: string;
+  deckColumn: string;
+  missesColumnShort: string;
+  lastReviewColumn: string;
+  audioColumn: string;
+  noForgottenWords: string;
+  missCountBadge: string;
+  allTopicsChip: string;
+  dailyConversationChip: string;
+  travelChip: string;
+  gridViewTooltip: string;
+  gridViewAria: string;
+  listViewTooltip: string;
+  listViewAria: string;
+  streakDaysBanner: string;
+  cardsDueTodayMessage: string;
+  nothingDueTodayMessage: string;
+  startReviewCount: string;
+  learnNewCardsButton: string;
+  noSetsToStudyButton: string;
+  dueTodayLabel: string;
+  cardsUnit: string;
+  retentionRateLabel: string;
+  notStudiedYet: string;
+  studiedToday: string;
+  studiedYesterday: string;
+  daysAgoSuffix: string;
+  wordsCountSuffix: string;
+  dueCardsBadge: string;
+  reviewButton: string;
+  studyButton: string;
+  noSetsPublished: string;
+  noSetsMatchFilters: string;
+  couldNotLoadSets: string;
+  period7DaysShort: string;
+  period30DaysShort: string;
+  period3MonthsShort: string;
+  periodAllTimeShort: string;
+  backToDecksButton: string;
+  studyDeckNowButton: string;
+  cardsDueTodayBadge: string;
+  completedForTodayBadge: string;
+  totalCardsLabel: string;
+  lastStudiedLabel: string;
+  masteredColonLabel: string;
+  deckWordListTitle: string;
+  clickSpeakerHint: string;
+  ipaColumn: string;
+  partOfSpeechColumn: string;
+  definitionColumn: string;
+  englishMeaningColumn: string;
+  statusColumn: string;
+  reviewStatusBadge: string;
+  learningStatusBadge: string;
+  newStatusBadge: string;
+  listenWordAria: string;
+  exitSessionButton: string;
+  cardPositionLabel: string;
+  nothingToReviewTitle: string;
+  nothingToReviewDescription: string;
+  backToDeckButton: string;
+  setNameColumn: string;
+  cardCountColumn: string;
+  dueTodayColumn: string;
+  lastStudiedColumn: string;
+  viewButton: string;
 }
 
 export interface PronunciationTranslations {
@@ -167,6 +304,41 @@ export interface PronunciationTranslations {
   consonants: string;
   diphthongs: string;
   lessonsList: string;
+  allLessonsSegment: string;
+  noPromptsPublished: string;
+  soundPrefix: string;
+  bestScoreLabel: string;
+  practiceNowButton: string;
+  ipaChartTitle: string;
+  ipaChartSubtitle: string;
+  vowelsHeading: string;
+  consonantsHeading: string;
+  noPhonemeDetail: string;
+  pronunciationScoreTitle: string;
+  scoringExplanation: string;
+  recordAgainButton: string;
+  completenessLabel: string;
+  referenceLabel: string;
+  recognizedLabel: string;
+  wordByWordLabel: string;
+  hoverWordHint: string;
+  yourRecordingLabel: string;
+  yourRecordingFallback: string;
+  notScoredTitle: string;
+  uploadingLabel: string;
+  scoringLabel: string;
+  sayThisLabel: string;
+  hearItButton: string;
+  slowlyButton: string;
+  tipsLabel: string;
+  recordingBadge: string;
+  stopAndScoreButton: string;
+  playbackHint: string;
+  couldNotLoadPrompts: string;
+  backToPromptsButton: string;
+  backToLibraryButton: string;
+  notFinishedTitle: string;
+  checkResultAgainButton: string;
 }
 
 export interface DailyPathTranslations {
@@ -186,6 +358,28 @@ export interface DailyPathTranslations {
   nextMilestone: string;
   allQuizzes: string;
   quizDifficulty: string;
+  doneToday: string;
+  doneTodayPercent: string;
+  cardNoun: string;
+  cardsNoun: string;
+  sentenceNoun: string;
+  sentencesNoun: string;
+  doneTodayCount: string;
+  remainingLabel: string;
+  alreadyDoneTodaySuffix: string;
+  nothingOutstandingTitle: string;
+  nothingOutstandingDescription: string;
+  roadmapMapTitle: string;
+  roadmapMapSubtitle: string;
+  stagePrefix: string;
+  completePercentLabel: string;
+  practiceAgainButton: string;
+  startNowButton: string;
+  openButton: string;
+  todaysGoalsTitle: string;
+  resetsDaily: string;
+  pageTitle: string;
+  couldNotLoadPath: string;
 }
 
 export interface QuizTranslations {
@@ -206,6 +400,43 @@ export interface QuizTranslations {
   xpEarned: string;
   retakeQuiz: string;
   backToRoadmap: string;
+  timeRemainingCaps: string;
+  questionPaletteLabel: string;
+  answeredLabel: string;
+  unflagButton: string;
+  flagButton: string;
+  confirmSubmitTitle: string;
+  unansweredWarningLong: string;
+  allAnsweredMessage: string;
+  keepWorkingButton: string;
+  confirmSubmitButton: string;
+  catalogueTitle: string;
+  allCategoriesSegment: string;
+  noQuizzesPublished: string;
+  questionsCountSuffix: string;
+  minutesUnitShort: string;
+  passedBadge: string;
+  needsRetakeBadge: string;
+  passedMessage: string;
+  failedMessage: string;
+  scoreLabel: string;
+  pointsUnit: string;
+  timeSpentLabel: string;
+  durationFormat: string;
+  experienceLabel: string;
+  detailedReviewTitle: string;
+  questionPrefix: string;
+  correctLabel: string;
+  incorrectLabel: string;
+  pointsAbbrev: string;
+  yourAnswerLabel: string;
+  correctAnswerLabel: string;
+  explanationNoteLabel: string;
+  backToQuizzesButton: string;
+  readyToStartTitle: string;
+  startExplanation: string;
+  exitQuizButton: string;
+  questionPositionLabel: string;
 }
 
 export interface DictationTranslations {
@@ -218,6 +449,8 @@ export interface DictationTranslations {
   replaySentence: string;
   inputPlaceholder: string;
   checkAnswer: string;
+  checkAnswerErrorTitle: string;
+  checkingAnswerDescription: string;
   nextSentence: string;
   charHint: string;
   originalAudio: string;
@@ -247,6 +480,118 @@ export interface DictationTranslations {
   sentencesCompleted: string;
   studyDuration: string;
   reviewMistakes: string;
+  replaysBadge: string;
+  back5Aria: string;
+  pauseAria: string;
+  playAudioAria: string;
+  forward5Aria: string;
+  speedLabel: string;
+  chartsEmptyState: string;
+  sentencesPerDayLabel: string;
+  sentencesPracticedSuffix: string;
+  perfectScoreTitle: string;
+  wordsNeedCorrection: string;
+  accuracyDetail: string;
+  legendCorrect: string;
+  legendIncorrect: string;
+  legendMissing: string;
+  fullSentenceLabel: string;
+  tokensToFixLabel: string;
+  mistakesOnlySegment: string;
+  fullSentenceSegment: string;
+  noErrorsDetected: string;
+  replayAudioButton: string;
+  finishAndViewResults: string;
+  filterByTopicAria: string;
+  filterByLevelAria: string;
+  filterByStatusAria: string;
+  sortLessonsAria: string;
+  noHardSentences: string;
+  avgAccuracyPrefix: string;
+  attemptsSuffix: string;
+  practiceButton: string;
+  hintWordCountLabel: string;
+  wordsUnit: string;
+  hintFirstLettersLabel: string;
+  hintRevealWordLabel: string;
+  hintTranslationLabel: string;
+  hintPartialTranscriptLabel: string;
+  collapseHints: string;
+  needHint: string;
+  hintsUsedBadge: string;
+  hintsCounterNote: string;
+  unlockHint: string;
+  dateColumn: string;
+  lessonColumn: string;
+  sentencesColumn: string;
+  durationColumn: string;
+  hintsColumn: string;
+  actionColumn: string;
+  noSessionsYet: string;
+  detailsButton: string;
+  wordsTypedCount: string;
+  toCheckHint: string;
+  skipButton: string;
+  minutesUnit: string;
+  notPractisedYet: string;
+  practisedToday: string;
+  practisedYesterday: string;
+  daysAgoSuffix: string;
+  sentenceCountSuffix: string;
+  practiceAgainShort: string;
+  continueButton: string;
+  topicColumn: string;
+  difficultyColumn: string;
+  progressColumn: string;
+  wordColumn: string;
+  missesColumn: string;
+  correctColumn: string;
+  noMissedWords: string;
+  exampleLabel: string;
+  timesUnit: string;
+  allMistakesClearedTitle: string;
+  allMistakesClearedDescription: string;
+  backToLessonsButton: string;
+  mistakePracticeBadge: string;
+  queueCountLabel: string;
+  queuePositionLabel: string;
+  bestAttemptSummary: string;
+  clearMistakeHint: string;
+  lastTypedPrefix: string;
+  correctAnswerReveal: string;
+  checkFailedMessage: string;
+  clearedFeedback: string;
+  notQuiteFeedback: string;
+  continueToNextButton: string;
+  tryNextButton: string;
+  reviewMistakesCount: string;
+  hintsUnit: string;
+  perfectSentencesLabel: string;
+  sentencesWithMistakesLabel: string;
+  sentencesToReviewTitle: string;
+  startReviewingMistakes: string;
+  zeroMistakesMessage: string;
+  yourInputShort: string;
+  correctAnswerShort: string;
+  backToLessonCatalog: string;
+  completedLessonsLabel: string;
+  lessonsUnit: string;
+  averageAccuracyLabel: string;
+  overallSentencesUnit: string;
+  listeningHoursLabel: string;
+  focusedPracticeUnit: string;
+  sentencesPracticedLabel: string;
+  sentencesCompletedUnit: string;
+  statsPageTitle: string;
+  period7Days: string;
+  period30Days: string;
+  period3Months: string;
+  periodAllTime: string;
+  noLessonsPublished: string;
+  noLessonsMatchFilters: string;
+  couldNotLoadLessons: string;
+  checkConnectionReload: string;
+  backToLibraryButton: string;
 }
 
 export interface HomeCopyItem {
@@ -279,6 +624,31 @@ export interface HomeTranslations {
   ctaSubtitle: string;
   footerTagline: string;
   footerProject: string;
+  mockCardsDue: string;
+  mockAcquireDefinition: string;
+  mockRatingAgain: string;
+  mockRatingGood: string;
+  mockRatingEasy: string;
+  mockYouTyped: string;
+  mockResultLabel: string;
+  mockStreakLabel: string;
+  mockDueSuffix: string;
+  greetingWithName: string;
+  greetingGeneric: string;
+  levelLabel: string;
+  streakDaysLabel: string;
+  finishGoalSetupTitle: string;
+  finishGoalSetupDescription: string;
+  setupNowButton: string;
+  pathLoadErrorMessage: string;
+  upNextBadge: string;
+  nothingWaitingTitle: string;
+  nothingWaitingDescription: string;
+  chooseLessonButton: string;
+  todaySectionTitle: string;
+  fullPathButton: string;
+  practiceSectionTitle: string;
+  xpToNextLevel: string;
 }
 
 export interface AuthTranslations {
@@ -500,6 +870,15 @@ export const translations: Record<Language, AppTranslations> = {
       inProgress: "Đang thực hiện",
       locked: "Chưa mở khóa",
       status: "Trạng thái",
+      copied: "Đã chép!",
+      notFoundTitle: "Không tìm thấy {thing}",
+      notFoundDescription:
+        "{Thing} không tồn tại hoặc đã bị gỡ. Hãy chọn lại từ thư viện.",
+      loadErrorTitle: "Không tải được {thing}",
+      loadErrorDescription: "Máy chủ chưa phản hồi. Thử lại sau ít phút.",
+      languageSwitcherTooltip: "Đổi ngôn ngữ giao diện",
+      languageSwitcherMenuLabel: "Ngôn ngữ giao diện",
+      reset: "Đặt lại",
     },
     account: {
       title: "Hồ sơ cá nhân",
@@ -556,6 +935,50 @@ export const translations: Record<Language, AppTranslations> = {
       activeNow: "Đang hoạt động",
       supabaseAuthNotice: "Đăng nhập an toàn qua hệ thống Englow3",
       secureSession: "Phiên bảo mật",
+      onboardingReady: "Đã sẵn sàng học",
+      onboardingStepLearningPurposes: "Mục tiêu học tập",
+      onboardingStepCertificateTarget: "Chứng chỉ mục tiêu",
+      onboardingStepLearningGoal: "Mục tiêu điểm số",
+      studentId: "Mã học viên",
+      clickToCopyId: "Nhấn để sao chép mã",
+      learningTargetsCardTitle: "Mục tiêu học tập",
+      targetScoreLabel: "Mục tiêu điểm",
+      currentLevelLabel: "Trình độ hiện tại",
+      targetSkillsLabel: "Kỹ năng trọng tâm",
+      certificateNotSelected: "Chưa chọn",
+      levelNotAssessed: "Chưa đánh giá",
+      updateLearningGoalsButton: "Cập nhật mục tiêu học",
+      skillListening: "Nghe",
+      skillReading: "Đọc",
+      skillWriting: "Viết",
+      skillSpeaking: "Nói",
+      skillGrammar: "Ngữ pháp",
+      skillVocabulary: "Từ vựng",
+      skillPronunciation: "Phát âm",
+      notConfigured: "Chưa thiết lập",
+      targetScoreEmpty: "Chưa có",
+      learningRoadmapTitle: "Lộ trình & Mục tiêu học tập",
+      targetCertificateLabel: "Chứng chỉ hướng tới",
+      goalPrefix: "Mục tiêu",
+      cefrEvaluationBadge: "Đánh giá năng lực",
+      targetDeadlineLabel: "Thời hạn mục tiêu",
+      flexibleDeadline: "Linh hoạt",
+      adaptiveScheduleBadge: "Lộ trình thích ứng",
+      prioritySkillsTitle: "Kỹ năng tập trung rèn luyện",
+      noSkillsSelectedHint:
+        'Chưa chọn kỹ năng cụ thể. Bấm "Cập nhật mục tiêu học" để chọn.',
+      profileLoadErrorTitle: "Không thể tải hồ sơ",
+      profileLoadErrorDescription:
+        "Đã có lỗi xảy ra khi tải thông tin hồ sơ. Vui lòng kiểm tra lại kết nối mạng hoặc đăng nhập lại.",
+      notSignedInTitle: "Chưa đăng nhập",
+      notSignedInDescription:
+        "Vui lòng đăng nhập để xem và chỉnh sửa thông tin hồ sơ cá nhân của bạn.",
+      saveErrorFallback: "Đã có lỗi xảy ra khi lưu hồ sơ",
+      fullNamePlaceholder: "Ví dụ: Nguyễn Văn A",
+      displayNamePlaceholder: "Ví dụ: An Nguyen",
+      selectGenderPlaceholder: "Chọn giới tính",
+      emailFieldDescription:
+        "Email dùng để đăng nhập và nhận thông báo, không thể thay đổi tại đây",
     },
     flashcard: {
       title: "Thẻ ghi nhớ 3D",
@@ -599,6 +1022,94 @@ export const translations: Record<Language, AppTranslations> = {
       memoryStages: "Trạng thái lưu trữ não bộ",
       newCardsBadge: "Từ mới tinh",
       reviewHintSpace: "Nhấn phím cách hoặc bấm vào thẻ để xem nghĩa và ví dụ",
+      flipPrompt: "Lật thẻ xem đáp án",
+      assessRetentionLabel: "ĐÁNH GIÁ MỨC ĐỘ GHI NHỚ (Phím tắt 1 - 4):",
+      ratingAgainHint: "Chưa nhớ (< 1 ngày)",
+      ratingHardHint: "Khó (2 ngày)",
+      ratingGoodHint: "Nhớ tốt (4 ngày)",
+      ratingEasyHint: "Rất dễ (7 ngày)",
+      needsReviewBadge: "Cần ôn lại ({count} lần sai)",
+      listenNativeAudioTooltip: "Nghe phát âm chuẩn",
+      listenAudioAria: "Nghe phát âm",
+      pronounceWordAria: "Phát âm từ",
+      flipHintFooter: "Nhấn phím cách hoặc bấm vào thẻ để xem nghĩa & ví dụ",
+      listenAgainAria: "Nghe lại",
+      vietnameseMeaningLabel: "NGHĨA TIẾNG VIỆT:",
+      englishDefinitionLabel: "ĐỊNH NGHĨA ANH - ANH:",
+      contextExampleLabel: "VÍ DỤ NGỮ CẢNH:",
+      memoryMnemonicLabel: "MẸO GHI NHỚ:",
+      rateRetentionFooter:
+        "Đánh giá mức độ ghi nhớ ở bên dưới để hệ thống lặp lại khoa học",
+      cardsReviewedPerDay: "Số thẻ ôn tập theo ngày",
+      noReviewsInPeriod: "Chưa có lượt ôn tập nào trong khoảng thời gian này.",
+      priorityWordsBadge: "{count} từ cần ưu tiên",
+      deckColumn: "Bộ từ",
+      missesColumnShort: "Số lần chưa nhớ",
+      lastReviewColumn: "Lần xem cuối",
+      audioColumn: "Phát âm",
+      noForgottenWords: "Chưa có từ nào bạn hay quên.",
+      missCountBadge: "{count} lần",
+      allTopicsChip: "Tất cả",
+      dailyConversationChip: "Giao tiếp hàng ngày",
+      travelChip: "Du lịch",
+      gridViewTooltip: "Xem dạng lưới",
+      gridViewAria: "Dạng lưới",
+      listViewTooltip: "Xem dạng danh sách",
+      listViewAria: "Dạng danh sách",
+      streakDaysBanner: "Chuỗi {count} ngày liên tiếp",
+      cardsDueTodayMessage: "Hôm nay bạn có {count} thẻ đến hạn cần ôn tập!",
+      nothingDueTodayMessage: "Hôm nay chưa có thẻ nào đến hạn ôn.",
+      startReviewCount: "Bắt đầu ôn ngay ({count} thẻ)",
+      learnNewCardsButton: "Học thẻ mới",
+      noSetsToStudyButton: "Chưa có bộ thẻ nào để học",
+      dueTodayLabel: "Thẻ đến hạn hôm nay:",
+      cardsUnit: "thẻ",
+      retentionRateLabel: "Tỷ lệ nhớ:",
+      notStudiedYet: "Chưa học",
+      studiedToday: "Hôm nay",
+      studiedYesterday: "Hôm qua",
+      daysAgoSuffix: "ngày trước",
+      wordsCountSuffix: "từ vựng",
+      dueCardsBadge: "{count} thẻ cần ôn",
+      reviewButton: "Ôn ngay",
+      studyButton: "Học",
+      noSetsPublished: "Chưa có bộ thẻ nào được phát hành. Quay lại sau nhé.",
+      noSetsMatchFilters:
+        "Không có bộ thẻ nào khớp bộ lọc. Thử đổi từ khoá hoặc chủ đề.",
+      couldNotLoadSets: "Không tải được bộ thẻ",
+      period7DaysShort: "7 ngày",
+      period30DaysShort: "30 ngày",
+      period3MonthsShort: "3 tháng",
+      periodAllTimeShort: "Tất cả",
+      backToDecksButton: "Quay lại danh sách bộ thẻ",
+      studyDeckNowButton: "Học ngay bộ từ này",
+      cardsDueTodayBadge: "{count} từ cần ôn tập hôm nay",
+      completedForTodayBadge: "Đã hoàn thành mục tiêu hôm nay",
+      totalCardsLabel: "Tổng số từ:",
+      lastStudiedLabel: "Lần học gần nhất:",
+      masteredColonLabel: "Đã thuộc:",
+      deckWordListTitle: "Danh sách từ vựng trong bộ ({count} thẻ)",
+      clickSpeakerHint: "Bấm vào biểu tượng loa để nghe phát âm chuẩn bản xứ",
+      ipaColumn: "Phiên âm IPA",
+      partOfSpeechColumn: "Từ loại",
+      definitionColumn: "Nghĩa",
+      englishMeaningColumn: "Định nghĩa tiếng Anh",
+      statusColumn: "Trạng thái",
+      reviewStatusBadge: "Ôn tập",
+      learningStatusBadge: "Đang học",
+      newStatusBadge: "Từ mới",
+      listenWordAria: "Nghe từ {word}",
+      exitSessionButton: "Thoát phiên học",
+      cardPositionLabel: "Thẻ số {current} trên {total}",
+      nothingToReviewTitle: "Chưa có thẻ nào cần ôn",
+      nothingToReviewDescription:
+        "Bạn đã ôn hết các thẻ đến hạn của bộ này. Quay lại sau khi có thẻ tới lượt ôn.",
+      backToDeckButton: "Về bộ thẻ",
+      setNameColumn: "Bộ từ vựng",
+      cardCountColumn: "Số từ",
+      dueTodayColumn: "Cần ôn hôm nay",
+      lastStudiedColumn: "Lần học cuối",
+      viewButton: "Xem",
     },
     pronunciation: {
       title: "Luyện phát âm",
@@ -626,6 +1137,43 @@ export const translations: Record<Language, AppTranslations> = {
       consonants: "Phụ âm",
       diphthongs: "Nguyên âm đôi",
       lessonsList: "Danh sách bài học phát âm",
+      allLessonsSegment: "Tất cả bài học",
+      noPromptsPublished:
+        "Chưa có câu luyện phát âm nào được phát hành. Trong lúc chờ, bạn có thể nghe mẫu từng âm ở bảng IPA bên dưới.",
+      soundPrefix: "Âm",
+      bestScoreLabel: "Điểm cao nhất",
+      practiceNowButton: "Luyện ngay",
+      ipaChartTitle: "Bảng âm vị học quốc tế IPA",
+      ipaChartSubtitle: "Nhấp vào từng âm để nghe phát âm mẫu",
+      vowelsHeading: "NGUYÊN ÂM:",
+      consonantsHeading: "PHỤ ÂM:",
+      noPhonemeDetail: "Không có chi tiết âm vị",
+      pronunciationScoreTitle: "Điểm phát âm",
+      scoringExplanation:
+        "Chấm bằng cách so bản ghi của bạn với câu mẫu, không phải bằng cảm tính.",
+      recordAgainButton: "Ghi lại",
+      completenessLabel: "Đầy đủ",
+      referenceLabel: "CÂU MẪU",
+      recognizedLabel: "MÁY NGHE ĐƯỢC",
+      wordByWordLabel: "TỪNG TỪ",
+      hoverWordHint: "Di chuột lên một từ để xem điểm từng âm vị.",
+      yourRecordingLabel: "BẢN GHI CỦA BẠN",
+      yourRecordingFallback: "Bản ghi của bạn",
+      notScoredTitle: "Không chấm được",
+      uploadingLabel: "Đang tải bản ghi lên...",
+      scoringLabel: "Đang chấm...",
+      sayThisLabel: "ĐỌC CÂU NÀY",
+      hearItButton: "Nghe câu mẫu",
+      slowlyButton: "Nghe chậm",
+      tipsLabel: "Mẹo phát âm",
+      recordingBadge: "Đang ghi",
+      stopAndScoreButton: "Dừng và chấm",
+      playbackHint: "Nghe lại bản vừa ghi",
+      couldNotLoadPrompts: "Không tải được danh sách",
+      backToPromptsButton: "Về danh sách câu luyện",
+      backToLibraryButton: "Quay lại thư viện phát âm",
+      notFinishedTitle: "Chưa xong",
+      checkResultAgainButton: "Kiểm tra kết quả lại",
     },
     dailyPath: {
       title: "Lộ trình học tập mỗi ngày",
@@ -645,6 +1193,30 @@ export const translations: Record<Language, AppTranslations> = {
       nextMilestone: "Cột mốc tiếp theo",
       allQuizzes: "Tất cả bài tập",
       quizDifficulty: "Độ khó",
+      doneToday: "Đã làm hôm nay",
+      doneTodayPercent: "Đã làm hôm nay - {percent}%",
+      cardNoun: "thẻ",
+      cardsNoun: "thẻ",
+      sentenceNoun: "câu",
+      sentencesNoun: "câu",
+      doneTodayCount: "Hôm nay đã xong {count} {noun}{accuracy}",
+      remainingLabel: "Còn {remaining} {unit}",
+      alreadyDoneTodaySuffix: "{base} - đã làm {count} hôm nay",
+      nothingOutstandingTitle: "Không còn việc nào đang dở",
+      nothingOutstandingDescription:
+        "Chưa có thẻ nào đến hạn, chưa có bài nào bỏ giữa. Mở thư viện chọn thêm bộ thẻ hoặc bài nghe để lộ trình có việc.",
+      roadmapMapTitle: "Bản đồ chặng đường học tập",
+      roadmapMapSubtitle:
+        "Việc đang dở của chính bạn, thẻ đến hạn xếp trước vì chỉ lịch ôn mới có kỳ hạn",
+      stagePrefix: "Trạm {n}",
+      completePercentLabel: "Đã xong {percent}%",
+      practiceAgainButton: "Luyện lại",
+      startNowButton: "Bắt đầu ngay",
+      openButton: "Mở",
+      todaysGoalsTitle: "Mục tiêu hôm nay",
+      resetsDaily: "Tính lại mỗi ngày",
+      pageTitle: "Lộ trình học",
+      couldNotLoadPath: "Không tải được lộ trình",
     },
     quiz: {
       questionNumber: "Câu hỏi",
@@ -664,6 +1236,49 @@ export const translations: Record<Language, AppTranslations> = {
       xpEarned: "Điểm thưởng nhận được",
       retakeQuiz: "Làm lại bài này",
       backToRoadmap: "Trở về lộ trình chính",
+      timeRemainingCaps: "THỜI GIAN CÒN LẠI:",
+      questionPaletteLabel: "BẢNG CÂU HỎI:",
+      answeredLabel: "Đã làm",
+      unflagButton: "Bỏ đánh dấu xem lại",
+      flagButton: "Đánh dấu xem lại",
+      confirmSubmitTitle: "Xác nhận nộp bài kiểm tra",
+      unansweredWarningLong:
+        "Bạn còn {count} câu chưa làm. Bạn có chắc chắn muốn nộp bài ngay bây giờ?",
+      allAnsweredMessage:
+        "Bạn đã hoàn thành tất cả các câu hỏi! Bạn có muốn nộp bài để xem điểm và lời giải chi tiết ngay bây giờ không?",
+      keepWorkingButton: "Tiếp tục làm bài",
+      confirmSubmitButton: "Xác nhận nộp bài",
+      catalogueTitle: "Kho bài tập trắc nghiệm",
+      allCategoriesSegment: "Tất cả chủ đề",
+      noQuizzesPublished:
+        "Chưa có bài trắc nghiệm nào được phát hành. Quay lại sau nhé.",
+      questionsCountSuffix: "câu hỏi",
+      minutesUnitShort: "phút",
+      passedBadge: "ĐẠT YÊU CẦU",
+      needsRetakeBadge: "CHƯA ĐẠT",
+      passedMessage:
+        "Chúc mừng bạn đã vượt qua bài kiểm tra với số điểm ấn tượng!",
+      failedMessage:
+        "Bạn chưa đạt điểm tối thiểu để mở khóa bài tiếp theo. Hãy xem lại lời giải chi tiết bên dưới nhé!",
+      scoreLabel: "Điểm số:",
+      pointsUnit: "điểm",
+      timeSpentLabel: "Thời gian làm:",
+      durationFormat: "{m} phút {s} giây",
+      experienceLabel: "Kinh nghiệm:",
+      detailedReviewTitle: "Xem lại đáp án & Giải thích chi tiết ({count} câu)",
+      questionPrefix: "Câu {n}:",
+      correctLabel: "Đúng",
+      incorrectLabel: "Sai",
+      pointsAbbrev: "đ",
+      yourAnswerLabel: "CÂU TRẢ LỜI CỦA BẠN:",
+      correctAnswerLabel: "ĐÁP ÁN CHÍNH XÁC:",
+      explanationNoteLabel: "GIẢI THÍCH NGỮ PHÁP / KIẾN THỨC:",
+      backToQuizzesButton: "Về danh sách bài kiểm tra",
+      readyToStartTitle: "Sẵn sàng làm bài?",
+      startExplanation:
+        "Đồng hồ bắt đầu chạy ngay khi bạn bấm. Bấm lại lần nữa sẽ quay về đúng lượt đang dở, không tạo lượt mới.",
+      exitQuizButton: "Thoát bài kiểm tra",
+      questionPositionLabel: "Câu hỏi {current} / {total}",
     },
     dictation: {
       title: "Luyện nghe chép chính tả",
@@ -676,6 +1291,8 @@ export const translations: Record<Language, AppTranslations> = {
       replaySentence: "Phát lại câu này",
       inputPlaceholder: "Gõ những gì bạn vừa nghe được tại đây...",
       checkAnswer: "Kiểm tra kết quả",
+      checkAnswerErrorTitle: "Chưa chấm được câu này",
+      checkingAnswerDescription: "Đang đối chiếu câu trả lời của bạn…",
       nextSentence: "Sang câu tiếp theo",
       charHint: "Gợi ý chữ cái",
       originalAudio: "Đoạn âm thanh gốc",
@@ -705,6 +1322,125 @@ export const translations: Record<Language, AppTranslations> = {
       sentencesCompleted: "Câu đã hoàn thành",
       studyDuration: "Thời gian luyện tập",
       reviewMistakes: "Xem lại các từ chưa đúng",
+      replaysBadge: "Đã nghe lại: {count} lần",
+      back5Aria: "Lùi lại 5 giây",
+      pauseAria: "Tạm dừng",
+      playAudioAria: "Phát âm thanh",
+      forward5Aria: "Tua tới 5 giây",
+      speedLabel: "Tốc độ",
+      chartsEmptyState: "Chưa có dữ liệu. Luyện vài câu để thấy biểu đồ.",
+      sentencesPerDayLabel: "Số câu / ngày",
+      sentencesPracticedSuffix: "câu đã luyện",
+      perfectScoreTitle: "Xuất sắc! Bạn đã gõ đúng 100%",
+      wordsNeedCorrection: "{count} từ cần chú ý sửa lại",
+      accuracyDetail: "Độ chính xác: {percent}% ({correct} / {total} từ đúng)",
+      legendCorrect: "Từ đúng",
+      legendIncorrect: "Từ sai",
+      legendMissing: "Từ còn thiếu",
+      fullSentenceLabel: "Toàn bộ câu mẫu:",
+      tokensToFixLabel: "Các từ cần sửa:",
+      mistakesOnlySegment: "Chỉ từ lỗi",
+      fullSentenceSegment: "Cả câu mẫu",
+      noErrorsDetected: "Không có từ lỗi nào cần sửa!",
+      replayAudioButton: "Nghe lại câu này",
+      finishAndViewResults: "Hoàn thành & Xem kết quả",
+      filterByTopicAria: "Lọc theo chủ đề",
+      filterByLevelAria: "Lọc theo cấp độ",
+      filterByStatusAria: "Lọc theo trạng thái",
+      sortLessonsAria: "Sắp xếp bài học",
+      noHardSentences: "Chưa có câu nào khó với bạn.",
+      avgAccuracyPrefix: "Chính xác TB",
+      attemptsSuffix: "lần thử",
+      practiceButton: "Luyện tập",
+      hintWordCountLabel: "Xem số lượng từ trong câu",
+      wordsUnit: "từ",
+      hintFirstLettersLabel: "Gợi ý các chữ cái đầu tiên",
+      hintRevealWordLabel: "Mở khóa 1 từ khóa quan trọng",
+      hintTranslationLabel: "Xem bản dịch tiếng Việt",
+      hintPartialTranscriptLabel: "Xem trích đoạn đầu của câu",
+      collapseHints: "Thu gọn gợi ý",
+      needHint: "Bạn cần gợi ý?",
+      hintsUsedBadge: "Đã dùng: {count} gợi ý",
+      hintsCounterNote:
+        "* Mỗi gợi ý được mở sẽ tính vào số gợi ý đã dùng trong thống kê buổi học.",
+      unlockHint: "Mở xem",
+      dateColumn: "Thời gian",
+      lessonColumn: "Bài học",
+      sentencesColumn: "Số câu",
+      durationColumn: "Thời lượng",
+      hintsColumn: "Gợi ý dùng",
+      actionColumn: "Xem lại",
+      noSessionsYet: "Chưa có buổi luyện tập nào.",
+      detailsButton: "Chi tiết",
+      wordsTypedCount: "{count} từ đã gõ",
+      toCheckHint: "để kiểm tra",
+      skipButton: "Bỏ qua",
+      minutesUnit: "phút",
+      notPractisedYet: "Chưa luyện",
+      practisedToday: "Hôm nay",
+      practisedYesterday: "Hôm qua",
+      daysAgoSuffix: "ngày trước",
+      sentenceCountSuffix: "câu",
+      practiceAgainShort: "Luyện lại",
+      continueButton: "Tiếp tục",
+      topicColumn: "Chủ đề",
+      difficultyColumn: "Độ khó",
+      progressColumn: "Tiến độ",
+      wordColumn: "Từ vựng",
+      missesColumn: "Số lần gõ sai",
+      correctColumn: "Số lần gõ đúng",
+      noMissedWords: "Chưa có từ nào bạn hay gõ sai.",
+      exampleLabel: "Ví dụ:",
+      timesUnit: "lần",
+      allMistakesClearedTitle: "Xuất sắc! Bạn đã vượt qua tất cả câu sai!",
+      allMistakesClearedDescription:
+        "Không còn câu nào bạn hay sai. Cứ luyện tiếp, danh sách này sẽ tự cập nhật.",
+      backToLessonsButton: "Quay lại thư viện bài học",
+      mistakePracticeBadge: "Luyện tập câu sai",
+      queueCountLabel: "{count} câu cần ôn tập trong danh sách",
+      queuePositionLabel: "Câu {current} / {total}",
+      bestAttemptSummary: "Tốt nhất {percent}% sau {count} lần thử",
+      clearMistakeHint:
+        "Nghe lại và gõ đúng để gỡ câu này khỏi danh sách câu sai.",
+      lastTypedPrefix: "Lần trước bạn gõ: ",
+      correctAnswerReveal: 'Đáp án chuẩn: "{text}" ({percent}%)',
+      checkFailedMessage:
+        "Chưa chấm được câu này. Kiểm tra kết nối rồi bấm kiểm tra lại.",
+      clearedFeedback: "Chính xác! Câu này sẽ được gỡ khỏi danh sách lỗi.",
+      notQuiteFeedback: "Chưa hoàn toàn chính xác. Hãy nghe lại lần nữa nhé!",
+      continueToNextButton: "Tiếp tục gỡ câu tiếp theo",
+      tryNextButton: "Thử lại câu tiếp theo",
+      reviewMistakesCount: "Luyện câu sai ({count})",
+      hintsUnit: "gợi ý",
+      perfectSentencesLabel: "Câu chuẩn xác 100%:",
+      sentencesWithMistakesLabel: "Câu có từ chưa chuẩn:",
+      sentencesToReviewTitle: "Các câu có lỗi cần ôn tập ({count})",
+      startReviewingMistakes: "Bắt đầu ôn tập câu sai",
+      zeroMistakesMessage:
+        "Tuyệt vời! Bạn không mắc phải lỗi nào trong bài học này.",
+      yourInputShort: "Bạn đã gõ:",
+      correctAnswerShort: "Đáp án đúng:",
+      backToLessonCatalog: "Về danh sách bài học",
+      completedLessonsLabel: "Bài học đã hoàn thành",
+      lessonsUnit: "bài",
+      averageAccuracyLabel: "Độ chính xác trung bình",
+      overallSentencesUnit: "trên tổng số câu",
+      listeningHoursLabel: "Thời gian luyện nghe",
+      focusedPracticeUnit: "luyện tập trung",
+      sentencesPracticedLabel: "Số câu đã thực hành",
+      sentencesCompletedUnit: "câu hoàn thành",
+      statsPageTitle: "Thống kê quá trình học",
+      period7Days: "7 ngày qua",
+      period30Days: "30 ngày qua",
+      period3Months: "3 tháng qua",
+      periodAllTime: "Tất cả",
+      noLessonsPublished:
+        "Chưa có bài nghe nào được phát hành. Quay lại sau nhé.",
+      noLessonsMatchFilters:
+        "Không có bài nào khớp bộ lọc. Thử đổi chủ đề, trình độ hoặc trạng thái.",
+      couldNotLoadLessons: "Không tải được bài học",
+      checkConnectionReload: "Kiểm tra kết nối rồi tải lại trang.",
+      backToLibraryButton: "Trở về Thư viện",
     },
     exam: {
       title: "Thư viện đề thi thử",
@@ -913,6 +1649,34 @@ export const translations: Record<Language, AppTranslations> = {
       ctaSubtitle: "Chỉ mất một phút để đặt mục tiêu. Englow3 lo phần còn lại.",
       footerTagline: "Con đường của riêng bạn, tương lai trong tay bạn.",
       footerProject: "Đồ án tốt nghiệp",
+      mockCardsDue: "12 thẻ đến hạn",
+      mockAcquireDefinition: "đạt được, thu được",
+      mockRatingAgain: "Quên",
+      mockRatingGood: "Nhớ",
+      mockRatingEasy: "Dễ",
+      mockYouTyped: "Bạn đã gõ",
+      mockResultLabel: "Kết quả",
+      mockStreakLabel: "7 ngày liên tiếp",
+      mockDueSuffix: "{count} đến hạn",
+      greetingWithName: "Chào {name}!",
+      greetingGeneric: "Chào bạn!",
+      levelLabel: "Cấp {level}",
+      streakDaysLabel: "{count} ngày liên tiếp",
+      finishGoalSetupTitle: "Hoàn tất thiết lập mục tiêu",
+      finishGoalSetupDescription:
+        "Chọn mục tiêu và trình độ để lộ trình hằng ngày có việc cho bạn.",
+      setupNowButton: "Thiết lập ngay",
+      pathLoadErrorMessage:
+        "Chưa tải được lộ trình hôm nay. Tải lại trang sau ít phút.",
+      upNextBadge: "Học tiếp",
+      nothingWaitingTitle: "Hôm nay chưa có việc nào đang chờ",
+      nothingWaitingDescription:
+        "Bạn đã hoàn thành lộ trình hiện tại. Khám phá bài trắc nghiệm hoặc chọn một hoạt động luyện tập khác.",
+      chooseLessonButton: "Khám phá bài luyện tập",
+      todaySectionTitle: "Hôm nay",
+      fullPathButton: "Xem lộ trình",
+      practiceSectionTitle: "Luyện tập",
+      xpToNextLevel: "Còn {remaining} XP để lên cấp {next}",
     },
     auth: {
       loginTitle: "Chào mừng trở lại",
@@ -1000,6 +1764,16 @@ export const translations: Record<Language, AppTranslations> = {
       inProgress: "In Progress",
       locked: "Locked",
       status: "Status",
+      copied: "Copied!",
+      notFoundTitle: "This {thing} does not exist",
+      notFoundDescription:
+        "It may have been removed, or the link is wrong. Pick one from the library instead.",
+      loadErrorTitle: "Could not load this {thing}",
+      loadErrorDescription:
+        "The server did not answer. Try again in a few minutes.",
+      languageSwitcherTooltip: "Switch UI language",
+      languageSwitcherMenuLabel: "Interface Language",
+      reset: "Reset",
     },
     account: {
       title: "My Profile",
@@ -1058,6 +1832,50 @@ export const translations: Record<Language, AppTranslations> = {
       supabaseAuthNotice:
         "Authenticated securely via Englow3 security services",
       secureSession: "Secure Session",
+      onboardingReady: "Ready to Learn",
+      onboardingStepLearningPurposes: "Learning Purposes",
+      onboardingStepCertificateTarget: "Certificate Target",
+      onboardingStepLearningGoal: "Score Goal",
+      studentId: "Student ID",
+      clickToCopyId: "Click to copy ID",
+      learningTargetsCardTitle: "Learning Targets",
+      targetScoreLabel: "Target Score",
+      currentLevelLabel: "Current Level",
+      targetSkillsLabel: "Target Skills",
+      certificateNotSelected: "None",
+      levelNotAssessed: "Not assessed",
+      updateLearningGoalsButton: "Update Learning Goals",
+      skillListening: "Listening",
+      skillReading: "Reading",
+      skillWriting: "Writing",
+      skillSpeaking: "Speaking",
+      skillGrammar: "Grammar",
+      skillVocabulary: "Vocabulary",
+      skillPronunciation: "Pronunciation",
+      notConfigured: "Not configured",
+      targetScoreEmpty: "None",
+      learningRoadmapTitle: "Learning Roadmap & Targets",
+      targetCertificateLabel: "Target Certificate",
+      goalPrefix: "Goal",
+      cefrEvaluationBadge: "CEFR Evaluation",
+      targetDeadlineLabel: "Target Deadline",
+      flexibleDeadline: "Flexible",
+      adaptiveScheduleBadge: "Adaptive Schedule",
+      prioritySkillsTitle: "Priority Focus Skills",
+      noSkillsSelectedHint:
+        'No specific skills selected yet. Click "Update Learning Goals" to configure.',
+      profileLoadErrorTitle: "Could not load profile",
+      profileLoadErrorDescription:
+        "An error occurred while loading profile details. Please verify your connection or sign in again.",
+      notSignedInTitle: "Not Signed In",
+      notSignedInDescription:
+        "Please sign in to view and edit your profile settings.",
+      saveErrorFallback: "Error saving profile",
+      fullNamePlaceholder: "e.g. John Doe",
+      displayNamePlaceholder: "e.g. jdoe",
+      selectGenderPlaceholder: "Select gender",
+      emailFieldDescription:
+        "Email is used for account login and notifications, cannot be edited here",
     },
     flashcard: {
       title: "3D Flashcards",
@@ -1102,6 +1920,95 @@ export const translations: Record<Language, AppTranslations> = {
       newCardsBadge: "New Cards",
       reviewHintSpace:
         "Press Space or click card to reveal definition and examples",
+      flipPrompt: "Flip card to reveal answer",
+      assessRetentionLabel: "ASSESS RETENTION LEVEL (Keys 1 - 4):",
+      ratingAgainHint: "Again (< 1 day)",
+      ratingHardHint: "Hard (2 days)",
+      ratingGoodHint: "Good (4 days)",
+      ratingEasyHint: "Easy (7 days)",
+      needsReviewBadge: "Needs review ({count} misses)",
+      listenNativeAudioTooltip: "Listen to native audio",
+      listenAudioAria: "Listen audio",
+      pronounceWordAria: "Pronounce word",
+      flipHintFooter: "Press Space or tap card to flip and view definition",
+      listenAgainAria: "Listen again",
+      vietnameseMeaningLabel: "VIETNAMESE MEANING:",
+      englishDefinitionLabel: "ENGLISH DEFINITION:",
+      contextExampleLabel: "CONTEXT EXAMPLE:",
+      memoryMnemonicLabel: "MEMORY MNEMONIC:",
+      rateRetentionFooter:
+        "Rate your retention below for optimal spaced repetition",
+      cardsReviewedPerDay: "Cards reviewed per day",
+      noReviewsInPeriod: "No reviews in this period yet.",
+      priorityWordsBadge: "{count} priority words",
+      deckColumn: "Deck",
+      missesColumnShort: "Misses",
+      lastReviewColumn: "Last Review",
+      audioColumn: "Audio",
+      noForgottenWords: "No words you keep forgetting yet.",
+      missCountBadge: "{count} times",
+      allTopicsChip: "All",
+      dailyConversationChip: "Daily Conversation",
+      travelChip: "Travel",
+      gridViewTooltip: "Grid view",
+      gridViewAria: "Grid view",
+      listViewTooltip: "List view",
+      listViewAria: "List view",
+      streakDaysBanner: "{count}-day streak",
+      cardsDueTodayMessage: "You have {count} cards due for review today!",
+      nothingDueTodayMessage: "Nothing is due for review today.",
+      startReviewCount: "Start Review ({count} cards)",
+      learnNewCardsButton: "Learn new cards",
+      noSetsToStudyButton: "No sets to study yet",
+      dueTodayLabel: "Due today:",
+      cardsUnit: "cards",
+      retentionRateLabel: "Retention rate:",
+      notStudiedYet: "Not started",
+      studiedToday: "Today",
+      studiedYesterday: "Yesterday",
+      daysAgoSuffix: "days ago",
+      wordsCountSuffix: "words",
+      dueCardsBadge: "{count} due",
+      reviewButton: "Review",
+      studyButton: "Study",
+      noSetsPublished:
+        "No flashcard sets have been published yet. Check back soon.",
+      noSetsMatchFilters:
+        "No sets match these filters. Try another search or topic.",
+      couldNotLoadSets: "Could not load flashcard sets",
+      period7DaysShort: "7 days",
+      period30DaysShort: "30 days",
+      period3MonthsShort: "3 months",
+      periodAllTimeShort: "All time",
+      backToDecksButton: "Back to Decks",
+      studyDeckNowButton: "Study Deck Now",
+      cardsDueTodayBadge: "{count} cards due today",
+      completedForTodayBadge: "Completed for today",
+      totalCardsLabel: "Total cards:",
+      lastStudiedLabel: "Last studied:",
+      masteredColonLabel: "Mastered:",
+      deckWordListTitle: "Card list in deck ({count} cards)",
+      clickSpeakerHint: "Click speaker icon to listen to native pronunciation",
+      ipaColumn: "IPA",
+      partOfSpeechColumn: "Part of Speech",
+      definitionColumn: "Definition",
+      englishMeaningColumn: "English Meaning",
+      statusColumn: "Status",
+      reviewStatusBadge: "Review",
+      learningStatusBadge: "Learning",
+      newStatusBadge: "New",
+      listenWordAria: "Listen to {word}",
+      exitSessionButton: "Exit session",
+      cardPositionLabel: "Card {current} of {total}",
+      nothingToReviewTitle: "Nothing to review yet",
+      nothingToReviewDescription:
+        "You have reviewed every card that is due in this deck. Come back when more are due.",
+      backToDeckButton: "Back to the deck",
+      setNameColumn: "Deck",
+      cardCountColumn: "Cards",
+      dueTodayColumn: "Due Today",
+      lastStudiedColumn: "Last Studied",
+      viewButton: "View",
     },
     pronunciation: {
       title: "Pronunciation",
@@ -1129,6 +2036,43 @@ export const translations: Record<Language, AppTranslations> = {
       consonants: "Consonants",
       diphthongs: "Diphthongs",
       lessonsList: "Pronunciation Lessons",
+      allLessonsSegment: "All Lessons",
+      noPromptsPublished:
+        "No pronunciation prompts have been published yet. Meanwhile, you can hear each sound in the IPA chart below.",
+      soundPrefix: "Sound",
+      bestScoreLabel: "Best score",
+      practiceNowButton: "Practise",
+      ipaChartTitle: "International Phonetic Alphabet (IPA) Chart",
+      ipaChartSubtitle: "Click a sound to hear it",
+      vowelsHeading: "VOWELS:",
+      consonantsHeading: "CONSONANTS:",
+      noPhonemeDetail: "No phoneme detail",
+      pronunciationScoreTitle: "Pronunciation score",
+      scoringExplanation:
+        "Scored by comparing your recording against the sentence, not by opinion.",
+      recordAgainButton: "Record again",
+      completenessLabel: "Completeness",
+      referenceLabel: "REFERENCE",
+      recognizedLabel: "WHAT WAS HEARD",
+      wordByWordLabel: "WORD BY WORD",
+      hoverWordHint: "Hover a word for its phoneme scores.",
+      yourRecordingLabel: "YOUR RECORDING",
+      yourRecordingFallback: "Your recording",
+      notScoredTitle: "Not scored",
+      uploadingLabel: "Uploading your recording...",
+      scoringLabel: "Scoring...",
+      sayThisLabel: "SAY THIS",
+      hearItButton: "Hear it",
+      slowlyButton: "Slowly",
+      tipsLabel: "Tips",
+      recordingBadge: "Recording",
+      stopAndScoreButton: "Stop and score",
+      playbackHint: "Play back what you recorded",
+      couldNotLoadPrompts: "Could not load prompts",
+      backToPromptsButton: "Back to prompts",
+      backToLibraryButton: "Back to library",
+      notFinishedTitle: "Not finished",
+      checkResultAgainButton: "Check result again",
     },
     dailyPath: {
       title: "Adaptive Daily Learning Path",
@@ -1149,6 +2093,30 @@ export const translations: Record<Language, AppTranslations> = {
       nextMilestone: "Next Milestone",
       allQuizzes: "All Exercises",
       quizDifficulty: "Difficulty",
+      doneToday: "Done today",
+      doneTodayPercent: "Done today - {percent}%",
+      cardNoun: "card",
+      cardsNoun: "cards",
+      sentenceNoun: "sentence",
+      sentencesNoun: "sentences",
+      doneTodayCount: "{count} {noun} done today{accuracy}",
+      remainingLabel: "{remaining} {unit}",
+      alreadyDoneTodaySuffix: "{base} - {count} already done today",
+      nothingOutstandingTitle: "Nothing outstanding",
+      nothingOutstandingDescription:
+        "No cards are due and nothing is half-finished. Pick up a new set or lesson from the library to give the path something to plan.",
+      roadmapMapTitle: "Learning Roadmap",
+      roadmapMapSubtitle:
+        "Your own outstanding work. Due cards come first - only the review schedule has a deadline",
+      stagePrefix: "Stage {n}",
+      completePercentLabel: "{percent}% complete",
+      practiceAgainButton: "Practise again",
+      startNowButton: "Start now",
+      openButton: "Open",
+      todaysGoalsTitle: "Today's Goals",
+      resetsDaily: "Resets daily",
+      pageTitle: "Learning path",
+      couldNotLoadPath: "Could not load your path",
     },
     quiz: {
       questionNumber: "Question",
@@ -1169,6 +2137,49 @@ export const translations: Record<Language, AppTranslations> = {
       xpEarned: "Experience Points Earned",
       retakeQuiz: "Retake Quiz",
       backToRoadmap: "Back to Daily Path",
+      timeRemainingCaps: "TIME REMAINING:",
+      questionPaletteLabel: "QUESTION PALETTE:",
+      answeredLabel: "Answered",
+      unflagButton: "Unflag question",
+      flagButton: "Flag for review",
+      confirmSubmitTitle: "Confirm Quiz Submission",
+      unansweredWarningLong:
+        "You have {count} unanswered questions. Are you sure you want to submit now?",
+      allAnsweredMessage:
+        "You have answered all questions. Would you like to submit and view your detailed results now?",
+      keepWorkingButton: "Keep Working",
+      confirmSubmitButton: "Confirm Submit",
+      catalogueTitle: "Quiz Challenge Library",
+      allCategoriesSegment: "All Categories",
+      noQuizzesPublished:
+        "No quizzes have been published yet. Check back soon.",
+      questionsCountSuffix: "questions",
+      minutesUnitShort: "min",
+      passedBadge: "PASSED",
+      needsRetakeBadge: "NEEDS RETAKE",
+      passedMessage:
+        "Congratulations! You have passed the quiz with a great score.",
+      failedMessage:
+        "You have not reached the passing score for this quiz. Review the explanations below and try again!",
+      scoreLabel: "Score:",
+      pointsUnit: "pts",
+      timeSpentLabel: "Time spent:",
+      durationFormat: "{m}m {s}s",
+      experienceLabel: "Experience:",
+      detailedReviewTitle: "Detailed Review & Explanations ({count} questions)",
+      questionPrefix: "Question {n}:",
+      correctLabel: "Correct",
+      incorrectLabel: "Incorrect",
+      pointsAbbrev: "pts",
+      yourAnswerLabel: "YOUR ANSWER:",
+      correctAnswerLabel: "CORRECT ANSWER:",
+      explanationNoteLabel: "EXPLANATION & GRAMMAR NOTE:",
+      backToQuizzesButton: "Back to quizzes",
+      readyToStartTitle: "Ready to start?",
+      startExplanation:
+        "The clock starts when you press. Pressing again returns to the same attempt rather than opening a new one.",
+      exitQuizButton: "Exit Quiz",
+      questionPositionLabel: "Question {current} of {total}",
     },
     dictation: {
       title: "Audio Dictation Practice",
@@ -1181,6 +2192,8 @@ export const translations: Record<Language, AppTranslations> = {
       replaySentence: "Replay Sentence",
       inputPlaceholder: "Type exactly what you hear here...",
       checkAnswer: "Check Answer",
+      checkAnswerErrorTitle: "This answer could not be checked",
+      checkingAnswerDescription: "Checking your answer…",
       nextSentence: "Next Sentence",
       charHint: "Letter Hint",
       originalAudio: "Original Audio Track",
@@ -1210,6 +2223,127 @@ export const translations: Record<Language, AppTranslations> = {
       sentencesCompleted: "Completed Sentences",
       studyDuration: "Practice Duration",
       reviewMistakes: "Review Missed Words",
+      replaysBadge: "Replays: {count}",
+      back5Aria: "Back 5 seconds",
+      pauseAria: "Pause",
+      playAudioAria: "Play audio",
+      forward5Aria: "Forward 5 seconds",
+      speedLabel: "Speed",
+      chartsEmptyState:
+        "No data yet. Practise a few sentences to see the chart.",
+      sentencesPerDayLabel: "Sentences / day",
+      sentencesPracticedSuffix: "sentences practiced",
+      perfectScoreTitle: "Outstanding! 100% Accuracy",
+      wordsNeedCorrection: "{count} words need correction",
+      accuracyDetail:
+        "Accuracy: {percent}% ({correct} / {total} words correct)",
+      legendCorrect: "Correct",
+      legendIncorrect: "Incorrect",
+      legendMissing: "Missing",
+      fullSentenceLabel: "Full Target Sentence:",
+      tokensToFixLabel: "Tokens to Fix:",
+      mistakesOnlySegment: "Mistakes only",
+      fullSentenceSegment: "Full sentence",
+      noErrorsDetected: "No errors detected!",
+      replayAudioButton: "Replay Audio",
+      finishAndViewResults: "Finish & View Results",
+      filterByTopicAria: "Filter by topic",
+      filterByLevelAria: "Filter by level",
+      filterByStatusAria: "Filter by status",
+      sortLessonsAria: "Sort lessons",
+      noHardSentences: "No sentences giving you trouble yet.",
+      avgAccuracyPrefix: "Avg. Accuracy",
+      attemptsSuffix: "attempts",
+      practiceButton: "Practice",
+      hintWordCountLabel: "Word count in sentence",
+      wordsUnit: "words",
+      hintFirstLettersLabel: "First letter of each word",
+      hintRevealWordLabel: "Reveal 1 key word",
+      hintTranslationLabel: "Vietnamese translation",
+      hintPartialTranscriptLabel: "Sentence opening excerpt",
+      collapseHints: "Collapse hints",
+      needHint: "Need a hint?",
+      hintsUsedBadge: "Used: {count} hints",
+      hintsCounterNote:
+        "* Each unlocked hint counts toward the hints used in session stats.",
+      unlockHint: "Unlock",
+      dateColumn: "Date",
+      lessonColumn: "Lesson",
+      sentencesColumn: "Sentences",
+      durationColumn: "Duration",
+      hintsColumn: "Hints",
+      actionColumn: "Action",
+      noSessionsYet: "No sessions yet.",
+      detailsButton: "Details",
+      wordsTypedCount: "{count} words typed",
+      toCheckHint: "to check",
+      skipButton: "Skip",
+      minutesUnit: "mins",
+      notPractisedYet: "Not started",
+      practisedToday: "Today",
+      practisedYesterday: "Yesterday",
+      daysAgoSuffix: "days ago",
+      sentenceCountSuffix: "sentences",
+      practiceAgainShort: "Practise again",
+      continueButton: "Continue",
+      topicColumn: "Topic",
+      difficultyColumn: "Difficulty",
+      progressColumn: "Progress",
+      wordColumn: "Word",
+      missesColumn: "Misses",
+      correctColumn: "Correct",
+      noMissedWords: "No words you keep mistyping yet.",
+      exampleLabel: "Example:",
+      timesUnit: "times",
+      allMistakesClearedTitle: "Great job! You cleared all mistakes!",
+      allMistakesClearedDescription:
+        "No sentences are giving you trouble. Keep practising and this list will fill itself.",
+      backToLessonsButton: "Back to lessons",
+      mistakePracticeBadge: "Mistake Practice",
+      queueCountLabel: "{count} sentences to review in queue",
+      queuePositionLabel: "Sentence {current} / {total}",
+      bestAttemptSummary: "Best {percent}% over {count} attempts",
+      clearMistakeHint:
+        "Listen and type accurately to clear this sentence from mistakes.",
+      lastTypedPrefix: "Last time you typed: ",
+      correctAnswerReveal: 'Correct answer: "{text}" ({percent}%)',
+      checkFailedMessage:
+        "Could not check this one. Check your connection and try again.",
+      clearedFeedback: "Correct! This sentence has been cleared from mistakes.",
+      notQuiteFeedback: "Not quite right. Please listen and try again!",
+      continueToNextButton: "Continue to next sentence",
+      tryNextButton: "Try next sentence",
+      reviewMistakesCount: "Review Mistakes ({count})",
+      hintsUnit: "hints",
+      perfectSentencesLabel: "100% Accurate Sentences:",
+      sentencesWithMistakesLabel: "Sentences with Mistakes:",
+      sentencesToReviewTitle: "Sentences to Review ({count})",
+      startReviewingMistakes: "Review Mistakes",
+      zeroMistakesMessage:
+        "Awesome! You completed this session with zero mistakes.",
+      yourInputShort: "Your Input:",
+      correctAnswerShort: "Correct Answer:",
+      backToLessonCatalog: "Back to Lesson Catalog",
+      completedLessonsLabel: "Completed Lessons",
+      lessonsUnit: "lessons",
+      averageAccuracyLabel: "Average Accuracy",
+      overallSentencesUnit: "overall sentences",
+      listeningHoursLabel: "Listening Hours",
+      focusedPracticeUnit: "focused practice",
+      sentencesPracticedLabel: "Sentences Practiced",
+      sentencesCompletedUnit: "completed",
+      statsPageTitle: "Dictation Statistics",
+      period7Days: "Past 7 Days",
+      period30Days: "Past 30 Days",
+      period3Months: "Past 3 Months",
+      periodAllTime: "All Time",
+      noLessonsPublished:
+        "No listening lessons have been published yet. Check back soon.",
+      noLessonsMatchFilters:
+        "No lessons match these filters. Try another topic, level or status.",
+      couldNotLoadLessons: "Could not load lessons",
+      checkConnectionReload: "Check your connection and reload the page.",
+      backToLibraryButton: "Back to Library",
     },
     exam: {
       title: "Exam Library",
@@ -1421,6 +2555,33 @@ export const translations: Record<Language, AppTranslations> = {
       ctaSubtitle: "Setting your goal takes a minute. Englow3 does the rest.",
       footerTagline: "Your unique path, your future in your hands.",
       footerProject: "Graduation project",
+      mockCardsDue: "12 cards due",
+      mockAcquireDefinition: "to gain, to obtain",
+      mockRatingAgain: "Again",
+      mockRatingGood: "Good",
+      mockRatingEasy: "Easy",
+      mockYouTyped: "You typed",
+      mockResultLabel: "Result",
+      mockStreakLabel: "7-day streak",
+      mockDueSuffix: "{count} due",
+      greetingWithName: "Hi {name}!",
+      greetingGeneric: "Welcome back!",
+      levelLabel: "Level {level}",
+      streakDaysLabel: "{count}-day streak",
+      finishGoalSetupTitle: "Finish setting your goal",
+      finishGoalSetupDescription:
+        "Pick a goal and level so your daily path has work for you.",
+      setupNowButton: "Set up now",
+      pathLoadErrorMessage: "Could not load today's path. Reload in a moment.",
+      upNextBadge: "Up next",
+      nothingWaitingTitle: "Nothing waiting for you today",
+      nothingWaitingDescription:
+        "You have completed the current path. Explore quizzes or choose another practice activity.",
+      chooseLessonButton: "Explore practice",
+      todaySectionTitle: "Today",
+      fullPathButton: "Full path",
+      practiceSectionTitle: "Practice",
+      xpToNextLevel: "{remaining} XP to level {next}",
     },
     auth: {
       loginTitle: "Welcome Back",

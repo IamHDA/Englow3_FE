@@ -1,6 +1,8 @@
 import express, { type Request, type Response, type Router } from "express";
 
-import { env } from "../config/env.js";
+import { createBackendClient } from "../shared/http/backendClient.js";
+import { BackendError } from "../shared/http/backendError.js";
+import { logServerError } from "../shared/http/logServerError.js";
 
 /**
  * The largest batch that will be forwarded.
@@ -61,12 +63,13 @@ export function importRoute(): Router {
 /**
  * Sends the file on as multipart, which is what the backend's endpoint takes.
  *
- * The learner's token rides along unread: authorisation is the backend's to
- * decide, and a BFF that checked the role itself would be a second place for
- * that answer to be wrong.
+ * The learner's token rides along with no more than a check that one is there:
+ * authorisation is the backend's to decide, and a BFF that checked the role
+ * itself would be a second place for that answer to be wrong.
  */
 async function forward(req: Request, res: Response, path: string) {
-  const token = req.headers.authorization;
+  const { token, requestId, client } = createBackendClient(req.headers);
+  res.setHeader("x-request-id", requestId);
   if (!token) {
     res.status(401).json({ code: "UNAUTHENTICATED", message: "Missing token" });
     return;
@@ -81,22 +84,39 @@ async function forward(req: Request, res: Response, path: string) {
     "import.json",
   );
 
+  const where = `rest ${req.baseUrl}${req.path}`;
+  const start = Date.now();
   try {
-    const response = await fetch(`${env.backendUrl}${path}`, {
-      method: "POST",
-      headers: { authorization: token },
-      body: form,
-      signal: AbortSignal.timeout(env.backendTimeoutMs),
-    });
+    const response = await client.send("POST", path, form);
 
-    // The backend's own body is passed through, including on a refusal: its
-    // rejection report is the whole point of the endpoint, and summarising it
-    // here would lose the rows an author needs to fix.
+    // A 5xx is the backend failing, not the file being refused: its body is a
+    // server's own account of what broke, which is for the log and not the
+    // author. The trace id is kept so the two sides can be lined up.
+    if (response.status >= 500) {
+      const failure = await BackendError.fromResponse(
+        response,
+        "POST",
+        path,
+        Date.now() - start,
+      );
+      logServerError({ requestId, where, error: failure });
+      res.status(response.status).json({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+        traceId: failure.traceId,
+      });
+      return;
+    }
+
+    // Anything else is passed through as the backend wrote it, including on a
+    // refusal: its rejection report is the whole point of the endpoint, and
+    // summarising it here would lose the rows an author needs to fix.
     res
       .status(response.status)
       .type("application/json")
       .send(await response.text());
-  } catch {
+  } catch (error) {
+    logServerError({ requestId, where, error });
     res.status(502).json({
       code: "BACKEND_UNREACHABLE",
       message: "Could not reach the backend service",

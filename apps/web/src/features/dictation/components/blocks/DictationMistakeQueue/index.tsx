@@ -43,7 +43,7 @@ export function DictationMistakeQueue({
   mistakes,
   onCheck,
 }: DictationMistakeQueueProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const [queue, setQueue] = useState<MistakeSentence[]>(mistakes);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [inputVal, setInputVal] = useState("");
@@ -126,14 +126,10 @@ export function DictationMistakeQueue({
             <Trophy size={36} />
           </ThemeIcon>
           <Title order={2} size="h3" fw={700} c="ink.9">
-            {isVi
-              ? "Xuất sắc! Bạn đã vượt qua tất cả câu sai!"
-              : "Great job! You cleared all mistakes!"}
+            {t.dictation.allMistakesClearedTitle}
           </Title>
           <Text size="sm" c="ink.6" style={{ maxWidth: 460 }}>
-            {isVi
-              ? "Không còn câu nào bạn hay sai. Cứ luyện tiếp, danh sách này sẽ tự cập nhật."
-              : "No sentences are giving you trouble. Keep practising and this list will fill itself."}
+            {t.dictation.allMistakesClearedDescription}
           </Text>
           <Group gap="sm" mt="md">
             <Button
@@ -144,7 +140,7 @@ export function DictationMistakeQueue({
               radius="md"
               leftSection={<ArrowLeft size={16} />}
             >
-              {isVi ? "Quay lại thư viện bài học" : "Back to lessons"}
+              {t.dictation.backToLessonsButton}
             </Button>
           </Group>
         </Stack>
@@ -160,20 +156,21 @@ export function DictationMistakeQueue({
           <Group justify="space-between" align="center" wrap="wrap">
             <Group gap="xs">
               <Badge color="orange" variant="light" size="sm">
-                {isVi ? "Luyện tập câu sai" : "Mistake Practice"}
+                {t.dictation.mistakePracticeBadge}
               </Badge>
               <Text size="xs" c="ink.5">
                 •{" "}
-                {isVi
-                  ? `${queue.length} câu cần ôn tập trong danh sách`
-                  : `${queue.length} sentences to review in queue`}
+                {t.dictation.queueCountLabel.replace(
+                  "{count}",
+                  String(queue.length),
+                )}
               </Text>
             </Group>
 
             <Text size="xs" fw={600} c="ink.7">
-              {isVi
-                ? `Câu ${currentIndex + 1} / ${queue.length}`
-                : `Sentence ${currentIndex + 1} / ${queue.length}`}
+              {t.dictation.queuePositionLabel
+                .replace("{current}", String(currentIndex + 1))
+                .replace("{total}", String(queue.length))}
             </Text>
           </Group>
 
@@ -206,22 +203,18 @@ export function DictationMistakeQueue({
       {/* Previous Attempt Note Banner */}
       <Alert
         icon={<AlertCircle size={18} />}
-        title={
-          isVi
-            ? `Tốt nhất ${currentItem.bestAccuracyPercent}% sau ${currentItem.attemptCount} lần thử`
-            : `Best ${currentItem.bestAccuracyPercent}% over ${currentItem.attemptCount} attempts`
-        }
+        title={t.dictation.bestAttemptSummary
+          .replace("{percent}", String(currentItem.bestAccuracyPercent))
+          .replace("{count}", String(currentItem.attemptCount))}
         color="orange"
         radius="md"
       >
         <Text size="xs" mb={4}>
-          {isVi
-            ? "Nghe lại và gõ đúng để gỡ câu này khỏi danh sách câu sai."
-            : "Listen and type accurately to clear this sentence from mistakes."}
+          {t.dictation.clearMistakeHint}
         </Text>
         {currentItem.lastResponse !== null && (
           <Text size="xs" fw={500} c="ink.8">
-            {isVi ? "Lần trước bạn gõ: " : "Last time you typed: "}
+            {t.dictation.lastTypedPrefix}
             <Text span fs="italic">
               &ldquo;{currentItem.lastResponse}&rdquo;
             </Text>
@@ -231,20 +224,16 @@ export function DictationMistakeQueue({
             sẵn trong danh sách. */}
         {isChecked && result && (
           <Text size="xs" fw={600} c="teal.9" mt="xs">
-            {isVi
-              ? `Đáp án chuẩn: “${result.correctText}” (${Math.round(result.accuracyPercent)}%)`
-              : `Correct answer: "${result.correctText}" (${Math.round(result.accuracyPercent)}%)`}
+            {t.dictation.correctAnswerReveal
+              .replace("{text}", result.correctText)
+              .replace("{percent}", String(Math.round(result.accuracyPercent)))}
           </Text>
         )}
       </Alert>
 
       {checkFailed && (
         <Alert color="warn" radius="md">
-          <Text size="sm">
-            {isVi
-              ? "Chưa chấm được câu này. Kiểm tra kết nối rồi bấm kiểm tra lại."
-              : "Could not check this one. Check your connection and try again."}
-          </Text>
+          <Text size="sm">{t.dictation.checkFailedMessage}</Text>
         </Alert>
       )}
 
@@ -295,12 +284,8 @@ export function DictationMistakeQueue({
               </ThemeIcon>
               <Text size="sm" fw={600} c={isCorrect ? "teal.9" : "warn.9"}>
                 {isCorrect
-                  ? isVi
-                    ? "Chính xác! Câu này sẽ được gỡ khỏi danh sách lỗi."
-                    : "Correct! This sentence has been cleared from mistakes."
-                  : isVi
-                    ? "Chưa hoàn toàn chính xác. Hãy nghe lại lần nữa nhé!"
-                    : "Not quite right. Please listen and try again!"}
+                  ? t.dictation.clearedFeedback
+                  : t.dictation.notQuiteFeedback}
               </Text>
             </Group>
 
@@ -314,12 +299,8 @@ export function DictationMistakeQueue({
               fw={600}
             >
               {isCorrect
-                ? isVi
-                  ? "Tiếp tục gỡ câu tiếp theo"
-                  : "Continue to next sentence"
-                : isVi
-                  ? "Thử lại câu tiếp theo"
-                  : "Try next sentence"}
+                ? t.dictation.continueToNextButton
+                : t.dictation.tryNextButton}
             </Button>
           </Flex>
         </Paper>

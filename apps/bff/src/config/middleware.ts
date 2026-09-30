@@ -18,13 +18,28 @@ export function corsMiddleware() {
 }
 
 /**
- * A ceiling on how fast one address can call.
- *
- * <p>Keyed on IP, which is the only thing available before a request is
+ * A ceiling on how fast one address can call - best-effort anti-abuse, not a
+ * quota. Keyed on IP, which is the only thing available before a request is
  * parsed. That makes it a blunt instrument - a university behind one NAT looks
  * like one caller - which is why the limit is set well above what a person
- * browsing could reach. The limits that matter per account live on the backend,
- * where the token has been verified and the user is known.
+ * browsing could reach.
+ *
+ * Its store (`express-rate-limit`'s default, in memory) is per process, and
+ * this app runs as a Vercel function (`apps/bff/api/index.ts`), not one
+ * long-lived server: concurrent instances each keep their own counter, and a
+ * cold start resets it to zero. Phase 12 reviewed this on purpose - it is not
+ * a global/shared quota across the deployment, and nothing here should be
+ * relied on as one.
+ *
+ * That is fine for what this guards against (scripted abuse from one
+ * address), which is why it stays as-is rather than gaining a shared store.
+ * Anything that actually needs a global ceiling - AI/account usage quotas
+ * included - is enforced on the backend, where the token has been verified
+ * and the user, not just an IP, is known.
+ *
+ * ponytail: instance-local memory store, move to a shared store (e.g. Redis)
+ * or platform-level protection if IP-based abuse ever needs a true global
+ * limit instead of an outer, best-effort one.
  */
 export function rateLimitMiddleware() {
   return rateLimit({

@@ -1,6 +1,7 @@
+import type { QuerySpeakingPromptsArgs } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
+import { toQueryString } from "../../shared/http/queryParams.js";
 import type {
-  SearchSpeakingPromptsParams,
   SpeakingAttemptResponse,
   SpeakingPromptPageResponse,
   SpeakingPromptResponse,
@@ -13,15 +14,16 @@ export class SpeakingApi {
   constructor(private readonly client: BackendClient) {}
 
   searchPrompts(
-    params: SearchSpeakingPromptsParams,
+    params: QuerySpeakingPromptsArgs,
   ): Promise<SpeakingPromptPageResponse> {
-    const query = new URLSearchParams();
-    if (params.category) query.set("category", params.category);
-    if (params.title) query.set("title", params.title);
-    query.set("page", String(params.page ?? 0));
-    query.set("size", String(params.size ?? 20));
+    const query = toQueryString({
+      category: params.category,
+      title: params.title,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
 
-    return this.client.get(`${SPEAKING_BASE_PATH}/prompts?${query.toString()}`);
+    return this.client.get(`${SPEAKING_BASE_PATH}/prompts?${query}`);
   }
 
   getPrompt(id: string): Promise<SpeakingPromptResponse> {

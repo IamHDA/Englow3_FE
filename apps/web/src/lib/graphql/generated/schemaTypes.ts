@@ -356,7 +356,7 @@ export type ExamAttempt = {
    */
   expiresAt: Scalars["DateTime"]["output"];
   id: Scalars["ID"]["output"];
-  maxRawScore?: Maybe<Scalars["Float"]["output"]>;
+  maxRawScore: Scalars["Float"]["output"];
   questionCount: Scalars["Int"]["output"];
   /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
   questions: Array<AttemptQuestionReview>;
@@ -1000,7 +1000,7 @@ export type MutationUpdateProfileArgs = {
 
 export type OnboardingState = {
   __typename?: "OnboardingState";
-  certificateLearner?: Maybe<Scalars["Boolean"]["output"]>;
+  certificateLearner: Scalars["Boolean"]["output"];
   currentLevel?: Maybe<CefrLevel>;
   learningPurposeIds: Array<Scalars["Int"]["output"]>;
   /**

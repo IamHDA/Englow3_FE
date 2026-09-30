@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Grid, Skeleton, Stack } from "@mantine/core";
+import { Alert, Button, Grid, Skeleton, Stack } from "@mantine/core";
 import { IconCompass, IconSparkles } from "@tabler/icons-react";
 import React, { useState } from "react";
 
@@ -27,7 +27,7 @@ interface DailyPathViewProps {
 
 export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
   const [activeTab, setActiveTab] = useState<"roadmap" | "quizzes">(initialTab);
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   const { data } = useQuizzesQuery({
     variables: { size: QUIZ_PAGE_SIZE },
@@ -41,6 +41,7 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
     data: pathData,
     loading: pathLoading,
     error: pathError,
+    refetch: refetchPath,
   } = useDailyPathQuery({ fetchPolicy: "cache-and-network" });
 
   const path = pathData?.dailyPath;
@@ -49,7 +50,7 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
     <Page>
       <Stack gap="xl">
         <PageHeader
-          title={isVi ? "Lộ trình học" : "Learning path"}
+          title={t.dailyPath.pageTitle}
           actions={
             <PageTabs
               value={activeTab}
@@ -57,18 +58,33 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
               tabs={[
                 {
                   value: "roadmap",
-                  label: isVi ? "Hôm nay" : "Today",
+                  label: t.dailyPath.roadmapTab,
                   icon: <IconCompass size={16} />,
                 },
                 {
                   value: "quizzes",
-                  label: isVi ? "Trắc nghiệm" : "Quizzes",
+                  label: t.dailyPath.quizCatalogueTab,
                   icon: <IconSparkles size={16} />,
                 },
               ]}
             />
           }
         />
+
+        {pathError && !path && (
+          <Alert color="warn" title={t.dailyPath.couldNotLoadPath}>
+            <Stack gap="sm" align="flex-start">
+              <span>{t.dictation.checkConnectionReload}</span>
+              <Button
+                variant="light"
+                onClick={() => void refetchPath()}
+                loading={pathLoading}
+              >
+                {t.common.retry}
+              </Button>
+            </Stack>
+          </Alert>
+        )}
 
         {path ? (
           <DailyStreakBanner
@@ -85,31 +101,20 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
         {activeTab === "roadmap" ? (
           <Grid gap="md">
             <Grid.Col span={{ base: 12, md: 8 }}>
-              {pathError && !path ? (
-                <Alert
-                  color="warn"
-                  title={
-                    isVi
-                      ? "Không tải được lộ trình"
-                      : "Could not load your path"
-                  }
-                >
-                  {isVi
-                    ? "Kiểm tra kết nối tới backend rồi tải lại trang."
-                    : "Check the connection to the backend and reload."}
-                </Alert>
-              ) : path ? (
+              {path ? (
                 <DailyPathRoadmap tasks={path.tasks} />
               ) : (
-                <Skeleton height={420} radius="md" visible={pathLoading} />
+                !pathError && (
+                  <Skeleton height={420} radius="md" visible={pathLoading} />
+                )
               )}
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
               {path ? (
                 <DailyQuestsCard quests={path.quests} />
-              ) : (
+              ) : !pathError ? (
                 <Skeleton height={280} radius="md" visible={pathLoading} />
-              )}
+              ) : null}
             </Grid.Col>
           </Grid>
         ) : (

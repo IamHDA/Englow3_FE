@@ -266,7 +266,7 @@ export function useSpeakingPractice({
         clearInterval(timer);
         setPhase("error");
         setErrorMessage(
-          "Không lấy được kết quả. Bản ghi đã gửi vẫn được xử lý; hãy thử lấy kết quả lại.",
+          "Mất kết nối khi lấy kết quả. Bản ghi vẫn được giữ; hãy kiểm tra lại thay vì ghi lại.",
         );
       } finally {
         polling = false;
@@ -278,6 +278,12 @@ export function useSpeakingPractice({
       clearInterval(timer);
     };
   }, [phase, attempt, fetchAttempt]);
+
+  const checkAssessmentAgain = useCallback(() => {
+    if (attempt === null) return;
+    setErrorMessage(null);
+    setPhase("assessing");
+  }, [attempt]);
 
   const reset = useCallback(() => {
     operation.current += 1;
@@ -305,12 +311,6 @@ export function useSpeakingPractice({
   );
 
   return {
-    retryAssessment: () => {
-      if (attempt) {
-        setErrorMessage(null);
-        setPhase("assessing");
-      }
-    },
     phase,
     recordingSeconds,
     attempt,
@@ -319,6 +319,7 @@ export function useSpeakingPractice({
     startRecording,
     stopRecording,
     reset,
+    checkAssessmentAgain,
     playReference,
   };
 }

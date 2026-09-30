@@ -106,7 +106,7 @@ const SHORTCUTS: Shortcut[] = [
  * someone who already has was being shown it again.
  */
 export function LearnerHomeView() {
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
   const { profile } = useAccountProfile();
   const { requiresOnboarding, open: openOnboarding } = useOnboarding();
   const { data, loading, error } = useDailyPathQuery({
@@ -128,17 +128,13 @@ export function LearnerHomeView() {
         <Stack gap={2}>
           <Title order={1} c="navy.9" className={classes.greeting}>
             {name
-              ? isVi
-                ? `Chào ${name}!`
-                : `Hi ${name}!`
-              : isVi
-                ? "Chào bạn!"
-                : "Welcome back!"}
+              ? t.home.greetingWithName.replace("{name}", name)
+              : t.home.greetingGeneric}
           </Title>
           {path && (
             <Text size="sm" c="ink.6">
               {levelTitle(path.level, isVi)} ·{" "}
-              {isVi ? `Cấp ${path.level}` : `Level ${path.level}`}
+              {t.home.levelLabel.replace("{level}", String(path.level))}
             </Text>
           )}
         </Stack>
@@ -150,29 +146,17 @@ export function LearnerHomeView() {
             leftSection={<Flame size={18} aria-hidden="true" />}
             className={classes.streak}
           >
-            {isVi
-              ? `${path.streakDays} ngày liên tiếp`
-              : `${path.streakDays}-day streak`}
+            {t.home.streakDaysLabel.replace("{count}", String(path.streakDays))}
           </Badge>
         )}
       </Group>
 
       {requiresOnboarding && (
-        <Alert
-          color="orange"
-          radius="lg"
-          title={
-            isVi ? "Hoàn tất thiết lập mục tiêu" : "Finish setting your goal"
-          }
-        >
+        <Alert color="orange" radius="lg" title={t.home.finishGoalSetupTitle}>
           <Group justify="space-between" gap="sm">
-            <Text size="sm">
-              {isVi
-                ? "Chọn mục tiêu và trình độ để lộ trình hằng ngày có việc cho bạn."
-                : "Pick a goal and level so your daily path has work for you."}
-            </Text>
+            <Text size="sm">{t.home.finishGoalSetupDescription}</Text>
             <Button color="orange.5" onClick={openOnboarding}>
-              {isVi ? "Thiết lập ngay" : "Set up now"}
+              {t.home.setupNowButton}
             </Button>
           </Group>
         </Alert>
@@ -180,9 +164,7 @@ export function LearnerHomeView() {
 
       {error && !path && (
         <Alert color="warn" radius="lg">
-          {isVi
-            ? "Chưa tải được lộ trình hôm nay. Tải lại trang sau ít phút."
-            : "Could not load today's path. Reload in a moment."}
+          {t.home.pathLoadErrorMessage}
         </Alert>
       )}
 
@@ -198,7 +180,7 @@ export function LearnerHomeView() {
                   <Stack gap="md">
                     <Group gap="xs">
                       <Badge color="orange" variant="filled">
-                        {isVi ? "Học tiếp" : "Up next"}
+                        {t.home.upNextBadge}
                       </Badge>
                       <Text size="sm" c="navy.1">
                         {isVi
@@ -226,30 +208,26 @@ export function LearnerHomeView() {
                       rightSection={<ArrowRight size={18} aria-hidden="true" />}
                       className={classes.continueButton}
                     >
-                      {isVi ? "Bắt đầu" : "Start"}
+                      {t.common.start}
                     </Button>
                   </Stack>
                 ) : (
                   <Stack gap="md">
                     <Title order={2} c="white">
-                      {isVi
-                        ? "Hôm nay chưa có việc nào đang chờ"
-                        : "Nothing waiting for you today"}
+                      {t.home.nothingWaitingTitle}
                     </Title>
                     <Text size="sm" c="navy.0">
-                      {isVi
-                        ? "Chọn một bộ thẻ hoặc một bài nghe để bắt đầu."
-                        : "Pick a flashcard set or a listening lesson to begin."}
+                      {t.home.nothingWaitingDescription}
                     </Text>
                     <Button
                       component={Link}
-                      href="/study/flashcards"
+                      href="/study/daily-path?tab=quizzes"
                       color="orange.5"
                       size="md"
                       rightSection={<ArrowRight size={18} aria-hidden="true" />}
                       className={classes.continueButton}
                     >
-                      {isVi ? "Chọn bài học" : "Choose a lesson"}
+                      {t.home.chooseLessonButton}
                     </Button>
                   </Stack>
                 )}
@@ -262,7 +240,7 @@ export function LearnerHomeView() {
                 <Stack gap="sm">
                   <Group justify="space-between">
                     <Title order={3} c="navy.9">
-                      {isVi ? "Hôm nay" : "Today"}
+                      {t.home.todaySectionTitle}
                     </Title>
                     <Button
                       component={Link}
@@ -270,7 +248,7 @@ export function LearnerHomeView() {
                       variant="subtle"
                       size="compact-sm"
                     >
-                      {isVi ? "Xem lộ trình" : "Full path"}
+                      {t.home.fullPathButton}
                     </Button>
                   </Group>
                   {rest.map((task) => {
@@ -313,7 +291,7 @@ export function LearnerHomeView() {
             {/* Every kind of practice */}
             <Stack gap="sm">
               <Title order={3} c="navy.9">
-                {isVi ? "Luyện tập" : "Practice"}
+                {t.home.practiceSectionTitle}
               </Title>
               <SimpleGrid cols={{ base: 3, sm: 5 }} spacing="sm">
                 {SHORTCUTS.map(({ href, icon: Icon, vi, en, tone }) => (
@@ -348,7 +326,7 @@ export function LearnerHomeView() {
                 <Stack gap={8}>
                   <Group justify="space-between">
                     <Text fw={700}>
-                      {isVi ? `Cấp ${path.level}` : `Level ${path.level}`}
+                      {t.home.levelLabel.replace("{level}", String(path.level))}
                     </Text>
                     <Text size="sm" c="ink.6">
                       {path.totalXp} XP
@@ -365,9 +343,12 @@ export function LearnerHomeView() {
                     radius="xl"
                   />
                   <Text size="xs" c="ink.5">
-                    {isVi
-                      ? `Còn ${path.levelCostXp - path.xpIntoLevel} XP để lên cấp ${path.level + 1}`
-                      : `${path.levelCostXp - path.xpIntoLevel} XP to level ${path.level + 1}`}
+                    {t.home.xpToNextLevel
+                      .replace(
+                        "{remaining}",
+                        String(path.levelCostXp - path.xpIntoLevel),
+                      )
+                      .replace("{next}", String(path.level + 1))}
                   </Text>
                 </Stack>
               </Card>

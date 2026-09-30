@@ -21,7 +21,7 @@ interface DailyQuestsCardProps {
 }
 
 export function DailyQuestsCard({ quests }: DailyQuestsCardProps) {
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
 
   return (
     <Card withBorder padding="md" radius="md">
@@ -32,11 +32,11 @@ export function DailyQuestsCard({ quests }: DailyQuestsCardProps) {
               <IconTarget size={16} />
             </ThemeIcon>
             <Text fw={700} fz="sm" c="dark.9">
-              {isVi ? "Mục tiêu hôm nay" : "Today's Goals"}
+              {t.dailyPath.todaysGoalsTitle}
             </Text>
           </Group>
           <Badge variant="light" color="yellow" size="xs">
-            {isVi ? "Tính lại mỗi ngày" : "Resets daily"}
+            {t.dailyPath.resetsDaily}
           </Badge>
         </Group>
 

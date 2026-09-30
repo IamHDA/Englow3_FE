@@ -23,7 +23,7 @@ interface DictationHardSentencesProps {
 export function DictationHardSentences({
   sentences,
 }: DictationHardSentencesProps) {
-  const { isVi, t } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <Paper radius="md" p="lg" withBorder bg="white">
@@ -40,9 +40,7 @@ export function DictationHardSentences({
         <Stack gap="xs">
           {sentences.length === 0 && (
             <Text size="sm" c="ink.5" ta="center" py="md">
-              {isVi
-                ? "Chưa có câu nào khó với bạn."
-                : "No sentences giving you trouble yet."}
+              {t.dictation.noHardSentences}
             </Text>
           )}
           {sentences.map((s) => (
@@ -59,12 +57,10 @@ export function DictationHardSentences({
                       {s.topic}
                     </Badge>
                     <Badge size="xs" color="warn" variant="light">
-                      {isVi
-                        ? `Chính xác TB: ${s.avgAccuracyPercent}%`
-                        : `Avg. Accuracy: ${s.avgAccuracyPercent}%`}
+                      {t.dictation.avgAccuracyPrefix}: {s.avgAccuracyPercent}%
                     </Badge>
                     <Text size="xs" c="ink.5">
-                      • {s.attemptsCount} {isVi ? "lần thử" : "attempts"}
+                      • {s.attemptsCount} {t.dictation.attemptsSuffix}
                     </Text>
                   </Group>
 
@@ -88,7 +84,7 @@ export function DictationHardSentences({
                   rightSection={<ArrowRight size={13} />}
                   fw={600}
                 >
-                  {isVi ? "Luyện tập" : "Practice"}
+                  {t.dictation.practiceButton}
                 </Button>
               </Flex>
             </Card>

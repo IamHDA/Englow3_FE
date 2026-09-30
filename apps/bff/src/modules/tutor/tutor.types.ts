@@ -1,44 +1,32 @@
-export type TutorMessageRole = "USER" | "ASSISTANT";
+import type {
+  TutorMessageRole,
+  TutorMessageStatus,
+} from "../../generated/graphql.js";
+import type { paths } from "../../generated/backend-openapi.js";
 
-export type TutorMessageStatus = "PENDING" | "READY" | "FAILED";
+type RawTutorConversation =
+  paths["/api/tutor/conversations/{id}"]["get"]["responses"][200]["content"]["application/json"];
+type RawTutorMessage = RawTutorConversation["messages"][number];
 
-// mirrors GET /api/tutor/conversations/{id} exactly as the backend returns it
-export type TutorMessageResponse = {
-  id: string;
-  orderNo: number;
+export type TutorConversationSummaryResponse =
+  paths["/api/tutor/conversations"]["get"]["responses"][200]["content"]["application/json"][number];
+
+/**
+ * The backend serialises `role`/`status` with `message.getRole().name()` onto
+ * a plain `String` component (see TutorMessageResult.java), so OpenAPI can
+ * only say `string` - reasserted here as the real, fixed-value domain enum.
+ */
+export type TutorMessageResponse = Omit<RawTutorMessage, "role" | "status"> & {
   role: TutorMessageRole;
   status: TutorMessageStatus;
-  /**
-   * Null while a reply is pending. Deliberately not an empty string: the screen
-   * has to tell "still thinking" from "answered with nothing", and one value for
-   * both makes that impossible.
-   */
-  content: string | null;
-  /** Why no answer came, when none did. Shown instead of a bubble that never fills. */
-  errorCode: string | null;
-  model: string | null;
-  reported: boolean;
-  createdAt: string;
-  answeredAt: string | null;
 };
 
-export type TutorConversationSummaryResponse = {
-  id: string;
-  title: string;
-  topic: string | null;
-  messageCount: number;
-  lastMessageAt: string;
-  createdAt: string;
-};
-
-export type TutorConversationResponse = {
-  conversation: TutorConversationSummaryResponse;
+// mirrors GET /api/tutor/conversations/{id} exactly as the backend returns it -
+// also the shape POST /api/tutor/messages answers with (queues the reply and
+// hands back the conversation so far).
+export type TutorConversationResponse = Omit<
+  RawTutorConversation,
+  "messages"
+> & {
   messages: TutorMessageResponse[];
-};
-
-export type SendTutorMessageParams = {
-  /** Null starts a new thread. Sending a message is one thing the learner does. */
-  conversationId?: string | null;
-  message: string;
-  topic?: string | null;
 };

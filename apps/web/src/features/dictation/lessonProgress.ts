@@ -1,3 +1,4 @@
+import type { AppTranslations } from "@/shared/constants/translations";
 import type { DictationLesson } from "./types";
 
 export type DictationLessonStatus = "Not started" | "In progress" | "Completed";
@@ -21,22 +22,25 @@ export function lessonStatus(lesson: DictationLesson): DictationLessonStatus {
 }
 
 /** Tổng thời lượng audio, làm tròn lên phút - "0 phút" cho một bài có tiếng là sai. */
-export function estimatedTime(lesson: DictationLesson, isVi: boolean): string {
+export function estimatedTime(
+  lesson: DictationLesson,
+  t: AppTranslations,
+): string {
   const minutes = Math.max(1, Math.ceil(lesson.totalDurationSeconds / 60));
-  return isVi ? `${minutes} phút` : `${minutes} mins`;
+  return `${minutes} ${t.dictation.minutesUnit}`;
 }
 
 /** null nghĩa là chưa từng luyện, khác hẳn với "luyện 0 ngày trước". */
 export function lastPractisedLabel(
   lesson: DictationLesson,
-  isVi: boolean,
+  t: AppTranslations,
 ): string {
-  if (!lesson.lastPractisedAt) return isVi ? "Chưa luyện" : "Not started";
+  if (!lesson.lastPractisedAt) return t.dictation.notPractisedYet;
 
   const days = Math.floor(
     (Date.now() - Date.parse(lesson.lastPractisedAt)) / 86_400_000,
   );
-  if (days <= 0) return isVi ? "Hôm nay" : "Today";
-  if (days === 1) return isVi ? "Hôm qua" : "Yesterday";
-  return isVi ? `${days} ngày trước` : `${days} days ago`;
+  if (days <= 0) return t.dictation.practisedToday;
+  if (days === 1) return t.dictation.practisedYesterday;
+  return `${days} ${t.dictation.daysAgoSuffix}`;
 }

@@ -37,9 +37,10 @@ export function LoadErrorState({
   back,
   onRetry,
 }: LoadErrorStateProps) {
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
   const notFound = (kind ?? loadErrorKind(error)) === "not-found";
   const name = isVi ? thing.vi : thing.en;
+  const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
 
   const code = errorCodeOf(error);
   const unauthorized = code === "UNAUTHENTICATED";
@@ -52,13 +53,10 @@ export function LoadErrorState({
       ? isVi
         ? "Bạn không có quyền truy cập"
         : "Access denied"
-      : notFound
-        ? isVi
-          ? `Không tìm thấy ${name}`
-          : `This ${name} does not exist`
-        : isVi
-          ? `Không tải được ${name}`
-          : `Could not load this ${name}`;
+      : (notFound ? t.common.notFoundTitle : t.common.loadErrorTitle).replace(
+          "{thing}",
+          name,
+        );
   const description = unauthorized
     ? isVi
       ? "Về trang chủ và đăng nhập lại để tiếp tục."
@@ -68,12 +66,8 @@ export function LoadErrorState({
         ? "Tài khoản hiện tại không được phép mở nội dung này."
         : "Your account cannot access this content."
       : notFound
-        ? isVi
-          ? `${name[0].toUpperCase()}${name.slice(1)} không tồn tại hoặc đã bị gỡ. Hãy chọn lại từ thư viện.`
-          : `It may have been removed, or the link is wrong. Pick one from the library instead.`
-        : isVi
-          ? "Máy chủ chưa phản hồi. Thử lại sau ít phút."
-          : "The server did not answer. Try again in a few minutes.";
+        ? t.common.notFoundDescription.replace("{Thing}", capitalizedName)
+        : t.common.loadErrorDescription;
 
   return (
     <Stack align="center" gap="md" py={60} role="alert">
@@ -109,7 +103,7 @@ export function LoadErrorState({
             onClick={onRetry}
             leftSection={<RotateCw size={16} aria-hidden="true" />}
           >
-            {isVi ? "Thử lại" : "Try again"}
+            {t.common.retry}
           </Button>
         )}
       </Group>

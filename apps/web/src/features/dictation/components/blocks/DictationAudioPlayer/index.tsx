@@ -39,7 +39,7 @@ export function DictationAudioPlayer({
   onForward5,
   onChangeSpeed,
 }: DictationAudioPlayerProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const progressRatio = duration > 0 ? currentTime / duration : 0;
   const activeBarIndex = Math.floor(
     progressRatio * DEFAULT_WAVEFORM_BARS.length,
@@ -99,9 +99,10 @@ export function DictationAudioPlayer({
             </Text>
             {replayCount > 0 && (
               <Badge variant="light" color="orange" size="sm" radius="sm">
-                {isVi
-                  ? `Đã nghe lại: ${replayCount} lần`
-                  : `Replays: ${replayCount}`}
+                {t.dictation.replaysBadge.replace(
+                  "{count}",
+                  String(replayCount),
+                )}
               </Badge>
             )}
           </Group>
@@ -113,8 +114,8 @@ export function DictationAudioPlayer({
               size="lg"
               radius="xl"
               onClick={onBack5}
-              title={isVi ? "Lùi lại 5 giây" : "Back 5 seconds"}
-              aria-label={isVi ? "Lùi lại 5 giây" : "Back 5 seconds"}
+              title={t.dictation.back5Aria}
+              aria-label={t.dictation.back5Aria}
             >
               <RotateCcw size={16} />
             </ActionIcon>
@@ -126,22 +127,10 @@ export function DictationAudioPlayer({
               radius="xl"
               onClick={onTogglePlay}
               title={
-                isPlaying
-                  ? isVi
-                    ? "Tạm dừng"
-                    : "Pause"
-                  : isVi
-                    ? "Phát âm thanh"
-                    : "Play audio"
+                isPlaying ? t.dictation.pauseAria : t.dictation.playAudioAria
               }
               aria-label={
-                isPlaying
-                  ? isVi
-                    ? "Tạm dừng"
-                    : "Pause"
-                  : isVi
-                    ? "Phát âm thanh"
-                    : "Play audio"
+                isPlaying ? t.dictation.pauseAria : t.dictation.playAudioAria
               }
             >
               {isPlaying ? (
@@ -156,8 +145,8 @@ export function DictationAudioPlayer({
               size="lg"
               radius="xl"
               onClick={onReplay}
-              title={isVi ? "Nghe lại câu này" : "Replay sentence"}
-              aria-label={isVi ? "Nghe lại câu này" : "Replay sentence"}
+              title={t.dictation.replaySentence}
+              aria-label={t.dictation.replaySentence}
             >
               <RotateCw size={16} />
             </ActionIcon>
@@ -167,8 +156,8 @@ export function DictationAudioPlayer({
               size="lg"
               radius="xl"
               onClick={onForward5}
-              title={isVi ? "Tua tới 5 giây" : "Forward 5 seconds"}
-              aria-label={isVi ? "Tua tới 5 giây" : "Forward 5 seconds"}
+              title={t.dictation.forward5Aria}
+              aria-label={t.dictation.forward5Aria}
             >
               <FastForward size={16} />
             </ActionIcon>
@@ -177,7 +166,7 @@ export function DictationAudioPlayer({
           {/* Playback Speed Controls */}
           <Group gap={4} align="center">
             <Text size="xs" c="ink.6" fw={500} mr={2}>
-              {isVi ? "Tốc độ:" : "Speed:"}
+              {t.dictation.speedLabel}:
             </Text>
             {speeds.map((s) => (
               <Button

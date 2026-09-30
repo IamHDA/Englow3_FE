@@ -7,3 +7,5 @@ build
 out
 coverage
 pnpm-lock.yaml
+apps/bff/src/generated
+apps/bff/src/modules/**/*.typeDefs.ts

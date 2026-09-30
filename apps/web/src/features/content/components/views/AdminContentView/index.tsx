@@ -116,7 +116,7 @@ export function AdminContentView({
     id: string,
     action: () => Promise<unknown>,
     successMessage: string,
-  ) {
+  ): Promise<boolean> {
     if (actionPending.current) return false;
     actionPending.current = true;
     setBusyId(id);
@@ -330,13 +330,14 @@ export function AdminContentView({
         }}
         onConfirm={async (note) => {
           const target = rejecting;
-          if (target === null) return;
+          if (target === null) return false;
           const succeeded = await runAction(
             target.id,
             () => rejectContent({ variables: { kind, id: target.id, note } }),
             "Đã trả lại kèm lý do.",
           );
           if (succeeded) setRejecting(null);
+          return succeeded;
         }}
       />
     </Page>

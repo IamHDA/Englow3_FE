@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 import { useOnboarding } from "@/features/onboarding";
-import { SKILL_LABELS } from "../../../constants/profile";
+import { skillLabel } from "../../../constants/profile";
 import type { AccountProfile } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -34,20 +34,15 @@ type ProfileLearningTabProps = {
 
 export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
   const { open } = useOnboarding();
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const state = profile.onboardingState;
 
-  const certificate =
-    state?.targetCertificateType ??
-    (isVi ? "Chưa thiết lập" : "Not configured");
+  const certificate = state?.targetCertificateType ?? t.account.notConfigured;
   const targetScore =
     state?.targetScore != null
       ? String(state.targetScore)
-      : isVi
-        ? "Chưa có"
-        : "None";
-  const currentLevel =
-    state?.currentLevel ?? (isVi ? "Chưa đánh giá" : "Not assessed");
+      : t.account.targetScoreEmpty;
+  const currentLevel = state?.currentLevel ?? t.account.levelNotAssessed;
   const targetDate = state?.targetDate ? String(state.targetDate) : null;
   const targetSkills = state?.targetSkills ?? [];
 
@@ -58,9 +53,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
           <Group justify="space-between" align="center" wrap="wrap">
             <Stack gap={4}>
               <Title order={3} fz={20} fw={700} c="ink.9">
-                {isVi
-                  ? "Lộ trình & Mục tiêu học tập"
-                  : "Learning Roadmap & Targets"}
+                {t.account.learningRoadmapTitle}
               </Title>
             </Stack>
 
@@ -71,7 +64,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
               leftSection={<Sparkles size={16} />}
               onClick={open}
             >
-              {isVi ? "Thiết lập lại mục tiêu" : "Update Learning Goals"}
+              {t.account.updateLearningGoalsButton}
             </Button>
           </Group>
 
@@ -96,7 +89,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                 </ThemeIcon>
                 <Stack gap={0}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    {isVi ? "Chứng chỉ hướng tới" : "Target Certificate"}
+                    {t.account.targetCertificateLabel}
                   </Text>
                   <Text size="md" fw={800} c="ink.9">
                     {certificate}
@@ -104,7 +97,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                 </Stack>
               </Group>
               <Badge color="orange" variant="light" size="sm">
-                {isVi ? `Mục tiêu: ${targetScore}` : `Goal: ${targetScore}`}
+                {t.account.goalPrefix}: {targetScore}
               </Badge>
             </Paper>
 
@@ -121,7 +114,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                 </ThemeIcon>
                 <Stack gap={0}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    {isVi ? "Trình độ hiện tại" : "Current Proficiency"}
+                    {t.account.currentLevelLabel}
                   </Text>
                   <Text size="md" fw={800} c="ink.9">
                     CEFR {currentLevel}
@@ -129,7 +122,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                 </Stack>
               </Group>
               <Badge color="teal" variant="light" size="sm">
-                {isVi ? "Đánh giá năng lực" : "CEFR Evaluation"}
+                {t.account.cefrEvaluationBadge}
               </Badge>
             </Paper>
 
@@ -146,15 +139,15 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                 </ThemeIcon>
                 <Stack gap={0}>
                   <Text size="xs" c="ink.5" fw={600}>
-                    {isVi ? "Thời hạn mục tiêu" : "Target Deadline"}
+                    {t.account.targetDeadlineLabel}
                   </Text>
                   <Text size="md" fw={800} c="ink.9">
-                    {targetDate ?? (isVi ? "Linh hoạt" : "Flexible")}
+                    {targetDate ?? t.account.flexibleDeadline}
                   </Text>
                 </Stack>
               </Group>
               <Badge color="blue" variant="light" size="sm">
-                {isVi ? "Lộ trình thích ứng" : "Adaptive Schedule"}
+                {t.account.adaptiveScheduleBadge}
               </Badge>
             </Paper>
           </SimpleGrid>
@@ -164,7 +157,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
             <Group gap="xs" align="center">
               <GraduationCap size={18} className={classes.sectionIcon} />
               <Title order={4} fz={15} fw={700} c="ink.8">
-                {isVi ? "Kỹ năng tập trung rèn luyện" : "Priority Focus Skills"}
+                {t.account.prioritySkillsTitle}
               </Title>
             </Group>
 
@@ -182,7 +175,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                     <Group gap="xs" align="center">
                       <Target size={14} className={classes.skillIcon} />
                       <Text size="sm" fw={600} c="ink.9">
-                        {isVi ? (SKILL_LABELS[skill] ?? skill) : skill}
+                        {skillLabel(skill, t)}
                       </Text>
                     </Group>
                   </Paper>
@@ -190,9 +183,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
               </Group>
             ) : (
               <Text size="sm" c="ink.5">
-                {isVi
-                  ? 'Chưa chọn kỹ năng cụ thể. Bạn có thể bấm nút "Thiết lập lại mục tiêu" để chọn.'
-                  : 'No specific skills selected yet. Click "Update Learning Goals" to configure.'}
+                {t.account.noSkillsSelectedHint}
               </Text>
             )}
           </Stack>

@@ -26,7 +26,7 @@ export function FlashcardStudyControls({
   onFlip,
   onRate,
 }: FlashcardStudyControlsProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   if (!isFlipped) {
     return (
@@ -42,7 +42,7 @@ export function FlashcardStudyControls({
           rightSection={<Kbd size="xs">Space</Kbd>}
           style={{ minWidth: 260 }}
         >
-          {isVi ? "Lật thẻ xem đáp án" : "Flip card to reveal answer"}
+          {t.flashcard.flipPrompt}
         </Button>
       </Group>
     );
@@ -51,9 +51,7 @@ export function FlashcardStudyControls({
   return (
     <Stack gap="xs" align="center" mt="md">
       <Text fz="xs" c="dimmed" fw={600}>
-        {isVi
-          ? "ĐÁNH GIÁ MỨC ĐỘ GHI NHỚ (Phím tắt 1 - 4):"
-          : "ASSESS RETENTION LEVEL (Keys 1 - 4):"}
+        {t.flashcard.assessRetentionLabel}
       </Text>
       <Group justify="center" gap="sm" wrap="wrap">
         {/* Rating 1: Again */}
@@ -67,7 +65,7 @@ export function FlashcardStudyControls({
           leftSection={<IconX size={18} />}
           rightSection={<Kbd size="xs">1</Kbd>}
         >
-          {isVi ? "Chưa nhớ" : "Again"}
+          {t.flashcard.ratingAgainHint}
         </Button>
 
         {/* Rating 2: Hard */}
@@ -81,7 +79,7 @@ export function FlashcardStudyControls({
           leftSection={<IconClock size={18} />}
           rightSection={<Kbd size="xs">2</Kbd>}
         >
-          {isVi ? "Khó" : "Hard"}
+          {t.flashcard.ratingHardHint}
         </Button>
 
         {/* Rating 3: Good */}
@@ -95,7 +93,7 @@ export function FlashcardStudyControls({
           leftSection={<IconCheck size={18} />}
           rightSection={<Kbd size="xs">3</Kbd>}
         >
-          {isVi ? "Nhớ tốt" : "Good"}
+          {t.flashcard.ratingGoodHint}
         </Button>
 
         {/* Rating 4: Easy */}
@@ -109,7 +107,7 @@ export function FlashcardStudyControls({
           leftSection={<IconMoodSmile size={18} />}
           rightSection={<Kbd size="xs">4</Kbd>}
         >
-          {isVi ? "Rất dễ" : "Easy"}
+          {t.flashcard.ratingEasyHint}
         </Button>
       </Group>
     </Stack>

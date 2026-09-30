@@ -14,13 +14,13 @@ import classes from "./HomeMocks.module.css";
  */
 
 export function FlashcardMock() {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   return (
     <div className={classes.panel}>
       <Group justify="space-between">
         <Badge color="navy">B2</Badge>
         <Text size="xs" c="ink.5">
-          {isVi ? "12 thẻ đến hạn" : "12 cards due"}
+          {t.home.mockCardsDue}
         </Text>
       </Group>
       <Stack gap={4} align="center" className={classes.flashcardFace}>
@@ -29,20 +29,20 @@ export function FlashcardMock() {
           /əˈkwaɪər/
         </Text>
         <Text size="sm" c="ink.8" fw={600}>
-          {isVi ? "đạt được, thu được" : "to gain, to obtain"}
+          {t.home.mockAcquireDefinition}
         </Text>
       </Stack>
       <div className={classes.rateRow}>
-        <span data-tone="warn">{isVi ? "Quên" : "Again"}</span>
-        <span data-tone="navy">{isVi ? "Nhớ" : "Good"}</span>
-        <span data-tone="teal">{isVi ? "Dễ" : "Easy"}</span>
+        <span data-tone="warn">{t.home.mockRatingAgain}</span>
+        <span data-tone="navy">{t.home.mockRatingGood}</span>
+        <span data-tone="teal">{t.home.mockRatingEasy}</span>
       </div>
     </div>
   );
 }
 
 export function DictationMock() {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   return (
     <div className={classes.panel}>
       <Group gap="sm" wrap="nowrap">
@@ -61,7 +61,7 @@ export function DictationMock() {
         />
       </Group>
       <Text size="xs" c="ink.5" mt="md">
-        {isVi ? "Bạn đã gõ" : "You typed"}
+        {t.home.mockYouTyped}
       </Text>
       <Text className={classes.sentence}>
         The meeting has been <mark data-kind="wrong">move</mark>{" "}
@@ -69,7 +69,7 @@ export function DictationMock() {
       </Text>
       <Group justify="space-between" mt="sm">
         <Text size="xs" c="ink.5">
-          {isVi ? "Độ chính xác" : "Accuracy"}
+          {t.dictation.accuracyScore}
         </Text>
         <Text size="sm" fw={700} c="teal.7">
           86%
@@ -81,7 +81,7 @@ export function DictationMock() {
 }
 
 export function ExamResultMock() {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const sections = [
     { label: "Listening", score: "7.5", value: 83 },
     { label: "Reading", score: "7.0", value: 78 },
@@ -95,7 +95,7 @@ export function ExamResultMock() {
             IELTS Academic · Test 05
           </Text>
           <Text fw={700} c="navy.9">
-            {isVi ? "Kết quả" : "Result"}
+            {t.home.mockResultLabel}
           </Text>
         </Stack>
         <div className={classes.band}>
@@ -130,7 +130,7 @@ export function ExamResultMock() {
 }
 
 export function StreakChip() {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   return (
     <div className={classes.chip}>
       <Flame
@@ -139,14 +139,14 @@ export function StreakChip() {
         aria-hidden="true"
       />
       <Text size="sm" fw={700} c="ink.8">
-        {isVi ? "7 ngày liên tiếp" : "7-day streak"}
+        {t.home.mockStreakLabel}
       </Text>
     </div>
   );
 }
 
 export function DeckListMock() {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const decks = [
     { name: "Core vocabulary B1", level: "B1", done: 72, due: 8 },
     { name: "Core vocabulary B2", level: "B2", done: 38, due: 15 },
@@ -165,7 +165,7 @@ export function DeckListMock() {
                 </Text>
               </Group>
               <Text size="xs" c="orange.7" fw={700}>
-                {isVi ? `${deck.due} đến hạn` : `${deck.due} due`}
+                {t.home.mockDueSuffix.replace("{count}", String(deck.due))}
               </Text>
             </Group>
             <Progress value={deck.done} color="teal" size="sm" radius="xl" />

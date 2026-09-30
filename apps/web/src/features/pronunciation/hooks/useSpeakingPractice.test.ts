@@ -90,11 +90,9 @@ describe("speech failure recovery", () => {
   });
 
   it("retries a failed result lookup without uploading or charging another assessment", async () => {
-    fetchAttempt
-      .mockRejectedValueOnce(new Error("offline"))
-      .mockResolvedValue({
-        data: { speakingAttempt: { id: "attempt", status: "ASSESSED" } },
-      });
+    fetchAttempt.mockRejectedValueOnce(new Error("offline")).mockResolvedValue({
+      data: { speakingAttempt: { id: "attempt", status: "ASSESSED" } },
+    });
     const { result, unmount } = renderHook(() =>
       useSpeakingPractice({ promptId: "prompt", referenceText: "Hello" }),
     );
@@ -114,7 +112,7 @@ describe("speech failure recovery", () => {
     expect(result.current.phase).toBe("error");
     expect(result.current.attempt?.id).toBe("attempt");
     act(() => {
-      result.current.retryAssessment();
+      result.current.checkAssessmentAgain();
     });
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1500);

@@ -26,7 +26,7 @@ export function DictationLessonGrid({
   lessons,
   emptyMessage,
 }: DictationLessonGridProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
 
   if (lessons.length === 0) {
     return (
@@ -51,7 +51,7 @@ export function DictationLessonGrid({
         const percent = progressPercent(lesson);
         const completed = status === "Completed";
         const started = status === "In progress";
-        const last = lastPractisedLabel(lesson, isVi);
+        const last = lastPractisedLabel(lesson, t);
         return (
           <LibraryCard
             key={lesson.id}
@@ -59,36 +59,28 @@ export function DictationLessonGrid({
             level={lesson.targetLevel}
             status={
               completed
-                ? { label: isVi ? "Hoàn thành" : "Completed", color: "teal" }
+                ? { label: t.common.completed, color: "teal" }
                 : undefined
             }
             title={lesson.title}
             meta={[
               {
                 icon: <Headphones size={15} />,
-                label: isVi
-                  ? `${lesson.sentenceCount} câu`
-                  : `${lesson.sentenceCount} sentences`,
+                label: `${lesson.sentenceCount} ${t.dictation.sentenceCountSuffix}`,
               },
-              { icon: <Clock size={15} />, label: estimatedTime(lesson, isVi) },
+              { icon: <Clock size={15} />, label: estimatedTime(lesson, t) },
             ]}
             progress={{
               value: percent,
-              label: last ?? (isVi ? "Chưa bắt đầu" : "Not started"),
+              label: last ?? t.dictation.notPractisedYet,
               color: completed ? "teal" : "orange",
             }}
             action={{
               label: completed
-                ? isVi
-                  ? "Luyện lại"
-                  : "Practise again"
+                ? t.dictation.practiceAgainShort
                 : started
-                  ? isVi
-                    ? "Tiếp tục"
-                    : "Continue"
-                  : isVi
-                    ? "Bắt đầu"
-                    : "Start",
+                  ? t.dictation.continueButton
+                  : t.common.start,
               href: `/study/dictation/${lesson.id}`,
               emphasis: started ? "continue" : "default",
             }}

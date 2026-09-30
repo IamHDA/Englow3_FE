@@ -8,7 +8,6 @@ import {
   Paper,
   Stack,
   Title,
-  Text,
 } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
@@ -20,7 +19,7 @@ import {
 import { DictationPracticeSkeleton } from "../../blocks/DictationPracticeSkeleton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 import { useDictationPractice } from "../../../hooks/useDictationPractice";
@@ -56,7 +55,7 @@ export function DictationPracticeView({
   lessonId,
 }: DictationPracticeViewProps) {
   const router = useRouter();
-  const { isVi } = useLanguage();
+  const { isVi, t } = useLanguage();
   const [hintDrawerOpen, setHintDrawerOpen] = useState(false);
 
   const { data, loading, error, refetch } = useDictationLessonDetailQuery({
@@ -90,6 +89,7 @@ export function DictationPracticeView({
     sentences,
     checkSentence,
   );
+  const updateReplayCount = practice.setReplayCount;
 
   const audio = useDictationAudio({
     audioUrl: practice.currentSentence?.audioUrl ?? null,
@@ -99,6 +99,16 @@ export function DictationPracticeView({
     audioStartMs: practice.currentSentence?.audioStartMs,
     audioEndMs: practice.currentSentence?.audioEndMs,
   });
+  const resetAudioReplayCount = audio.resetReplayCount;
+  const restartSession = practice.restartPractice;
+  const restartPractice = useCallback(() => {
+    resetAudioReplayCount();
+    restartSession();
+  }, [resetAudioReplayCount, restartSession]);
+
+  useEffect(() => {
+    updateReplayCount(audio.replayCount);
+  }, [audio.replayCount, updateReplayCount]);
 
   if (loading && lesson === undefined) {
     return <DictationPracticeSkeleton />;
@@ -112,7 +122,7 @@ export function DictationPracticeView({
           thing={{ vi: "bài nghe", en: "lesson" }}
           back={{
             href: "/study/dictation",
-            label: isVi ? "Về thư viện bài nghe" : "Back to lessons",
+            label: t.dictation.backToLessonsButton,
           }}
           onRetry={() => void refetch().catch(() => undefined)}
         />
@@ -124,17 +134,8 @@ export function DictationPracticeView({
     return (
       <Page width="focus">
         <DictationSessionSummary
-          summary={{
-            ...practice.summaryData,
-            metrics: {
-              ...practice.summaryData.metrics,
-              replays: audio.replayCount,
-            },
-          }}
-          onRestart={() => {
-            practice.restartPractice();
-            audio.resetReplayCount();
-          }}
+          summary={practice.summaryData}
+          onRestart={restartPractice}
           onReviewMistakes={() => {
             router.push(`/study/dictation/${lesson.id}/review`);
           }}
@@ -161,22 +162,12 @@ export function DictationPracticeView({
   return (
     <Page width="focus">
       <Stack gap="lg">
-        {practice.submitError && (
-          <Alert color="red" role="alert">
-            {isVi
-              ? "Chưa lưu được câu trả lời. Nội dung bạn nhập vẫn được giữ; hãy kiểm tra kết nối và thử lại."
-              : "Your answer could not be saved. Your text is kept; check your connection and try again."}
-          </Alert>
-        )}
         {audio.error && (
           <Alert color="red" role="alert">
             {isVi
               ? "Không phát được âm thanh. Thử phát lại hoặc tải lại bài nghe."
               : "Audio is unavailable. Try playing again or reload the lesson."}
           </Alert>
-        )}
-        {practice.submitting && (
-          <Text role="status">{isVi ? "Đang kiểm tra…" : "Checking…"}</Text>
         )}
         {/* Top Header Navigation Bar */}
         <Paper radius="md" p="md" withBorder bg="white">
@@ -191,7 +182,7 @@ export function DictationPracticeView({
                 radius="md"
                 leftSection={<ArrowLeft size={14} />}
               >
-                {isVi ? "Trở về Thư viện" : "Back to Library"}
+                {t.dictation.backToLibraryButton}
               </Button>
 
               <Title order={2} size="h5" fw={700} c="ink.9">
@@ -204,9 +195,9 @@ export function DictationPracticeView({
                 {lesson.targetLevel ?? ""}
               </Badge>
               <Badge size="sm" variant="filled" color="orange">
-                {isVi
-                  ? `Câu ${practice.currentIndex + 1} / ${practice.totalSentences}`
-                  : `Sentence ${practice.currentIndex + 1} / ${practice.totalSentences}`}
+                {t.dictation.queuePositionLabel
+                  .replace("{current}", String(practice.currentIndex + 1))
+                  .replace("{total}", String(practice.totalSentences))}
               </Badge>
             </Group>
           </Group>
@@ -219,10 +210,22 @@ export function DictationPracticeView({
           duration={audio.duration}
           playbackSpeed={audio.playbackSpeed}
           replayCount={audio.replayCount}
-          onTogglePlay={audio.togglePlay}
-          onReplay={audio.replay}
-          onBack5={audio.back5}
-          onForward5={audio.forward5}
+          onTogglePlay={() => {
+            practice.startSession();
+            audio.togglePlay();
+          }}
+          onReplay={() => {
+            practice.startSession();
+            audio.replay();
+          }}
+          onBack5={() => {
+            practice.startSession();
+            audio.back5();
+          }}
+          onForward5={() => {
+            practice.startSession();
+            audio.forward5();
+          }}
           onChangeSpeed={audio.changeSpeed}
         />
 
@@ -242,10 +245,20 @@ export function DictationPracticeView({
           onChange={practice.handleType}
           onCheckAnswer={practice.checkAnswer}
           onSkip={practice.skipSentence}
-          disabled={
-            practice.isChecked || practice.submitting || sentences.length === 0
-          }
+          disabled={practice.isChecked || practice.isSubmitting}
+          checking={practice.isSubmitting}
         />
+
+        {practice.submissionError && (
+          <Alert
+            color="red"
+            title={t.dictation.checkAnswerErrorTitle}
+            withCloseButton
+            onClose={practice.clearSubmissionError}
+          >
+            {t.dictation.checkConnectionReload}
+          </Alert>
+        )}
 
         {/* Checked Result Diff */}
         {practice.isChecked && practice.diffResult && (
@@ -253,7 +266,7 @@ export function DictationPracticeView({
             diff={practice.diffResult}
             expectedSentence={practice.currentCorrectText}
             onNextSentence={practice.nextSentence}
-            onTryAgain={practice.retrySentence}
+            onTryAgain={practice.tryAgain}
             onListenAgain={audio.replay}
             isLastSentence={
               practice.currentIndex + 1 >= practice.totalSentences

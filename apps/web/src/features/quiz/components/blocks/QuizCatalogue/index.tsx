@@ -19,7 +19,7 @@ interface QuizCatalogueProps {
 }
 
 export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
-  const { isVi } = useLanguage();
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const categories = useMemo(() => {
@@ -36,7 +36,7 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
     <Stack gap="md">
       <Group justify="space-between" align="center" wrap="wrap">
         <Text fw={800} fz="lg" c="dark.9">
-          {isVi ? "Kho bài tập trắc nghiệm" : "Quiz Challenge Library"}
+          {t.quiz.catalogueTitle}
         </Text>
 
         {/* One option is no choice: only offer the filter when there are
@@ -48,8 +48,7 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
             onChange={setSelectedCategory}
             data={categories.map((c) => ({
               value: c,
-              label:
-                c === "ALL" ? (isVi ? "Tất cả chủ đề" : "All Categories") : c,
+              label: c === "ALL" ? t.quiz.allCategoriesSegment : c,
             }))}
           />
         )}
@@ -58,9 +57,7 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
       {filteredQuizzes.length === 0 && (
         <Card withBorder radius="md" p="xl">
           <Text ta="center" c="dimmed" fz="sm">
-            {isVi
-              ? "Chưa có bài trắc nghiệm nào được phát hành. Quay lại sau nhé."
-              : "No quizzes have been published yet. Check back soon."}
+            {t.quiz.noQuizzesPublished}
           </Text>
         </Card>
       )}
@@ -75,27 +72,23 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
             meta={[
               {
                 icon: <IconHelpCircle size={15} />,
-                label: isVi
-                  ? `${quiz.questionCount} câu hỏi`
-                  : `${quiz.questionCount} questions`,
+                label: `${quiz.questionCount} ${t.quiz.questionsCountSuffix}`,
               },
               {
                 icon: <IconClock size={15} />,
-                label: isVi
-                  ? `${Math.round(quiz.timeLimitSeconds / 60)} phút`
-                  : `${Math.round(quiz.timeLimitSeconds / 60)} min`,
+                label: `${Math.round(quiz.timeLimitSeconds / 60)} ${t.quiz.minutesUnitShort}`,
               },
             ]}
             progress={
               quiz.bestScorePercent != null
                 ? {
                     value: quiz.bestScorePercent,
-                    label: isVi ? "Điểm cao nhất" : "Best score",
+                    label: t.pronunciation.bestScoreLabel,
                   }
                 : undefined
             }
             action={{
-              label: isVi ? "Làm bài" : "Start",
+              label: t.common.start,
               href: `/study/quiz/${quiz.id}`,
             }}
           />
