@@ -1625,6 +1625,14 @@ export type SubmitQuizAttemptMutation = {
   };
 };
 
+export type MyTourStatusQueryVariables = Exact<{ [key: string]: never }>;
+
+export type MyTourStatusQuery = { myTourStatus: { completed: boolean } };
+
+export type CompleteMyTourMutationVariables = Exact<{ [key: string]: never }>;
+
+export type CompleteMyTourMutation = { completeMyTour: { completed: boolean } };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -8118,6 +8126,59 @@ export const SubmitQuizAttemptDocument = {
 } as unknown as DocumentNode<
   SubmitQuizAttemptMutation,
   SubmitQuizAttemptMutationVariables
+>;
+export const MyTourStatusDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "MyTourStatus" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "myTourStatus" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "completed" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<MyTourStatusQuery, MyTourStatusQueryVariables>;
+export const CompleteMyTourDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CompleteMyTour" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "completeMyTour" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "completed" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CompleteMyTourMutation,
+  CompleteMyTourMutationVariables
 >;
 export const CurrentUserDocument = {
   kind: "Document",

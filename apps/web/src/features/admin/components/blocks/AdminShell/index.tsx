@@ -13,6 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   ArrowLeft,
   ClipboardList,
+  CircleHelp,
   Layers,
   LayoutDashboard,
   LogOut,
@@ -24,6 +25,7 @@ import type { ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { useAuth } from "@/features/auth";
+import { useUserTour } from "@/features/tour";
 
 const NAV = [
   { href: "/admin", label: "Tổng quan", icon: LayoutDashboard, exact: true },
@@ -45,6 +47,7 @@ export function AdminShell({ children }: AdminShellProps) {
   const [opened, { toggle, close }] = useDisclosure(false);
   const { session, signOut } = useAuth();
   const { profile } = useAccountProfile();
+  const { replay } = useUserTour();
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
@@ -112,6 +115,18 @@ export function AdminShell({ children }: AdminShellProps) {
 
         <AppShell.Section>
           <Stack gap={6}>
+            <Button
+              variant="subtle"
+              color="ink"
+              justify="flex-start"
+              leftSection={<CircleHelp size={16} aria-hidden="true" />}
+              onClick={() => {
+                close();
+                replay();
+              }}
+            >
+              Hướng dẫn sử dụng
+            </Button>
             <Button
               component={Link}
               href="/"

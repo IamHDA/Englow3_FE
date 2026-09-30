@@ -739,6 +739,7 @@ export type Mutation = {
    */
   archiveExam: Exam;
   archiveTutorConversation: TutorConversationSummary;
+  completeMyTour: UserTourStatus;
   /**
    * Final step. Refuses with ONBOARDING_PURPOSE_REQUIRED,
    * ONBOARDING_LEVEL_REQUIRED or ONBOARDING_CERTIFICATE_TARGET_REQUIRED when an
@@ -1119,6 +1120,7 @@ export type Query = {
   health: Scalars['String']['output'];
   learningPurposes: Array<LearningPurpose>;
   me: Me;
+  myTourStatus: UserTourStatus;
   /**
    * The placement paper, for a learner who does not know their level. Errors
    * with NOT_FOUND when the deployment has no published placement exam, which
@@ -1627,6 +1629,11 @@ export type UpdateProfileInput = {
   gender?: InputMaybe<Gender>;
 };
 
+export type UserTourStatus = {
+  __typename?: 'UserTourStatus';
+  completed: Scalars['Boolean']['output'];
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -1801,6 +1808,7 @@ export type ResolversTypes = ResolversObject<{
   TutorMessageRole: TutorMessageRole;
   TutorMessageStatus: TutorMessageStatus;
   UpdateProfileInput: UpdateProfileInput;
+  UserTourStatus: ResolverTypeWrapper<UserTourStatus>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1879,6 +1887,7 @@ export type ResolversParentTypes = ResolversObject<{
   TutorConversationSummary: TutorConversationSummary;
   TutorMessage: TutorMessage;
   UpdateProfileInput: UpdateProfileInput;
+  UserTourStatus: UserTourStatus;
 }>;
 
 export type AdminOverviewResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AdminOverview'] = ResolversParentTypes['AdminOverview']> = ResolversObject<{
@@ -2347,6 +2356,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   archiveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationArchiveContentArgs, 'id' | 'kind'>>;
   archiveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationArchiveExamArgs, 'id'>>;
   archiveTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationArchiveTutorConversationArgs, 'id'>>;
+  completeMyTour?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   completeOnboarding?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType>;
   publishContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationPublishContentArgs, 'id' | 'kind'>>;
   publishExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationPublishExamArgs, 'id'>>;
@@ -2411,6 +2421,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   learningPurposes?: Resolver<Array<ResolversTypes['LearningPurpose']>, ParentType, ContextType>;
   me?: Resolver<ResolversTypes['Me'], ParentType, ContextType>;
+  myTourStatus?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   placementExam?: Resolver<ResolversTypes['LearnerExamItem'], ParentType, ContextType>;
   quizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<QueryQuizAttemptArgs, 'id'>>;
   quizPaper?: Resolver<ResolversTypes['QuizPaper'], ParentType, ContextType, RequireFields<QueryQuizPaperArgs, 'attemptId'>>;
@@ -2606,6 +2617,10 @@ export type TutorMessageResolvers<ContextType = GraphQLContext, ParentType exten
   status?: Resolver<ResolversTypes['TutorMessageStatus'], ParentType, ContextType>;
 }>;
 
+export type UserTourStatusResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['UserTourStatus'] = ResolversParentTypes['UserTourStatus']> = ResolversObject<{
+  completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AdminOverview?: AdminOverviewResolvers<ContextType>;
   AttemptOptionReview?: AttemptOptionReviewResolvers<ContextType>;
@@ -2672,5 +2687,6 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   TutorConversation?: TutorConversationResolvers<ContextType>;
   TutorConversationSummary?: TutorConversationSummaryResolvers<ContextType>;
   TutorMessage?: TutorMessageResolvers<ContextType>;
+  UserTourStatus?: UserTourStatusResolvers<ContextType>;
 }>;
 

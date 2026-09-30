@@ -17,6 +17,7 @@ import { getAccountProfile } from "@/features/account/server/getAccountProfile";
 import { AuthProvider } from "@/features/auth";
 import { getServerSession } from "@/features/auth/server/getServerSession";
 import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
+import { UserTourProvider } from "@/features/tour";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { NavigationProgress } from "@/shared/components/NavigationProgress";
 import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
@@ -76,12 +77,14 @@ export default async function RootLayout({
               <AccountProvider initialProfile={initialProfile}>
                 <LanguageProvider>
                   <OnboardingProvider>
-                    <HideInAdmin>
-                      <SiteHeader />
-                    </HideInAdmin>
-                    <SlowBackendNotice />
-                    <main>{children}</main>
-                    <OnboardingGate />
+                    <UserTourProvider>
+                      <HideInAdmin>
+                        <SiteHeader />
+                      </HideInAdmin>
+                      <SlowBackendNotice />
+                      <main>{children}</main>
+                      <OnboardingGate />
+                    </UserTourProvider>
                   </OnboardingProvider>
                 </LanguageProvider>
               </AccountProvider>

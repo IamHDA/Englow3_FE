@@ -89,3 +89,40 @@ describe("Mutation.updateProfile", () => {
     expect(updateProfile).toHaveBeenCalledWith(input);
   });
 });
+
+describe("website tour", () => {
+  it("requires authentication before reading status or completing the tour", () => {
+    const getTourStatus = vi.fn();
+    const completeTour = vi.fn();
+    const ctx = makeContext({
+      token: null,
+      apis: { userApi: { getTourStatus, completeTour } },
+    });
+
+    expect(() => userResolvers.Query.myTourStatus({}, {}, ctx)).toThrow(
+      "Missing or invalid access token",
+    );
+    expect(() => userResolvers.Mutation.completeMyTour({}, {}, ctx)).toThrow(
+      "Missing or invalid access token",
+    );
+    expect(getTourStatus).not.toHaveBeenCalled();
+    expect(completeTour).not.toHaveBeenCalled();
+  });
+
+  it("forwards the current user's tour requests", async () => {
+    const getTourStatus = vi.fn().mockResolvedValue({ completed: false });
+    const completeTour = vi.fn().mockResolvedValue({ completed: true });
+    const ctx = makeContext({
+      apis: { userApi: { getTourStatus, completeTour } },
+    });
+
+    expect(await userResolvers.Query.myTourStatus({}, {}, ctx)).toEqual({
+      completed: false,
+    });
+    expect(await userResolvers.Mutation.completeMyTour({}, {}, ctx)).toEqual({
+      completed: true,
+    });
+    expect(getTourStatus).toHaveBeenCalledOnce();
+    expect(completeTour).toHaveBeenCalledOnce();
+  });
+});

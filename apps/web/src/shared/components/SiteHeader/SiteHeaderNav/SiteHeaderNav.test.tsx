@@ -34,6 +34,10 @@ vi.mock("@/features/onboarding", () => ({
   useOnboardingGuard: () => guardOnboarding,
 }));
 
+vi.mock("@/features/tour", () => ({
+  useUserTour: () => ({ canReplay: false, replay: vi.fn() }),
+}));
+
 function renderNav() {
   render(
     <MantineProvider theme={theme}>

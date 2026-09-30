@@ -751,6 +751,7 @@ export type Mutation = {
    */
   archiveExam: Exam;
   archiveTutorConversation: TutorConversationSummary;
+  completeMyTour: UserTourStatus;
   /**
    * Final step. Refuses with ONBOARDING_PURPOSE_REQUIRED,
    * ONBOARDING_LEVEL_REQUIRED or ONBOARDING_CERTIFICATE_TARGET_REQUIRED when an
@@ -1106,6 +1107,7 @@ export type Query = {
   health: Scalars["String"]["output"];
   learningPurposes: Array<LearningPurpose>;
   me: Me;
+  myTourStatus: UserTourStatus;
   /**
    * The placement paper, for a learner who does not know their level. Errors
    * with NOT_FOUND when the deployment has no published placement exam, which
@@ -1599,4 +1601,9 @@ export type UpdateProfileInput = {
   displayName: Scalars["String"]["input"];
   fullName: Scalars["String"]["input"];
   gender?: InputMaybe<Gender>;
+};
+
+export type UserTourStatus = {
+  __typename?: "UserTourStatus";
+  completed: Scalars["Boolean"]["output"];
 };

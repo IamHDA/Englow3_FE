@@ -5,3 +5,6 @@ import type { paths } from "../../generated/backend-openapi.js";
 // so one canonical path stands in for both.
 export type UserInformationResponse =
   paths["/api/user/me"]["get"]["responses"][200]["content"]["application/json"];
+
+export type UserTourStatusResponse =
+  paths["/api/user/me/tour"]["get"]["responses"][200]["content"]["application/json"];

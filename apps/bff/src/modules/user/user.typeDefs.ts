@@ -44,11 +44,17 @@ export const userTypeDefs = /* GraphQL */ `
     birthDate: Date
   }
 
+  type UserTourStatus {
+    completed: Boolean!
+  }
+
   extend type Query {
     me: Me!
+    myTourStatus: UserTourStatus!
   }
 
   extend type Mutation {
     updateProfile(input: UpdateProfileInput!): Me!
+    completeMyTour: UserTourStatus!
   }
 `;
