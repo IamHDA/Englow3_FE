@@ -3,7 +3,7 @@
 import { Alert, Card, Group, Pagination, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   ADMIN_EXAMS_PAGE_SIZE,
@@ -85,16 +85,21 @@ export function AdminExamListView() {
     setPage(0);
   }
 
+  const actionPending = useRef(false);
+
   async function runAction(
     id: string,
     action: () => Promise<unknown>,
     successMessage: string,
   ) {
+    if (actionPending.current) return false;
+    actionPending.current = true;
     setBusyExamId(id);
     try {
       await action();
-      await refetch();
       notifications.show({ color: "green", message: successMessage });
+      await refetch().catch(() => undefined);
+      return true;
     } catch (actionError) {
       const code = backendCodeOf(actionError);
       notifications.show({
@@ -103,7 +108,9 @@ export function AdminExamListView() {
         message:
           (code && ADMIN_EXAM_ERROR_MESSAGES[code]) ?? ADMIN_EXAM_GENERIC_ERROR,
       });
+      return false;
     } finally {
+      actionPending.current = false;
       setBusyExamId(null);
     }
   }
@@ -208,20 +215,21 @@ export function AdminExamListView() {
       </Stack>
 
       <RejectExamModal
+        key={rejecting?.id ?? "closed"}
         examTitle={rejecting?.title ?? null}
         submitting={rejecting !== null && busyExamId === rejecting.id}
-        onCancel={() => setRejecting(null)}
+        onCancel={() => {
+          if (!busyExamId) setRejecting(null);
+        }}
         onConfirm={async (note) => {
           const target = rejecting;
           if (target === null) return;
-          // Đóng hộp thoại trước khi gọi: giữ nó mở trong lúc chờ rồi đóng sau
-          // sẽ nhấp nháy, còn thông báo kết quả đã có ở notification.
-          setRejecting(null);
-          await runAction(
+          const succeeded = await runAction(
             target.id,
             () => rejectExam({ variables: { id: target.id, note } }),
             "Đã trả lại đề kèm lý do.",
           );
+          if (succeeded) setRejecting(null);
         }}
       />
     </Page>

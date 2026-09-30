@@ -56,7 +56,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
             href: "/study/flashcards",
             label: isVi ? "Về thư viện bộ thẻ" : "Back to decks",
           }}
-          onRetry={() => void refetch()}
+          onRetry={() => void refetch().catch(() => undefined)}
         />
       </Page>
     );

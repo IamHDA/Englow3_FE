@@ -12,7 +12,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFileUpload, IconUpload } from "@tabler/icons-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { supabase } from "@/lib/supabase/client";
 
@@ -50,27 +50,34 @@ export function FlashcardImportPanel({
   const [report, setReport] = useState<FlashcardImportReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const pending = useRef(false);
 
   async function run(commit: boolean) {
-    if (!file) {
+    if (
+      !file ||
+      pending.current ||
+      (!isDictation && !setId) ||
+      (commit && (!report || report.committed || report.acceptedCount === 0))
+    ) {
       return;
     }
 
-    // Read at the moment of upload rather than held in state: a token taken
-    // when the screen opened can have expired by the time a large file is
-    // chosen and sent.
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    if (!token) {
-      setError("Phiên đăng nhập đã hết hạn. Đăng nhập lại rồi thử lại.");
-      return;
-    }
-
+    pending.current = true;
     setBusy(true);
     setError(null);
     try {
+      // Read at the moment of upload rather than held in state: a token taken
+      // when the screen opened can have expired by the time a large file is
+      // chosen and sent.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) {
+        setError("Phiên đăng nhập đã hết hạn. Đăng nhập lại rồi thử lại.");
+        return;
+      }
+
       const json = await file.text();
       if (isDictation) {
         setReport(
@@ -91,6 +98,7 @@ export function FlashcardImportPanel({
         failure instanceof Error ? failure.message : "Không đọc được tệp.",
       );
     } finally {
+      pending.current = false;
       setBusy(false);
     }
   }
@@ -114,6 +122,7 @@ export function FlashcardImportPanel({
           placeholder="Chọn tệp .json"
           leftSection={<IconFileUpload size={16} />}
           value={file}
+          disabled={busy}
           onChange={(next) => {
             setFile(next);
             // Báo cáo cũ nói về tệp cũ. Giữ lại là nói dối về tệp vừa chọn.
@@ -134,7 +143,13 @@ export function FlashcardImportPanel({
           </Button>
           <Button
             leftSection={<IconUpload size={16} />}
-            disabled={!file || busy || !report || report.acceptedCount === 0}
+            disabled={
+              !file ||
+              busy ||
+              !report ||
+              report.committed ||
+              report.acceptedCount === 0
+            }
             onClick={() => void run(true)}
           >
             {isDictation ? "Nhập các bài này" : "Nhập vào bộ này"}

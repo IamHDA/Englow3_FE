@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { computeWordDiff } from "../utils/diff";
 import type {
   DictationLesson,
@@ -34,6 +34,14 @@ export function useDictationPractice(
     {},
   );
   const [isCompleted, setIsCompleted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+  const pending = useRef(false);
+  const startedAt = useRef<number | null>(null);
+  const [studySeconds, setStudySeconds] = useState(0);
+  useEffect(() => {
+    if (lesson.id) startedAt.current = Date.now();
+  }, [lesson.id]);
 
   // Per-sentence recorded results
   const [completedResults, setCompletedResults] = useState<
@@ -52,6 +60,7 @@ export function useDictationPractice(
   const totalSentences = sentences.length;
 
   const handleType = useCallback((value: string) => {
+    startedAt.current ??= Date.now();
     setTypedText(value);
   }, []);
 
@@ -71,31 +80,43 @@ export function useDictationPractice(
    */
   const recordAnswer = useCallback(
     async (answer: string) => {
-      if (!currentSentence) return null;
+      if (!currentSentence || pending.current || isCompleted) return null;
+      pending.current = true;
+      setSubmitting(true);
+      setSubmitError(false);
+      startedAt.current ??= Date.now();
+      try {
+        const submission = await checkSentence(currentSentence.id, answer);
+        if (!submission) throw new Error("Submission unavailable");
+        setStudySeconds(Math.floor((Date.now() - startedAt.current) / 1000));
 
-      const submission = await checkSentence(currentSentence.id, answer);
-      if (!submission) return null;
+        const diff: DiffResult = {
+          ...computeWordDiff(submission.correctText, answer),
+          accuracyPercent: Math.round(submission.accuracyPercent),
+          correctWordsCount: submission.correctWordCount,
+          totalWordsCount: submission.totalWordCount,
+        };
 
-      const diff: DiffResult = {
-        ...computeWordDiff(submission.correctText, answer),
-        accuracyPercent: Math.round(submission.accuracyPercent),
-        correctWordsCount: submission.correctWordCount,
-        totalWordsCount: submission.totalWordCount,
-      };
+        setCompletedResults((prev) => [
+          ...prev.filter((r) => r.sentence.id !== currentSentence.id),
+          {
+            sentence: currentSentence,
+            learnerAnswer: answer,
+            correctText: submission.correctText,
+            diff,
+          },
+        ]);
 
-      setCompletedResults((prev) => [
-        ...prev.filter((r) => r.sentence.id !== currentSentence.id),
-        {
-          sentence: currentSentence,
-          learnerAnswer: answer,
-          correctText: submission.correctText,
-          diff,
-        },
-      ]);
-
-      return diff;
+        return diff;
+      } catch {
+        setSubmitError(true);
+        return null;
+      } finally {
+        pending.current = false;
+        setSubmitting(false);
+      }
     },
-    [currentSentence, checkSentence],
+    [currentSentence, checkSentence, isCompleted],
   );
 
   const checkAnswer = useCallback(async () => {
@@ -106,6 +127,7 @@ export function useDictationPractice(
   }, [recordAnswer, typedText]);
 
   const nextSentence = useCallback(() => {
+    if (pending.current) return;
     if (currentIndex + 1 < totalSentences) {
       setCurrentIndex((prev) => prev + 1);
       setTypedText("");
@@ -120,11 +142,14 @@ export function useDictationPractice(
   // Bỏ qua vẫn là một lần trả lời - ghi lại chuỗi rỗng để lịch sử phản ánh đúng
   // những câu người học né, chứ không phải những câu họ chưa gặp.
   const skipSentence = useCallback(async () => {
-    await recordAnswer("");
-    nextSentence();
+    if (await recordAnswer("")) nextSentence();
   }, [recordAnswer, nextSentence]);
 
   const restartPractice = useCallback(() => {
+    if (pending.current) return;
+    startedAt.current = Date.now();
+    setStudySeconds(0);
+    setSubmitError(false);
     setCurrentIndex(0);
     setTypedText("");
     setIsChecked(false);
@@ -174,9 +199,9 @@ export function useDictationPractice(
       ),
       wordsCorrectRatio: `${correctWords} / ${totalWords}`,
       sentencesCompletedCount: completedResults.length,
-      studyDurationFormatted: "6m 15s",
+      studyDurationFormatted: `${Math.floor(studySeconds / 60)}m ${studySeconds % 60}s`,
       metrics: {
-        replays: 8,
+        replays: 0,
         hintsUsed: hintsUsedCount,
         perfectSentences: perfectCount,
         sentencesWithMistakes: mistakesList.length,
@@ -193,7 +218,21 @@ export function useDictationPractice(
       },
       mistakes: mistakesList,
     };
-  }, [completedResults, hintsUsedCount, lesson.targetLevel, lesson.title]);
+  }, [
+    completedResults,
+    hintsUsedCount,
+    lesson.targetLevel,
+    lesson.title,
+    studySeconds,
+  ]);
+
+  const retrySentence = useCallback(() => {
+    if (pending.current) return;
+    setIsChecked(false);
+    setDiffResult(null);
+    setTypedText("");
+    setSubmitError(false);
+  }, []);
 
   /** Transcript của câu vừa chấm. Rỗng cho tới khi người học nộp - đó là cả ý đồ. */
   const currentCorrectText =
@@ -218,5 +257,8 @@ export function useDictationPractice(
     nextSentence,
     skipSentence,
     restartPractice,
+    retrySentence,
+    submitting,
+    submitError,
   };
 }

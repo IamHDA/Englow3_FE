@@ -1,6 +1,15 @@
 "use client";
 
-import { Badge, Button, Group, Paper, Stack, Title } from "@mantine/core";
+import {
+  Alert,
+  Badge,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Title,
+  Text,
+} from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -105,7 +114,7 @@ export function DictationPracticeView({
             href: "/study/dictation",
             label: isVi ? "Về thư viện bài nghe" : "Back to lessons",
           }}
-          onRetry={() => void refetch()}
+          onRetry={() => void refetch().catch(() => undefined)}
         />
       </Page>
     );
@@ -115,8 +124,17 @@ export function DictationPracticeView({
     return (
       <Page width="focus">
         <DictationSessionSummary
-          summary={practice.summaryData}
-          onRestart={practice.restartPractice}
+          summary={{
+            ...practice.summaryData,
+            metrics: {
+              ...practice.summaryData.metrics,
+              replays: audio.replayCount,
+            },
+          }}
+          onRestart={() => {
+            practice.restartPractice();
+            audio.resetReplayCount();
+          }}
           onReviewMistakes={() => {
             router.push(`/study/dictation/${lesson.id}/review`);
           }}
@@ -125,9 +143,41 @@ export function DictationPracticeView({
     );
   }
 
+  if (sentences.length === 0) {
+    return (
+      <Page width="focus">
+        <Alert color="blue">
+          {isVi
+            ? "Bài nghe này chưa có câu luyện tập. Vui lòng chọn bài khác."
+            : "This lesson has no practice sentences yet. Please choose another lesson."}
+          <Button component={Link} href="/study/dictation" variant="subtle">
+            {isVi ? "Về thư viện" : "Back to lessons"}
+          </Button>
+        </Alert>
+      </Page>
+    );
+  }
+
   return (
     <Page width="focus">
       <Stack gap="lg">
+        {practice.submitError && (
+          <Alert color="red" role="alert">
+            {isVi
+              ? "Chưa lưu được câu trả lời. Nội dung bạn nhập vẫn được giữ; hãy kiểm tra kết nối và thử lại."
+              : "Your answer could not be saved. Your text is kept; check your connection and try again."}
+          </Alert>
+        )}
+        {audio.error && (
+          <Alert color="red" role="alert">
+            {isVi
+              ? "Không phát được âm thanh. Thử phát lại hoặc tải lại bài nghe."
+              : "Audio is unavailable. Try playing again or reload the lesson."}
+          </Alert>
+        )}
+        {practice.submitting && (
+          <Text role="status">{isVi ? "Đang kiểm tra…" : "Checking…"}</Text>
+        )}
         {/* Top Header Navigation Bar */}
         <Paper radius="md" p="md" withBorder bg="white">
           <Group justify="space-between" align="center" wrap="wrap">
@@ -192,7 +242,9 @@ export function DictationPracticeView({
           onChange={practice.handleType}
           onCheckAnswer={practice.checkAnswer}
           onSkip={practice.skipSentence}
-          disabled={practice.isChecked}
+          disabled={
+            practice.isChecked || practice.submitting || sentences.length === 0
+          }
         />
 
         {/* Checked Result Diff */}
@@ -201,10 +253,7 @@ export function DictationPracticeView({
             diff={practice.diffResult}
             expectedSentence={practice.currentCorrectText}
             onNextSentence={practice.nextSentence}
-            onTryAgain={() => {
-              // Allows user to try typing again
-              practice.handleType("");
-            }}
+            onTryAgain={practice.retrySentence}
             onListenAgain={audio.replay}
             isLastSentence={
               practice.currentIndex + 1 >= practice.totalSentences

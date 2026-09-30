@@ -135,3 +135,40 @@ describe("Mutation.updateProfile", () => {
     expect(updateProfile).toHaveBeenCalledWith(input);
   });
 });
+
+describe("website tour", () => {
+  it("requires a token before reading tour status", () => {
+    const getTourStatus = vi.fn();
+    const ctx = makeContext({
+      requireToken: () => {
+        throw new GraphQLError("Unauthenticated");
+      },
+      apis: { ...makeContext().apis, userApi: { getTourStatus } as any },
+    });
+
+    expect(() => userResolvers.Query.myTourStatus({}, {}, ctx)).toThrow(
+      "Unauthenticated",
+    );
+    expect(getTourStatus).not.toHaveBeenCalled();
+  });
+
+  it("reads and completes only the current user's tour", async () => {
+    const getTourStatus = vi.fn().mockResolvedValue({ completed: false });
+    const completeTour = vi.fn().mockResolvedValue({ completed: true });
+    const ctx = makeContext({
+      apis: {
+        ...makeContext().apis,
+        userApi: { getTourStatus, completeTour } as any,
+      },
+    });
+
+    expect(await userResolvers.Query.myTourStatus({}, {}, ctx)).toEqual({
+      completed: false,
+    });
+    expect(await userResolvers.Mutation.completeMyTour({}, {}, ctx)).toEqual({
+      completed: true,
+    });
+    expect(getTourStatus).toHaveBeenCalledOnce();
+    expect(completeTour).toHaveBeenCalledOnce();
+  });
+});

@@ -9,6 +9,10 @@ const STATUS_TO_CODE: Record<number, string> = {
   404: "NOT_FOUND",
   409: "CONFLICT",
   422: "BAD_USER_INPUT",
+  429: "TOO_MANY_REQUESTS",
+  502: "BACKEND_UNAVAILABLE",
+  503: "BACKEND_UNAVAILABLE",
+  504: "BACKEND_UNAVAILABLE",
 };
 
 const SAFE_MESSAGES: Record<string, string> = {
@@ -19,6 +23,7 @@ const SAFE_MESSAGES: Record<string, string> = {
   CONFLICT: "The request could not be completed due to a conflict",
   BACKEND_UNAVAILABLE: "The backend service is currently unavailable",
   INTERNAL_SERVER_ERROR: "An unexpected error occurred",
+  TOO_MANY_REQUESTS: "Too many requests. Please try again later",
 };
 
 function codeForStatus(status: number): string {
@@ -48,6 +53,15 @@ export function formatError(
       : error;
 
   if (!(original instanceof BackendError)) {
+    if (
+      !formattedError.extensions?.code ||
+      formattedError.extensions.code === "INTERNAL_SERVER_ERROR"
+    ) {
+      return {
+        message: SAFE_MESSAGES.INTERNAL_SERVER_ERROR,
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      };
+    }
     return formattedError;
   }
 

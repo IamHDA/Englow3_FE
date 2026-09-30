@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Search, ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { ContentKind, ContentStatus, Role } from "@/lib/graphql/generated";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
@@ -110,16 +110,21 @@ export function AdminContentView({
   const [publishContent] = usePublishContentMutation();
   const [archiveContent] = useArchiveContentMutation();
 
+  const actionPending = useRef(false);
+
   async function runAction(
     id: string,
     action: () => Promise<unknown>,
     successMessage: string,
   ) {
+    if (actionPending.current) return false;
+    actionPending.current = true;
     setBusyId(id);
     try {
       await action();
-      await refetch();
       notifications.show({ color: "green", message: successMessage });
+      await refetch().catch(() => undefined);
+      return true;
     } catch (actionError) {
       const code = backendCodeOf(actionError);
       notifications.show({
@@ -128,7 +133,9 @@ export function AdminContentView({
         message:
           (code && CONTENT_ERROR_MESSAGES[code]) ?? CONTENT_GENERIC_ERROR,
       });
+      return false;
     } finally {
+      actionPending.current = false;
       setBusyId(null);
     }
   }
@@ -225,7 +232,9 @@ export function AdminContentView({
               maw={420}
               clearable
             />
-            {importingInto && <FlashcardImportPanel setId={importingInto} />}
+            {importingInto && (
+              <FlashcardImportPanel key={importingInto} setId={importingInto} />
+            )}
           </Stack>
         )}
 
@@ -313,20 +322,21 @@ export function AdminContentView({
       </Stack>
 
       <RejectContentModal
+        key={rejecting?.id ?? "closed"}
         itemTitle={rejecting?.title ?? null}
         submitting={rejecting !== null && busyId === rejecting.id}
-        onCancel={() => setRejecting(null)}
+        onCancel={() => {
+          if (!busyId) setRejecting(null);
+        }}
         onConfirm={async (note) => {
           const target = rejecting;
           if (target === null) return;
-          // Đóng hộp thoại trước khi gọi: giữ nó mở trong lúc chờ rồi đóng sau
-          // sẽ nhấp nháy, còn kết quả đã có ở notification.
-          setRejecting(null);
-          await runAction(
+          const succeeded = await runAction(
             target.id,
             () => rejectContent({ variables: { kind, id: target.id, note } }),
             "Đã trả lại kèm lý do.",
           );
+          if (succeeded) setRejecting(null);
         }}
       />
     </Page>

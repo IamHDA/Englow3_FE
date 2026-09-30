@@ -33,7 +33,13 @@ export function DictationInputArea({
   const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    if (
+      !disabled &&
+      value.trim() &&
+      !e.nativeEvent.isComposing &&
+      (e.ctrlKey || e.metaKey) &&
+      e.key === "Enter"
+    ) {
       e.preventDefault();
       onCheckAnswer();
     }

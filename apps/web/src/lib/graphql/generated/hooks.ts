@@ -1628,6 +1628,14 @@ export type SubmitQuizAttemptMutation = {
   };
 };
 
+export type MyTourStatusQueryVariables = Exact<{ [key: string]: never }>;
+
+export type MyTourStatusQuery = { myTourStatus: { completed: boolean } };
+
+export type CompleteMyTourMutationVariables = Exact<{ [key: string]: never }>;
+
+export type CompleteMyTourMutation = { completeMyTour: { completed: boolean } };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -6594,6 +6602,156 @@ export type SubmitQuizAttemptMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     SubmitQuizAttemptMutation,
     SubmitQuizAttemptMutationVariables
+  >;
+export const MyTourStatusDocument = gql`
+  query MyTourStatus {
+    myTourStatus {
+      completed
+    }
+  }
+`;
+
+/**
+ * __useMyTourStatusQuery__
+ *
+ * To run a query within a React component, call `useMyTourStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyTourStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyTourStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyTourStatusQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    MyTourStatusQuery,
+    MyTourStatusQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    MyTourStatusQuery,
+    MyTourStatusQueryVariables
+  >(MyTourStatusDocument, options);
+}
+export function useMyTourStatusLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    MyTourStatusQuery,
+    MyTourStatusQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    MyTourStatusQuery,
+    MyTourStatusQueryVariables
+  >(MyTourStatusDocument, options);
+}
+export function useMyTourStatusSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    MyTourStatusQuery,
+    MyTourStatusQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  MyTourStatusQuery,
+  MyTourStatusQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useMyTourStatusSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        MyTourStatusQuery,
+        MyTourStatusQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  MyTourStatusQuery | undefined,
+  MyTourStatusQueryVariables
+>;
+export function useMyTourStatusSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        MyTourStatusQuery,
+        MyTourStatusQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    MyTourStatusQuery,
+    MyTourStatusQueryVariables
+  >(MyTourStatusDocument, options as any);
+}
+export type MyTourStatusQueryHookResult = ReturnType<
+  typeof useMyTourStatusQuery
+>;
+export type MyTourStatusLazyQueryHookResult = ReturnType<
+  typeof useMyTourStatusLazyQuery
+>;
+export type MyTourStatusSuspenseQueryHookResult = ReturnType<
+  typeof useMyTourStatusSuspenseQuery
+>;
+export type MyTourStatusQueryResult = ApolloReactCommon.QueryResult<
+  MyTourStatusQuery,
+  MyTourStatusQueryVariables
+>;
+export const CompleteMyTourDocument = gql`
+  mutation CompleteMyTour {
+    completeMyTour {
+      completed
+    }
+  }
+`;
+export type CompleteMyTourMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CompleteMyTourMutation,
+    CompleteMyTourMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useCompleteMyTourMutation__
+ *
+ * To run a mutation, you first call `useCompleteMyTourMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompleteMyTourMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [completeMyTourMutation, { data, loading, error }] = useCompleteMyTourMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCompleteMyTourMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CompleteMyTourMutation,
+    CompleteMyTourMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CompleteMyTourMutation,
+    CompleteMyTourMutationVariables
+  >(CompleteMyTourDocument, options);
+}
+export type CompleteMyTourMutationHookResult = ReturnType<
+  typeof useCompleteMyTourMutation
+>;
+export type CompleteMyTourMutationResult =
+  ApolloReactCommon.MutationResult<CompleteMyTourMutation>;
+export type CompleteMyTourMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CompleteMyTourMutation,
+    CompleteMyTourMutationVariables
   >;
 export const CurrentUserDocument = gql`
   query CurrentUser {

@@ -37,6 +37,7 @@ async function post(
       "content-type": "application/json",
     },
     body: json,
+    signal: AbortSignal.timeout(60_000),
   });
 
   const body = await response.text();
@@ -45,7 +46,22 @@ async function post(
     // reason, and replacing it with a generic line would throw that away.
     throw new Error(readMessage(body));
   }
-  return JSON.parse(body) as FlashcardImportReport;
+  try {
+    const report = JSON.parse(body) as FlashcardImportReport;
+    if (
+      typeof report.committed !== "boolean" ||
+      !Array.isArray(report.rejections) ||
+      !Number.isInteger(report.acceptedCount) ||
+      !Number.isInteger(report.rejectedCount)
+    ) {
+      throw new Error("Invalid report");
+    }
+    return report;
+  } catch {
+    throw new Error(
+      "Máy chủ trả về báo cáo không hợp lệ. Tải lại danh sách để kiểm tra trước khi nhập lại.",
+    );
+  }
 }
 
 function readMessage(body: string): string {

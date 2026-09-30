@@ -21,7 +21,7 @@ export interface UseFlashcardStudyOptions {
     cardId: string,
     rating: SRSRating,
     timeSpentSeconds: number,
-  ) => void;
+  ) => void | Promise<void>;
 }
 
 export function useFlashcardStudy({
@@ -40,6 +40,10 @@ export function useFlashcardStudy({
   });
   const [isCompleted, setIsCompleted] = useState(false);
   const [studySeconds, setStudySeconds] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const ratingPending = useRef(false);
+  const cardShownAtRef = useRef<number | null>(null);
 
   // Timer
   useEffect(() => {
@@ -92,47 +96,57 @@ export function useFlashcardStudy({
   // lời. Ref chứ không phải state: đổi nó không cần vẽ lại gì cả. Đặt lại ngay
   // trong lúc chấm chứ không qua effect - đây là hệ quả của một hành động, không
   // phải đồng bộ với thứ gì bên ngoài React.
-  const cardShownAtRef = useRef<number | null>(null);
 
   const rateCard = useCallback(
-    (rating: SRSRating) => {
-      const answeredAt = Date.now();
-      const shownAt = cardShownAtRef.current;
-      const card = cards[currentIndex];
-      if (card) {
-        onRate?.(
-          card.id,
-          rating,
-          shownAt === null ? 0 : Math.round((answeredAt - shownAt) / 1000),
-        );
-      }
-      // Thẻ kế tiếp bắt đầu đếm lại từ lần lật của chính nó.
-      cardShownAtRef.current = null;
+    async (rating: SRSRating) => {
+      if (ratingPending.current || isCompleted || !cards[currentIndex]) return;
+      ratingPending.current = true;
+      setSaving(true);
+      setSaveError(false);
+      try {
+        const answeredAt = Date.now();
+        const shownAt = cardShownAtRef.current;
+        const card = cards[currentIndex];
+        if (card) {
+          await onRate?.(
+            card.id,
+            rating,
+            shownAt === null ? 0 : Math.round((answeredAt - shownAt) / 1000),
+          );
+        }
+        // Thẻ kế tiếp bắt đầu đếm lại từ lần lật của chính nó.
+        cardShownAtRef.current = null;
 
-      const nextCounts = { ...ratingCounts };
-      if (rating === ReviewRating.AGAIN) nextCounts.again += 1;
-      else if (rating === ReviewRating.HARD) nextCounts.hard += 1;
-      else if (rating === ReviewRating.GOOD) nextCounts.good += 1;
-      else if (rating === ReviewRating.EASY) nextCounts.easy += 1;
-      setRatingCounts(nextCounts);
+        const nextCounts = { ...ratingCounts };
+        if (rating === ReviewRating.AGAIN) nextCounts.again += 1;
+        else if (rating === ReviewRating.HARD) nextCounts.hard += 1;
+        else if (rating === ReviewRating.GOOD) nextCounts.good += 1;
+        else if (rating === ReviewRating.EASY) nextCounts.easy += 1;
+        setRatingCounts(nextCounts);
 
-      if (currentIndex + 1 >= cards.length) {
-        setIsCompleted(true);
-        const totalReviewed = cards.length;
-        const successful = nextCounts.good + nextCounts.easy;
-        const accuracyPercent =
-          Math.round((successful / totalReviewed) * 100) || 0;
-        const summary: FlashcardSessionSummaryData = {
-          setName,
-          totalReviewed,
-          accuracyPercent,
-          studyDurationFormatted: formatDuration(studySeconds),
-          breakdown: nextCounts,
-        };
-        onComplete?.(summary);
-      } else {
-        setIsFlipped(false);
-        setCurrentIndex((prev) => prev + 1);
+        if (currentIndex + 1 >= cards.length) {
+          setIsCompleted(true);
+          const totalReviewed = cards.length;
+          const successful = nextCounts.good + nextCounts.easy;
+          const accuracyPercent =
+            Math.round((successful / totalReviewed) * 100) || 0;
+          const summary: FlashcardSessionSummaryData = {
+            setName,
+            totalReviewed,
+            accuracyPercent,
+            studyDurationFormatted: formatDuration(studySeconds),
+            breakdown: nextCounts,
+          };
+          onComplete?.(summary);
+        } else {
+          setIsFlipped(false);
+          setCurrentIndex((prev) => prev + 1);
+        }
+      } catch {
+        setSaveError(true);
+      } finally {
+        ratingPending.current = false;
+        setSaving(false);
       }
     },
     [
@@ -143,10 +157,14 @@ export function useFlashcardStudy({
       ratingCounts,
       setName,
       studySeconds,
+      isCompleted,
     ],
   );
 
   const restartStudy = useCallback(() => {
+    if (ratingPending.current) return;
+    cardShownAtRef.current = null;
+    setSaveError(false);
     setCurrentIndex(0);
     setIsFlipped(false);
     setRatingCounts({ again: 0, hard: 0, good: 0, easy: 0 });
@@ -157,10 +175,14 @@ export function useFlashcardStudy({
   // Keyboard shortcut: Space (flip), 1: Again, 2: Hard, 3: Good, 4: Easy
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isCompleted || saving || e.repeat) return;
       // Don't trigger if user is typing in an input
       if (
         e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target instanceof HTMLElement &&
+          (e.target.isContentEditable ||
+            !!e.target.closest("button, a, select, [role='dialog']")))
       ) {
         return;
       }
@@ -183,7 +205,7 @@ export function useFlashcardStudy({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [flipCard, isFlipped, rateCard]);
+  }, [flipCard, isFlipped, rateCard, isCompleted, saving]);
 
   const summaryData: FlashcardSessionSummaryData = useMemo(() => {
     const totalReviewed = cards.length;
@@ -211,5 +233,7 @@ export function useFlashcardStudy({
     speakCard,
     rateCard,
     restartStudy,
+    saving,
+    saveError,
   };
 }

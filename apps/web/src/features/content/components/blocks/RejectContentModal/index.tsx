@@ -30,6 +30,7 @@ export function RejectContentModal({
   const trimmed = note.trim();
 
   function handleClose() {
+    if (submitting) return;
     setNote("");
     onCancel();
   }
@@ -53,6 +54,7 @@ export function RejectContentModal({
           description="Nói rõ phải sửa gì, ví dụ: Mười hai thẻ chưa có file phát âm."
           placeholder="Mười hai thẻ chưa có file phát âm."
           value={note}
+          disabled={submitting}
           onChange={(event) => setNote(event.currentTarget.value)}
           maxLength={MAX_NOTE_LENGTH}
           autosize
@@ -73,7 +75,6 @@ export function RejectContentModal({
             loading={submitting}
             onClick={() => {
               onConfirm(trimmed);
-              setNote("");
             }}
           >
             Trả lại

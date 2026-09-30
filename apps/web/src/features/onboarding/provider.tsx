@@ -5,7 +5,7 @@ import { createContext, useState, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { hasOnboardingStepUi } from "@/features/onboarding/constants/onboardingSteps";
-import { OnboardingStep } from "@/lib/graphql/generated";
+import { OnboardingStep, Role } from "@/lib/graphql/generated";
 
 /**
  * Luồng xác thực (login, callback, đặt lại mật khẩu). Link đặt lại mật khẩu
@@ -33,6 +33,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const step = profile?.onboardingStep ?? null;
   const requiresOnboarding =
     profile != null &&
+    profile.role === Role.LEARNER &&
     step != null &&
     step !== OnboardingStep.COMPLETED &&
     hasOnboardingStepUi(step) &&

@@ -57,6 +57,8 @@ export function useSpeakingPractice({
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const chunksRef = useRef<Float32Array[]>([]);
   const durationTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const operation = useRef(0);
+  const busy = useRef(false);
 
   const [startAttempt] = useStartSpeakingAttemptMutation();
   const [submitAttempt] = useSubmitSpeakingAttemptMutation();
@@ -80,9 +82,24 @@ export function useSpeakingPractice({
     }
   }, []);
 
-  useEffect(() => releaseMicrophone, [releaseMicrophone]);
+  useEffect(
+    () => () => {
+      operation.current += 1;
+      releaseMicrophone();
+    },
+    [releaseMicrophone],
+  );
+  useEffect(
+    () => () => {
+      if (localAudioUrl) URL.revokeObjectURL(localAudioUrl);
+    },
+    [localAudioUrl],
+  );
 
   const startRecording = useCallback(async () => {
+    if (busy.current || streamRef.current) return;
+    busy.current = true;
+    const version = ++operation.current;
     setErrorMessage(null);
     setAttempt(null);
     setRecordingSeconds(0);
@@ -98,6 +115,10 @@ export function useSpeakingPractice({
           autoGainControl: true,
         },
       });
+      if (version !== operation.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
       streamRef.current = stream;
 
       const audioContext = new AudioContext();
@@ -124,14 +145,20 @@ export function useSpeakingPractice({
       );
       setPhase("recording");
     } catch {
+      if (version !== operation.current) return;
+      releaseMicrophone();
       setPhase("error");
       setErrorMessage(
         "Không truy cập được micro. Kiểm tra quyền truy cập của trình duyệt rồi thử lại.",
       );
+    } finally {
+      busy.current = false;
     }
-  }, []);
+  }, [releaseMicrophone]);
 
   const stopRecording = useCallback(async () => {
+    if (busy.current || !streamRef.current) return;
+    const version = operation.current;
     const sampleRate =
       audioContextRef.current?.sampleRate ?? TARGET_SAMPLE_RATE;
     const recorded = chunksRef.current;
@@ -145,6 +172,7 @@ export function useSpeakingPractice({
     }
 
     const wav = new Blob([encodeWav(samples)], { type: WAV_CONTENT_TYPE });
+    busy.current = true;
     setLocalAudioUrl(URL.createObjectURL(wav));
     setPhase("uploading");
 
@@ -160,6 +188,7 @@ export function useSpeakingPractice({
         },
       });
       const upload = ticket.data?.startSpeakingAttempt;
+      if (version !== operation.current) return;
       if (upload === undefined) {
         throw new Error("No upload ticket");
       }
@@ -170,19 +199,27 @@ export function useSpeakingPractice({
         method: "PUT",
         headers: { "Content-Type": upload.contentType },
         body: wav,
+        signal: AbortSignal.timeout(60_000),
       });
       if (!response.ok) {
         throw new Error(`Upload failed with ${response.status}`);
       }
+      if (version !== operation.current) return;
 
       const submitted = await submitAttempt({
         variables: { attemptId: upload.attemptId },
       });
-      setAttempt(submitted.data?.submitSpeakingAttempt ?? null);
+      if (version !== operation.current) return;
+      if (!submitted.data?.submitSpeakingAttempt)
+        throw new Error("No assessment attempt");
+      setAttempt(submitted.data.submitSpeakingAttempt);
       setPhase("assessing");
     } catch {
+      if (version !== operation.current) return;
       setPhase("error");
       setErrorMessage("Không gửi được bản ghi. Kiểm tra kết nối rồi thử lại.");
+    } finally {
+      busy.current = false;
     }
   }, [promptId, releaseMicrophone, startAttempt, submitAttempt]);
 
@@ -193,8 +230,11 @@ export function useSpeakingPractice({
 
     const attemptId = attempt.id;
     const startedAt = Date.now();
+    let cancelled = false;
+    let polling = false;
 
     const timer = setInterval(async () => {
+      if (polling || cancelled) return;
       if (Date.now() - startedAt > POLL_TIMEOUT_MS) {
         clearInterval(timer);
         setPhase("error");
@@ -204,26 +244,43 @@ export function useSpeakingPractice({
         return;
       }
 
-      const polled = await fetchAttempt({ variables: { id: attemptId } });
-      const latest = polled.data?.speakingAttempt;
-      if (latest === undefined) return;
+      polling = true;
+      try {
+        const polled = await fetchAttempt({ variables: { id: attemptId } });
+        if (cancelled) return;
+        const latest = polled.data?.speakingAttempt;
+        if (latest === undefined) throw new Error("Assessment unavailable");
 
-      if (latest.status === SpeakingAttemptStatus.ASSESSED) {
+        if (latest.status === SpeakingAttemptStatus.ASSESSED) {
+          clearInterval(timer);
+          setAttempt(latest);
+          setPhase("done");
+        } else if (latest.status === SpeakingAttemptStatus.FAILED) {
+          clearInterval(timer);
+          setAttempt(latest);
+          setPhase("error");
+          setErrorMessage("Không chấm được bản ghi này. Thử ghi lại rõ hơn.");
+        }
+      } catch {
+        if (cancelled) return;
         clearInterval(timer);
-        setAttempt(latest);
-        setPhase("done");
-      } else if (latest.status === SpeakingAttemptStatus.FAILED) {
-        clearInterval(timer);
-        setAttempt(latest);
         setPhase("error");
-        setErrorMessage("Không chấm được bản ghi này. Thử ghi lại rõ hơn.");
+        setErrorMessage(
+          "Không lấy được kết quả. Bản ghi đã gửi vẫn được xử lý; hãy thử lấy kết quả lại.",
+        );
+      } finally {
+        polling = false;
       }
     }, POLL_INTERVAL_MS);
 
-    return () => clearInterval(timer);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
   }, [phase, attempt, fetchAttempt]);
 
   const reset = useCallback(() => {
+    operation.current += 1;
     releaseMicrophone();
     setPhase("idle");
     setAttempt(null);
@@ -248,6 +305,12 @@ export function useSpeakingPractice({
   );
 
   return {
+    retryAssessment: () => {
+      if (attempt) {
+        setErrorMessage(null);
+        setPhase("assessing");
+      }
+    },
     phase,
     recordingSeconds,
     attempt,

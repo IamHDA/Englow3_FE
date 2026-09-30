@@ -47,13 +47,17 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
 
   async function send(email: string) {
     setSendError(null);
-    const error = await onSend(email);
-    if (error) {
-      setSendError(error);
-      return;
+    try {
+      const error = await onSend(email);
+      if (error) {
+        setSendError(error);
+        return;
+      }
+      setSentTo(email);
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch {
+      setSendError("Không gửi được email. Kiểm tra kết nối rồi thử lại.");
     }
-    setSentTo(email);
-    setCooldown(RESEND_COOLDOWN_SECONDS);
   }
 
   async function resend() {

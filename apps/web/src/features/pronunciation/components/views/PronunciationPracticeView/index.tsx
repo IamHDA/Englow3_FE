@@ -41,7 +41,7 @@ export function PronunciationPracticeView({
             href: "/study/pronunciation",
             label: isVi ? "Về danh sách câu luyện" : "Back to prompts",
           }}
-          onRetry={() => void refetch()}
+          onRetry={() => void refetch().catch(() => undefined)}
         />
       </Page>
     );
@@ -78,6 +78,7 @@ function Practice({
     stopRecording,
     reset,
     playReference,
+    retryAssessment,
   } = useSpeakingPractice({
     promptId,
     referenceText: prompt.referenceText,
@@ -128,6 +129,11 @@ function Practice({
             onClose={reset}
           >
             {errorMessage}
+            {attempt && (
+              <Button variant="subtle" onClick={retryAssessment}>
+                {isVi ? "Lấy kết quả lại" : "Retry result"}
+              </Button>
+            )}
           </Alert>
         )}
 

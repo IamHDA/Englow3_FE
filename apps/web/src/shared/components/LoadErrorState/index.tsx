@@ -5,7 +5,11 @@ import { ArrowLeft, RotateCw, SearchX, WifiOff } from "lucide-react";
 import Link from "next/link";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { loadErrorKind, type LoadErrorKind } from "@/shared/network/loadError";
+import {
+  errorCodeOf,
+  loadErrorKind,
+  type LoadErrorKind,
+} from "@/shared/network/loadError";
 
 type LoadErrorStateProps = {
   error?: unknown;
@@ -37,20 +41,39 @@ export function LoadErrorState({
   const notFound = (kind ?? loadErrorKind(error)) === "not-found";
   const name = isVi ? thing.vi : thing.en;
 
-  const title = notFound
+  const code = errorCodeOf(error);
+  const unauthorized = code === "UNAUTHENTICATED";
+  const forbidden = code === "FORBIDDEN";
+  const title = unauthorized
     ? isVi
-      ? `Không tìm thấy ${name}`
-      : `This ${name} does not exist`
-    : isVi
-      ? `Không tải được ${name}`
-      : `Could not load this ${name}`;
-  const description = notFound
+      ? "Phiên đăng nhập đã hết hạn"
+      : "Your session has expired"
+    : forbidden
+      ? isVi
+        ? "Bạn không có quyền truy cập"
+        : "Access denied"
+      : notFound
+        ? isVi
+          ? `Không tìm thấy ${name}`
+          : `This ${name} does not exist`
+        : isVi
+          ? `Không tải được ${name}`
+          : `Could not load this ${name}`;
+  const description = unauthorized
     ? isVi
-      ? `${name[0].toUpperCase()}${name.slice(1)} không tồn tại hoặc đã bị gỡ. Hãy chọn lại từ thư viện.`
-      : `It may have been removed, or the link is wrong. Pick one from the library instead.`
-    : isVi
-      ? "Máy chủ chưa phản hồi. Thử lại sau ít phút."
-      : "The server did not answer. Try again in a few minutes.";
+      ? "Về trang chủ và đăng nhập lại để tiếp tục."
+      : "Return home and sign in again to continue."
+    : forbidden
+      ? isVi
+        ? "Tài khoản hiện tại không được phép mở nội dung này."
+        : "Your account cannot access this content."
+      : notFound
+        ? isVi
+          ? `${name[0].toUpperCase()}${name.slice(1)} không tồn tại hoặc đã bị gỡ. Hãy chọn lại từ thư viện.`
+          : `It may have been removed, or the link is wrong. Pick one from the library instead.`
+        : isVi
+          ? "Máy chủ chưa phản hồi. Thử lại sau ít phút."
+          : "The server did not answer. Try again in a few minutes.";
 
   return (
     <Stack align="center" gap="md" py={60} role="alert">
@@ -71,13 +94,17 @@ export function LoadErrorState({
       <Group gap="sm" justify="center">
         <Button
           component={Link}
-          href={back.href}
+          href={unauthorized ? "/" : back.href}
           variant="default"
           leftSection={<ArrowLeft size={16} aria-hidden="true" />}
         >
-          {back.label}
+          {unauthorized
+            ? isVi
+              ? "Về trang chủ để đăng nhập"
+              : "Go home to sign in"
+            : back.label}
         </Button>
-        {!notFound && onRetry && (
+        {!notFound && !unauthorized && !forbidden && onRetry && (
           <Button
             onClick={onRetry}
             leftSection={<RotateCw size={16} aria-hidden="true" />}

@@ -207,6 +207,7 @@ export function QuizTimerPalette({
               size="sm"
               radius="md"
               onClick={open}
+              disabled={submitting || timeRemainingSeconds <= 0}
               leftSection={<IconSend size={16} />}
             >
               {isVi ? "Nộp bài kiểm tra" : "Submit Quiz"}
@@ -251,6 +252,7 @@ export function QuizTimerPalette({
               color="indigo"
               onClick={handleConfirmSubmit}
               loading={submitting}
+              disabled={timeRemainingSeconds <= 0}
             >
               {isVi ? "Xác nhận nộp bài" : "Confirm Submit"}
             </Button>

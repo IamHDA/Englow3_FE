@@ -5,6 +5,29 @@ import { formatError } from "./errors.js";
 import { BackendError } from "../shared/http/backendError.js";
 
 describe("formatError", () => {
+  it("hides unexpected resolver exceptions", () => {
+    const result = formatError(
+      {
+        message: "secret database detail",
+        extensions: { code: "INTERNAL_SERVER_ERROR", stacktrace: ["private"] },
+      },
+      new Error("secret database detail"),
+    );
+    expect(result).toEqual({
+      message: "An unexpected error occurred",
+      extensions: { code: "INTERNAL_SERVER_ERROR" },
+    });
+  });
+
+  it.each([502, 503, 504])(
+    "classifies HTTP %s as temporarily unavailable",
+    (status) => {
+      expect(
+        formatError({ message: "failed" }, new BackendError("failed", status))
+          .extensions?.code,
+      ).toBe("BACKEND_UNAVAILABLE");
+    },
+  );
   it("maps a 401 BackendError to UNAUTHENTICATED without leaking the backend message", () => {
     const backendError = new BackendError(
       "some internal detail from Spring Boot",

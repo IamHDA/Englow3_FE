@@ -15,12 +15,14 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface FlashcardStudyControlsProps {
   isFlipped: boolean;
+  disabled?: boolean;
   onFlip: () => void;
   onRate: (rating: SRSRating) => void;
 }
 
 export function FlashcardStudyControls({
   isFlipped,
+  disabled = false,
   onFlip,
   onRate,
 }: FlashcardStudyControlsProps) {
@@ -35,6 +37,7 @@ export function FlashcardStudyControls({
           color="indigo"
           radius="xl"
           onClick={onFlip}
+          disabled={disabled}
           leftSection={<IconRotateClockwise size={20} />}
           rightSection={<Kbd size="xs">Space</Kbd>}
           style={{ minWidth: 260 }}
@@ -60,10 +63,11 @@ export function FlashcardStudyControls({
           color="red"
           radius="md"
           onClick={() => onRate(ReviewRating.AGAIN)}
+          disabled={disabled}
           leftSection={<IconX size={18} />}
           rightSection={<Kbd size="xs">1</Kbd>}
         >
-          {isVi ? "Chưa nhớ (< 1 ngày)" : "Again (< 1 day)"}
+          {isVi ? "Chưa nhớ" : "Again"}
         </Button>
 
         {/* Rating 2: Hard */}
@@ -73,10 +77,11 @@ export function FlashcardStudyControls({
           color="orange"
           radius="md"
           onClick={() => onRate(ReviewRating.HARD)}
+          disabled={disabled}
           leftSection={<IconClock size={18} />}
           rightSection={<Kbd size="xs">2</Kbd>}
         >
-          {isVi ? "Khó (2 ngày)" : "Hard (2 days)"}
+          {isVi ? "Khó" : "Hard"}
         </Button>
 
         {/* Rating 3: Good */}
@@ -86,10 +91,11 @@ export function FlashcardStudyControls({
           color="blue"
           radius="md"
           onClick={() => onRate(ReviewRating.GOOD)}
+          disabled={disabled}
           leftSection={<IconCheck size={18} />}
           rightSection={<Kbd size="xs">3</Kbd>}
         >
-          {isVi ? "Nhớ tốt (4 ngày)" : "Good (4 days)"}
+          {isVi ? "Nhớ tốt" : "Good"}
         </Button>
 
         {/* Rating 4: Easy */}
@@ -99,10 +105,11 @@ export function FlashcardStudyControls({
           color="teal"
           radius="md"
           onClick={() => onRate(ReviewRating.EASY)}
+          disabled={disabled}
           leftSection={<IconMoodSmile size={18} />}
           rightSection={<Kbd size="xs">4</Kbd>}
         >
-          {isVi ? "Rất dễ (7 ngày)" : "Easy (7 days)"}
+          {isVi ? "Rất dễ" : "Easy"}
         </Button>
       </Group>
     </Stack>

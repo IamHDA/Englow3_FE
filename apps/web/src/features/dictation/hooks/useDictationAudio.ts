@@ -22,7 +22,6 @@ interface UseDictationAudioOptions {
 }
 
 /** Nhịp cập nhật khi không có audio thật để bám theo. */
-const FALLBACK_TICK_MS = 100;
 
 export function useDictationAudio({
   audioUrl,
@@ -37,7 +36,7 @@ export function useDictationAudio({
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const startedAtRef = useRef<number>(0);
+  const [error, setError] = useState(false);
 
   /** Cửa sổ của câu, tính bằng giây. Chỉ có khi cả hai mốc cùng có. */
   const window_ = useMemo(() => {
@@ -71,6 +70,9 @@ export function useDictationAudio({
     stopTimer();
     setIsPlaying(false);
     if (audioRef.current) {
+      audioRef.current.onended = null;
+      audioRef.current.ontimeupdate = null;
+      audioRef.current.onerror = null;
       audioRef.current.pause();
       audioRef.current = null;
     }
@@ -85,28 +87,13 @@ export function useDictationAudio({
       setIsPlaying(true);
       setCurrentTime(offsetSeconds);
 
+      setError(false);
       if (!audioUrl) {
-        // Không có file: giữ lại thanh tiến trình chạy theo đồng hồ, vì đó là
-        // phản hồi duy nhất còn lại cho người học.
-        startedAtRef.current =
-          Date.now() - (offsetSeconds * 1000) / playbackSpeed;
-        timerRef.current = setInterval(() => {
-          const elapsed =
-            ((Date.now() - startedAtRef.current) / 1000) * playbackSpeed;
-          if (elapsed >= durationRef.current) {
-            setCurrentTime(durationRef.current);
-            setIsPlaying(false);
-            stopTimer();
-            return;
-          }
-          setCurrentTime(elapsed);
-        }, FALLBACK_TICK_MS);
+        setIsPlaying(false);
+        setError(true);
         return;
       }
 
-      // Dựng phần tử mới mỗi lượt phát rồi mới gắn vào ref: sửa một giá trị
-      // đọc ra từ ref là thứ React Compiler cấm, và phần tử cũ đã bị dừng ở
-      // `stopAudio` phía trên.
       const element = new Audio(audioUrl);
       element.playbackRate = playbackSpeed;
       element.currentTime = (window_?.start ?? 0) + offsetSeconds;
@@ -131,17 +118,21 @@ export function useDictationAudio({
       };
 
       element.onerror = () => {
+        if (audioRef.current !== element) return;
+        setError(true);
         setIsPlaying(false);
       };
 
       audioRef.current = element;
       void element.play().catch(() => {
+        if (audioRef.current !== element) return;
+        setError(true);
         // Trình duyệt chặn phát tự động: giữ nguyên trạng thái dừng thay vì
         // hiện thanh tiến trình chạy trong im lặng.
         setIsPlaying(false);
       });
     },
-    [audioUrl, playbackSpeed, stopAudio, stopTimer, window_],
+    [audioUrl, playbackSpeed, stopAudio, window_],
   );
 
   const playAudio = useCallback(() => playFrom(0), [playFrom]);
@@ -195,9 +186,11 @@ export function useDictationAudio({
     return () => {
       stopAudio();
     };
-  }, [stopAudio]);
+  }, [stopAudio, audioUrl, audioStartMs, audioEndMs]);
 
   return {
+    resetReplayCount: () => setReplayCount(0),
+    error,
     isPlaying,
     currentTime,
     duration,

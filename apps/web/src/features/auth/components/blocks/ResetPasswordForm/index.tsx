@@ -41,22 +41,26 @@ export function ResetPasswordForm() {
   });
 
   async function onSubmit({ password }: ResetPasswordValues) {
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        notifications.show({
+          color: "warn",
+          title: "Không thể đặt lại mật khẩu",
+          message: authErrorMessage(error),
+        });
+        return;
+      }
       notifications.show({
-        color: "warn",
-        title: "Không thể đặt lại mật khẩu",
-        message: authErrorMessage(error),
+        color: "green",
+        title: "Thành công",
+        message: "Mật khẩu đã được cập nhật. Bạn đã được đăng nhập.",
       });
-      return;
+      router.replace("/");
+      router.refresh();
+    } catch {
+      notifications.show({ color: "warn", message: authErrorMessage(null) });
     }
-    notifications.show({
-      color: "green",
-      title: "Thành công",
-      message: "Mật khẩu đã được cập nhật. Bạn đã được đăng nhập.",
-    });
-    router.replace("/");
-    router.refresh();
   }
 
   return (

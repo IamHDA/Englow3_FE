@@ -10,7 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   useReportTutorMessageMutation,
@@ -39,11 +39,14 @@ export function AiTutorView() {
   const {
     data,
     loading: conversationsLoading,
+    error: conversationsError,
     refetch,
   } = useTutorConversationsQuery({
     fetchPolicy: "cache-and-network",
   });
   const [reportMessage] = useReportTutorMessageMutation();
+  const [reportError, setReportError] = useState(false);
+  const reportPending = useRef(false);
 
   const bottom = useRef<HTMLDivElement>(null);
 
@@ -57,19 +60,43 @@ export function AiTutorView() {
   // hỏi lại lúc đó thay vì hỏi theo mỗi lượt.
   useEffect(() => {
     if (conversationId) {
-      void refetch();
+      void refetch().catch(() => undefined);
     }
   }, [conversationId, refetch]);
 
   async function handleReport(messageId: string) {
-    if (!conversationId) return;
-    await reportMessage({ variables: { conversationId, messageId } });
-    await open(conversationId);
+    if (!conversationId || reportPending.current) return;
+    reportPending.current = true;
+    setReportError(false);
+    try {
+      await reportMessage({ variables: { conversationId, messageId } });
+      await open(conversationId);
+    } catch {
+      setReportError(true);
+    } finally {
+      reportPending.current = false;
+    }
   }
 
   return (
     <Page>
       <Stack gap="lg">
+        {conversationsError && (
+          <Alert color="orange">
+            Không tải được lịch sử trò chuyện.{" "}
+            <Button
+              variant="subtle"
+              onClick={() => void refetch().catch(() => undefined)}
+            >
+              Thử lại
+            </Button>
+          </Alert>
+        )}
+        {reportError && (
+          <Alert color="red" role="alert">
+            Chưa gửi được báo cáo. Vui lòng thử lại.
+          </Alert>
+        )}
         <PageHeader
           title="Gia sư AI"
           actions={
@@ -122,13 +149,18 @@ export function AiTutorView() {
                 {error && (
                   <Alert color="orange" variant="light">
                     <Text size="sm">{error}</Text>
+                    {conversationId && (
+                      <Button
+                        variant="subtle"
+                        onClick={() => void open(conversationId)}
+                      >
+                        Thử lấy câu trả lời lại
+                      </Button>
+                    )}
                   </Alert>
                 )}
 
-                <TutorComposer
-                  onSend={(message) => void send(message)}
-                  disabled={sending || waiting}
-                />
+                <TutorComposer onSend={send} disabled={sending || waiting} />
               </Stack>
             </Card>
           </Grid.Col>

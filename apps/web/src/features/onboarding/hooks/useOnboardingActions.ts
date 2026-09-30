@@ -145,15 +145,19 @@ export function useOnboardingActions() {
      */
     startPlacementTest: useCallback(async () => {
       setErrorMessage(null);
-      const { data, error } = await loadPlacementExam();
+      try {
+        const { data, error } = await loadPlacementExam();
 
-      if (error || !data) {
+        if (error || !data) {
+          setErrorMessage(messageForError(error));
+          return;
+        }
+
+        close();
+        router.push(`/exams/${data.placementExam.id}`);
+      } catch (error) {
         setErrorMessage(messageForError(error));
-        return;
       }
-
-      close();
-      router.push(`/exams/${data.placementExam.id}`);
     }, [loadPlacementExam, close, router]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>

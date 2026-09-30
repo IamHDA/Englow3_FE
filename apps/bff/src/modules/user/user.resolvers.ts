@@ -7,6 +7,10 @@ export const userResolvers = {
       ctx.requireToken();
       return ctx.apis.userApi.getMe();
     },
+    myTourStatus: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.userApi.getTourStatus();
+    },
   },
   Mutation: {
     updateProfile: (
@@ -16,6 +20,10 @@ export const userResolvers = {
     ) => {
       ctx.requireToken();
       return ctx.apis.userApi.updateProfile(input);
+    },
+    completeMyTour: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      ctx.requireToken();
+      return ctx.apis.userApi.completeTour();
     },
   },
 };

@@ -25,6 +25,7 @@ export interface ExamSittingHeaderProps {
   totalQuestions: number;
   onSubmitClick: () => void;
   onExitClick: () => void;
+  submitDisabled?: boolean;
 }
 
 export function ExamSittingHeader({
@@ -36,6 +37,7 @@ export function ExamSittingHeader({
   totalQuestions,
   onSubmitClick,
   onExitClick,
+  submitDisabled = false,
 }: ExamSittingHeaderProps) {
   const { t } = useLanguage();
   const progressPercent =
@@ -115,6 +117,7 @@ export function ExamSittingHeader({
 
             <Button
               onClick={onSubmitClick}
+              disabled={submitDisabled}
               radius="xl"
               size="sm"
               rightSection={<Send size={14} />}

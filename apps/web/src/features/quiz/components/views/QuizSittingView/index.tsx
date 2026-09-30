@@ -2,6 +2,7 @@
 
 import {
   Badge,
+  Alert,
   Box,
   Button,
   Card,
@@ -18,7 +19,8 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useExamTimer } from "@/features/exam/hooks/useExamTimer";
 import { useQuizEngine } from "../../../hooks/useQuizEngine";
 import { QuizItem } from "../../../types";
 import { encodeAnswer, toQuizQuestion } from "./answerEncoding";
@@ -55,16 +57,22 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [scored, setScored] = useState<ScoredAttempt | null>(null);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  const [sendFailed, setSendFailed] = useState(false);
+  const pending = useRef(false);
 
   const [startAttempt, { loading: starting, error: startError }] =
     useStartQuizAttemptMutation();
-  const [submitAttempt, { loading: submitting, error: submitError }] =
-    useSubmitQuizAttemptMutation();
+  const [
+    submitAttempt,
+    { loading: submitting, error: submitError, reset: resetSubmit },
+  ] = useSubmitQuizAttemptMutation();
 
   const {
     data: paperData,
     loading: paperLoading,
     error: paperError,
+    refetch: refetchPaper,
   } = useQuizPaperQuery({
     variables: { attemptId: attemptId ?? "" },
     skip: attemptId === null,
@@ -99,8 +107,6 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     answers,
     flaggedIds,
     isSubmitted,
-    timeRemainingFormatted,
-    timeRemainingSeconds,
     setAnswer,
     toggleFlag,
     nextQuestion,
@@ -108,11 +114,29 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     jumpToQuestion,
     submitQuiz,
     restartQuiz,
-  } = useQuizEngine({ quiz });
+  } = useQuizEngine({ quiz, timerEnabled: false });
+
+  const {
+    formattedTime: timeRemainingFormatted,
+    remainingSeconds: timeRemainingSeconds,
+  } = useExamTimer({
+    expiresAt,
+    isActive: attemptId !== null && scored === null,
+  });
+  const expired = expiresAt !== null && timeRemainingSeconds === 0;
 
   /** Sends every question, including the ones left alone - a missing answer is wrong, not absent. */
   async function handleSubmit() {
-    if (attemptId === null || paper === undefined) return;
+    if (
+      attemptId === null ||
+      paper === undefined ||
+      pending.current ||
+      scored ||
+      expired
+    )
+      return;
+    pending.current = true;
+    setSendFailed(false);
 
     const payload = paper.questions.map((question) => ({
       questionId: question.id,
@@ -124,21 +148,30 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     }).catch(() => null);
 
     if (response?.data) {
+      resetSubmit();
       setScored(response.data.submitQuizAttempt);
       submitQuiz();
+    } else {
+      setSendFailed(true);
     }
+    pending.current = false;
   }
 
   async function handleStart() {
+    if (pending.current) return;
+    pending.current = true;
     const response = await startAttempt({ variables: { quizId } }).catch(
       () => null,
     );
     if (response?.data) {
+      restartQuiz();
       setAttemptId(response.data.startQuizAttempt.id);
+      setExpiresAt(response.data.startQuizAttempt.expiresAt);
     }
+    pending.current = false;
   }
 
-  const error = startError ?? paperError ?? submitError;
+  const error = startError ?? (paper === undefined ? paperError : undefined);
 
   // Nothing is fetched before Start, so an id that cannot name a quiz is
   // caught here; one that is well formed but missing comes back from Start as
@@ -156,7 +189,11 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             href: "/study/quiz",
             label: isVi ? "Về danh sách bài kiểm tra" : "Back to quizzes",
           }}
-          onRetry={attemptId === null ? handleStart : undefined}
+          onRetry={
+            attemptId === null
+              ? handleStart
+              : () => void refetchPaper().catch(() => undefined)
+          }
         />
       </Page>
     );
@@ -174,8 +211,8 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             </Title>
             <Text fz="sm" c="dimmed" ta="center">
               {isVi
-                ? "Đồng hồ bắt đầu chạy ngay khi bạn bấm. Bấm lại lần nữa sẽ quay về đúng lượt đang dở, không tạo lượt mới."
-                : "The clock starts when you press. Pressing again returns to the same attempt rather than opening a new one."}
+                ? "Đồng hồ bắt đầu chạy ngay khi bạn bấm. Hãy nộp bài trước khi hết giờ. Bấm bắt đầu lần nữa sẽ quay về lượt đang dở."
+                : "The clock starts when you press. Submit before time runs out. Pressing Start again resumes your active attempt."}
             </Text>
             <Button onClick={handleStart} loading={starting} size="md">
               {isVi ? "Bắt đầu" : "Start"}
@@ -225,19 +262,65 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
               explanation: review.explanation,
             })),
           }}
-          onRestart={restartQuiz}
+          onRestart={() => {
+            resetSubmit();
+            restartQuiz();
+            setScored(null);
+            setAttemptId(null);
+            setExpiresAt(null);
+            setSendFailed(false);
+          }}
         />
       </Page>
     );
   }
 
   if (!currentQuestion) {
-    return null;
+    return (
+      <Page width="focus">
+        <Alert color="blue">
+          {isVi
+            ? "Bài kiểm tra chưa có câu hỏi."
+            : "This quiz has no questions."}
+          <Button component={Link} href="/study/quiz" variant="subtle">
+            {isVi ? "Về danh sách" : "Back to quizzes"}
+          </Button>
+        </Alert>
+      </Page>
+    );
   }
 
   return (
     <Page>
       <Stack gap="lg">
+        {(sendFailed || submitError) && !expired && (
+          <Alert color="red" role="alert">
+            {isVi
+              ? "Chưa nộp được bài. Đáp án vẫn được giữ trên trang; kiểm tra kết nối rồi bấm nộp lại."
+              : "Submission failed. Your answers are kept on this page; check your connection and submit again."}
+          </Alert>
+        )}
+        {expired && (
+          <Alert color="orange" role="alert">
+            {isVi
+              ? "Lượt làm bài đã hết hạn. Máy chủ không nhận bài nộp muộn. Bạn có thể bắt đầu lượt mới."
+              : "This attempt has expired. Late submissions are not accepted. You can start a new attempt."}
+            <Button
+              variant="subtle"
+              disabled={submitting}
+              onClick={() => {
+                if (pending.current) return;
+                resetSubmit();
+                restartQuiz();
+                setAttemptId(null);
+                setExpiresAt(null);
+                setSendFailed(false);
+              }}
+            >
+              {isVi ? "Bắt đầu lượt mới" : "Start a new attempt"}
+            </Button>
+          </Alert>
+        )}
         {/* Top Header */}
         <Group justify="space-between" align="center">
           <Button
@@ -291,7 +374,12 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
                 </Title>
 
                 {/* Question Renderer by Type */}
-                <Box py="xs">
+                <Box
+                  component="fieldset"
+                  disabled={submitting || expired}
+                  style={{ border: 0, margin: 0, minWidth: 0 }}
+                  py="xs"
+                >
                   {currentQuestion.type === "MULTIPLE_CHOICE" && (
                     <MultipleChoiceQuestion
                       question={currentQuestion}
@@ -383,7 +471,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
               onSelectQuestion={jumpToQuestion}
               onToggleFlag={toggleFlag}
               onSubmit={handleSubmit}
-              submitting={submitting}
+              submitting={submitting || expired}
             />
           </Grid.Col>
         </Grid>

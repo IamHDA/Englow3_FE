@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { useRouter } from "next/navigation";
-import { Box, Card, Grid, Text } from "@mantine/core";
+import { Alert, Button, Box, Card, Grid, Text } from "@mantine/core";
 
 import {
   useAttemptPaperQuery,
@@ -53,7 +59,23 @@ function readProgress(attemptId: string): StoredProgress | null {
   if (typeof window === "undefined") return null;
   try {
     const saved = sessionStorage.getItem(storageKey(attemptId));
-    return saved ? (JSON.parse(saved) as StoredProgress) : null;
+    if (!saved) return null;
+    const value = JSON.parse(saved);
+    if (
+      !value ||
+      !value.answers ||
+      typeof value.answers !== "object" ||
+      Array.isArray(value.answers) ||
+      !Object.values(value.answers).every(
+        (answer) => typeof answer === "string",
+      ) ||
+      !Array.isArray(value.flaggedIds) ||
+      !value.flaggedIds.every((id: unknown) => typeof id === "string") ||
+      !Number.isInteger(value.currentIndex) ||
+      value.currentIndex < 0
+    )
+      return null;
+    return value as StoredProgress;
   } catch {
     return null;
   }
@@ -61,29 +83,35 @@ function readProgress(attemptId: string): StoredProgress | null {
 
 export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const { refresh: refreshProfile } = useAccountProfile();
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [result, setResult] = useState<ExamAttemptResult | null>(null);
+  const pending = useRef(false);
+  const [sendFailed, setSendFailed] = useState(false);
 
   // Bản tóm tắt đề cho màn giới thiệu - đọc được trước khi đồng hồ chạy.
   const {
     data: detailData,
     loading: detailLoading,
     error: detailError,
+    refetch: refetchDetail,
   } = useExamDetailQuery({ variables: { id: examId } });
 
   const [startAttempt, { loading: starting, error: startError }] =
     useStartExamAttemptMutation();
-  const [submitAttempt, { loading: submitting, error: submitError }] =
-    useSubmitExamAttemptMutation();
+  const [
+    submitAttempt,
+    { loading: submitting, error: submitError, reset: resetSubmit },
+  ] = useSubmitExamAttemptMutation();
 
   const {
     data,
     loading: paperLoading,
     error: paperError,
+    refetch: refetchPaper,
   } = useAttemptPaperQuery({
     variables: { attemptId: attemptId ?? "" },
     skip: attemptId === null,
@@ -129,7 +157,15 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
    * giờ thì nộp những gì đang có chứ không vứt đi, rồi để server phán quyết.
    */
   const handleFinalSubmit = useCallback(async () => {
-    if (attemptId === null) return;
+    if (
+      attemptId === null ||
+      pending.current ||
+      result !== null ||
+      (expiresAt && Date.now() >= Date.parse(expiresAt))
+    )
+      return;
+    pending.current = true;
+    setSendFailed(false);
 
     setSubmitModalOpen(false);
 
@@ -144,7 +180,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       variables: { attemptId, answers: payload },
     }).catch(() => null);
 
-    if (!response?.data) return;
+    pending.current = false;
+    if (!response?.data) {
+      setSendFailed(true);
+      return;
+    }
 
     setResult(response.data.submitExamAttempt);
     try {
@@ -157,15 +197,25 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     // onboarding. Đọc lại hồ sơ ngay, nếu không thì header và popup vẫn hiện
     // trạng thái cũ cho tới lần tải trang kế tiếp.
     if (isPlacement) {
-      await refreshProfile();
+      await refreshProfile().catch(() => undefined);
     }
-  }, [attemptId, answers, submitAttempt, isPlacement, refreshProfile]);
-
-  const { formattedTime, isWarning, isCritical } = useExamTimer({
+  }, [
+    attemptId,
+    answers,
+    submitAttempt,
+    isPlacement,
+    refreshProfile,
+    result,
     expiresAt,
-    isActive: attemptId !== null && result === null,
-    onExpire: handleFinalSubmit,
-  });
+  ]);
+
+  const { formattedTime, isWarning, isCritical, remainingSeconds } =
+    useExamTimer({
+      expiresAt,
+      isActive: attemptId !== null && result === null,
+    });
+  const expired =
+    expiresAt !== null && remainingSeconds === 0 && result === null;
 
   /**
    * Mở lượt thi. Backend luôn trả về một lượt đang mở: lượt cũ còn hạn thì trả
@@ -173,9 +223,12 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
    * "Bắt đầu" lần nữa không bao giờ tạo ra hai lượt song song.
    */
   const handleStart = useCallback(async () => {
+    if (pending.current) return;
+    pending.current = true;
     const response = await startAttempt({
       variables: { examId },
     }).catch(() => null);
+    pending.current = false;
 
     const attempt = response?.data?.startExamAttempt;
     if (!attempt) return;
@@ -208,7 +261,10 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   }, [attemptId, result, answers, flaggedIds, currentIndex]);
 
   // Current question references
-  const currentItem = flatQuestions[currentIndex];
+  const currentItem =
+    flatQuestions[
+      Math.min(currentIndex, Math.max(0, flatQuestions.length - 1))
+    ];
   const currentSection = currentItem
     ? paper?.sections[currentItem.sectionIndex]
     : null;
@@ -228,7 +284,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       : null;
 
   const handleSelectOption = (optionId: string) => {
-    if (!currentItem) return;
+    if (!currentItem || pending.current || expired) return;
     setAnswers((prev) => ({ ...prev, [currentItem.questionId]: optionId }));
   };
 
@@ -248,6 +304,9 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   // Làm lại là mở một lượt mới - backend cấp id và hạn nộp mới, không tái dùng
   // lượt đã chấm.
   const handleRetake = () => {
+    if (pending.current) return;
+    resetSubmit();
+    setSendFailed(false);
     setResult(null);
     setAttemptId(null);
     setExpiresAt(null);
@@ -256,7 +315,10 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     setCurrentIndex(0);
   };
 
-  const error = detailError ?? startError ?? paperError ?? submitError;
+  const error =
+    (!detailData ? detailError : undefined) ??
+    startError ??
+    (!paper ? paperError : undefined);
 
   if (error) {
     return (
@@ -265,6 +327,15 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
           error={error}
           thing={{ vi: "đề thi", en: "exam" }}
           back={{ href: "/exams", label: t.exam.returnToLibrary }}
+          onRetry={() => {
+            void (
+              attemptId
+                ? refetchPaper()
+                : startError
+                  ? handleStart()
+                  : refetchDetail()
+            ).catch(() => undefined);
+          }}
         />
       </Page>
     );
@@ -297,6 +368,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   return (
     <Box bg="ink.0" mih="100vh" pb={60}>
       <ExamSittingHeader
+        submitDisabled={expired || submitting}
         title={paper.title}
         sectionTitle={
           currentSection
@@ -317,34 +389,71 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       />
 
       <Page>
+        {!expired && (
+          <Text size="sm" c="dimmed" mb="sm">
+            {isVi
+              ? "Hãy nộp bài trước khi đồng hồ về 00:00."
+              : "Submit your answers before the timer reaches 00:00."}
+          </Text>
+        )}
+        {(sendFailed || submitError) && !expired && !result && (
+          <Alert color="red" role="alert" mb="md">
+            {isVi
+              ? "Chưa nộp được bài. Đáp án được giữ lại; kiểm tra kết nối rồi nộp lại."
+              : "Submission failed. Your answers are kept; check your connection and submit again."}
+            <Button
+              variant="subtle"
+              loading={submitting}
+              onClick={handleFinalSubmit}
+            >
+              {isVi ? "Nộp lại" : "Retry submission"}
+            </Button>
+          </Alert>
+        )}
+        {expired && (
+          <Alert color="orange" role="alert" mb="md">
+            {isVi
+              ? "Lượt thi đã hết hạn. Máy chủ không nhận bài nộp muộn; bản nháp vẫn được giữ trong phiên trình duyệt này."
+              : "This attempt has expired. Late submissions are not accepted; your draft is kept in this browser session."}
+            <Button variant="subtle" onClick={handleRetake}>
+              {isVi ? "Làm lượt mới" : "Start a new attempt"}
+            </Button>
+          </Alert>
+        )}
         <Grid gap="lg">
           <Grid.Col span={{ base: 12, md: 8, lg: 8.5 }}>
             {currentSection &&
             currentPart &&
             currentQuestionSet &&
             currentQuestion ? (
-              <QuestionCard
-                section={currentSection}
-                part={currentPart}
-                questionSet={currentQuestionSet}
-                question={currentQuestion}
-                questionIndex={currentIndex}
-                totalQuestions={flatQuestions.length}
-                selectedOptionId={answers[currentQuestion.id]}
-                isFlagged={flaggedIds.has(currentQuestion.id)}
-                onSelectOption={handleSelectOption}
-                onToggleFlag={handleToggleFlag}
-                onPrevQuestion={() =>
-                  setCurrentIndex((prev) => Math.max(0, prev - 1))
-                }
-                onNextQuestion={() =>
-                  setCurrentIndex((prev) =>
-                    Math.min(flatQuestions.length - 1, prev + 1),
-                  )
-                }
-                hasPrev={currentIndex > 0}
-                hasNext={currentIndex < flatQuestions.length - 1}
-              />
+              <Box
+                component="fieldset"
+                disabled={expired || submitting}
+                style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
+              >
+                <QuestionCard
+                  section={currentSection}
+                  part={currentPart}
+                  questionSet={currentQuestionSet}
+                  question={currentQuestion}
+                  questionIndex={currentIndex}
+                  totalQuestions={flatQuestions.length}
+                  selectedOptionId={answers[currentQuestion.id]}
+                  isFlagged={flaggedIds.has(currentQuestion.id)}
+                  onSelectOption={handleSelectOption}
+                  onToggleFlag={handleToggleFlag}
+                  onPrevQuestion={() =>
+                    setCurrentIndex((prev) => Math.max(0, prev - 1))
+                  }
+                  onNextQuestion={() =>
+                    setCurrentIndex((prev) =>
+                      Math.min(flatQuestions.length - 1, prev + 1),
+                    )
+                  }
+                  hasPrev={currentIndex > 0}
+                  hasNext={currentIndex < flatQuestions.length - 1}
+                />
+              </Box>
             ) : (
               <Card p="xl" radius="lg">
                 <Text c="ink.5" ta="center">

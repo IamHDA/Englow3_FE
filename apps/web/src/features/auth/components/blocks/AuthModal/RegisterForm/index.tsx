@@ -105,34 +105,38 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   });
 
   async function onSubmit(values: RegisterValues) {
-    const { error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          full_name: values.fullName,
-          display_name: values.nickname,
-          birth_date: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
-          gender: values.gender,
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: values.fullName,
+            display_name: values.nickname,
+            birth_date: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
+            gender: values.gender,
+          },
         },
-      },
-    });
-    if (error) {
-      notifications.show({
-        color: "warn",
-        title: "Không thể tạo tài khoản",
-        message: authErrorMessage(error),
       });
-      return;
+      if (error) {
+        notifications.show({
+          color: "warn",
+          title: "Không thể tạo tài khoản",
+          message: authErrorMessage(error),
+        });
+        return;
+      }
+      notifications.show({
+        color: "green",
+        title: "Kiểm tra email",
+        message: "Chúng tôi đã gửi email xác nhận tới hộp thư của bạn.",
+      });
+      router.refresh();
+      onSuccess();
+    } catch {
+      notifications.show({ color: "warn", message: authErrorMessage(null) });
     }
-    notifications.show({
-      color: "green",
-      title: "Kiểm tra email",
-      message: "Chúng tôi đã gửi email xác nhận tới hộp thư của bạn.",
-    });
-    router.refresh();
-    onSuccess();
   }
 
   return (

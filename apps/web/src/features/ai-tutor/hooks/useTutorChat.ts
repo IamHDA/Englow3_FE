@@ -37,18 +37,21 @@ export function useTutorChat(initialConversationId?: string) {
   const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const sendingRef = useRef(false);
+  const generation = useRef(0);
 
   const [sendMessage] = useSendTutorMessageMutation();
   const [fetchConversation] = useTutorConversationLazyQuery({
     fetchPolicy: "network-only",
   });
 
-  const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pollStartedAt = useRef<number | null>(null);
 
   const stopPolling = useCallback(() => {
+    generation.current += 1;
     if (pollTimer.current) {
-      clearInterval(pollTimer.current);
+      clearTimeout(pollTimer.current);
       pollTimer.current = null;
     }
     pollStartedAt.current = null;
@@ -65,12 +68,12 @@ export function useTutorChat(initialConversationId?: string) {
    * danh sách phụ thuộc của chính nó thì không bao giờ ổn định.
    */
   const pollOnce = useCallback(
-    async (id: string) => {
+    async (id: string, version: number) => {
       const { data } = await fetchConversation({ variables: { id } });
-      const next = data?.tutorConversation.messages ?? [];
-      if (next.length > 0) {
-        setMessages(next);
-      }
+      if (version !== generation.current) return false;
+      if (!data?.tutorConversation) throw new Error("Conversation unavailable");
+      const next = data.tutorConversation.messages;
+      setMessages(next);
 
       return next.some(
         (message) => message.status === TutorMessageStatus.PENDING,
@@ -82,40 +85,47 @@ export function useTutorChat(initialConversationId?: string) {
   const poll = useCallback(
     async (id: string) => {
       stopPolling();
+      const version = generation.current;
       pollStartedAt.current = Date.now();
 
       try {
-        if (!(await pollOnce(id))) {
+        if (!(await pollOnce(id, version))) {
           return;
         }
       } catch {
+        if (version !== generation.current) return;
         setError("Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.");
         return;
       }
 
-      pollTimer.current = setInterval(() => {
-        void (async () => {
-          try {
-            if (!(await pollOnce(id))) {
+      const schedule = () => {
+        pollTimer.current = setTimeout(() => {
+          void (async () => {
+            try {
+              if (!(await pollOnce(id, version))) {
+                return;
+              }
+              if (Date.now() - (pollStartedAt.current ?? 0) > POLL_TIMEOUT_MS) {
+                stopPolling();
+                // Câu trả lời vẫn có thể về sau - hàng đợi chưa bỏ cuộc - nên
+                // nói rõ là "mở lại sau", đừng nói là hỏng.
+                setError(
+                  "Gia sư trả lời lâu hơn thường lệ. Bạn mở lại cuộc trò chuyện này sau nhé.",
+                );
+                return;
+              }
+              if (version === generation.current) schedule();
+            } catch {
+              if (version !== generation.current) return;
               stopPolling();
-              return;
-            }
-            if (Date.now() - (pollStartedAt.current ?? 0) > POLL_TIMEOUT_MS) {
-              stopPolling();
-              // Câu trả lời vẫn có thể về sau - hàng đợi chưa bỏ cuộc - nên
-              // nói rõ là "mở lại sau", đừng nói là hỏng.
               setError(
-                "Gia sư trả lời lâu hơn thường lệ. Bạn mở lại cuộc trò chuyện này sau nhé.",
+                "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
               );
             }
-          } catch {
-            stopPolling();
-            setError(
-              "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
-            );
-          }
-        })();
-      }, POLL_INTERVAL_MS);
+          })();
+        }, POLL_INTERVAL_MS);
+      };
+      if (version === generation.current) schedule();
     },
     [pollOnce, stopPolling],
   );
@@ -124,20 +134,27 @@ export function useTutorChat(initialConversationId?: string) {
     async (id: string) => {
       setError(null);
       setConversationId(id);
-      setMessages([]);
+      if (id !== conversationId) setMessages([]);
       stopPolling();
       await poll(id);
     },
-    [poll, stopPolling],
+    [conversationId, poll, stopPolling],
   );
 
   const send = useCallback(
     async (message: string) => {
       const trimmed = message.trim();
-      if (!trimmed || sending) {
-        return;
+      if (
+        !trimmed ||
+        sendingRef.current ||
+        messages.some(
+          (message) => message.status === TutorMessageStatus.PENDING,
+        )
+      ) {
+        return false;
       }
-
+      sendingRef.current = true;
+      const version = generation.current;
       setSending(true);
       setError(null);
       try {
@@ -148,6 +165,7 @@ export function useTutorChat(initialConversationId?: string) {
         if (!result) {
           throw new Error("no result");
         }
+        if (version !== generation.current) return true;
 
         setConversationId(result.conversation.id);
         // Mutation chỉ trả về hai lượt vừa tạo, không phải cả cuộc hội thoại,
@@ -157,16 +175,20 @@ export function useTutorChat(initialConversationId?: string) {
 
         stopPolling();
         await poll(result.conversation.id);
+        return true;
       } catch (sendError) {
+        if (version !== generation.current) return false;
         setError(
           TUTOR_SEND_ERRORS[backendCodeOf(sendError) ?? ""] ??
             "Không gửi được câu hỏi. Thử lại giúp mình nhé.",
         );
+        return false;
       } finally {
+        sendingRef.current = false;
         setSending(false);
       }
     },
-    [conversationId, poll, sendMessage, sending, stopPolling],
+    [conversationId, poll, sendMessage, messages, stopPolling],
   );
 
   const reset = useCallback(() => {

@@ -77,6 +77,40 @@ beforeEach(() => {
 });
 
 describe("useTutorChat", () => {
+  it("returns failure so the composer can retain an unsent draft", async () => {
+    sendMessage.mockRejectedValueOnce(new Error("offline"));
+    const { result } = renderHook(() => useTutorChat());
+    await act(async () => {
+      expect(await result.current.send("Keep my draft")).toBe(false);
+    });
+    expect(result.current.error).toBeTruthy();
+    expect(result.current.messages).toEqual([]);
+  });
+
+  it("does not let an old conversation response replace the newly opened one", async () => {
+    let finish!: (value: ReturnType<typeof polled>) => void;
+    fetchConversation.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    fetchConversation.mockResolvedValueOnce(polled([ANSWERED]));
+    const { result } = renderHook(() => useTutorChat());
+    let old!: Promise<void>;
+    act(() => {
+      old = result.current.open("old");
+    });
+    await act(async () => {
+      await result.current.open("new");
+    });
+    await act(async () => {
+      finish(polled([QUESTION, PENDING]));
+      await old;
+    });
+    expect(result.current.conversationId).toBe("new");
+    expect(result.current.messages).toEqual([ANSWERED]);
+  });
   it("shows the question and a pending turn as soon as it is sent", async () => {
     sendMessage.mockResolvedValue(sent());
     fetchConversation.mockResolvedValue(polled([QUESTION, PENDING]));

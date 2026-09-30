@@ -25,6 +25,8 @@ export type UserInformationResponse = {
   role: Role;
 };
 
+export type UserTourStatusResponse = { completed: boolean };
+
 // mirrors PUT /api/user/me/profile request body
 export type UpdateProfileInput = {
   fullName: string;

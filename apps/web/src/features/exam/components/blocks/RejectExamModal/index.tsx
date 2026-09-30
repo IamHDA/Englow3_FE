@@ -30,6 +30,7 @@ export function RejectExamModal({
   const trimmed = note.trim();
 
   function handleClose() {
+    if (submitting) return;
     setNote("");
     onCancel();
   }
@@ -53,6 +54,7 @@ export function RejectExamModal({
           description="Nói rõ phải sửa gì, ví dụ: Phần 3 chưa có file nghe."
           placeholder="Phần 3 chưa có file nghe."
           value={note}
+          disabled={submitting}
           onChange={(event) => setNote(event.currentTarget.value)}
           maxLength={MAX_NOTE_LENGTH}
           autosize
@@ -73,7 +75,6 @@ export function RejectExamModal({
             loading={submitting}
             onClick={() => {
               onConfirm(trimmed);
-              setNote("");
             }}
           >
             Trả lại đề

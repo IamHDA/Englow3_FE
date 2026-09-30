@@ -6,9 +6,14 @@ import { QuestionReview, QuizItem, QuizSessionResult } from "../types";
 export interface UseQuizEngineOptions {
   quiz: QuizItem;
   onComplete?: (result: QuizSessionResult) => void;
+  timerEnabled?: boolean;
 }
 
-export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
+export function useQuizEngine({
+  quiz,
+  onComplete,
+  timerEnabled = true,
+}: UseQuizEngineOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [flaggedIds, setFlaggedIds] = useState<string[]>([]);
@@ -173,7 +178,7 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
 
   // Countdown timer
   useEffect(() => {
-    if (isSubmitted) return;
+    if (isSubmitted || !timerEnabled) return;
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
@@ -185,7 +190,7 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [isSubmitted, handleSubmit]);
+  }, [isSubmitted, handleSubmit, timerEnabled]);
 
   const restartQuiz = useCallback(() => {
     setCurrentIndex(0);

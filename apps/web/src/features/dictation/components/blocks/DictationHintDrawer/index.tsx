@@ -101,49 +101,51 @@ export function DictationHintDrawer({
               : "* Each unlocked hint counts toward the hints used in session stats."}
           </Text>
 
-          {hints.map((h) => {
-            const isRevealed = Boolean(revealedHints[h.key]);
+          {hints
+            .filter((h) => h.value !== null && h.value !== "")
+            .map((h) => {
+              const isRevealed = Boolean(revealedHints[h.key]);
 
-            return (
-              <Paper
-                key={h.key}
-                p="xs"
-                radius="sm"
-                withBorder
-                style={{
-                  backgroundColor: isRevealed
-                    ? "var(--mantine-color-orange-0)"
-                    : "var(--mantine-color-ink-0)",
-                  borderColor: isRevealed
-                    ? "var(--mantine-color-orange-3)"
-                    : "var(--mantine-color-ink-2)",
-                }}
-              >
-                <Group justify="space-between" align="center">
-                  <Text size="xs" fw={600} c="ink.8">
-                    {h.label}
-                  </Text>
-
-                  {isRevealed ? (
-                    <Text size="xs" fw={700} c="orange.9">
-                      {h.value}
+              return (
+                <Paper
+                  key={h.key}
+                  p="xs"
+                  radius="sm"
+                  withBorder
+                  style={{
+                    backgroundColor: isRevealed
+                      ? "var(--mantine-color-orange-0)"
+                      : "var(--mantine-color-ink-0)",
+                    borderColor: isRevealed
+                      ? "var(--mantine-color-orange-3)"
+                      : "var(--mantine-color-ink-2)",
+                  }}
+                >
+                  <Group justify="space-between" align="center">
+                    <Text size="xs" fw={600} c="ink.8">
+                      {h.label}
                     </Text>
-                  ) : (
-                    <Button
-                      size="compact-xs"
-                      variant="light"
-                      color="navy"
-                      radius="sm"
-                      onClick={() => onRevealHint(h.key)}
-                      leftSection={<Lock size={11} />}
-                    >
-                      {isVi ? "Mở xem" : "Unlock"}
-                    </Button>
-                  )}
-                </Group>
-              </Paper>
-            );
-          })}
+
+                    {isRevealed ? (
+                      <Text size="xs" fw={700} c="orange.9">
+                        {h.value}
+                      </Text>
+                    ) : (
+                      <Button
+                        size="compact-xs"
+                        variant="light"
+                        color="navy"
+                        radius="sm"
+                        onClick={() => onRevealHint(h.key)}
+                        leftSection={<Lock size={11} />}
+                      >
+                        {isVi ? "Mở xem" : "Unlock"}
+                      </Button>
+                    )}
+                  </Group>
+                </Paper>
+              );
+            })}
         </Stack>
       </Collapse>
     </Paper>

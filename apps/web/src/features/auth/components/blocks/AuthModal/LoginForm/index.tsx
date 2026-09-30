@@ -51,29 +51,33 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   });
 
   async function onSubmit({ email, password, rememberMe }: LoginValues) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      notifications.show({
-        color: "warn",
-        title: "Không thể đăng nhập",
-        message: authErrorMessage(error),
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      return;
-    }
-    if (!rememberMe) {
-      forgetSessionOnBrowserClose();
-    }
-    onSuccess();
-    // Each role lands where its work is: staff and administrators in the
-    // administration area, a learner on the page they signed in from.
-    const home = homeForRole(toAuthSession(data?.user)?.role);
-    if (home) {
-      router.push(home);
-    } else {
-      router.refresh();
+      if (error) {
+        notifications.show({
+          color: "warn",
+          title: "Không thể đăng nhập",
+          message: authErrorMessage(error),
+        });
+        return;
+      }
+      if (!rememberMe) {
+        forgetSessionOnBrowserClose();
+      }
+      onSuccess();
+      // Each role lands where its work is: staff and administrators in the
+      // administration area, a learner on the page they signed in from.
+      const home = homeForRole(toAuthSession(data?.user)?.role);
+      if (home) {
+        router.push(home);
+      } else {
+        router.refresh();
+      }
+    } catch {
+      notifications.show({ color: "warn", message: authErrorMessage(null) });
     }
   }
 

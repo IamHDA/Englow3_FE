@@ -171,6 +171,28 @@ describe("seeking", () => {
 });
 
 describe("a sentence with no recording", () => {
+  it("reports a missing file instead of pretending to play", async () => {
+    const { result } = renderHook(() => useDictationAudio({ audioUrl: null }));
+    await act(async () => {
+      result.current.togglePlay();
+    });
+    expect(result.current.isPlaying).toBe(false);
+    expect(result.current.error).toBe(true);
+  });
+
+  it("stops the previous recording when the sentence changes", async () => {
+    const { result, rerender } = renderHook(
+      ({ url }) => useDictationAudio({ audioUrl: url }),
+      { initialProps: { url: "first.mp3" } },
+    );
+    await act(async () => {
+      result.current.togglePlay();
+    });
+    const first = FakeAudio.last;
+    rerender({ url: "second.mp3" });
+    expect(first?.paused).toBe(true);
+    expect(result.current.isPlaying).toBe(false);
+  });
   it("still reports a length rather than failing", () => {
     const { result } = renderHook(() =>
       useDictationAudio({ audioUrl: null, durationSeconds: 6 }),

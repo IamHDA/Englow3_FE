@@ -1,11 +1,19 @@
 "use client";
 
 import { Avatar, Menu, Text, UnstyledButton } from "@mantine/core";
-import { ChevronDown, LogOut, Settings, ShieldCheck, User } from "lucide-react";
+import {
+  ChevronDown,
+  CircleHelp,
+  LogOut,
+  Settings,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 
 import { isBackOfficeRole, useAuth } from "@/features/auth";
 import { useOnboardingGuard } from "@/features/onboarding";
+import { useUserTour } from "@/features/tour";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./SiteHeaderUserMenu.module.css";
@@ -23,7 +31,8 @@ export function SiteHeaderUserMenu({
   // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
   // là chuẩn.
   const { session, signOut } = useAuth();
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
+  const { canReplay, replay } = useUserTour();
 
   // "Hồ sơ của tôi" và "Cài đặt" chặn khi chưa onboarding; "Đăng xuất" thì
   // không - đó là lối thoát cuối cùng, chặn nốt thì người dùng kẹt hẳn trong
@@ -61,6 +70,13 @@ export function SiteHeaderUserMenu({
           onClick={guardNavigation}
         >
           {t.nav.settings}
+        </Menu.Item>
+        <Menu.Item
+          leftSection={<CircleHelp aria-hidden="true" size={16} />}
+          disabled={!canReplay}
+          onClick={replay}
+        >
+          {isVi ? "Hướng dẫn sử dụng" : "Website guide"}
         </Menu.Item>
         {/* Chỉ là lối tắt cho người có quyền - layout /admin tự chặn người
             không đủ quyền, nên ẩn nút không phải là chốt chặn. */}

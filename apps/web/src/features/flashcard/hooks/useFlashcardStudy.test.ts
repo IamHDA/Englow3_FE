@@ -38,6 +38,53 @@ const mockCards: FlashcardItem[] = [
 ];
 
 describe("useFlashcardStudy", () => {
+  it("keeps a card when saving fails and advances only after a successful retry", async () => {
+    const onRate = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockResolvedValue(undefined);
+    const { result } = renderHook(() =>
+      useFlashcardStudy({ cards: mockCards, setName: "Test", onRate }),
+    );
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.GOOD);
+    });
+    expect(result.current.currentIndex).toBe(0);
+    expect(result.current.saveError).toBe(true);
+    expect(result.current.summaryData.breakdown.good).toBe(0);
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.GOOD);
+    });
+    expect(result.current.currentIndex).toBe(1);
+    expect(result.current.saveError).toBe(false);
+  });
+
+  it("ignores duplicate ratings while the request is pending", async () => {
+    let finish!: () => void;
+    const onRate = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const { result } = renderHook(() =>
+      useFlashcardStudy({ cards: mockCards, setName: "Test", onRate }),
+    );
+    let request!: Promise<void>;
+    act(() => {
+      request = result.current.rateCard(ReviewRating.GOOD);
+    });
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.EASY);
+    });
+    expect(onRate).toHaveBeenCalledTimes(1);
+    expect(result.current.currentIndex).toBe(0);
+    await act(async () => {
+      finish();
+      await request;
+    });
+    expect(result.current.currentIndex).toBe(1);
+  });
   it("initializes with first card and unflipped state", () => {
     const { result } = renderHook(() =>
       useFlashcardStudy({ cards: mockCards, setName: "Test Set" }),
@@ -68,15 +115,15 @@ describe("useFlashcardStudy", () => {
     expect(result.current.isFlipped).toBe(false);
   });
 
-  it("advances card upon rating and triggers onComplete on last card", () => {
+  it("advances card upon rating and triggers onComplete on last card", async () => {
     const onComplete = vi.fn();
     const { result } = renderHook(() =>
       useFlashcardStudy({ cards: mockCards, setName: "Test Set", onComplete }),
     );
 
     // Rate first card
-    act(() => {
-      result.current.rateCard(ReviewRating.GOOD);
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.GOOD);
     });
 
     expect(result.current.currentIndex).toBe(1);
@@ -84,8 +131,8 @@ describe("useFlashcardStudy", () => {
     expect(result.current.isFlipped).toBe(false);
 
     // Rate second (last) card
-    act(() => {
-      result.current.rateCard(ReviewRating.EASY);
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.EASY);
     });
 
     expect(result.current.isCompleted).toBe(true);
@@ -100,16 +147,16 @@ describe("useFlashcardStudy", () => {
     );
   });
 
-  it("restarts study successfully", () => {
+  it("restarts study successfully", async () => {
     const { result } = renderHook(() =>
       useFlashcardStudy({ cards: mockCards, setName: "Test Set" }),
     );
 
-    act(() => {
-      result.current.rateCard(ReviewRating.AGAIN);
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.AGAIN);
     });
-    act(() => {
-      result.current.rateCard(ReviewRating.GOOD);
+    await act(async () => {
+      await result.current.rateCard(ReviewRating.GOOD);
     });
 
     expect(result.current.isCompleted).toBe(true);

@@ -1,6 +1,14 @@
 "use client";
 
-import { Box, Button, Group, Progress, Stack, Text } from "@mantine/core";
+import {
+  Alert,
+  Box,
+  Button,
+  Group,
+  Progress,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconArrowLeft, IconClock } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
@@ -59,18 +67,16 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
     speakCard,
     rateCard,
     restartStudy,
+    saving,
+    saveError,
   } = useFlashcardStudy({
     cards,
     setName: set?.name ?? "",
-    /**
-     * Gửi đi rồi đi tiếp, không chờ. Lịch ôn là việc của server và nó đã nhận
-     * câu trả lời; bắt người học đứng chờ một round trip giữa hai thẻ là đánh
-     * đổi sai. Lỗi mạng làm mất một lượt ghi, không làm hỏng phiên học.
-     */
-    onRate: (cardId, rating, timeSpentSeconds) => {
-      void rateFlashcard({
+    onRate: async (cardId, rating, timeSpentSeconds) => {
+      const response = await rateFlashcard({
         variables: { flashcardId: cardId, rating, timeSpentSeconds },
-      }).catch(() => undefined);
+      });
+      if (!response.data) throw new Error("Rating was not saved");
     },
   });
 
@@ -88,7 +94,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
             href: "/study/flashcards",
             label: isVi ? "Về thư viện bộ thẻ" : "Back to decks",
           }}
-          onRetry={() => void refetchQueue()}
+          onRetry={() => void refetchQueue().catch(() => undefined)}
         />
       </Page>
     );
@@ -187,7 +193,20 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
         />
 
         {/* Study SRS Controls */}
+        {saveError && (
+          <Alert color="red" role="alert">
+            {isVi
+              ? "Chưa lưu được đánh giá. Thẻ vẫn được giữ lại; kiểm tra kết nối rồi chọn đánh giá để thử lại."
+              : "Your rating could not be saved. This card is still here; check your connection and rate it again."}
+          </Alert>
+        )}
+        {saving && (
+          <Text role="status" ta="center">
+            {isVi ? "Đang lưu đánh giá…" : "Saving rating…"}
+          </Text>
+        )}
         <FlashcardStudyControls
+          disabled={saving}
           isFlipped={isFlipped}
           onFlip={flipCard}
           onRate={rateCard}
