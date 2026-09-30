@@ -338,6 +338,7 @@ export interface PronunciationTranslations {
   backToPromptsButton: string;
   backToLibraryButton: string;
   notFinishedTitle: string;
+  checkResultAgainButton: string;
 }
 
 export interface DailyPathTranslations {
@@ -448,6 +449,8 @@ export interface DictationTranslations {
   replaySentence: string;
   inputPlaceholder: string;
   checkAnswer: string;
+  checkAnswerErrorTitle: string;
+  checkingAnswerDescription: string;
   nextSentence: string;
   charHint: string;
   originalAudio: string;
@@ -1170,6 +1173,7 @@ export const translations: Record<Language, AppTranslations> = {
       backToPromptsButton: "Về danh sách câu luyện",
       backToLibraryButton: "Quay lại thư viện phát âm",
       notFinishedTitle: "Chưa xong",
+      checkResultAgainButton: "Kiểm tra kết quả lại",
     },
     dailyPath: {
       title: "Lộ trình học tập mỗi ngày",
@@ -1287,6 +1291,8 @@ export const translations: Record<Language, AppTranslations> = {
       replaySentence: "Phát lại câu này",
       inputPlaceholder: "Gõ những gì bạn vừa nghe được tại đây...",
       checkAnswer: "Kiểm tra kết quả",
+      checkAnswerErrorTitle: "Chưa chấm được câu này",
+      checkingAnswerDescription: "Đang đối chiếu câu trả lời của bạn…",
       nextSentence: "Sang câu tiếp theo",
       charHint: "Gợi ý chữ cái",
       originalAudio: "Đoạn âm thanh gốc",
@@ -1665,8 +1671,8 @@ export const translations: Record<Language, AppTranslations> = {
       upNextBadge: "Học tiếp",
       nothingWaitingTitle: "Hôm nay chưa có việc nào đang chờ",
       nothingWaitingDescription:
-        "Chọn một bộ thẻ hoặc một bài nghe để bắt đầu.",
-      chooseLessonButton: "Chọn bài học",
+        "Bạn đã hoàn thành lộ trình hiện tại. Khám phá bài trắc nghiệm hoặc chọn một hoạt động luyện tập khác.",
+      chooseLessonButton: "Khám phá bài luyện tập",
       todaySectionTitle: "Hôm nay",
       fullPathButton: "Xem lộ trình",
       practiceSectionTitle: "Luyện tập",
@@ -2066,6 +2072,7 @@ export const translations: Record<Language, AppTranslations> = {
       backToPromptsButton: "Back to prompts",
       backToLibraryButton: "Back to library",
       notFinishedTitle: "Not finished",
+      checkResultAgainButton: "Check result again",
     },
     dailyPath: {
       title: "Adaptive Daily Learning Path",
@@ -2185,6 +2192,8 @@ export const translations: Record<Language, AppTranslations> = {
       replaySentence: "Replay Sentence",
       inputPlaceholder: "Type exactly what you hear here...",
       checkAnswer: "Check Answer",
+      checkAnswerErrorTitle: "This answer could not be checked",
+      checkingAnswerDescription: "Checking your answer…",
       nextSentence: "Next Sentence",
       charHint: "Letter Hint",
       originalAudio: "Original Audio Track",
@@ -2567,8 +2576,8 @@ export const translations: Record<Language, AppTranslations> = {
       upNextBadge: "Up next",
       nothingWaitingTitle: "Nothing waiting for you today",
       nothingWaitingDescription:
-        "Pick a flashcard set or a listening lesson to begin.",
-      chooseLessonButton: "Choose a lesson",
+        "You have completed the current path. Explore quizzes or choose another practice activity.",
+      chooseLessonButton: "Explore practice",
       todaySectionTitle: "Today",
       fullPathButton: "Full path",
       practiceSectionTitle: "Practice",

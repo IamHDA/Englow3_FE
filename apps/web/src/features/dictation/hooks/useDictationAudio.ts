@@ -159,6 +159,8 @@ export function useDictationAudio({
     playAudio();
   }, [playAudio]);
 
+  const resetReplayCount = useCallback(() => setReplayCount(0), []);
+
   /**
    * Tua thật, không chỉ đổi con số.
    *
@@ -205,6 +207,7 @@ export function useDictationAudio({
     replayCount,
     togglePlay,
     replay,
+    resetReplayCount,
     back5,
     forward5,
     changeSpeed,

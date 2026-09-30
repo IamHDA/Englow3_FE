@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { computeWordDiff } from "../utils/diff";
 import type {
   DictationLesson,
@@ -20,6 +20,12 @@ type CheckSentence = (
   typed: string,
 ) => Promise<DictationSubmission | null>;
 
+function formatDuration(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes === 0 ? `${seconds}s` : `${minutes}m ${seconds}s`;
+}
+
 export function useDictationPractice(
   lesson: DictationLesson,
   sentences: DictationSentence[],
@@ -34,6 +40,35 @@ export function useDictationPractice(
     {},
   );
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [replayCount, setReplayCountState] = useState(0);
+  const [clockStarted, setClockStarted] = useState(false);
+  const startedAtRef = useRef<number | null>(null);
+  const clearSubmissionError = useCallback(() => setSubmissionError(false), []);
+  const updateReplayCount = useCallback(
+    (count: number) => setReplayCountState(count),
+    [],
+  );
+
+  const startClock = useCallback(() => {
+    if (startedAtRef.current === null) {
+      startedAtRef.current = Date.now();
+      setClockStarted(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!clockStarted || isCompleted) return;
+    const timer = setInterval(() => {
+      const startedAt = startedAtRef.current;
+      if (startedAt !== null) {
+        setElapsedSeconds(Math.floor((Date.now() - startedAt) / 1000));
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [clockStarted, isCompleted]);
 
   // Per-sentence recorded results
   const [completedResults, setCompletedResults] = useState<
@@ -51,19 +86,27 @@ export function useDictationPractice(
 
   const totalSentences = sentences.length;
 
-  const handleType = useCallback((value: string) => {
-    setTypedText(value);
-  }, []);
+  const handleType = useCallback(
+    (value: string) => {
+      startClock();
+      setTypedText(value);
+    },
+    [startClock],
+  );
 
-  const revealHint = useCallback((hintKey: string) => {
-    setRevealedHints((prev) => {
-      if (!prev[hintKey]) {
-        setHintsUsedCount((c) => c + 1);
-        return { ...prev, [hintKey]: true };
-      }
-      return prev;
-    });
-  }, []);
+  const revealHint = useCallback(
+    (hintKey: string) => {
+      startClock();
+      setRevealedHints((prev) => {
+        if (!prev[hintKey]) {
+          setHintsUsedCount((c) => c + 1);
+          return { ...prev, [hintKey]: true };
+        }
+        return prev;
+      });
+    },
+    [startClock],
+  );
 
   /**
    * Chấm bài. Con số là của server; `computeWordDiff` ở đây chỉ để tô màu chỗ
@@ -72,9 +115,21 @@ export function useDictationPractice(
   const recordAnswer = useCallback(
     async (answer: string) => {
       if (!currentSentence) return null;
-
-      const submission = await checkSentence(currentSentence.id, answer);
-      if (!submission) return null;
+      startClock();
+      setSubmissionError(false);
+      setIsSubmitting(true);
+      let submission: DictationSubmission | null;
+      try {
+        submission = await checkSentence(currentSentence.id, answer);
+      } catch {
+        submission = null;
+      } finally {
+        setIsSubmitting(false);
+      }
+      if (!submission) {
+        setSubmissionError(true);
+        return null;
+      }
 
       const diff: DiffResult = {
         ...computeWordDiff(submission.correctText, answer),
@@ -95,7 +150,7 @@ export function useDictationPractice(
 
       return diff;
     },
-    [currentSentence, checkSentence],
+    [currentSentence, checkSentence, startClock],
   );
 
   const checkAnswer = useCallback(async () => {
@@ -105,6 +160,13 @@ export function useDictationPractice(
     setIsChecked(true);
   }, [recordAnswer, typedText]);
 
+  const tryAgain = useCallback(() => {
+    setTypedText("");
+    setIsChecked(false);
+    setDiffResult(null);
+    setSubmissionError(false);
+  }, []);
+
   const nextSentence = useCallback(() => {
     if (currentIndex + 1 < totalSentences) {
       setCurrentIndex((prev) => prev + 1);
@@ -113,6 +175,11 @@ export function useDictationPractice(
       setDiffResult(null);
       setRevealedHints({});
     } else {
+      if (startedAtRef.current !== null) {
+        setElapsedSeconds(
+          Math.floor((Date.now() - startedAtRef.current) / 1000),
+        );
+      }
       setIsCompleted(true);
     }
   }, [currentIndex, totalSentences]);
@@ -120,7 +187,8 @@ export function useDictationPractice(
   // Bỏ qua vẫn là một lần trả lời - ghi lại chuỗi rỗng để lịch sử phản ánh đúng
   // những câu người học né, chứ không phải những câu họ chưa gặp.
   const skipSentence = useCallback(async () => {
-    await recordAnswer("");
+    const result = await recordAnswer("");
+    if (!result) return;
     nextSentence();
   }, [recordAnswer, nextSentence]);
 
@@ -133,6 +201,12 @@ export function useDictationPractice(
     setRevealedHints({});
     setCompletedResults([]);
     setIsCompleted(false);
+    setIsSubmitting(false);
+    setSubmissionError(false);
+    setElapsedSeconds(0);
+    setReplayCountState(0);
+    setClockStarted(false);
+    startedAtRef.current = null;
   }, []);
 
   // Summary computed data
@@ -174,9 +248,9 @@ export function useDictationPractice(
       ),
       wordsCorrectRatio: `${correctWords} / ${totalWords}`,
       sentencesCompletedCount: completedResults.length,
-      studyDurationFormatted: "6m 15s",
+      studyDurationFormatted: formatDuration(elapsedSeconds),
       metrics: {
-        replays: 8,
+        replays: replayCount,
         hintsUsed: hintsUsedCount,
         perfectSentences: perfectCount,
         sentencesWithMistakes: mistakesList.length,
@@ -193,7 +267,14 @@ export function useDictationPractice(
       },
       mistakes: mistakesList,
     };
-  }, [completedResults, hintsUsedCount, lesson.targetLevel, lesson.title]);
+  }, [
+    completedResults,
+    elapsedSeconds,
+    hintsUsedCount,
+    lesson.targetLevel,
+    lesson.title,
+    replayCount,
+  ]);
 
   /** Transcript của câu vừa chấm. Rỗng cho tới khi người học nộp - đó là cả ý đồ. */
   const currentCorrectText =
@@ -207,6 +288,10 @@ export function useDictationPractice(
     currentCorrectText,
     typedText,
     isChecked,
+    isSubmitting,
+    submissionError,
+    clearSubmissionError,
+    setReplayCount: updateReplayCount,
     diffResult,
     hintsUsedCount,
     revealedHints,
@@ -215,6 +300,7 @@ export function useDictationPractice(
     handleType,
     revealHint,
     checkAnswer,
+    tryAgain,
     nextSentence,
     skipSentence,
     restartPractice,

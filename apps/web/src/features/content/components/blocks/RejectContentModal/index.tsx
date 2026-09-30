@@ -10,7 +10,7 @@ type RejectContentModalProps = {
   itemTitle: string | null;
   submitting: boolean;
   onCancel: () => void;
-  onConfirm: (note: string) => void;
+  onConfirm: (note: string) => Promise<boolean | void> | boolean | void;
 };
 
 /**
@@ -71,9 +71,9 @@ export function RejectContentModal({
             color="yellow"
             disabled={trimmed === ""}
             loading={submitting}
-            onClick={() => {
-              onConfirm(trimmed);
-              setNote("");
+            onClick={async () => {
+              const succeeded = await onConfirm(trimmed);
+              if (succeeded !== false) setNote("");
             }}
           >
             Trả lại

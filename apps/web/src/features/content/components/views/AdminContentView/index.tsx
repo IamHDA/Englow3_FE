@@ -114,12 +114,13 @@ export function AdminContentView({
     id: string,
     action: () => Promise<unknown>,
     successMessage: string,
-  ) {
+  ): Promise<boolean> {
     setBusyId(id);
     try {
       await action();
       await refetch();
       notifications.show({ color: "green", message: successMessage });
+      return true;
     } catch (actionError) {
       const code = backendCodeOf(actionError);
       notifications.show({
@@ -128,6 +129,7 @@ export function AdminContentView({
         message:
           (code && CONTENT_ERROR_MESSAGES[code]) ?? CONTENT_GENERIC_ERROR,
       });
+      return false;
     } finally {
       setBusyId(null);
     }
@@ -318,15 +320,14 @@ export function AdminContentView({
         onCancel={() => setRejecting(null)}
         onConfirm={async (note) => {
           const target = rejecting;
-          if (target === null) return;
-          // Đóng hộp thoại trước khi gọi: giữ nó mở trong lúc chờ rồi đóng sau
-          // sẽ nhấp nháy, còn kết quả đã có ở notification.
-          setRejecting(null);
-          await runAction(
+          if (target === null) return false;
+          const succeeded = await runAction(
             target.id,
             () => rejectContent({ variables: { kind, id: target.id, note } }),
             "Đã trả lại kèm lý do.",
           );
+          if (succeeded) setRejecting(null);
+          return succeeded;
         }}
       />
     </Page>

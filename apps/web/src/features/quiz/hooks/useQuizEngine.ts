@@ -1,14 +1,34 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { QuestionReview, QuizItem, QuizSessionResult } from "../types";
 
 export interface UseQuizEngineOptions {
   quiz: QuizItem;
+  isActive?: boolean;
+  expiresAt?: string | null;
+  onExpire?: () => void;
   onComplete?: (result: QuizSessionResult) => void;
 }
 
-export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
+function secondsUntil(deadlineMs: number): number {
+  return Math.max(0, Math.ceil((deadlineMs - Date.now()) / 1000));
+}
+
+export function useQuizEngine({
+  quiz,
+  isActive = true,
+  expiresAt = null,
+  onExpire,
+  onComplete,
+}: UseQuizEngineOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [flaggedIds, setFlaggedIds] = useState<string[]>([]);
@@ -16,6 +36,10 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
   const [timeRemaining, setTimeRemaining] = useState(
     quiz.timeLimitMinutes * 60,
   );
+  const [, tick] = useReducer((count: number) => count + 1, 0);
+  const deadlineMs = expiresAt === null ? null : Date.parse(expiresAt);
+  const remainingSeconds =
+    deadlineMs === null ? timeRemaining : secondsUntil(deadlineMs);
 
   const answersRef = useRef(answers);
   const timeRemainingRef = useRef(timeRemaining);
@@ -25,8 +49,8 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
   }, [answers]);
 
   useEffect(() => {
-    timeRemainingRef.current = timeRemaining;
-  }, [timeRemaining]);
+    timeRemainingRef.current = remainingSeconds;
+  }, [remainingSeconds]);
 
   const currentQuestion = useMemo(() => {
     return quiz.questions[currentIndex] || null;
@@ -46,6 +70,21 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
         : [...prev, questionId],
     );
   }, []);
+
+  const restoreProgress = useCallback(
+    (progress: {
+      answers: Record<string, unknown>;
+      flaggedIds: string[];
+      currentIndex: number;
+    }) => {
+      setAnswers(progress.answers);
+      setFlaggedIds(progress.flaggedIds);
+      setCurrentIndex(
+        Math.max(0, Math.min(progress.currentIndex, quiz.questions.length - 1)),
+      );
+    },
+    [quiz.questions.length],
+  );
 
   const handleSubmit = useCallback(() => {
     const currentAnswers = answersRef.current;
@@ -173,19 +212,48 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
 
   // Countdown timer
   useEffect(() => {
-    if (isSubmitted) return;
+    if (!isActive || isSubmitted) return;
+    if (deadlineMs !== null) {
+      const timer = setInterval(tick, 1000);
+      return () => clearInterval(timer);
+    }
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          handleSubmit();
+          (onExpire ?? handleSubmit)();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [isSubmitted, handleSubmit]);
+  }, [isActive, isSubmitted, handleSubmit, onExpire, deadlineMs]);
+
+  const expiredRef = useRef(false);
+  useEffect(() => {
+    expiredRef.current = false;
+  }, [expiresAt]);
+  useEffect(() => {
+    if (
+      !isActive ||
+      isSubmitted ||
+      deadlineMs === null ||
+      remainingSeconds > 0 ||
+      expiredRef.current
+    ) {
+      return;
+    }
+    expiredRef.current = true;
+    (onExpire ?? handleSubmit)();
+  }, [
+    isActive,
+    isSubmitted,
+    deadlineMs,
+    remainingSeconds,
+    handleSubmit,
+    onExpire,
+  ]);
 
   const restartQuiz = useCallback(() => {
     setCurrentIndex(0);
@@ -218,10 +286,11 @@ export function useQuizEngine({ quiz, onComplete }: UseQuizEngineOptions) {
     answers,
     flaggedIds,
     isSubmitted,
-    timeRemainingFormatted: formatTimer(timeRemaining),
-    timeRemainingSeconds: timeRemaining,
+    timeRemainingFormatted: formatTimer(remainingSeconds),
+    timeRemainingSeconds: remainingSeconds,
     answeredCount,
     setAnswer,
+    restoreProgress,
     toggleFlag,
     nextQuestion: () =>
       setCurrentIndex((prev) => Math.min(prev + 1, quiz.questions.length - 1)),

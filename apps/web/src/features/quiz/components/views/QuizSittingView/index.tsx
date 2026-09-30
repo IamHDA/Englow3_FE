@@ -18,7 +18,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuizEngine } from "../../../hooks/useQuizEngine";
 import { QuizItem } from "../../../types";
 import { encodeAnswer, toQuizQuestion } from "./answerEncoding";
@@ -49,11 +49,44 @@ interface QuizSittingViewProps {
 }
 
 type ScoredAttempt = SubmitQuizAttemptMutation["submitQuizAttempt"];
+type StoredQuizProgress = {
+  answers: Record<string, unknown>;
+  flaggedIds: string[];
+  currentIndex: number;
+};
+
+function progressKey(attemptId: string): string {
+  return `englow3:quiz-progress:${attemptId}`;
+}
+
+function readProgress(attemptId: string): StoredQuizProgress | null {
+  try {
+    const value = sessionStorage.getItem(progressKey(attemptId));
+    if (value === null) return null;
+    const parsed = JSON.parse(value) as Partial<StoredQuizProgress>;
+    if (
+      typeof parsed.answers !== "object" ||
+      parsed.answers === null ||
+      !Array.isArray(parsed.flaggedIds) ||
+      typeof parsed.currentIndex !== "number"
+    ) {
+      return null;
+    }
+    return {
+      answers: parsed.answers,
+      flaggedIds: parsed.flaggedIds,
+      currentIndex: parsed.currentIndex,
+    };
+  } catch {
+    return null;
+  }
+}
 
 export function QuizSittingView({ quizId }: QuizSittingViewProps) {
   const { t } = useLanguage();
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
+  const [attemptExpiresAt, setAttemptExpiresAt] = useState<string | null>(null);
   const [scored, setScored] = useState<ScoredAttempt | null>(null);
 
   const [startAttempt, { loading: starting, error: startError }] =
@@ -71,7 +104,10 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     fetchPolicy: "network-only",
   });
 
-  const paper = paperData?.quizPaper;
+  const paper =
+    paperData?.quizPaper?.attemptId === attemptId
+      ? paperData.quizPaper
+      : undefined;
 
   /**
    * The shape the question blocks were written against, built from the paper.
@@ -85,7 +121,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
       category: "",
       level: "Intermediate",
       description: paper?.description ?? "",
-      timeLimitMinutes: Math.round((paper?.timeLimitSeconds ?? 0) / 60),
+      timeLimitMinutes: Math.ceil((paper?.timeLimitSeconds ?? 0) / 60),
       passingScorePercent: 0,
       questions: (paper?.questions ?? []).map(toQuizQuestion),
     }),
@@ -102,13 +138,31 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     timeRemainingFormatted,
     timeRemainingSeconds,
     setAnswer,
+    restoreProgress,
     toggleFlag,
     nextQuestion,
     prevQuestion,
     jumpToQuestion,
     submitQuiz,
     restartQuiz,
-  } = useQuizEngine({ quiz });
+  } = useQuizEngine({
+    quiz,
+    isActive: attemptId !== null && paper !== undefined,
+    expiresAt: paper?.expiresAt ?? attemptExpiresAt,
+    onExpire: () => void handleSubmit(),
+  });
+
+  useEffect(() => {
+    if (attemptId === null || paper === undefined || isSubmitted) return;
+    try {
+      sessionStorage.setItem(
+        progressKey(attemptId),
+        JSON.stringify({ answers, flaggedIds, currentIndex }),
+      );
+    } catch {
+      // Session storage can be unavailable in restricted browser contexts.
+    }
+  }, [attemptId, paper, isSubmitted, answers, flaggedIds, currentIndex]);
 
   /** Sends every question, including the ones left alone - a missing answer is wrong, not absent. */
   async function handleSubmit() {
@@ -126,6 +180,11 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     if (response?.data) {
       setScored(response.data.submitQuizAttempt);
       submitQuiz();
+      try {
+        sessionStorage.removeItem(progressKey(attemptId));
+      } catch {
+        // Ignore unavailable session storage.
+      }
     }
   }
 
@@ -134,8 +193,29 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
       () => null,
     );
     if (response?.data) {
-      setAttemptId(response.data.startQuizAttempt.id);
+      const attempt = response.data.startQuizAttempt;
+      const restored = readProgress(attempt.id);
+      restoreProgress(
+        restored ?? { answers: {}, flaggedIds: [], currentIndex: 0 },
+      );
+      setAttemptExpiresAt(attempt.expiresAt);
+      setAttemptId(attempt.id);
     }
+  }
+
+  async function handleRetake() {
+    if (attemptId !== null) {
+      try {
+        sessionStorage.removeItem(progressKey(attemptId));
+      } catch {
+        // Ignore unavailable session storage.
+      }
+    }
+    setAttemptId(null);
+    setAttemptExpiresAt(null);
+    setScored(null);
+    restartQuiz();
+    await handleStart();
   }
 
   const error = startError ?? paperError ?? submitError;
@@ -156,7 +236,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
             href: "/study/quiz",
             label: t.quiz.backToQuizzesButton,
           }}
-          onRetry={attemptId === null ? handleStart : undefined}
+          onRetry={attemptId === null ? handleStart : handleSubmit}
         />
       </Page>
     );
@@ -223,7 +303,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
               explanation: review.explanation,
             })),
           }}
-          onRestart={restartQuiz}
+          onRestart={() => void handleRetake()}
         />
       </Page>
     );

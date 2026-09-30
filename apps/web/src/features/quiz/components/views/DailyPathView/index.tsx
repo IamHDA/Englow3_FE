@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Grid, Skeleton, Stack } from "@mantine/core";
+import { Alert, Button, Grid, Skeleton, Stack } from "@mantine/core";
 import { IconCompass, IconSparkles } from "@tabler/icons-react";
 import React, { useState } from "react";
 
@@ -41,6 +41,7 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
     data: pathData,
     loading: pathLoading,
     error: pathError,
+    refetch: refetchPath,
   } = useDailyPathQuery({ fetchPolicy: "cache-and-network" });
 
   const path = pathData?.dailyPath;
@@ -70,6 +71,21 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
           }
         />
 
+        {pathError && !path && (
+          <Alert color="warn" title={t.dailyPath.couldNotLoadPath}>
+            <Stack gap="sm" align="flex-start">
+              <span>{t.dictation.checkConnectionReload}</span>
+              <Button
+                variant="light"
+                onClick={() => void refetchPath()}
+                loading={pathLoading}
+              >
+                {t.common.retry}
+              </Button>
+            </Stack>
+          </Alert>
+        )}
+
         {path ? (
           <DailyStreakBanner
             streakDays={path.streakDays}
@@ -85,22 +101,20 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
         {activeTab === "roadmap" ? (
           <Grid gap="md">
             <Grid.Col span={{ base: 12, md: 8 }}>
-              {pathError && !path ? (
-                <Alert color="warn" title={t.dailyPath.couldNotLoadPath}>
-                  {t.dictation.checkConnectionReload}
-                </Alert>
-              ) : path ? (
+              {path ? (
                 <DailyPathRoadmap tasks={path.tasks} />
               ) : (
-                <Skeleton height={420} radius="md" visible={pathLoading} />
+                !pathError && (
+                  <Skeleton height={420} radius="md" visible={pathLoading} />
+                )
               )}
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
               {path ? (
                 <DailyQuestsCard quests={path.quests} />
-              ) : (
+              ) : !pathError ? (
                 <Skeleton height={280} radius="md" visible={pathLoading} />
-              )}
+              ) : null}
             </Grid.Col>
           </Grid>
         ) : (

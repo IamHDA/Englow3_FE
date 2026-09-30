@@ -1,6 +1,14 @@
 "use client";
 
-import { Badge, Button, Group, Paper, Stack, Title } from "@mantine/core";
+import {
+  Alert,
+  Badge,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Title,
+} from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
@@ -11,7 +19,7 @@ import {
 import { DictationPracticeSkeleton } from "../../blocks/DictationPracticeSkeleton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 import { useDictationPractice } from "../../../hooks/useDictationPractice";
@@ -81,6 +89,7 @@ export function DictationPracticeView({
     sentences,
     checkSentence,
   );
+  const updateReplayCount = practice.setReplayCount;
 
   const audio = useDictationAudio({
     audioUrl: practice.currentSentence?.audioUrl ?? null,
@@ -90,6 +99,16 @@ export function DictationPracticeView({
     audioStartMs: practice.currentSentence?.audioStartMs,
     audioEndMs: practice.currentSentence?.audioEndMs,
   });
+  const resetAudioReplayCount = audio.resetReplayCount;
+  const restartSession = practice.restartPractice;
+  const restartPractice = useCallback(() => {
+    resetAudioReplayCount();
+    restartSession();
+  }, [resetAudioReplayCount, restartSession]);
+
+  useEffect(() => {
+    updateReplayCount(audio.replayCount);
+  }, [audio.replayCount, updateReplayCount]);
 
   if (loading && lesson === undefined) {
     return <DictationPracticeSkeleton />;
@@ -116,7 +135,7 @@ export function DictationPracticeView({
       <Page width="focus">
         <DictationSessionSummary
           summary={practice.summaryData}
-          onRestart={practice.restartPractice}
+          onRestart={restartPractice}
           onReviewMistakes={() => {
             router.push(`/study/dictation/${lesson.id}/review`);
           }}
@@ -192,8 +211,20 @@ export function DictationPracticeView({
           onChange={practice.handleType}
           onCheckAnswer={practice.checkAnswer}
           onSkip={practice.skipSentence}
-          disabled={practice.isChecked}
+          disabled={practice.isChecked || practice.isSubmitting}
+          checking={practice.isSubmitting}
         />
+
+        {practice.submissionError && (
+          <Alert
+            color="red"
+            title={t.dictation.checkAnswerErrorTitle}
+            withCloseButton
+            onClose={practice.clearSubmissionError}
+          >
+            {t.dictation.checkConnectionReload}
+          </Alert>
+        )}
 
         {/* Checked Result Diff */}
         {practice.isChecked && practice.diffResult && (
@@ -201,10 +232,7 @@ export function DictationPracticeView({
             diff={practice.diffResult}
             expectedSentence={practice.currentCorrectText}
             onNextSentence={practice.nextSentence}
-            onTryAgain={() => {
-              // Allows user to try typing again
-              practice.handleType("");
-            }}
+            onTryAgain={practice.tryAgain}
             onListenAgain={audio.replay}
             isLastSentence={
               practice.currentIndex + 1 >= practice.totalSentences

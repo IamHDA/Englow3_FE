@@ -7,6 +7,7 @@ import React from "react";
 
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
+import { SpeakingAttemptStatus } from "@/lib/graphql/generated/schemaTypes";
 import { useSpeakingPromptQuery } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -74,6 +75,7 @@ function Practice({
     attempt,
     errorMessage,
     localAudioUrl,
+    checkAssessmentAgain,
     startRecording,
     stopRecording,
     reset,
@@ -121,13 +123,22 @@ function Practice({
         />
 
         {errorMessage !== null && (
-          <Alert
-            color="warn"
-            title={t.pronunciation.notFinishedTitle}
-            withCloseButton
-            onClose={reset}
-          >
-            {errorMessage}
+          <Alert color="warn" title={t.pronunciation.notFinishedTitle}>
+            <Stack gap="sm" align="flex-start">
+              <Text>{errorMessage}</Text>
+              {attempt !== null &&
+                attempt.status !== SpeakingAttemptStatus.FAILED && (
+                  <Button variant="light" onClick={checkAssessmentAgain}>
+                    {t.pronunciation.checkResultAgainButton}
+                  </Button>
+                )}
+              {(attempt === null ||
+                attempt.status === SpeakingAttemptStatus.FAILED) && (
+                <Button variant="light" onClick={reset}>
+                  {t.pronunciation.recordAgainButton}
+                </Button>
+              )}
+            </Stack>
           </Alert>
         )}
 

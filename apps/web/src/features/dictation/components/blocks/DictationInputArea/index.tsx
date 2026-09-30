@@ -20,6 +20,7 @@ interface DictationInputAreaProps {
   onCheckAnswer: () => void;
   onSkip: () => void;
   disabled?: boolean;
+  checking?: boolean;
 }
 
 export function DictationInputArea({
@@ -28,12 +29,13 @@ export function DictationInputArea({
   onCheckAnswer,
   onSkip,
   disabled = false,
+  checking = false,
 }: DictationInputAreaProps) {
   const { t } = useLanguage();
   const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    if (!disabled && (e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault();
       onCheckAnswer();
     }
@@ -106,6 +108,7 @@ export function DictationInputArea({
               radius="md"
               onClick={onCheckAnswer}
               disabled={disabled || value.trim().length === 0}
+              loading={checking}
               leftSection={<Check size={15} />}
               fw={600}
             >

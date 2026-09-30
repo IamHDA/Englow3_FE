@@ -221,7 +221,7 @@ export function LearnerHomeView() {
                     </Text>
                     <Button
                       component={Link}
-                      href="/study/flashcards"
+                      href="/study/daily-path?tab=quizzes"
                       color="orange.5"
                       size="md"
                       rightSection={<ArrowRight size={18} aria-hidden="true" />}

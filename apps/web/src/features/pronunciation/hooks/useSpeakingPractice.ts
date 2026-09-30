@@ -57,6 +57,7 @@ export function useSpeakingPractice({
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const chunksRef = useRef<Float32Array[]>([]);
   const durationTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollInFlightRef = useRef(false);
 
   const [startAttempt] = useStartSpeakingAttemptMutation();
   const [submitAttempt] = useSubmitSpeakingAttemptMutation();
@@ -195,6 +196,7 @@ export function useSpeakingPractice({
     const startedAt = Date.now();
 
     const timer = setInterval(async () => {
+      if (pollInFlightRef.current) return;
       if (Date.now() - startedAt > POLL_TIMEOUT_MS) {
         clearInterval(timer);
         setPhase("error");
@@ -204,24 +206,41 @@ export function useSpeakingPractice({
         return;
       }
 
-      const polled = await fetchAttempt({ variables: { id: attemptId } });
-      const latest = polled.data?.speakingAttempt;
-      if (latest === undefined) return;
+      pollInFlightRef.current = true;
+      try {
+        const polled = await fetchAttempt({ variables: { id: attemptId } });
+        const latest = polled.data?.speakingAttempt;
+        if (latest === undefined) return;
 
-      if (latest.status === SpeakingAttemptStatus.ASSESSED) {
+        if (latest.status === SpeakingAttemptStatus.ASSESSED) {
+          clearInterval(timer);
+          setAttempt(latest);
+          setPhase("done");
+        } else if (latest.status === SpeakingAttemptStatus.FAILED) {
+          clearInterval(timer);
+          setAttempt(latest);
+          setPhase("error");
+          setErrorMessage("Không chấm được bản ghi này. Thử ghi lại rõ hơn.");
+        }
+      } catch {
         clearInterval(timer);
-        setAttempt(latest);
-        setPhase("done");
-      } else if (latest.status === SpeakingAttemptStatus.FAILED) {
-        clearInterval(timer);
-        setAttempt(latest);
         setPhase("error");
-        setErrorMessage("Không chấm được bản ghi này. Thử ghi lại rõ hơn.");
+        setErrorMessage(
+          "Mất kết nối khi lấy kết quả. Bản ghi vẫn được giữ; hãy kiểm tra lại thay vì ghi lại.",
+        );
+      } finally {
+        pollInFlightRef.current = false;
       }
     }, POLL_INTERVAL_MS);
 
     return () => clearInterval(timer);
   }, [phase, attempt, fetchAttempt]);
+
+  const checkAssessmentAgain = useCallback(() => {
+    if (attempt === null) return;
+    setErrorMessage(null);
+    setPhase("assessing");
+  }, [attempt]);
 
   const reset = useCallback(() => {
     releaseMicrophone();
@@ -256,6 +275,7 @@ export function useSpeakingPractice({
     startRecording,
     stopRecording,
     reset,
+    checkAssessmentAgain,
     playReference,
   };
 }
