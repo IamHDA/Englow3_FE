@@ -29,8 +29,50 @@ body {
   /* A light grey page so white cards stand apart from it, as in Study4 -
      white on white left every screen looking flat. */
   background-color: var(--mantine-color-ink-0);
-  color: var(--mantine-color-ink-7);
+  color: var(--mantine-color-ink-8);
+  font-family: var(--font-body), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings break into even lines instead of leaving one word alone. */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+/* A visible focus ring on everything reachable by keyboard, including the
+   plain links and buttons styled in CSS modules. Never removed on :focus
+   alone - only the mouse-click case is quiet, via :focus-visible. */
+:where(a, button, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--mantine-color-brand-7);
+  outline-offset: 2px;
+}
+
+/* The skip link lands focus on <main>; it is a landmark, not a control, so a
+   ring around the whole page would only be noise. */
+main:focus,
+main:focus-visible {
+  outline: none;
+}
+
+/* Figures that change in place (timers, scores, counters) keep their width. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Respect the system setting: no smooth scrolling, no long transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body > main {
@@ -44,6 +86,16 @@ nextjs-portal,
 [data-nextjs-dev-indicator],
 [data-next-badge] {
   display: none !important;
+}
+
+/* 44px touch targets for the default (md) buttons and inputs - Mantine's md is
+   42px. Same specificity as Mantine's class, later in the cascade. */
+.mantine-Button-root {
+  --button-height-md: 44px;
+}
+
+.mantine-Input-wrapper {
+  --input-height-md: 44px;
 }
 
 /* Comfortable touch targets on a phone: nothing tappable under 44px tall. */

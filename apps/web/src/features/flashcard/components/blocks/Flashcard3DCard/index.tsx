@@ -86,7 +86,7 @@ export function Flashcard3DCard({
           <Stack align="center" justify="center" gap="xs" my="auto">
             <Text
               fz={{ base: 36, sm: 46 }}
-              fw={800}
+              fw={700}
               c="indigo.9"
               ta="center"
               style={{ letterSpacing: "-0.02em" }}

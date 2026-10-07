@@ -127,7 +127,7 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
     <Card withBorder padding="xl" radius="md">
       <Stack gap="lg">
         <Box>
-          <Text fw={800} fz="lg" c="dark.9">
+          <Text fw={700} fz="lg" c="dark.9">
             {t.dailyPath.roadmapMapTitle}
           </Text>
           <Text fz="xs" c="dimmed">

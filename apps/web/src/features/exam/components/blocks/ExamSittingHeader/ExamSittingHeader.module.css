@@ -4,7 +4,7 @@
   z-index: 100;
   background-color: var(--mantine-color-white);
   border-bottom: 1px solid var(--mantine-color-ink-2);
-  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.05);
+  box-shadow: none;
 }
 
 .divider {

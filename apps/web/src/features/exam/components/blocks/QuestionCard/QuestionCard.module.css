@@ -1,7 +1,7 @@
 .cardRoot {
   background-color: var(--mantine-color-white);
   border-color: var(--mantine-color-ink-2);
-  box-shadow: 0 4px 16px rgba(30, 58, 138, 0.05);
+  box-shadow: none;
 }
 
 .partHeader {
@@ -11,7 +11,7 @@
 }
 
 .stimulusCard {
-  background-color: #f8fafc;
+  background-color: var(--mantine-color-ink-0);
   border: 1px solid var(--mantine-color-ink-2);
 }
 
@@ -46,7 +46,7 @@
 
 .optionItem:hover {
   border-color: var(--mantine-color-navy-5);
-  background-color: #fafcff;
+  background-color: var(--mantine-color-ink-0);
 }
 
 .optionItemSelected {

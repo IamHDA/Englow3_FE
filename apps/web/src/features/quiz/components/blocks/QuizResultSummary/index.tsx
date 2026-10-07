@@ -60,7 +60,7 @@ export function QuizResultSummary({
             <Badge size="lg" variant="filled" color={statusColor}>
               {isPassed ? t.quiz.passedBadge : t.quiz.needsRetakeBadge}
             </Badge>
-            <Text fz="xl" fw={800} ta="center">
+            <Text fz="xl" fw={700} ta="center">
               {result.quizTitle}
             </Text>
             <Text fz="sm" c="dimmed" ta="center">
@@ -75,7 +75,7 @@ export function QuizResultSummary({
               roundCaps
               sections={[{ value: result.scorePercent, color: statusColor }]}
               label={
-                <Text ta="center" fw={800} fz="xl">
+                <Text ta="center" fw={700} fz="xl">
                   {result.scorePercent}%
                 </Text>
               }

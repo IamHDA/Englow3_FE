@@ -44,7 +44,7 @@ function ScoreTile({ label, value }: { label: string; value: number | null }) {
       <Stack gap={2} align="center">
         <Text
           fz={22}
-          fw={800}
+          fw={700}
           c={value === null ? "dimmed" : scoreColor(value)}
         >
           {value === null ? "—" : Math.round(value)}
@@ -109,13 +109,13 @@ export function PronunciationScoreCard({
                 },
               ]}
               label={
-                <Text ta="center" fw={800} fz="lg">
+                <Text ta="center" fw={700} fz="lg">
                   {overall === null ? "—" : Math.round(overall)}
                 </Text>
               }
             />
             <Stack gap={2}>
-              <Text fw={800} fz="lg" c="dark.9">
+              <Text fw={700} fz="lg" c="dark.9">
                 {t.pronunciation.pronunciationScoreTitle}
               </Text>
               <Text fz="xs" c="dimmed" maw={360}>

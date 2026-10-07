@@ -28,7 +28,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--mantine-color-orange-6);
+  color: var(--mantine-color-orange-7);
 }
 
 .title {
@@ -36,7 +36,7 @@
   font-size: 34px;
   font-weight: 700;
   line-height: 1.15;
-  color: #0f172a;
+  color: var(--mantine-color-ink-9);
   letter-spacing: -0.02em;
 }
 
@@ -63,7 +63,7 @@
 .statValue {
   font-size: 26px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--mantine-color-ink-9);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -121,7 +121,7 @@
   height: 38px;
   border-radius: 10px;
   border: 1px solid var(--mantine-color-gray-3);
-  background: #ffffff;
+  background: var(--mantine-color-white);
   color: var(--mantine-color-gray-7);
   display: inline-flex;
   align-items: center;
@@ -146,7 +146,7 @@
   padding: 0 10px;
   border-radius: 10px;
   border: 1px solid var(--mantine-color-gray-3);
-  background: #ffffff;
+  background: var(--mantine-color-white);
   color: var(--mantine-color-gray-7);
   font-size: 14px;
   font-weight: 700;
@@ -158,7 +158,7 @@
 }
 
 .pageNumber[data-active="true"] {
-  background: #0f172a;
-  border-color: #0f172a;
-  color: #ffffff;
+  background: var(--mantine-color-ink-9);
+  border-color: var(--mantine-color-ink-9);
+  color: var(--mantine-color-white);
 }

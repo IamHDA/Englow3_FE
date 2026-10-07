@@ -10,19 +10,9 @@
 
 .continueCard {
   color: var(--mantine-color-white);
-  background:
-    radial-gradient(
-      circle at 92% 0%,
-      rgba(132, 162, 225, 0.4),
-      transparent 55%
-    ),
-    linear-gradient(
-      135deg,
-      var(--mantine-color-navy-9),
-      var(--mantine-color-navy-7)
-    );
+  background: var(--mantine-color-navy-9);
   padding: 28px;
-  box-shadow: var(--mantine-shadow-md);
+  box-shadow: none;
 }
 
 .continueButton {
@@ -58,8 +48,8 @@
 }
 
 .shortcut:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--mantine-shadow-md);
+  box-shadow: none;
+  border-color: var(--mantine-color-navy-3);
 }
 
 @media (min-width: $mantine-breakpoint-md) {

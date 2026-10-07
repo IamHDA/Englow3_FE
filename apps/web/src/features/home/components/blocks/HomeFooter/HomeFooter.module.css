@@ -4,7 +4,7 @@
 }
 
 .tagline {
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-body), sans-serif;
   font-style: italic;
   font-size: 15px;
   color: var(--mantine-color-ink-6);

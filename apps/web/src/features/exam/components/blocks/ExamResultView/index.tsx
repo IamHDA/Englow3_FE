@@ -227,7 +227,7 @@ export function ExamResultView({
                     {t.exam.estimatedScore}
                   </Text>
                 </Group>
-                <Text size="xl" fw={800} c="navy.9">
+                <Text size="xl" fw={700} c="navy.9">
                   {scaledScore} / {maxScore}
                 </Text>
                 <Text size="xs" c="navy.7">
@@ -237,12 +237,15 @@ export function ExamResultView({
 
               <Card p="md" radius="md" className={classes.scoreCardCorrect}>
                 <Group gap="xs" mb={4}>
-                  <CheckCircle2 size={20} color="#16A34A" />
+                  <CheckCircle2
+                    size={20}
+                    color="var(--mantine-color-green-6)"
+                  />
                   <Text size="xs" fw={700} c="green.9">
                     {t.exam.correctAnswersCount}
                   </Text>
                 </Group>
-                <Text size="xl" fw={800} c="green.9">
+                <Text size="xl" fw={700} c="green.9">
                   {correctCount}
                 </Text>
                 <Text size="xs" c="green.7">
@@ -252,12 +255,12 @@ export function ExamResultView({
 
               <Card p="md" radius="md" className={classes.scoreCardIncorrect}>
                 <Group gap="xs" mb={4}>
-                  <XCircle size={20} color="#D9483B" />
+                  <XCircle size={20} color="var(--mantine-color-warn-6)" />
                   <Text size="xs" fw={700} c="warn.9">
                     {t.exam.incorrectAnswersCount}
                   </Text>
                 </Group>
-                <Text size="xl" fw={800} c="warn.9">
+                <Text size="xl" fw={700} c="warn.9">
                   {incorrectCount}
                 </Text>
                 <Text size="xs" c="warn.7">
@@ -418,10 +421,10 @@ export function ExamResultView({
                               let badgeLabel: string | null = null;
 
                               if (isCorrectOpt) {
-                                bg = "#F0FDF4";
+                                bg = "var(--mantine-color-green-0)";
                                 badgeLabel = t.exam.correctBadge;
                               } else if (isUserChoice && !isCorrectOpt) {
-                                bg = "#FEF2F2";
+                                bg = "var(--mantine-color-warn-0)";
                                 badgeLabel = t.exam.yourChoiceBadge;
                               }
 

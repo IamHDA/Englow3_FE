@@ -57,7 +57,7 @@ function StatCard({
           <Text size="sm" c="ink.6" fw={600}>
             {label}
           </Text>
-          <Text fz={30} fw={800} c="navy.9" lh={1.1}>
+          <Text fz={30} fw={700} c="navy.9" lh={1.1}>
             {value.toLocaleString(locale)}
           </Text>
           {hint && (
@@ -289,7 +289,7 @@ export function AdminOverviewView() {
                   ],
                 ].map(([label, value]) => (
                   <Stack key={label as string} gap={2}>
-                    <Text fz={24} fw={800} c="navy.9">
+                    <Text fz={24} fw={700} c="navy.9">
                       {(value as number).toLocaleString(locale)}
                     </Text>
                     <Text size="xs" c="ink.6">

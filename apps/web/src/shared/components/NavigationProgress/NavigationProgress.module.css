@@ -10,12 +10,8 @@
   height: 100%;
   width: 100%;
   transform-origin: left center;
-  background: linear-gradient(
-    90deg,
-    var(--mantine-color-orange-5),
-    var(--mantine-color-orange-6)
-  );
-  box-shadow: 0 0 8px rgba(240, 138, 12, 0.6);
+  background: var(--mantine-color-orange-5);
+  box-shadow: none;
   transition:
     transform 200ms ease-out,
     opacity 300ms ease 150ms;

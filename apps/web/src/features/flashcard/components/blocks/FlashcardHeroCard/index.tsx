@@ -44,7 +44,7 @@ export function FlashcardHeroCard({
       padding="xl"
       radius="lg"
       style={{
-        background: "linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%)",
+        background: "var(--mantine-color-navy-9)",
         color: "#ffffff",
       }}
     >
@@ -53,7 +53,7 @@ export function FlashcardHeroCard({
           <Stack gap="sm">
             {streakDays !== null && streakDays > 0 && (
               <Group gap={4}>
-                <IconFlame size={18} color="#FDE047" />
+                <IconFlame size={18} color="var(--mantine-color-orange-3)" />
                 <Text fz="xs" fw={700} c="yellow.2">
                   {t.flashcard.streakDaysBanner.replace(
                     "{count}",
@@ -63,7 +63,7 @@ export function FlashcardHeroCard({
               </Group>
             )}
 
-            <Text fz={{ base: 22, sm: 26 }} fw={800} lh={1.2}>
+            <Text fz={{ base: 22, sm: 26 }} fw={700} lh={1.2}>
               {dueCount > 0
                 ? t.flashcard.cardsDueTodayMessage.replace(
                     "{count}",
@@ -129,7 +129,7 @@ export function FlashcardHeroCard({
                   {t.flashcard.dueTodayLabel}
                 </Text>
               </Group>
-              <Text fz="sm" fw={800} c="white">
+              <Text fz="sm" fw={700} c="white">
                 {dueCount} {t.flashcard.cardsUnit}
               </Text>
             </Group>
@@ -149,7 +149,7 @@ export function FlashcardHeroCard({
                     {t.flashcard.retentionRateLabel}
                   </Text>
                 </Group>
-                <Text fz="sm" fw={800} c="white">
+                <Text fz="sm" fw={700} c="white">
                   {retentionPercent}%
                 </Text>
               </Group>

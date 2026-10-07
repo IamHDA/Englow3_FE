@@ -91,7 +91,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                   <Text size="xs" c="ink.5" fw={600}>
                     {t.account.targetCertificateLabel}
                   </Text>
-                  <Text size="md" fw={800} c="ink.9">
+                  <Text size="md" fw={700} c="ink.9">
                     {certificate}
                   </Text>
                 </Stack>
@@ -116,7 +116,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                   <Text size="xs" c="ink.5" fw={600}>
                     {t.account.currentLevelLabel}
                   </Text>
-                  <Text size="md" fw={800} c="ink.9">
+                  <Text size="md" fw={700} c="ink.9">
                     CEFR {currentLevel}
                   </Text>
                 </Stack>
@@ -141,7 +141,7 @@ export function ProfileLearningTab({ profile }: ProfileLearningTabProps) {
                   <Text size="xs" c="ink.5" fw={600}>
                     {t.account.targetDeadlineLabel}
                   </Text>
-                  <Text size="md" fw={800} c="ink.9">
+                  <Text size="md" fw={700} c="ink.9">
                     {targetDate ?? t.account.flexibleDeadline}
                   </Text>
                 </Stack>

@@ -10,17 +10,7 @@
   border-radius: 28px;
   /* Blue light rather than orange: orange over navy mixes to brown. The
      orange stays on the button, where it is the thing to press. */
-  background:
-    radial-gradient(
-      circle at 88% 0%,
-      rgba(132, 162, 225, 0.45),
-      transparent 50%
-    ),
-    linear-gradient(
-      135deg,
-      var(--mantine-color-navy-9),
-      var(--mantine-color-navy-7)
-    );
+  background: var(--mantine-color-navy-9);
   color: var(--mantine-color-white);
 }
 
@@ -30,7 +20,7 @@
 
 .title {
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.2;
   color: var(--mantine-color-white);
 }

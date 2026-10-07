@@ -96,12 +96,12 @@ export function DictationCharts({ stats }: DictationChartsProps) {
                     >
                       <stop
                         offset="0%"
-                        stopColor="#3B6FD4"
+                        stopColor="#0D9488"
                         stopOpacity="0.35"
                       />
                       <stop
                         offset="100%"
-                        stopColor="#3B6FD4"
+                        stopColor="#0D9488"
                         stopOpacity="0.0"
                       />
                     </linearGradient>

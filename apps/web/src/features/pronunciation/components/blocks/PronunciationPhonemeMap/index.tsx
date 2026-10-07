@@ -61,7 +61,7 @@ export function PronunciationPhonemeMap({
               >
                 <Group justify="space-between" align="center">
                   <Stack gap={2}>
-                    <Text fw={800} fz="md" c="indigo.9">
+                    <Text fw={700} fz="md" c="indigo.9">
                       {item.symbol}
                     </Text>
                     <Text fz={10} c="dimmed">
@@ -94,7 +94,7 @@ export function PronunciationPhonemeMap({
               >
                 <Group justify="space-between" align="center">
                   <Stack gap={2}>
-                    <Text fw={800} fz="md" c="indigo.9">
+                    <Text fw={700} fz="md" c="indigo.9">
                       {item.symbol}
                     </Text>
                     <Text fz={10} c="dimmed">

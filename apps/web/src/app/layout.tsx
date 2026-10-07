@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import type { Metadata } from "next";
-import { Lora, Work_Sans } from "next/font/google";
+import { Lexend, Source_Sans_3 } from "next/font/google";
 import { Suspense } from "react";
 
 import { AccountProvider } from "@/features/account";
@@ -24,16 +24,23 @@ import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
 import { theme } from "@/lib/mantine/theme";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
+import { SkipLink } from "@/shared/components/SkipLink";
 import { HideInAdmin } from "@/shared/components/SiteHeader/HideInAdmin";
 
-const lora = Lora({
-  variable: "--font-lora",
+// Lexend for headings - designed for reading ease; Source Sans 3 for body
+// copy. Both carry the Vietnamese subset (diacritics render in the font, not a
+// fallback). See apps/web/docs/design-system.md.
+const heading = Lexend({
+  variable: "--font-heading",
   subsets: ["latin", "vietnamese"],
+  display: "swap",
 });
 
-const workSans = Work_Sans({
-  variable: "--font-work-sans",
+const body = Source_Sans_3({
+  variable: "--font-body",
   subsets: ["latin", "vietnamese"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -59,7 +66,7 @@ export default async function RootLayout({
     <html
       lang="vi"
       {...mantineHtmlProps}
-      className={`${lora.variable} ${workSans.variable}`}
+      className={`${heading.variable} ${body.variable}`}
     >
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
@@ -78,11 +85,14 @@ export default async function RootLayout({
                 <LanguageProvider>
                   <OnboardingProvider>
                     <UserTourProvider>
+                      <SkipLink />
                       <HideInAdmin>
                         <SiteHeader />
                       </HideInAdmin>
                       <SlowBackendNotice />
-                      <main>{children}</main>
+                      <main id="main-content" tabIndex={-1}>
+                        {children}
+                      </main>
                       <OnboardingGate />
                     </UserTourProvider>
                   </OnboardingProvider>

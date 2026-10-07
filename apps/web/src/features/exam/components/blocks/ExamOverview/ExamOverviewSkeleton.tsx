@@ -95,7 +95,7 @@ export function ExamOverviewSkeleton() {
           <Box
             p="md"
             style={{
-              backgroundColor: "#F8FAFC",
+              backgroundColor: "var(--mantine-color-ink-0)",
               border: "1px solid var(--mantine-color-ink-2)",
               borderRadius: 14,
             }}

@@ -128,7 +128,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                     </Badge>
                   )}
                 </Group>
-                <Title order={2} fw={800} c="dark.9">
+                <Title order={2} fw={700} c="dark.9">
                   {set.name}
                 </Title>
               </Stack>

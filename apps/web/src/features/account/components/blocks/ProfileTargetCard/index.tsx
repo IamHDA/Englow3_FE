@@ -64,7 +64,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
                 {t.account.targetScoreLabel}
               </Text>
             </Group>
-            <Text size="sm" fw={800} c="navy.9" mt={2}>
+            <Text size="sm" fw={700} c="navy.9" mt={2}>
               {targetScore}
             </Text>
           </Paper>
@@ -76,7 +76,7 @@ export function ProfileTargetCard({ profile }: ProfileTargetCardProps) {
                 {t.account.currentLevelLabel}
               </Text>
             </Group>
-            <Text size="sm" fw={800} c="teal.8" mt={2}>
+            <Text size="sm" fw={700} c="teal.8" mt={2}>
               {currentLevel}
             </Text>
           </Paper>

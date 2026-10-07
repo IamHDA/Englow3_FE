@@ -28,8 +28,8 @@
 .tile[aria-pressed="true"] {
   border-color: var(--mantine-color-orange-4);
   background-color: var(--mantine-color-orange-0);
-  color: var(--mantine-color-orange-6);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  color: var(--mantine-color-orange-8);
+  box-shadow: none;
 }
 
 /* Bàn phím: Mantine chỉ vẽ viền focus khi điều hướng bằng Tab, không khi click. */

@@ -99,7 +99,7 @@ export function QuizTimerPalette({
             </Group>
             <Text
               fz="lg"
-              fw={800}
+              fw={700}
               c={isTimeCritical ? "red.7" : "indigo.7"}
               style={{ fontVariantNumeric: "tabular-nums" }}
             >

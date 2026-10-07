@@ -59,7 +59,7 @@ export function AuthModal({
       centered
       padding={0}
       withCloseButton={false}
-      overlayProps={{ color: "#0F1B3A", backgroundOpacity: 0.5 }}
+      overlayProps={{ color: "#0F172A", backgroundOpacity: 0.5 }}
       classNames={{ content: classes.content }}
     >
       <CloseButton

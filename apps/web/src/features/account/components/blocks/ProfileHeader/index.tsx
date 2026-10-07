@@ -131,7 +131,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
 
         <Stack gap={4}>
           <Group gap="xs" align="center">
-            <Title order={2} fz={20} fw={800} c="ink.9">
+            <Title order={2} fz={20} fw={700} c="ink.9">
               {profile.fullName || profile.displayName}
             </Title>
             <UserCheck size={18} className={classes.verifiedIcon} />

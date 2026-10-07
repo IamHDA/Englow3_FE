@@ -4,7 +4,7 @@
 }
 
 .successBox {
-  background-color: #f0fdf4;
+  background-color: var(--mantine-color-green-0);
   border-radius: 10px;
 }
 

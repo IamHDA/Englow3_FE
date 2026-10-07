@@ -42,8 +42,7 @@ export function DailyStreakBanner({
       padding="xl"
       radius="lg"
       style={{
-        background:
-          "linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%)",
+        background: "var(--mantine-color-navy-9)",
         color: "#ffffff",
       }}
     >
@@ -53,7 +52,7 @@ export function DailyStreakBanner({
             {/* Chuỗi 0 ngày không phải là chuỗi - không dán ngọn lửa lên nó. */}
             {streakDays > 0 && (
               <Group gap={4}>
-                <IconFlame size={18} color="#FBBF24" />
+                <IconFlame size={18} color="var(--mantine-color-orange-3)" />
                 <Text fz="xs" fw={700} c="yellow.2">
                   {isVi
                     ? `Chuỗi ${streakDays} ngày liên tiếp`

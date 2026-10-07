@@ -218,7 +218,7 @@ export function OnboardingGate() {
       centered
       padding={40}
       withCloseButton={false}
-      overlayProps={{ color: "#0F1B3A", backgroundOpacity: 0.5 }}
+      overlayProps={{ color: "#0F172A", backgroundOpacity: 0.5 }}
       title={
         <VisuallyHidden>
           {tr("Thiết lập lộ trình học", "Set up your learning path")}

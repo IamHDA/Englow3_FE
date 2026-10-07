@@ -58,7 +58,7 @@ export function FlashcardStatsOverview({ stats }: FlashcardStatsOverviewProps) {
                   <Text fz="xs" c="dimmed" fw={600}>
                     {item.title}
                   </Text>
-                  <Text fz="xl" fw={800} c="dark.9">
+                  <Text fz="xl" fw={700} c="dark.9">
                     {item.value}
                   </Text>
                 </Stack>

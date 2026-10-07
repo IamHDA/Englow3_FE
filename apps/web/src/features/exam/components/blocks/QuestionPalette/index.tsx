@@ -107,7 +107,11 @@ export function QuestionPalette({
                 {q.globalIndex + 1}
                 {isFlagged && (
                   <Box className={classes.flagIconPin}>
-                    <Flag size={10} color="#F59E0B" fill="#F59E0B" />
+                    <Flag
+                      size={10}
+                      color="var(--mantine-color-orange-5)"
+                      fill="var(--mantine-color-orange-5)"
+                    />
                   </Box>
                 )}
               </UnstyledButton>

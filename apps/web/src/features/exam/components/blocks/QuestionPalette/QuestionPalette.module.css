@@ -23,7 +23,7 @@
   width: 12px;
   height: 12px;
   border-radius: 3px;
-  background-color: #f59e0b;
+  background-color: var(--mantine-color-orange-5);
 }
 
 .legendDotUnanswered {
@@ -63,9 +63,9 @@
 }
 
 .paletteBtn[data-status="flagged"] {
-  background-color: #fef3c7;
-  color: #92400e;
-  border: 1.5px solid #f59e0b;
+  background-color: var(--mantine-color-orange-0);
+  color: var(--mantine-color-orange-9);
+  border: 1.5px solid var(--mantine-color-orange-5);
 }
 
 .paletteBtn:hover {

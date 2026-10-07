@@ -2,11 +2,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: #ffffff;
+  background: var(--mantine-color-white);
   border-radius: 18px;
   padding: 20px 24px;
   border: 1px solid var(--mantine-color-gray-2);
-  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.03);
+  box-shadow: none;
 }
 
 .topBar {
@@ -50,9 +50,9 @@
 }
 
 .tabButton[data-active="true"] {
-  background: #0f172a;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+  background: var(--mantine-color-ink-9);
+  color: var(--mantine-color-white);
+  box-shadow: none;
 }
 
 .sortWrapper {
@@ -83,7 +83,7 @@
   padding: 7px 14px;
   border-radius: 999px;
   border: 1px solid var(--mantine-color-gray-3);
-  background: #ffffff;
+  background: var(--mantine-color-white);
   color: var(--mantine-color-gray-8);
   font-size: 13px;
   font-weight: 600;

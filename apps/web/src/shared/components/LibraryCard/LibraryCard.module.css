@@ -9,9 +9,8 @@
 }
 
 .card:hover {
-  transform: translateY(-2px);
   border-color: var(--mantine-color-navy-1);
-  box-shadow: var(--mantine-shadow-md);
+  box-shadow: none;
 }
 
 .body {

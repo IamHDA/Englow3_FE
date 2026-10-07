@@ -7,7 +7,7 @@
 .topFilterSkeleton {
   height: 120px;
   border-radius: 18px;
-  background: #ffffff;
+  background: var(--mantine-color-white);
   border: 1px solid var(--mantine-color-gray-2);
   padding: 20px 24px;
   display: flex;
@@ -42,7 +42,7 @@
 .cardSkeleton {
   min-height: 270px;
   border-radius: 18px;
-  background: #ffffff;
+  background: var(--mantine-color-white);
   border: 1px solid var(--mantine-color-gray-2);
   padding: 20px;
   display: flex;

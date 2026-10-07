@@ -5,10 +5,10 @@
   justify-content: center;
   gap: 14px;
   padding: 72px 24px 84px;
-  background: #ffffff;
+  background: var(--mantine-color-white);
   border: 1px solid var(--mantine-color-gray-2);
   border-radius: 18px;
-  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.03);
+  box-shadow: none;
   text-align: center;
 }
 
@@ -27,7 +27,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--mantine-color-ink-9);
 }
 
 .description {
@@ -41,8 +41,8 @@
 .clearButton {
   margin-top: 8px;
   border: 0;
-  background: #0f172a;
-  color: #ffffff;
+  background: var(--mantine-color-ink-9);
+  color: var(--mantine-color-white);
   padding: 12px 24px;
   border-radius: 999px;
   font-size: 14px;
@@ -52,5 +52,5 @@
 }
 
 .clearButton:hover {
-  background: #1e293b;
+  background: var(--mantine-color-ink-8);
 }

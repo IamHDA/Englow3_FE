@@ -16,7 +16,7 @@
 .bannerCard {
   background-color: var(--mantine-color-white);
   border-color: var(--mantine-color-ink-2);
-  box-shadow: 0 8px 30px rgba(30, 58, 138, 0.08);
+  box-shadow: none;
 }
 
 .libraryBtn {
@@ -35,8 +35,8 @@
 }
 
 .scoreCardCorrect {
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background-color: var(--mantine-color-green-0);
+  border: 1px solid var(--mantine-color-green-2);
 }
 
 .scoreCardIncorrect {

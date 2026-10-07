@@ -111,7 +111,7 @@ export function AssessmentWorkloadPanel({
               <Text size="sm" c="dimmed">
                 {item.label}
               </Text>
-              <Text fz={30} fw={800} c="navy.9">
+              <Text fz={30} fw={700} c="navy.9">
                 {item.count}
               </Text>
               <Text size="sm" c="navy.8">

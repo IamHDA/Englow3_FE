@@ -1,0 +1,17 @@
+.link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 10px 16px;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-navy-9);
+  color: var(--mantine-color-white);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.link:focus-visible {
+  transform: none;
+}

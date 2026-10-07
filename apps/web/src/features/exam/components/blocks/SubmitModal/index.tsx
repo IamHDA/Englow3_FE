@@ -118,7 +118,7 @@ export function SubmitModal({
 
           <Paper p="xs" radius="md" withBorder bg="gray.0">
             <Stack gap={2} align="center">
-              <Flag size={18} color="#F59E0B" />
+              <Flag size={18} color="var(--mantine-color-orange-5)" />
               <Text size="xs" c="ink.5">
                 {t.exam.legendFlagged}
               </Text>

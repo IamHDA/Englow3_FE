@@ -35,7 +35,7 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
   return (
     <Stack gap="md">
       <Group justify="space-between" align="center" wrap="wrap">
-        <Text fw={800} fz="lg" c="dark.9">
+        <Text fw={700} fz="lg" c="dark.9">
           {t.quiz.catalogueTitle}
         </Text>
 

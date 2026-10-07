@@ -64,7 +64,7 @@ export function DictationInputArea({
             input: {
               fontSize: 16,
               lineHeight: 1.6,
-              fontFamily: "var(--font-work-sans), sans-serif",
+              fontFamily: "var(--font-body), sans-serif",
             },
           }}
         />

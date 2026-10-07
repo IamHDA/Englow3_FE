@@ -76,7 +76,7 @@ export function DictationSessionSummary({
         p={{ base: "lg", sm: "xl" }}
         withBorder
         style={{
-          background: "linear-gradient(135deg, #1B2540 0%, #2A4CA8 100%)",
+          background: "var(--mantine-color-navy-9)",
           color: "#FFFFFF",
         }}
       >
@@ -88,7 +88,7 @@ export function DictationSessionSummary({
             <Title order={2} size="h2" fw={700} style={{ color: "#FFFFFF" }}>
               {t.dictation.sessionCompletedTitle}
             </Title>
-            <Text size="sm" style={{ color: "#C5CBD7" }}>
+            <Text size="sm" style={{ color: "var(--mantine-color-navy-1)" }}>
               {summary.sentencesCompletedCount}{" "}
               {t.dictation.sentenceCountSuffix} · {summary.lessonTitle} (
               {summary.lessonLevel})

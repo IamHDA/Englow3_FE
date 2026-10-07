@@ -103,7 +103,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               }}
             >
               <Image src="/englow3-mark.png" alt="" width={27} height={30} />
-              <Text fw={800} c="navy.9">
+              <Text fw={700} c="navy.9">
                 Englow3
               </Text>
             </Link>

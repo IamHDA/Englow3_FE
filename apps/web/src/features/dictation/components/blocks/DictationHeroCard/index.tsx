@@ -39,7 +39,7 @@ export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
       p={{ base: "md", sm: "xl" }}
       withBorder
       style={{
-        background: "linear-gradient(135deg, #1B2540 0%, #1E3A8A 100%)",
+        background: "var(--mantine-color-navy-9)",
         color: "#FFFFFF",
         position: "relative",
         overflow: "hidden",
@@ -68,7 +68,7 @@ export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
               size="sm"
               radius="sm"
               style={{
-                color: "#E9EEFB",
+                color: "var(--mantine-color-navy-0)",
                 borderColor: "rgba(255,255,255,0.25)",
               }}
             >
@@ -85,12 +85,12 @@ export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
               <ThemeIcon size={20} radius="xl" color="orange" variant="light">
                 <Clock size={12} />
               </ThemeIcon>
-              <Text size="xs" style={{ color: "#C5CBD7" }}>
+              <Text size="xs" style={{ color: "var(--mantine-color-navy-1)" }}>
                 {isVi ? "Luyện tập gần nhất" : "Last practised"}:{" "}
                 {lastPractised}
               </Text>
             </Group>
-            <Text size="xs" style={{ color: "#C5CBD7" }}>
+            <Text size="xs" style={{ color: "var(--mantine-color-navy-1)" }}>
               • {done} / {total} {isVi ? "câu đã đạt" : "sentences cleared"}
             </Text>
           </Group>
