@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { ActionIcon, Group, Stack, Text, Textarea } from "@mantine/core";
 import { IconSend } from "@tabler/icons-react";
 import React, { useRef, useState } from "react";
@@ -13,6 +15,7 @@ interface TutorComposerProps {
 
 /** Ô soạn câu hỏi. Enter gửi, Shift+Enter xuống dòng - như mọi ô chat khác. */
 export function TutorComposer({ onSend, disabled }: TutorComposerProps) {
+  const { isVi } = useLanguage();
   const [value, setValue] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const pending = useRef(false);
@@ -44,10 +47,14 @@ export function TutorComposer({ onSend, disabled }: TutorComposerProps) {
           minRows={1}
           maxRows={6}
           radius="md"
-          placeholder="Hỏi gia sư về từ vựng, ngữ pháp, phát âm…"
+          placeholder={
+            isVi
+              ? "Hỏi gia sư về từ vựng, ngữ pháp, phát âm…"
+              : "Ask about vocabulary, grammar, pronunciation…"
+          }
           value={value}
           disabled={submitting}
-          aria-label="Câu hỏi cho gia sư"
+          aria-label={isVi ? "Câu hỏi cho gia sư" : "Question for the tutor"}
           error={tooLong}
           onChange={(event) => setValue(event.currentTarget.value)}
           onKeyDown={(event) => {
@@ -66,14 +73,16 @@ export function TutorComposer({ onSend, disabled }: TutorComposerProps) {
           radius="md"
           disabled={!canSend}
           onClick={submit}
-          aria-label="Gửi câu hỏi"
+          aria-label={isVi ? "Gửi câu hỏi" : "Send question"}
         >
           <IconSend size={18} />
         </ActionIcon>
       </Group>
       {tooLong && (
         <Text size="xs" c="red">
-          Câu hỏi dài quá {MAX_MESSAGE_LENGTH} ký tự. Rút ngắn giúp mình nhé.
+          {isVi
+            ? `Câu hỏi dài quá ${MAX_MESSAGE_LENGTH} ký tự. Rút ngắn giúp mình nhé.`
+            : `Questions can be at most ${MAX_MESSAGE_LENGTH} characters. Please shorten it.`}
         </Text>
       )}
     </Stack>

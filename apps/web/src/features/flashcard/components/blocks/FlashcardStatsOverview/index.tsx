@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Card, Grid, Group, Stack, Text, ThemeIcon } from "@mantine/core";
 import {
   IconBrain,
@@ -15,28 +17,30 @@ interface FlashcardStatsOverviewProps {
 }
 
 export function FlashcardStatsOverview({ stats }: FlashcardStatsOverviewProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const statItems = [
     {
-      title: "Tổng số từ đã học",
-      value: `${stats.totalCardsLearned} từ`,
+      title: tr("Tổng số từ đã học", "Words learned"),
+      value: `${stats.totalCardsLearned} ${tr("từ", "words")}`,
       icon: IconCards,
       color: "indigo",
     },
     {
-      title: "Tỷ lệ ghi nhớ dài hạn",
+      title: tr("Tỷ lệ ghi nhớ dài hạn", "Long-term retention"),
       value: `${stats.retentionRatePercent}%`,
       icon: IconBrain,
       color: "teal",
     },
     {
-      title: "Tổng thời gian ôn tập",
-      value: `${stats.studyTimeHours} giờ`,
+      title: tr("Tổng thời gian ôn tập", "Total review time"),
+      value: `${stats.studyTimeHours} ${tr("giờ", "h")}`,
       icon: IconClock,
       color: "blue",
     },
     {
-      title: "Chuỗi ngày liên tục",
-      value: `${stats.dailyStreakDays} ngày`,
+      title: tr("Chuỗi ngày liên tục", "Day streak"),
+      value: `${stats.dailyStreakDays} ${tr("ngày", "days")}`,
       icon: IconFlame,
       color: "orange",
     },

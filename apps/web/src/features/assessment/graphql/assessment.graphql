@@ -1,0 +1,258 @@
+fragment AssessmentTaskFields on AssessmentTask {
+  id
+  skill
+  title
+  taskType
+  instructions
+  rubricNotes
+  sampleAnswer
+  minimumWords
+  timeLimitSeconds
+  status
+  reviewNote
+  version
+}
+fragment AssessmentAttemptFields on AssessmentAttempt {
+  id
+  taskId
+  skill
+  task {
+    ...AssessmentTaskFields
+  }
+  status
+  answerText
+  audioUrl
+  recognizedText
+  report
+  source
+  errorCode
+  wordCount
+  version
+  createdAt
+  submittedAt
+  assessedAt
+  learnerId
+  learnerName
+}
+query AssessmentWorkload {
+  assessmentWorkload {
+    drafts
+    rejected
+    pendingReview
+    published
+    needsReview
+    failed
+    completed
+  }
+}
+query AssessmentAuthoringTaskDetail($id: ID!) {
+  authoringAssessmentTask(id: $id) {
+    ...AssessmentTaskFields
+  }
+}
+query AssessmentReviews($id: ID!) {
+  assessmentReviews(id: $id) {
+    id
+    reviewerId
+    reviewerName
+    previousReport
+    report
+    note
+    createdAt
+  }
+}
+query AssessmentCatalog($skill: AssessmentSkill, $page: Int) {
+  assessmentCapabilities {
+    automaticWriting
+    automaticSpeaking
+    humanReview
+  }
+  assessmentTasks(skill: $skill, page: $page) {
+    items {
+      ...AssessmentTaskFields
+    }
+    page
+    totalPages
+    totalItems
+  }
+}
+query AssessmentTaskDetail($id: ID!) {
+  assessmentTask(id: $id) {
+    ...AssessmentTaskFields
+  }
+  assessmentCapabilities {
+    automaticWriting
+    automaticSpeaking
+    humanReview
+  }
+}
+query AssessmentAttemptDetail($id: ID!) {
+  assessmentAttempt(id: $id) {
+    ...AssessmentAttemptFields
+  }
+}
+query AssessmentHistory(
+  $taskId: ID
+  $skill: AssessmentSkill
+  $status: AssessmentAttemptStatus
+  $title: String
+  $page: Int
+) {
+  assessmentHistory(
+    taskId: $taskId
+    skill: $skill
+    status: $status
+    title: $title
+    page: $page
+  ) {
+    items {
+      ...AssessmentAttemptFields
+    }
+    page
+    totalPages
+    totalItems
+  }
+}
+query AssessmentAuthoring(
+  $skill: AssessmentSkill
+  $status: AssessmentTaskStatus
+  $page: Int
+) {
+  authoringAssessmentTasks(skill: $skill, status: $status, page: $page) {
+    items {
+      ...AssessmentTaskFields
+    }
+    page
+    totalPages
+    totalItems
+  }
+}
+query AssessmentReviewQueue(
+  $status: AssessmentAttemptStatus
+  $skill: AssessmentSkill
+  $term: String
+  $oldest: Boolean
+  $page: Int
+) {
+  assessmentSubmissions(
+    status: $status
+    skill: $skill
+    term: $term
+    oldest: $oldest
+    page: $page
+  ) {
+    items {
+      id
+      skill
+      status
+      submittedAt
+      version
+      learnerId
+      learnerName
+      task {
+        id
+        title
+      }
+    }
+    page
+    totalPages
+    totalItems
+  }
+}
+query AssessmentSubmissionDetail($id: ID!) {
+  assessmentSubmission(id: $id) {
+    ...AssessmentAttemptFields
+  }
+}
+mutation AssessmentStart(
+  $taskId: ID!
+  $clientKey: ID!
+  $contentType: String
+  $contentLength: Int
+) {
+  startAssessment(
+    taskId: $taskId
+    clientKey: $clientKey
+    contentType: $contentType
+    contentLength: $contentLength
+  ) {
+    attempt {
+      ...AssessmentAttemptFields
+    }
+    uploadUrl
+  }
+}
+mutation AssessmentSaveDraft($id: ID!, $answerText: String!, $version: Int!) {
+  saveAssessmentDraft(id: $id, answerText: $answerText, version: $version) {
+    ...AssessmentAttemptFields
+  }
+}
+mutation AssessmentSubmit($id: ID!) {
+  submitAssessment(id: $id) {
+    ...AssessmentAttemptFields
+  }
+}
+mutation AssessmentRetry($id: ID!) {
+  retryAssessment(id: $id) {
+    ...AssessmentAttemptFields
+  }
+}
+mutation AssessmentRequestReview($id: ID!) {
+  requestAssessmentReview(id: $id) {
+    ...AssessmentAttemptFields
+  }
+}
+mutation AssessmentCreateTask($input: AssessmentTaskInput!) {
+  createAssessmentTask(input: $input) {
+    ...AssessmentTaskFields
+  }
+}
+mutation AssessmentEditTask(
+  $id: ID!
+  $version: Int!
+  $input: AssessmentTaskInput!
+) {
+  editAssessmentTask(id: $id, version: $version, input: $input) {
+    ...AssessmentTaskFields
+  }
+}
+mutation AssessmentTransitionTask($id: ID!, $action: String!, $note: String) {
+  transitionAssessmentTask(id: $id, action: $action, note: $note) {
+    ...AssessmentTaskFields
+  }
+}
+mutation AssessmentGrade(
+  $id: ID!
+  $report: String!
+  $note: String!
+  $transcript: String
+  $version: Int!
+) {
+  gradeAssessment(
+    id: $id
+    report: $report
+    note: $note
+    transcript: $transcript
+    version: $version
+  ) {
+    ...AssessmentAttemptFields
+  }
+}
+
+query AssessmentNotifications($page: Int) {
+  assessmentNotifications(page: $page) {
+    items {
+      attemptId
+      title
+      skill
+      version
+      assessedAt
+    }
+    page
+    totalPages
+    totalItems
+  }
+}
+mutation AssessmentReadResult($id: ID!, $version: Int!) {
+  readAssessmentResult(id: $id, version: $version)
+}

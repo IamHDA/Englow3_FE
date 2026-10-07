@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Group, Select, TextInput } from "@mantine/core";
 import { Search } from "lucide-react";
 
@@ -23,27 +25,39 @@ type AdminExamFiltersProps = {
 
 const ALL_OPTION_VALUE = "";
 
-const statusOptions = [
-  { value: ALL_OPTION_VALUE, label: "Tất cả trạng thái" },
-  ...Object.values(ExamStatus).map((status) => ({
-    value: status,
-    label: EXAM_STATUS_LABELS[status],
-  })),
-];
+function statusOptions(isVi: boolean) {
+  return [
+    {
+      value: ALL_OPTION_VALUE,
+      label: isVi ? "Tất cả trạng thái" : "All statuses",
+    },
+    ...Object.values(ExamStatus).map((status) => ({
+      value: status,
+      label: isVi
+        ? EXAM_STATUS_LABELS[status].vi
+        : EXAM_STATUS_LABELS[status].en,
+    })),
+  ];
+}
 
-const typeOptions = [
-  { value: ALL_OPTION_VALUE, label: "Tất cả loại đề" },
-  ...Object.values(ExamType).map((type) => ({
-    value: type,
-    label: EXAM_TYPE_LABELS[type],
-  })),
-];
+function typeOptions(isVi: boolean) {
+  return [
+    { value: ALL_OPTION_VALUE, label: isVi ? "Tất cả loại đề" : "All types" },
+    ...Object.values(ExamType).map((type) => ({
+      value: type,
+      label: isVi ? EXAM_TYPE_LABELS[type].vi : EXAM_TYPE_LABELS[type].en,
+    })),
+  ];
+}
 
 export function AdminExamFilters({ value, onChange }: AdminExamFiltersProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   return (
     <Group gap="sm" wrap="wrap">
       <TextInput
-        placeholder="Tìm theo tiêu đề"
+        placeholder={tr("Tìm theo tiêu đề", "Search by title")}
+        aria-label={tr("Tìm theo tiêu đề", "Search by title")}
         leftSection={<Search size={16} />}
         radius="md"
         w={260}
@@ -53,7 +67,8 @@ export function AdminExamFilters({ value, onChange }: AdminExamFiltersProps) {
         }
       />
       <Select
-        data={statusOptions}
+        data={statusOptions(isVi)}
+        aria-label={tr("Trạng thái", "Status")}
         radius="md"
         w={190}
         allowDeselect={false}
@@ -66,7 +81,8 @@ export function AdminExamFilters({ value, onChange }: AdminExamFiltersProps) {
         }
       />
       <Select
-        data={typeOptions}
+        data={typeOptions(isVi)}
+        aria-label={tr("Loại đề", "Exam type")}
         radius="md"
         w={180}
         allowDeselect={false}

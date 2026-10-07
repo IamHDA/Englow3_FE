@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { TutorMessageStatus } from "@/lib/graphql/generated/schemaTypes";
@@ -17,12 +19,19 @@ import { backendCodeOf } from "@/shared/network/loadError";
  * được", kể cả khi đã hết lượt hôm nay - người học bấm lại mãi mà không biết vì
  * sao.
  */
-const TUTOR_SEND_ERRORS: Record<string, string> = {
-  TUTOR_DAILY_LIMIT_REACHED:
-    "Bạn đã dùng hết lượt hỏi gia sư AI hôm nay. Quay lại vào ngày mai nhé.",
-  TUTOR_REPLY_PENDING: "Đợi gia sư trả lời xong câu trước rồi hỏi tiếp nhé.",
-  TUTOR_CONVERSATION_ARCHIVED:
-    "Cuộc trò chuyện này đã được lưu trữ. Hãy bắt đầu cuộc mới.",
+const TUTOR_SEND_ERRORS: Record<string, { vi: string; en: string }> = {
+  TUTOR_DAILY_LIMIT_REACHED: {
+    vi: "Bạn đã dùng hết lượt hỏi gia sư AI hôm nay. Quay lại vào ngày mai nhé.",
+    en: "You have used today's AI tutor questions. Come back tomorrow.",
+  },
+  TUTOR_REPLY_PENDING: {
+    vi: "Đợi gia sư trả lời xong câu trước rồi hỏi tiếp nhé.",
+    en: "Wait for the tutor to answer before asking the next question.",
+  },
+  TUTOR_CONVERSATION_ARCHIVED: {
+    vi: "Cuộc trò chuyện này đã được lưu trữ. Hãy bắt đầu cuộc mới.",
+    en: "This conversation has been archived. Start a new one.",
+  },
 };
 
 /**
@@ -33,6 +42,16 @@ const TUTOR_SEND_ERRORS: Record<string, string> = {
  * cung cấp suy nghĩ thì chiếm một thread đúng chừng ấy lâu mà chẳng được gì.
  */
 export function useTutorChat(initialConversationId?: string) {
+  // Messages are set from callbacks; reading the language through a ref keeps those callbacks stable.
+  const { isVi } = useLanguage();
+  const isViRef = useRef(isVi);
+  useEffect(() => {
+    isViRef.current = isVi;
+  }, [isVi]);
+  const tr = (vi: string, en: string) => (isViRef.current ? vi : en);
+  const pick = (words?: { vi: string; en: string }) =>
+    words ? (isViRef.current ? words.vi : words.en) : undefined;
+
   const [conversationId, setConversationId] = useState(initialConversationId);
   const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [sending, setSending] = useState(false);
@@ -94,7 +113,15 @@ export function useTutorChat(initialConversationId?: string) {
         }
       } catch {
         if (version !== generation.current) return;
-        setError("Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.");
+        setError(
+          tr(
+            tr(
+              "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
+              "Could not fetch the answer. Check the connection and try again.",
+            ),
+            "Could not fetch the answer. Check the connection and try again.",
+          ),
+        );
         return;
       }
 
@@ -110,7 +137,10 @@ export function useTutorChat(initialConversationId?: string) {
                 // Câu trả lời vẫn có thể về sau - hàng đợi chưa bỏ cuộc - nên
                 // nói rõ là "mở lại sau", đừng nói là hỏng.
                 setError(
-                  "Gia sư trả lời lâu hơn thường lệ. Bạn mở lại cuộc trò chuyện này sau nhé.",
+                  tr(
+                    "Gia sư trả lời lâu hơn thường lệ. Bạn mở lại cuộc trò chuyện này sau nhé.",
+                    "The tutor is taking longer than usual. Open this conversation again later.",
+                  ),
                 );
                 return;
               }
@@ -119,7 +149,10 @@ export function useTutorChat(initialConversationId?: string) {
               if (version !== generation.current) return;
               stopPolling();
               setError(
-                "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
+                tr(
+                  "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
+                  "Could not fetch the answer. Check the connection and try again.",
+                ),
               );
             }
           })();
@@ -179,8 +212,11 @@ export function useTutorChat(initialConversationId?: string) {
       } catch (sendError) {
         if (version !== generation.current) return false;
         setError(
-          TUTOR_SEND_ERRORS[backendCodeOf(sendError) ?? ""] ??
-            "Không gửi được câu hỏi. Thử lại giúp mình nhé.",
+          pick(TUTOR_SEND_ERRORS[backendCodeOf(sendError) ?? ""]) ??
+            tr(
+              "Không gửi được câu hỏi. Thử lại giúp mình nhé.",
+              "Could not send the question. Please try again.",
+            ),
         );
         return false;
       } finally {

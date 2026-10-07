@@ -23,6 +23,7 @@ import {
 
 import { DictationMistakeQueue } from "../../blocks/DictationMistakeQueue";
 import { Page } from "@/shared/components/Page";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 /**
  * Những câu người học hay sai, trên toàn bộ bài học chứ không riêng một bài.
@@ -33,6 +34,8 @@ import { Page } from "@/shared/components/Page";
  * giờ nó hỏi đúng như vậy.
  */
 export function DictationReviewView() {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const { data, loading, error } = useDictationMistakesQuery({
     fetchPolicy: "cache-and-network",
   });
@@ -71,18 +74,27 @@ export function DictationReviewView() {
               radius="md"
               leftSection={<ArrowLeft size={14} />}
             >
-              Về thư viện bài học
+              {tr("Về thư viện bài học", "Back to the lessons")}
             </Button>
 
             <Title order={2} size="h5" fw={700} c="ink.9">
-              Những câu bạn hay sai
+              {tr("Những câu bạn hay sai", "Sentences you often miss")}
             </Title>
           </Group>
         </Paper>
 
         {error && mistakes.length === 0 ? (
-          <Alert color="warn" title="Không tải được danh sách câu sai">
-            Kiểm tra kết nối tới backend rồi tải lại trang.
+          <Alert
+            color="warn"
+            title={tr(
+              "Không tải được danh sách câu sai",
+              "Could not load your missed sentences",
+            )}
+          >
+            {tr(
+              "Kiểm tra kết nối tới backend rồi tải lại trang.",
+              "Check the connection to the server, then reload the page.",
+            )}
           </Alert>
         ) : loading && mistakes.length === 0 ? (
           <Skeleton height={420} radius="md" />

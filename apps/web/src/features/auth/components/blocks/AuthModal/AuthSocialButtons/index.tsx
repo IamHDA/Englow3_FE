@@ -9,8 +9,10 @@ import { authErrorMessage } from "@/features/auth/authErrorMessage";
 
 import { AuthProvider } from "@/features/auth/constants/authOptions";
 import { supabase } from "@/lib/supabase/client";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 export function AuthSocialButtons() {
+  const { isVi } = useLanguage();
   const [busy, setBusy] = useState(false);
   const pending = useRef(false);
   async function handleOAuthClick(provider: AuthProvider) {
@@ -25,12 +27,15 @@ export function AuthSocialButtons() {
       if (error) {
         notifications.show({
           color: "warn",
-          title: "Không thể đăng nhập",
-          message: authErrorMessage(error),
+          title: isVi ? "Không thể đăng nhập" : "Could not sign in",
+          message: authErrorMessage(error, isVi),
         });
       }
     } catch {
-      notifications.show({ color: "warn", message: authErrorMessage(null) });
+      notifications.show({
+        color: "warn",
+        message: authErrorMessage(null, isVi),
+      });
     } finally {
       pending.current = false;
       setBusy(false);

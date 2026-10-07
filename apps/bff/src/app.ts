@@ -7,6 +7,7 @@ import { createContext, type GraphQLContext } from "./graphql/context.js";
 import { formatError, logServerErrors } from "./graphql/errors.js";
 import { resolvers, typeDefs } from "./graphql/schema.js";
 import { importRoute } from "./http/importRoute.js";
+import { authoringRoute } from "./http/authoringRoute.js";
 
 /**
  * The one place Express and Apollo are configured. The long-running server and
@@ -41,6 +42,7 @@ export async function createApp() {
   // and raising the GraphQL body cap for every query to carry one upload would
   // be paying for the exception on every request.
   app.use("/rest", corsMiddleware(), rateLimitMiddleware(), importRoute());
+  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), authoringRoute());
 
   return app;
 }

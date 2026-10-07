@@ -1,5 +1,7 @@
 "use client";
 
+import { readStoredLanguage } from "@/shared/context/LanguageContext";
+
 import { notifications } from "@mantine/notifications";
 import {
   createContext,
@@ -56,58 +58,55 @@ export function AccountProvider({
   });
 
   /**
-   * Id của người mà `fetched` đang mô tả. Server đã lấy hồ sơ rồi nên lần mount
-   * đầu id trùng nhau và effect dưới không gọi BFF lần nữa - bỏ so sánh này thì
+   * Id Supabase của phiên đã tải hồ sơ. Khi server đã lấy hồ sơ, lần mount
+   * đầu effect dưới không gọi BFF lần nữa - bỏ so sánh này thì
    * mỗi lần tải trang sẽ gọi `CurrentUser` hai lượt (một server, một client).
    *
    * Khi server gọi BFF hỏng, `profile` là null nên id không trùng session và
    * client thử lại một lần - đúng ý đồ, lỗi tạm thời tự phục hồi.
    */
-  const loadedUserId = useRef(initialProfile.profile?.id ?? null);
+  const loadedUserId = useRef(
+    initialProfile.profile ? (session?.userId ?? null) : null,
+  );
+  const requestVersion = useRef(0);
 
   // Dùng chung một nhánh lỗi với effect dưới: gọi lại `loadProfile()` rồi ghi
   // kết quả vào state, không phân biệt "lần đầu" hay "gọi lại theo yêu cầu".
   const refresh = useCallback(async () => {
-    const { data, error } = await loadProfile();
-
-    if (error) {
-      console.error("Không lấy được hồ sơ người dùng từ BFF", error);
+    if (!session?.userId) return;
+    const version = ++requestVersion.current;
+    try {
+      const { data, error } = await loadProfile();
+      if (version !== requestVersion.current) return;
+      setFetched({ profile: data?.me ?? null, hasError: Boolean(error) });
+    } catch {
+      if (version !== requestVersion.current) return;
       setFetched({ profile: null, hasError: true });
-      return;
     }
-
-    setFetched({ profile: data?.me ?? null, hasError: false });
-  }, [loadProfile]);
+  }, [loadProfile, session?.userId]);
 
   useEffect(() => {
     const userId = session?.userId ?? null;
-    if (userId === loadedUserId.current) return;
-
-    loadedUserId.current = userId;
-
-    // Đăng xuất không cần làm gì ở đây: giá trị hồ sơ được suy ra từ `session`
-    // ngay lúc render bên dưới, nên tên người cũ biến mất tức thì.
-    if (!userId) return;
-
     let active = true;
-
-    loadProfile().then(({ data, error }) => {
-      if (!active) return;
-
-      if (error) {
-        console.error("Không lấy được hồ sơ người dùng từ BFF", error);
-        setFetched({ profile: null, hasError: true });
-        return;
+    if (userId !== loadedUserId.current) {
+      // Đăng xuất được xử lý bởi giá trị context bên dưới.
+      if (userId) {
+        void Promise.resolve().then(() => {
+          if (!active) return;
+          loadedUserId.current = userId;
+          return refresh();
+        });
+      } else {
+        loadedUserId.current = null;
       }
-
-      setFetched({ profile: data?.me ?? null, hasError: false });
-    });
+    }
 
     return () => {
       // Đổi tài khoản giữa chừng: bỏ kết quả của lượt fetch cũ.
       active = false;
+      requestVersion.current += 1;
     };
-  }, [session?.userId, loadProfile]);
+  }, [session?.userId, refresh]);
 
   const applyOnboardingState = useCallback(
     (state: OnboardingStateFieldsFragment) => {
@@ -148,13 +147,19 @@ export function AccountProvider({
 
   useEffect(() => {
     if (!value.hasError) return;
+    // This provider sits above LanguageProvider, so it reads the stored choice.
+    const isVi = readStoredLanguage() === "vi";
 
     notifications.show({
       color: "warn",
       // Not "please sign in again": the session is fine, it is the server
       // that did not answer, and signing in again would not help.
-      title: "Không tải được thông tin tài khoản",
-      message: "Máy chủ chưa phản hồi. Tải lại trang sau ít phút.",
+      title: isVi
+        ? "Không tải được thông tin tài khoản"
+        : "Could not load your account",
+      message: isVi
+        ? "Máy chủ chưa phản hồi. Tải lại trang sau ít phút."
+        : "The server did not answer. Reload the page in a few minutes.",
     });
   }, [value.hasError]);
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Button, Stack, Text } from "@mantine/core";
 import { ArrowRight } from "lucide-react";
 
@@ -13,16 +15,15 @@ type OnboardingStepFooterProps = {
   onContinue: () => void;
 };
 
-const DEFAULT_LABEL = "Tiếp tục";
-
 /** Hàng nút cuối mỗi bước onboarding: lỗi lần gửi trước, rồi nút đi tiếp. */
 export function OnboardingStepFooter({
   pending,
   errorMessage,
   disabled,
-  label = DEFAULT_LABEL,
+  label,
   onContinue,
 }: OnboardingStepFooterProps) {
+  const { isVi } = useLanguage();
   return (
     <Stack gap={8} align="flex-end">
       {errorMessage && (
@@ -43,7 +44,7 @@ export function OnboardingStepFooter({
         onClick={onContinue}
         rightSection={<ArrowRight aria-hidden="true" size={22} />}
       >
-        {label}
+        {label ?? (isVi ? "Tiếp tục" : "Continue")}
       </Button>
     </Stack>
   );

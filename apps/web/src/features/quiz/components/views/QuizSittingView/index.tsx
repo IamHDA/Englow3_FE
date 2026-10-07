@@ -264,7 +264,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
           kind={malformedId ? "not-found" : undefined}
           thing={{ vi: "bài kiểm tra", en: "quiz" }}
           back={{
-            href: "/study/quiz",
+            href: "/study/daily-path?tab=quizzes",
             label: t.quiz.backToQuizzesButton,
           }}
           onRetry={
@@ -351,7 +351,11 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
           {isVi
             ? "Bài kiểm tra chưa có câu hỏi."
             : "This quiz has no questions."}
-          <Button component={Link} href="/study/quiz" variant="subtle">
+          <Button
+            component={Link}
+            href="/study/daily-path?tab=quizzes"
+            variant="subtle"
+          >
             {isVi ? "Về danh sách" : "Back to quizzes"}
           </Button>
         </Alert>

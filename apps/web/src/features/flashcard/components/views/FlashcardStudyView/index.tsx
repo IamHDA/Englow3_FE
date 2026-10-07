@@ -174,6 +174,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
         {/* Progress Bar */}
         <Box>
           <Progress
+            aria-label={isVi ? "Tiến độ phiên học" : "Session progress"}
             value={progressPercent}
             color="indigo"
             size="sm"

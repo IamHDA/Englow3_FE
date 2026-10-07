@@ -59,6 +59,12 @@ mutation PublishContent($kind: ContentKind!, $id: ID!) {
   }
 }
 
+mutation RestoreContent($kind: ContentKind!, $id: ID!) {
+  restoreContent(kind: $kind, id: $id) {
+    ...ContentReviewFields
+  }
+}
+
 mutation ArchiveContent($kind: ContentKind!, $id: ID!) {
   archiveContent(kind: $kind, id: $id) {
     ...ContentReviewFields

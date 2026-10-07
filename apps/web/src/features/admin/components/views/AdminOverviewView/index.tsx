@@ -30,16 +30,26 @@ import { OVERVIEW_KINDS } from "@/features/admin/constants/contentKinds";
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useAdminOverviewQuery } from "@/lib/graphql/generated/hooks";
 import { Page, PageHeader } from "@/shared/components/Page";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import { AssessmentWorkloadPanel } from "../StaffHomeView";
 
 type StatCardProps = {
   label: string;
   value: number;
+  locale: string;
   hint?: string;
   icon: LucideIcon;
   color: string;
 };
 
-function StatCard({ label, value, hint, icon: Icon, color }: StatCardProps) {
+function StatCard({
+  label,
+  value,
+  locale,
+  hint,
+  icon: Icon,
+  color,
+}: StatCardProps) {
   return (
     <Paper withBorder radius="lg" p="lg">
       <Group justify="space-between" align="flex-start" wrap="nowrap">
@@ -48,7 +58,7 @@ function StatCard({ label, value, hint, icon: Icon, color }: StatCardProps) {
             {label}
           </Text>
           <Text fz={30} fw={800} c="navy.9" lh={1.1}>
-            {value.toLocaleString("vi-VN")}
+            {value.toLocaleString(locale)}
           </Text>
           {hint && (
             <Text size="xs" c="ink.5">
@@ -91,6 +101,9 @@ function TodoLink({ href, tone, count, text }: TodoLinkProps) {
  * dung đang chạy, và có ai đang dùng không. Mọi con số đến từ một lần gọi.
  */
 export function AdminOverviewView() {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const locale = isVi ? "vi-VN" : "en-GB";
   const { data, loading, error } = useAdminOverviewQuery({
     fetchPolicy: "cache-and-network",
   });
@@ -100,10 +113,16 @@ export function AdminOverviewView() {
     return (
       <Page>
         <Stack gap="lg">
-          <PageHeader title="Tổng quan" />
+          <PageHeader title={tr("Tổng quan", "Overview")} />
           {error && !loading ? (
-            <Alert color="warn" title="Không tải được số liệu">
-              Kiểm tra kết nối rồi tải lại trang.
+            <Alert
+              color="warn"
+              title={tr("Không tải được số liệu", "Could not load the figures")}
+            >
+              {tr(
+                "Kiểm tra kết nối rồi tải lại trang.",
+                "Check the connection and reload the page.",
+              )}
             </Alert>
           ) : (
             <>
@@ -131,33 +150,52 @@ export function AdminOverviewView() {
   return (
     <Page>
       <Stack gap="lg">
-        <PageHeader title="Tổng quan" />
+        <PageHeader title={tr("Tổng quan", "Overview")} />
+
+        <AssessmentWorkloadPanel />
 
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
           <StatCard
-            label="Đang chờ duyệt"
+            label={tr("Đang chờ duyệt", "Awaiting review")}
             value={overview.pendingReviewTotal}
-            hint={drafts > 0 ? `${drafts} bản nháp chưa gửi duyệt` : undefined}
+            locale={locale}
+            hint={
+              drafts > 0
+                ? tr(
+                    `${drafts} bản nháp chưa gửi duyệt`,
+                    `${drafts} drafts not yet submitted`,
+                  )
+                : undefined
+            }
             icon={Clock}
             color="orange"
           />
           <StatCard
-            label="Người học"
+            label={tr("Người học", "Learners")}
             value={overview.learners}
-            hint={`+${overview.newLearners} trong ${overview.periodDays} ngày qua`}
+            locale={locale}
+            hint={tr(
+              `+${overview.newLearners} trong ${overview.periodDays} ngày qua`,
+              `+${overview.newLearners} in the last ${overview.periodDays} days`,
+            )}
             icon={Users}
             color="navy"
           />
           <StatCard
-            label="Đang hoạt động"
+            label={tr("Đang hoạt động", "Active")}
             value={overview.activeLearners}
-            hint={`người học trong ${overview.periodDays} ngày qua`}
+            locale={locale}
+            hint={tr(
+              `người học trong ${overview.periodDays} ngày qua`,
+              `learners in the last ${overview.periodDays} days`,
+            )}
             icon={Activity}
             color="teal"
           />
           <StatCard
-            label="Nội dung đã phát hành"
+            label={tr("Nội dung đã phát hành", "Published content")}
             value={published}
+            locale={locale}
             icon={FileCheck2}
             color="grape"
           />
@@ -167,12 +205,17 @@ export function AdminOverviewView() {
           <Paper withBorder radius="lg" p="lg">
             <Stack gap="md">
               <Title order={2} size="h4" c="navy.9">
-                Việc cần làm
+                {tr("Việc cần làm", "To do")}
               </Title>
               {waiting.length === 0 && withDrafts.length === 0 ? (
                 <Group gap="xs" c="teal.7">
                   <CheckCircle2 size={18} aria-hidden="true" />
-                  <Text size="sm">Không có việc gì đang chờ.</Text>
+                  <Text size="sm">
+                    {tr(
+                      "Không có đề chờ duyệt trong các nhóm nội dung bên dưới.",
+                      "Nothing is waiting for review in the content below.",
+                    )}
+                  </Text>
                 </Group>
               ) : (
                 <Stack gap="xs">
@@ -188,7 +231,10 @@ export function AdminOverviewView() {
                         href={href}
                         tone="orange"
                         count={row.pendingReview}
-                        text={`${kind.unit} đang chờ duyệt`}
+                        text={tr(
+                          `${kind.unit.vi} đang chờ duyệt`,
+                          `${kind.unit.en} awaiting review`,
+                        )}
                       />
                     );
                   })}
@@ -206,7 +252,10 @@ export function AdminOverviewView() {
                         href={href}
                         tone="gray"
                         count={row.drafts}
-                        text={`${kind.unit} còn ở bản nháp`}
+                        text={tr(
+                          `${kind.unit.vi} còn ở bản nháp`,
+                          `${kind.unit.en} still in draft`,
+                        )}
                       />
                     );
                   })}
@@ -218,18 +267,30 @@ export function AdminOverviewView() {
           <Paper withBorder radius="lg" p="lg">
             <Stack gap="md">
               <Title order={2} size="h4" c="navy.9">
-                Hoạt động {overview.periodDays} ngày qua
+                {tr(
+                  `Hoạt động ${overview.periodDays} ngày qua`,
+                  `Activity, last ${overview.periodDays} days`,
+                )}
               </Title>
               <SimpleGrid cols={2} spacing="md">
                 {[
-                  ["Lượt ôn thẻ", overview.cardReviews],
-                  ["Câu nghe chép", overview.dictationSentences],
-                  ["Bài trắc nghiệm đã nộp", overview.quizzesSubmitted],
-                  ["Đề thi đã nộp", overview.examsSubmitted],
+                  [tr("Lượt ôn thẻ", "Card reviews"), overview.cardReviews],
+                  [
+                    tr("Câu nghe chép", "Dictation sentences"),
+                    overview.dictationSentences,
+                  ],
+                  [
+                    tr("Bài trắc nghiệm đã nộp", "Quizzes submitted"),
+                    overview.quizzesSubmitted,
+                  ],
+                  [
+                    tr("Đề thi đã nộp", "Exams submitted"),
+                    overview.examsSubmitted,
+                  ],
                 ].map(([label, value]) => (
                   <Stack key={label as string} gap={2}>
                     <Text fz={24} fw={800} c="navy.9">
-                      {(value as number).toLocaleString("vi-VN")}
+                      {(value as number).toLocaleString(locale)}
                     </Text>
                     <Text size="xs" c="ink.6">
                       {label}
@@ -244,16 +305,20 @@ export function AdminOverviewView() {
         <Paper withBorder radius="lg" p="lg">
           <Stack gap="md">
             <Title order={2} size="h4" c="navy.9">
-              Nội dung
+              {tr("Nội dung", "Content")}
             </Title>
             <Table.ScrollContainer minWidth={520}>
               <Table verticalSpacing="sm" highlightOnHover>
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th>Loại</Table.Th>
-                    <Table.Th ta="right">Bản nháp</Table.Th>
-                    <Table.Th ta="right">Chờ duyệt</Table.Th>
-                    <Table.Th ta="right">Đã phát hành</Table.Th>
+                    <Table.Th>{tr("Loại", "Kind")}</Table.Th>
+                    <Table.Th ta="right">{tr("Bản nháp", "Drafts")}</Table.Th>
+                    <Table.Th ta="right">
+                      {tr("Chờ duyệt", "Awaiting review")}
+                    </Table.Th>
+                    <Table.Th ta="right">
+                      {tr("Đã phát hành", "Published")}
+                    </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
@@ -266,7 +331,9 @@ export function AdminOverviewView() {
                           fw={600}
                           c="navy.8"
                         >
-                          {OVERVIEW_KINDS[row.kind].label}
+                          {isVi
+                            ? OVERVIEW_KINDS[row.kind].label.vi
+                            : OVERVIEW_KINDS[row.kind].label.en}
                         </Anchor>
                       </Table.Td>
                       <Table.Td ta="right">{row.drafts}</Table.Td>

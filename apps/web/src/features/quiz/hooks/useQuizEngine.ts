@@ -8,6 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { QuestionReview, QuizItem, QuizSessionResult } from "../types";
 
 export interface UseQuizEngineOptions {
@@ -29,6 +31,7 @@ export function useQuizEngine({
   onExpire,
   onComplete,
 }: UseQuizEngineOptions) {
+  const { isVi } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [flaggedIds, setFlaggedIds] = useState<string[]>([]);
@@ -87,6 +90,7 @@ export function useQuizEngine({
   );
 
   const handleSubmit = useCallback(() => {
+    const tr = (vi: string, en: string) => (isVi ? vi : en);
     const currentAnswers = answersRef.current;
     const currentTimeRemaining = timeRemainingRef.current;
     let totalScore = 0;
@@ -107,7 +111,7 @@ export function useQuizEngine({
           const right = q.mcOptions?.find((o) => o.id === q.correctOptionId);
           userAnsText = chosen
             ? `${chosen.label}. ${chosen.text}`
-            : "(Chưa chọn)";
+            : tr("(Chưa chọn)", "(Not chosen)");
           correctAnsText = right ? `${right.label}. ${right.text}` : "";
           break;
         }
@@ -120,7 +124,9 @@ export function useQuizEngine({
             (ans) => ans.trim().toLowerCase() === cleanUser,
           );
           isCorrect = !!matches;
-          userAnsText = userAns ? String(userAns) : "(Chưa điền)";
+          userAnsText = userAns
+            ? String(userAns)
+            : tr("(Chưa điền)", "(Left blank)");
           correctAnsText = q.acceptedAnswers?.join(" / ") || "";
           break;
         }
@@ -136,7 +142,9 @@ export function useQuizEngine({
               (w, i) => w.toLowerCase() === correctWords[i]?.toLowerCase(),
             );
           userAnsText =
-            userWords.length > 0 ? userWords.join(" ") : "(Chưa hoàn thành)";
+            userWords.length > 0
+              ? userWords.join(" ")
+              : tr("(Chưa hoàn thành)", "(Not finished)");
           correctAnsText = correctWords.join(" ");
           break;
         }
@@ -152,7 +160,9 @@ export function useQuizEngine({
               (w, i) => w.toLowerCase() === correctWords[i]?.toLowerCase(),
             );
           userAnsText =
-            userWords.length > 0 ? userWords.join(" ") : "(Chưa sắp xếp)";
+            userWords.length > 0
+              ? userWords.join(" ")
+              : tr("(Chưa sắp xếp)", "(Not ordered)");
           correctAnsText = correctWords.join(" ");
           break;
         }
@@ -167,7 +177,10 @@ export function useQuizEngine({
             }
           });
           isCorrect = matchesCount === pairs.length && pairs.length > 0;
-          userAnsText = `Đúng ${matchesCount}/${pairs.length} cặp`;
+          userAnsText = tr(
+            `Đúng ${matchesCount}/${pairs.length} cặp`,
+            `${matchesCount}/${pairs.length} pairs right`,
+          );
           correctAnsText = pairs
             .map((p) => `${p.left} ➔ ${p.right}`)
             .join("\n");
@@ -208,7 +221,7 @@ export function useQuizEngine({
 
     setIsSubmitted(true);
     onComplete?.(result);
-  }, [quiz, onComplete]);
+  }, [quiz, onComplete, isVi]);
 
   // Countdown timer
   useEffect(() => {

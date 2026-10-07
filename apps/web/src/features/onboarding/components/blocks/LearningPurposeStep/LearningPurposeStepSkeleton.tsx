@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { SimpleGrid, Skeleton } from "@mantine/core";
 
 import { LEARNING_PURPOSE_COPY } from "@/features/onboarding/constants/onboardingSteps";
@@ -19,11 +21,13 @@ const PLACEHOLDER_COUNT = 6;
  * Chưa có nút "Tiếp tục": chưa có gì để chọn thì cũng chưa có gì để tiếp tục.
  */
 export function LearningPurposeStepSkeleton() {
+  const { isVi } = useLanguage();
+  const copy = isVi ? LEARNING_PURPOSE_COPY.vi : LEARNING_PURPOSE_COPY.en;
   return (
     <OnboardingStepShell
       step={OnboardingStep.LEARNING_PURPOSES}
-      title={LEARNING_PURPOSE_COPY.title}
-      subtitle={LEARNING_PURPOSE_COPY.subtitle}
+      title={copy.title}
+      subtitle={copy.subtitle}
     >
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={20}>
         {Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => (

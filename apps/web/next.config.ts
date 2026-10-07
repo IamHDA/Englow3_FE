@@ -18,6 +18,21 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Here rather than as a page calling redirect(): a page's redirect is
+      // streamed into the document and followed by the client router while the
+      // app is still hydrating, and the language provider - which reads the
+      // learner's choice only after hydration - stayed on Vietnamese. A real
+      // 307 loads the destination fresh.
+      {
+        source: "/study/quiz",
+        destination: "/study/daily-path?tab=quizzes",
+        permanent: false,
+      },
+      {
+        source: "/dictation",
+        destination: "/study/dictation",
+        permanent: false,
+      },
       {
         source: "/mock-test",
         destination: "/exams",

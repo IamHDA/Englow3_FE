@@ -34,7 +34,7 @@ export function FlashcardFilters({
   viewMode,
   onViewModeChange,
 }: FlashcardFiltersProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
 
   const topics = [
     { key: "ALL", label: t.flashcard.allTopicsChip },
@@ -49,6 +49,7 @@ export function FlashcardFilters({
       <Group justify="space-between" align="center" wrap="wrap">
         <TextInput
           placeholder={t.flashcard.searchPlaceholder}
+          aria-label={t.flashcard.searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.currentTarget.value)}
           leftSection={<IconSearch size={16} />}
@@ -61,6 +62,7 @@ export function FlashcardFilters({
             size="sm"
             value={selectedSort}
             onChange={(val) => onSortChange(val || "due")}
+            aria-label={isVi ? "Sắp xếp" : "Sort"}
             data={[
               { value: "due", label: t.flashcard.sortDue },
               { value: "progress", label: t.flashcard.sortProgress },

@@ -14,6 +14,30 @@ fragment ExamAttemptFields on ExamAttempt {
   resumed
   examTitle
 }
+query ExamDraft($attemptId: ID!) {
+  examDraft(attemptId: $attemptId) {
+    answers {
+      questionId
+      selectedOptionIds
+    }
+    version
+    savedAt
+  }
+}
+mutation SaveExamDraft(
+  $attemptId: ID!
+  $version: Int!
+  $answers: [SubmitAnswerInput!]!
+) {
+  saveExamDraft(attemptId: $attemptId, version: $version, answers: $answers) {
+    answers {
+      questionId
+      selectedOptionIds
+    }
+    version
+    savedAt
+  }
+}
 
 fragment AttemptReviewFields on AttemptQuestionReview {
   questionId

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import {
   Alert,
   Button,
@@ -124,6 +126,8 @@ function LearningPurposeStepContent({
   errorMessage,
   onContinue,
 }: LearningPurposeStepContentProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const { data, loading, error, refetch } = useLearningPurposesQuery();
 
   if (loading) {
@@ -133,14 +137,22 @@ function LearningPurposeStepContent({
   if (error) {
     return (
       <Stack gap={16}>
-        <Alert color="warn" title="Không tải được mục đích học">
+        <Alert
+          color="warn"
+          title={tr(
+            "Không tải được mục đích học",
+            "Could not load the learning goals",
+          )}
+        >
           <Text size="sm">
-            Kiểm tra lại kết nối rồi thử lần nữa. Bạn có thể để sau và thiết lập
-            lại từ đầu.
+            {tr(
+              "Kiểm tra lại kết nối rồi thử lần nữa. Bạn có thể để sau và thiết lập lại từ đầu.",
+              "Check the connection and try again. You can also come back to this later.",
+            )}
           </Text>
         </Alert>
         <Button variant="default" onClick={() => refetch()}>
-          Thử lại
+          {tr("Thử lại", "Try again")}
         </Button>
       </Stack>
     );
@@ -150,9 +162,15 @@ function LearningPurposeStepContent({
 
   if (purposes.length === 0) {
     return (
-      <Alert color="ink" title="Chưa có mục đích học nào">
+      <Alert
+        color="ink"
+        title={tr("Chưa có mục đích học nào", "No learning goals yet")}
+      >
         <Text size="sm">
-          Danh sách đang trống. Vui lòng quay lại sau ít phút.
+          {tr(
+            "Danh sách đang trống. Vui lòng quay lại sau ít phút.",
+            "The list is empty. Please come back in a few minutes.",
+          )}
         </Text>
       </Alert>
     );
@@ -176,6 +194,8 @@ function LearningPurposeStepContent({
  * props và gọi callback chứ không tự đi lấy hay ghi dữ liệu.
  */
 export function OnboardingGate() {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const { profile } = useAccountProfile();
   const { opened, close } = useOnboarding();
   const actions = useOnboardingActions();
@@ -199,12 +219,16 @@ export function OnboardingGate() {
       padding={40}
       withCloseButton={false}
       overlayProps={{ color: "#0F1B3A", backgroundOpacity: 0.5 }}
-      title={<VisuallyHidden>Thiết lập lộ trình học</VisuallyHidden>}
+      title={
+        <VisuallyHidden>
+          {tr("Thiết lập lộ trình học", "Set up your learning path")}
+        </VisuallyHidden>
+      }
       classNames={{ header: classes.header, content: classes.content }}
     >
       <CloseButton
         onClick={close}
-        aria-label="Đóng"
+        aria-label={tr("Đóng", "Close")}
         radius={10}
         size={36}
         className={classes.closeButton}

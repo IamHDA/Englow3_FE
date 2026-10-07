@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import {
   ActionIcon,
   Alert,
@@ -31,14 +33,20 @@ interface TutorMessageBubbleProps {
 }
 
 /** Lỗi kỹ thuật không phải thứ người học đọc được - dịch sang câu họ hiểu. */
-function explain(errorCode: string | null | undefined): string {
+function explain(errorCode: string | null | undefined, isVi: boolean): string {
   switch (errorCode) {
     case "TUTOR_REPLY_EMPTY":
-      return "Gia sư không đưa ra được câu trả lời cho câu hỏi này. Thử hỏi lại theo cách khác nhé.";
+      return isVi
+        ? "Gia sư không đưa ra được câu trả lời cho câu hỏi này. Thử hỏi lại theo cách khác nhé."
+        : "The tutor could not answer this question. Try asking it another way.";
     case "TUTOR_SERVICE_UNREACHABLE":
-      return "Không kết nối được tới gia sư. Thử lại sau ít phút.";
+      return isVi
+        ? "Không kết nối được tới gia sư. Thử lại sau ít phút."
+        : "Could not reach the tutor. Try again in a few minutes.";
     default:
-      return "Câu hỏi này chưa được trả lời. Bạn thử gửi lại nhé.";
+      return isVi
+        ? "Câu hỏi này chưa được trả lời. Bạn thử gửi lại nhé."
+        : "This question was not answered. Try sending it again.";
   }
 }
 
@@ -53,6 +61,7 @@ export function TutorMessageBubble({
   message,
   onReport,
 }: TutorMessageBubbleProps) {
+  const { isVi } = useLanguage();
   const fromLearner = message.role === TutorMessageRole.USER;
 
   if (fromLearner) {
@@ -77,7 +86,9 @@ export function TutorMessageBubble({
       <Group align="center" gap="xs">
         <Loader size="xs" type="dots" />
         <Text size="sm" c="dimmed">
-          Gia sư đang soạn câu trả lời…
+          {isVi
+            ? "Gia sư đang soạn câu trả lời…"
+            : "The tutor is writing an answer…"}
         </Text>
       </Group>
     );
@@ -91,7 +102,7 @@ export function TutorMessageBubble({
         variant="light"
         maw="85%"
       >
-        <Text size="sm">{explain(message.errorCode)}</Text>
+        <Text size="sm">{explain(message.errorCode, isVi)}</Text>
       </Alert>
     );
   }
@@ -107,13 +118,17 @@ export function TutorMessageBubble({
             {/* Model hiện ngay trên câu trả lời: một câu đọc thấy sai cần
                 truy được là cái gì sinh ra nó. */}
             <Text size="xs" c="dimmed">
-              {message.model ?? "Gia sư AI"}
+              {message.model ?? (isVi ? "Gia sư AI" : "AI Tutor")}
             </Text>
             <Tooltip
               label={
                 message.reported
-                  ? "Bạn đã báo câu trả lời này"
-                  : "Báo câu trả lời sai hoặc không phù hợp"
+                  ? isVi
+                    ? "Bạn đã báo câu trả lời này"
+                    : "You reported this answer"
+                  : isVi
+                    ? "Báo câu trả lời sai hoặc không phù hợp"
+                    : "Report a wrong or unsuitable answer"
               }
             >
               <ActionIcon
@@ -122,7 +137,7 @@ export function TutorMessageBubble({
                 color={message.reported ? "orange" : "gray"}
                 disabled={message.reported}
                 onClick={() => onReport(message.id)}
-                aria-label="Báo câu trả lời này"
+                aria-label={isVi ? "Báo câu trả lời này" : "Report this answer"}
               >
                 {message.reported ? (
                   <IconFlagFilled size={14} />

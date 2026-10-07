@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import {
   Badge,
   Button,
@@ -22,6 +24,7 @@ interface DictationHeroCardProps {
 }
 
 export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
+  const { isVi } = useLanguage();
   const done = lesson.completedSentenceCount;
   const total = lesson.sentenceCount;
   const progressPercent = total === 0 ? 0 : Math.round((done / total) * 100);
@@ -57,7 +60,7 @@ export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
               radius="sm"
               leftSection={<Flame size={12} />}
             >
-              Tiếp tục học gần đây
+              {isVi ? "Tiếp tục học gần đây" : "Pick up where you left off"}
             </Badge>
             <Badge
               variant="outline"
@@ -83,16 +86,18 @@ export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
                 <Clock size={12} />
               </ThemeIcon>
               <Text size="xs" style={{ color: "#C5CBD7" }}>
-                Luyện tập gần nhất: {lastPractised}
+                {isVi ? "Luyện tập gần nhất" : "Last practised"}:{" "}
+                {lastPractised}
               </Text>
             </Group>
             <Text size="xs" style={{ color: "#C5CBD7" }}>
-              • {done} / {total} câu đã đạt
+              • {done} / {total} {isVi ? "câu đã đạt" : "sentences cleared"}
             </Text>
           </Group>
 
           <Stack gap={4} mt={4}>
             <Progress
+              aria-label={isVi ? "Tiến độ bài nghe" : "Lesson progress"}
               value={progressPercent}
               color="orange"
               size="sm"
@@ -112,7 +117,7 @@ export function DictationHeroCard({ lesson }: DictationHeroCardProps) {
           rightSection={<ArrowRight size={16} />}
           style={{ minWidth: 160 }}
         >
-          Tiếp tục học
+          {isVi ? "Tiếp tục học" : "Continue"}
         </Button>
       </Flex>
     </Paper>

@@ -129,6 +129,9 @@ export function DictationLessonList({
                   <Table.Td>
                     <Group gap="xs" align="center">
                       <Progress
+                        aria-label={
+                          isVi ? "Tiến độ bài nghe" : "Lesson progress"
+                        }
                         value={progressPercent(lesson)}
                         color={isCompleted ? "teal" : "orange"}
                         size="sm"

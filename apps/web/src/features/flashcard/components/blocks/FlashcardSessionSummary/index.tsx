@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import {
   Badge,
   Box,
@@ -33,19 +35,30 @@ export function FlashcardSessionSummary({
   summary,
   onRestart,
 }: FlashcardSessionSummaryProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const getFeedback = (accuracy: number) => {
     if (accuracy >= 85)
       return {
-        text: "Xuất sắc! Trí nhớ của bạn rất tuyệt vời.",
+        text: tr(
+          "Xuất sắc! Trí nhớ của bạn rất tuyệt vời.",
+          "Excellent! Your memory is in great shape.",
+        ),
         color: "teal",
       };
     if (accuracy >= 65)
       return {
-        text: "Khá tốt! Hãy tiếp tục duy trì chuỗi học này.",
+        text: tr(
+          "Khá tốt! Hãy tiếp tục duy trì chuỗi học này.",
+          "Good work! Keep the streak going.",
+        ),
         color: "blue",
       };
     return {
-      text: "Cần luyện tập thêm! Hãy ôn lại những từ chưa nhớ nhé.",
+      text: tr(
+        "Cần luyện tập thêm! Hãy ôn lại những từ chưa nhớ nhé.",
+        "Needs more practice - review the words you missed.",
+      ),
       color: "orange",
     };
   };
@@ -67,7 +80,7 @@ export function FlashcardSessionSummary({
 
         <Stack align="center" gap={4}>
           <Badge size="lg" variant="dot" color={feedback.color}>
-            HOÀN THÀNH PHIÊN HỌC
+            {tr("HOÀN THÀNH PHIÊN HỌC", "SESSION COMPLETE")}
           </Badge>
           <Text fz="xl" fw={700} ta="center">
             {summary.setName}
@@ -95,19 +108,24 @@ export function FlashcardSessionSummary({
             <Group gap="xs">
               <IconCheck size={18} color="var(--mantine-color-teal-6)" />
               <Text fz="sm">
-                Đã ôn tập: <b>{summary.totalReviewed} từ</b>
+                {tr("Đã ôn tập", "Reviewed")}:{" "}
+                <b>
+                  {summary.totalReviewed} {tr("từ", "words")}
+                </b>
               </Text>
             </Group>
             <Group gap="xs">
               <IconClock size={18} color="var(--mantine-color-blue-6)" />
               <Text fz="sm">
-                Thời gian học: <b>{summary.studyDurationFormatted}</b>
+                {tr("Thời gian học", "Study time")}:{" "}
+                <b>{summary.studyDurationFormatted}</b>
               </Text>
             </Group>
             <Group gap="xs">
               <IconFlame size={18} color="var(--mantine-color-orange-6)" />
               <Text fz="sm">
-                Điểm kinh nghiệm: <b>+{summary.totalReviewed * 5} XP</b>
+                {tr("Điểm kinh nghiệm", "Experience")}:{" "}
+                <b>+{summary.totalReviewed * 5} XP</b>
               </Text>
             </Group>
           </Stack>
@@ -116,13 +134,13 @@ export function FlashcardSessionSummary({
         {/* Breakdown Breakdown */}
         <Box w="100%">
           <Text fz="xs" fw={700} c="dimmed" mb="xs">
-            CHI TIẾT PHÂN BỔ ĐÁNH GIÁ:
+            {tr("CHI TIẾT PHÂN BỔ ĐÁNH GIÁ:", "RATING BREAKDOWN:")}
           </Text>
           <Grid gap="xs">
             <Grid.Col span={3}>
               <Card withBorder padding="xs" radius="sm" ta="center" bg="red.0">
                 <Text fz="xs" c="red.9" fw={600}>
-                  Chưa nhớ
+                  {tr("Chưa nhớ", "Again")}
                 </Text>
                 <Text fz="lg" fw={700} c="red.8">
                   {summary.breakdown.again}
@@ -138,7 +156,7 @@ export function FlashcardSessionSummary({
                 bg="orange.0"
               >
                 <Text fz="xs" c="orange.9" fw={600}>
-                  Khó nhớ
+                  {tr("Khó nhớ", "Hard")}
                 </Text>
                 <Text fz="lg" fw={700} c="orange.8">
                   {summary.breakdown.hard}
@@ -148,7 +166,7 @@ export function FlashcardSessionSummary({
             <Grid.Col span={3}>
               <Card withBorder padding="xs" radius="sm" ta="center" bg="blue.0">
                 <Text fz="xs" c="blue.9" fw={600}>
-                  Nhớ tốt
+                  {tr("Nhớ tốt", "Good")}
                 </Text>
                 <Text fz="lg" fw={700} c="blue.8">
                   {summary.breakdown.good}
@@ -158,7 +176,7 @@ export function FlashcardSessionSummary({
             <Grid.Col span={3}>
               <Card withBorder padding="xs" radius="sm" ta="center" bg="teal.0">
                 <Text fz="xs" c="teal.9" fw={600}>
-                  Rất dễ
+                  {tr("Rất dễ", "Easy")}
                 </Text>
                 <Text fz="lg" fw={700} c="teal.8">
                   {summary.breakdown.easy}
@@ -176,7 +194,7 @@ export function FlashcardSessionSummary({
             variant="default"
             leftSection={<IconArrowLeft size={18} />}
           >
-            Về danh sách
+            {tr("Về danh sách", "Back to sets")}
           </Button>
           <Button
             variant="filled"
@@ -184,7 +202,7 @@ export function FlashcardSessionSummary({
             onClick={onRestart}
             leftSection={<IconRotateClockwise size={18} />}
           >
-            Luyện tập lại
+            {tr("Luyện tập lại", "Practise again")}
           </Button>
         </Group>
       </Stack>

@@ -164,6 +164,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                   </Text>
                 </Group>
                 <Progress
+                  aria-label={isVi ? "Thẻ đã thuộc" : "Cards mastered"}
                   value={masteredPercent}
                   color="indigo"
                   size="sm"

@@ -14,6 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import { AtSign, Calendar, Mail, RotateCcw, Save, User } from "lucide-react";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import type { AccountProfile } from "../../../types";
@@ -34,13 +35,15 @@ export function ProfileForm({
   isSubmitting,
   onSubmit,
 }: ProfileFormProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const defaultValues: ProfileFormValues = {
     fullName: profile.fullName ?? "",
     displayName: profile.displayName ?? "",
     gender: profile.gender ?? null,
     birthDate: typeof profile.birthDate === "string" ? profile.birthDate : "",
   };
+
+  const schema = useMemo(() => profileFormSchema(isVi), [isVi]);
 
   const genderOptions = [
     { value: "MALE", label: t.account.male },
@@ -55,7 +58,7 @@ export function ProfileForm({
     reset,
     formState: { errors, isDirty },
   } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(schema),
     defaultValues,
   });
 

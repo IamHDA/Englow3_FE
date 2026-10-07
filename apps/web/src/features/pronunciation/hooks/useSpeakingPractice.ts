@@ -16,6 +16,8 @@ import {
   TARGET_SAMPLE_RATE,
   WAV_CONTENT_TYPE,
 } from "../audio/wav";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import type { SpeakingAttempt } from "../types";
 
 /** Nhịp hỏi kết quả. Chấm một câu thường mất vài giây, nên hỏi dày hơn là phí. */
@@ -46,6 +48,12 @@ export function useSpeakingPractice({
   promptId,
   referenceText,
 }: UseSpeakingPracticeOptions) {
+  const { isVi } = useLanguage();
+  const isViRef = useRef(isVi);
+  useEffect(() => {
+    isViRef.current = isVi;
+  }, [isVi]);
+  const tr = (vi: string, en: string) => (isViRef.current ? vi : en);
   const [phase, setPhase] = useState<PracticePhase>("idle");
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [attempt, setAttempt] = useState<SpeakingAttempt | null>(null);
@@ -149,7 +157,10 @@ export function useSpeakingPractice({
       releaseMicrophone();
       setPhase("error");
       setErrorMessage(
-        "Không truy cập được micro. Kiểm tra quyền truy cập của trình duyệt rồi thử lại.",
+        tr(
+          "Không truy cập được micro. Kiểm tra quyền truy cập của trình duyệt rồi thử lại.",
+          "Could not use the microphone. Check the browser permission and try again.",
+        ),
       );
     } finally {
       busy.current = false;
@@ -167,7 +178,12 @@ export function useSpeakingPractice({
     const samples = downsample(concat(recorded), sampleRate);
     if (samples.length === 0) {
       setPhase("error");
-      setErrorMessage("Không thu được âm thanh nào. Thử ghi lại.");
+      setErrorMessage(
+        tr(
+          "Không thu được âm thanh nào. Thử ghi lại.",
+          "No sound was recorded. Try again.",
+        ),
+      );
       return;
     }
 
@@ -217,7 +233,12 @@ export function useSpeakingPractice({
     } catch {
       if (version !== operation.current) return;
       setPhase("error");
-      setErrorMessage("Không gửi được bản ghi. Kiểm tra kết nối rồi thử lại.");
+      setErrorMessage(
+        tr(
+          "Không gửi được bản ghi. Kiểm tra kết nối rồi thử lại.",
+          "Could not send the recording. Check the connection and try again.",
+        ),
+      );
     } finally {
       busy.current = false;
     }
@@ -239,7 +260,10 @@ export function useSpeakingPractice({
         clearInterval(timer);
         setPhase("error");
         setErrorMessage(
-          "Chấm lâu hơn bình thường. Hệ thống vẫn đang xử lý - mở lại trang sau ít phút để xem kết quả.",
+          tr(
+            "Chấm lâu hơn bình thường. Hệ thống vẫn đang xử lý - mở lại trang sau ít phút để xem kết quả.",
+            "Scoring is taking longer than usual. It is still running - reopen the page in a few minutes for the result.",
+          ),
         );
         return;
       }
@@ -259,14 +283,22 @@ export function useSpeakingPractice({
           clearInterval(timer);
           setAttempt(latest);
           setPhase("error");
-          setErrorMessage("Không chấm được bản ghi này. Thử ghi lại rõ hơn.");
+          setErrorMessage(
+            tr(
+              "Không chấm được bản ghi này. Thử ghi lại rõ hơn.",
+              "This recording could not be scored. Try again, more clearly.",
+            ),
+          );
         }
       } catch {
         if (cancelled) return;
         clearInterval(timer);
         setPhase("error");
         setErrorMessage(
-          "Mất kết nối khi lấy kết quả. Bản ghi vẫn được giữ; hãy kiểm tra lại thay vì ghi lại.",
+          tr(
+            "Mất kết nối khi lấy kết quả. Bản ghi vẫn được giữ; hãy kiểm tra lại thay vì ghi lại.",
+            "Lost the connection while fetching the result. The recording is kept - check again instead of re-recording.",
+          ),
         );
       } finally {
         polling = false;

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Button, Group, Modal, Stack, Text, Textarea } from "@mantine/core";
 import { useState } from "react";
 
@@ -26,6 +28,8 @@ export function RejectContentModal({
   onCancel,
   onConfirm,
 }: RejectContentModalProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const [note, setNote] = useState("");
   const trimmed = note.trim();
 
@@ -39,20 +43,29 @@ export function RejectContentModal({
     <Modal
       opened={itemTitle !== null}
       onClose={handleClose}
-      title="Trả lại nội dung"
+      title={tr("Trả lại nội dung", "Return content")}
       radius="lg"
       centered
     >
       <Stack gap="md">
         <Text size="sm" c="ink.7">
-          <strong>{itemTitle}</strong> sẽ về trạng thái bị trả lại. Người soạn
-          thấy ghi chú này, sửa rồi gửi duyệt lại.
+          <strong>{itemTitle}</strong>{" "}
+          {tr(
+            "sẽ về trạng thái bị trả lại. Người soạn thấy ghi chú này, sửa rồi gửi duyệt lại.",
+            "goes back to its author, who sees this note, fixes it and submits again.",
+          )}
         </Text>
 
         <Textarea
-          label="Lý do trả lại"
-          description="Nói rõ phải sửa gì, ví dụ: Mười hai thẻ chưa có file phát âm."
-          placeholder="Mười hai thẻ chưa có file phát âm."
+          label={tr("Lý do trả lại", "Reason")}
+          description={tr(
+            "Nói rõ phải sửa gì, ví dụ: Mười hai thẻ chưa có file phát âm.",
+            "Say what to fix, e.g. Twelve cards have no audio.",
+          )}
+          placeholder={tr(
+            "Mười hai thẻ chưa có file phát âm.",
+            "Twelve cards have no audio.",
+          )}
           value={note}
           disabled={submitting}
           onChange={(event) => setNote(event.currentTarget.value)}
@@ -66,7 +79,7 @@ export function RejectContentModal({
 
         <Group justify="flex-end">
           <Button variant="default" radius="md" onClick={handleClose}>
-            Huỷ
+            {tr("Huỷ", "Cancel")}
           </Button>
           <Button
             radius="md"
@@ -78,7 +91,7 @@ export function RejectContentModal({
               if (succeeded === true) setNote("");
             }}
           >
-            Trả lại
+            {tr("Trả lại", "Return")}
           </Button>
         </Group>
       </Stack>

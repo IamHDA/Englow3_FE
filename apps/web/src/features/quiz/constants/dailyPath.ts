@@ -18,6 +18,8 @@ export const TASK_KIND_LABELS: Record<
   [DailyTaskKind.FLASHCARD_REVIEW]: { vi: "Ôn thẻ từ", en: "Review" },
   [DailyTaskKind.DICTATION]: { vi: "Nghe chép", en: "Dictation" },
   [DailyTaskKind.QUIZ]: { vi: "Trắc nghiệm", en: "Quiz" },
+  [DailyTaskKind.WRITING]: { vi: "Luyện viết", en: "Writing" },
+  [DailyTaskKind.SPEAKING]: { vi: "Luyện nói", en: "Speaking" },
 };
 
 /** Trang luyện tập tương ứng với từng kiểu việc. */
@@ -28,6 +30,8 @@ export const TASK_KIND_HREFS: Record<
   [DailyTaskKind.FLASHCARD_REVIEW]: (id) => `/study/flashcards/${id}/study`,
   [DailyTaskKind.DICTATION]: (id) => `/study/dictation/${id}`,
   [DailyTaskKind.QUIZ]: (id) => `/study/quiz/${id}`,
+  [DailyTaskKind.WRITING]: (id) => `/study/writing/${id}`,
+  [DailyTaskKind.SPEAKING]: (id) => `/study/speaking/${id}`,
 };
 
 /**
@@ -47,6 +51,16 @@ export const TASK_UNIT_LABELS: Record<
     vi: "câu chưa đạt",
     en: "sentence left",
     enPlural: "sentences left",
+  },
+  [DailyTaskKind.WRITING]: {
+    vi: "bài viết",
+    en: "response",
+    enPlural: "responses",
+  },
+  [DailyTaskKind.SPEAKING]: {
+    vi: "bài nói",
+    en: "response",
+    enPlural: "responses",
   },
   [DailyTaskKind.QUIZ]: {
     vi: "câu hỏi",

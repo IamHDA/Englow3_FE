@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import {
-  createContext,
   useCallback,
   useEffect,
   useRef,
@@ -11,15 +10,12 @@ import {
 } from "react";
 
 import { supabase } from "@/lib/supabase/client";
+import { clearBrowserDrafts } from "@/shared/storage/browserDrafts";
 
 import { toAuthSession, type AuthSession } from "@/features/auth/types";
 
-type AuthContextValue = {
-  session: AuthSession | null;
-  signOut: () => Promise<void>;
-};
-
-export const AuthContext = createContext<AuthContextValue | null>(null);
+import { AuthContext } from "./context";
+export { AuthContext } from "./context";
 
 type AuthProviderProps = {
   /**
@@ -50,6 +46,11 @@ export function AuthProvider({ initialSession, children }: AuthProviderProps) {
       const nextSession = toAuthSession(supabaseSession?.user);
       if (nextSession?.userId === currentUserId.current) return;
 
+      if (
+        _event === "SIGNED_OUT" ||
+        (currentUserId.current && currentUserId.current !== nextSession?.userId)
+      )
+        void clearBrowserDrafts();
       currentUserId.current = nextSession?.userId ?? null;
       setSession(nextSession);
     });
@@ -58,6 +59,7 @@ export function AuthProvider({ initialSession, children }: AuthProviderProps) {
   }, []);
 
   const signOut = useCallback(async () => {
+    await clearBrowserDrafts();
     await supabase.auth.signOut();
     // Cần cả hai: signOut cập nhật context phía client, còn refresh bắt root
     // layout tính lại initialSession/initialProfile - thiếu nó thì lần điều

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { notifications } from "@mantine/notifications";
 import { Sparkles } from "lucide-react";
 import { createElement, type MouseEvent } from "react";
@@ -22,6 +24,7 @@ import { cancelNavigationProgress } from "@/shared/components/NavigationProgress
  */
 export function useOnboardingGuard() {
   const { requiresOnboarding } = useOnboarding();
+  const { isVi } = useLanguage();
 
   return function guardAction(event?: MouseEvent) {
     if (!requiresOnboarding) return;
@@ -35,8 +38,10 @@ export function useOnboardingGuard() {
       id: ONBOARDING_REQUIRED_NOTIFICATION_ID,
       color: "orange",
       icon: createElement(Sparkles, { size: 18 }),
-      title: "Hoàn tất thiết lập trước đã",
-      message: "Chọn mục tiêu học để mở khoá bài học, thi thử và gia sư AI.",
+      title: isVi ? "Hoàn tất thiết lập trước đã" : "Finish setting up first",
+      message: isVi
+        ? "Chọn mục tiêu học để mở khoá bài học, thi thử và gia sư AI."
+        : "Pick a learning goal to unlock lessons, mock tests and the AI tutor.",
     });
   };
 }

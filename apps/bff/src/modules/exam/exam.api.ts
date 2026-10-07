@@ -22,6 +22,24 @@ const ATTEMPT_BASE_PATH = "/api/exam-attempts";
 export class ExamApi {
   constructor(private readonly client: BackendClient) {}
 
+  draft(
+    attemptId: string,
+  ): Promise<import("../../generated/graphql.js").ExamDraft> {
+    return this.client.get(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/draft`,
+    );
+  }
+  saveDraft(
+    attemptId: string,
+    version: number,
+    answers: SubmittedAnswer[],
+  ): Promise<import("../../generated/graphql.js").ExamDraft> {
+    return this.client.put(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/draft`,
+      { version, answers },
+    );
+  }
+
   /** Learner search on the backend (/api/exams) - returns published exams. */
   searchAsLearner(params: QueryExamsArgs): Promise<LearnerExamPageResponse> {
     const query = toQueryString({
@@ -124,6 +142,13 @@ export class ExamApi {
     return this.client.post(
       `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/reject`,
       { note },
+    );
+  }
+
+  /** Admin-only on the backend. Back to PUBLISHED if it had been, DRAFT otherwise. */
+  restoreAsAdmin(id: string): Promise<ExamResponse> {
+    return this.client.post(
+      `${ADMIN_EXAM_BASE_PATH}/${encodeURIComponent(id)}/restore`,
     );
   }
 

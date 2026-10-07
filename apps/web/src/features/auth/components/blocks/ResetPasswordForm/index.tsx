@@ -5,38 +5,66 @@ import { Button, Flex, PasswordInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { supabase } from "@/lib/supabase/client";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-const resetPasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Mật khẩu tối thiểu 8 ký tự")
-      .regex(/[A-Z]/, "Mật khẩu cần ít nhất 1 chữ hoa")
-      .regex(/[a-z]/, "Mật khẩu cần ít nhất 1 chữ thường")
-      .regex(/[^A-Za-z0-9]/, "Mật khẩu cần ít nhất 1 ký tự đặc biệt"),
-    // Typed blind, so typed twice: a typo here locks the learner out of an
-    // account they just recovered.
-    confirmPassword: z.string().min(1, "Vui lòng nhập lại mật khẩu"),
-  })
-  .refine((values) => values.password === values.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Mật khẩu nhập lại không khớp",
-  });
+function resetPasswordSchema(isVi: boolean) {
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  return z
+    .object({
+      password: z
+        .string()
+        .min(8, tr("Mật khẩu tối thiểu 8 ký tự", "At least 8 characters"))
+        .regex(
+          /[A-Z]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 chữ hoa",
+            "Needs at least 1 uppercase letter",
+          ),
+        )
+        .regex(
+          /[a-z]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 chữ thường",
+            "Needs at least 1 lowercase letter",
+          ),
+        )
+        .regex(
+          /[^A-Za-z0-9]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 ký tự đặc biệt",
+            "Needs at least 1 special character",
+          ),
+        ),
+      // Typed blind, so typed twice: a typo here locks the learner out of an
+      // account they just recovered.
+      confirmPassword: z
+        .string()
+        .min(1, tr("Vui lòng nhập lại mật khẩu", "Enter the password again")),
+    })
+    .refine((values) => values.password === values.confirmPassword, {
+      path: ["confirmPassword"],
+      message: tr("Mật khẩu nhập lại không khớp", "The passwords do not match"),
+    });
+}
 
-type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordValues = z.infer<ReturnType<typeof resetPasswordSchema>>;
 
 export function ResetPasswordForm() {
   const router = useRouter();
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const schema = useMemo(() => resetPasswordSchema(isVi), [isVi]);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordValues>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: { password: "", confirmPassword: "" },
   });
 
@@ -46,20 +74,29 @@ export function ResetPasswordForm() {
       if (error) {
         notifications.show({
           color: "warn",
-          title: "Không thể đặt lại mật khẩu",
-          message: authErrorMessage(error),
+          title: tr(
+            "Không thể đặt lại mật khẩu",
+            "Could not reset the password",
+          ),
+          message: authErrorMessage(error, isVi),
         });
         return;
       }
       notifications.show({
         color: "green",
-        title: "Thành công",
-        message: "Mật khẩu đã được cập nhật. Bạn đã được đăng nhập.",
+        title: tr("Thành công", "Done"),
+        message: tr(
+          "Mật khẩu đã được cập nhật. Bạn đã được đăng nhập.",
+          "Password updated. You are signed in.",
+        ),
       });
       router.replace("/");
       router.refresh();
     } catch {
-      notifications.show({ color: "warn", message: authErrorMessage(null) });
+      notifications.show({
+        color: "warn",
+        message: authErrorMessage(null, isVi),
+      });
     }
   }
 
@@ -74,8 +111,8 @@ export function ResetPasswordForm() {
       <PasswordInput
         {...register("password")}
         autoComplete="new-password"
-        label="Mật khẩu mới"
-        placeholder="Nhập mật khẩu mới"
+        label={tr("Mật khẩu mới", "New password")}
+        placeholder={tr("Nhập mật khẩu mới", "Enter a new password")}
         error={errors.password?.message}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
@@ -89,8 +126,8 @@ export function ResetPasswordForm() {
       <PasswordInput
         {...register("confirmPassword")}
         autoComplete="new-password"
-        label="Nhập lại mật khẩu mới"
-        placeholder="Nhập lại để chắc chắn"
+        label={tr("Nhập lại mật khẩu mới", "Repeat the new password")}
+        placeholder={tr("Nhập lại để chắc chắn", "Type it again to be sure")}
         error={errors.confirmPassword?.message}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
@@ -110,7 +147,7 @@ export function ResetPasswordForm() {
         fz={16}
         fw={700}
       >
-        Đặt lại mật khẩu
+        {tr("Đặt lại mật khẩu", "Reset password")}
       </Button>
     </Flex>
   );

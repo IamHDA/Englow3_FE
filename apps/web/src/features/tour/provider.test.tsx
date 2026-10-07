@@ -77,10 +77,10 @@ describe("UserTourProvider", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("shows five learner steps and persists a skip", async () => {
+  it("shows six learner steps and persists a skip", async () => {
     renderTour();
 
-    expect(screen.getByText("Bước 1 / 5")).toBeTruthy();
+    expect(screen.getByText("Bước 1 / 6")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Bỏ qua" }));
 
     await waitFor(() => expect(state.complete).toHaveBeenCalledOnce());
@@ -92,7 +92,7 @@ describe("UserTourProvider", () => {
     state.pathname = "/admin";
     renderTour();
 
-    expect(screen.getByText("Bước 1 / 3")).toBeTruthy();
+    expect(screen.getByText("Bước 1 / 4")).toBeTruthy();
     expect(screen.getByText("Xem tổng quan công việc")).toBeTruthy();
   });
 
@@ -104,7 +104,7 @@ describe("UserTourProvider", () => {
 
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Replay tour" }));
-    expect(screen.getByText("Bước 1 / 3")).toBeTruthy();
+    expect(screen.getByText("Bước 1 / 4")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Bỏ qua" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());

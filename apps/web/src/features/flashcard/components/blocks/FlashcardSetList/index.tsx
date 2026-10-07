@@ -21,7 +21,7 @@ interface FlashcardSetListProps {
 }
 
 export function FlashcardSetList({ sets }: FlashcardSetListProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
 
   return (
     <Card withBorder padding={0} radius="md">
@@ -61,6 +61,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
               <Table.Td style={{ minWidth: 120 }}>
                 <Group gap="xs">
                   <Progress
+                    aria-label={isVi ? "Thẻ đã thuộc" : "Cards mastered"}
                     value={masteredPercent(set)}
                     size="xs"
                     color="indigo"

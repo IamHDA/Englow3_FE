@@ -120,6 +120,7 @@ export function DailyStreakBanner({
             </Group>
 
             <Progress
+              aria-label={isVi ? "Tiến độ lên cấp" : "Level progress"}
               value={levelProgress}
               color="yellow"
               size="sm"

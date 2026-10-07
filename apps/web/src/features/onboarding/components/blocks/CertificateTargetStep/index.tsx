@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Box, SimpleGrid } from "@mantine/core";
 import { useState } from "react";
 
@@ -33,6 +35,9 @@ export function CertificateTargetStep({
   errorMessage,
   onContinue,
 }: CertificateTargetStepProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const copy = isVi ? CERTIFICATE_TARGET_COPY.vi : CERTIFICATE_TARGET_COPY.en;
   const [selected, setSelected] = useState<TargetCertificate | null>(
     initialCertificate,
   );
@@ -40,8 +45,8 @@ export function CertificateTargetStep({
   return (
     <OnboardingStepShell
       step={OnboardingStep.CERTIFICATE_TARGET}
-      title={CERTIFICATE_TARGET_COPY.title}
-      subtitle={CERTIFICATE_TARGET_COPY.subtitle}
+      title={copy.title}
+      subtitle={copy.subtitle}
       footer={
         <OnboardingStepFooter
           pending={pending}
@@ -51,13 +56,16 @@ export function CertificateTargetStep({
         />
       }
     >
-      <Box role="group" aria-label="Chứng chỉ muốn thi">
+      <Box
+        role="group"
+        aria-label={tr("Chứng chỉ muốn thi", "Target certificate")}
+      >
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={20}>
           {TARGET_CERTIFICATE_CHOICES.map((choice) => (
             <OnboardingChoiceTile
               key={choice.certificate}
               label={choice.label}
-              description={choice.description}
+              description={isVi ? choice.description.vi : choice.description.en}
               selected={selected === choice.certificate}
               disabled={pending}
               onSelect={() => setSelected(choice.certificate)}

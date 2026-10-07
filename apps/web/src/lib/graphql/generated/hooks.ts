@@ -191,6 +191,692 @@ export type ReportTutorMessageMutation = {
   };
 };
 
+export type AssessmentTaskFieldsFragment = {
+  id: string;
+  skill: Types.AssessmentSkill;
+  title: string;
+  taskType: string;
+  instructions: string;
+  rubricNotes: string | null;
+  sampleAnswer: string | null;
+  minimumWords: number;
+  timeLimitSeconds: number;
+  status: Types.AssessmentTaskStatus;
+  reviewNote: string | null;
+  version: number;
+};
+
+export type AssessmentAttemptFieldsFragment = {
+  id: string;
+  taskId: string;
+  skill: Types.AssessmentSkill;
+  status: Types.AssessmentAttemptStatus;
+  answerText: string;
+  audioUrl: string | null;
+  recognizedText: string | null;
+  report: string | null;
+  source: string | null;
+  errorCode: string | null;
+  wordCount: number;
+  version: number;
+  createdAt: string;
+  submittedAt: string | null;
+  assessedAt: string | null;
+  learnerId: string | null;
+  learnerName: string | null;
+  task: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentWorkloadQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AssessmentWorkloadQuery = {
+  assessmentWorkload: {
+    drafts: number;
+    rejected: number;
+    pendingReview: number;
+    published: number;
+    needsReview: number;
+    failed: number;
+    completed: number;
+  };
+};
+
+export type AssessmentAuthoringTaskDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentAuthoringTaskDetailQuery = {
+  authoringAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentReviewsQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentReviewsQuery = {
+  assessmentReviews: Array<{
+    id: string;
+    reviewerId: string;
+    reviewerName: string | null;
+    previousReport: string | null;
+    report: string;
+    note: string;
+    createdAt: string;
+  }>;
+};
+
+export type AssessmentCatalogQueryVariables = Exact<{
+  skill?: Types.AssessmentSkill | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentCatalogQuery = {
+  assessmentCapabilities: {
+    automaticWriting: boolean;
+    automaticSpeaking: boolean;
+    humanReview: boolean;
+  };
+  assessmentTasks: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    }>;
+  };
+};
+
+export type AssessmentTaskDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentTaskDetailQuery = {
+  assessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+  assessmentCapabilities: {
+    automaticWriting: boolean;
+    automaticSpeaking: boolean;
+    humanReview: boolean;
+  };
+};
+
+export type AssessmentAttemptDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentAttemptDetailQuery = {
+  assessmentAttempt: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentHistoryQueryVariables = Exact<{
+  taskId?: string | number | null | undefined;
+  skill?: Types.AssessmentSkill | null | undefined;
+  status?: Types.AssessmentAttemptStatus | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentHistoryQuery = {
+  assessmentHistory: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      taskId: string;
+      skill: Types.AssessmentSkill;
+      status: Types.AssessmentAttemptStatus;
+      answerText: string;
+      audioUrl: string | null;
+      recognizedText: string | null;
+      report: string | null;
+      source: string | null;
+      errorCode: string | null;
+      wordCount: number;
+      version: number;
+      createdAt: string;
+      submittedAt: string | null;
+      assessedAt: string | null;
+      learnerId: string | null;
+      learnerName: string | null;
+      task: {
+        id: string;
+        skill: Types.AssessmentSkill;
+        title: string;
+        taskType: string;
+        instructions: string;
+        rubricNotes: string | null;
+        sampleAnswer: string | null;
+        minimumWords: number;
+        timeLimitSeconds: number;
+        status: Types.AssessmentTaskStatus;
+        reviewNote: string | null;
+        version: number;
+      };
+    }>;
+  };
+};
+
+export type AssessmentAuthoringQueryVariables = Exact<{
+  skill?: Types.AssessmentSkill | null | undefined;
+  status?: Types.AssessmentTaskStatus | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentAuthoringQuery = {
+  authoringAssessmentTasks: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    }>;
+  };
+};
+
+export type AssessmentReviewQueueQueryVariables = Exact<{
+  status?: Types.AssessmentAttemptStatus | null | undefined;
+  skill?: Types.AssessmentSkill | null | undefined;
+  term?: string | null | undefined;
+  oldest?: boolean | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentReviewQueueQuery = {
+  assessmentSubmissions: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      skill: Types.AssessmentSkill;
+      status: Types.AssessmentAttemptStatus;
+      submittedAt: string | null;
+      version: number;
+      learnerId: string;
+      learnerName: string | null;
+      task: { id: string; title: string };
+    }>;
+  };
+};
+
+export type AssessmentSubmissionDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentSubmissionDetailQuery = {
+  assessmentSubmission: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentStartMutationVariables = Exact<{
+  taskId: string | number;
+  clientKey: string | number;
+  contentType?: string | null | undefined;
+  contentLength?: number | null | undefined;
+}>;
+
+export type AssessmentStartMutation = {
+  startAssessment: {
+    uploadUrl: string | null;
+    attempt: {
+      id: string;
+      taskId: string;
+      skill: Types.AssessmentSkill;
+      status: Types.AssessmentAttemptStatus;
+      answerText: string;
+      audioUrl: string | null;
+      recognizedText: string | null;
+      report: string | null;
+      source: string | null;
+      errorCode: string | null;
+      wordCount: number;
+      version: number;
+      createdAt: string;
+      submittedAt: string | null;
+      assessedAt: string | null;
+      learnerId: string | null;
+      learnerName: string | null;
+      task: {
+        id: string;
+        skill: Types.AssessmentSkill;
+        title: string;
+        taskType: string;
+        instructions: string;
+        rubricNotes: string | null;
+        sampleAnswer: string | null;
+        minimumWords: number;
+        timeLimitSeconds: number;
+        status: Types.AssessmentTaskStatus;
+        reviewNote: string | null;
+        version: number;
+      };
+    };
+  };
+};
+
+export type AssessmentSaveDraftMutationVariables = Exact<{
+  id: string | number;
+  answerText: string;
+  version: number;
+}>;
+
+export type AssessmentSaveDraftMutation = {
+  saveAssessmentDraft: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentSubmitMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentSubmitMutation = {
+  submitAssessment: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentRetryMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentRetryMutation = {
+  retryAssessment: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentRequestReviewMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentRequestReviewMutation = {
+  requestAssessmentReview: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentCreateTaskMutationVariables = Exact<{
+  input: Types.AssessmentTaskInput;
+}>;
+
+export type AssessmentCreateTaskMutation = {
+  createAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentEditTaskMutationVariables = Exact<{
+  id: string | number;
+  version: number;
+  input: Types.AssessmentTaskInput;
+}>;
+
+export type AssessmentEditTaskMutation = {
+  editAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentTransitionTaskMutationVariables = Exact<{
+  id: string | number;
+  action: string;
+  note?: string | null | undefined;
+}>;
+
+export type AssessmentTransitionTaskMutation = {
+  transitionAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentGradeMutationVariables = Exact<{
+  id: string | number;
+  report: string;
+  note: string;
+  transcript?: string | null | undefined;
+  version: number;
+}>;
+
+export type AssessmentGradeMutation = {
+  gradeAssessment: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentNotificationsQueryVariables = Exact<{
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentNotificationsQuery = {
+  assessmentNotifications: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      attemptId: string;
+      title: string;
+      skill: Types.AssessmentSkill;
+      version: number;
+      assessedAt: string;
+    }>;
+  };
+};
+
+export type AssessmentReadResultMutationVariables = Exact<{
+  id: string | number;
+  version: number;
+}>;
+
+export type AssessmentReadResultMutation = { readAssessmentResult: boolean };
+
 export type ContentReviewFieldsFragment = {
   id: string;
   slug: string;
@@ -301,6 +987,26 @@ export type PublishContentMutationVariables = Exact<{
 
 export type PublishContentMutation = {
   publishContent: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number | null;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type RestoreContentMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+}>;
+
+export type RestoreContentMutation = {
+  restoreContent: {
     id: string;
     slug: string;
     title: string;
@@ -572,6 +1278,23 @@ export type PublishExamMutation = {
   };
 };
 
+export type RestoreExamMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type RestoreExamMutation = {
+  restoreExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
 export type ArchiveExamMutationVariables = Exact<{
   id: string | number;
 }>;
@@ -656,6 +1379,32 @@ export type ExamAttemptFieldsFragment = {
   questionCount: number;
   resumed: boolean;
   examTitle: string | null;
+};
+
+export type ExamDraftQueryVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type ExamDraftQuery = {
+  examDraft: {
+    version: number;
+    savedAt: string;
+    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+  };
+};
+
+export type SaveExamDraftMutationVariables = Exact<{
+  attemptId: string | number;
+  version: number;
+  answers: Array<Types.SubmitAnswerInput> | Types.SubmitAnswerInput;
+}>;
+
+export type SaveExamDraftMutation = {
+  saveExamDraft: {
+    version: number;
+    savedAt: string;
+    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+  };
 };
 
 export type AttemptReviewFieldsFragment = {
@@ -1685,6 +2434,47 @@ export const TutorConversationSummaryFieldsFragmentDoc = gql`
     createdAt
   }
 `;
+export const AssessmentTaskFieldsFragmentDoc = gql`
+  fragment AssessmentTaskFields on AssessmentTask {
+    id
+    skill
+    title
+    taskType
+    instructions
+    rubricNotes
+    sampleAnswer
+    minimumWords
+    timeLimitSeconds
+    status
+    reviewNote
+    version
+  }
+`;
+export const AssessmentAttemptFieldsFragmentDoc = gql`
+  fragment AssessmentAttemptFields on AssessmentAttempt {
+    id
+    taskId
+    skill
+    task {
+      ...AssessmentTaskFields
+    }
+    status
+    answerText
+    audioUrl
+    recognizedText
+    report
+    source
+    errorCode
+    wordCount
+    version
+    createdAt
+    submittedAt
+    assessedAt
+    learnerId
+    learnerName
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
 export const ContentReviewFieldsFragmentDoc = gql`
   fragment ContentReviewFields on ContentReview {
     id
@@ -2507,6 +3297,1806 @@ export type ReportTutorMessageMutationOptions =
     ReportTutorMessageMutation,
     ReportTutorMessageMutationVariables
   >;
+export const AssessmentWorkloadDocument = gql`
+  query AssessmentWorkload {
+    assessmentWorkload {
+      drafts
+      rejected
+      pendingReview
+      published
+      needsReview
+      failed
+      completed
+    }
+  }
+`;
+
+/**
+ * __useAssessmentWorkloadQuery__
+ *
+ * To run a query within a React component, call `useAssessmentWorkloadQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentWorkloadQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentWorkloadQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAssessmentWorkloadQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AssessmentWorkloadQuery,
+    AssessmentWorkloadQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentWorkloadQuery,
+    AssessmentWorkloadQueryVariables
+  >(AssessmentWorkloadDocument, options);
+}
+export function useAssessmentWorkloadLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentWorkloadQuery,
+    AssessmentWorkloadQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentWorkloadQuery,
+    AssessmentWorkloadQueryVariables
+  >(AssessmentWorkloadDocument, options);
+}
+export function useAssessmentWorkloadSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentWorkloadQuery,
+    AssessmentWorkloadQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentWorkloadQuery,
+  AssessmentWorkloadQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentWorkloadSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentWorkloadQuery,
+        AssessmentWorkloadQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentWorkloadQuery | undefined,
+  AssessmentWorkloadQueryVariables
+>;
+export function useAssessmentWorkloadSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentWorkloadQuery,
+        AssessmentWorkloadQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentWorkloadQuery,
+    AssessmentWorkloadQueryVariables
+  >(AssessmentWorkloadDocument, options as any);
+}
+export type AssessmentWorkloadQueryHookResult = ReturnType<
+  typeof useAssessmentWorkloadQuery
+>;
+export type AssessmentWorkloadLazyQueryHookResult = ReturnType<
+  typeof useAssessmentWorkloadLazyQuery
+>;
+export type AssessmentWorkloadSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentWorkloadSuspenseQuery
+>;
+export type AssessmentWorkloadQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentWorkloadQuery,
+  AssessmentWorkloadQueryVariables
+>;
+export const AssessmentAuthoringTaskDetailDocument = gql`
+  query AssessmentAuthoringTaskDetail($id: ID!) {
+    authoringAssessmentTask(id: $id) {
+      ...AssessmentTaskFields
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentAuthoringTaskDetailQuery__
+ *
+ * To run a query within a React component, call `useAssessmentAuthoringTaskDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentAuthoringTaskDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentAuthoringTaskDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentAuthoringTaskDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  > &
+    (
+      | {
+          variables: AssessmentAuthoringTaskDetailQueryVariables;
+          skip?: boolean;
+        }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  >(AssessmentAuthoringTaskDetailDocument, options);
+}
+export function useAssessmentAuthoringTaskDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  >(AssessmentAuthoringTaskDetailDocument, options);
+}
+export function useAssessmentAuthoringTaskDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentAuthoringTaskDetailQuery,
+  AssessmentAuthoringTaskDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentAuthoringTaskDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentAuthoringTaskDetailQuery,
+        AssessmentAuthoringTaskDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentAuthoringTaskDetailQuery | undefined,
+  AssessmentAuthoringTaskDetailQueryVariables
+>;
+export function useAssessmentAuthoringTaskDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentAuthoringTaskDetailQuery,
+        AssessmentAuthoringTaskDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  >(AssessmentAuthoringTaskDetailDocument, options as any);
+}
+export type AssessmentAuthoringTaskDetailQueryHookResult = ReturnType<
+  typeof useAssessmentAuthoringTaskDetailQuery
+>;
+export type AssessmentAuthoringTaskDetailLazyQueryHookResult = ReturnType<
+  typeof useAssessmentAuthoringTaskDetailLazyQuery
+>;
+export type AssessmentAuthoringTaskDetailSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentAuthoringTaskDetailSuspenseQuery
+>;
+export type AssessmentAuthoringTaskDetailQueryResult =
+  ApolloReactCommon.QueryResult<
+    AssessmentAuthoringTaskDetailQuery,
+    AssessmentAuthoringTaskDetailQueryVariables
+  >;
+export const AssessmentReviewsDocument = gql`
+  query AssessmentReviews($id: ID!) {
+    assessmentReviews(id: $id) {
+      id
+      reviewerId
+      reviewerName
+      previousReport
+      report
+      note
+      createdAt
+    }
+  }
+`;
+
+/**
+ * __useAssessmentReviewsQuery__
+ *
+ * To run a query within a React component, call `useAssessmentReviewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentReviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentReviewsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentReviewsQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AssessmentReviewsQuery,
+    AssessmentReviewsQueryVariables
+  > &
+    (
+      | { variables: AssessmentReviewsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentReviewsQuery,
+    AssessmentReviewsQueryVariables
+  >(AssessmentReviewsDocument, options);
+}
+export function useAssessmentReviewsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentReviewsQuery,
+    AssessmentReviewsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentReviewsQuery,
+    AssessmentReviewsQueryVariables
+  >(AssessmentReviewsDocument, options);
+}
+export function useAssessmentReviewsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentReviewsQuery,
+    AssessmentReviewsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentReviewsQuery,
+  AssessmentReviewsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentReviewsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentReviewsQuery,
+        AssessmentReviewsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentReviewsQuery | undefined,
+  AssessmentReviewsQueryVariables
+>;
+export function useAssessmentReviewsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentReviewsQuery,
+        AssessmentReviewsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentReviewsQuery,
+    AssessmentReviewsQueryVariables
+  >(AssessmentReviewsDocument, options as any);
+}
+export type AssessmentReviewsQueryHookResult = ReturnType<
+  typeof useAssessmentReviewsQuery
+>;
+export type AssessmentReviewsLazyQueryHookResult = ReturnType<
+  typeof useAssessmentReviewsLazyQuery
+>;
+export type AssessmentReviewsSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentReviewsSuspenseQuery
+>;
+export type AssessmentReviewsQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentReviewsQuery,
+  AssessmentReviewsQueryVariables
+>;
+export const AssessmentCatalogDocument = gql`
+  query AssessmentCatalog($skill: AssessmentSkill, $page: Int) {
+    assessmentCapabilities {
+      automaticWriting
+      automaticSpeaking
+      humanReview
+    }
+    assessmentTasks(skill: $skill, page: $page) {
+      items {
+        ...AssessmentTaskFields
+      }
+      page
+      totalPages
+      totalItems
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentCatalogQuery__
+ *
+ * To run a query within a React component, call `useAssessmentCatalogQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentCatalogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentCatalogQuery({
+ *   variables: {
+ *      skill: // value for 'skill'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useAssessmentCatalogQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AssessmentCatalogQuery,
+    AssessmentCatalogQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentCatalogQuery,
+    AssessmentCatalogQueryVariables
+  >(AssessmentCatalogDocument, options);
+}
+export function useAssessmentCatalogLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentCatalogQuery,
+    AssessmentCatalogQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentCatalogQuery,
+    AssessmentCatalogQueryVariables
+  >(AssessmentCatalogDocument, options);
+}
+export function useAssessmentCatalogSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentCatalogQuery,
+    AssessmentCatalogQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentCatalogQuery,
+  AssessmentCatalogQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentCatalogSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentCatalogQuery,
+        AssessmentCatalogQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentCatalogQuery | undefined,
+  AssessmentCatalogQueryVariables
+>;
+export function useAssessmentCatalogSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentCatalogQuery,
+        AssessmentCatalogQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentCatalogQuery,
+    AssessmentCatalogQueryVariables
+  >(AssessmentCatalogDocument, options as any);
+}
+export type AssessmentCatalogQueryHookResult = ReturnType<
+  typeof useAssessmentCatalogQuery
+>;
+export type AssessmentCatalogLazyQueryHookResult = ReturnType<
+  typeof useAssessmentCatalogLazyQuery
+>;
+export type AssessmentCatalogSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentCatalogSuspenseQuery
+>;
+export type AssessmentCatalogQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentCatalogQuery,
+  AssessmentCatalogQueryVariables
+>;
+export const AssessmentTaskDetailDocument = gql`
+  query AssessmentTaskDetail($id: ID!) {
+    assessmentTask(id: $id) {
+      ...AssessmentTaskFields
+    }
+    assessmentCapabilities {
+      automaticWriting
+      automaticSpeaking
+      humanReview
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentTaskDetailQuery__
+ *
+ * To run a query within a React component, call `useAssessmentTaskDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentTaskDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentTaskDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentTaskDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AssessmentTaskDetailQuery,
+    AssessmentTaskDetailQueryVariables
+  > &
+    (
+      | { variables: AssessmentTaskDetailQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentTaskDetailQuery,
+    AssessmentTaskDetailQueryVariables
+  >(AssessmentTaskDetailDocument, options);
+}
+export function useAssessmentTaskDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentTaskDetailQuery,
+    AssessmentTaskDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentTaskDetailQuery,
+    AssessmentTaskDetailQueryVariables
+  >(AssessmentTaskDetailDocument, options);
+}
+export function useAssessmentTaskDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentTaskDetailQuery,
+    AssessmentTaskDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentTaskDetailQuery,
+  AssessmentTaskDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentTaskDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentTaskDetailQuery,
+        AssessmentTaskDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentTaskDetailQuery | undefined,
+  AssessmentTaskDetailQueryVariables
+>;
+export function useAssessmentTaskDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentTaskDetailQuery,
+        AssessmentTaskDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentTaskDetailQuery,
+    AssessmentTaskDetailQueryVariables
+  >(AssessmentTaskDetailDocument, options as any);
+}
+export type AssessmentTaskDetailQueryHookResult = ReturnType<
+  typeof useAssessmentTaskDetailQuery
+>;
+export type AssessmentTaskDetailLazyQueryHookResult = ReturnType<
+  typeof useAssessmentTaskDetailLazyQuery
+>;
+export type AssessmentTaskDetailSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentTaskDetailSuspenseQuery
+>;
+export type AssessmentTaskDetailQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentTaskDetailQuery,
+  AssessmentTaskDetailQueryVariables
+>;
+export const AssessmentAttemptDetailDocument = gql`
+  query AssessmentAttemptDetail($id: ID!) {
+    assessmentAttempt(id: $id) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentAttemptDetailQuery__
+ *
+ * To run a query within a React component, call `useAssessmentAttemptDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentAttemptDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentAttemptDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentAttemptDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AssessmentAttemptDetailQuery,
+    AssessmentAttemptDetailQueryVariables
+  > &
+    (
+      | { variables: AssessmentAttemptDetailQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentAttemptDetailQuery,
+    AssessmentAttemptDetailQueryVariables
+  >(AssessmentAttemptDetailDocument, options);
+}
+export function useAssessmentAttemptDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentAttemptDetailQuery,
+    AssessmentAttemptDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentAttemptDetailQuery,
+    AssessmentAttemptDetailQueryVariables
+  >(AssessmentAttemptDetailDocument, options);
+}
+export function useAssessmentAttemptDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentAttemptDetailQuery,
+    AssessmentAttemptDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentAttemptDetailQuery,
+  AssessmentAttemptDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentAttemptDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentAttemptDetailQuery,
+        AssessmentAttemptDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentAttemptDetailQuery | undefined,
+  AssessmentAttemptDetailQueryVariables
+>;
+export function useAssessmentAttemptDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentAttemptDetailQuery,
+        AssessmentAttemptDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentAttemptDetailQuery,
+    AssessmentAttemptDetailQueryVariables
+  >(AssessmentAttemptDetailDocument, options as any);
+}
+export type AssessmentAttemptDetailQueryHookResult = ReturnType<
+  typeof useAssessmentAttemptDetailQuery
+>;
+export type AssessmentAttemptDetailLazyQueryHookResult = ReturnType<
+  typeof useAssessmentAttemptDetailLazyQuery
+>;
+export type AssessmentAttemptDetailSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentAttemptDetailSuspenseQuery
+>;
+export type AssessmentAttemptDetailQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentAttemptDetailQuery,
+  AssessmentAttemptDetailQueryVariables
+>;
+export const AssessmentHistoryDocument = gql`
+  query AssessmentHistory(
+    $taskId: ID
+    $skill: AssessmentSkill
+    $status: AssessmentAttemptStatus
+    $title: String
+    $page: Int
+  ) {
+    assessmentHistory(
+      taskId: $taskId
+      skill: $skill
+      status: $status
+      title: $title
+      page: $page
+    ) {
+      items {
+        ...AssessmentAttemptFields
+      }
+      page
+      totalPages
+      totalItems
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentHistoryQuery__
+ *
+ * To run a query within a React component, call `useAssessmentHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentHistoryQuery({
+ *   variables: {
+ *      taskId: // value for 'taskId'
+ *      skill: // value for 'skill'
+ *      status: // value for 'status'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useAssessmentHistoryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AssessmentHistoryQuery,
+    AssessmentHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentHistoryQuery,
+    AssessmentHistoryQueryVariables
+  >(AssessmentHistoryDocument, options);
+}
+export function useAssessmentHistoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentHistoryQuery,
+    AssessmentHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentHistoryQuery,
+    AssessmentHistoryQueryVariables
+  >(AssessmentHistoryDocument, options);
+}
+export function useAssessmentHistorySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentHistoryQuery,
+    AssessmentHistoryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentHistoryQuery,
+  AssessmentHistoryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentHistoryQuery,
+        AssessmentHistoryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentHistoryQuery | undefined,
+  AssessmentHistoryQueryVariables
+>;
+export function useAssessmentHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentHistoryQuery,
+        AssessmentHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentHistoryQuery,
+    AssessmentHistoryQueryVariables
+  >(AssessmentHistoryDocument, options as any);
+}
+export type AssessmentHistoryQueryHookResult = ReturnType<
+  typeof useAssessmentHistoryQuery
+>;
+export type AssessmentHistoryLazyQueryHookResult = ReturnType<
+  typeof useAssessmentHistoryLazyQuery
+>;
+export type AssessmentHistorySuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentHistorySuspenseQuery
+>;
+export type AssessmentHistoryQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentHistoryQuery,
+  AssessmentHistoryQueryVariables
+>;
+export const AssessmentAuthoringDocument = gql`
+  query AssessmentAuthoring(
+    $skill: AssessmentSkill
+    $status: AssessmentTaskStatus
+    $page: Int
+  ) {
+    authoringAssessmentTasks(skill: $skill, status: $status, page: $page) {
+      items {
+        ...AssessmentTaskFields
+      }
+      page
+      totalPages
+      totalItems
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentAuthoringQuery__
+ *
+ * To run a query within a React component, call `useAssessmentAuthoringQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentAuthoringQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentAuthoringQuery({
+ *   variables: {
+ *      skill: // value for 'skill'
+ *      status: // value for 'status'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useAssessmentAuthoringQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AssessmentAuthoringQuery,
+    AssessmentAuthoringQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentAuthoringQuery,
+    AssessmentAuthoringQueryVariables
+  >(AssessmentAuthoringDocument, options);
+}
+export function useAssessmentAuthoringLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentAuthoringQuery,
+    AssessmentAuthoringQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentAuthoringQuery,
+    AssessmentAuthoringQueryVariables
+  >(AssessmentAuthoringDocument, options);
+}
+export function useAssessmentAuthoringSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentAuthoringQuery,
+    AssessmentAuthoringQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentAuthoringQuery,
+  AssessmentAuthoringQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentAuthoringSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentAuthoringQuery,
+        AssessmentAuthoringQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentAuthoringQuery | undefined,
+  AssessmentAuthoringQueryVariables
+>;
+export function useAssessmentAuthoringSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentAuthoringQuery,
+        AssessmentAuthoringQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentAuthoringQuery,
+    AssessmentAuthoringQueryVariables
+  >(AssessmentAuthoringDocument, options as any);
+}
+export type AssessmentAuthoringQueryHookResult = ReturnType<
+  typeof useAssessmentAuthoringQuery
+>;
+export type AssessmentAuthoringLazyQueryHookResult = ReturnType<
+  typeof useAssessmentAuthoringLazyQuery
+>;
+export type AssessmentAuthoringSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentAuthoringSuspenseQuery
+>;
+export type AssessmentAuthoringQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentAuthoringQuery,
+  AssessmentAuthoringQueryVariables
+>;
+export const AssessmentReviewQueueDocument = gql`
+  query AssessmentReviewQueue(
+    $status: AssessmentAttemptStatus
+    $skill: AssessmentSkill
+    $term: String
+    $oldest: Boolean
+    $page: Int
+  ) {
+    assessmentSubmissions(
+      status: $status
+      skill: $skill
+      term: $term
+      oldest: $oldest
+      page: $page
+    ) {
+      items {
+        id
+        skill
+        status
+        submittedAt
+        version
+        learnerId
+        learnerName
+        task {
+          id
+          title
+        }
+      }
+      page
+      totalPages
+      totalItems
+    }
+  }
+`;
+
+/**
+ * __useAssessmentReviewQueueQuery__
+ *
+ * To run a query within a React component, call `useAssessmentReviewQueueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentReviewQueueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentReviewQueueQuery({
+ *   variables: {
+ *      status: // value for 'status'
+ *      skill: // value for 'skill'
+ *      term: // value for 'term'
+ *      oldest: // value for 'oldest'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useAssessmentReviewQueueQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AssessmentReviewQueueQuery,
+    AssessmentReviewQueueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentReviewQueueQuery,
+    AssessmentReviewQueueQueryVariables
+  >(AssessmentReviewQueueDocument, options);
+}
+export function useAssessmentReviewQueueLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentReviewQueueQuery,
+    AssessmentReviewQueueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentReviewQueueQuery,
+    AssessmentReviewQueueQueryVariables
+  >(AssessmentReviewQueueDocument, options);
+}
+export function useAssessmentReviewQueueSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentReviewQueueQuery,
+    AssessmentReviewQueueQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentReviewQueueQuery,
+  AssessmentReviewQueueQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentReviewQueueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentReviewQueueQuery,
+        AssessmentReviewQueueQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentReviewQueueQuery | undefined,
+  AssessmentReviewQueueQueryVariables
+>;
+export function useAssessmentReviewQueueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentReviewQueueQuery,
+        AssessmentReviewQueueQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentReviewQueueQuery,
+    AssessmentReviewQueueQueryVariables
+  >(AssessmentReviewQueueDocument, options as any);
+}
+export type AssessmentReviewQueueQueryHookResult = ReturnType<
+  typeof useAssessmentReviewQueueQuery
+>;
+export type AssessmentReviewQueueLazyQueryHookResult = ReturnType<
+  typeof useAssessmentReviewQueueLazyQuery
+>;
+export type AssessmentReviewQueueSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentReviewQueueSuspenseQuery
+>;
+export type AssessmentReviewQueueQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentReviewQueueQuery,
+  AssessmentReviewQueueQueryVariables
+>;
+export const AssessmentSubmissionDetailDocument = gql`
+  query AssessmentSubmissionDetail($id: ID!) {
+    assessmentSubmission(id: $id) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useAssessmentSubmissionDetailQuery__
+ *
+ * To run a query within a React component, call `useAssessmentSubmissionDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentSubmissionDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentSubmissionDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentSubmissionDetailQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  > &
+    (
+      | { variables: AssessmentSubmissionDetailQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  >(AssessmentSubmissionDetailDocument, options);
+}
+export function useAssessmentSubmissionDetailLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  >(AssessmentSubmissionDetailDocument, options);
+}
+export function useAssessmentSubmissionDetailSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentSubmissionDetailQuery,
+  AssessmentSubmissionDetailQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentSubmissionDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentSubmissionDetailQuery,
+        AssessmentSubmissionDetailQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentSubmissionDetailQuery | undefined,
+  AssessmentSubmissionDetailQueryVariables
+>;
+export function useAssessmentSubmissionDetailSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentSubmissionDetailQuery,
+        AssessmentSubmissionDetailQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  >(AssessmentSubmissionDetailDocument, options as any);
+}
+export type AssessmentSubmissionDetailQueryHookResult = ReturnType<
+  typeof useAssessmentSubmissionDetailQuery
+>;
+export type AssessmentSubmissionDetailLazyQueryHookResult = ReturnType<
+  typeof useAssessmentSubmissionDetailLazyQuery
+>;
+export type AssessmentSubmissionDetailSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentSubmissionDetailSuspenseQuery
+>;
+export type AssessmentSubmissionDetailQueryResult =
+  ApolloReactCommon.QueryResult<
+    AssessmentSubmissionDetailQuery,
+    AssessmentSubmissionDetailQueryVariables
+  >;
+export const AssessmentStartDocument = gql`
+  mutation AssessmentStart(
+    $taskId: ID!
+    $clientKey: ID!
+    $contentType: String
+    $contentLength: Int
+  ) {
+    startAssessment(
+      taskId: $taskId
+      clientKey: $clientKey
+      contentType: $contentType
+      contentLength: $contentLength
+    ) {
+      attempt {
+        ...AssessmentAttemptFields
+      }
+      uploadUrl
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+export type AssessmentStartMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentStartMutation,
+    AssessmentStartMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentStartMutation__
+ *
+ * To run a mutation, you first call `useAssessmentStartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentStartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentStartMutation, { data, loading, error }] = useAssessmentStartMutation({
+ *   variables: {
+ *      taskId: // value for 'taskId'
+ *      clientKey: // value for 'clientKey'
+ *      contentType: // value for 'contentType'
+ *      contentLength: // value for 'contentLength'
+ *   },
+ * });
+ */
+export function useAssessmentStartMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentStartMutation,
+    AssessmentStartMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentStartMutation,
+    AssessmentStartMutationVariables
+  >(AssessmentStartDocument, options);
+}
+export type AssessmentStartMutationHookResult = ReturnType<
+  typeof useAssessmentStartMutation
+>;
+export type AssessmentStartMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentStartMutation>;
+export type AssessmentStartMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentStartMutation,
+    AssessmentStartMutationVariables
+  >;
+export const AssessmentSaveDraftDocument = gql`
+  mutation AssessmentSaveDraft($id: ID!, $answerText: String!, $version: Int!) {
+    saveAssessmentDraft(id: $id, answerText: $answerText, version: $version) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+export type AssessmentSaveDraftMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentSaveDraftMutation,
+    AssessmentSaveDraftMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentSaveDraftMutation__
+ *
+ * To run a mutation, you first call `useAssessmentSaveDraftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentSaveDraftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentSaveDraftMutation, { data, loading, error }] = useAssessmentSaveDraftMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      answerText: // value for 'answerText'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useAssessmentSaveDraftMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentSaveDraftMutation,
+    AssessmentSaveDraftMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentSaveDraftMutation,
+    AssessmentSaveDraftMutationVariables
+  >(AssessmentSaveDraftDocument, options);
+}
+export type AssessmentSaveDraftMutationHookResult = ReturnType<
+  typeof useAssessmentSaveDraftMutation
+>;
+export type AssessmentSaveDraftMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentSaveDraftMutation>;
+export type AssessmentSaveDraftMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentSaveDraftMutation,
+    AssessmentSaveDraftMutationVariables
+  >;
+export const AssessmentSubmitDocument = gql`
+  mutation AssessmentSubmit($id: ID!) {
+    submitAssessment(id: $id) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+export type AssessmentSubmitMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentSubmitMutation,
+    AssessmentSubmitMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentSubmitMutation__
+ *
+ * To run a mutation, you first call `useAssessmentSubmitMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentSubmitMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentSubmitMutation, { data, loading, error }] = useAssessmentSubmitMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentSubmitMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentSubmitMutation,
+    AssessmentSubmitMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentSubmitMutation,
+    AssessmentSubmitMutationVariables
+  >(AssessmentSubmitDocument, options);
+}
+export type AssessmentSubmitMutationHookResult = ReturnType<
+  typeof useAssessmentSubmitMutation
+>;
+export type AssessmentSubmitMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentSubmitMutation>;
+export type AssessmentSubmitMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentSubmitMutation,
+    AssessmentSubmitMutationVariables
+  >;
+export const AssessmentRetryDocument = gql`
+  mutation AssessmentRetry($id: ID!) {
+    retryAssessment(id: $id) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+export type AssessmentRetryMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentRetryMutation,
+    AssessmentRetryMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentRetryMutation__
+ *
+ * To run a mutation, you first call `useAssessmentRetryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentRetryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentRetryMutation, { data, loading, error }] = useAssessmentRetryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentRetryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentRetryMutation,
+    AssessmentRetryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentRetryMutation,
+    AssessmentRetryMutationVariables
+  >(AssessmentRetryDocument, options);
+}
+export type AssessmentRetryMutationHookResult = ReturnType<
+  typeof useAssessmentRetryMutation
+>;
+export type AssessmentRetryMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentRetryMutation>;
+export type AssessmentRetryMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentRetryMutation,
+    AssessmentRetryMutationVariables
+  >;
+export const AssessmentRequestReviewDocument = gql`
+  mutation AssessmentRequestReview($id: ID!) {
+    requestAssessmentReview(id: $id) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+export type AssessmentRequestReviewMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentRequestReviewMutation,
+    AssessmentRequestReviewMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentRequestReviewMutation__
+ *
+ * To run a mutation, you first call `useAssessmentRequestReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentRequestReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentRequestReviewMutation, { data, loading, error }] = useAssessmentRequestReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentRequestReviewMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentRequestReviewMutation,
+    AssessmentRequestReviewMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentRequestReviewMutation,
+    AssessmentRequestReviewMutationVariables
+  >(AssessmentRequestReviewDocument, options);
+}
+export type AssessmentRequestReviewMutationHookResult = ReturnType<
+  typeof useAssessmentRequestReviewMutation
+>;
+export type AssessmentRequestReviewMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentRequestReviewMutation>;
+export type AssessmentRequestReviewMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentRequestReviewMutation,
+    AssessmentRequestReviewMutationVariables
+  >;
+export const AssessmentCreateTaskDocument = gql`
+  mutation AssessmentCreateTask($input: AssessmentTaskInput!) {
+    createAssessmentTask(input: $input) {
+      ...AssessmentTaskFields
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+export type AssessmentCreateTaskMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentCreateTaskMutation,
+    AssessmentCreateTaskMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentCreateTaskMutation__
+ *
+ * To run a mutation, you first call `useAssessmentCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentCreateTaskMutation, { data, loading, error }] = useAssessmentCreateTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAssessmentCreateTaskMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentCreateTaskMutation,
+    AssessmentCreateTaskMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentCreateTaskMutation,
+    AssessmentCreateTaskMutationVariables
+  >(AssessmentCreateTaskDocument, options);
+}
+export type AssessmentCreateTaskMutationHookResult = ReturnType<
+  typeof useAssessmentCreateTaskMutation
+>;
+export type AssessmentCreateTaskMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentCreateTaskMutation>;
+export type AssessmentCreateTaskMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentCreateTaskMutation,
+    AssessmentCreateTaskMutationVariables
+  >;
+export const AssessmentEditTaskDocument = gql`
+  mutation AssessmentEditTask(
+    $id: ID!
+    $version: Int!
+    $input: AssessmentTaskInput!
+  ) {
+    editAssessmentTask(id: $id, version: $version, input: $input) {
+      ...AssessmentTaskFields
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+export type AssessmentEditTaskMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentEditTaskMutation,
+    AssessmentEditTaskMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentEditTaskMutation__
+ *
+ * To run a mutation, you first call `useAssessmentEditTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentEditTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentEditTaskMutation, { data, loading, error }] = useAssessmentEditTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      version: // value for 'version'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAssessmentEditTaskMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentEditTaskMutation,
+    AssessmentEditTaskMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentEditTaskMutation,
+    AssessmentEditTaskMutationVariables
+  >(AssessmentEditTaskDocument, options);
+}
+export type AssessmentEditTaskMutationHookResult = ReturnType<
+  typeof useAssessmentEditTaskMutation
+>;
+export type AssessmentEditTaskMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentEditTaskMutation>;
+export type AssessmentEditTaskMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentEditTaskMutation,
+    AssessmentEditTaskMutationVariables
+  >;
+export const AssessmentTransitionTaskDocument = gql`
+  mutation AssessmentTransitionTask($id: ID!, $action: String!, $note: String) {
+    transitionAssessmentTask(id: $id, action: $action, note: $note) {
+      ...AssessmentTaskFields
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+export type AssessmentTransitionTaskMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentTransitionTaskMutation,
+    AssessmentTransitionTaskMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentTransitionTaskMutation__
+ *
+ * To run a mutation, you first call `useAssessmentTransitionTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentTransitionTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentTransitionTaskMutation, { data, loading, error }] = useAssessmentTransitionTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      action: // value for 'action'
+ *      note: // value for 'note'
+ *   },
+ * });
+ */
+export function useAssessmentTransitionTaskMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentTransitionTaskMutation,
+    AssessmentTransitionTaskMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentTransitionTaskMutation,
+    AssessmentTransitionTaskMutationVariables
+  >(AssessmentTransitionTaskDocument, options);
+}
+export type AssessmentTransitionTaskMutationHookResult = ReturnType<
+  typeof useAssessmentTransitionTaskMutation
+>;
+export type AssessmentTransitionTaskMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentTransitionTaskMutation>;
+export type AssessmentTransitionTaskMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentTransitionTaskMutation,
+    AssessmentTransitionTaskMutationVariables
+  >;
+export const AssessmentGradeDocument = gql`
+  mutation AssessmentGrade(
+    $id: ID!
+    $report: String!
+    $note: String!
+    $transcript: String
+    $version: Int!
+  ) {
+    gradeAssessment(
+      id: $id
+      report: $report
+      note: $note
+      transcript: $transcript
+      version: $version
+    ) {
+      ...AssessmentAttemptFields
+    }
+  }
+  ${AssessmentAttemptFieldsFragmentDoc}
+`;
+export type AssessmentGradeMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentGradeMutation,
+    AssessmentGradeMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentGradeMutation__
+ *
+ * To run a mutation, you first call `useAssessmentGradeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentGradeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentGradeMutation, { data, loading, error }] = useAssessmentGradeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      report: // value for 'report'
+ *      note: // value for 'note'
+ *      transcript: // value for 'transcript'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useAssessmentGradeMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentGradeMutation,
+    AssessmentGradeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentGradeMutation,
+    AssessmentGradeMutationVariables
+  >(AssessmentGradeDocument, options);
+}
+export type AssessmentGradeMutationHookResult = ReturnType<
+  typeof useAssessmentGradeMutation
+>;
+export type AssessmentGradeMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentGradeMutation>;
+export type AssessmentGradeMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentGradeMutation,
+    AssessmentGradeMutationVariables
+  >;
+export const AssessmentNotificationsDocument = gql`
+  query AssessmentNotifications($page: Int) {
+    assessmentNotifications(page: $page) {
+      items {
+        attemptId
+        title
+        skill
+        version
+        assessedAt
+      }
+      page
+      totalPages
+      totalItems
+    }
+  }
+`;
+
+/**
+ * __useAssessmentNotificationsQuery__
+ *
+ * To run a query within a React component, call `useAssessmentNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssessmentNotificationsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useAssessmentNotificationsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AssessmentNotificationsQuery,
+    AssessmentNotificationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AssessmentNotificationsQuery,
+    AssessmentNotificationsQueryVariables
+  >(AssessmentNotificationsDocument, options);
+}
+export function useAssessmentNotificationsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AssessmentNotificationsQuery,
+    AssessmentNotificationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AssessmentNotificationsQuery,
+    AssessmentNotificationsQueryVariables
+  >(AssessmentNotificationsDocument, options);
+}
+export function useAssessmentNotificationsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AssessmentNotificationsQuery,
+    AssessmentNotificationsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentNotificationsQuery,
+  AssessmentNotificationsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAssessmentNotificationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentNotificationsQuery,
+        AssessmentNotificationsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AssessmentNotificationsQuery | undefined,
+  AssessmentNotificationsQueryVariables
+>;
+export function useAssessmentNotificationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AssessmentNotificationsQuery,
+        AssessmentNotificationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AssessmentNotificationsQuery,
+    AssessmentNotificationsQueryVariables
+  >(AssessmentNotificationsDocument, options as any);
+}
+export type AssessmentNotificationsQueryHookResult = ReturnType<
+  typeof useAssessmentNotificationsQuery
+>;
+export type AssessmentNotificationsLazyQueryHookResult = ReturnType<
+  typeof useAssessmentNotificationsLazyQuery
+>;
+export type AssessmentNotificationsSuspenseQueryHookResult = ReturnType<
+  typeof useAssessmentNotificationsSuspenseQuery
+>;
+export type AssessmentNotificationsQueryResult = ApolloReactCommon.QueryResult<
+  AssessmentNotificationsQuery,
+  AssessmentNotificationsQueryVariables
+>;
+export const AssessmentReadResultDocument = gql`
+  mutation AssessmentReadResult($id: ID!, $version: Int!) {
+    readAssessmentResult(id: $id, version: $version)
+  }
+`;
+export type AssessmentReadResultMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentReadResultMutation,
+    AssessmentReadResultMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentReadResultMutation__
+ *
+ * To run a mutation, you first call `useAssessmentReadResultMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentReadResultMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentReadResultMutation, { data, loading, error }] = useAssessmentReadResultMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useAssessmentReadResultMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentReadResultMutation,
+    AssessmentReadResultMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentReadResultMutation,
+    AssessmentReadResultMutationVariables
+  >(AssessmentReadResultDocument, options);
+}
+export type AssessmentReadResultMutationHookResult = ReturnType<
+  typeof useAssessmentReadResultMutation
+>;
+export type AssessmentReadResultMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentReadResultMutation>;
+export type AssessmentReadResultMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentReadResultMutation,
+    AssessmentReadResultMutationVariables
+  >;
 export const AdminContentDocument = gql`
   query AdminContent(
     $kind: ContentKind!
@@ -2853,6 +5443,61 @@ export type PublishContentMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     PublishContentMutation,
     PublishContentMutationVariables
+  >;
+export const RestoreContentDocument = gql`
+  mutation RestoreContent($kind: ContentKind!, $id: ID!) {
+    restoreContent(kind: $kind, id: $id) {
+      ...ContentReviewFields
+    }
+  }
+  ${ContentReviewFieldsFragmentDoc}
+`;
+export type RestoreContentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RestoreContentMutation,
+    RestoreContentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRestoreContentMutation__
+ *
+ * To run a mutation, you first call `useRestoreContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreContentMutation, { data, loading, error }] = useRestoreContentMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreContentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RestoreContentMutation,
+    RestoreContentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RestoreContentMutation,
+    RestoreContentMutationVariables
+  >(RestoreContentDocument, options);
+}
+export type RestoreContentMutationHookResult = ReturnType<
+  typeof useRestoreContentMutation
+>;
+export type RestoreContentMutationResult =
+  ApolloReactCommon.MutationResult<RestoreContentMutation>;
+export type RestoreContentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RestoreContentMutation,
+    RestoreContentMutationVariables
   >;
 export const ArchiveContentDocument = gql`
   mutation ArchiveContent($kind: ContentKind!, $id: ID!) {
@@ -3604,6 +6249,59 @@ export type PublishExamMutationOptions = ApolloReactCommon.MutationHookOptions<
   PublishExamMutation,
   PublishExamMutationVariables
 >;
+export const RestoreExamDocument = gql`
+  mutation RestoreExam($id: ID!) {
+    restoreExam(id: $id) {
+      ...AdminExamShellFields
+    }
+  }
+  ${AdminExamShellFieldsFragmentDoc}
+`;
+export type RestoreExamMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RestoreExamMutation,
+    RestoreExamMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRestoreExamMutation__
+ *
+ * To run a mutation, you first call `useRestoreExamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreExamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreExamMutation, { data, loading, error }] = useRestoreExamMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreExamMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RestoreExamMutation,
+    RestoreExamMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RestoreExamMutation,
+    RestoreExamMutationVariables
+  >(RestoreExamDocument, options);
+}
+export type RestoreExamMutationHookResult = ReturnType<
+  typeof useRestoreExamMutation
+>;
+export type RestoreExamMutationResult =
+  ApolloReactCommon.MutationResult<RestoreExamMutation>;
+export type RestoreExamMutationOptions = ApolloReactCommon.MutationHookOptions<
+  RestoreExamMutation,
+  RestoreExamMutationVariables
+>;
 export const ArchiveExamDocument = gql`
   mutation ArchiveExam($id: ID!) {
     archiveExam(id: $id) {
@@ -3818,6 +6516,175 @@ export type RejectExamMutationOptions = ApolloReactCommon.MutationHookOptions<
   RejectExamMutation,
   RejectExamMutationVariables
 >;
+export const ExamDraftDocument = gql`
+  query ExamDraft($attemptId: ID!) {
+    examDraft(attemptId: $attemptId) {
+      answers {
+        questionId
+        selectedOptionIds
+      }
+      version
+      savedAt
+    }
+  }
+`;
+
+/**
+ * __useExamDraftQuery__
+ *
+ * To run a query within a React component, call `useExamDraftQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExamDraftQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExamDraftQuery({
+ *   variables: {
+ *      attemptId: // value for 'attemptId'
+ *   },
+ * });
+ */
+export function useExamDraftQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ExamDraftQuery,
+    ExamDraftQueryVariables
+  > &
+    (
+      { variables: ExamDraftQueryVariables; skip?: boolean } | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<ExamDraftQuery, ExamDraftQueryVariables>(
+    ExamDraftDocument,
+    options,
+  );
+}
+export function useExamDraftLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamDraftQuery,
+    ExamDraftQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<ExamDraftQuery, ExamDraftQueryVariables>(
+    ExamDraftDocument,
+    options,
+  );
+}
+export function useExamDraftSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamDraftQuery,
+    ExamDraftQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamDraftQuery,
+  ExamDraftQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamDraftSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamDraftQuery,
+        ExamDraftQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamDraftQuery | undefined,
+  ExamDraftQueryVariables
+>;
+export function useExamDraftSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamDraftQuery,
+        ExamDraftQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamDraftQuery,
+    ExamDraftQueryVariables
+  >(ExamDraftDocument, options as any);
+}
+export type ExamDraftQueryHookResult = ReturnType<typeof useExamDraftQuery>;
+export type ExamDraftLazyQueryHookResult = ReturnType<
+  typeof useExamDraftLazyQuery
+>;
+export type ExamDraftSuspenseQueryHookResult = ReturnType<
+  typeof useExamDraftSuspenseQuery
+>;
+export type ExamDraftQueryResult = ApolloReactCommon.QueryResult<
+  ExamDraftQuery,
+  ExamDraftQueryVariables
+>;
+export const SaveExamDraftDocument = gql`
+  mutation SaveExamDraft(
+    $attemptId: ID!
+    $version: Int!
+    $answers: [SubmitAnswerInput!]!
+  ) {
+    saveExamDraft(attemptId: $attemptId, version: $version, answers: $answers) {
+      answers {
+        questionId
+        selectedOptionIds
+      }
+      version
+      savedAt
+    }
+  }
+`;
+export type SaveExamDraftMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SaveExamDraftMutation,
+    SaveExamDraftMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSaveExamDraftMutation__
+ *
+ * To run a mutation, you first call `useSaveExamDraftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveExamDraftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveExamDraftMutation, { data, loading, error }] = useSaveExamDraftMutation({
+ *   variables: {
+ *      attemptId: // value for 'attemptId'
+ *      version: // value for 'version'
+ *      answers: // value for 'answers'
+ *   },
+ * });
+ */
+export function useSaveExamDraftMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SaveExamDraftMutation,
+    SaveExamDraftMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SaveExamDraftMutation,
+    SaveExamDraftMutationVariables
+  >(SaveExamDraftDocument, options);
+}
+export type SaveExamDraftMutationHookResult = ReturnType<
+  typeof useSaveExamDraftMutation
+>;
+export type SaveExamDraftMutationResult =
+  ApolloReactCommon.MutationResult<SaveExamDraftMutation>;
+export type SaveExamDraftMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SaveExamDraftMutation,
+    SaveExamDraftMutationVariables
+  >;
 export const StartExamAttemptDocument = gql`
   mutation StartExamAttempt($examId: ID!) {
     startExamAttempt(examId: $examId) {

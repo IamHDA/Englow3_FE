@@ -49,8 +49,10 @@ const ink: MantineColorsTuple = [
   "#E3E8F0",
   "#C5CBD7",
   "#A6AFBF",
-  "#8892A6",
-  "#6E7990",
+  // 5 and 6 carry secondary text, so both clear WCAG AA (4.5:1) on white
+  // and on the ink-0 page: the earlier #8892A6 / #6E7990 measured 3.1 / 4.4.
+  "#636E86",
+  "#5A657E",
   "#54607A",
   "#384359",
   "#1B2540",
@@ -73,8 +75,8 @@ export const theme = createTheme({
   fontFamily: "var(--font-work-sans), sans-serif",
   fontSizes: {
     xs: "12px",
-    sm: "13px",
-    md: "14px",
+    sm: "14px",
+    md: "15px",
     lg: "16px",
     xl: "18px",
   },
@@ -83,7 +85,7 @@ export const theme = createTheme({
     fontFamily: "var(--font-work-sans), sans-serif",
     fontWeight: "800",
     sizes: {
-      h1: { fontSize: "30px", lineHeight: "1.2" },
+      h1: { fontSize: "32px", lineHeight: "1.2" },
       h2: { fontSize: "24px", lineHeight: "1.25" },
       h3: { fontSize: "19px", lineHeight: "1.3", fontWeight: "700" },
       h4: { fontSize: "16px", lineHeight: "1.35", fontWeight: "700" },
@@ -116,10 +118,13 @@ export const theme = createTheme({
       styles: { root: { borderColor: "var(--mantine-color-ink-1)" } },
     },
     Button: {
-      defaultProps: { radius: "md" },
+      defaultProps: { radius: "md", size: "md" },
       styles: { root: { fontWeight: 600 } },
     },
     ActionIcon: { defaultProps: { radius: "md" } },
+    TextInput: { defaultProps: { size: "md" } },
+    Select: { defaultProps: { size: "md" } },
+    Textarea: { defaultProps: { size: "md" } },
     Badge: {
       defaultProps: { radius: "sm", variant: "light" },
       styles: { root: { textTransform: "none", fontWeight: 600 } },

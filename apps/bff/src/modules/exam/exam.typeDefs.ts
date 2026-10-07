@@ -74,7 +74,9 @@ export const examTypeDefs = /* GraphQL */ `
     totalPages: Int!
   }
 
-  """The full paper shell returned by create, update, publish and archive."""
+  """
+  The full paper shell returned by create, update, publish and archive.
+  """
   type Exam {
     id: ID!
     title: String!
@@ -110,7 +112,9 @@ export const examTypeDefs = /* GraphQL */ `
     questionCount: Int!
     status: ExamStatus!
     publishedAt: DateTime
-    """Per learner. Null until they have finished a sitting."""
+    """
+    Per learner. Null until they have finished a sitting.
+    """
     bestScorePercentage: Float
     attemptStatus: LearnerAttemptStatus!
   }
@@ -162,7 +166,9 @@ export const examTypeDefs = /* GraphQL */ `
     """
     placementExam: LearnerExamItem!
 
-    """Learner exam detail by id"""
+    """
+    Learner exam detail by id
+    """
     exam(id: ID!): LearnerExamItem
 
     """
@@ -213,7 +219,9 @@ export const examTypeDefs = /* GraphQL */ `
     instruction: String
     orderNo: Int!
     content: String
-    """Pre-signed and short-lived - the backend resolves the object key for us."""
+    """
+    Pre-signed and short-lived - the backend resolves the object key for us.
+    """
     audioUrl: String
     imageUrl: String
     questions: [ExamQuestion!]!
@@ -289,17 +297,25 @@ export const examTypeDefs = /* GraphQL */ `
     expiresAt: DateTime!
     submittedAt: DateTime
     scoredAt: DateTime
-    """Null until the attempt is scored."""
+    """
+    Null until the attempt is scored.
+    """
     rawScore: Float
     maxRawScore: Float!
     scorePercentage: Float
     correctAnswerCount: Int
     questionCount: Int!
-    """True when the backend handed back an attempt that was already open."""
+    """
+    True when the backend handed back an attempt that was already open.
+    """
     resumed: Boolean!
-    """Null except on a history row - a sitting knows its own paper's name."""
+    """
+    Null except on a history row - a sitting knows its own paper's name.
+    """
     examTitle: String
-    """Empty while the attempt is IN_PROGRESS - it carries the answer key."""
+    """
+    Empty while the attempt is IN_PROGRESS - it carries the answer key.
+    """
     questions: [AttemptQuestionReview!]!
   }
 
@@ -313,11 +329,31 @@ export const examTypeDefs = /* GraphQL */ `
 
   input SubmitAnswerInput {
     questionId: ID!
-    """Empty for a question the learner skipped; several for a multi-select."""
+    """
+    Empty for a question the learner skipped; several for a multi-select.
+    """
     selectedOptionIds: [ID!]!
   }
 
+  type ExamDraftAnswer {
+    questionId: ID!
+    selectedOptionIds: [ID!]!
+  }
+  type ExamDraft {
+    answers: [ExamDraftAnswer!]!
+    version: Int!
+    savedAt: DateTime!
+  }
+  extend type Query {
+    examDraft(attemptId: ID!): ExamDraft!
+  }
+
   extend type Mutation {
+    saveExamDraft(
+      attemptId: ID!
+      version: Int!
+      answers: [SubmitAnswerInput!]!
+    ): ExamDraft!
     """
     Opens an attempt, or returns the one already open with resumed: true. The
     backend enforces one live attempt per learner and exam, so calling this
@@ -348,6 +384,13 @@ export const examTypeDefs = /* GraphQL */ `
     extensions.backendCode: EXAM_ALREADY_ARCHIVED.
     """
     archiveExam(id: ID!): Exam!
+
+    """
+    ARCHIVED -> PUBLISHED if the paper had been published, DRAFT otherwise.
+    Administrators only; anything not archived fails with
+    extensions.backendCode: EXAM_NOT_ARCHIVED.
+    """
+    restoreExam(id: ID!): Exam!
 
     """
     DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators may

@@ -33,6 +33,170 @@ export type AdminOverview = {
   quizzesSubmitted: Scalars["Int"]["output"];
 };
 
+export type AssessmentAttempt = {
+  __typename?: "AssessmentAttempt";
+  answerText: Scalars["String"]["output"];
+  assessedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  audioUrl?: Maybe<Scalars["String"]["output"]>;
+  createdAt: Scalars["DateTime"]["output"];
+  errorCode?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  learnerId?: Maybe<Scalars["ID"]["output"]>;
+  learnerName?: Maybe<Scalars["String"]["output"]>;
+  recognizedText?: Maybe<Scalars["String"]["output"]>;
+  report?: Maybe<Scalars["String"]["output"]>;
+  skill: AssessmentSkill;
+  source?: Maybe<Scalars["String"]["output"]>;
+  status: AssessmentAttemptStatus;
+  submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  task: AssessmentTask;
+  taskId: Scalars["ID"]["output"];
+  version: Scalars["Int"]["output"];
+  wordCount: Scalars["Int"]["output"];
+};
+
+export type AssessmentAttemptPage = {
+  __typename?: "AssessmentAttemptPage";
+  items: Array<AssessmentAttempt>;
+  page: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export enum AssessmentAttemptStatus {
+  COMPLETED = "COMPLETED",
+  DRAFT = "DRAFT",
+  FAILED = "FAILED",
+  NEEDS_REVIEW = "NEEDS_REVIEW",
+  QUEUED = "QUEUED",
+}
+
+export type AssessmentCapabilities = {
+  __typename?: "AssessmentCapabilities";
+  automaticSpeaking: Scalars["Boolean"]["output"];
+  automaticWriting: Scalars["Boolean"]["output"];
+  humanReview: Scalars["Boolean"]["output"];
+};
+
+export type AssessmentNotification = {
+  __typename?: "AssessmentNotification";
+  assessedAt: Scalars["DateTime"]["output"];
+  attemptId: Scalars["ID"]["output"];
+  skill: AssessmentSkill;
+  title: Scalars["String"]["output"];
+  version: Scalars["Int"]["output"];
+};
+
+export type AssessmentNotificationPage = {
+  __typename?: "AssessmentNotificationPage";
+  items: Array<AssessmentNotification>;
+  page: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export type AssessmentReview = {
+  __typename?: "AssessmentReview";
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  note: Scalars["String"]["output"];
+  previousReport?: Maybe<Scalars["String"]["output"]>;
+  report: Scalars["String"]["output"];
+  reviewerId: Scalars["ID"]["output"];
+  reviewerName?: Maybe<Scalars["String"]["output"]>;
+};
+
+export enum AssessmentSkill {
+  SPEAKING = "SPEAKING",
+  WRITING = "WRITING",
+}
+
+export type AssessmentSubmissionPage = {
+  __typename?: "AssessmentSubmissionPage";
+  items: Array<AssessmentSubmissionSummary>;
+  page: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export type AssessmentSubmissionSummary = {
+  __typename?: "AssessmentSubmissionSummary";
+  id: Scalars["ID"]["output"];
+  learnerId: Scalars["ID"]["output"];
+  learnerName?: Maybe<Scalars["String"]["output"]>;
+  skill: AssessmentSkill;
+  status: AssessmentAttemptStatus;
+  submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  task: AssessmentSubmissionTask;
+  version: Scalars["Int"]["output"];
+};
+
+export type AssessmentSubmissionTask = {
+  __typename?: "AssessmentSubmissionTask";
+  id: Scalars["ID"]["output"];
+  title: Scalars["String"]["output"];
+};
+
+export type AssessmentTask = {
+  __typename?: "AssessmentTask";
+  id: Scalars["ID"]["output"];
+  instructions: Scalars["String"]["output"];
+  minimumWords: Scalars["Int"]["output"];
+  reviewNote?: Maybe<Scalars["String"]["output"]>;
+  rubricNotes?: Maybe<Scalars["String"]["output"]>;
+  sampleAnswer?: Maybe<Scalars["String"]["output"]>;
+  skill: AssessmentSkill;
+  status: AssessmentTaskStatus;
+  taskType: Scalars["String"]["output"];
+  timeLimitSeconds: Scalars["Int"]["output"];
+  title: Scalars["String"]["output"];
+  version: Scalars["Int"]["output"];
+};
+
+export type AssessmentTaskInput = {
+  instructions: Scalars["String"]["input"];
+  minimumWords: Scalars["Int"]["input"];
+  rubricNotes?: InputMaybe<Scalars["String"]["input"]>;
+  sampleAnswer?: InputMaybe<Scalars["String"]["input"]>;
+  skill: AssessmentSkill;
+  taskType: Scalars["String"]["input"];
+  timeLimitSeconds: Scalars["Int"]["input"];
+  title: Scalars["String"]["input"];
+};
+
+export type AssessmentTaskPage = {
+  __typename?: "AssessmentTaskPage";
+  items: Array<AssessmentTask>;
+  page: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export enum AssessmentTaskStatus {
+  ARCHIVED = "ARCHIVED",
+  DRAFT = "DRAFT",
+  PENDING_REVIEW = "PENDING_REVIEW",
+  PUBLISHED = "PUBLISHED",
+  REJECTED = "REJECTED",
+}
+
+export type AssessmentUpload = {
+  __typename?: "AssessmentUpload";
+  attempt: AssessmentAttempt;
+  uploadUrl?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type AssessmentWorkload = {
+  __typename?: "AssessmentWorkload";
+  completed: Scalars["Int"]["output"];
+  drafts: Scalars["Int"]["output"];
+  failed: Scalars["Int"]["output"];
+  needsReview: Scalars["Int"]["output"];
+  pendingReview: Scalars["Int"]["output"];
+  published: Scalars["Int"]["output"];
+  rejected: Scalars["Int"]["output"];
+};
+
 export type AttemptOptionReview = {
   __typename?: "AttemptOptionReview";
   correct: Scalars["Boolean"]["output"];
@@ -182,6 +346,8 @@ export enum DailyTaskKind {
   /** Cards the spaced-repetition schedule says are due. */
   FLASHCARD_REVIEW = "FLASHCARD_REVIEW",
   QUIZ = "QUIZ",
+  SPEAKING = "SPEAKING",
+  WRITING = "WRITING",
 }
 
 /**
@@ -385,6 +551,19 @@ export enum ExamAttemptStatus {
   IN_PROGRESS = "IN_PROGRESS",
   SCORED = "SCORED",
 }
+
+export type ExamDraft = {
+  __typename?: "ExamDraft";
+  answers: Array<ExamDraftAnswer>;
+  savedAt: Scalars["DateTime"]["output"];
+  version: Scalars["Int"]["output"];
+};
+
+export type ExamDraftAnswer = {
+  __typename?: "ExamDraftAnswer";
+  questionId: Scalars["ID"]["output"];
+  selectedOptionIds: Array<Scalars["ID"]["output"]>;
+};
 
 export type ExamListItem = {
   __typename?: "ExamListItem";
@@ -758,6 +937,9 @@ export type Mutation = {
    * earlier step is missing.
    */
   completeOnboarding: OnboardingState;
+  createAssessmentTask: AssessmentTask;
+  editAssessmentTask: AssessmentTask;
+  gradeAssessment: AssessmentAttempt;
   /** DRAFT -> PUBLISHED, skipping review. Administrators only. */
   publishContent: ContentReview;
   /**
@@ -772,6 +954,7 @@ export type Mutation = {
    * row on first sight, so browsing a set costs nothing until it is studied.
    */
   rateFlashcard: FlashcardReview;
+  readAssessmentResult: Scalars["Boolean"]["output"];
   /**
    * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
    * backend refuses a blank one with REVIEW_NOTE_REQUIRED, because "rejected"
@@ -786,6 +969,23 @@ export type Mutation = {
   rejectExam: Exam;
   /** Reports an answer as wrong or inappropriate. The note is optional. */
   reportTutorMessage: TutorMessage;
+  requestAssessmentReview: AssessmentAttempt;
+  /**
+   * ARCHIVED -> back where it was: PUBLISHED if it had been published (it is
+   * never edited, so it needs no second review), DRAFT otherwise.
+   * Administrators only. Anything not archived fails with
+   * extensions.backendCode: <KIND>_NOT_ARCHIVED.
+   */
+  restoreContent: ContentReview;
+  /**
+   * ARCHIVED -> PUBLISHED if the paper had been published, DRAFT otherwise.
+   * Administrators only; anything not archived fails with
+   * extensions.backendCode: EXAM_NOT_ARCHIVED.
+   */
+  restoreExam: Exam;
+  retryAssessment: AssessmentAttempt;
+  saveAssessmentDraft: AssessmentAttempt;
+  saveExamDraft: ExamDraft;
   /**
    * Records the purposes and advances the step. Which step comes next is the
    * backend's decision: a learner who picked the certificate purpose goes to
@@ -818,6 +1018,7 @@ export type Mutation = {
   setCurrentLevel: OnboardingState;
   /** Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done. */
   setLearningGoal: OnboardingState;
+  startAssessment: AssessmentUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
    * backend enforces one live attempt per learner and exam, so calling this
@@ -835,6 +1036,7 @@ export type Mutation = {
    * before the learner records anything.
    */
   startSpeakingAttempt: SpeakingUploadTicket;
+  submitAssessment: AssessmentAttempt;
   /**
    * DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators. Held
    * to the publication rules at this end too, so a reviewer is never handed an
@@ -869,6 +1071,7 @@ export type Mutation = {
    * actually in storage.
    */
   submitSpeakingAttempt: SpeakingAttempt;
+  transitionAssessmentTask: AssessmentTask;
   updateProfile: Me;
 };
 
@@ -894,6 +1097,24 @@ export type MutationArchiveTutorConversationArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationCreateAssessmentTaskArgs = {
+  input: AssessmentTaskInput;
+};
+
+export type MutationEditAssessmentTaskArgs = {
+  id: Scalars["ID"]["input"];
+  input: AssessmentTaskInput;
+  version: Scalars["Int"]["input"];
+};
+
+export type MutationGradeAssessmentArgs = {
+  id: Scalars["ID"]["input"];
+  note: Scalars["String"]["input"];
+  report: Scalars["String"]["input"];
+  transcript?: InputMaybe<Scalars["String"]["input"]>;
+  version: Scalars["Int"]["input"];
+};
+
 export type MutationPublishContentArgs = {
   id: Scalars["ID"]["input"];
   kind: ContentKind;
@@ -907,6 +1128,11 @@ export type MutationRateFlashcardArgs = {
   flashcardId: Scalars["ID"]["input"];
   rating: ReviewRating;
   timeSpentSeconds: Scalars["Int"]["input"];
+};
+
+export type MutationReadAssessmentResultArgs = {
+  id: Scalars["ID"]["input"];
+  version: Scalars["Int"]["input"];
 };
 
 export type MutationRejectContentArgs = {
@@ -924,6 +1150,35 @@ export type MutationReportTutorMessageArgs = {
   conversationId: Scalars["ID"]["input"];
   messageId: Scalars["ID"]["input"];
   note?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type MutationRequestAssessmentReviewArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationRestoreContentArgs = {
+  id: Scalars["ID"]["input"];
+  kind: ContentKind;
+};
+
+export type MutationRestoreExamArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationRetryAssessmentArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationSaveAssessmentDraftArgs = {
+  answerText: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+  version: Scalars["Int"]["input"];
+};
+
+export type MutationSaveExamDraftArgs = {
+  answers: Array<SubmitAnswerInput>;
+  attemptId: Scalars["ID"]["input"];
+  version: Scalars["Int"]["input"];
 };
 
 export type MutationSelectLearningPurposesArgs = {
@@ -952,6 +1207,13 @@ export type MutationSetLearningGoalArgs = {
   input: LearningGoalInput;
 };
 
+export type MutationStartAssessmentArgs = {
+  clientKey: Scalars["ID"]["input"];
+  contentLength?: InputMaybe<Scalars["Int"]["input"]>;
+  contentType?: InputMaybe<Scalars["String"]["input"]>;
+  taskId: Scalars["ID"]["input"];
+};
+
 export type MutationStartExamAttemptArgs = {
   examId: Scalars["ID"]["input"];
 };
@@ -964,6 +1226,10 @@ export type MutationStartSpeakingAttemptArgs = {
   contentLength: Scalars["Int"]["input"];
   contentType: Scalars["String"]["input"];
   promptId: Scalars["ID"]["input"];
+};
+
+export type MutationSubmitAssessmentArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type MutationSubmitContentForReviewArgs = {
@@ -992,6 +1258,12 @@ export type MutationSubmitQuizAttemptArgs = {
 
 export type MutationSubmitSpeakingAttemptArgs = {
   attemptId: Scalars["ID"]["input"];
+};
+
+export type MutationTransitionAssessmentTaskArgs = {
+  action: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+  note?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type MutationUpdateProfileArgs = {
@@ -1037,7 +1309,9 @@ export enum OverviewContentKind {
   EXAM = "EXAM",
   FLASHCARD_SET = "FLASHCARD_SET",
   QUIZ = "QUIZ",
+  SPEAKING_ASSESSMENT = "SPEAKING_ASSESSMENT",
   SPEAKING_PROMPT = "SPEAKING_PROMPT",
+  WRITING_ASSESSMENT = "WRITING_ASSESSMENT",
 }
 
 export type Query = {
@@ -1056,12 +1330,24 @@ export type Query = {
   adminExams: ExamPage;
   /** Staff and administrators only. */
   adminOverview: AdminOverview;
+  assessmentAttempt: AssessmentAttempt;
+  assessmentCapabilities: AssessmentCapabilities;
+  assessmentHistory: AssessmentAttemptPage;
+  assessmentNotifications: AssessmentNotificationPage;
+  assessmentReviews: Array<AssessmentReview>;
+  assessmentSubmission: AssessmentAttempt;
+  assessmentSubmissions: AssessmentSubmissionPage;
+  assessmentTask: AssessmentTask;
+  assessmentTasks: AssessmentTaskPage;
+  assessmentWorkload: AssessmentWorkload;
   /**
    * The paper to sit, reachable only through an open attempt. There is no
    * lookup by exam id: the answer key is stripped per attempt, and handing out
    * a paper without one would mean handing it out unscoped.
    */
   attemptPaper: ExamPaper;
+  authoringAssessmentTask: AssessmentTask;
+  authoringAssessmentTasks: AssessmentTaskPage;
   /**
    * The learner's own plan for today: streak, points, roadmap and goals. Takes
    * no argument because the only path anyone can read is their own.
@@ -1089,6 +1375,7 @@ export type Query = {
    * structure holds the answer key.
    */
   examAttempts: ExamAttemptPage;
+  examDraft: ExamDraft;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
   flashcardSet: FlashcardSetDetail;
@@ -1145,8 +1432,59 @@ export type QueryAdminExamsArgs = {
   title?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type QueryAssessmentAttemptArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryAssessmentHistoryArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  skill?: InputMaybe<AssessmentSkill>;
+  status?: InputMaybe<AssessmentAttemptStatus>;
+  taskId?: InputMaybe<Scalars["ID"]["input"]>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryAssessmentNotificationsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryAssessmentReviewsArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryAssessmentSubmissionArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryAssessmentSubmissionsArgs = {
+  oldest?: InputMaybe<Scalars["Boolean"]["input"]>;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  skill?: InputMaybe<AssessmentSkill>;
+  status?: InputMaybe<AssessmentAttemptStatus>;
+  term?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryAssessmentTaskArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryAssessmentTasksArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  skill?: InputMaybe<AssessmentSkill>;
+};
+
 export type QueryAttemptPaperArgs = {
   attemptId: Scalars["ID"]["input"];
+};
+
+export type QueryAuthoringAssessmentTaskArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryAuthoringAssessmentTasksArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  skill?: InputMaybe<AssessmentSkill>;
+  status?: InputMaybe<AssessmentTaskStatus>;
 };
 
 export type QueryDictationLessonArgs = {
@@ -1175,6 +1513,10 @@ export type QueryExamAttemptArgs = {
 export type QueryExamAttemptsArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryExamDraftArgs = {
+  attemptId: Scalars["ID"]["input"];
 };
 
 export type QueryExamsArgs = {

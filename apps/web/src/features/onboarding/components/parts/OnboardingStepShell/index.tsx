@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Badge, Group, Stack, Text, UnstyledButton } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
@@ -45,6 +47,7 @@ export function OnboardingStepShell({
   footer,
   onBack,
 }: OnboardingStepShellProps) {
+  const { isVi } = useLanguage();
   return (
     <Stack gap={0}>
       {onBack && (
@@ -56,7 +59,7 @@ export function OnboardingStepShell({
           >
             <Group gap={8} wrap="nowrap">
               <ArrowLeft aria-hidden="true" size={20} />
-              Quay lại
+              {isVi ? "Quay lại" : "Back"}
             </Group>
           </UnstyledButton>
         </Group>
@@ -65,7 +68,8 @@ export function OnboardingStepShell({
       <Group justify="center" gap={16} mt={18} wrap="nowrap">
         <Image src="/englow3-mark.png" alt="Englow3" width={52} height={56} />
         <Badge size="lg" radius={10} color="navy.0" c="navy.9" py={16} px={14}>
-          Bước {getOnboardingStepNumber(step)} / {ONBOARDING_TOTAL_STEPS}
+          {isVi ? "Bước" : "Step"} {getOnboardingStepNumber(step)} /{" "}
+          {ONBOARDING_TOTAL_STEPS}
         </Badge>
       </Group>
 

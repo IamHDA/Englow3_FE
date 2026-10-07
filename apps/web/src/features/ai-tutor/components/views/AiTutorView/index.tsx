@@ -10,6 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import React, { useEffect, useRef, useState } from "react";
 
 import {
@@ -25,6 +26,7 @@ import { useTutorChat } from "../../../hooks/useTutorChat";
 import { Page, PageHeader } from "@/shared/components/Page";
 
 export function AiTutorView() {
+  const { isVi } = useLanguage();
   const {
     conversationId,
     messages,
@@ -49,12 +51,21 @@ export function AiTutorView() {
   const reportPending = useRef(false);
 
   const bottom = useRef<HTMLDivElement>(null);
+  const nearBottom = useRef(true);
+  const viewport = useRef<HTMLDivElement>(null);
+  const [unseenIn, setUnseenIn] = useState<string | null>(null);
+  const hasNewMessages = unseenIn !== null && unseenIn === conversationId;
 
+  useEffect(() => {
+    nearBottom.current = true;
+  }, [conversationId]);
   // Cuộn xuống khi có lượt mới, nếu không thì câu trả lời vừa về nằm ngoài
   // màn hình và người học tưởng là chưa có gì.
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length, waiting]);
+    if (nearBottom.current)
+      bottom.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    else setUnseenIn(conversationId ?? null);
+  }, [messages.length, waiting, conversationId]);
 
   // Danh sách bên trái chỉ đổi khi một cuộc trò chuyện mới được mở, nên chỉ
   // hỏi lại lúc đó thay vì hỏi theo mỗi lượt.
@@ -83,22 +94,26 @@ export function AiTutorView() {
       <Stack gap="lg">
         {conversationsError && (
           <Alert color="orange">
-            Không tải được lịch sử trò chuyện.{" "}
+            {isVi
+              ? "Không tải được lịch sử trò chuyện."
+              : "Could not load your conversations."}{" "}
             <Button
               variant="subtle"
               onClick={() => void refetch().catch(() => undefined)}
             >
-              Thử lại
+              {isVi ? "Thử lại" : "Try again"}
             </Button>
           </Alert>
         )}
         {reportError && (
           <Alert color="red" role="alert">
-            Chưa gửi được báo cáo. Vui lòng thử lại.
+            {isVi
+              ? "Chưa gửi được báo cáo. Vui lòng thử lại."
+              : "Could not send the report. Please try again."}
           </Alert>
         )}
         <PageHeader
-          title="Gia sư AI"
+          title={isVi ? "Gia sư AI" : "AI Tutor"}
           actions={
             <Button
               variant="light"
@@ -106,7 +121,7 @@ export function AiTutorView() {
               onClick={reset}
               fullWidth
             >
-              Cuộc trò chuyện mới
+              {isVi ? "Cuộc trò chuyện mới" : "New conversation"}
             </Button>
           }
         />
@@ -126,7 +141,19 @@ export function AiTutorView() {
           <Grid.Col span={{ base: 12, md: 9 }}>
             <Card withBorder radius="md" p="md">
               <Stack gap="md">
-                <ScrollArea.Autosize mah={520} type="auto">
+                <ScrollArea.Autosize
+                  mah={520}
+                  type="auto"
+                  viewportRef={viewport}
+                  onScrollPositionChange={() => {
+                    const node = viewport.current;
+                    if (!node) return;
+                    nearBottom.current =
+                      node.scrollHeight - node.scrollTop - node.clientHeight <
+                      80;
+                    if (nearBottom.current) setUnseenIn(null);
+                  }}
+                >
                   <Stack gap="md" p="xs">
                     {messages.length === 0 ? (
                       <TutorStarters
@@ -145,6 +172,23 @@ export function AiTutorView() {
                     <div ref={bottom} />
                   </Stack>
                 </ScrollArea.Autosize>
+                {hasNewMessages && (
+                  <Button
+                    variant="light"
+                    onClick={() => {
+                      nearBottom.current = true;
+                      setUnseenIn(null);
+                      bottom.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest",
+                      });
+                    }}
+                  >
+                    {isVi
+                      ? "Có tin nhắn mới · Xuống cuối"
+                      : "New message · Scroll down"}
+                  </Button>
+                )}
 
                 {error && (
                   <Alert color="orange" variant="light">
@@ -154,7 +198,9 @@ export function AiTutorView() {
                         variant="subtle"
                         onClick={() => void open(conversationId)}
                       >
-                        Thử lấy câu trả lời lại
+                        {isVi
+                          ? "Thử lấy câu trả lời lại"
+                          : "Fetch the answer again"}
                       </Button>
                     )}
                   </Alert>

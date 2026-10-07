@@ -1,5 +1,11 @@
 "use client";
 
+import { paginationControlProps } from "@/shared/a11y/paginationControls";
+
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import Link from "next/link";
+import { Button } from "@mantine/core";
+
 import { Alert, Card, Group, Pagination, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { ShieldAlert } from "lucide-react";
@@ -26,6 +32,7 @@ import {
   useAdminExamsQuery,
   useApproveExamMutation,
   useArchiveExamMutation,
+  useRestoreExamMutation,
   useCurrentUserQuery,
   usePublishExamMutation,
   useRejectExamMutation,
@@ -48,6 +55,8 @@ function isForbidden(error: unknown): boolean {
 }
 
 export function AdminExamListView() {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const [filters, setFilters] =
     useState<AdminExamFiltersState>(INITIAL_FILTERS);
   const [page, setPage] = useState(0);
@@ -75,6 +84,7 @@ export function AdminExamListView() {
 
   const [publishExam] = usePublishExamMutation();
   const [archiveExam] = useArchiveExamMutation();
+  const [restoreExam] = useRestoreExamMutation();
   const [submitExamForReview] = useSubmitExamForReviewMutation();
   const [approveExam] = useApproveExamMutation();
   const [rejectExam] = useRejectExamMutation();
@@ -98,15 +108,25 @@ export function AdminExamListView() {
     try {
       await action();
       notifications.show({ color: "green", message: successMessage });
-      await refetch().catch(() => undefined);
+      await refetch().catch(() =>
+        notifications.show({
+          color: "orange",
+          message: tr(
+            "Thao tác đã lưu; danh sách chưa cập nhật. Hãy tải lại.",
+            "Saved, but the list did not refresh. Reload the page.",
+          ),
+        }),
+      );
       return true;
     } catch (actionError) {
       const code = backendCodeOf(actionError);
+      const words =
+        (code ? ADMIN_EXAM_ERROR_MESSAGES[code] : undefined) ??
+        ADMIN_EXAM_GENERIC_ERROR;
       notifications.show({
         color: "warn",
-        title: "Không thực hiện được",
-        message:
-          (code && ADMIN_EXAM_ERROR_MESSAGES[code]) ?? ADMIN_EXAM_GENERIC_ERROR,
+        title: tr("Không thực hiện được", "That did not work"),
+        message: isVi ? words.vi : words.en,
       });
       return false;
     } finally {
@@ -122,10 +142,18 @@ export function AdminExamListView() {
     <Page>
       <Stack gap="lg">
         <Stack gap={4}>
-          <PageHeader title="Quản lý đề thi" />
+          <Group justify="space-between">
+            <PageHeader title={tr("Quản lý đề thi", "Exams")} />
+            <Button component={Link} href={`/admin/content/editor/EXAM/new`}>
+              {tr("Tạo mới", "Create")}
+            </Button>
+          </Group>
           {!canReview && (
             <Text size="sm" c="ink.6">
-              Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.
+              {tr(
+                "Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.",
+                "You write and submit; an administrator approves or returns it.",
+              )}
             </Text>
           )}
         </Stack>
@@ -137,18 +165,36 @@ export function AdminExamListView() {
             <Alert
               color="warn"
               icon={<ShieldAlert size={18} />}
-              title="Không có quyền truy cập"
+              title={tr("Không có quyền truy cập", "No access")}
               m="md"
             >
               <Text size="sm">
-                Tài khoản này không có vai trò quản trị hoặc nhân viên nội dung.
-                Đăng nhập bằng tài khoản phù hợp rồi thử lại.
+                {tr(
+                  "Tài khoản này không có vai trò quản trị hoặc nhân viên nội dung. Đăng nhập bằng tài khoản phù hợp rồi thử lại.",
+                  "This account is not an administrator or content staff. Sign in with the right account and try again.",
+                )}
               </Text>
             </Alert>
           ) : error && exams.length === 0 ? (
-            <Alert color="warn" title="Không tải được danh sách đề" m="md">
+            <Alert
+              color="warn"
+              title={tr(
+                "Không tải được danh sách đề",
+                "Could not load the exams",
+              )}
+              m="md"
+            >
               <Text size="sm">
-                Kiểm tra kết nối tới backend rồi tải lại trang.
+                {tr(
+                  "Kiểm tra kết nối rồi thử lại.",
+                  "Check the connection and try again.",
+                )}{" "}
+                <Button
+                  variant="light"
+                  onClick={() => void refetch().catch(() => undefined)}
+                >
+                  {tr("Thử lại", "Try again")}
+                </Button>
               </Text>
             </Alert>
           ) : loading && exams.length === 0 ? (
@@ -158,10 +204,16 @@ export function AdminExamListView() {
           ) : exams.length === 0 ? (
             <Stack p="xl" align="center" gap={6}>
               <Text fw={600} c="navy.9">
-                Không có đề nào khớp bộ lọc
+                {tr(
+                  "Không có đề nào khớp bộ lọc",
+                  "No exam matches the filters",
+                )}
               </Text>
               <Text size="sm" c="ink.5">
-                Thử bỏ bớt điều kiện lọc hoặc xoá từ khoá tìm kiếm.
+                {tr(
+                  "Thử bỏ bớt điều kiện lọc hoặc xoá từ khoá tìm kiếm.",
+                  "Try removing a filter or clearing the search.",
+                )}
               </Text>
             </Stack>
           ) : (
@@ -173,14 +225,17 @@ export function AdminExamListView() {
                 runAction(
                   id,
                   () => submitExamForReview({ variables: { id } }),
-                  "Đã gửi đề đi duyệt.",
+                  tr("Đã gửi đề đi duyệt.", "Submitted for review."),
                 )
               }
               onApprove={(id) =>
                 runAction(
                   id,
                   () => approveExam({ variables: { id } }),
-                  "Đã duyệt và phát hành đề thi.",
+                  tr(
+                    "Đã duyệt và phát hành đề thi.",
+                    "Approved and published.",
+                  ),
                 )
               }
               onReject={setRejecting}
@@ -188,14 +243,21 @@ export function AdminExamListView() {
                 runAction(
                   id,
                   () => publishExam({ variables: { id } }),
-                  "Đã phát hành đề thi.",
+                  tr("Đã phát hành đề thi.", "Published."),
                 )
               }
               onArchive={(id) =>
                 runAction(
                   id,
                   () => archiveExam({ variables: { id } }),
-                  "Đã lưu trữ đề thi.",
+                  tr("Đã lưu trữ đề thi.", "Archived."),
+                )
+              }
+              onRestore={(id) =>
+                runAction(
+                  id,
+                  () => restoreExam({ variables: { id } }),
+                  tr("Đã khôi phục đề thi.", "Restored."),
                 )
               }
             />
@@ -205,6 +267,7 @@ export function AdminExamListView() {
         {totalPages > 1 && (
           <Group justify="center">
             <Pagination
+              getControlProps={paginationControlProps(isVi)}
               total={totalPages}
               value={page + 1}
               onChange={(next) => setPage(next - 1)}
@@ -227,7 +290,7 @@ export function AdminExamListView() {
           const succeeded = await runAction(
             target.id,
             () => rejectExam({ variables: { id: target.id, note } }),
-            "Đã trả lại đề kèm lý do.",
+            tr("Đã trả lại đề kèm lý do.", "Returned with a reason."),
           );
           if (succeeded) setRejecting(null);
           return succeeded;

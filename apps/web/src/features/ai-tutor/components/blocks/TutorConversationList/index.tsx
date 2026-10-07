@@ -2,6 +2,7 @@
 
 import { NavLink, ScrollArea, Skeleton, Stack, Text } from "@mantine/core";
 import { IconMessage } from "@tabler/icons-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import React from "react";
 
 import type { TutorConversationSummary } from "../../../types";
@@ -20,6 +21,7 @@ export function TutorConversationList({
   onOpen,
   loading = false,
 }: TutorConversationListProps) {
+  const { isVi } = useLanguage();
   // "No conversations yet" while the list is still on its way would tell a
   // learner their history is gone.
   if (loading && conversations.length === 0) {
@@ -35,7 +37,7 @@ export function TutorConversationList({
   if (conversations.length === 0) {
     return (
       <Text size="sm" c="dimmed" p="sm">
-        Chưa có cuộc trò chuyện nào.
+        {isVi ? "Chưa có cuộc trò chuyện nào." : "No conversations yet."}
       </Text>
     );
   }
@@ -48,7 +50,7 @@ export function TutorConversationList({
             key={conversation.id}
             active={conversation.id === activeId}
             label={conversation.title}
-            description={`${conversation.messageCount} tin nhắn`}
+            description={`${conversation.messageCount} ${isVi ? "tin nhắn" : "messages"}`}
             leftSection={<IconMessage size={16} />}
             onClick={() => onOpen(conversation.id)}
           />

@@ -11,6 +11,20 @@ const query = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/graphql/generated/hooks", () => ({
   useAdminOverviewQuery: () => query.result,
+  useAssessmentWorkloadQuery: () => ({
+    data: {
+      assessmentWorkload: {
+        drafts: 0,
+        rejected: 0,
+        pendingReview: 0,
+        published: 0,
+        needsReview: 0,
+        failed: 0,
+        completed: 0,
+      },
+    },
+    loading: false,
+  }),
 }));
 
 function overview(content: unknown[], pendingReviewTotal = 0) {
@@ -88,7 +102,11 @@ describe("AdminOverviewView", () => {
     };
     renderView();
 
-    expect(screen.getByText("Không có việc gì đang chờ.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Không có đề chờ duyệt trong các nhóm nội dung bên dưới.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("says the figures could not be loaded instead of showing zeros", () => {

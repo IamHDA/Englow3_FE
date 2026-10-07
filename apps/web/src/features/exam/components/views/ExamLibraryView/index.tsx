@@ -1,5 +1,7 @@
 "use client";
 
+import { paginationControlProps } from "@/shared/a11y/paginationControls";
+
 import { useMemo, useState } from "react";
 import {
   Button,
@@ -30,7 +32,7 @@ import { Page, PageHeader } from "@/shared/components/Page";
 const PAGE_SIZE = 8;
 
 export function ExamLibraryView() {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const [filters, setFilters] = useState<ExamFiltersState>({
     searchQuery: "",
     tabId: "all",
@@ -178,6 +180,7 @@ export function ExamLibraryView() {
                 </Text>
 
                 <Pagination
+                  getControlProps={paginationControlProps(isVi)}
                   total={totalPages}
                   value={currentPage + 1}
                   onChange={(page) => handleFilterChange({ page: page - 1 })}

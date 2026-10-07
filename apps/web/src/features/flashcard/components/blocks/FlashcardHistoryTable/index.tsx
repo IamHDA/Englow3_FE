@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Badge, Card, Group, Stack, Table, Text } from "@mantine/core";
 import { IconHistory } from "@tabler/icons-react";
 import React from "react";
@@ -10,6 +12,8 @@ interface FlashcardHistoryTableProps {
 }
 
 export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   return (
     <Card withBorder padding="md" radius="md">
       <Stack gap="sm">
@@ -17,7 +21,7 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
           <Group gap="xs">
             <IconHistory size={20} color="var(--mantine-color-indigo-6)" />
             <Text fw={700} fz="sm" c="dark.9">
-              Lịch sử các phiên học gần đây
+              {tr("Lịch sử các phiên học gần đây", "Recent study sessions")}
             </Text>
           </Group>
         </Group>
@@ -25,11 +29,11 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
         <Table verticalSpacing="xs" horizontalSpacing="sm" highlightOnHover>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Thời gian</Table.Th>
-              <Table.Th>Bộ từ vựng</Table.Th>
-              <Table.Th>Số thẻ đã lật</Table.Th>
-              <Table.Th>Tỷ lệ nhớ tốt</Table.Th>
-              <Table.Th ta="right">Thời lượng</Table.Th>
+              <Table.Th>{tr("Thời gian", "When")}</Table.Th>
+              <Table.Th>{tr("Bộ từ vựng", "Set")}</Table.Th>
+              <Table.Th>{tr("Số thẻ đã lật", "Cards reviewed")}</Table.Th>
+              <Table.Th>{tr("Tỷ lệ nhớ tốt", "Recall")}</Table.Th>
+              <Table.Th ta="right">{tr("Thời lượng", "Duration")}</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -37,7 +41,7 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
               <Table.Tr>
                 <Table.Td colSpan={5}>
                   <Text fz="sm" c="dimmed" ta="center" py="md">
-                    Chưa có phiên học nào.
+                    {tr("Chưa có phiên học nào.", "No study sessions yet.")}
                   </Text>
                 </Table.Td>
               </Table.Tr>
@@ -55,7 +59,9 @@ export function FlashcardHistoryTable({ history }: FlashcardHistoryTableProps) {
                   </Text>
                 </Table.Td>
                 <Table.Td>
-                  <Text fz="xs">{row.cardsCount} thẻ</Text>
+                  <Text fz="xs">
+                    {row.cardsCount} {tr("thẻ", "cards")}
+                  </Text>
                 </Table.Td>
                 <Table.Td>
                   <Badge

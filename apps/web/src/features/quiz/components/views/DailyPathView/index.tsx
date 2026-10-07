@@ -1,6 +1,15 @@
 "use client";
 
-import { Alert, Button, Grid, Skeleton, Stack } from "@mantine/core";
+import { paginationControlProps } from "@/shared/a11y/paginationControls";
+
+import {
+  Alert,
+  Button,
+  Grid,
+  Pagination,
+  Skeleton,
+  Stack,
+} from "@mantine/core";
 import { IconCompass, IconSparkles } from "@tabler/icons-react";
 import React, { useState } from "react";
 
@@ -19,7 +28,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import { Page, PageHeader, PageTabs } from "@/shared/components/Page";
 
 /** Một trang bài kiểm tra. Phân trang thật sẽ cần khi thư viện vượt con số này. */
-const QUIZ_PAGE_SIZE = 50;
+const QUIZ_PAGE_SIZE = 12;
 
 interface DailyPathViewProps {
   initialTab?: "roadmap" | "quizzes";
@@ -27,10 +36,17 @@ interface DailyPathViewProps {
 
 export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
   const [activeTab, setActiveTab] = useState<"roadmap" | "quizzes">(initialTab);
-  const { t } = useLanguage();
+  const [quizPage, setQuizPage] = useState(1);
+  const { t, isVi } = useLanguage();
 
-  const { data } = useQuizzesQuery({
-    variables: { size: QUIZ_PAGE_SIZE },
+  const {
+    data,
+    loading: quizzesLoading,
+    error: quizzesError,
+    refetch: refetchQuizzes,
+  } = useQuizzesQuery({
+    variables: { size: QUIZ_PAGE_SIZE, page: quizPage - 1 },
+    skip: activeTab !== "quizzes",
     fetchPolicy: "cache-and-network",
   });
 
@@ -94,9 +110,9 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
             xpIntoLevel={path.xpIntoLevel}
             levelCostXp={path.levelCostXp}
           />
-        ) : (
+        ) : !pathError ? (
           <Skeleton height={180} radius="lg" />
-        )}
+        ) : null}
 
         {activeTab === "roadmap" ? (
           <Grid gap="md">
@@ -118,7 +134,30 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
             </Grid.Col>
           </Grid>
         ) : (
-          <QuizCatalogue quizzes={data?.quizzes.items ?? []} />
+          <Stack>
+            {quizzesLoading && !data ? (
+              <Skeleton height={280} />
+            ) : quizzesError && !data ? (
+              <Alert color="orange" title={t.dailyPath.couldNotLoadPath}>
+                <Button
+                  variant="light"
+                  onClick={() => void refetchQuizzes().catch(() => {})}
+                >
+                  {t.common.retry}
+                </Button>
+              </Alert>
+            ) : (
+              <QuizCatalogue quizzes={data?.quizzes.items ?? []} />
+            )}
+            {data && data.quizzes.totalPages > 1 && (
+              <Pagination
+                getControlProps={paginationControlProps(isVi)}
+                value={quizPage}
+                onChange={setQuizPage}
+                total={data.quizzes.totalPages}
+              />
+            )}
+          </Stack>
         )}
       </Stack>
     </Page>

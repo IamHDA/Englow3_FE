@@ -7,8 +7,23 @@ import React, {
   useCallback,
   useRef,
 } from "react";
+import { useApolloClient } from "@apollo/client/react";
+import {
+  ExamDraftDocument,
+  ExamAttemptResultDocument,
+} from "@/lib/graphql/generated/documents";
+import { useExamAutosave } from "../../../hooks/useExamAutosave";
 import { useRouter } from "next/navigation";
-import { Alert, Button, Box, Card, Grid, Text } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Box,
+  Card,
+  Grid,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 
 import {
   useAttemptPaperQuery,
@@ -42,7 +57,8 @@ interface ExamSittingViewProps {
 }
 
 type StoredProgress = {
-  answers: Record<string, string>;
+  updatedAt?: number;
+  answers: Record<string, string | string[]>;
   flaggedIds: string[];
   currentIndex: number;
 };
@@ -67,7 +83,10 @@ function readProgress(attemptId: string): StoredProgress | null {
       typeof value.answers !== "object" ||
       Array.isArray(value.answers) ||
       !Object.values(value.answers).every(
-        (answer) => typeof answer === "string",
+        (answer) =>
+          typeof answer === "string" ||
+          (Array.isArray(answer) &&
+            answer.every((id) => typeof id === "string")),
       ) ||
       !Array.isArray(value.flaggedIds) ||
       !value.flaggedIds.every((id: unknown) => typeof id === "string") ||
@@ -83,6 +102,9 @@ function readProgress(attemptId: string): StoredProgress | null {
 
 export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const router = useRouter();
+  const client = useApolloClient();
+  const [openingDraft, setOpeningDraft] = useState(false);
+  const [draftLoadFailed, setDraftLoadFailed] = useState(false);
   const { t, isVi } = useLanguage();
   const { refresh: refreshProfile } = useAccountProfile();
 
@@ -122,7 +144,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const isPlacement = detailData?.exam?.examType === ExamType.PLACEMENT;
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [flaggedIds, setFlaggedIds] = useState<Set<string>>(new Set());
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
@@ -152,6 +174,8 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     return list;
   }, [paper]);
 
+  const autosave = useExamAutosave(result ? null : attemptId, answers);
+
   /**
    * Nộp bài. Backend chấm ngay và trả kết quả, kể cả khi mảng đáp án rỗng - hết
    * giờ thì nộp những gì đang có chứ không vứt đi, rồi để server phán quyết.
@@ -161,7 +185,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       attemptId === null ||
       pending.current ||
       result !== null ||
-      (expiresAt && Date.now() >= Date.parse(expiresAt))
+      autosave.status === "conflict"
     )
       return;
     pending.current = true;
@@ -169,10 +193,19 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
     setSubmitModalOpen(false);
 
+    if (!expiresAt || Date.now() < Date.parse(expiresAt)) {
+      if (!(await autosave.flush(answers))) {
+        pending.current = false;
+        setSendFailed(true);
+        return;
+      }
+    }
     const payload = Object.entries(answers).map(
       ([questionId, selectedOptionId]) => ({
         questionId,
-        selectedOptionIds: [selectedOptionId],
+        selectedOptionIds: Array.isArray(selectedOptionId)
+          ? selectedOptionId
+          : [selectedOptionId],
       }),
     );
 
@@ -207,15 +240,70 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     refreshProfile,
     result,
     expiresAt,
+    autosave,
   ]);
 
   const { formattedTime, isWarning, isCritical, remainingSeconds } =
     useExamTimer({
       expiresAt,
       isActive: attemptId !== null && result === null,
+      onExpire: () => void handleFinalSubmit(),
     });
   const expired =
     expiresAt !== null && remainingSeconds === 0 && result === null;
+
+  useEffect(() => {
+    if (!expired || !attemptId || result) return;
+    let active = true;
+    const readResult = async () => {
+      try {
+        const response = await client.query({
+          query: ExamAttemptResultDocument,
+          variables: { id: attemptId },
+          fetchPolicy: "network-only",
+        });
+        if (active && response.data) setResult(response.data.examAttempt);
+      } catch {
+        /* Keep the retry action visible while the server finalizes. */
+      }
+    };
+    void readResult();
+    const timer = setInterval(() => void readResult(), 3000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [expired, attemptId, result, client]);
+
+  async function reloadServerDraft() {
+    if (
+      !attemptId ||
+      !window.confirm(
+        isVi
+          ? "Thay đáp án trên màn hình bằng bản mới nhất trên máy chủ?"
+          : "Replace the displayed answers with the latest server draft?",
+      )
+    )
+      return;
+    try {
+      const response = await client.query({
+        query: ExamDraftDocument,
+        variables: { attemptId },
+        fetchPolicy: "network-only",
+      });
+      if (!response.data) return;
+      const draft = response.data.examDraft;
+      const restored = Object.fromEntries(
+        draft.answers
+          .filter((a) => a.selectedOptionIds.length)
+          .map((a) => [a.questionId, a.selectedOptionIds]),
+      );
+      autosave.initialize(attemptId, draft.version, restored, restored);
+      setAnswers(restored);
+    } catch {
+      setSendFailed(true);
+    }
+  }
 
   /**
    * Mở lượt thi. Backend luôn trả về một lượt đang mở: lượt cũ còn hạn thì trả
@@ -235,13 +323,42 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
     // Lượt được nối lại có thể đã làm dở ở lần trước - khôi phục bản nháp cục
     // bộ của đúng lượt đó, kể cả vị trí câu đang đứng.
-    const restored = readProgress(attempt.id);
-    setAnswers(restored?.answers ?? {});
-    setFlaggedIds(new Set(restored?.flaggedIds ?? []));
-    setCurrentIndex(restored?.currentIndex ?? 0);
-    setAttemptId(attempt.id);
-    setExpiresAt(attempt.expiresAt);
-  }, [examId, startAttempt]);
+    setOpeningDraft(true);
+    setDraftLoadFailed(false);
+    try {
+      const response = await client.query({
+        query: ExamDraftDocument,
+        variables: { attemptId: attempt.id },
+        fetchPolicy: "network-only",
+      });
+      if (!response.data) throw new Error("Missing draft");
+      const draft = response.data.examDraft;
+      const serverAnswers = Object.fromEntries(
+        draft.answers
+          .filter((a) => a.selectedOptionIds.length)
+          .map((a) => [a.questionId, a.selectedOptionIds]),
+      );
+      const restored = readProgress(attempt.id);
+      const useLocal =
+        restored && (restored.updatedAt ?? 0) > Date.parse(draft.savedAt);
+      const currentAnswers = useLocal ? restored.answers : serverAnswers;
+      autosave.initialize(
+        attempt.id,
+        draft.version,
+        serverAnswers,
+        currentAnswers,
+      );
+      setAnswers(currentAnswers);
+      setFlaggedIds(new Set(restored?.flaggedIds ?? []));
+      setCurrentIndex(restored?.currentIndex ?? 0);
+      setAttemptId(attempt.id);
+      setExpiresAt(attempt.expiresAt);
+    } catch {
+      setDraftLoadFailed(true);
+    } finally {
+      setOpeningDraft(false);
+    }
+  }, [examId, startAttempt, client, autosave]);
 
   // Giữ bản nháp cục bộ để tải lại trang hay mất mạng không mất bài đang làm.
   useEffect(() => {
@@ -251,6 +368,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         storageKey(attemptId),
         JSON.stringify({
           answers,
+          updatedAt: Date.now(),
           flaggedIds: Array.from(flaggedIds),
           currentIndex,
         }),
@@ -285,7 +403,19 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
   const handleSelectOption = (optionId: string) => {
     if (!currentItem || pending.current || expired) return;
-    setAnswers((prev) => ({ ...prev, [currentItem.questionId]: optionId }));
+    setAnswers((prev) => {
+      if (currentQuestion?.questionType !== "MULTIPLE_CHOICE")
+        return { ...prev, [currentItem.questionId]: optionId };
+      const old = prev[currentItem.questionId];
+      const chosen = Array.isArray(old) ? old : old ? [old] : [];
+      const selected = chosen.includes(optionId)
+        ? chosen.filter((id) => id !== optionId)
+        : [...chosen, optionId];
+      const next = { ...prev };
+      if (selected.length) next[currentItem.questionId] = selected;
+      else delete next[currentItem.questionId];
+      return next;
+    });
   };
 
   const handleToggleFlag = () => {
@@ -320,7 +450,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     startError ??
     (!paper ? paperError : undefined);
 
-  if (error) {
+  if (error && !result && !expired) {
     return (
       <Page width="focus">
         <LoadErrorState
@@ -341,6 +471,44 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     );
   }
 
+  if (result && !paper)
+    return (
+      <Page width="focus">
+        <Stack>
+          <Title order={1}>{isVi ? "Kết quả bài thi" : "Exam result"}</Title>
+          <Card withBorder>
+            <Text fw={700} size="xl">
+              {result.rawScore ?? 0} / {result.maxRawScore}
+            </Text>
+            <Text>
+              {result.correctAnswerCount ?? 0} / {result.questionCount}{" "}
+              {isVi ? "câu đúng" : "correct answers"}
+            </Text>
+          </Card>
+          <Alert color="blue">
+            {isVi
+              ? "Lượt thi đã được chấm trên máy chủ. Không tải được nội dung đề để hiển thị chi tiết câu hỏi."
+              : "The server has scored your attempt. The paper is unavailable for the detailed question review."}
+          </Alert>
+          <Button onClick={handleRetake}>
+            {isVi ? "Về màn bắt đầu" : "Return to exam briefing"}
+          </Button>
+          <Button variant="light" onClick={() => router.push("/exams")}>
+            {t.exam.returnToLibrary}
+          </Button>
+        </Stack>
+      </Page>
+    );
+  if (expired && !paper)
+    return (
+      <Page width="focus">
+        <Alert color="blue">
+          {isVi
+            ? "Đã hết hạn. Máy chủ đang hoàn tất lượt thi từ các đáp án đã đồng bộ đúng hạn; trang sẽ tự lấy kết quả khi kết nối trở lại."
+            : "The deadline has passed. The server finalizes answers received on time; this page retrieves the result when the connection returns."}
+        </Alert>
+      </Page>
+    );
   // 1. Overview Mode (Briefing) - chưa mở lượt thi nào
   if (attemptId === null || !paper) {
     const exam = detailData?.exam;
@@ -348,7 +516,20 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       return <ExamOverviewSkeleton />;
     }
     return (
-      <ExamOverview exam={exam} starting={starting} onStart={handleStart} />
+      <Box>
+        {draftLoadFailed && (
+          <Alert color="orange">
+            {isVi
+              ? "Chưa tải được nháp đã lưu. Thử mở lại lượt thi; hệ thống sẽ tiếp tục lượt còn hạn."
+              : "Could not load your saved answers. Retry opening the attempt."}
+          </Alert>
+        )}
+        <ExamOverview
+          exam={exam}
+          starting={starting || openingDraft}
+          onStart={handleStart}
+        />
+      </Box>
     );
   }
 
@@ -368,7 +549,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   return (
     <Box bg="ink.0" mih="100vh" pb={60}>
       <ExamSittingHeader
-        submitDisabled={expired || submitting}
+        submitDisabled={expired || submitting || autosave.status === "conflict"}
         title={paper.title}
         sectionTitle={
           currentSection
@@ -389,11 +570,45 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       />
 
       <Page>
+        <Text size="sm" role="status" aria-live="polite" mb="sm">
+          {autosave.status === "saving"
+            ? isVi
+              ? "Đang lưu đáp án…"
+              : "Saving answers…"
+            : autosave.status === "saved"
+              ? isVi
+                ? "Đáp án đã đồng bộ"
+                : "Answers synced"
+              : isVi
+                ? "Có đáp án chưa đồng bộ"
+                : "Some answers are not synced"}
+        </Text>
+        {(autosave.status === "error" || autosave.status === "conflict") && (
+          <Alert color="orange" mb="md">
+            {autosave.status === "conflict"
+              ? isVi
+                ? "Tab khác đã thay đổi nháp. Tải lại để đọc phiên bản mới trước khi tiếp tục."
+                : "Another tab changed this draft. Reload the latest version before continuing."
+              : isVi
+                ? "Chưa lưu được lên máy chủ. Giữ trang mở và thử lưu lại trước hạn."
+                : "Could not sync. Keep this page open and retry before the deadline."}
+            <Button
+              variant="subtle"
+              onClick={() =>
+                autosave.status === "conflict"
+                  ? void reloadServerDraft()
+                  : void autosave.flush()
+              }
+            >
+              {isVi ? "Thử lại" : "Retry"}
+            </Button>
+          </Alert>
+        )}
         {!expired && (
           <Text size="sm" c="dimmed" mb="sm">
             {isVi
-              ? "Hãy nộp bài trước khi đồng hồ về 00:00."
-              : "Submit your answers before the timer reaches 00:00."}
+              ? "Đáp án được tự lưu lên máy chủ. Hết giờ, hệ thống chấm phần đã đồng bộ trước hạn."
+              : "Answers are saved to the server. At the deadline, only answers synced before expiry are graded."}
           </Text>
         )}
         {(sendFailed || submitError) && !expired && !result && (
@@ -413,10 +628,14 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         {expired && (
           <Alert color="orange" role="alert" mb="md">
             {isVi
-              ? "Lượt thi đã hết hạn. Máy chủ không nhận bài nộp muộn; bản nháp vẫn được giữ trong phiên trình duyệt này."
-              : "This attempt has expired. Late submissions are not accepted; your draft is kept in this browser session."}
-            <Button variant="subtle" onClick={handleRetake}>
-              {isVi ? "Làm lượt mới" : "Start a new attempt"}
+              ? "Đã hết giờ. Hệ thống đang hoàn tất phần đáp án đã lưu trước hạn; đáp án chưa đồng bộ không được tính."
+              : "Time is up. The server is finalizing answers saved before the deadline; unsynced answers are not counted."}
+            <Button
+              variant="subtle"
+              loading={submitting}
+              onClick={() => void handleFinalSubmit()}
+            >
+              {isVi ? "Lấy kết quả" : "Get result"}
             </Button>
           </Alert>
         )}
@@ -438,7 +657,13 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
                   question={currentQuestion}
                   questionIndex={currentIndex}
                   totalQuestions={flatQuestions.length}
-                  selectedOptionId={answers[currentQuestion.id]}
+                  selectedOptionIds={
+                    Array.isArray(answers[currentQuestion.id])
+                      ? (answers[currentQuestion.id] as string[])
+                      : answers[currentQuestion.id]
+                        ? [answers[currentQuestion.id] as string]
+                        : []
+                  }
                   isFlagged={flaggedIds.has(currentQuestion.id)}
                   onSelectOption={handleSelectOption}
                   onToggleFlag={handleToggleFlag}

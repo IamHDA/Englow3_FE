@@ -23,7 +23,10 @@ const SCALARS = { Date: "string", DateTime: "string" } as const;
 
 const config: CodegenConfig = {
   schema:
-    process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ?? "http://localhost:4000/graphql",
+    process.env.GRAPHQL_SCHEMA_SOURCE === "local"
+      ? ["../bff/src/graphql/schema.ts", "../bff/src/modules/**/*.typeDefs.ts"]
+      : (process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ??
+        "http://localhost:4000/graphql"),
   // features/<feature>/graphql for feature-owned operations, shared/graphql
   // for operations consumed by cross-cutting components (e.g. SiteHeader)
   // that don't belong to any one feature.

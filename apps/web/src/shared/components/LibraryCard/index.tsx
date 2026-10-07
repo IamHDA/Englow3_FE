@@ -109,6 +109,7 @@ export function LibraryCard({
               </Text>
             </Group>
             <Progress
+              aria-label={progress.label}
               value={progress.value}
               color={progress.color ?? "teal"}
               size="sm"

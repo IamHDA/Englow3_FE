@@ -1,4 +1,6 @@
 import { dateScalar, dateTimeScalar } from "./scalars.js";
+import { assessmentResolvers } from "../modules/assessment/assessment.resolvers.js";
+import { assessmentTypeDefs } from "../modules/assessment/assessment.typeDefs.js";
 import { contentManagementResolvers } from "../modules/contentManagement/contentManagement.resolvers.js";
 import { contentManagementTypeDefs } from "../modules/contentManagement/contentManagement.typeDefs.js";
 import { dictationResolvers } from "../modules/dictation/dictation.resolvers.js";
@@ -35,6 +37,7 @@ const rootTypeDefs = /* GraphQL */ `
 
 export const typeDefs = [
   rootTypeDefs,
+  assessmentTypeDefs,
   userTypeDefs,
   onboardingTypeDefs,
   examTypeDefs,
@@ -52,6 +55,7 @@ export const resolvers = {
   DateTime: dateTimeScalar,
   Query: {
     health: () => "ok",
+    ...assessmentResolvers.Query,
     ...userResolvers.Query,
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
@@ -64,6 +68,7 @@ export const resolvers = {
     ...tutorResolvers.Query,
   },
   Mutation: {
+    ...assessmentResolvers.Mutation,
     ...userResolvers.Mutation,
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,

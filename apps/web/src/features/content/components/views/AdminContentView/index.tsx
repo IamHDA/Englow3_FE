@@ -1,5 +1,11 @@
 "use client";
 
+import { paginationControlProps } from "@/shared/a11y/paginationControls";
+
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import Link from "next/link";
+import { Button } from "@mantine/core";
+
 import {
   Alert,
   Card,
@@ -23,6 +29,7 @@ import {
   useAdminContentQuery,
   useApproveContentMutation,
   useArchiveContentMutation,
+  useRestoreContentMutation,
   useCurrentUserQuery,
   usePublishContentMutation,
   useRejectContentMutation,
@@ -58,13 +65,17 @@ const KIND_TABS = [
   ContentKind.SPEAKING_PROMPT,
 ];
 
-const STATUS_OPTIONS = [
-  { value: "", label: "Mọi trạng thái" },
-  ...Object.values(ContentStatus).map((status) => ({
-    value: status,
-    label: CONTENT_STATUS_LABELS[status],
-  })),
-];
+function statusOptions(isVi: boolean) {
+  return [
+    { value: "", label: isVi ? "Mọi trạng thái" : "All statuses" },
+    ...Object.values(ContentStatus).map((status) => ({
+      value: status,
+      label: isVi
+        ? CONTENT_STATUS_LABELS[status].vi
+        : CONTENT_STATUS_LABELS[status].en,
+    })),
+  ];
+}
 
 /**
  * Một màn cho cả bốn loại nội dung. Bốn loại dùng chung một quy trình duyệt,
@@ -81,6 +92,8 @@ export function AdminContentView({
   initialKind = ContentKind.FLASHCARD_SET,
   initialStatus = null,
 }: AdminContentViewProps = {}) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const [kind, setKind] = useState<ContentKind>(initialKind);
   const [status, setStatus] = useState<ContentStatus | null>(initialStatus);
   const [title, setTitle] = useState("");
@@ -109,6 +122,7 @@ export function AdminContentView({
   const [rejectContent] = useRejectContentMutation();
   const [publishContent] = usePublishContentMutation();
   const [archiveContent] = useArchiveContentMutation();
+  const [restoreContent] = useRestoreContentMutation();
 
   const actionPending = useRef(false);
 
@@ -123,15 +137,25 @@ export function AdminContentView({
     try {
       await action();
       notifications.show({ color: "green", message: successMessage });
-      await refetch().catch(() => undefined);
+      await refetch().catch(() =>
+        notifications.show({
+          color: "orange",
+          message: tr(
+            "Thao tác đã lưu; danh sách chưa cập nhật. Hãy tải lại.",
+            "Saved, but the list did not refresh. Reload the page.",
+          ),
+        }),
+      );
       return true;
     } catch (actionError) {
       const code = backendCodeOf(actionError);
+      const words =
+        (code ? CONTENT_ERROR_MESSAGES[code] : undefined) ??
+        CONTENT_GENERIC_ERROR;
       notifications.show({
         color: "warn",
-        title: "Không thực hiện được",
-        message:
-          (code && CONTENT_ERROR_MESSAGES[code]) ?? CONTENT_GENERIC_ERROR,
+        title: tr("Không thực hiện được", "That did not work"),
+        message: isVi ? words.vi : words.en,
       });
       return false;
     } finally {
@@ -148,12 +172,22 @@ export function AdminContentView({
     <Page>
       <Stack gap="lg">
         <Stack gap={4}>
-          <PageHeader title="Quản lý nội dung học" />
+          <Group justify="space-between">
+            <PageHeader
+              title={tr("Quản lý nội dung học", "Learning content")}
+            />
+            <Button component={Link} href={`/admin/content/editor/${kind}/new`}>
+              {tr("Tạo mới", "Create")}
+            </Button>
+          </Group>
           {/* Staff need to know the approval is not theirs; an admin does not
               need the page described to them. */}
           {!canReview && (
             <Text size="sm" c="ink.6">
-              Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.
+              {tr(
+                "Bạn soạn và gửi duyệt; quản trị viên là người duyệt hoặc trả lại.",
+                "You write and submit; an administrator approves or returns it.",
+              )}
             </Text>
           )}
         </Stack>
@@ -172,7 +206,9 @@ export function AdminContentView({
               }}
               data={KIND_TABS.map((value) => ({
                 value,
-                label: CONTENT_KIND_LABELS[value],
+                label: isVi
+                  ? CONTENT_KIND_LABELS[value].vi
+                  : CONTENT_KIND_LABELS[value].en,
               }))}
             />
           </Group>
@@ -181,8 +217,8 @@ export function AdminContentView({
         <Card radius="lg" withBorder p="md">
           <Group gap="md" align="flex-end">
             <TextInput
-              label="Tìm theo tên"
-              placeholder="Nhập tên nội dung"
+              label={tr("Tìm theo tên", "Search by name")}
+              placeholder={tr("Nhập tên nội dung", "Type a name")}
               leftSection={<Search size={16} />}
               value={title}
               onChange={(event) => {
@@ -193,8 +229,8 @@ export function AdminContentView({
               style={{ flex: 1, minWidth: 220 }}
             />
             <Select
-              label="Trạng thái"
-              data={STATUS_OPTIONS}
+              label={tr("Trạng thái", "Status")}
+              data={statusOptions(isVi)}
               value={status ?? ""}
               onChange={(next) => {
                 setStatus(
@@ -220,8 +256,11 @@ export function AdminContentView({
         {kind === ContentKind.FLASHCARD_SET && draftSets.length > 0 && (
           <Stack gap="sm">
             <Select
-              label="Nhập thẻ vào bộ nháp"
-              placeholder="Chọn một bộ còn nháp"
+              label={tr(
+                "Nhập thẻ vào bộ nháp",
+                "Import cards into a draft set",
+              )}
+              placeholder={tr("Chọn một bộ còn nháp", "Pick a draft set")}
               data={draftSets.map((set) => ({
                 value: set.id,
                 label: set.title,
@@ -243,18 +282,33 @@ export function AdminContentView({
             <Alert
               color="warn"
               icon={<ShieldAlert size={18} />}
-              title="Không có quyền truy cập"
+              title={tr("Không có quyền truy cập", "No access")}
               m="md"
             >
               <Text size="sm">
-                Tài khoản này không có vai trò quản trị hoặc nhân viên nội dung.
-                Đăng nhập bằng tài khoản phù hợp rồi thử lại.
+                {tr(
+                  "Tài khoản này không có vai trò quản trị hoặc nhân viên nội dung. Đăng nhập bằng tài khoản phù hợp rồi thử lại.",
+                  "This account is not an administrator or content staff. Sign in with the right account and try again.",
+                )}
               </Text>
             </Alert>
           ) : error && items.length === 0 ? (
-            <Alert color="warn" title="Không tải được danh sách" m="md">
+            <Alert
+              color="warn"
+              title={tr("Không tải được danh sách", "Could not load the list")}
+              m="md"
+            >
               <Text size="sm">
-                Kiểm tra kết nối tới backend rồi tải lại trang.
+                {tr(
+                  "Kiểm tra kết nối rồi thử lại.",
+                  "Check the connection and try again.",
+                )}{" "}
+                <Button
+                  variant="light"
+                  onClick={() => void refetch().catch(() => undefined)}
+                >
+                  Thử lại
+                </Button>
               </Text>
             </Alert>
           ) : loading && items.length === 0 ? (
@@ -264,10 +318,16 @@ export function AdminContentView({
           ) : items.length === 0 ? (
             <Stack p="xl" align="center" gap={6}>
               <Text fw={600} c="navy.9">
-                Không có mục nào khớp bộ lọc
+                {tr(
+                  "Không có mục nào khớp bộ lọc",
+                  "Nothing matches the filters",
+                )}
               </Text>
               <Text size="sm" c="ink.5">
-                Thử bỏ bớt điều kiện lọc hoặc xoá từ khoá tìm kiếm.
+                {tr(
+                  "Thử bỏ bớt điều kiện lọc hoặc xoá từ khoá tìm kiếm.",
+                  "Try removing a filter or clearing the search.",
+                )}
               </Text>
             </Stack>
           ) : (
@@ -280,14 +340,14 @@ export function AdminContentView({
                 runAction(
                   id,
                   () => submitForReview({ variables: { kind, id } }),
-                  "Đã gửi đi duyệt.",
+                  tr("Đã gửi đi duyệt.", "Submitted for review."),
                 )
               }
               onApprove={(id) =>
                 runAction(
                   id,
                   () => approveContent({ variables: { kind, id } }),
-                  "Đã duyệt và phát hành.",
+                  tr("Đã duyệt và phát hành.", "Approved and published."),
                 )
               }
               onReject={setRejecting}
@@ -295,14 +355,21 @@ export function AdminContentView({
                 runAction(
                   id,
                   () => publishContent({ variables: { kind, id } }),
-                  "Đã phát hành.",
+                  tr("Đã phát hành.", "Published."),
                 )
               }
               onArchive={(id) =>
                 runAction(
                   id,
                   () => archiveContent({ variables: { kind, id } }),
-                  "Đã lưu trữ.",
+                  tr("Đã lưu trữ.", "Archived."),
+                )
+              }
+              onRestore={(id) =>
+                runAction(
+                  id,
+                  () => restoreContent({ variables: { kind, id } }),
+                  tr("Đã khôi phục.", "Restored."),
                 )
               }
             />
@@ -312,6 +379,7 @@ export function AdminContentView({
         {totalPages > 1 && (
           <Group justify="center">
             <Pagination
+              getControlProps={paginationControlProps(isVi)}
               total={totalPages}
               value={page + 1}
               onChange={(next) => setPage(next - 1)}
@@ -334,7 +402,7 @@ export function AdminContentView({
           const succeeded = await runAction(
             target.id,
             () => rejectContent({ variables: { kind, id: target.id, note } }),
-            "Đã trả lại kèm lý do.",
+            tr("Đã trả lại kèm lý do.", "Returned with a reason."),
           );
           if (succeeded) setRejecting(null);
           return succeeded;

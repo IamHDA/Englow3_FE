@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Box, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
 
@@ -33,6 +35,9 @@ export function TargetSkillsStep({
   errorMessage,
   onFinish,
 }: TargetSkillsStepProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const copy = isVi ? TARGET_SKILLS_COPY.vi : TARGET_SKILLS_COPY.en;
   const [selected, setSelected] = useState<LearningSkill[]>(initialSkills);
 
   function toggleSkill(skill: LearningSkill) {
@@ -46,23 +51,30 @@ export function TargetSkillsStep({
   return (
     <OnboardingStepShell
       step={OnboardingStep.TARGET_SKILLS}
-      title={TARGET_SKILLS_COPY.title}
-      subtitle={TARGET_SKILLS_COPY.subtitle}
+      title={copy.title}
+      subtitle={copy.subtitle}
       footer={
         <OnboardingStepFooter
           pending={pending}
           errorMessage={errorMessage}
-          label="Hoàn tất"
+          label={tr("Hoàn tất", "Finish")}
           onContinue={() => onFinish(selected)}
         />
       }
     >
-      <Box role="group" aria-label="Kỹ năng muốn tập trung">
+      <Box
+        role="group"
+        aria-label={tr("Kỹ năng muốn tập trung", "Skills to focus on")}
+      >
         <SimpleGrid cols={{ base: 2, sm: 3 }} spacing={16}>
           {SKILL_CHOICES.map((skill) => (
             <OnboardingChoiceTile
               key={skill}
-              label={LEARNING_SKILL_LABELS[skill]}
+              label={
+                isVi
+                  ? LEARNING_SKILL_LABELS[skill].vi
+                  : LEARNING_SKILL_LABELS[skill].en
+              }
               selected={selected.includes(skill)}
               disabled={pending}
               onSelect={() => toggleSkill(skill)}
@@ -72,7 +84,10 @@ export function TargetSkillsStep({
       </Box>
 
       <Text size="xs" c="ink.5" ta="center" mt={18}>
-        Chưa chắc thì cứ bỏ trống - bạn đổi được bất cứ lúc nào trong hồ sơ.
+        {tr(
+          "Chưa chắc thì cứ bỏ trống - bạn đổi được bất cứ lúc nào trong hồ sơ.",
+          "Not sure? Leave it empty - you can change it any time in your profile.",
+        )}
       </Text>
     </OnboardingStepShell>
   );

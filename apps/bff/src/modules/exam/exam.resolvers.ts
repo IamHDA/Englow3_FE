@@ -3,6 +3,10 @@ import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 export const examResolvers = {
   Query: {
+    examDraft: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.draft(args.attemptId);
+    },
     exams: async (_, args, ctx) => {
       ctx.requireToken();
       // The two per-learner figures used to be filled in here with null and
@@ -45,6 +49,14 @@ export const examResolvers = {
     },
   },
   Mutation: {
+    saveExamDraft: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.saveDraft(
+        args.attemptId,
+        args.version,
+        args.answers,
+      );
+    },
     startExamAttempt: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.startAttempt(args.examId);
@@ -60,6 +72,10 @@ export const examResolvers = {
     archiveExam: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.archiveAsAdmin(args.id);
+    },
+    restoreExam: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.restoreAsAdmin(args.id);
     },
     submitExamForReview: (_, args, ctx) => {
       ctx.requireToken();

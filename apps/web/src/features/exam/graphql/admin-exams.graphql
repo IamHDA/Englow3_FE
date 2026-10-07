@@ -55,6 +55,12 @@ mutation PublishExam($id: ID!) {
   }
 }
 
+mutation RestoreExam($id: ID!) {
+  restoreExam(id: $id) {
+    ...AdminExamShellFields
+  }
+}
+
 mutation ArchiveExam($id: ID!) {
   archiveExam(id: $id) {
     ...AdminExamShellFields

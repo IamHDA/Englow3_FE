@@ -8,7 +8,7 @@ import {
   Divider,
   Flex,
   Group,
-  Radio,
+  Image,
   Stack,
   Text,
   ThemeIcon,
@@ -32,6 +32,7 @@ export interface QuestionCardProps {
   questionIndex: number;
   totalQuestions: number;
   selectedOptionId?: string;
+  selectedOptionIds?: string[];
   isFlagged: boolean;
   onSelectOption: (optionId: string) => void;
   onToggleFlag: () => void;
@@ -49,6 +50,7 @@ export function QuestionCard({
   questionIndex,
   totalQuestions,
   selectedOptionId,
+  selectedOptionIds,
   isFlagged,
   onSelectOption,
   onToggleFlag,
@@ -57,7 +59,10 @@ export function QuestionCard({
   hasPrev,
   hasNext,
 }: QuestionCardProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
+  const multiple = question.questionType === "MULTIPLE_CHOICE";
+  const selected =
+    selectedOptionIds ?? (selectedOptionId ? [selectedOptionId] : []);
   const isListening = section.sectionType.toUpperCase().includes("LISTEN");
 
   return (
@@ -90,9 +95,35 @@ export function QuestionCard({
           )}
         </Box>
 
+        {(part.content || part.audioUrl || part.imageUrl) && (
+          <Card withBorder>
+            <Stack>
+              {part.content && (
+                <Text style={{ whiteSpace: "pre-wrap" }}>{part.content}</Text>
+              )}
+              {part.audioUrl && (
+                <audio
+                  controls
+                  preload="none"
+                  src={part.audioUrl}
+                  style={{ width: "100%" }}
+                />
+              )}
+              {part.imageUrl && (
+                <Image
+                  src={part.imageUrl}
+                  alt={isVi ? "Ảnh trong phần thi" : "Part stimulus"}
+                  fit="contain"
+                  mah={360}
+                />
+              )}
+            </Stack>
+          </Card>
+        )}
         {/* Question Set Stimulus / Passage / Audio */}
         {(questionSet.content ||
           questionSet.audioUrl ||
+          questionSet.imageUrl ||
           questionSet.instruction) && (
           <Card p="md" radius="md" className={classes.stimulusCard}>
             {questionSet.title && (
@@ -113,6 +144,14 @@ export function QuestionCard({
               >
                 {questionSet.content}
               </Text>
+            )}
+            {questionSet.imageUrl && (
+              <Image
+                src={questionSet.imageUrl}
+                alt={isVi ? "Ảnh trong nhóm câu" : "Question stimulus"}
+                fit="contain"
+                mah={360}
+              />
             )}
             {/* URL đã được backend ký sẵn và tự hết hạn, phát thẳng được. */}
             {questionSet.audioUrl && (
@@ -166,18 +205,53 @@ export function QuestionCard({
 
         {/* Answer Options */}
         <Stack gap="xs">
-          <Radio.Group
-            value={selectedOptionId || ""}
-            onChange={(val) => onSelectOption(val)}
+          <Box
+            role={multiple ? "group" : "radiogroup"}
+            aria-label={question.content}
           >
+            {multiple && (
+              <Text size="sm" c="dimmed" mb="sm">
+                {isVi
+                  ? "Chọn tất cả đáp án đúng."
+                  : "Select all correct answers."}
+              </Text>
+            )}
             <Stack gap="xs">
               {question.options.map((option, optIdx) => {
-                const isSelected = selectedOptionId === option.id;
+                const isSelected = selected.includes(option.id);
                 const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
 
                 return (
                   <UnstyledButton
                     key={option.id}
+                    role={multiple ? "checkbox" : "radio"}
+                    aria-checked={isSelected}
+                    onKeyDown={(event) => {
+                      if (
+                        !multiple &&
+                        [
+                          "ArrowUp",
+                          "ArrowDown",
+                          "ArrowLeft",
+                          "ArrowRight",
+                        ].includes(event.key)
+                      ) {
+                        event.preventDefault();
+                        const offset =
+                          event.key === "ArrowUp" || event.key === "ArrowLeft"
+                            ? -1
+                            : 1;
+                        const next =
+                          (optIdx + offset + question.options.length) %
+                          question.options.length;
+                        onSelectOption(question.options[next].id);
+                        const buttons =
+                          event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                            '[role="radio"]',
+                          );
+                        buttons?.[next]?.focus();
+                      }
+                    }}
                     onClick={() => onSelectOption(option.id)}
                     p="sm"
                     className={
@@ -211,7 +285,7 @@ export function QuestionCard({
                 );
               })}
             </Stack>
-          </Radio.Group>
+          </Box>
         </Stack>
 
         <Divider color="gray.2" />

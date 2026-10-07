@@ -5,12 +5,14 @@ import { ContentKind, ContentStatus } from "@/lib/graphql/generated";
  * bằng enum sinh ra, nên thêm một trạng thái hay một loại nội dung vào schema
  * là lỗi biên dịch chứ không phải một ô trống lúc chạy.
  */
-export const CONTENT_STATUS_LABELS: Record<ContentStatus, string> = {
-  [ContentStatus.DRAFT]: "Bản nháp",
-  [ContentStatus.PENDING_REVIEW]: "Chờ duyệt",
-  [ContentStatus.REJECTED]: "Bị trả lại",
-  [ContentStatus.PUBLISHED]: "Đã phát hành",
-  [ContentStatus.ARCHIVED]: "Đã lưu trữ",
+type Words = { vi: string; en: string };
+
+export const CONTENT_STATUS_LABELS: Record<ContentStatus, Words> = {
+  [ContentStatus.DRAFT]: { vi: "Bản nháp", en: "Draft" },
+  [ContentStatus.PENDING_REVIEW]: { vi: "Chờ duyệt", en: "Awaiting review" },
+  [ContentStatus.REJECTED]: { vi: "Bị trả lại", en: "Returned" },
+  [ContentStatus.PUBLISHED]: { vi: "Đã phát hành", en: "Published" },
+  [ContentStatus.ARCHIVED]: { vi: "Đã lưu trữ", en: "Archived" },
 };
 
 export const CONTENT_STATUS_COLORS: Record<ContentStatus, string> = {
@@ -23,11 +25,11 @@ export const CONTENT_STATUS_COLORS: Record<ContentStatus, string> = {
   [ContentStatus.ARCHIVED]: "orange",
 };
 
-export const CONTENT_KIND_LABELS: Record<ContentKind, string> = {
-  [ContentKind.FLASHCARD_SET]: "Bộ thẻ từ",
-  [ContentKind.QUIZ]: "Bài trắc nghiệm",
-  [ContentKind.DICTATION_LESSON]: "Bài nghe chép",
-  [ContentKind.SPEAKING_PROMPT]: "Câu luyện nói",
+export const CONTENT_KIND_LABELS: Record<ContentKind, Words> = {
+  [ContentKind.FLASHCARD_SET]: { vi: "Bộ thẻ từ", en: "Flashcard sets" },
+  [ContentKind.QUIZ]: { vi: "Bài trắc nghiệm", en: "Quizzes" },
+  [ContentKind.DICTATION_LESSON]: { vi: "Bài nghe chép", en: "Dictation" },
+  [ContentKind.SPEAKING_PROMPT]: { vi: "Câu luyện nói", en: "Pronunciation" },
 };
 
 /**
@@ -36,10 +38,10 @@ export const CONTENT_KIND_LABELS: Record<ContentKind, string> = {
  * Câu luyện nói không có nhãn vì không có gì để đếm: nó là một câu, không phải
  * một tập hợp. Backend trả null và bảng hiện dấu gạch ngang.
  */
-export const CONTENT_ITEM_LABELS: Record<ContentKind, string | null> = {
-  [ContentKind.FLASHCARD_SET]: "thẻ",
-  [ContentKind.QUIZ]: "câu hỏi",
-  [ContentKind.DICTATION_LESSON]: "câu",
+export const CONTENT_ITEM_LABELS: Record<ContentKind, Words | null> = {
+  [ContentKind.FLASHCARD_SET]: { vi: "thẻ", en: "cards" },
+  [ContentKind.QUIZ]: { vi: "câu hỏi", en: "questions" },
+  [ContentKind.DICTATION_LESSON]: { vi: "câu", en: "sentences" },
   [ContentKind.SPEAKING_PROMPT]: null,
 };
 
@@ -56,6 +58,7 @@ export const CONTENT_ACTIONS_BY_STATUS: Record<
     reject: boolean;
     publish: boolean;
     archive: boolean;
+    restore?: boolean;
   }
 > = {
   [ContentStatus.DRAFT]: {
@@ -92,6 +95,7 @@ export const CONTENT_ACTIONS_BY_STATUS: Record<
     reject: false,
     publish: false,
     archive: false,
+    restore: true,
   },
 };
 
@@ -102,54 +106,138 @@ export const ADMIN_CONTENT_PAGE_SIZE = 20;
  * dung có mã riêng cho cùng một luật, trừ `REVIEW_NOTE_REQUIRED` - cái đó dùng
  * chung vì luật và câu thông báo y hệt nhau.
  */
-export const CONTENT_ERROR_MESSAGES: Record<string, string> = {
-  REVIEW_NOTE_REQUIRED: "Phải ghi rõ lý do khi trả lại.",
+export const CONTENT_ERROR_MESSAGES: Record<string, Words> = {
+  REVIEW_NOTE_REQUIRED: {
+    vi: "Phải ghi rõ lý do khi trả lại.",
+    en: "A reason is required when returning it.",
+  },
 
-  FLASHCARD_SET_EMPTY: "Bộ thẻ chưa có thẻ nào.",
-  FLASHCARD_SET_NOT_DRAFT:
-    "Bộ thẻ này không còn là bản nháp nên không phát hành hay nhập thêm được.",
-  FLASHCARD_SET_NOT_EDITABLE:
-    "Bộ thẻ đang chờ duyệt hoặc đã lưu trữ nên không thêm thẻ được.",
-  FLASHCARD_SET_LIVE_ADMIN_ONLY:
-    "Bộ thẻ đã phát hành - chỉ quản trị viên được thêm thẻ.",
-  FLASHCARD_SET_NOT_SUBMITTABLE:
-    "Chỉ gửi duyệt được bộ thẻ đang là bản nháp hoặc bị trả lại.",
-  FLASHCARD_SET_NOT_PENDING_REVIEW:
-    "Bộ thẻ này không còn chờ duyệt - có thể ai đó vừa xử lý.",
-  FLASHCARD_SET_ALREADY_ARCHIVED: "Bộ thẻ này đã được lưu trữ từ trước.",
+  FLASHCARD_SET_EMPTY: {
+    vi: "Bộ thẻ chưa có thẻ nào.",
+    en: "The set has no cards yet.",
+  },
+  FLASHCARD_SET_NOT_DRAFT: {
+    vi: "Bộ thẻ này không còn là bản nháp nên không phát hành hay nhập thêm được.",
+    en: "This set is no longer a draft, so it cannot be published or imported into.",
+  },
+  FLASHCARD_SET_NOT_EDITABLE: {
+    vi: "Bộ thẻ đang chờ duyệt hoặc đã lưu trữ nên không thêm thẻ được.",
+    en: "The set is awaiting review or archived, so cards cannot be added.",
+  },
+  FLASHCARD_SET_LIVE_ADMIN_ONLY: {
+    vi: "Bộ thẻ đã phát hành - chỉ quản trị viên được thêm thẻ.",
+    en: "The set is published - only an administrator can add cards.",
+  },
+  FLASHCARD_SET_NOT_SUBMITTABLE: {
+    vi: "Chỉ gửi duyệt được bộ thẻ đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned set can be submitted.",
+  },
+  FLASHCARD_SET_NOT_PENDING_REVIEW: {
+    vi: "Bộ thẻ này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+    en: "This set is no longer awaiting review - someone may have just handled it.",
+  },
+  FLASHCARD_SET_ALREADY_ARCHIVED: {
+    vi: "Bộ thẻ này đã được lưu trữ từ trước.",
+    en: "This set was already archived.",
+  },
+  FLASHCARD_SET_NOT_ARCHIVED: {
+    vi: "Chỉ khôi phục được bộ thẻ đã lưu trữ.",
+    en: "Only an archived set can be restored.",
+  },
 
-  QUIZ_EMPTY: "Bài trắc nghiệm chưa có câu hỏi nào.",
-  QUIZ_ZERO_POINTS:
-    "Mọi câu hỏi đều 0 điểm nên không chấm được. Gán điểm rồi thử lại.",
-  QUIZ_NOT_DRAFT: "Chỉ phát hành được bài đang là bản nháp.",
-  QUIZ_NOT_EDITABLE: "Chỉ sửa được bài đang là bản nháp hoặc bị trả lại.",
-  QUIZ_NOT_SUBMITTABLE:
-    "Chỉ gửi duyệt được bài đang là bản nháp hoặc bị trả lại.",
-  QUIZ_NOT_PENDING_REVIEW:
-    "Bài này không còn chờ duyệt - có thể ai đó vừa xử lý.",
-  QUIZ_ALREADY_ARCHIVED: "Bài này đã được lưu trữ từ trước.",
+  QUIZ_EMPTY: {
+    vi: "Bài trắc nghiệm chưa có câu hỏi nào.",
+    en: "The quiz has no questions yet.",
+  },
+  QUIZ_ZERO_POINTS: {
+    vi: "Mọi câu hỏi đều 0 điểm nên không chấm được. Gán điểm rồi thử lại.",
+    en: "Every question is worth 0 points, so it cannot be scored. Assign points and try again.",
+  },
+  QUIZ_NOT_DRAFT: {
+    vi: "Chỉ phát hành được bài đang là bản nháp.",
+    en: "Only a draft can be published.",
+  },
+  QUIZ_NOT_EDITABLE: {
+    vi: "Chỉ sửa được bài đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned quiz can be edited.",
+  },
+  QUIZ_NOT_SUBMITTABLE: {
+    vi: "Chỉ gửi duyệt được bài đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned quiz can be submitted.",
+  },
+  QUIZ_NOT_PENDING_REVIEW: {
+    vi: "Bài này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+    en: "This quiz is no longer awaiting review - someone may have just handled it.",
+  },
+  QUIZ_ALREADY_ARCHIVED: {
+    vi: "Bài này đã được lưu trữ từ trước.",
+    en: "This quiz was already archived.",
+  },
+  QUIZ_NOT_ARCHIVED: {
+    vi: "Chỉ khôi phục được bài đã lưu trữ.",
+    en: "Only an archived quiz can be restored.",
+  },
 
-  DICTATION_LESSON_EMPTY: "Bài nghe chép chưa có câu nào.",
-  DICTATION_LESSON_NOT_DRAFT: "Chỉ phát hành được bài đang là bản nháp.",
-  DICTATION_LESSON_NOT_EDITABLE:
-    "Bài đang chờ duyệt hoặc đã lưu trữ nên không thêm câu được.",
-  DICTATION_LESSON_LIVE_ADMIN_ONLY:
-    "Bài đã phát hành - chỉ quản trị viên được thêm câu.",
-  DICTATION_LESSON_NOT_SUBMITTABLE:
-    "Chỉ gửi duyệt được bài đang là bản nháp hoặc bị trả lại.",
-  DICTATION_LESSON_NOT_PENDING_REVIEW:
-    "Bài này không còn chờ duyệt - có thể ai đó vừa xử lý.",
-  DICTATION_LESSON_ALREADY_ARCHIVED: "Bài này đã được lưu trữ từ trước.",
+  DICTATION_LESSON_EMPTY: {
+    vi: "Bài nghe chép chưa có câu nào.",
+    en: "The lesson has no sentences yet.",
+  },
+  DICTATION_LESSON_NOT_DRAFT: {
+    vi: "Chỉ phát hành được bài đang là bản nháp.",
+    en: "Only a draft can be published.",
+  },
+  DICTATION_LESSON_NOT_EDITABLE: {
+    vi: "Bài đang chờ duyệt hoặc đã lưu trữ nên không thêm câu được.",
+    en: "The lesson is awaiting review or archived, so sentences cannot be added.",
+  },
+  DICTATION_LESSON_LIVE_ADMIN_ONLY: {
+    vi: "Bài đã phát hành - chỉ quản trị viên được thêm câu.",
+    en: "The lesson is published - only an administrator can add sentences.",
+  },
+  DICTATION_LESSON_NOT_SUBMITTABLE: {
+    vi: "Chỉ gửi duyệt được bài đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned lesson can be submitted.",
+  },
+  DICTATION_LESSON_NOT_PENDING_REVIEW: {
+    vi: "Bài này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+    en: "This lesson is no longer awaiting review - someone may have just handled it.",
+  },
+  DICTATION_LESSON_ALREADY_ARCHIVED: {
+    vi: "Bài này đã được lưu trữ từ trước.",
+    en: "This lesson was already archived.",
+  },
+  DICTATION_LESSON_NOT_ARCHIVED: {
+    vi: "Chỉ khôi phục được bài đã lưu trữ.",
+    en: "Only an archived lesson can be restored.",
+  },
 
-  SPEAKING_PROMPT_NO_REFERENCE_TEXT:
-    "Câu luyện nói phải có câu mẫu để người học đọc theo.",
-  SPEAKING_PROMPT_NOT_DRAFT: "Chỉ phát hành được câu đang là bản nháp.",
-  SPEAKING_PROMPT_NOT_SUBMITTABLE:
-    "Chỉ gửi duyệt được câu đang là bản nháp hoặc bị trả lại.",
-  SPEAKING_PROMPT_NOT_PENDING_REVIEW:
-    "Câu này không còn chờ duyệt - có thể ai đó vừa xử lý.",
-  SPEAKING_PROMPT_ALREADY_ARCHIVED: "Câu này đã được lưu trữ từ trước.",
+  SPEAKING_PROMPT_NO_REFERENCE_TEXT: {
+    vi: "Câu luyện nói phải có câu mẫu để người học đọc theo.",
+    en: "A speaking prompt needs a model sentence for the learner to read.",
+  },
+  SPEAKING_PROMPT_NOT_DRAFT: {
+    vi: "Chỉ phát hành được câu đang là bản nháp.",
+    en: "Only a draft can be published.",
+  },
+  SPEAKING_PROMPT_NOT_SUBMITTABLE: {
+    vi: "Chỉ gửi duyệt được câu đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned prompt can be submitted.",
+  },
+  SPEAKING_PROMPT_NOT_PENDING_REVIEW: {
+    vi: "Câu này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+    en: "This prompt is no longer awaiting review - someone may have just handled it.",
+  },
+  SPEAKING_PROMPT_ALREADY_ARCHIVED: {
+    vi: "Câu này đã được lưu trữ từ trước.",
+    en: "This prompt was already archived.",
+  },
+  SPEAKING_PROMPT_NOT_ARCHIVED: {
+    vi: "Chỉ khôi phục được câu đã lưu trữ.",
+    en: "Only an archived prompt can be restored.",
+  },
 };
 
-export const CONTENT_GENERIC_ERROR =
-  "Thao tác không thành công. Thử lại hoặc kiểm tra quyền truy cập.";
+export const CONTENT_GENERIC_ERROR: Words = {
+  vi: "Thao tác không thành công. Thử lại hoặc kiểm tra quyền truy cập.",
+  en: "That did not work. Try again or check your access.",
+};

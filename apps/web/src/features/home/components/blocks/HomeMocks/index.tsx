@@ -42,7 +42,7 @@ export function FlashcardMock() {
 }
 
 export function DictationMock() {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   return (
     <div className={classes.panel}>
       <Group gap="sm" wrap="nowrap">
@@ -75,7 +75,13 @@ export function DictationMock() {
           86%
         </Text>
       </Group>
-      <Progress value={86} color="teal" size="sm" radius="xl" />
+      <Progress
+        aria-label={isVi ? "Độ chính xác" : "Accuracy"}
+        value={86}
+        color="teal"
+        size="sm"
+        radius="xl"
+      />
     </div>
   );
 }
@@ -117,6 +123,7 @@ export function ExamResultMock() {
               </Text>
             </Group>
             <Progress
+              aria-label={section.label}
               value={section.value}
               color="navy"
               size="sm"
@@ -168,7 +175,13 @@ export function DeckListMock() {
                 {t.home.mockDueSuffix.replace("{count}", String(deck.due))}
               </Text>
             </Group>
-            <Progress value={deck.done} color="teal" size="sm" radius="xl" />
+            <Progress
+              aria-label={deck.name}
+              value={deck.done}
+              color="teal"
+              size="sm"
+              radius="xl"
+            />
           </Stack>
         ))}
       </Stack>

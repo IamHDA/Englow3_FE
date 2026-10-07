@@ -39,7 +39,7 @@ export function ExamSittingHeader({
   onExitClick,
   submitDisabled = false,
 }: ExamSittingHeaderProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const progressPercent =
     totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 
@@ -108,6 +108,7 @@ export function ExamSittingHeader({
                 </Text>
               </Flex>
               <Progress
+                aria-label={isVi ? "Số câu đã trả lời" : "Questions answered"}
                 value={progressPercent}
                 size="xs"
                 color="navy.9"

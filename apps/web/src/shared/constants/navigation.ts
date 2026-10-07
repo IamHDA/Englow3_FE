@@ -40,6 +40,18 @@ export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
       icon: Layers,
     },
     {
+      label: "Writing",
+      description: nav.writingDesc,
+      href: "/study/writing",
+      icon: ClipboardCheck,
+    },
+    {
+      label: "Speaking",
+      description: nav.speakingDesc,
+      href: "/study/speaking",
+      icon: Mic,
+    },
+    {
       label: nav.dictation,
       description: nav.dictationDesc,
       href: "/study/dictation",
@@ -50,6 +62,12 @@ export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
       description: nav.dailyPathDesc,
       href: "/study/daily-path",
       icon: Route,
+    },
+    {
+      label: nav.myWork,
+      description: nav.myWorkDesc,
+      href: "/study/assessments",
+      icon: ClipboardCheck,
     },
   ];
 }

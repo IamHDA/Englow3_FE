@@ -93,6 +93,7 @@ export function DailyQuestsCard({ quests }: DailyQuestsCardProps) {
                 </Group>
 
                 <Progress
+                  aria-label={isVi ? "Tiến độ nhiệm vụ" : "Quest progress"}
                   value={percent}
                   size="xs"
                   color={quest.completed ? "teal" : "indigo"}

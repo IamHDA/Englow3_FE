@@ -27,7 +27,7 @@ export interface FlatQuestionItem {
 export interface QuestionPaletteProps {
   questions: FlatQuestionItem[];
   currentIndex: number;
-  answers: Record<string, string>; // questionId -> optionId
+  answers: Record<string, string | string[]>; // questionId -> optionId
   flaggedQuestionIds: Set<string>;
   onSelectQuestion: (index: number) => void;
 }

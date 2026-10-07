@@ -2,6 +2,23 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+For local acceptance testing, run the prebuilt app from the monorepo root:
+
+```powershell
+pnpm --filter web preview:local
+```
+
+Start the backend (8080) and BFF (4000) separately, and configure
+`NEXT_PUBLIC_BFF_GRAPHQL_URL` before building. This mode avoids compiling routes
+when opening them; use `dev` when actively editing code. Stop the other frontend
+process before starting either mode on port 3000.
+
+Writing/Speaking starts with an empty catalog. Admin/Staff can use **Tạo đề và
+chọn mẫu** at `/admin/assessments` to fill one of five original starter prompts,
+then save, submit and approve it through the normal workflow. Choosing a template
+does not create database rows or submissions automatically. Staff only sees tasks
+they authored; learners see published tasks.
+
 First, run the development server:
 
 ```bash

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Anchor, Box, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
 
@@ -36,13 +38,16 @@ export function CurrentLevelStep({
   onContinue,
   onTakePlacementTest,
 }: CurrentLevelStepProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const copy = isVi ? CURRENT_LEVEL_COPY.vi : CURRENT_LEVEL_COPY.en;
   const [selected, setSelected] = useState<CefrLevel | null>(initialLevel);
 
   return (
     <OnboardingStepShell
       step={OnboardingStep.CURRENT_LEVEL}
-      title={CURRENT_LEVEL_COPY.title}
-      subtitle={CURRENT_LEVEL_COPY.subtitle}
+      title={copy.title}
+      subtitle={copy.subtitle}
       footer={
         <OnboardingStepFooter
           pending={pending}
@@ -52,13 +57,16 @@ export function CurrentLevelStep({
         />
       }
     >
-      <Box role="group" aria-label="Trình độ tiếng Anh hiện tại">
+      <Box
+        role="group"
+        aria-label={tr("Trình độ tiếng Anh hiện tại", "Current English level")}
+      >
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={20}>
           {CEFR_LEVEL_CHOICES.map((choice) => (
             <OnboardingChoiceTile
               key={choice.level}
-              label={choice.label}
-              description={choice.description}
+              label={isVi ? choice.label.vi : choice.label.en}
+              description={isVi ? choice.description.vi : choice.description.en}
               selected={selected === choice.level}
               disabled={pending}
               onSelect={() => setSelected(choice.level)}
@@ -68,7 +76,7 @@ export function CurrentLevelStep({
       </Box>
 
       <Text size="sm" c="ink.6" ta="center" mt={18}>
-        Chưa chắc mình ở đâu?{" "}
+        {tr("Chưa chắc mình ở đâu?", "Not sure where you are?")}{" "}
         <Anchor
           component="button"
           type="button"
@@ -76,7 +84,7 @@ export function CurrentLevelStep({
           disabled={pending}
           fw={700}
         >
-          Làm bài kiểm tra đầu vào
+          {tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
         </Anchor>
       </Text>
     </OnboardingStepShell>

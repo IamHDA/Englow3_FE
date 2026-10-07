@@ -11,9 +11,17 @@ export const POLL_TIMEOUT_MS = 90_000;
 export const MAX_MESSAGE_LENGTH = 4_000;
 
 /** Gợi ý mở đầu cho người chưa biết hỏi gì. */
-export const TUTOR_STARTERS = [
-  "Phân biệt 'make' và 'do' giúp mình.",
-  "Sửa câu này: He don't like coffee.",
-  "Khi nào dùng thì hiện tại hoàn thành?",
-  "Đóng vai lễ tân khách sạn để mình luyện hội thoại.",
-] as const;
+export const TUTOR_STARTERS = {
+  vi: [
+    "Phân biệt 'make' và 'do' giúp mình.",
+    "Sửa câu này: He don't like coffee.",
+    "Khi nào dùng thì hiện tại hoàn thành?",
+    "Đóng vai lễ tân khách sạn để mình luyện hội thoại.",
+  ],
+  en: [
+    "What is the difference between 'make' and 'do'?",
+    "Correct this sentence: He don't like coffee.",
+    "When do I use the present perfect?",
+    "Play a hotel receptionist so I can practise a conversation.",
+  ],
+} as const;

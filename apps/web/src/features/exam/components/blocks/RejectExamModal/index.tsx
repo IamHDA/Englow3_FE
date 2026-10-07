@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Button, Group, Modal, Stack, Text, Textarea } from "@mantine/core";
 import { useState } from "react";
 
@@ -26,6 +28,8 @@ export function RejectExamModal({
   onCancel,
   onConfirm,
 }: RejectExamModalProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const [note, setNote] = useState("");
   const trimmed = note.trim();
 
@@ -39,20 +43,35 @@ export function RejectExamModal({
     <Modal
       opened={examTitle !== null}
       onClose={handleClose}
-      title="Trả lại đề thi"
+      title={tr("Trả lại đề thi", "Return the exam")}
       radius="lg"
       centered
     >
       <Stack gap="md">
         <Text size="sm" c="ink.7">
-          Đề <strong>{examTitle}</strong> sẽ về trạng thái bị trả lại. Người
-          viết sẽ thấy ghi chú này và sửa rồi gửi duyệt lại.
+          {isVi ? (
+            <>
+              Đề <strong>{examTitle}</strong> sẽ về trạng thái bị trả lại. Người
+              viết sẽ thấy ghi chú này và sửa rồi gửi duyệt lại.
+            </>
+          ) : (
+            <>
+              <strong>{examTitle}</strong> goes back as returned. The author
+              sees this note, fixes it and submits again.
+            </>
+          )}
         </Text>
 
         <Textarea
-          label="Lý do trả lại"
-          description="Nói rõ phải sửa gì, ví dụ: Phần 3 chưa có file nghe."
-          placeholder="Phần 3 chưa có file nghe."
+          label={tr("Lý do trả lại", "Reason")}
+          description={tr(
+            "Nói rõ phải sửa gì, ví dụ: Phần 3 chưa có file nghe.",
+            "Say what to fix, for example: Part 3 has no audio file.",
+          )}
+          placeholder={tr(
+            "Phần 3 chưa có file nghe.",
+            "Part 3 has no audio file.",
+          )}
           value={note}
           disabled={submitting}
           onChange={(event) => setNote(event.currentTarget.value)}
@@ -66,7 +85,7 @@ export function RejectExamModal({
 
         <Group justify="flex-end">
           <Button variant="default" radius="md" onClick={handleClose}>
-            Huỷ
+            {tr("Huỷ", "Cancel")}
           </Button>
           <Button
             radius="md"
@@ -78,7 +97,7 @@ export function RejectExamModal({
               if (succeeded === true) setNote("");
             }}
           >
-            Trả lại đề
+            {tr("Trả lại đề", "Return exam")}
           </Button>
         </Group>
       </Stack>

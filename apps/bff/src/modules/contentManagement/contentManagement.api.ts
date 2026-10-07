@@ -131,4 +131,11 @@ export class ContentManagementApi {
   ): Promise<ContentReviewResponse> {
     return this.contentAction(kind, id, "archive");
   }
+
+  restoreContent(
+    kind: ContentKind,
+    id: string,
+  ): Promise<ContentReviewResponse> {
+    return this.contentAction(kind, id, "restore");
+  }
 }

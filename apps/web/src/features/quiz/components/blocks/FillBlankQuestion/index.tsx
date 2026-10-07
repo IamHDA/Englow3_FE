@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Alert, Card, Group, Stack, Text, TextInput } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import React from "react";
@@ -16,6 +18,8 @@ export function FillBlankQuestion({
   value = "",
   onChange,
 }: FillBlankQuestionProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   return (
     <Stack gap="md">
       <Text fw={600} fz="md" c="dark.9" style={{ whiteSpace: "pre-line" }}>
@@ -36,7 +40,7 @@ export function FillBlankQuestion({
           )}
 
           <TextInput
-            placeholder="Nhập từ..."
+            placeholder={tr("Nhập từ...", "Type the word...")}
             value={value}
             onChange={(e) => onChange(e.currentTarget.value)}
             style={{ width: 140 }}
@@ -61,11 +65,13 @@ export function FillBlankQuestion({
       <Alert
         variant="light"
         color="blue"
-        title="Quy tắc chấm điểm"
+        title={tr("Quy tắc chấm điểm", "How it is scored")}
         icon={<IconInfoCircle size={16} />}
       >
-        Hệ thống không phân biệt chữ hoa / chữ thường. Hãy kiểm tra kỹ chính tả
-        trước khi chuyển sang câu tiếp theo.
+        {tr(
+          "Hệ thống không phân biệt chữ hoa / chữ thường. Hãy kiểm tra kỹ chính tả trước khi chuyển sang câu tiếp theo.",
+          "Upper and lower case count the same. Check the spelling before moving on.",
+        )}
       </Alert>
     </Stack>
   );

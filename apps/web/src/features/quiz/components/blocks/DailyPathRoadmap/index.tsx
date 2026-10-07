@@ -43,6 +43,8 @@ const KIND_ICONS = {
   [DailyTaskKind.FLASHCARD_REVIEW]: IconBook,
   [DailyTaskKind.DICTATION]: IconHeadphones,
   [DailyTaskKind.QUIZ]: IconSparkles,
+  [DailyTaskKind.WRITING]: IconBook,
+  [DailyTaskKind.SPEAKING]: IconHeadphones,
 };
 
 /**
@@ -221,6 +223,7 @@ export function DailyPathRoadmap({ tasks }: DailyPathRoadmapProps) {
                           )}
                         </Text>
                         <Progress
+                          aria-label={task.title}
                           value={task.completionPercent}
                           size="xs"
                           color={isCurrent ? "indigo" : "gray"}

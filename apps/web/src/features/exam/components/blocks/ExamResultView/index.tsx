@@ -91,17 +91,12 @@ export function ExamResultView({
     const q = qData?.question;
     const review = reviewMap.get(item.questionId);
 
-    const selectedOptionId = review?.selectedOptionIds[0];
-    const correctOptionId = review?.correctOptionIds[0];
-
     return {
       item,
       question: q,
       review,
       partTitle: qData?.partTitle || "",
       sectionType: qData?.sectionType || "",
-      selectedOption: q?.options.find((o) => o.id === selectedOptionId),
-      correctOption: q?.options.find((o) => o.id === correctOptionId),
       isAnswered: !isSkipped(review),
       isCorrect: review?.correct === true,
     };
@@ -318,7 +313,6 @@ export function ExamResultView({
                   question,
                   review,
                   partTitle,
-                  selectedOption,
                   isCorrect,
                   isAnswered,
                 }) => {
@@ -396,7 +390,8 @@ export function ExamResultView({
                           <Stack gap="xs">
                             {question.options.map((opt, optIdx) => {
                               const isUserChoice =
-                                opt.id === selectedOption?.id;
+                                review?.selectedOptionIds.includes(opt.id) ===
+                                true;
                               const isCorrectOpt =
                                 optionReview.get(opt.id)?.correct === true;
                               const letter = String.fromCharCode(65 + optIdx);

@@ -7,11 +7,14 @@
  * input's invalid state. Text input backgrounds are not here - those go
  * through `--input-bg`/`--input-bd`, set per-field via classNames instead,
  * since that pair is scoped to `[data-variant]` and wins the same fight.
+ * `--mantine-color-dimmed` is every `c="dimmed"`: Mantine's gray-6 (#868e96)
+ * is 3.3:1 on white, below WCAG AA for body text; ink-6 clears it.
  */
 :root[data-mantine-color-scheme="light"] {
   --mantine-color-default-hover: var(--mantine-color-ink-0);
   --mantine-color-default-border: var(--mantine-color-ink-2);
   --mantine-color-error: var(--mantine-color-warn-6);
+  --mantine-color-dimmed: var(--mantine-color-ink-6);
 }
 
 html,

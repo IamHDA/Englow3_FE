@@ -15,6 +15,7 @@ import {
 import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -43,37 +44,83 @@ function isValidCalendarDate(day: string, month: string, year: string) {
   );
 }
 
-const registerSchema = z
-  .object({
-    fullName: z.string().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
-    nickname: z
-      .string()
-      .regex(
-        /^[a-zA-Z0-9_]{3,20}$/,
-        "Nickname chỉ gồm chữ cái, số, dấu gạch dưới, 3–20 ký tự",
-      ),
-    email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
-    password: z
-      .string()
-      .min(8, "Mật khẩu tối thiểu 8 ký tự")
-      .regex(/[A-Z]/, "Mật khẩu cần ít nhất 1 chữ hoa")
-      .regex(/[a-z]/, "Mật khẩu cần ít nhất 1 chữ thường")
-      .regex(/[^A-Za-z0-9]/, "Mật khẩu cần ít nhất 1 ký tự đặc biệt"),
-    birthDay: z.string().min(1, "Vui lòng chọn ngày sinh"),
-    birthMonth: z.string().min(1, "Vui lòng chọn tháng sinh"),
-    birthYear: z.string().min(1, "Vui lòng chọn năm sinh"),
-    gender: z.enum(Gender),
-    acceptedTerms: z
-      .boolean()
-      .refine((v) => v, "Bạn cần đồng ý với điều khoản để tiếp tục"),
-  })
-  .refine(
-    ({ birthDay, birthMonth, birthYear }) =>
-      isValidCalendarDate(birthDay, birthMonth, birthYear),
-    { message: "Ngày sinh không hợp lệ", path: ["birthDay"] },
-  );
+function registerSchema(isVi: boolean) {
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  return z
+    .object({
+      fullName: z
+        .string()
+        .min(
+          2,
+          tr(
+            "Họ và tên phải có ít nhất 2 ký tự",
+            "Full name needs at least 2 characters",
+          ),
+        ),
+      nickname: z
+        .string()
+        .regex(
+          /^[a-zA-Z0-9_]{3,20}$/,
+          tr(
+            "Nickname chỉ gồm chữ cái, số, dấu gạch dưới, 3–20 ký tự",
+            "Nickname: letters, digits and underscores, 3–20 characters",
+          ),
+        ),
+      email: z
+        .string()
+        .min(1, tr("Vui lòng nhập email", "Enter your email"))
+        .email(tr("Email không hợp lệ", "That email is not valid")),
+      password: z
+        .string()
+        .min(8, tr("Mật khẩu tối thiểu 8 ký tự", "At least 8 characters"))
+        .regex(
+          /[A-Z]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 chữ hoa",
+            "Needs at least 1 uppercase letter",
+          ),
+        )
+        .regex(
+          /[a-z]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 chữ thường",
+            "Needs at least 1 lowercase letter",
+          ),
+        )
+        .regex(
+          /[^A-Za-z0-9]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 ký tự đặc biệt",
+            "Needs at least 1 special character",
+          ),
+        ),
+      birthDay: z.string().min(1, tr("Vui lòng chọn ngày sinh", "Pick a day")),
+      birthMonth: z
+        .string()
+        .min(1, tr("Vui lòng chọn tháng sinh", "Pick a month")),
+      birthYear: z.string().min(1, tr("Vui lòng chọn năm sinh", "Pick a year")),
+      gender: z.enum(Gender),
+      acceptedTerms: z
+        .boolean()
+        .refine(
+          (v) => v,
+          tr(
+            "Bạn cần đồng ý với điều khoản để tiếp tục",
+            "Accept the terms to continue",
+          ),
+        ),
+    })
+    .refine(
+      ({ birthDay, birthMonth, birthYear }) =>
+        isValidCalendarDate(birthDay, birthMonth, birthYear),
+      {
+        message: tr("Ngày sinh không hợp lệ", "That date does not exist"),
+        path: ["birthDay"],
+      },
+    );
+}
 
-type RegisterValues = z.infer<typeof registerSchema>;
+type RegisterValues = z.infer<ReturnType<typeof registerSchema>>;
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -81,7 +128,8 @@ type RegisterFormProps = {
 
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
+  const schema = useMemo(() => registerSchema(isVi), [isVi]);
   const birthMonthOptions = getBirthMonthOptions(t);
   const genderOptions = getGenderOptions(t);
 
@@ -90,7 +138,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
       nickname: "",
@@ -122,20 +170,27 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       if (error) {
         notifications.show({
           color: "warn",
-          title: "Không thể tạo tài khoản",
-          message: authErrorMessage(error),
+          title: isVi
+            ? "Không thể tạo tài khoản"
+            : "Could not create the account",
+          message: authErrorMessage(error, isVi),
         });
         return;
       }
       notifications.show({
         color: "green",
-        title: "Kiểm tra email",
-        message: "Chúng tôi đã gửi email xác nhận tới hộp thư của bạn.",
+        title: isVi ? "Kiểm tra email" : "Check your email",
+        message: isVi
+          ? "Chúng tôi đã gửi email xác nhận tới hộp thư của bạn."
+          : "We sent a confirmation email to your inbox.",
       });
       router.refresh();
       onSuccess();
     } catch {
-      notifications.show({ color: "warn", message: authErrorMessage(null) });
+      notifications.show({
+        color: "warn",
+        message: authErrorMessage(null, isVi),
+      });
     }
   }
 

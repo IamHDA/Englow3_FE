@@ -5,12 +5,14 @@ import { ExamStatus, ExamType } from "@/lib/graphql/generated";
  * thêm một trạng thái mới vào schema là lỗi biên dịch chứ không phải một ô
  * trống lúc chạy.
  */
-export const EXAM_STATUS_LABELS: Record<ExamStatus, string> = {
-  [ExamStatus.DRAFT]: "Bản nháp",
-  [ExamStatus.PENDING_REVIEW]: "Chờ duyệt",
-  [ExamStatus.REJECTED]: "Bị trả lại",
-  [ExamStatus.PUBLISHED]: "Đã phát hành",
-  [ExamStatus.ARCHIVED]: "Đã lưu trữ",
+type Words = { vi: string; en: string };
+
+export const EXAM_STATUS_LABELS: Record<ExamStatus, Words> = {
+  [ExamStatus.DRAFT]: { vi: "Bản nháp", en: "Draft" },
+  [ExamStatus.PENDING_REVIEW]: { vi: "Chờ duyệt", en: "Awaiting review" },
+  [ExamStatus.REJECTED]: { vi: "Bị trả lại", en: "Returned" },
+  [ExamStatus.PUBLISHED]: { vi: "Đã phát hành", en: "Published" },
+  [ExamStatus.ARCHIVED]: { vi: "Đã lưu trữ", en: "Archived" },
 };
 
 export const EXAM_STATUS_COLORS: Record<ExamStatus, string> = {
@@ -23,9 +25,9 @@ export const EXAM_STATUS_COLORS: Record<ExamStatus, string> = {
   [ExamStatus.ARCHIVED]: "orange",
 };
 
-export const EXAM_TYPE_LABELS: Record<ExamType, string> = {
-  [ExamType.MOCK]: "Thi thử",
-  [ExamType.PLACEMENT]: "Xếp trình độ",
+export const EXAM_TYPE_LABELS: Record<ExamType, Words> = {
+  [ExamType.MOCK]: { vi: "Thi thử", en: "Mock test" },
+  [ExamType.PLACEMENT]: { vi: "Xếp trình độ", en: "Placement" },
 };
 
 export const ADMIN_EXAMS_PAGE_SIZE = 20;
@@ -34,23 +36,59 @@ export const ADMIN_EXAMS_PAGE_SIZE = 20;
  * Backend từ chối phát hành kèm mã miền ổn định ở `extensions.backendCode` -
  * dịch sang lời đọc được thay vì hiện thông báo gốc của server.
  */
-export const ADMIN_EXAM_ERROR_MESSAGES: Record<string, string> = {
-  EXAM_NOT_DRAFT: "Chỉ phát hành được đề đang ở trạng thái bản nháp.",
-  EXAM_NOT_EDITABLE: "Chỉ sửa được đề đang là bản nháp hoặc bị trả lại.",
-  STORAGE_UNAVAILABLE: "Kho lưu trữ tệp đang lỗi. Thử tải lên lại sau ít phút.",
-  EXAM_NOT_SUBMITTABLE:
-    "Chỉ gửi duyệt được đề đang là bản nháp hoặc bị trả lại.",
-  EXAM_NOT_PENDING_REVIEW:
-    "Đề này không còn chờ duyệt - có thể ai đó vừa xử lý.",
-  EXAM_REVIEW_NOTE_REQUIRED: "Phải ghi rõ lý do khi trả lại đề.",
-  EXAM_SCORE_MISMATCH:
-    "Tổng điểm các phần không khớp thang điểm tối đa của đề. Sửa lại rồi phát hành.",
-  EXAM_EMPTY: "Đề chưa có phần hoặc câu hỏi nào.",
-  EXAM_HAS_NO_SECTION: "Đề chưa có phần nào.",
-  EXAM_HAS_NO_QUESTION: "Đề chưa có câu hỏi nào.",
-  EXAM_UNGRADEABLE_QUESTION:
-    "Có câu hỏi chưa chấm được (thiếu đáp án đúng hoặc thiếu điểm).",
-  EXAM_ALREADY_ARCHIVED: "Đề này đã được lưu trữ từ trước.",
+export const ADMIN_EXAM_ERROR_MESSAGES: Record<string, Words> = {
+  EXAM_NOT_DRAFT: {
+    vi: "Chỉ phát hành được đề đang ở trạng thái bản nháp.",
+    en: "Only a draft exam can be published.",
+  },
+  EXAM_NOT_EDITABLE: {
+    vi: "Chỉ sửa được đề đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned exam can be edited.",
+  },
+  STORAGE_UNAVAILABLE: {
+    vi: "Kho lưu trữ tệp đang lỗi. Thử tải lên lại sau ít phút.",
+    en: "File storage is failing. Try the upload again in a few minutes.",
+  },
+  EXAM_NOT_SUBMITTABLE: {
+    vi: "Chỉ gửi duyệt được đề đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned exam can be submitted.",
+  },
+  EXAM_NOT_PENDING_REVIEW: {
+    vi: "Đề này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+    en: "This exam is no longer awaiting review - someone may have just handled it.",
+  },
+  EXAM_REVIEW_NOTE_REQUIRED: {
+    vi: "Phải ghi rõ lý do khi trả lại đề.",
+    en: "A reason is required when returning an exam.",
+  },
+  EXAM_SCORE_MISMATCH: {
+    vi: "Tổng điểm các phần không khớp thang điểm tối đa của đề. Sửa lại rồi phát hành.",
+    en: "The section scores do not add up to the exam maximum. Fix them, then publish.",
+  },
+  EXAM_EMPTY: {
+    vi: "Đề chưa có phần hoặc câu hỏi nào.",
+    en: "The exam has no sections or questions yet.",
+  },
+  EXAM_HAS_NO_SECTION: {
+    vi: "Đề chưa có phần nào.",
+    en: "The exam has no sections yet.",
+  },
+  EXAM_HAS_NO_QUESTION: {
+    vi: "Đề chưa có câu hỏi nào.",
+    en: "The exam has no questions yet.",
+  },
+  EXAM_UNGRADEABLE_QUESTION: {
+    vi: "Có câu hỏi chưa chấm được (thiếu đáp án đúng hoặc thiếu điểm).",
+    en: "A question cannot be scored yet (no correct answer or no points).",
+  },
+  EXAM_ALREADY_ARCHIVED: {
+    vi: "Đề này đã được lưu trữ từ trước.",
+    en: "This exam was already archived.",
+  },
+  EXAM_NOT_ARCHIVED: {
+    vi: "Chỉ khôi phục được đề đã lưu trữ.",
+    en: "Only an archived exam can be restored.",
+  },
 };
 
 /**
@@ -71,6 +109,7 @@ export const EXAM_ACTIONS_BY_STATUS: Record<
     reject: boolean;
     publish: boolean;
     archive: boolean;
+    restore?: boolean;
   }
 > = {
   [ExamStatus.DRAFT]: {
@@ -107,8 +146,11 @@ export const EXAM_ACTIONS_BY_STATUS: Record<
     reject: false,
     publish: false,
     archive: false,
+    restore: true,
   },
 };
 
-export const ADMIN_EXAM_GENERIC_ERROR =
-  "Thao tác không thành công. Thử lại hoặc kiểm tra quyền truy cập.";
+export const ADMIN_EXAM_GENERIC_ERROR: Words = {
+  vi: "Thao tác không thành công. Thử lại hoặc kiểm tra quyền truy cập.",
+  en: "That did not work. Try again or check your access.",
+};

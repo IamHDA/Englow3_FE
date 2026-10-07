@@ -46,5 +46,9 @@ export const contentManagementResolvers = {
       ctx.requireToken();
       return ctx.apis.contentManagementApi.archiveContent(args.kind, args.id);
     },
+    restoreContent: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.contentManagementApi.restoreContent(args.kind, args.id);
+    },
   },
 } satisfies Resolvers;

@@ -20,6 +20,7 @@ import {
   useSetLearningGoalMutation,
   usePlacementExamLazyQuery,
 } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import { backendCodeOf } from "@/shared/network/loadError";
 
 import type {
@@ -36,11 +37,13 @@ import type {
  * hợp cụ thể. Trước đây hàm này đọc `error.graphQLErrors` - Apollo Client 4 đã
  * bỏ thuộc tính đó, nên mọi lỗi đều rơi về câu chung chung.
  */
-function messageForError(error: unknown): string {
+function messageForError(error: unknown, isVi: boolean): string {
   const backendCode = backendCodeOf(error);
-  return backendCode === null
-    ? ONBOARDING_GENERIC_ERROR
-    : (ONBOARDING_ERROR_MESSAGES[backendCode] ?? ONBOARDING_GENERIC_ERROR);
+  const words =
+    backendCode === null
+      ? ONBOARDING_GENERIC_ERROR
+      : (ONBOARDING_ERROR_MESSAGES[backendCode] ?? ONBOARDING_GENERIC_ERROR);
+  return isVi ? words.vi : words.en;
 }
 
 /**
@@ -57,6 +60,7 @@ export function useOnboardingActions() {
   const { applyOnboardingState } = useAccountProfile();
   const { close } = useOnboarding();
   const router = useRouter();
+  const { isVi } = useLanguage();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [selectPurposes, purposesState] = useSelectLearningPurposesMutation();
@@ -89,12 +93,12 @@ export function useOnboardingActions() {
       try {
         state = await mutate();
       } catch (error) {
-        setErrorMessage(messageForError(error));
+        setErrorMessage(messageForError(error, isVi));
         return;
       }
       if (state) applyOnboardingState(state);
     },
-    [applyOnboardingState],
+    [applyOnboardingState, isVi],
   );
 
   return {
@@ -149,16 +153,16 @@ export function useOnboardingActions() {
         const { data, error } = await loadPlacementExam();
 
         if (error || !data) {
-          setErrorMessage(messageForError(error));
+          setErrorMessage(messageForError(error, isVi));
           return;
         }
 
         close();
         router.push(`/exams/${data.placementExam.id}`);
       } catch (error) {
-        setErrorMessage(messageForError(error));
+        setErrorMessage(messageForError(error, isVi));
       }
-    }, [loadPlacementExam, close, router]),
+    }, [loadPlacementExam, close, router, isVi]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>
         run(async () => {

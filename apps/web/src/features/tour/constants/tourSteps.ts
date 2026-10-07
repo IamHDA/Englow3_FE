@@ -23,6 +23,18 @@ export const LEARNER_TOUR: readonly TourStep[] = [
     links: [{ href: "/", vi: "Trang chủ", en: "Home" }],
   },
   {
+    titleVi: "Luyện Writing và Speaking",
+    titleEn: "Practise Writing and Speaking",
+    bodyVi:
+      "Chọn đề đã xuất bản, lưu bài viết hoặc ghi âm câu trả lời rồi nộp để nhận điểm và góp ý theo 4 tiêu chí. Xem lại bài trong lịch sử luyện tập.",
+    bodyEn:
+      "Choose a published task, save your essay or record an answer, then submit for four-criterion feedback. Review responses in your practice history.",
+    links: [
+      { href: "/study/writing", vi: "Writing", en: "Writing" },
+      { href: "/study/speaking", vi: "Speaking", en: "Speaking" },
+    ],
+  },
+  {
     titleVi: "Theo lộ trình mỗi ngày",
     titleEn: "Follow your daily path",
     bodyVi:
@@ -40,7 +52,7 @@ export const LEARNER_TOUR: readonly TourStep[] = [
       "Review words with flashcards, check yourself with quizzes and practise listening through dictation.",
     links: [
       { href: "/study/flashcards", vi: "Flashcard", en: "Flashcards" },
-      { href: "/study/quiz", vi: "Quiz", en: "Quizzes" },
+      { href: "/study/daily-path?tab=quizzes", vi: "Quiz", en: "Quizzes" },
       { href: "/study/dictation", vi: "Dictation", en: "Dictation" },
     ],
   },
@@ -53,7 +65,7 @@ export const LEARNER_TOUR: readonly TourStep[] = [
       "Ask the AI tutor questions. Speaking practice lets you record and see pronunciation feedback when speech assessment is enabled.",
     links: [
       { href: "/ai-tutor", vi: "Gia sư AI", en: "AI tutor" },
-      { href: "/study/pronunciation", vi: "Luyện nói", en: "Speaking" },
+      { href: "/study/pronunciation", vi: "Phát âm", en: "Pronunciation" },
     ],
   },
   {
@@ -78,6 +90,21 @@ export const STAFF_TOUR: readonly TourStep[] = [
     bodyEn:
       "The administration overview shows drafts and items awaiting action.",
     links: [{ href: "/admin", vi: "Tổng quan", en: "Overview" }],
+  },
+  {
+    titleVi: "Soạn và chấm Writing / Speaking",
+    titleEn: "Author and assess Writing / Speaking",
+    bodyVi:
+      "Tạo đề viết hoặc nói, gửi admin duyệt và chấm bài nộp của những đề bạn phụ trách theo 4 tiêu chí.",
+    bodyEn:
+      "Create writing or speaking tasks, submit for approval and assess responses to your tasks using four criteria.",
+    links: [
+      {
+        href: "/admin/assessments",
+        vi: "Writing & Speaking",
+        en: "Writing & Speaking",
+      },
+    ],
   },
   {
     titleVi: "Soạn nội dung học",
@@ -112,6 +139,21 @@ export const ADMIN_TOUR: readonly TourStep[] = [
       "Xem số nội dung chờ duyệt và hoạt động học tập trên trang tổng quan.",
     bodyEn: "See pending reviews and learning activity in the overview.",
     links: [{ href: "/admin", vi: "Tổng quan", en: "Overview" }],
+  },
+  {
+    titleVi: "Duyệt đề và kiểm tra điểm",
+    titleEn: "Approve tasks and review grades",
+    bodyVi:
+      "Duyệt hoặc trả lại đề Writing / Speaking, theo dõi hàng chờ chấm và điều chỉnh kết quả khi cần.",
+    bodyEn:
+      "Approve or return Writing / Speaking tasks, monitor the grading queue and correct results when needed.",
+    links: [
+      {
+        href: "/admin/assessments",
+        vi: "Writing & Speaking",
+        en: "Writing & Speaking",
+      },
+    ],
   },
   {
     titleVi: "Duyệt nội dung học",

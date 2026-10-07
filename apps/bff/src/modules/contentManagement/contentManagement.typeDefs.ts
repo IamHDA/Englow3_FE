@@ -8,6 +8,8 @@ export const contentManagementTypeDefs = /* GraphQL */ `
     DICTATION_LESSON
     SPEAKING_PROMPT
     EXAM
+    WRITING_ASSESSMENT
+    SPEAKING_ASSESSMENT
   }
 
   type OverviewContentCounts {
@@ -23,18 +25,26 @@ export const contentManagementTypeDefs = /* GraphQL */ `
   """
   type AdminOverview {
     content: [OverviewContentCounts!]!
-    """Items of every kind waiting on review."""
+    """
+    Items of every kind waiting on review.
+    """
     pendingReviewTotal: Int!
     learners: Int!
-    """Learners who signed up within the period."""
+    """
+    Learners who signed up within the period.
+    """
     newLearners: Int!
-    """Learners who did anything within the period, each counted once."""
+    """
+    Learners who did anything within the period, each counted once.
+    """
     activeLearners: Int!
     cardReviews: Int!
     dictationSentences: Int!
     quizzesSubmitted: Int!
     examsSubmitted: Int!
-    """Days the activity figures cover."""
+    """
+    Days the activity figures cover.
+    """
     periodDays: Int!
   }
 
@@ -84,7 +94,9 @@ export const contentManagementTypeDefs = /* GraphQL */ `
     submittedForReviewAt: DateTime
     reviewedByUserId: ID
     reviewedAt: DateTime
-    """Why it came back, in the reviewer words. Required when rejecting."""
+    """
+    Why it came back, in the reviewer words. Required when rejecting.
+    """
     reviewNote: String
   }
 
@@ -111,7 +123,9 @@ export const contentManagementTypeDefs = /* GraphQL */ `
       size: Int = 20
     ): ContentReviewPage!
 
-    """Staff and administrators only."""
+    """
+    Staff and administrators only.
+    """
     adminOverview: AdminOverview!
   }
 
@@ -136,10 +150,22 @@ export const contentManagementTypeDefs = /* GraphQL */ `
     """
     rejectContent(kind: ContentKind!, id: ID!, note: String!): ContentReview!
 
-    """DRAFT -> PUBLISHED, skipping review. Administrators only."""
+    """
+    DRAFT -> PUBLISHED, skipping review. Administrators only.
+    """
     publishContent(kind: ContentKind!, id: ID!): ContentReview!
 
-    """Anything -> ARCHIVED. Administrators only. There is no delete."""
+    """
+    Anything -> ARCHIVED. Administrators only. There is no delete.
+    """
     archiveContent(kind: ContentKind!, id: ID!): ContentReview!
+
+    """
+    ARCHIVED -> back where it was: PUBLISHED if it had been published (it is
+    never edited, so it needs no second review), DRAFT otherwise.
+    Administrators only. Anything not archived fails with
+    extensions.backendCode: <KIND>_NOT_ARCHIVED.
+    """
+    restoreContent(kind: ContentKind!, id: ID!): ContentReview!
   }
 `;

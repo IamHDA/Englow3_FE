@@ -3,15 +3,22 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, Button, Flex, Stack, Text, TextInput } from "@mantine/core";
 import { MailCheck } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const forgotPasswordSchema = z.object({
-  email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
-});
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+function forgotPasswordSchema(isVi: boolean) {
+  return z.object({
+    email: z
+      .string()
+      .min(1, isVi ? "Vui lòng nhập email" : "Enter your email")
+      .email(isVi ? "Email không hợp lệ" : "That email is not valid"),
+  });
+}
+
+type ForgotPasswordValues = z.infer<ReturnType<typeof forgotPasswordSchema>>;
 
 /** Supabase will not send another link to the same address for a minute. */
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -25,6 +32,9 @@ type ForgotPasswordFormProps = {
 };
 
 export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const schema = useMemo(() => forgotPasswordSchema(isVi), [isVi]);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
@@ -35,7 +45,7 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordValues>({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: { email: "" },
   });
 
@@ -56,7 +66,12 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
       setSentTo(email);
       setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch {
-      setSendError("Không gửi được email. Kiểm tra kết nối rồi thử lại.");
+      setSendError(
+        tr(
+          "Không gửi được email. Kiểm tra kết nối rồi thử lại.",
+          "Could not send the email. Check the connection and try again.",
+        ),
+      );
     }
   }
 
@@ -74,15 +89,27 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
           color="teal"
           radius={12}
           icon={<MailCheck size={20} aria-hidden="true" />}
-          title="Đã gửi link đặt lại mật khẩu"
+          title={tr("Đã gửi link đặt lại mật khẩu", "Reset link sent")}
         >
           {/* Supabase answers the same whether or not the address has an
               account, so this does not claim that it does. */}
-          Nếu <b>{sentTo}</b> đã đăng ký Englow3, thư sẽ tới trong vài phút.
-          Link có hiệu lực trong 1 giờ và chỉ dùng được một lần.
+          {isVi ? (
+            <>
+              Nếu <b>{sentTo}</b> đã đăng ký Englow3, thư sẽ tới trong vài phút.
+              Link có hiệu lực trong 1 giờ và chỉ dùng được một lần.
+            </>
+          ) : (
+            <>
+              If <b>{sentTo}</b> has an Englow3 account, the email will arrive
+              within a few minutes. The link works for 1 hour, and only once.
+            </>
+          )}
         </Alert>
         <Text fz={13} c="ink.6">
-          Không thấy thư? Kiểm tra thư mục Spam hoặc Quảng cáo, hoặc gửi lại.
+          {tr(
+            "Không thấy thư? Kiểm tra thư mục Spam hoặc Quảng cáo, hoặc gửi lại.",
+            "No email? Check the Spam or Promotions folder, or send it again.",
+          )}
         </Text>
         {sendError && (
           <Text fz={13} c="warn.7" role="alert">
@@ -97,7 +124,9 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
           loading={resending}
           disabled={cooldown > 0}
         >
-          {cooldown > 0 ? `Gửi lại sau ${cooldown} giây` : "Gửi lại link"}
+          {cooldown > 0
+            ? tr(`Gửi lại sau ${cooldown} giây`, `Resend in ${cooldown}s`)
+            : tr("Gửi lại link", "Resend link")}
         </Button>
       </Stack>
     );
@@ -135,7 +164,7 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
         fz={16}
         fw={700}
       >
-        Gửi link đặt lại mật khẩu
+        {tr("Gửi link đặt lại mật khẩu", "Send reset link")}
       </Button>
     </Flex>
   );

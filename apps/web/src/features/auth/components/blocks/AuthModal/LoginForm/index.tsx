@@ -14,6 +14,7 @@ import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -24,13 +25,21 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
 
-const loginSchema = z.object({
-  email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
-  password: z.string().min(1, "Vui lòng nhập mật khẩu"),
-  rememberMe: z.boolean(),
-});
+function loginSchema(isVi: boolean) {
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  return z.object({
+    email: z
+      .string()
+      .min(1, tr("Vui lòng nhập email", "Enter your email"))
+      .email(tr("Email không hợp lệ", "That email is not valid")),
+    password: z
+      .string()
+      .min(1, tr("Vui lòng nhập mật khẩu", "Enter your password")),
+    rememberMe: z.boolean(),
+  });
+}
 
-type LoginValues = z.infer<typeof loginSchema>;
+type LoginValues = z.infer<ReturnType<typeof loginSchema>>;
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -40,13 +49,14 @@ type LoginFormProps = {
 
 export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
+  const schema = useMemo(() => loginSchema(isVi), [isVi]);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(schema),
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
@@ -59,8 +69,8 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
       if (error) {
         notifications.show({
           color: "warn",
-          title: "Không thể đăng nhập",
-          message: authErrorMessage(error),
+          title: isVi ? "Không thể đăng nhập" : "Could not sign in",
+          message: authErrorMessage(error, isVi),
         });
         return;
       }
@@ -77,7 +87,10 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
         router.refresh();
       }
     } catch {
-      notifications.show({ color: "warn", message: authErrorMessage(null) });
+      notifications.show({
+        color: "warn",
+        message: authErrorMessage(null, isVi),
+      });
     }
   }
 

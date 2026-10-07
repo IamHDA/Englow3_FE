@@ -188,6 +188,692 @@ export type ReportTutorMessageMutation = {
   };
 };
 
+export type AssessmentTaskFieldsFragment = {
+  id: string;
+  skill: Types.AssessmentSkill;
+  title: string;
+  taskType: string;
+  instructions: string;
+  rubricNotes: string | null;
+  sampleAnswer: string | null;
+  minimumWords: number;
+  timeLimitSeconds: number;
+  status: Types.AssessmentTaskStatus;
+  reviewNote: string | null;
+  version: number;
+};
+
+export type AssessmentAttemptFieldsFragment = {
+  id: string;
+  taskId: string;
+  skill: Types.AssessmentSkill;
+  status: Types.AssessmentAttemptStatus;
+  answerText: string;
+  audioUrl: string | null;
+  recognizedText: string | null;
+  report: string | null;
+  source: string | null;
+  errorCode: string | null;
+  wordCount: number;
+  version: number;
+  createdAt: string;
+  submittedAt: string | null;
+  assessedAt: string | null;
+  learnerId: string | null;
+  learnerName: string | null;
+  task: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentWorkloadQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AssessmentWorkloadQuery = {
+  assessmentWorkload: {
+    drafts: number;
+    rejected: number;
+    pendingReview: number;
+    published: number;
+    needsReview: number;
+    failed: number;
+    completed: number;
+  };
+};
+
+export type AssessmentAuthoringTaskDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentAuthoringTaskDetailQuery = {
+  authoringAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentReviewsQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentReviewsQuery = {
+  assessmentReviews: Array<{
+    id: string;
+    reviewerId: string;
+    reviewerName: string | null;
+    previousReport: string | null;
+    report: string;
+    note: string;
+    createdAt: string;
+  }>;
+};
+
+export type AssessmentCatalogQueryVariables = Exact<{
+  skill?: Types.AssessmentSkill | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentCatalogQuery = {
+  assessmentCapabilities: {
+    automaticWriting: boolean;
+    automaticSpeaking: boolean;
+    humanReview: boolean;
+  };
+  assessmentTasks: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    }>;
+  };
+};
+
+export type AssessmentTaskDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentTaskDetailQuery = {
+  assessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+  assessmentCapabilities: {
+    automaticWriting: boolean;
+    automaticSpeaking: boolean;
+    humanReview: boolean;
+  };
+};
+
+export type AssessmentAttemptDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentAttemptDetailQuery = {
+  assessmentAttempt: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentHistoryQueryVariables = Exact<{
+  taskId?: string | number | null | undefined;
+  skill?: Types.AssessmentSkill | null | undefined;
+  status?: Types.AssessmentAttemptStatus | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentHistoryQuery = {
+  assessmentHistory: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      taskId: string;
+      skill: Types.AssessmentSkill;
+      status: Types.AssessmentAttemptStatus;
+      answerText: string;
+      audioUrl: string | null;
+      recognizedText: string | null;
+      report: string | null;
+      source: string | null;
+      errorCode: string | null;
+      wordCount: number;
+      version: number;
+      createdAt: string;
+      submittedAt: string | null;
+      assessedAt: string | null;
+      learnerId: string | null;
+      learnerName: string | null;
+      task: {
+        id: string;
+        skill: Types.AssessmentSkill;
+        title: string;
+        taskType: string;
+        instructions: string;
+        rubricNotes: string | null;
+        sampleAnswer: string | null;
+        minimumWords: number;
+        timeLimitSeconds: number;
+        status: Types.AssessmentTaskStatus;
+        reviewNote: string | null;
+        version: number;
+      };
+    }>;
+  };
+};
+
+export type AssessmentAuthoringQueryVariables = Exact<{
+  skill?: Types.AssessmentSkill | null | undefined;
+  status?: Types.AssessmentTaskStatus | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentAuthoringQuery = {
+  authoringAssessmentTasks: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    }>;
+  };
+};
+
+export type AssessmentReviewQueueQueryVariables = Exact<{
+  status?: Types.AssessmentAttemptStatus | null | undefined;
+  skill?: Types.AssessmentSkill | null | undefined;
+  term?: string | null | undefined;
+  oldest?: boolean | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentReviewQueueQuery = {
+  assessmentSubmissions: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      id: string;
+      skill: Types.AssessmentSkill;
+      status: Types.AssessmentAttemptStatus;
+      submittedAt: string | null;
+      version: number;
+      learnerId: string;
+      learnerName: string | null;
+      task: { id: string; title: string };
+    }>;
+  };
+};
+
+export type AssessmentSubmissionDetailQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentSubmissionDetailQuery = {
+  assessmentSubmission: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentStartMutationVariables = Exact<{
+  taskId: string | number;
+  clientKey: string | number;
+  contentType?: string | null | undefined;
+  contentLength?: number | null | undefined;
+}>;
+
+export type AssessmentStartMutation = {
+  startAssessment: {
+    uploadUrl: string | null;
+    attempt: {
+      id: string;
+      taskId: string;
+      skill: Types.AssessmentSkill;
+      status: Types.AssessmentAttemptStatus;
+      answerText: string;
+      audioUrl: string | null;
+      recognizedText: string | null;
+      report: string | null;
+      source: string | null;
+      errorCode: string | null;
+      wordCount: number;
+      version: number;
+      createdAt: string;
+      submittedAt: string | null;
+      assessedAt: string | null;
+      learnerId: string | null;
+      learnerName: string | null;
+      task: {
+        id: string;
+        skill: Types.AssessmentSkill;
+        title: string;
+        taskType: string;
+        instructions: string;
+        rubricNotes: string | null;
+        sampleAnswer: string | null;
+        minimumWords: number;
+        timeLimitSeconds: number;
+        status: Types.AssessmentTaskStatus;
+        reviewNote: string | null;
+        version: number;
+      };
+    };
+  };
+};
+
+export type AssessmentSaveDraftMutationVariables = Exact<{
+  id: string | number;
+  answerText: string;
+  version: number;
+}>;
+
+export type AssessmentSaveDraftMutation = {
+  saveAssessmentDraft: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentSubmitMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentSubmitMutation = {
+  submitAssessment: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentRetryMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentRetryMutation = {
+  retryAssessment: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentRequestReviewMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentRequestReviewMutation = {
+  requestAssessmentReview: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentCreateTaskMutationVariables = Exact<{
+  input: Types.AssessmentTaskInput;
+}>;
+
+export type AssessmentCreateTaskMutation = {
+  createAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentEditTaskMutationVariables = Exact<{
+  id: string | number;
+  version: number;
+  input: Types.AssessmentTaskInput;
+}>;
+
+export type AssessmentEditTaskMutation = {
+  editAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentTransitionTaskMutationVariables = Exact<{
+  id: string | number;
+  action: string;
+  note?: string | null | undefined;
+}>;
+
+export type AssessmentTransitionTaskMutation = {
+  transitionAssessmentTask: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+  };
+};
+
+export type AssessmentGradeMutationVariables = Exact<{
+  id: string | number;
+  report: string;
+  note: string;
+  transcript?: string | null | undefined;
+  version: number;
+}>;
+
+export type AssessmentGradeMutation = {
+  gradeAssessment: {
+    id: string;
+    taskId: string;
+    skill: Types.AssessmentSkill;
+    status: Types.AssessmentAttemptStatus;
+    answerText: string;
+    audioUrl: string | null;
+    recognizedText: string | null;
+    report: string | null;
+    source: string | null;
+    errorCode: string | null;
+    wordCount: number;
+    version: number;
+    createdAt: string;
+    submittedAt: string | null;
+    assessedAt: string | null;
+    learnerId: string | null;
+    learnerName: string | null;
+    task: {
+      id: string;
+      skill: Types.AssessmentSkill;
+      title: string;
+      taskType: string;
+      instructions: string;
+      rubricNotes: string | null;
+      sampleAnswer: string | null;
+      minimumWords: number;
+      timeLimitSeconds: number;
+      status: Types.AssessmentTaskStatus;
+      reviewNote: string | null;
+      version: number;
+    };
+  };
+};
+
+export type AssessmentNotificationsQueryVariables = Exact<{
+  page?: number | null | undefined;
+}>;
+
+export type AssessmentNotificationsQuery = {
+  assessmentNotifications: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    items: Array<{
+      attemptId: string;
+      title: string;
+      skill: Types.AssessmentSkill;
+      version: number;
+      assessedAt: string;
+    }>;
+  };
+};
+
+export type AssessmentReadResultMutationVariables = Exact<{
+  id: string | number;
+  version: number;
+}>;
+
+export type AssessmentReadResultMutation = { readAssessmentResult: boolean };
+
 export type ContentReviewFieldsFragment = {
   id: string;
   slug: string;
@@ -298,6 +984,26 @@ export type PublishContentMutationVariables = Exact<{
 
 export type PublishContentMutation = {
   publishContent: {
+    id: string;
+    slug: string;
+    title: string;
+    status: Types.ContentStatus;
+    itemCount: number | null;
+    createdAt: string;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
+export type RestoreContentMutationVariables = Exact<{
+  kind: Types.ContentKind;
+  id: string | number;
+}>;
+
+export type RestoreContentMutation = {
+  restoreContent: {
     id: string;
     slug: string;
     title: string;
@@ -569,6 +1275,23 @@ export type PublishExamMutation = {
   };
 };
 
+export type RestoreExamMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type RestoreExamMutation = {
+  restoreExam: {
+    id: string;
+    title: string;
+    status: Types.ExamStatus;
+    versionNumber: number;
+    publishedAt: string | null;
+    submittedForReviewAt: string | null;
+    reviewedAt: string | null;
+    reviewNote: string | null;
+  };
+};
+
 export type ArchiveExamMutationVariables = Exact<{
   id: string | number;
 }>;
@@ -653,6 +1376,32 @@ export type ExamAttemptFieldsFragment = {
   questionCount: number;
   resumed: boolean;
   examTitle: string | null;
+};
+
+export type ExamDraftQueryVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type ExamDraftQuery = {
+  examDraft: {
+    version: number;
+    savedAt: string;
+    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+  };
+};
+
+export type SaveExamDraftMutationVariables = Exact<{
+  attemptId: string | number;
+  version: number;
+  answers: Array<Types.SubmitAnswerInput> | Types.SubmitAnswerInput;
+}>;
+
+export type SaveExamDraftMutation = {
+  saveExamDraft: {
+    version: number;
+    savedAt: string;
+    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+  };
 };
 
 export type AttemptReviewFieldsFragment = {
@@ -1710,6 +2459,109 @@ export const TutorConversationSummaryFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<TutorConversationSummaryFieldsFragment, unknown>;
+export const AssessmentTaskFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AssessmentTaskFieldsFragment, unknown>;
+export const AssessmentAttemptFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AssessmentAttemptFieldsFragment, unknown>;
 export const ContentReviewFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -2925,6 +3777,2458 @@ export const ReportTutorMessageDocument = {
   ReportTutorMessageMutation,
   ReportTutorMessageMutationVariables
 >;
+export const AssessmentWorkloadDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentWorkload" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentWorkload" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "drafts" } },
+                { kind: "Field", name: { kind: "Name", value: "rejected" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "pendingReview" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "published" } },
+                { kind: "Field", name: { kind: "Name", value: "needsReview" } },
+                { kind: "Field", name: { kind: "Name", value: "failed" } },
+                { kind: "Field", name: { kind: "Name", value: "completed" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentWorkloadQuery,
+  AssessmentWorkloadQueryVariables
+>;
+export const AssessmentAuthoringTaskDetailDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentAuthoringTaskDetail" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "authoringAssessmentTask" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentAuthoringTaskDetailQuery,
+  AssessmentAuthoringTaskDetailQueryVariables
+>;
+export const AssessmentReviewsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentReviews" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentReviews" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "reviewerName" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "previousReport" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "report" } },
+                { kind: "Field", name: { kind: "Name", value: "note" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentReviewsQuery,
+  AssessmentReviewsQueryVariables
+>;
+export const AssessmentCatalogDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentCatalog" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "skill" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentSkill" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentCapabilities" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "automaticWriting" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "automaticSpeaking" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "humanReview" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentTasks" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "skill" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "skill" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "AssessmentTaskFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentCatalogQuery,
+  AssessmentCatalogQueryVariables
+>;
+export const AssessmentTaskDetailDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentTaskDetail" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentTask" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentCapabilities" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "automaticWriting" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "automaticSpeaking" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "humanReview" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentTaskDetailQuery,
+  AssessmentTaskDetailQueryVariables
+>;
+export const AssessmentAttemptDetailDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentAttemptDetail" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentAttemptDetailQuery,
+  AssessmentAttemptDetailQueryVariables
+>;
+export const AssessmentHistoryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentHistory" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "taskId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "skill" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentSkill" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "status" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentAttemptStatus" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "title" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentHistory" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "taskId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "taskId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "skill" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "skill" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "status" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "title" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "AssessmentAttemptFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentHistoryQuery,
+  AssessmentHistoryQueryVariables
+>;
+export const AssessmentAuthoringDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentAuthoring" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "skill" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentSkill" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "status" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentTaskStatus" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "authoringAssessmentTasks" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "skill" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "skill" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "status" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "AssessmentTaskFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentAuthoringQuery,
+  AssessmentAuthoringQueryVariables
+>;
+export const AssessmentReviewQueueDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentReviewQueue" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "status" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentAttemptStatus" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "skill" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "AssessmentSkill" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "term" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "oldest" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentSubmissions" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "status" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "skill" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "skill" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "term" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "term" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "oldest" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "oldest" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "skill" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "submittedAt" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "version" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "learnerId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "learnerName" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "task" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "title" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentReviewQueueQuery,
+  AssessmentReviewQueueQueryVariables
+>;
+export const AssessmentSubmissionDetailDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentSubmissionDetail" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentSubmission" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentSubmissionDetailQuery,
+  AssessmentSubmissionDetailQueryVariables
+>;
+export const AssessmentStartDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentStart" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "taskId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientKey" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentType" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentLength" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startAssessment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "taskId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "taskId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientKey" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientKey" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentType" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentType" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentLength" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentLength" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "attempt" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "AssessmentAttemptFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "uploadUrl" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentStartMutation,
+  AssessmentStartMutationVariables
+>;
+export const AssessmentSaveDraftDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentSaveDraft" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "answerText" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "version" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "saveAssessmentDraft" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "answerText" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "answerText" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "version" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "version" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentSaveDraftMutation,
+  AssessmentSaveDraftMutationVariables
+>;
+export const AssessmentSubmitDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentSubmit" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submitAssessment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentSubmitMutation,
+  AssessmentSubmitMutationVariables
+>;
+export const AssessmentRetryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentRetry" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "retryAssessment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentRetryMutation,
+  AssessmentRetryMutationVariables
+>;
+export const AssessmentRequestReviewDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentRequestReview" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "requestAssessmentReview" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentRequestReviewMutation,
+  AssessmentRequestReviewMutationVariables
+>;
+export const AssessmentCreateTaskDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentCreateTask" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "AssessmentTaskInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createAssessmentTask" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentCreateTaskMutation,
+  AssessmentCreateTaskMutationVariables
+>;
+export const AssessmentEditTaskDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentEditTask" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "version" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "AssessmentTaskInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "editAssessmentTask" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "version" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "version" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentEditTaskMutation,
+  AssessmentEditTaskMutationVariables
+>;
+export const AssessmentTransitionTaskDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentTransitionTask" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "action" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "note" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "transitionAssessmentTask" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "action" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "action" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "note" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "note" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentTransitionTaskMutation,
+  AssessmentTransitionTaskMutationVariables
+>;
+export const AssessmentGradeDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentGrade" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "report" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "note" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "transcript" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "version" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "gradeAssessment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "report" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "report" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "note" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "note" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "transcript" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "transcript" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "version" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "version" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "taskId" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "task" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "answerText" } },
+          { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recognizedText" } },
+          { kind: "Field", name: { kind: "Name", value: "report" } },
+          { kind: "Field", name: { kind: "Name", value: "source" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "wordCount" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "assessedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerId" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerName" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentGradeMutation,
+  AssessmentGradeMutationVariables
+>;
+export const AssessmentNotificationsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentNotifications" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentNotifications" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "skill" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "version" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "assessedAt" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentNotificationsQuery,
+  AssessmentNotificationsQueryVariables
+>;
+export const AssessmentReadResultDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentReadResult" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "version" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "readAssessmentResult" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "version" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "version" },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentReadResultMutation,
+  AssessmentReadResultMutationVariables
+>;
 export const AdminContentDocument = {
   kind: "Document",
   definitions: [
@@ -3478,6 +6782,102 @@ export const PublishContentDocument = {
 } as unknown as DocumentNode<
   PublishContentMutation,
   PublishContentMutationVariables
+>;
+export const RestoreContentDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RestoreContent" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "kind" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "ContentKind" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "restoreContent" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "kind" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "kind" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ContentReviewFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ContentReviewFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ContentReview" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "itemCount" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RestoreContentMutation,
+  RestoreContentMutationVariables
 >;
 export const ArchiveContentDocument = {
   kind: "Document",
@@ -4374,6 +7774,78 @@ export const PublishExamDocument = {
     },
   ],
 } as unknown as DocumentNode<PublishExamMutation, PublishExamMutationVariables>;
+export const RestoreExamDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RestoreExam" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "restoreExam" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminExamShellFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminExamShellFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Exam" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submittedForReviewAt" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "reviewedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RestoreExamMutation, RestoreExamMutationVariables>;
 export const ArchiveExamDocument = {
   kind: "Document",
   definitions: [
@@ -4684,6 +8156,188 @@ export const RejectExamDocument = {
     },
   ],
 } as unknown as DocumentNode<RejectExamMutation, RejectExamMutationVariables>;
+export const ExamDraftDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ExamDraft" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "attemptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "examDraft" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "attemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "attemptId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "answers" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "questionId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "selectedOptionIds" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "version" } },
+                { kind: "Field", name: { kind: "Name", value: "savedAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ExamDraftQuery, ExamDraftQueryVariables>;
+export const SaveExamDraftDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SaveExamDraft" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "attemptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "version" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "answers" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "ListType",
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "SubmitAnswerInput" },
+                },
+              },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "saveExamDraft" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "attemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "attemptId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "version" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "version" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "answers" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "answers" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "answers" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "questionId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "selectedOptionIds" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "version" } },
+                { kind: "Field", name: { kind: "Name", value: "savedAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SaveExamDraftMutation,
+  SaveExamDraftMutationVariables
+>;
 export const StartExamAttemptDocument = {
   kind: "Document",
   definitions: [

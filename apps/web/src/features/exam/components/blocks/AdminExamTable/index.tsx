@@ -1,7 +1,18 @@
 "use client";
 
-import { Badge, Button, Group, Stack, Table, Text } from "@mantine/core";
-import { Archive, Check, Send, Undo2, Upload } from "lucide-react";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import Link from "next/link";
+import { useMediaQuery } from "@mantine/hooks";
+
+import { Badge, Button, Card, Group, Stack, Table, Text } from "@mantine/core";
+import {
+  Archive,
+  ArchiveRestore,
+  Check,
+  Send,
+  Undo2,
+  Upload,
+} from "lucide-react";
 
 import {
   EXAM_ACTIONS_BY_STATUS,
@@ -27,11 +38,13 @@ type AdminExamTableProps = {
   onReject: (exam: AdminExamFieldsFragment) => void;
   onPublish: (id: string) => void;
   onArchive: (id: string) => void;
+  /** Admin only; shown for archived rows. */
+  onRestore?: (id: string) => void;
 };
 
-function formatDate(value: string | null): string {
+function formatDate(value: string | null, isVi = true): string {
   if (value === null) return "—";
-  return new Date(value).toLocaleDateString("vi-VN");
+  return new Date(value).toLocaleDateString(isVi ? "vi-VN" : "en-GB");
 }
 
 export function AdminExamTable({
@@ -43,25 +56,156 @@ export function AdminExamTable({
   onReject,
   onPublish,
   onArchive,
+  onRestore,
 }: AdminExamTableProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const mobile = useMediaQuery("(max-width: 47.99em)");
+  const renderActions = (exam: AdminExamFieldsFragment) => {
+    const busy = busyExamId === exam.id;
+    const actions = EXAM_ACTIONS_BY_STATUS[exam.status];
+    return (
+      <Group gap="xs" justify="flex-end" wrap="wrap">
+        <Button
+          component={Link}
+          href={`/admin/content/editor/EXAM/${exam.id}`}
+          variant="default"
+          size="sm"
+        >
+          {exam.status === "DRAFT" || exam.status === "REJECTED"
+            ? tr("Soạn / xem trước", "Edit / preview")
+            : tr("Xem nội dung", "View")}
+        </Button>
+        {actions.submit && (
+          <Button
+            size="sm"
+            radius="md"
+            variant="light"
+            loading={busy}
+            leftSection={<Upload size={14} />}
+            onClick={() => onSubmitForReview(exam.id)}
+          >
+            {tr("Gửi duyệt", "Submit")}
+          </Button>
+        )}
+        {canReview && actions.approve && (
+          <Button
+            size="sm"
+            radius="md"
+            color="teal"
+            loading={busy}
+            leftSection={<Check size={14} />}
+            onClick={() => onApprove(exam.id)}
+          >
+            {tr("Duyệt", "Approve")}
+          </Button>
+        )}
+        {canReview && actions.reject && (
+          <Button
+            size="sm"
+            radius="md"
+            variant="default"
+            loading={busy}
+            leftSection={<Undo2 size={14} />}
+            onClick={() => onReject(exam)}
+          >
+            {tr("Trả lại", "Return")}
+          </Button>
+        )}
+        {canReview && actions.publish && (
+          <Button
+            size="sm"
+            radius="md"
+            loading={busy}
+            leftSection={<Send size={14} />}
+            onClick={() => onPublish(exam.id)}
+          >
+            {tr("Phát hành", "Publish")}
+          </Button>
+        )}
+        {canReview && actions.restore && onRestore && (
+          <Button
+            size="sm"
+            radius="md"
+            variant="light"
+            loading={busy}
+            leftSection={<ArchiveRestore size={14} />}
+            onClick={() => onRestore(exam.id)}
+          >
+            {tr("Khôi phục", "Restore")}
+          </Button>
+        )}
+        {canReview && actions.archive && (
+          <Button
+            size="sm"
+            radius="md"
+            variant="subtle"
+            color="gray"
+            loading={busy}
+            leftSection={<Archive size={14} />}
+            onClick={() => {
+              if (
+                window.confirm(
+                  tr(
+                    `Lưu trữ “${exam.title}”? Nội dung sẽ ẩn khỏi thư viện; lịch sử và bài đã nộp vẫn được giữ.`,
+                    `Archive “${exam.title}”? It leaves the library; history and submissions are kept.`,
+                  ),
+                )
+              )
+                onArchive(exam.id);
+            }}
+          >
+            {tr("Lưu trữ", "Archive")}
+          </Button>
+        )}
+      </Group>
+    );
+  };
+  if (mobile)
+    return (
+      <Stack p="md">
+        {exams.map((exam) => (
+          <Card key={exam.id} withBorder>
+            <Stack gap="sm">
+              <Text fw={700} style={{ overflowWrap: "anywhere" }}>
+                {exam.title}
+              </Text>
+              <Badge color={EXAM_STATUS_COLORS[exam.status]} w="fit-content">
+                {isVi
+                  ? EXAM_STATUS_LABELS[exam.status].vi
+                  : EXAM_STATUS_LABELS[exam.status].en}
+              </Badge>
+              {exam.reviewNote && (
+                <Text size="sm" c="orange">
+                  {exam.reviewNote}
+                </Text>
+              )}
+              <Text size="sm" c="dimmed">
+                {formatDate(exam.createdAt, isVi)}
+              </Text>
+              {renderActions(exam)}
+            </Stack>
+          </Card>
+        ))}
+      </Stack>
+    );
+
   return (
     <Table.ScrollContainer minWidth={980}>
       <Table verticalSpacing="sm" highlightOnHover>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Đề thi</Table.Th>
-            <Table.Th>Loại</Table.Th>
-            <Table.Th>Trạng thái</Table.Th>
-            <Table.Th>Phiên bản</Table.Th>
-            <Table.Th>Tạo lúc</Table.Th>
-            <Table.Th>Phát hành</Table.Th>
-            <Table.Th ta="right">Thao tác</Table.Th>
+            <Table.Th>{tr("Đề thi", "Exam")}</Table.Th>
+            <Table.Th>{tr("Loại", "Type")}</Table.Th>
+            <Table.Th>{tr("Trạng thái", "Status")}</Table.Th>
+            <Table.Th>{tr("Phiên bản", "Version")}</Table.Th>
+            <Table.Th>{tr("Tạo lúc", "Created")}</Table.Th>
+            <Table.Th>{tr("Phát hành", "Published")}</Table.Th>
+            <Table.Th ta="right">{tr("Thao tác", "Actions")}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {exams.map((exam) => {
-            const busy = busyExamId === exam.id;
-            const actions = EXAM_ACTIONS_BY_STATUS[exam.status];
             return (
               <Table.Tr key={exam.id}>
                 <Table.Td>
@@ -69,8 +213,9 @@ export function AdminExamTable({
                     <Text size="sm" fw={600} c="navy.9">
                       {exam.title}
                     </Text>
-                    <Text size="xs" c="ink.5">
-                      {exam.certificateType ?? "Không chứng chỉ"}
+                    <Text size="sm" c="ink.5">
+                      {exam.certificateType ??
+                        tr("Không chứng chỉ", "No certificate")}
                       {exam.certificateVariant
                         ? ` · ${exam.certificateVariant}`
                         : ""}
@@ -83,15 +228,17 @@ export function AdminExamTable({
                     */}
                     {exam.status === ExamStatus.REJECTED &&
                       exam.reviewNote !== null && (
-                        <Text size="xs" c="yellow.8" fs="italic">
-                          Lý do: {exam.reviewNote}
+                        <Text size="sm" c="yellow.8" fs="italic">
+                          {tr("Lý do", "Reason")}: {exam.reviewNote}
                         </Text>
                       )}
                   </Stack>
                 </Table.Td>
                 <Table.Td>
                   <Text size="sm" c="ink.7">
-                    {EXAM_TYPE_LABELS[exam.examType]}
+                    {isVi
+                      ? EXAM_TYPE_LABELS[exam.examType].vi
+                      : EXAM_TYPE_LABELS[exam.examType].en}
                   </Text>
                 </Table.Td>
                 <Table.Td>
@@ -101,11 +248,14 @@ export function AdminExamTable({
                       variant="light"
                       radius="sm"
                     >
-                      {EXAM_STATUS_LABELS[exam.status]}
+                      {isVi
+                        ? EXAM_STATUS_LABELS[exam.status].vi
+                        : EXAM_STATUS_LABELS[exam.status].en}
                     </Badge>
                     {exam.status === ExamStatus.PENDING_REVIEW && (
-                      <Text size="xs" c="ink.5">
-                        Gửi {formatDate(exam.submittedForReviewAt)}
+                      <Text size="sm" c="ink.5">
+                        {tr("Gửi", "Sent")}{" "}
+                        {formatDate(exam.submittedForReviewAt, isVi)}
                       </Text>
                     )}
                   </Stack>
@@ -117,78 +267,15 @@ export function AdminExamTable({
                 </Table.Td>
                 <Table.Td>
                   <Text size="sm" c="ink.7">
-                    {formatDate(exam.createdAt)}
+                    {formatDate(exam.createdAt, isVi)}
                   </Text>
                 </Table.Td>
                 <Table.Td>
                   <Text size="sm" c="ink.7">
-                    {formatDate(exam.publishedAt)}
+                    {formatDate(exam.publishedAt, isVi)}
                   </Text>
                 </Table.Td>
-                <Table.Td>
-                  <Group gap="xs" justify="flex-end" wrap="nowrap">
-                    {actions.submit && (
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="light"
-                        loading={busy}
-                        leftSection={<Upload size={14} />}
-                        onClick={() => onSubmitForReview(exam.id)}
-                      >
-                        Gửi duyệt
-                      </Button>
-                    )}
-                    {canReview && actions.approve && (
-                      <Button
-                        size="xs"
-                        radius="md"
-                        color="teal"
-                        loading={busy}
-                        leftSection={<Check size={14} />}
-                        onClick={() => onApprove(exam.id)}
-                      >
-                        Duyệt
-                      </Button>
-                    )}
-                    {canReview && actions.reject && (
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="default"
-                        loading={busy}
-                        leftSection={<Undo2 size={14} />}
-                        onClick={() => onReject(exam)}
-                      >
-                        Trả lại
-                      </Button>
-                    )}
-                    {canReview && actions.publish && (
-                      <Button
-                        size="xs"
-                        radius="md"
-                        loading={busy}
-                        leftSection={<Send size={14} />}
-                        onClick={() => onPublish(exam.id)}
-                      >
-                        Phát hành
-                      </Button>
-                    )}
-                    {canReview && actions.archive && (
-                      <Button
-                        size="xs"
-                        radius="md"
-                        variant="subtle"
-                        color="gray"
-                        loading={busy}
-                        leftSection={<Archive size={14} />}
-                        onClick={() => onArchive(exam.id)}
-                      >
-                        Lưu trữ
-                      </Button>
-                    )}
-                  </Group>
-                </Table.Td>
+                <Table.Td>{renderActions(exam)}</Table.Td>
               </Table.Tr>
             );
           })}

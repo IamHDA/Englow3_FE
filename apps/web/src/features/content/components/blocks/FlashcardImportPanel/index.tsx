@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import {
   Alert,
   Button,
@@ -45,6 +47,8 @@ export function FlashcardImportPanel({
   setId,
   kind = "flashcards",
 }: FlashcardImportPanelProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const isDictation = kind === "dictation";
   const [file, setFile] = useState<File | null>(null);
   const [report, setReport] = useState<FlashcardImportReport | null>(null);
@@ -74,7 +78,12 @@ export function FlashcardImportPanel({
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) {
-        setError("Phiên đăng nhập đã hết hạn. Đăng nhập lại rồi thử lại.");
+        setError(
+          tr(
+            "Phiên đăng nhập đã hết hạn. Đăng nhập lại rồi thử lại.",
+            "Your session has expired. Sign in again and retry.",
+          ),
+        );
         return;
       }
 
@@ -95,7 +104,9 @@ export function FlashcardImportPanel({
     } catch (failure) {
       setReport(null);
       setError(
-        failure instanceof Error ? failure.message : "Không đọc được tệp.",
+        failure instanceof Error
+          ? failure.message
+          : tr("Không đọc được tệp.", "Could not read the file."),
       );
     } finally {
       pending.current = false;
@@ -108,18 +119,26 @@ export function FlashcardImportPanel({
       <Stack gap="md">
         <Stack gap={4}>
           <Title order={4}>
-            {isDictation ? "Nhập bài nghe từ tệp" : "Nhập thẻ từ tệp"}
+            {isDictation
+              ? tr("Nhập bài nghe từ tệp", "Import lessons from a file")
+              : tr("Nhập thẻ từ tệp", "Import cards from a file")}
           </Title>
           <Text size="sm" c="dimmed">
             {isDictation
-              ? "Tệp shadowing batch do data pipeline sinh ra. Mỗi clip thành một bài nháp, mỗi đoạn thành một câu."
-              : "Tệp JSON do data pipeline sinh ra. Kiểm tra trước để xem dòng nào không dùng được, rồi mới nhập vào bộ nháp."}
+              ? tr(
+                  "Tệp shadowing batch do data pipeline sinh ra. Mỗi clip thành một bài nháp, mỗi đoạn thành một câu.",
+                  "A shadowing batch file from the data pipeline. Each clip becomes a draft lesson, each segment a sentence.",
+                )
+              : tr(
+                  "Tệp JSON do data pipeline sinh ra. Kiểm tra trước để xem dòng nào không dùng được, rồi mới nhập vào bộ nháp.",
+                  "A JSON file from the data pipeline. Check it first to see which rows are unusable, then import into the draft set.",
+                )}
           </Text>
         </Stack>
 
         <FileInput
           accept="application/json,.json"
-          placeholder="Chọn tệp .json"
+          placeholder={tr("Chọn tệp .json", "Choose a .json file")}
           leftSection={<IconFileUpload size={16} />}
           value={file}
           disabled={busy}
@@ -139,7 +158,7 @@ export function FlashcardImportPanel({
             loading={busy}
             onClick={() => void run(false)}
           >
-            Kiểm tra thử
+            {tr("Kiểm tra thử", "Dry run")}
           </Button>
           <Button
             leftSection={<IconUpload size={16} />}
@@ -152,7 +171,9 @@ export function FlashcardImportPanel({
             }
             onClick={() => void run(true)}
           >
-            {isDictation ? "Nhập các bài này" : "Nhập vào bộ này"}
+            {isDictation
+              ? tr("Nhập các bài này", "Import these lessons")
+              : tr("Nhập vào bộ này", "Import into this set")}
           </Button>
         </Group>
 
@@ -160,7 +181,10 @@ export function FlashcardImportPanel({
             kiểm tra trước khi lưu, và đây là chỗ luật đó có hiệu lực. */}
         {!report && !error && (
           <Text size="xs" c="dimmed">
-            Kiểm tra thử trước khi nhập.
+            {tr(
+              "Kiểm tra thử trước khi nhập.",
+              "Do a dry run before importing.",
+            )}
           </Text>
         )}
 
@@ -174,14 +198,16 @@ export function FlashcardImportPanel({
           <Stack gap="xs">
             <Alert color={report.committed ? "teal" : "blue"} variant="light">
               <Text size="sm">
-                {`${report.committed ? "Đã nhập" : "Sẽ nhập"} ${report.acceptedCount} ${
-                  isDictation ? "bài" : "thẻ"
-                }`}
+                {isVi
+                  ? `${report.committed ? "Đã nhập" : "Sẽ nhập"} ${report.acceptedCount} ${isDictation ? "bài" : "thẻ"}`
+                  : `${report.committed ? "Imported" : "Will import"} ${report.acceptedCount} ${isDictation ? "lessons" : "cards"}`}
                 {report.sentenceCount !== undefined &&
-                  ` (${report.sentenceCount} câu)`}
+                  ` (${report.sentenceCount} ${tr("câu", "sentences")})`}
                 {". "}
                 {report.rejectedCount > 0 &&
-                  `Bỏ qua ${report.rejectedCount} ${isDictation ? "clip" : "dòng"}.`}
+                  (isVi
+                    ? `Bỏ qua ${report.rejectedCount} ${isDictation ? "clip" : "dòng"}.`
+                    : `Skipped ${report.rejectedCount} ${isDictation ? "clips" : "rows"}.`)}
               </Text>
             </Alert>
 
@@ -189,9 +215,11 @@ export function FlashcardImportPanel({
               <Table striped withTableBorder>
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th w={80}>Dòng</Table.Th>
-                    <Table.Th>{isDictation ? "Clip" : "Từ"}</Table.Th>
-                    <Table.Th>Lý do</Table.Th>
+                    <Table.Th w={80}>{tr("Dòng", "Row")}</Table.Th>
+                    <Table.Th>
+                      {isDictation ? "Clip" : tr("Từ", "Word")}
+                    </Table.Th>
+                    <Table.Th>{tr("Lý do", "Reason")}</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>

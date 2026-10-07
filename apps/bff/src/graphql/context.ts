@@ -1,5 +1,6 @@
 import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import { GraphQLError } from "graphql";
+import { AssessmentApi } from "../modules/assessment/assessment.api.js";
 
 import { ContentManagementApi } from "../modules/contentManagement/contentManagement.api.js";
 import { DictationApi } from "../modules/dictation/dictation.api.js";
@@ -20,6 +21,7 @@ export type GraphQLContext = {
   /** Fails unauthenticated callers early. Not the authorization boundary - the backend still verifies. */
   requireToken: () => string;
   apis: {
+    assessmentApi: AssessmentApi;
     userApi: UserApi;
     onboardingApi: OnboardingApi;
     examApi: ExamApi;
@@ -54,6 +56,7 @@ export async function createContext({
       return token;
     },
     apis: {
+      assessmentApi: new AssessmentApi(client),
       userApi: new UserApi(client),
       onboardingApi: new OnboardingApi(client),
       examApi: new ExamApi(client),

@@ -6,6 +6,10 @@ export interface NavTranslations {
   aiTutor: string;
   pronunciation: string;
   pronunciationDesc: string;
+  writingDesc: string;
+  speakingDesc: string;
+  myWork: string;
+  myWorkDesc: string;
   flashcards: string;
   flashcardsDesc: string;
   dictation: string;
@@ -830,7 +834,11 @@ export const translations: Record<Language, AppTranslations> = {
       exams: "Thi thử",
       aiTutor: "Gia sư AI",
       pronunciation: "Luyện phát âm",
-      pronunciationDesc: "Chấm điểm phát âm AI theo thời gian thực",
+      pronunciationDesc: "Đọc theo mẫu, nhận phản hồi phát âm",
+      writingDesc: "Trả lời đề viết và nhận phản hồi theo tiêu chí",
+      speakingDesc: "Trả lời đề bằng giọng nói và nhận đánh giá",
+      myWork: "Bài của tôi",
+      myWorkDesc: "Tiếp tục nháp, theo dõi chờ chấm và đọc kết quả",
       flashcards: "Thẻ ghi nhớ",
       flashcardsDesc: "Bộ thẻ 3D tối ưu theo khả năng ghi nhớ của bạn",
       dictation: "Nghe chính tả",
@@ -1724,7 +1732,11 @@ export const translations: Record<Language, AppTranslations> = {
       exams: "Mock Exams",
       aiTutor: "AI Tutor",
       pronunciation: "Pronunciation",
-      pronunciationDesc: "Real-time AI pronunciation evaluation",
+      pronunciationDesc: "Read aloud and receive pronunciation feedback",
+      writingDesc: "Answer writing tasks and receive criterion feedback",
+      speakingDesc: "Answer speaking tasks and receive an assessment",
+      myWork: "My work",
+      myWorkDesc: "Resume drafts, track reviews and read results",
       flashcards: "Flashcards",
       flashcardsDesc: "3D cards tailored to your memory retention",
       dictation: "Dictation",

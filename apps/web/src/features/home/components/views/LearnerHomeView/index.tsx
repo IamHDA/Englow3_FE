@@ -24,6 +24,7 @@ import {
   Headphones,
   Layers,
   Mic,
+  PenLine,
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
@@ -46,11 +47,17 @@ import { Page } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./LearnerHome.module.css";
+import {
+  AssessmentNotifications,
+  AssessmentResumeCard,
+} from "@/features/assessment/components/AssessmentHistory";
 
 const TASK_ICONS: Record<DailyTaskKind, LucideIcon> = {
   [DailyTaskKind.FLASHCARD_REVIEW]: Layers,
   [DailyTaskKind.DICTATION]: Headphones,
   [DailyTaskKind.QUIZ]: Sparkles,
+  [DailyTaskKind.WRITING]: PenLine,
+  [DailyTaskKind.SPEAKING]: Mic,
 };
 
 type Shortcut = {
@@ -62,6 +69,20 @@ type Shortcut = {
 };
 
 const SHORTCUTS: Shortcut[] = [
+  {
+    href: "/study/writing",
+    icon: PenLine,
+    vi: "Luyện viết",
+    en: "Writing",
+    tone: "navy",
+  },
+  {
+    href: "/study/speaking",
+    icon: Mic,
+    vi: "Luyện nói",
+    en: "Speaking",
+    tone: "orange",
+  },
   {
     href: "/study/flashcards",
     icon: Layers,
@@ -109,7 +130,7 @@ export function LearnerHomeView() {
   const { isVi, t } = useLanguage();
   const { profile } = useAccountProfile();
   const { requiresOnboarding, open: openOnboarding } = useOnboarding();
-  const { data, loading, error } = useDailyPathQuery({
+  const { data, loading, error, refetch } = useDailyPathQuery({
     fetchPolicy: "cache-and-network",
   });
   const path = data?.dailyPath;
@@ -165,6 +186,13 @@ export function LearnerHomeView() {
       {error && !path && (
         <Alert color="warn" radius="lg">
           {t.home.pathLoadErrorMessage}
+          <Button
+            variant="light"
+            ml="sm"
+            onClick={() => void refetch().catch(() => {})}
+          >
+            {isVi ? "Thử lại" : "Retry"}
+          </Button>
         </Alert>
       )}
 
@@ -234,6 +262,8 @@ export function LearnerHomeView() {
               </Card>
             )}
 
+            <AssessmentResumeCard />
+            <AssessmentNotifications />
             {/* The rest of today */}
             {rest.length > 0 && (
               <Card>
@@ -333,6 +363,7 @@ export function LearnerHomeView() {
                     </Text>
                   </Group>
                   <Progress
+                    aria-label={isVi ? "Tiến độ lên cấp" : "Level progress"}
                     value={
                       path.levelCostXp > 0
                         ? (path.xpIntoLevel / path.levelCostXp) * 100

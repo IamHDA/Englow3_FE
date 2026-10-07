@@ -1,6 +1,15 @@
 "use client";
 
-import { Alert, Grid, Paper, Stack, Tabs, Text, Title } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Grid,
+  Paper,
+  Stack,
+  Tabs,
+  Text,
+  Title,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   AlertCircle,
@@ -45,6 +54,14 @@ export function ProfileView() {
           radius="md"
         >
           {t.account.profileLoadErrorDescription}
+          <Button
+            variant="light"
+            mt="md"
+            loading={loading}
+            onClick={() => void refresh().catch(() => {})}
+          >
+            {t.common.retry}
+          </Button>
         </Alert>
       </Paper>
     );

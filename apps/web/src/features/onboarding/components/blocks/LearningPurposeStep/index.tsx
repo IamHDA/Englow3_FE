@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { Box, SimpleGrid } from "@mantine/core";
 import { useState } from "react";
 
@@ -28,6 +30,9 @@ export function LearningPurposeStep({
   errorMessage,
   onContinue,
 }: LearningPurposeStepProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const copy = isVi ? LEARNING_PURPOSE_COPY.vi : LEARNING_PURPOSE_COPY.en;
   // Backend lưu `learningPurposeIds` là mảng nên chọn được nhiều. State cục bộ
   // của bước này, không đưa lên global.
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -43,8 +48,8 @@ export function LearningPurposeStep({
   return (
     <OnboardingStepShell
       step={OnboardingStep.LEARNING_PURPOSES}
-      title={LEARNING_PURPOSE_COPY.title}
-      subtitle={LEARNING_PURPOSE_COPY.subtitle}
+      title={copy.title}
+      subtitle={copy.subtitle}
       footer={
         <OnboardingStepFooter
           pending={pending}
@@ -54,7 +59,13 @@ export function LearningPurposeStep({
         />
       }
     >
-      <Box role="group" aria-label="Mục đích học tiếng Anh">
+      <Box
+        role="group"
+        aria-label={tr(
+          "Mục đích học tiếng Anh",
+          "Why you are learning English",
+        )}
+      >
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={20}>
           {purposes.map((purpose) => (
             <OnboardingChoiceTile

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
@@ -10,6 +12,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
+import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
 import {
@@ -53,12 +56,16 @@ export function LearningGoalStep({
   errorMessage,
   onContinue,
 }: LearningGoalStepProps) {
+  const { isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const copy = isVi ? LEARNING_GOAL_COPY.vi : LEARNING_GOAL_COPY.en;
+  const schema = useMemo(() => learningGoalSchema(isVi), [isVi]);
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<LearningGoalFormValues>({
-    resolver: zodResolver(learningGoalSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       certificateType: initialCertificate ?? TargetCertificate.IELTS,
       targetScore: initialTargetScore == null ? "" : String(initialTargetScore),
@@ -87,8 +94,8 @@ export function LearningGoalStep({
   return (
     <OnboardingStepShell
       step={OnboardingStep.LEARNING_GOAL}
-      title={LEARNING_GOAL_COPY.title}
-      subtitle={LEARNING_GOAL_COPY.subtitle}
+      title={copy.title}
+      subtitle={copy.subtitle}
       footer={
         <OnboardingStepFooter
           pending={pending}
@@ -104,15 +111,20 @@ export function LearningGoalStep({
           render={({ field }) => (
             <Stack gap={10}>
               <Text size="sm" fw={700} c="ink.9">
-                Định dạng chứng chỉ
+                {tr("Định dạng chứng chỉ", "Certificate format")}
               </Text>
-              <Box role="group" aria-label="Định dạng chứng chỉ">
+              <Box
+                role="group"
+                aria-label={tr("Định dạng chứng chỉ", "Certificate format")}
+              >
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={16}>
                   {TARGET_CERTIFICATE_CHOICES.map((choice) => (
                     <OnboardingChoiceTile
                       key={choice.certificate}
                       label={choice.label}
-                      description={choice.description}
+                      description={
+                        isVi ? choice.description.vi : choice.description.en
+                      }
                       selected={field.value === choice.certificate}
                       disabled={pending}
                       onSelect={() => field.onChange(choice.certificate)}
@@ -135,9 +147,15 @@ export function LearningGoalStep({
             control={control}
             render={({ field }) => (
               <NumberInput
-                label="Mốc điểm muốn đạt"
-                description={`Để trống nếu chưa quyết định. Thang ${certificateType}: ${range.min} - ${range.max}.`}
-                placeholder={`Ví dụ ${range.max}`}
+                label={tr("Mốc điểm muốn đạt", "Target score")}
+                description={tr(
+                  `Để trống nếu chưa quyết định. Thang ${certificateType}: ${range.min} - ${range.max}.`,
+                  `Leave empty if undecided. ${certificateType} scale: ${range.min} - ${range.max}.`,
+                )}
+                placeholder={tr(
+                  `Ví dụ ${range.max}`,
+                  `For example ${range.max}`,
+                )}
                 min={range.min}
                 max={range.max}
                 step={range.step}
@@ -159,8 +177,11 @@ export function LearningGoalStep({
           render={({ field }) => (
             <TextInput
               type="date"
-              label="Hạn hoàn thành"
-              description="Để trống nếu bạn chưa đặt hạn."
+              label={tr("Hạn hoàn thành", "Deadline")}
+              description={tr(
+                "Để trống nếu bạn chưa đặt hạn.",
+                "Leave empty if you have no deadline.",
+              )}
               radius="md"
               size="md"
               disabled={pending}

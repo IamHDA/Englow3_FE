@@ -48,6 +48,15 @@ function getSnapshot(): Language {
   return memoryLang;
 }
 
+/**
+ * The stored language, read directly. For the few places that render outside
+ * `LanguageProvider` - the account provider above it, and the global error page
+ * that replaces the whole layout.
+ */
+export function readStoredLanguage(): Language {
+  return getSnapshot();
+}
+
 function getServerSnapshot(): Language {
   return "vi";
 }
