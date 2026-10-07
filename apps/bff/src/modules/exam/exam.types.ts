@@ -62,6 +62,16 @@ export type AttemptQuestionReviewDto = ExamAttemptResponse["questions"][number];
 export type AttemptOptionReviewDto =
   AttemptQuestionReviewDto["options"][number];
 
+// mirrors POST /api/exams/{id}/attempts request body - optional; without it
+// the backend opens a full attempt
+export type StartExamAttemptRequest = NonNullable<
+  StartExamAttemptOp["requestBody"]
+>["content"]["application/json"];
+
+// GET /api/exams/{id}/outline - skills and parts with question counts
+export type ExamOutlineResponse =
+  paths["/api/exams/{id}/outline"]["get"]["responses"][200]["content"]["application/json"];
+
 // GET /api/exam-attempts - the learner's own sittings, newest first
 export type ExamAttemptPageResponse =
   paths["/api/exam-attempts"]["get"]["responses"][200]["content"]["application/json"];

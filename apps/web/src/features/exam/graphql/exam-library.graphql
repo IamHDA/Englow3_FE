@@ -69,3 +69,20 @@ query PlacementExam {
     questionCount
   }
 }
+
+query ExamOutline($examId: ID!) {
+  examOutline(examId: $examId) {
+    examId
+    sections {
+      id
+      sectionType
+      orderNo
+      parts {
+        id
+        orderNo
+        title
+        questionCount
+      }
+    }
+  }
+}

@@ -13,6 +13,13 @@ fragment ExamAttemptFields on ExamAttempt {
   questionCount
   resumed
   examTitle
+  mode
+  timeLimitSeconds
+  parts {
+    id
+    sectionType
+    title
+  }
 }
 query ExamDraft($attemptId: ID!) {
   examDraft(attemptId: $attemptId) {
@@ -53,8 +60,8 @@ fragment AttemptReviewFields on AttemptQuestionReview {
   }
 }
 
-mutation StartExamAttempt($examId: ID!) {
-  startExamAttempt(examId: $examId) {
+mutation StartExamAttempt($examId: ID!, $input: StartExamAttemptInput) {
+  startExamAttempt(examId: $examId, input: $input) {
     ...ExamAttemptFields
   }
 }

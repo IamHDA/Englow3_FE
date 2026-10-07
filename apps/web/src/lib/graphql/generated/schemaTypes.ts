@@ -204,6 +204,14 @@ export type AttemptOptionReview = {
   optionId: Scalars["ID"]["output"];
 };
 
+/** A part a practice covered. */
+export type AttemptPart = {
+  __typename?: "AttemptPart";
+  id: Scalars["ID"]["output"];
+  sectionType?: Maybe<Scalars["String"]["output"]>;
+  title?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type AttemptQuestionReview = {
   __typename?: "AttemptQuestionReview";
   awardedRawScore: Scalars["Float"]["output"];
@@ -523,6 +531,9 @@ export type ExamAttempt = {
   expiresAt: Scalars["DateTime"]["output"];
   id: Scalars["ID"]["output"];
   maxRawScore: Scalars["Float"]["output"];
+  mode: ExamAttemptMode;
+  /** Parts a practice covers; empty for a full attempt. */
+  parts: Array<AttemptPart>;
   questionCount: Scalars["Int"]["output"];
   /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
   questions: Array<AttemptQuestionReview>;
@@ -535,7 +546,22 @@ export type ExamAttempt = {
   startedAt: Scalars["DateTime"]["output"];
   status: ExamAttemptStatus;
   submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /**
+   * Null only for an untimed practice; expiresAt is then a far safety net and
+   * the client shows no countdown.
+   */
+  timeLimitSeconds?: Maybe<Scalars["Int"]["output"]>;
 };
+
+/**
+ * FULL is the real sitting: every part on the paper's own clock, and the only
+ * mode that counts toward progress, the best score and placement. PRACTICE
+ * covers chosen parts on a clock the learner picked, or none.
+ */
+export enum ExamAttemptMode {
+  FULL = "FULL",
+  PRACTICE = "PRACTICE",
+}
 
 export type ExamAttemptPage = {
   __typename?: "ExamAttemptPage";
@@ -588,6 +614,28 @@ export type ExamListItem = {
   targetLevel?: Maybe<TargetLevel>;
   title: Scalars["String"]["output"];
   versionNumber: Scalars["Int"]["output"];
+};
+
+export type ExamOutline = {
+  __typename?: "ExamOutline";
+  examId: Scalars["ID"]["output"];
+  sections: Array<ExamOutlineSection>;
+};
+
+export type ExamOutlinePart = {
+  __typename?: "ExamOutlinePart";
+  id: Scalars["ID"]["output"];
+  orderNo: Scalars["Int"]["output"];
+  questionCount: Scalars["Int"]["output"];
+  title: Scalars["String"]["output"];
+};
+
+export type ExamOutlineSection = {
+  __typename?: "ExamOutlineSection";
+  id: Scalars["ID"]["output"];
+  orderNo: Scalars["Int"]["output"];
+  parts: Array<ExamOutlinePart>;
+  sectionType: Scalars["String"]["output"];
 };
 
 export type ExamPage = {
@@ -1216,6 +1264,7 @@ export type MutationStartAssessmentArgs = {
 
 export type MutationStartExamAttemptArgs = {
   examId: Scalars["ID"]["input"];
+  input?: InputMaybe<StartExamAttemptInput>;
 };
 
 export type MutationStartQuizAttemptArgs = {
@@ -1293,6 +1342,14 @@ export enum OnboardingStep {
   LEARNING_GOAL = "LEARNING_GOAL",
   LEARNING_PURPOSES = "LEARNING_PURPOSES",
   TARGET_SKILLS = "TARGET_SKILLS",
+}
+
+/** What to do when another attempt at this exam is already open. */
+export enum OpenAttemptChoice {
+  /** Finalize the open attempt from its saved answers, then start the new one. */
+  REPLACE = "REPLACE",
+  /** Keep the open attempt and return it. */
+  RESUME = "RESUME",
 }
 
 export type OverviewContentCounts = {
@@ -1376,6 +1433,11 @@ export type Query = {
    */
   examAttempts: ExamAttemptPage;
   examDraft: ExamDraft;
+  /**
+   * The paper's skills and parts with how many questions each holds - what a
+   * practice is picked from. No question content.
+   */
+  examOutline: ExamOutline;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
   flashcardSet: FlashcardSetDetail;
@@ -1517,6 +1579,10 @@ export type QueryExamAttemptsArgs = {
 
 export type QueryExamDraftArgs = {
   attemptId: Scalars["ID"]["input"];
+};
+
+export type QueryExamOutlineArgs = {
+  examId: Scalars["ID"]["input"];
 };
 
 export type QueryExamsArgs = {
@@ -1854,6 +1920,19 @@ export type SpeakingWord = {
   orderNo: Scalars["Int"]["output"];
   phonemes: Array<SpeakingPhonemeScore>;
   word: Scalars["String"]["output"];
+};
+
+export type StartExamAttemptInput = {
+  mode?: InputMaybe<ExamAttemptMode>;
+  /**
+   * Without it, an open attempt that is not the one asked for fails with
+   * extensions.backendCode: ATTEMPT_IN_PROGRESS so the learner can choose.
+   */
+  onOpen?: InputMaybe<OpenAttemptChoice>;
+  /** Parts a practice covers. Ignored for FULL. */
+  partIds?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  /** A practice's clock, 1-300 minutes; null for none. Ignored for FULL. */
+  timeLimitMinutes?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type SubmitAnswerInput = {

@@ -31,6 +31,7 @@ import type {
   ExamAttemptResult,
   ExamPaper,
 } from "../../../types";
+import { ExamAttemptMode } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { FlatQuestionItem } from "../QuestionPalette";
 import classes from "./ExamResultView.module.css";
@@ -54,8 +55,9 @@ export function ExamResultView({
   attempt,
   onRetake,
 }: ExamResultViewProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const [filterTab, setFilterTab] = useState<string>("all");
+  const isPractice = attempt.mode === ExamAttemptMode.PRACTICE;
 
   // Build a lookup map of all questions in paper
   const questionMap = new Map<
@@ -170,11 +172,27 @@ export function ExamResultView({
                   radius="xl"
                   mb={4}
                 >
-                  {t.exam.finishedBadge}
+                  {isPractice
+                    ? isVi
+                      ? "Luyện tập"
+                      : "Practice"
+                    : t.exam.finishedBadge}
                 </Badge>
                 <Title order={1} size="h2" c="navy.9" fw={700}>
                   {paper.title}
                 </Title>
+                {isPractice && (
+                  <Text size="sm" c="ink.6">
+                    {(isVi ? "Các part đã luyện: " : "Parts practised: ") +
+                      attempt.parts
+                        .map((part) => part.title)
+                        .filter(Boolean)
+                        .join(", ")}
+                    {isVi
+                      ? " · Không tính vào tiến độ và điểm cao nhất."
+                      : " · Not counted toward progress or your best score."}
+                  </Text>
+                )}
               </Stack>
 
               {/* Action buttons */}

@@ -20,6 +20,8 @@ import {
   Box,
   Card,
   Grid,
+  Group,
+  Modal,
   Stack,
   Text,
   Title,
@@ -28,11 +30,18 @@ import {
 import {
   useAttemptPaperQuery,
   useExamDetailQuery,
+  useExamOutlineQuery,
   useStartExamAttemptMutation,
   useSubmitExamAttemptMutation,
 } from "@/lib/graphql/generated/hooks";
 import { useAccountProfile } from "@/features/account";
-import { ExamType } from "@/lib/graphql/generated";
+import {
+  ExamAttemptMode,
+  ExamType,
+  OpenAttemptChoice,
+  type StartExamAttemptInput,
+} from "@/lib/graphql/generated";
+import { backendCodeOf } from "@/shared/network/loadError";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useExamTimer } from "../../../hooks/useExamTimer";
 import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
@@ -48,7 +57,7 @@ import {
 import { SubmitModal } from "../../blocks/SubmitModal";
 import { ExamResultView } from "../../blocks/ExamResultView";
 
-import type { ExamAttemptResult } from "../../../types";
+import type { ExamAttemptResult, ExamStartChoice } from "../../../types";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 
@@ -110,6 +119,14 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  // Không giới hạn giờ chỉ có ở bài luyện tập; khi đó không đếm ngược.
+  const [untimed, setUntimed] = useState(false);
+  const [practice, setPractice] = useState(false);
+  // Lần bắt đầu bị chặn vì đề đang có một lượt khác còn dở - chờ người học chọn.
+  const [blockedChoice, setBlockedChoice] = useState<ExamStartChoice | null>(
+    null,
+  );
+  const lastChoice = useRef<ExamStartChoice>({ mode: "FULL" });
   const [result, setResult] = useState<ExamAttemptResult | null>(null);
   const pending = useRef(false);
   const [sendFailed, setSendFailed] = useState(false);
@@ -122,8 +139,16 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     refetch: refetchDetail,
   } = useExamDetailQuery({ variables: { id: examId } });
 
-  const [startAttempt, { loading: starting, error: startError }] =
-    useStartExamAttemptMutation();
+  const [
+    startAttempt,
+    { loading: starting, error: startError, reset: resetStart },
+  ] = useStartExamAttemptMutation();
+  const {
+    data: outlineData,
+    loading: outlineLoading,
+    error: outlineError,
+    refetch: refetchOutline,
+  } = useExamOutlineQuery({ variables: { examId } });
   const [
     submitAttempt,
     { loading: submitting, error: submitError, reset: resetSubmit },
@@ -310,55 +335,81 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
    * lại với `resumed: true`, hết hạn thì nó đóng lại rồi tạo lượt mới. Nên bấm
    * "Bắt đầu" lần nữa không bao giờ tạo ra hai lượt song song.
    */
-  const handleStart = useCallback(async () => {
-    if (pending.current) return;
-    pending.current = true;
-    const response = await startAttempt({
-      variables: { examId },
-    }).catch(() => null);
-    pending.current = false;
-
-    const attempt = response?.data?.startExamAttempt;
-    if (!attempt) return;
-
-    // Lượt được nối lại có thể đã làm dở ở lần trước - khôi phục bản nháp cục
-    // bộ của đúng lượt đó, kể cả vị trí câu đang đứng.
-    setOpeningDraft(true);
-    setDraftLoadFailed(false);
-    try {
-      const response = await client.query({
-        query: ExamDraftDocument,
-        variables: { attemptId: attempt.id },
-        fetchPolicy: "network-only",
+  const handleStart = useCallback(
+    async (
+      choice: ExamStartChoice = lastChoice.current,
+      onOpen?: OpenAttemptChoice,
+    ) => {
+      if (pending.current) return;
+      pending.current = true;
+      lastChoice.current = choice;
+      const input: StartExamAttemptInput =
+        choice.mode === "FULL"
+          ? { mode: ExamAttemptMode.FULL, onOpen }
+          : {
+              mode: ExamAttemptMode.PRACTICE,
+              partIds: choice.partIds,
+              timeLimitMinutes: choice.timeLimitMinutes,
+              onOpen,
+            };
+      const response = await startAttempt({
+        variables: { examId, input },
+      }).catch((failure: unknown) => {
+        // Đề đang có một lượt khác còn dở: hỏi người học thay vì báo lỗi cả trang.
+        if (backendCodeOf(failure) === "ATTEMPT_IN_PROGRESS") {
+          resetStart();
+          setBlockedChoice(choice);
+        }
+        return null;
       });
-      if (!response.data) throw new Error("Missing draft");
-      const draft = response.data.examDraft;
-      const serverAnswers = Object.fromEntries(
-        draft.answers
-          .filter((a) => a.selectedOptionIds.length)
-          .map((a) => [a.questionId, a.selectedOptionIds]),
-      );
-      const restored = readProgress(attempt.id);
-      const useLocal =
-        restored && (restored.updatedAt ?? 0) > Date.parse(draft.savedAt);
-      const currentAnswers = useLocal ? restored.answers : serverAnswers;
-      autosave.initialize(
-        attempt.id,
-        draft.version,
-        serverAnswers,
-        currentAnswers,
-      );
-      setAnswers(currentAnswers);
-      setFlaggedIds(new Set(restored?.flaggedIds ?? []));
-      setCurrentIndex(restored?.currentIndex ?? 0);
-      setAttemptId(attempt.id);
-      setExpiresAt(attempt.expiresAt);
-    } catch {
-      setDraftLoadFailed(true);
-    } finally {
-      setOpeningDraft(false);
-    }
-  }, [examId, startAttempt, client, autosave]);
+      pending.current = false;
+
+      const attempt = response?.data?.startExamAttempt;
+      if (!attempt) return;
+      setBlockedChoice(null);
+      setUntimed(attempt.timeLimitSeconds == null);
+      setPractice(attempt.mode === ExamAttemptMode.PRACTICE);
+
+      // Lượt được nối lại có thể đã làm dở ở lần trước - khôi phục bản nháp cục
+      // bộ của đúng lượt đó, kể cả vị trí câu đang đứng.
+      setOpeningDraft(true);
+      setDraftLoadFailed(false);
+      try {
+        const response = await client.query({
+          query: ExamDraftDocument,
+          variables: { attemptId: attempt.id },
+          fetchPolicy: "network-only",
+        });
+        if (!response.data) throw new Error("Missing draft");
+        const draft = response.data.examDraft;
+        const serverAnswers = Object.fromEntries(
+          draft.answers
+            .filter((a) => a.selectedOptionIds.length)
+            .map((a) => [a.questionId, a.selectedOptionIds]),
+        );
+        const restored = readProgress(attempt.id);
+        const useLocal =
+          restored && (restored.updatedAt ?? 0) > Date.parse(draft.savedAt);
+        const currentAnswers = useLocal ? restored.answers : serverAnswers;
+        autosave.initialize(
+          attempt.id,
+          draft.version,
+          serverAnswers,
+          currentAnswers,
+        );
+        setAnswers(currentAnswers);
+        setFlaggedIds(new Set(restored?.flaggedIds ?? []));
+        setCurrentIndex(restored?.currentIndex ?? 0);
+        setAttemptId(attempt.id);
+        setExpiresAt(attempt.expiresAt);
+      } catch {
+        setDraftLoadFailed(true);
+      } finally {
+        setOpeningDraft(false);
+      }
+    },
+    [examId, startAttempt, resetStart, client, autosave],
+  );
 
   // Giữ bản nháp cục bộ để tải lại trang hay mất mạng không mất bài đang làm.
   useEffect(() => {
@@ -440,6 +491,8 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     setResult(null);
     setAttemptId(null);
     setExpiresAt(null);
+    setUntimed(false);
+    setPractice(false);
     setAnswers({});
     setFlaggedIds(new Set());
     setCurrentIndex(0);
@@ -526,9 +579,55 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         )}
         <ExamOverview
           exam={exam}
+          outline={outlineData?.examOutline.sections ?? null}
+          outlineLoading={outlineLoading && !outlineData}
+          outlineFailed={!!outlineError && !outlineData}
+          onRetryOutline={() => void refetchOutline().catch(() => undefined)}
           starting={starting || openingDraft}
-          onStart={handleStart}
+          onStart={(choice) => void handleStart(choice)}
         />
+        <Modal
+          opened={blockedChoice !== null}
+          onClose={() => setBlockedChoice(null)}
+          title={
+            isVi ? "Bạn đang có bài làm dở" : "You have an unfinished attempt"
+          }
+          centered
+          radius="lg"
+        >
+          <Stack gap="md">
+            <Text size="sm">
+              {isVi
+                ? "Đề này còn một lượt làm dở khác. Bạn có thể làm tiếp lượt đó, hoặc nộp nó với các đáp án đã lưu rồi bắt đầu lượt mới."
+                : "This exam has another attempt still open. Continue it, or submit it with the answers saved so far and start a new one."}
+            </Text>
+            <Group justify="flex-end" gap="sm">
+              <Button variant="default" onClick={() => setBlockedChoice(null)}>
+                {isVi ? "Huỷ" : "Cancel"}
+              </Button>
+              <Button
+                variant="light"
+                loading={starting || openingDraft}
+                onClick={() =>
+                  blockedChoice &&
+                  void handleStart(blockedChoice, OpenAttemptChoice.RESUME)
+                }
+              >
+                {isVi ? "Làm tiếp bài dở" : "Continue that attempt"}
+              </Button>
+              <Button
+                color="orange"
+                loading={starting || openingDraft}
+                onClick={() =>
+                  blockedChoice &&
+                  void handleStart(blockedChoice, OpenAttemptChoice.REPLACE)
+                }
+              >
+                {isVi ? "Nộp bài đó, bắt đầu mới" : "Submit it and start new"}
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
       </Box>
     );
   }
@@ -552,13 +651,16 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         submitDisabled={expired || submitting || autosave.status === "conflict"}
         title={paper.title}
         sectionTitle={
-          currentSection
+          (practice ? (isVi ? "Luyện tập · " : "Practice · ") : "") +
+          (currentSection
             ? `${currentSection.sectionType} · ${currentPart?.title || ""}`
-            : ""
+            : "")
         }
-        formattedTime={formattedTime}
-        isWarning={isWarning}
-        isCritical={isCritical}
+        formattedTime={
+          untimed ? (isVi ? "Không giới hạn" : "No time limit") : formattedTime
+        }
+        isWarning={!untimed && isWarning}
+        isCritical={!untimed && isCritical}
         answeredCount={Object.keys(answers).length}
         totalQuestions={flatQuestions.length}
         onSubmitClick={() => setSubmitModalOpen(true)}

@@ -12,6 +12,7 @@ import {
   Paper,
   SimpleGrid,
   Stack,
+  Tabs,
   Text,
   ThemeIcon,
   Title,
@@ -26,7 +27,12 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
-import type { ExamSummary } from "../../../types";
+import type {
+  ExamOutlineSection,
+  ExamStartChoice,
+  ExamSummary,
+} from "../../../types";
+import { ExamPracticePicker } from "../ExamPracticePicker";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./ExamOverview.module.css";
 
@@ -37,12 +43,28 @@ export interface ExamOverviewProps {
    * khi đồng hồ chạy.
    */
   exam: ExamSummary;
+  /** Các part để chọn luyện tập; null khi chưa tải xong hoặc tải hỏng. */
+  outline: ExamOutlineSection[] | null;
+  outlineLoading: boolean;
+  outlineFailed: boolean;
+  onRetryOutline: () => void;
   starting: boolean;
-  onStart: () => void;
+  onStart: (choice: ExamStartChoice) => void;
 }
 
-export function ExamOverview({ exam, starting, onStart }: ExamOverviewProps) {
-  const { t } = useLanguage();
+export function ExamOverview({
+  exam,
+  outline,
+  outlineLoading,
+  outlineFailed,
+  onRetryOutline,
+  starting,
+  onStart,
+}: ExamOverviewProps) {
+  const { t, isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  // Bài kiểm tra đầu vào quyết định trình độ nên chỉ làm trọn đề.
+  const practiceAllowed = exam.examType !== "PLACEMENT";
 
   const durationMinutes = Math.round(exam.durationSeconds / 60);
 
@@ -165,85 +187,204 @@ export function ExamOverview({ exam, starting, onStart }: ExamOverviewProps) {
             </Card>
           </SimpleGrid>
 
-          {/* Guidelines Box */}
-          <Paper
-            p="md"
-            radius="md"
-            withBorder
-            className={classes.guidelinesBox}
-          >
-            <Group gap="xs" mb="xs">
-              <AlertCircle size={18} color="var(--mantine-color-navy-9)" />
-              <Text fw={700} size="sm" c="navy.9">
-                {t.exam.rulesTitle}
-              </Text>
-            </Group>
-            <Stack gap={8}>
-              <Flex gap="xs" align="flex-start">
-                <CheckCircle2
-                  size={16}
-                  color="var(--mantine-color-navy-9)"
-                  style={{ marginTop: 2, flexShrink: 0 }}
+          {practiceAllowed ? (
+            <Tabs defaultValue="practice" radius="md" keepMounted={false}>
+              <Tabs.List mb="md">
+                <Tabs.Tab value="practice">
+                  {tr("Luyện tập", "Practice")}
+                </Tabs.Tab>
+                <Tabs.Tab value="full">
+                  {tr("Thi thật (full test)", "Full test")}
+                </Tabs.Tab>
+              </Tabs.List>
+              <Tabs.Panel value="practice">
+                <ExamPracticePicker
+                  sections={outline}
+                  loading={outlineLoading}
+                  failed={outlineFailed}
+                  starting={starting}
+                  onRetry={onRetryOutline}
+                  onStart={(partIds, timeLimitMinutes) =>
+                    onStart({ mode: "PRACTICE", partIds, timeLimitMinutes })
+                  }
                 />
-                <Text size="xs" c="ink.6">
-                  {t.exam.rule1}
-                </Text>
-              </Flex>
-              <Flex gap="xs" align="flex-start">
-                <CheckCircle2
-                  size={16}
-                  color="var(--mantine-color-navy-9)"
-                  style={{ marginTop: 2, flexShrink: 0 }}
-                />
-                <Text size="xs" c="ink.6">
-                  {t.exam.rule2}
-                </Text>
-              </Flex>
-              <Flex gap="xs" align="flex-start">
-                <CheckCircle2
-                  size={16}
-                  color="var(--mantine-color-navy-9)"
-                  style={{ marginTop: 2, flexShrink: 0 }}
-                />
-                <Text size="xs" c="ink.6">
-                  {t.exam.rule3}
-                </Text>
-              </Flex>
-              <Flex gap="xs" align="flex-start">
-                <CheckCircle2
-                  size={16}
-                  color="var(--mantine-color-navy-9)"
-                  style={{ marginTop: 2, flexShrink: 0 }}
-                />
-                <Text size="xs" c="ink.6">
-                  {t.exam.rule4}
-                </Text>
-              </Flex>
-            </Stack>
-          </Paper>
+              </Tabs.Panel>
+              <Tabs.Panel value="full">
+                <Stack gap="lg">
+                  <Text size="sm" c="ink.6">
+                    {tr(
+                      `Làm toàn bộ đề trong ${durationMinutes} phút như thi thật. Hết giờ, bài được nộp tự động; kết quả được tính vào tiến độ và điểm cao nhất.`,
+                      `The whole paper in ${durationMinutes} minutes, as on test day. It is submitted automatically when time runs out, and counts toward your progress and best score.`,
+                    )}
+                  </Text>
+                  {/* Guidelines Box */}
+                  <Paper
+                    p="md"
+                    radius="md"
+                    withBorder
+                    className={classes.guidelinesBox}
+                  >
+                    <Group gap="xs" mb="xs">
+                      <AlertCircle
+                        size={18}
+                        color="var(--mantine-color-navy-9)"
+                      />
+                      <Text fw={700} size="sm" c="navy.9">
+                        {t.exam.rulesTitle}
+                      </Text>
+                    </Group>
+                    <Stack gap={8}>
+                      <Flex gap="xs" align="flex-start">
+                        <CheckCircle2
+                          size={16}
+                          color="var(--mantine-color-navy-9)"
+                          style={{ marginTop: 2, flexShrink: 0 }}
+                        />
+                        <Text size="xs" c="ink.6">
+                          {t.exam.rule1}
+                        </Text>
+                      </Flex>
+                      <Flex gap="xs" align="flex-start">
+                        <CheckCircle2
+                          size={16}
+                          color="var(--mantine-color-navy-9)"
+                          style={{ marginTop: 2, flexShrink: 0 }}
+                        />
+                        <Text size="xs" c="ink.6">
+                          {t.exam.rule2}
+                        </Text>
+                      </Flex>
+                      <Flex gap="xs" align="flex-start">
+                        <CheckCircle2
+                          size={16}
+                          color="var(--mantine-color-navy-9)"
+                          style={{ marginTop: 2, flexShrink: 0 }}
+                        />
+                        <Text size="xs" c="ink.6">
+                          {t.exam.rule3}
+                        </Text>
+                      </Flex>
+                      <Flex gap="xs" align="flex-start">
+                        <CheckCircle2
+                          size={16}
+                          color="var(--mantine-color-navy-9)"
+                          style={{ marginTop: 2, flexShrink: 0 }}
+                        />
+                        <Text size="xs" c="ink.6">
+                          {t.exam.rule4}
+                        </Text>
+                      </Flex>
+                    </Stack>
+                  </Paper>
 
-          {/* Action CTA */}
-          <Group justify="flex-end" pt="sm">
-            <Button
-              component={Link}
-              href="/exams"
-              variant="default"
-              radius="xl"
-              size="md"
-            >
-              {t.exam.returnToLibrary}
-            </Button>
-            <Button
-              onClick={onStart}
-              loading={starting}
-              radius="xl"
-              size="md"
-              rightSection={<Play size={16} />}
-              className={classes.startBtn}
-            >
-              {t.exam.startExam}
-            </Button>
-          </Group>
+                  {/* Action CTA */}
+                  <Group justify="flex-end" pt="sm">
+                    <Button
+                      component={Link}
+                      href="/exams"
+                      variant="default"
+                      radius="xl"
+                      size="md"
+                    >
+                      {t.exam.returnToLibrary}
+                    </Button>
+                    <Button
+                      onClick={() => onStart({ mode: "FULL" })}
+                      loading={starting}
+                      radius="xl"
+                      size="md"
+                      rightSection={<Play size={16} />}
+                      className={classes.startBtn}
+                    >
+                      {tr("Bắt đầu thi", "Start the test")}
+                    </Button>
+                  </Group>
+                </Stack>
+              </Tabs.Panel>
+            </Tabs>
+          ) : (
+            <>
+              {/* Guidelines Box */}
+              <Paper
+                p="md"
+                radius="md"
+                withBorder
+                className={classes.guidelinesBox}
+              >
+                <Group gap="xs" mb="xs">
+                  <AlertCircle size={18} color="var(--mantine-color-navy-9)" />
+                  <Text fw={700} size="sm" c="navy.9">
+                    {t.exam.rulesTitle}
+                  </Text>
+                </Group>
+                <Stack gap={8}>
+                  <Flex gap="xs" align="flex-start">
+                    <CheckCircle2
+                      size={16}
+                      color="var(--mantine-color-navy-9)"
+                      style={{ marginTop: 2, flexShrink: 0 }}
+                    />
+                    <Text size="xs" c="ink.6">
+                      {t.exam.rule1}
+                    </Text>
+                  </Flex>
+                  <Flex gap="xs" align="flex-start">
+                    <CheckCircle2
+                      size={16}
+                      color="var(--mantine-color-navy-9)"
+                      style={{ marginTop: 2, flexShrink: 0 }}
+                    />
+                    <Text size="xs" c="ink.6">
+                      {t.exam.rule2}
+                    </Text>
+                  </Flex>
+                  <Flex gap="xs" align="flex-start">
+                    <CheckCircle2
+                      size={16}
+                      color="var(--mantine-color-navy-9)"
+                      style={{ marginTop: 2, flexShrink: 0 }}
+                    />
+                    <Text size="xs" c="ink.6">
+                      {t.exam.rule3}
+                    </Text>
+                  </Flex>
+                  <Flex gap="xs" align="flex-start">
+                    <CheckCircle2
+                      size={16}
+                      color="var(--mantine-color-navy-9)"
+                      style={{ marginTop: 2, flexShrink: 0 }}
+                    />
+                    <Text size="xs" c="ink.6">
+                      {t.exam.rule4}
+                    </Text>
+                  </Flex>
+                </Stack>
+              </Paper>
+
+              {/* Action CTA */}
+              <Group justify="flex-end" pt="sm">
+                <Button
+                  component={Link}
+                  href="/exams"
+                  variant="default"
+                  radius="xl"
+                  size="md"
+                >
+                  {t.exam.returnToLibrary}
+                </Button>
+                <Button
+                  onClick={() => onStart({ mode: "FULL" })}
+                  loading={starting}
+                  radius="xl"
+                  size="md"
+                  rightSection={<Play size={16} />}
+                  className={classes.startBtn}
+                >
+                  {tr("Bắt đầu thi", "Start the test")}
+                </Button>
+              </Group>
+            </>
+          )}
         </Stack>
       </Card>
     </Box>

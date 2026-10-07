@@ -32,6 +32,10 @@ export const examResolvers = {
       ctx.requireToken();
       return ctx.apis.examApi.getPlacementExam();
     },
+    examOutline: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getOutline(args.examId);
+    },
     attemptPaper: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.getAttemptPaper(args.attemptId);
@@ -59,7 +63,18 @@ export const examResolvers = {
     },
     startExamAttempt: (_, args, ctx) => {
       ctx.requireToken();
-      return ctx.apis.examApi.startAttempt(args.examId);
+      const input = args.input;
+      return ctx.apis.examApi.startAttempt(
+        args.examId,
+        input
+          ? {
+              mode: input.mode ?? undefined,
+              partIds: input.partIds ?? undefined,
+              timeLimitMinutes: input.timeLimitMinutes ?? undefined,
+              onOpen: input.onOpen ?? undefined,
+            }
+          : undefined,
+      );
     },
     submitExamAttempt: (_, args, ctx) => {
       ctx.requireToken();

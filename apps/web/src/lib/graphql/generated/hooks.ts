@@ -1379,6 +1379,13 @@ export type ExamAttemptFieldsFragment = {
   questionCount: number;
   resumed: boolean;
   examTitle: string | null;
+  mode: Types.ExamAttemptMode;
+  timeLimitSeconds: number | null;
+  parts: Array<{
+    id: string;
+    sectionType: string | null;
+    title: string | null;
+  }>;
 };
 
 export type ExamDraftQueryVariables = Exact<{
@@ -1423,6 +1430,7 @@ export type AttemptReviewFieldsFragment = {
 
 export type StartExamAttemptMutationVariables = Exact<{
   examId: string | number;
+  input?: Types.StartExamAttemptInput | null | undefined;
 }>;
 
 export type StartExamAttemptMutation = {
@@ -1441,6 +1449,13 @@ export type StartExamAttemptMutation = {
     questionCount: number;
     resumed: boolean;
     examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
+    }>;
   };
 };
 
@@ -1522,6 +1537,8 @@ export type SubmitExamAttemptMutation = {
     questionCount: number;
     resumed: boolean;
     examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -1534,6 +1551,11 @@ export type SubmitExamAttemptMutation = {
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
     }>;
   };
 };
@@ -1558,6 +1580,8 @@ export type ExamAttemptResultQuery = {
     questionCount: number;
     resumed: boolean;
     examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -1570,6 +1594,11 @@ export type ExamAttemptResultQuery = {
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
     }>;
   };
 };
@@ -1600,6 +1629,13 @@ export type ExamAttemptHistoryQuery = {
       questionCount: number;
       resumed: boolean;
       examTitle: string | null;
+      mode: Types.ExamAttemptMode;
+      timeLimitSeconds: number | null;
+      parts: Array<{
+        id: string;
+        sectionType: string | null;
+        title: string | null;
+      }>;
     }>;
   };
 };
@@ -1673,6 +1709,27 @@ export type PlacementExamQuery = {
     description: string;
     durationSeconds: number;
     questionCount: number;
+  };
+};
+
+export type ExamOutlineQueryVariables = Exact<{
+  examId: string | number;
+}>;
+
+export type ExamOutlineQuery = {
+  examOutline: {
+    examId: string;
+    sections: Array<{
+      id: string;
+      sectionType: string;
+      orderNo: number;
+      parts: Array<{
+        id: string;
+        orderNo: number;
+        title: string;
+        questionCount: number;
+      }>;
+    }>;
   };
 };
 
@@ -2562,6 +2619,13 @@ export const ExamAttemptFieldsFragmentDoc = gql`
     questionCount
     resumed
     examTitle
+    mode
+    timeLimitSeconds
+    parts {
+      id
+      sectionType
+      title
+    }
   }
 `;
 export const AttemptReviewFieldsFragmentDoc = gql`
@@ -6686,8 +6750,8 @@ export type SaveExamDraftMutationOptions =
     SaveExamDraftMutationVariables
   >;
 export const StartExamAttemptDocument = gql`
-  mutation StartExamAttempt($examId: ID!) {
-    startExamAttempt(examId: $examId) {
+  mutation StartExamAttempt($examId: ID!, $input: StartExamAttemptInput) {
+    startExamAttempt(examId: $examId, input: $input) {
       ...ExamAttemptFields
     }
   }
@@ -6714,6 +6778,7 @@ export type StartExamAttemptMutationFn = (
  * const [startExamAttemptMutation, { data, loading, error }] = useStartExamAttemptMutation({
  *   variables: {
  *      examId: // value for 'examId'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -7522,6 +7587,118 @@ export type PlacementExamSuspenseQueryHookResult = ReturnType<
 export type PlacementExamQueryResult = ApolloReactCommon.QueryResult<
   PlacementExamQuery,
   PlacementExamQueryVariables
+>;
+export const ExamOutlineDocument = gql`
+  query ExamOutline($examId: ID!) {
+    examOutline(examId: $examId) {
+      examId
+      sections {
+        id
+        sectionType
+        orderNo
+        parts {
+          id
+          orderNo
+          title
+          questionCount
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useExamOutlineQuery__
+ *
+ * To run a query within a React component, call `useExamOutlineQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExamOutlineQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExamOutlineQuery({
+ *   variables: {
+ *      examId: // value for 'examId'
+ *   },
+ * });
+ */
+export function useExamOutlineQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ExamOutlineQuery,
+    ExamOutlineQueryVariables
+  > &
+    (
+      | { variables: ExamOutlineQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<ExamOutlineQuery, ExamOutlineQueryVariables>(
+    ExamOutlineDocument,
+    options,
+  );
+}
+export function useExamOutlineLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExamOutlineQuery,
+    ExamOutlineQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ExamOutlineQuery,
+    ExamOutlineQueryVariables
+  >(ExamOutlineDocument, options);
+}
+export function useExamOutlineSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ExamOutlineQuery,
+    ExamOutlineQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamOutlineQuery,
+  ExamOutlineQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useExamOutlineSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamOutlineQuery,
+        ExamOutlineQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ExamOutlineQuery | undefined,
+  ExamOutlineQueryVariables
+>;
+export function useExamOutlineSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ExamOutlineQuery,
+        ExamOutlineQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ExamOutlineQuery,
+    ExamOutlineQueryVariables
+  >(ExamOutlineDocument, options as any);
+}
+export type ExamOutlineQueryHookResult = ReturnType<typeof useExamOutlineQuery>;
+export type ExamOutlineLazyQueryHookResult = ReturnType<
+  typeof useExamOutlineLazyQuery
+>;
+export type ExamOutlineSuspenseQueryHookResult = ReturnType<
+  typeof useExamOutlineSuspenseQuery
+>;
+export type ExamOutlineQueryResult = ApolloReactCommon.QueryResult<
+  ExamOutlineQuery,
+  ExamOutlineQueryVariables
 >;
 export const FlashcardSetsDocument = gql`
   query FlashcardSets($topic: String, $title: String, $page: Int, $size: Int) {

@@ -179,6 +179,12 @@ export const examTypeDefs = /* GraphQL */ `
     attemptPaper(attemptId: ID!): ExamPaper!
 
     """
+    The paper's skills and parts with how many questions each holds - what a
+    practice is picked from. No question content.
+    """
+    examOutline(examId: ID!): ExamOutline!
+
+    """
     The scored attempt. Carries the answer key, so it is only worth reading
     once the attempt has left IN_PROGRESS.
     """
@@ -285,10 +291,89 @@ export const examTypeDefs = /* GraphQL */ `
     options: [AttemptOptionReview!]!
   }
 
+  """
+  FULL is the real sitting: every part on the paper's own clock, and the only
+  mode that counts toward progress, the best score and placement. PRACTICE
+  covers chosen parts on a clock the learner picked, or none.
+  """
+  enum ExamAttemptMode {
+    FULL
+    PRACTICE
+  }
+
+  """
+  What to do when another attempt at this exam is already open.
+  """
+  enum OpenAttemptChoice {
+    """
+    Keep the open attempt and return it.
+    """
+    RESUME
+    """
+    Finalize the open attempt from its saved answers, then start the new one.
+    """
+    REPLACE
+  }
+
+  input StartExamAttemptInput {
+    mode: ExamAttemptMode
+    """
+    Parts a practice covers. Ignored for FULL.
+    """
+    partIds: [ID!]
+    """
+    A practice's clock, 1-300 minutes; null for none. Ignored for FULL.
+    """
+    timeLimitMinutes: Int
+    """
+    Without it, an open attempt that is not the one asked for fails with
+    extensions.backendCode: ATTEMPT_IN_PROGRESS so the learner can choose.
+    """
+    onOpen: OpenAttemptChoice
+  }
+
+  type ExamOutline {
+    examId: ID!
+    sections: [ExamOutlineSection!]!
+  }
+
+  type ExamOutlineSection {
+    id: ID!
+    sectionType: String!
+    orderNo: Int!
+    parts: [ExamOutlinePart!]!
+  }
+
+  type ExamOutlinePart {
+    id: ID!
+    orderNo: Int!
+    title: String!
+    questionCount: Int!
+  }
+
+  """
+  A part a practice covered.
+  """
+  type AttemptPart {
+    id: ID!
+    sectionType: String
+    title: String
+  }
+
   type ExamAttempt {
     id: ID!
     examId: ID!
     status: ExamAttemptStatus!
+    mode: ExamAttemptMode!
+    """
+    Null only for an untimed practice; expiresAt is then a far safety net and
+    the client shows no countdown.
+    """
+    timeLimitSeconds: Int
+    """
+    Parts a practice covers; empty for a full attempt.
+    """
+    parts: [AttemptPart!]!
     startedAt: DateTime!
     """
     The deadline the backend issued. This is the only authority on remaining
@@ -359,7 +444,7 @@ export const examTypeDefs = /* GraphQL */ `
     backend enforces one live attempt per learner and exam, so calling this
     twice does not create two.
     """
-    startExamAttempt(examId: ID!): ExamAttempt!
+    startExamAttempt(examId: ID!, input: StartExamAttemptInput): ExamAttempt!
 
     """
     Submits and scores in one step. The backend rejects a submission after

@@ -204,6 +204,14 @@ export type AttemptOptionReview = {
   optionId: Scalars['ID']['output'];
 };
 
+/** A part a practice covered. */
+export type AttemptPart = {
+  __typename?: 'AttemptPart';
+  id: Scalars['ID']['output'];
+  sectionType?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
 export type AttemptQuestionReview = {
   __typename?: 'AttemptQuestionReview';
   awardedRawScore: Scalars['Float']['output'];
@@ -515,6 +523,9 @@ export type ExamAttempt = {
   expiresAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   maxRawScore: Scalars['Float']['output'];
+  mode: ExamAttemptMode;
+  /** Parts a practice covers; empty for a full attempt. */
+  parts: Array<AttemptPart>;
   questionCount: Scalars['Int']['output'];
   /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
   questions: Array<AttemptQuestionReview>;
@@ -527,7 +538,21 @@ export type ExamAttempt = {
   startedAt: Scalars['DateTime']['output'];
   status: ExamAttemptStatus;
   submittedAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * Null only for an untimed practice; expiresAt is then a far safety net and
+   * the client shows no countdown.
+   */
+  timeLimitSeconds?: Maybe<Scalars['Int']['output']>;
 };
+
+/**
+ * FULL is the real sitting: every part on the paper's own clock, and the only
+ * mode that counts toward progress, the best score and placement. PRACTICE
+ * covers chosen parts on a clock the learner picked, or none.
+ */
+export type ExamAttemptMode =
+  | 'FULL'
+  | 'PRACTICE';
 
 export type ExamAttemptPage = {
   __typename?: 'ExamAttemptPage';
@@ -579,6 +604,28 @@ export type ExamListItem = {
   targetLevel?: Maybe<TargetLevel>;
   title: Scalars['String']['output'];
   versionNumber: Scalars['Int']['output'];
+};
+
+export type ExamOutline = {
+  __typename?: 'ExamOutline';
+  examId: Scalars['ID']['output'];
+  sections: Array<ExamOutlineSection>;
+};
+
+export type ExamOutlinePart = {
+  __typename?: 'ExamOutlinePart';
+  id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+  questionCount: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type ExamOutlineSection = {
+  __typename?: 'ExamOutlineSection';
+  id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+  parts: Array<ExamOutlinePart>;
+  sectionType: Scalars['String']['output'];
 };
 
 export type ExamPage = {
@@ -1230,6 +1277,7 @@ export type MutationStartAssessmentArgs = {
 
 export type MutationStartExamAttemptArgs = {
   examId: Scalars['ID']['input'];
+  input?: InputMaybe<StartExamAttemptInput>;
 };
 
 
@@ -1319,6 +1367,13 @@ export type OnboardingStep =
   | 'LEARNING_PURPOSES'
   | 'TARGET_SKILLS';
 
+/** What to do when another attempt at this exam is already open. */
+export type OpenAttemptChoice =
+  /** Finalize the open attempt from its saved answers, then start the new one. */
+  | 'REPLACE'
+  /** Keep the open attempt and return it. */
+  | 'RESUME';
+
 export type OverviewContentCounts = {
   __typename?: 'OverviewContentCounts';
   drafts: Scalars['Int']['output'];
@@ -1399,6 +1454,11 @@ export type Query = {
    */
   examAttempts: ExamAttemptPage;
   examDraft: ExamDraft;
+  /**
+   * The paper's skills and parts with how many questions each holds - what a
+   * practice is picked from. No question content.
+   */
+  examOutline: ExamOutline;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
   flashcardSet: FlashcardSetDetail;
@@ -1560,6 +1620,11 @@ export type QueryExamAttemptsArgs = {
 
 export type QueryExamDraftArgs = {
   attemptId: Scalars['ID']['input'];
+};
+
+
+export type QueryExamOutlineArgs = {
+  examId: Scalars['ID']['input'];
 };
 
 
@@ -1907,6 +1972,19 @@ export type SpeakingWord = {
   word: Scalars['String']['output'];
 };
 
+export type StartExamAttemptInput = {
+  mode?: InputMaybe<ExamAttemptMode>;
+  /**
+   * Without it, an open attempt that is not the one asked for fails with
+   * extensions.backendCode: ATTEMPT_IN_PROGRESS so the learner can choose.
+   */
+  onOpen?: InputMaybe<OpenAttemptChoice>;
+  /** Parts a practice covers. Ignored for FULL. */
+  partIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** A practice's clock, 1-300 minutes; null for none. Ignored for FULL. */
+  timeLimitMinutes?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type SubmitAnswerInput = {
   questionId: Scalars['ID']['input'];
   /** Empty for a question the learner skipped; several for a multi-select. */
@@ -2090,6 +2168,7 @@ export type ResolversTypes = ResolversObject<{
   AssessmentUpload: ResolverTypeWrapper<AssessmentUpload>;
   AssessmentWorkload: ResolverTypeWrapper<AssessmentWorkload>;
   AttemptOptionReview: ResolverTypeWrapper<AttemptOptionReview>;
+  AttemptPart: ResolverTypeWrapper<AttemptPart>;
   AttemptQuestionReview: ResolverTypeWrapper<AttemptQuestionReview>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CefrLevel: CefrLevel;
@@ -2119,11 +2198,15 @@ export type ResolversTypes = ResolversObject<{
   DictationSubmission: ResolverTypeWrapper<DictationSubmission>;
   Exam: ResolverTypeWrapper<Exam>;
   ExamAttempt: ResolverTypeWrapper<ExamAttempt>;
+  ExamAttemptMode: ExamAttemptMode;
   ExamAttemptPage: ResolverTypeWrapper<ExamAttemptPage>;
   ExamAttemptStatus: ExamAttemptStatus;
   ExamDraft: ResolverTypeWrapper<ExamDraft>;
   ExamDraftAnswer: ResolverTypeWrapper<ExamDraftAnswer>;
   ExamListItem: ResolverTypeWrapper<ExamListItem>;
+  ExamOutline: ResolverTypeWrapper<ExamOutline>;
+  ExamOutlinePart: ResolverTypeWrapper<ExamOutlinePart>;
+  ExamOutlineSection: ResolverTypeWrapper<ExamOutlineSection>;
   ExamPage: ResolverTypeWrapper<ExamPage>;
   ExamPaper: ResolverTypeWrapper<ExamPaper>;
   ExamQuestion: ResolverTypeWrapper<ExamQuestion>;
@@ -2157,6 +2240,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   OnboardingState: ResolverTypeWrapper<OnboardingState>;
   OnboardingStep: OnboardingStep;
+  OpenAttemptChoice: OpenAttemptChoice;
   OverviewContentCounts: ResolverTypeWrapper<OverviewContentCounts>;
   OverviewContentKind: OverviewContentKind;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
@@ -2180,6 +2264,7 @@ export type ResolversTypes = ResolversObject<{
   SpeakingPromptPage: ResolverTypeWrapper<SpeakingPromptPage>;
   SpeakingUploadTicket: ResolverTypeWrapper<SpeakingUploadTicket>;
   SpeakingWord: ResolverTypeWrapper<SpeakingWord>;
+  StartExamAttemptInput: StartExamAttemptInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   SubmitAnswerInput: SubmitAnswerInput;
   TargetCertificate: TargetCertificate;
@@ -2211,6 +2296,7 @@ export type ResolversParentTypes = ResolversObject<{
   AssessmentUpload: AssessmentUpload;
   AssessmentWorkload: AssessmentWorkload;
   AttemptOptionReview: AttemptOptionReview;
+  AttemptPart: AttemptPart;
   AttemptQuestionReview: AttemptQuestionReview;
   Boolean: Scalars['Boolean']['output'];
   ContentReview: ContentReview;
@@ -2236,6 +2322,9 @@ export type ResolversParentTypes = ResolversObject<{
   ExamDraft: ExamDraft;
   ExamDraftAnswer: ExamDraftAnswer;
   ExamListItem: ExamListItem;
+  ExamOutline: ExamOutline;
+  ExamOutlinePart: ExamOutlinePart;
+  ExamOutlineSection: ExamOutlineSection;
   ExamPage: ExamPage;
   ExamPaper: ExamPaper;
   ExamQuestion: ExamQuestion;
@@ -2279,6 +2368,7 @@ export type ResolversParentTypes = ResolversObject<{
   SpeakingPromptPage: SpeakingPromptPage;
   SpeakingUploadTicket: SpeakingUploadTicket;
   SpeakingWord: SpeakingWord;
+  StartExamAttemptInput: StartExamAttemptInput;
   String: Scalars['String']['output'];
   SubmitAnswerInput: SubmitAnswerInput;
   TutorConversation: TutorConversation;
@@ -2424,6 +2514,12 @@ export type AttemptOptionReviewResolvers<ContextType = GraphQLContext, ParentTyp
   correct?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   explanation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   optionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type AttemptPartResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AttemptPart'] = ResolversParentTypes['AttemptPart']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  sectionType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
 export type AttemptQuestionReviewResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AttemptQuestionReview'] = ResolversParentTypes['AttemptQuestionReview']> = ResolversObject<{
@@ -2616,6 +2712,8 @@ export type ExamAttemptResolvers<ContextType = GraphQLContext, ParentType extend
   expiresAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   maxRawScore?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  mode?: Resolver<ResolversTypes['ExamAttemptMode'], ParentType, ContextType>;
+  parts?: Resolver<Array<ResolversTypes['AttemptPart']>, ParentType, ContextType>;
   questionCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   questions?: Resolver<Array<ResolversTypes['AttemptQuestionReview']>, ParentType, ContextType>;
   rawScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -2625,6 +2723,7 @@ export type ExamAttemptResolvers<ContextType = GraphQLContext, ParentType extend
   startedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['ExamAttemptStatus'], ParentType, ContextType>;
   submittedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  timeLimitSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 }>;
 
 export type ExamAttemptPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamAttemptPage'] = ResolversParentTypes['ExamAttemptPage']> = ResolversObject<{
@@ -2660,6 +2759,25 @@ export type ExamListItemResolvers<ContextType = GraphQLContext, ParentType exten
   targetLevel?: Resolver<Maybe<ResolversTypes['TargetLevel']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   versionNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type ExamOutlineResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamOutline'] = ResolversParentTypes['ExamOutline']> = ResolversObject<{
+  examId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  sections?: Resolver<Array<ResolversTypes['ExamOutlineSection']>, ParentType, ContextType>;
+}>;
+
+export type ExamOutlinePartResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamOutlinePart'] = ResolversParentTypes['ExamOutlinePart']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  questionCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type ExamOutlineSectionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamOutlineSection'] = ResolversParentTypes['ExamOutlineSection']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  parts?: Resolver<Array<ResolversTypes['ExamOutlinePart']>, ParentType, ContextType>;
+  sectionType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type ExamPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamPage'] = ResolversParentTypes['ExamPage']> = ResolversObject<{
@@ -2967,6 +3085,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   examAttempt?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<QueryExamAttemptArgs, 'id'>>;
   examAttempts?: Resolver<ResolversTypes['ExamAttemptPage'], ParentType, ContextType, RequireFields<QueryExamAttemptsArgs, 'page' | 'size'>>;
   examDraft?: Resolver<ResolversTypes['ExamDraft'], ParentType, ContextType, RequireFields<QueryExamDraftArgs, 'attemptId'>>;
+  examOutline?: Resolver<ResolversTypes['ExamOutline'], ParentType, ContextType, RequireFields<QueryExamOutlineArgs, 'examId'>>;
   exams?: Resolver<ResolversTypes['LearnerExamPage'], ParentType, ContextType, RequireFields<QueryExamsArgs, 'page' | 'size'>>;
   flashcardSet?: Resolver<ResolversTypes['FlashcardSetDetail'], ParentType, ContextType, RequireFields<QueryFlashcardSetArgs, 'id'>>;
   flashcardSets?: Resolver<ResolversTypes['FlashcardSetPage'], ParentType, ContextType, RequireFields<QueryFlashcardSetsArgs, 'page' | 'size'>>;
@@ -3191,6 +3310,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AssessmentUpload?: AssessmentUploadResolvers<ContextType>;
   AssessmentWorkload?: AssessmentWorkloadResolvers<ContextType>;
   AttemptOptionReview?: AttemptOptionReviewResolvers<ContextType>;
+  AttemptPart?: AttemptPartResolvers<ContextType>;
   AttemptQuestionReview?: AttemptQuestionReviewResolvers<ContextType>;
   ContentReview?: ContentReviewResolvers<ContextType>;
   ContentReviewPage?: ContentReviewPageResolvers<ContextType>;
@@ -3215,6 +3335,9 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   ExamDraft?: ExamDraftResolvers<ContextType>;
   ExamDraftAnswer?: ExamDraftAnswerResolvers<ContextType>;
   ExamListItem?: ExamListItemResolvers<ContextType>;
+  ExamOutline?: ExamOutlineResolvers<ContextType>;
+  ExamOutlinePart?: ExamOutlinePartResolvers<ContextType>;
+  ExamOutlineSection?: ExamOutlineSectionResolvers<ContextType>;
   ExamPage?: ExamPageResolvers<ContextType>;
   ExamPaper?: ExamPaperResolvers<ContextType>;
   ExamQuestion?: ExamQuestionResolvers<ContextType>;

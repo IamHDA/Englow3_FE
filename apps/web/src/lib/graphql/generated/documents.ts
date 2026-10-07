@@ -1376,6 +1376,13 @@ export type ExamAttemptFieldsFragment = {
   questionCount: number;
   resumed: boolean;
   examTitle: string | null;
+  mode: Types.ExamAttemptMode;
+  timeLimitSeconds: number | null;
+  parts: Array<{
+    id: string;
+    sectionType: string | null;
+    title: string | null;
+  }>;
 };
 
 export type ExamDraftQueryVariables = Exact<{
@@ -1420,6 +1427,7 @@ export type AttemptReviewFieldsFragment = {
 
 export type StartExamAttemptMutationVariables = Exact<{
   examId: string | number;
+  input?: Types.StartExamAttemptInput | null | undefined;
 }>;
 
 export type StartExamAttemptMutation = {
@@ -1438,6 +1446,13 @@ export type StartExamAttemptMutation = {
     questionCount: number;
     resumed: boolean;
     examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
+    }>;
   };
 };
 
@@ -1519,6 +1534,8 @@ export type SubmitExamAttemptMutation = {
     questionCount: number;
     resumed: boolean;
     examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -1531,6 +1548,11 @@ export type SubmitExamAttemptMutation = {
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
     }>;
   };
 };
@@ -1555,6 +1577,8 @@ export type ExamAttemptResultQuery = {
     questionCount: number;
     resumed: boolean;
     examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
     questions: Array<{
       questionId: string;
       selectedOptionIds: Array<string>;
@@ -1567,6 +1591,11 @@ export type ExamAttemptResultQuery = {
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
     }>;
   };
 };
@@ -1597,6 +1626,13 @@ export type ExamAttemptHistoryQuery = {
       questionCount: number;
       resumed: boolean;
       examTitle: string | null;
+      mode: Types.ExamAttemptMode;
+      timeLimitSeconds: number | null;
+      parts: Array<{
+        id: string;
+        sectionType: string | null;
+        title: string | null;
+      }>;
     }>;
   };
 };
@@ -1670,6 +1706,27 @@ export type PlacementExamQuery = {
     description: string;
     durationSeconds: number;
     questionCount: number;
+  };
+};
+
+export type ExamOutlineQueryVariables = Exact<{
+  examId: string | number;
+}>;
+
+export type ExamOutlineQuery = {
+  examOutline: {
+    examId: string;
+    sections: Array<{
+      id: string;
+      sectionType: string;
+      orderNo: number;
+      parts: Array<{
+        id: string;
+        orderNo: number;
+        title: string;
+        questionCount: number;
+      }>;
+    }>;
   };
 };
 
@@ -2760,6 +2817,20 @@ export const ExamAttemptFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
           { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -8357,6 +8428,17 @@ export const StartExamAttemptDocument = {
             type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
           },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "StartExamAttemptInput" },
+          },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -8371,6 +8453,14 @@ export const StartExamAttemptDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "examId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
                 },
               },
             ],
@@ -8414,6 +8504,20 @@ export const StartExamAttemptDocument = {
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
           { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -8811,6 +8915,20 @@ export const SubmitExamAttemptDocument = {
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
           { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -8936,6 +9054,20 @@ export const ExamAttemptResultDocument = {
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
           { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -9071,6 +9203,20 @@ export const ExamAttemptHistoryDocument = {
           { kind: "Field", name: { kind: "Name", value: "questionCount" } },
           { kind: "Field", name: { kind: "Name", value: "resumed" } },
           { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -9404,6 +9550,97 @@ export const PlacementExamDocument = {
     },
   ],
 } as unknown as DocumentNode<PlacementExamQuery, PlacementExamQueryVariables>;
+export const ExamOutlineDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ExamOutline" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "examId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "examOutline" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "examId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "examId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "examId" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "sections" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "sectionType" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "orderNo" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "parts" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "orderNo" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "title" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "questionCount" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ExamOutlineQuery, ExamOutlineQueryVariables>;
 export const FlashcardSetsDocument = {
   kind: "Document",
   definitions: [

@@ -236,8 +236,54 @@ describe("Mutation.startExamAttempt", () => {
     );
 
     expect(startAttempt).toHaveBeenCalledTimes(1);
-    expect(startAttempt).toHaveBeenCalledWith("exam-1");
+    expect(startAttempt).toHaveBeenCalledWith("exam-1", undefined);
     expect(res).toEqual({ id: "attempt-1", resumed: true });
+  });
+
+  it("forwards a practice request as the backend body, dropping unset fields", async () => {
+    const startAttempt = vi
+      .fn()
+      .mockResolvedValue({ id: "attempt-2", mode: "PRACTICE" });
+    const ctx = makeContext({ apis: { examApi: { startAttempt } } });
+
+    await examResolvers.Mutation.startExamAttempt(
+      {},
+      {
+        examId: "exam-1",
+        input: {
+          mode: "PRACTICE",
+          partIds: ["part-1", "part-5"],
+          timeLimitMinutes: null,
+          onOpen: "REPLACE",
+        },
+      },
+      ctx,
+    );
+
+    expect(startAttempt).toHaveBeenCalledWith("exam-1", {
+      mode: "PRACTICE",
+      partIds: ["part-1", "part-5"],
+      timeLimitMinutes: undefined,
+      onOpen: "REPLACE",
+    });
+  });
+});
+
+describe("Query.examOutline", () => {
+  it("reads the outline for the exam asked about", async () => {
+    const getOutline = vi
+      .fn()
+      .mockResolvedValue({ examId: "exam-1", sections: [] });
+    const ctx = makeContext({ apis: { examApi: { getOutline } } });
+
+    const res = await examResolvers.Query.examOutline(
+      {},
+      { examId: "exam-1" },
+      ctx,
+    );
+
+    expect(getOutline).toHaveBeenCalledWith("exam-1");
+    expect(res).toEqual({ examId: "exam-1", sections: [] });
   });
 });
 

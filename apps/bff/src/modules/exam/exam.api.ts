@@ -7,11 +7,13 @@ import { toQueryString } from "../../shared/http/queryParams.js";
 import type {
   ExamAttemptPageResponse,
   ExamAttemptResponse,
+  ExamOutlineResponse,
   ExamPageResponse,
   ExamPaperResponse,
   ExamResponse,
   LearnerExamItemResponse,
   LearnerExamPageResponse,
+  StartExamAttemptRequest,
   SubmittedAnswer,
 } from "./exam.types.js";
 
@@ -69,9 +71,20 @@ export class ExamApi {
    * 201 for a new attempt and 200 with `resumed: true` for an existing one, and
    * a unique index stops a learner holding two at once.
    */
-  startAttempt(examId: string): Promise<ExamAttemptResponse> {
+  startAttempt(
+    examId: string,
+    request?: StartExamAttemptRequest,
+  ): Promise<ExamAttemptResponse> {
     return this.client.post(
       `${EXAM_BASE_PATH}/${encodeURIComponent(examId)}/attempts`,
+      request,
+    );
+  }
+
+  /** Skills and parts with question counts - what a practice is picked from. */
+  getOutline(examId: string): Promise<ExamOutlineResponse> {
+    return this.client.get(
+      `${EXAM_BASE_PATH}/${encodeURIComponent(examId)}/outline`,
     );
   }
 

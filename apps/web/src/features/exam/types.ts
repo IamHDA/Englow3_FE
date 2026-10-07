@@ -4,6 +4,7 @@ import type {
   ExamAttemptResultQuery,
   ExamDetailQuery,
   ExamLibraryQuery,
+  ExamOutlineQuery,
 } from "@/lib/graphql/generated/documents";
 import type { SortKey } from "./constants/examLibrary";
 
@@ -20,6 +21,18 @@ export type ExamPaperSection = ExamPaper["sections"][number];
 export type ExamPaperPart = ExamPaperSection["parts"][number];
 export type ExamPaperQuestionSet = ExamPaperPart["questionSets"][number];
 export type ExamPaperQuestion = ExamPaperQuestionSet["questions"][number];
+
+/** Các kỹ năng và part của đề, kèm số câu - để chọn part luyện tập. */
+export type ExamOutlineSection =
+  ExamOutlineQuery["examOutline"]["sections"][number];
+
+/**
+ * Người học muốn mở đề theo cách nào. Thi thật luôn làm cả đề theo giờ của đề;
+ * luyện tập chỉ gồm các part đã chọn, với giờ tự chọn hoặc không giới hạn.
+ */
+export type ExamStartChoice =
+  | { mode: "FULL" }
+  | { mode: "PRACTICE"; partIds: string[]; timeLimitMinutes: number | null };
 
 /** Bản tóm tắt đề, đọc được trước khi mở lượt thi. */
 export type ExamSummary = NonNullable<ExamDetailQuery["exam"]>;
