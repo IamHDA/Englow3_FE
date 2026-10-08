@@ -346,15 +346,20 @@ function Editor({
                 "Nội dung đã thay đổi ở phiên khác. Nháp của bạn vẫn được giữ; tải bản mới trước khi lưu lại.",
                 "This item changed in another session. Your draft is retained; reload before saving again.",
               )
-            : e.code === "UNAUTHENTICATED"
+            : e.code === "EXAM_PRODUCTIVE_SECTION"
               ? t(
-                  "Phiên đăng nhập đã hết. Đăng nhập lại rồi mở nháp.",
-                  "Your session expired. Sign in and reopen the draft.",
+                  "Đề thi thử không chứa được phần Writing/Speaking. Đổi phần đó sang Listening hoặc Reading; Writing/Speaking soạn ở Quản trị → Writing & Speaking.",
+                  "A mock exam cannot hold a Writing/Speaking section. Switch it to Listening or Reading; author Writing/Speaking under Admin → Writing & Speaking.",
                 )
-              : t(
-                  "Chưa lưu được nội dung. Kiểm tra các trường và kết nối rồi thử lại.",
-                  "Save failed. Check the fields and connection, then retry.",
-                ),
+              : e.code === "UNAUTHENTICATED"
+                ? t(
+                    "Phiên đăng nhập đã hết. Đăng nhập lại rồi mở nháp.",
+                    "Your session expired. Sign in and reopen the draft.",
+                  )
+                : t(
+                    "Chưa lưu được nội dung. Kiểm tra các trường và kết nối rồi thử lại.",
+                    "Save failed. Check the fields and connection, then retry.",
+                  ),
         );
       } else
         setFailure(t("Chưa lưu được nội dung.", "Could not save content."));

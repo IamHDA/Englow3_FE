@@ -21,6 +21,7 @@ import { useAssessmentCatalogQuery } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { instructionsPreview } from "./TaskInstructions";
 export function AssessmentLibrary({ skill }: { skill: AssessmentSkill }) {
   const { isVi } = useLanguage();
   const t = (vi: string, en: string) => (isVi ? vi : en);
@@ -86,7 +87,7 @@ export function AssessmentLibrary({ skill }: { skill: AssessmentSkill }) {
                   </Badge>
                   <Title order={3}>{task.title}</Title>
                   <Text size="sm" lineClamp={4}>
-                    {task.instructions}
+                    {instructionsPreview(task.instructions)}
                   </Text>
                   <Text size="sm" c="dimmed">
                     {Math.round(task.timeLimitSeconds / 60)}{" "}

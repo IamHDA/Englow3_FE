@@ -38,6 +38,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { statusLabels, statusLabelsEn, type PracticeTask } from "../types";
+import { TaskInstructions } from "./TaskInstructions";
 export function AssessmentManagement({
   initial = {},
 }: {
@@ -517,9 +518,7 @@ export function AssessmentManagement({
                 {preview.skill} · {preview.taskType}
               </Badge>
               <Text fw={700}>{tx("Đề và hướng dẫn")}</Text>
-              <Text style={{ whiteSpace: "pre-wrap" }}>
-                {preview.instructions}
-              </Text>
+              <TaskInstructions text={preview.instructions} />
               <Text fw={700}>{tx("Ghi chú chấm bài")}</Text>
               <Text style={{ whiteSpace: "pre-wrap" }}>
                 {preview.rubricNotes ||

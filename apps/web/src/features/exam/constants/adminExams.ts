@@ -61,6 +61,10 @@ export const ADMIN_EXAM_ERROR_MESSAGES: Record<string, Words> = {
     vi: "Phải ghi rõ lý do khi trả lại đề.",
     en: "A reason is required when returning an exam.",
   },
+  EXAM_PRODUCTIVE_SECTION: {
+    vi: "Đề có phần Writing/Speaking nên không phát hành được: đề thi thử chỉ chấm trắc nghiệm. Soạn Writing/Speaking ở mục Writing & Speaking.",
+    en: "This paper has a Writing/Speaking section, so it cannot be published: mock exams score choice questions only. Use Writing & Speaking instead.",
+  },
   EXAM_SCORE_MISMATCH: {
     vi: "Tổng điểm các phần không khớp thang điểm tối đa của đề. Sửa lại rồi phát hành.",
     en: "The section scores do not add up to the exam maximum. Fix them, then publish.",

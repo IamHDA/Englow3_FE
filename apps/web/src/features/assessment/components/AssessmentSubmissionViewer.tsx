@@ -3,6 +3,7 @@ import { Alert, Button, Skeleton, Stack, Text } from "@mantine/core";
 import { useAssessmentSubmissionDetailQuery } from "@/lib/graphql/generated/hooks";
 import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentAuditTrail } from "./AssessmentAuditTrail";
+import { TaskInstructions } from "./TaskInstructions";
 
 export function AssessmentSubmissionViewer({ id }: { id: string }) {
   const query = useAssessmentSubmissionDetailQuery({
@@ -30,9 +31,7 @@ export function AssessmentSubmissionViewer({ id }: { id: string }) {
         {attempt.learnerName ?? attempt.learnerId?.slice(0, 8)} ·{" "}
         {attempt.task.title}
       </Text>
-      <Text style={{ whiteSpace: "pre-wrap" }}>
-        {attempt.task.instructions}
-      </Text>
+      <TaskInstructions text={attempt.task.instructions} />
       {attempt.audioUrl && (
         <audio controls src={attempt.audioUrl} style={{ width: "100%" }} />
       )}

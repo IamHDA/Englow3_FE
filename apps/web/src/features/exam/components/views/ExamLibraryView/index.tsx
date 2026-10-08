@@ -17,6 +17,7 @@ import { useExamLibraryQuery } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { ExamCard } from "../../blocks/ExamCard";
 import { ExamEmptyState } from "../../blocks/ExamEmptyState";
+import { ProductiveSkillsNotice } from "../../blocks/ProductiveSkillsNotice";
 import { ExamFilters } from "../../blocks/ExamFilters";
 import { ExamLibrarySkeleton } from "../../blocks/ExamLibrarySkeleton";
 import { EXAM_TYPE_TABS } from "../../../constants/examLibrary";
@@ -42,6 +43,13 @@ export function ExamLibraryView() {
     sortBy: "NEWEST",
     page: 0,
   });
+
+  // Writing and Speaking are practised in their own module; the notice points
+  // there, and an empty mock-exam list under it would only repeat the point.
+  const productiveFocus =
+    filters.tabId === "toeic_sw" ||
+    filters.skill === "WRITING" ||
+    filters.skill === "SPEAKING";
 
   const activeTab = useMemo(
     () => EXAM_TYPE_TABS.find((t) => t.id === filters.tabId),
@@ -128,6 +136,8 @@ export function ExamLibraryView() {
           totalItems={totalItems}
         />
 
+        {productiveFocus && <ProductiveSkillsNotice />}
+
         {/* Content Area */}
         {loading && !data ? (
           <ExamLibrarySkeleton />
@@ -150,7 +160,8 @@ export function ExamLibraryView() {
               </Button>
             </Stack>
           </Center>
-        ) : sortedItems.length === 0 ? (
+        ) : sortedItems.length === 0 &&
+          productiveFocus ? null : sortedItems.length === 0 ? (
           <ExamEmptyState
             searchQuery={filters.searchQuery}
             onResetFilters={handleResetFilters}

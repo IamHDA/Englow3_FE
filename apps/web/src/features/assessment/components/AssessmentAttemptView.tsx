@@ -28,6 +28,7 @@ import { useWritingDraft } from "../hooks/useWritingDraft";
 import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentResultRead } from "./AssessmentResultRead";
 import { statusLabels, wordCount, type PracticeAttempt } from "../types";
+import { TaskInstructions } from "./TaskInstructions";
 export function AssessmentAttemptView({ id }: { id: string }) {
   const tx = useAssessmentText();
   const query = useAssessmentAttemptDetailQuery({
@@ -132,9 +133,7 @@ function AttemptContent({
         </Group>
         <Title order={1}>{attempt.task.title}</Title>
         <Card withBorder>
-          <Text style={{ whiteSpace: "pre-wrap" }}>
-            {attempt.task.instructions}
-          </Text>
+          <TaskInstructions text={attempt.task.instructions} />
         </Card>
         {attempt.status === "DRAFT" && attempt.skill === "WRITING" ? (
           <WritingEditor key={attempt.id} attempt={attempt} refresh={refresh} />

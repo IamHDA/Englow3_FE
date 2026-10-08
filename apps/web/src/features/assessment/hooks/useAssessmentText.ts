@@ -135,6 +135,8 @@ const messages: Record<string, string> = {
   "Trả lại": "Request changes",
   "Lưu trữ": "Archive",
   "Khôi phục": "Restore",
+  "Bài làm": "Submission",
+  "Đề & rubric": "Task & rubric",
   "Writing Task 1 — mô tả bảng số liệu": "Writing Task 1 — describe a table",
   "Writing Task 2 — học trực tuyến": "Writing Task 2 — online learning",
   "Speaking Part 1 — quê hương": "Speaking Part 1 — hometown",

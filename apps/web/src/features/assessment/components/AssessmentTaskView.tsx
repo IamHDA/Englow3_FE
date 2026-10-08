@@ -25,6 +25,7 @@ import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useAssessmentRecorder } from "../hooks/useAssessmentRecorder";
 import type { PracticeTask } from "../types";
 import { MicrophoneCheck } from "./MicrophoneCheck";
+import { TaskInstructions } from "./TaskInstructions";
 export function AssessmentTaskView({ id }: { id: string }) {
   const tx = useAssessmentText();
   const { session } = useAuth();
@@ -199,7 +200,7 @@ function TaskWorkbench({
           )}
         </Group>
         <Card withBorder radius="lg" p="xl">
-          <Text style={{ whiteSpace: "pre-wrap" }}>{task.instructions}</Text>
+          <TaskInstructions text={task.instructions} />
         </Card>
         <Alert color="blue">
           {automatic

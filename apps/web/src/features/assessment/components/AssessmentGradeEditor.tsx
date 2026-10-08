@@ -8,6 +8,7 @@ import {
   Grid,
   NumberInput,
   Stack,
+  Tabs,
   Text,
   Textarea,
 } from "@mantine/core";
@@ -23,6 +24,7 @@ import {
   parseReport,
   type PracticeAttempt,
 } from "../types";
+import { TaskInstructions } from "./TaskInstructions";
 export function AssessmentGradeEditor({
   attempt,
   close,
@@ -199,7 +201,18 @@ export function AssessmentGradeEditor({
         )}
         <Grid align="flex-start">
           <Grid.Col span={{ base: 12, md: 6 }}>
-            <Stack gap="lg" style={{ position: "sticky", top: 80 }}>
+            {/* The work being graded stays in view while the criteria on the
+                right are filled in: one viewport tall, scrolling on its own,
+                with the submission first and the task and rubric a tab away. */}
+            <Stack
+              gap="md"
+              style={{
+                position: "sticky",
+                top: 80,
+                maxHeight: "calc(100vh - 96px)",
+                overflowY: "auto",
+              }}
+            >
               {attempt.status === "COMPLETED" && (
                 <Alert color="orange">
                   {tx(
@@ -207,52 +220,62 @@ export function AssessmentGradeEditor({
                   )}
                 </Alert>
               )}
-              <Card withBorder>
-                <Text fw={600}>{tx("Đề bài")}</Text>
-                <Text style={{ whiteSpace: "pre-wrap" }}>
-                  {attempt.task.instructions}
-                </Text>
-                {attempt.task.rubricNotes && (
-                  <>
-                    <Text fw={600} mt="sm">
-                      {tx("Ghi chú chấm")}
-                    </Text>
-                    <Text style={{ whiteSpace: "pre-wrap" }}>
-                      {attempt.task.rubricNotes}
-                    </Text>
-                  </>
-                )}
-              </Card>
-              {attempt.answerText && (
-                <Card withBorder>
-                  <Text fw={600}>
-                    {tx("Bài viết")} · {attempt.wordCount} {tx("từ")}
-                  </Text>
-                  <Text style={{ whiteSpace: "pre-wrap" }}>
-                    {attempt.answerText}
-                  </Text>
-                </Card>
-              )}
-              {attempt.audioUrl && (
-                <>
-                  <Text fw={600}>
-                    {tx("Nghe toàn bộ bản ghi trước khi chấm")}
-                  </Text>
-                  <audio
-                    controls
-                    src={attempt.audioUrl}
-                    style={{ width: "100%" }}
-                  />
-                  <Textarea
-                    label={tx("Bản chép lời (nếu có)")}
-                    value={transcript}
-                    maxLength={12000}
-                    disabled={busy}
-                    minRows={3}
-                    onChange={(e) => setTranscript(e.currentTarget.value)}
-                  />
-                </>
-              )}
+              <Tabs defaultValue="work" keepMounted>
+                <Tabs.List mb="md">
+                  <Tabs.Tab value="work">{tx("Bài làm")}</Tabs.Tab>
+                  <Tabs.Tab value="task">{tx("Đề & rubric")}</Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panel value="work">
+                  <Stack gap="md">
+                    {attempt.answerText && (
+                      <Card withBorder>
+                        <Text fw={600}>
+                          {tx("Bài viết")} · {attempt.wordCount} {tx("từ")}
+                        </Text>
+                        <Text style={{ whiteSpace: "pre-wrap" }}>
+                          {attempt.answerText}
+                        </Text>
+                      </Card>
+                    )}
+                    {attempt.audioUrl && (
+                      <>
+                        <Text fw={600}>
+                          {tx("Nghe toàn bộ bản ghi trước khi chấm")}
+                        </Text>
+                        <audio
+                          controls
+                          src={attempt.audioUrl}
+                          style={{ width: "100%" }}
+                        />
+                        <Textarea
+                          label={tx("Bản chép lời (nếu có)")}
+                          value={transcript}
+                          maxLength={12000}
+                          disabled={busy}
+                          minRows={3}
+                          onChange={(e) => setTranscript(e.currentTarget.value)}
+                        />
+                      </>
+                    )}
+                  </Stack>
+                </Tabs.Panel>
+                <Tabs.Panel value="task">
+                  <Card withBorder>
+                    <Text fw={600}>{tx("Đề bài")}</Text>
+                    <TaskInstructions text={attempt.task.instructions} />
+                    {attempt.task.rubricNotes && (
+                      <>
+                        <Text fw={600} mt="sm">
+                          {tx("Ghi chú chấm")}
+                        </Text>
+                        <Text style={{ whiteSpace: "pre-wrap" }}>
+                          {attempt.task.rubricNotes}
+                        </Text>
+                      </>
+                    )}
+                  </Card>
+                </Tabs.Panel>
+              </Tabs>
             </Stack>
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>

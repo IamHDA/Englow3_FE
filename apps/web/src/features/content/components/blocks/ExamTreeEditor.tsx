@@ -47,6 +47,11 @@ const blankQuestion = (skill: string): ExamQuestion => ({
     { label: "B", content: "", correct: false, orderNo: 2 },
   ],
 });
+/** Sections a mock exam cannot score - see the skill selector below. */
+function isProductive(sectionType: string): boolean {
+  return sectionType === "WRITING" || sectionType === "SPEAKING";
+}
+
 export function normalizeExam(sections: ExamSection[]) {
   let questionOrder = 1;
   return sections.map((s, si) => {
@@ -135,7 +140,23 @@ export function ExamTreeEditor({
                 <Group grow>
                   <Select
                     label={t("Kỹ năng", "Skill")}
-                    data={["LISTENING", "READING", "WRITING", "SPEAKING"]}
+                    // Choice questions only: Writing and Speaking need an
+                    // essay or a recording and a rubric, which live in
+                    // Writing & Speaking. An older paper may still hold one,
+                    // so it stays visible - with the reason it cannot stay.
+                    data={
+                      isProductive(s.sectionType)
+                        ? ["LISTENING", "READING", s.sectionType]
+                        : ["LISTENING", "READING"]
+                    }
+                    error={
+                      isProductive(s.sectionType)
+                        ? t(
+                            "Đề thi thử chỉ chấm câu trắc nghiệm. Soạn Writing/Speaking ở Quản trị → Writing & Speaking, rồi đổi phần này sang Listening hoặc Reading.",
+                            "Mock exams score choice questions only. Author Writing/Speaking under Admin → Writing & Speaking, then switch this section to Listening or Reading.",
+                          )
+                        : undefined
+                    }
                     value={s.sectionType}
                     disabled={disabled}
                     allowDeselect={false}
