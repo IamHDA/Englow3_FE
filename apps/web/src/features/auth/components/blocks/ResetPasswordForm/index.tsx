@@ -9,7 +9,8 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
-import { supabase } from "@/lib/supabase/client";
+import { setNewPassword } from "@/features/auth/api/authClient";
+import { announceSessionChange } from "@/features/auth/api/sessionSync";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 function resetPasswordSchema(isVi: boolean) {
@@ -70,7 +71,7 @@ export function ResetPasswordForm() {
 
   async function onSubmit({ password }: ResetPasswordValues) {
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error } = await setNewPassword(password);
       if (error) {
         notifications.show({
           color: "warn",
@@ -90,6 +91,7 @@ export function ResetPasswordForm() {
           "Password updated. You are signed in.",
         ),
       });
+      announceSessionChange();
       router.replace("/");
       router.refresh();
     } catch {

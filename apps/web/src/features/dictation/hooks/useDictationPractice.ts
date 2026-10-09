@@ -77,6 +77,7 @@ export function useDictationPractice(
       sentence: DictationSentence;
       learnerAnswer: string;
       correctText: string;
+      translationVi: string | null;
       diff: DiffResult;
     }>
   >([]);
@@ -137,6 +138,7 @@ export function useDictationPractice(
             sentence: currentSentence,
             learnerAnswer: answer,
             correctText: submission.correctText,
+            translationVi: submission.translationVi ?? null,
             diff,
           },
         ]);
@@ -279,15 +281,19 @@ export function useDictationPractice(
   ]);
 
   /** Transcript của câu vừa chấm. Rỗng cho tới khi người học nộp - đó là cả ý đồ. */
-  const currentCorrectText =
-    completedResults.find((r) => r.sentence.id === currentSentence?.id)
-      ?.correctText ?? "";
+  const currentResult = completedResults.find(
+    (r) => r.sentence.id === currentSentence?.id,
+  );
+  const currentCorrectText = currentResult?.correctText ?? "";
+  /** Nghĩa tiếng Việt của câu vừa chấm, nếu bài có - đến cùng lúc với transcript. */
+  const currentTranslation = currentResult?.translationVi ?? null;
 
   return {
     currentIndex,
     totalSentences,
     currentSentence,
     currentCorrectText,
+    currentTranslation,
     typedText,
     isChecked,
     isSubmitting,

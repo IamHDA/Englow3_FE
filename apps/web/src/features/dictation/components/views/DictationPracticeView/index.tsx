@@ -265,6 +265,7 @@ export function DictationPracticeView({
           <DictationDiffResult
             diff={practice.diffResult}
             expectedSentence={practice.currentCorrectText}
+            translationVi={practice.currentTranslation}
             onNextSentence={practice.nextSentence}
             onTryAgain={practice.tryAgain}
             onListenAgain={audio.replay}

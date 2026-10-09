@@ -8,7 +8,21 @@ import { env } from "./env.js";
  * two cannot drift into having different security postures - which is exactly
  * what happened when each called `cors()` for itself.
  */
+let warnedAboutOpenCors = false;
+
 export function corsMiddleware() {
+  if (
+    env.production &&
+    env.allowedOrigins.length === 0 &&
+    !warnedAboutOpenCors
+  ) {
+    warnedAboutOpenCors = true;
+    // Not fatal, so a deployment missing the variable keeps serving; loud, so
+    // it does not stay missing. Set CORS_ALLOWED_ORIGINS to the web origin.
+    console.warn(
+      "[security] CORS_ALLOWED_ORIGINS is not set: any website may call this API.",
+    );
+  }
   const options: CorsOptions =
     env.allowedOrigins.length === 0
       ? {}

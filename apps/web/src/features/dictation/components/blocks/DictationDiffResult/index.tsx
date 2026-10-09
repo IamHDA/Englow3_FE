@@ -26,6 +26,8 @@ import type { DiffResult } from "../../../types";
 interface DictationDiffResultProps {
   diff: DiffResult;
   expectedSentence: string;
+  /** Nghĩa tiếng Việt của câu; null khi bài chưa có bản dịch. */
+  translationVi?: string | null;
   onNextSentence: () => void;
   onTryAgain: () => void;
   onListenAgain: () => void;
@@ -35,6 +37,7 @@ interface DictationDiffResultProps {
 export function DictationDiffResult({
   diff,
   expectedSentence,
+  translationVi = null,
   onNextSentence,
   onTryAgain,
   onListenAgain,
@@ -315,6 +318,15 @@ export function DictationDiffResult({
             </Stack>
           )}
         </Paper>
+
+        {translationVi && (
+          <Text size="sm" c="ink.7">
+            <Text span size="sm" fw={700} c="ink.8">
+              {t.dictation.meaningLabel}:
+            </Text>{" "}
+            {translationVi}
+          </Text>
+        )}
 
         {/* Footer Actions */}
         <Flex

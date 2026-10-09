@@ -14,18 +14,13 @@ vi.mock("next/navigation", () => ({
 }));
 
 const signInWithPassword = vi.fn();
-const resetPasswordForEmail = vi.fn();
-const forgetSessionOnBrowserClose = vi.fn();
-vi.mock("@/lib/supabase/client", () => ({
-  supabase: {
-    auth: {
-      signInWithPassword: (...args: unknown[]) => signInWithPassword(...args),
-      resetPasswordForEmail: (...args: unknown[]) =>
-        resetPasswordForEmail(...args),
-    },
-  },
-  forgetSessionOnBrowserClose: (...args: unknown[]) =>
-    forgetSessionOnBrowserClose(...args),
+const sendPasswordResetLink = vi.fn();
+vi.mock("@/features/auth/api/authClient", () => ({
+  signInWithPassword: (...args: unknown[]) => signInWithPassword(...args),
+  sendPasswordResetLink: (...args: unknown[]) => sendPasswordResetLink(...args),
+}));
+vi.mock("@/features/auth/api/sessionSync", () => ({
+  announceSessionChange: vi.fn(),
 }));
 
 const notificationsShow = vi.fn();
@@ -50,8 +45,7 @@ function renderForm() {
 
 beforeEach(() => {
   signInWithPassword.mockReset();
-  resetPasswordForEmail.mockReset();
-  forgetSessionOnBrowserClose.mockReset();
+  sendPasswordResetLink.mockReset();
   notificationsShow.mockReset();
   notificationsUpdate.mockReset();
   refresh.mockReset();
@@ -59,7 +53,7 @@ beforeEach(() => {
 });
 
 describe("LoginForm", () => {
-  it("shows validation errors on empty submit and does not call Supabase", async () => {
+  it("shows validation errors on empty submit and sends nothing", async () => {
     const user = userEvent.setup();
     renderForm();
 
@@ -83,7 +77,7 @@ describe("LoginForm", () => {
   });
 
   it("submits valid credentials and calls onSuccess", async () => {
-    signInWithPassword.mockResolvedValue({ error: null });
+    signInWithPassword.mockResolvedValue({ error: null, session: null });
     const user = userEvent.setup();
     const { onSuccess } = renderForm();
 
@@ -95,6 +89,7 @@ describe("LoginForm", () => {
       expect(signInWithPassword).toHaveBeenCalledWith({
         email: "learner@example.com",
         password: "password123",
+        rememberMe: false,
       }),
     );
     expect(refresh).toHaveBeenCalled();
@@ -105,10 +100,7 @@ describe("LoginForm", () => {
   // gets a sentence in Vietnamese, keyed on the error code.
   it("shows a toast when Supabase rejects the credentials", async () => {
     signInWithPassword.mockResolvedValue({
-      error: {
-        message: "Invalid login credentials",
-        code: "invalid_credentials",
-      },
+      error: { code: "invalid_credentials", status: 400 },
     });
     const user = userEvent.setup();
     renderForm();
@@ -127,8 +119,10 @@ describe("LoginForm", () => {
     );
   });
 
-  it("forgets the session on browser close when remember me stays unchecked", async () => {
-    signInWithPassword.mockResolvedValue({ error: null });
+  // The choice is the server's to act on (it writes the cookies); the form's
+  // part is to say which one was made.
+  it("tells the server to end the session with the browser when remember me stays unchecked", async () => {
+    signInWithPassword.mockResolvedValue({ error: null, session: null });
     const user = userEvent.setup();
     renderForm();
 
@@ -136,11 +130,15 @@ describe("LoginForm", () => {
     await user.type(screen.getByLabelText("Mật khẩu"), "password123");
     await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
-    await waitFor(() => expect(forgetSessionOnBrowserClose).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(signInWithPassword).toHaveBeenCalledWith(
+        expect.objectContaining({ rememberMe: false }),
+      ),
+    );
   });
 
-  it("keeps the persistent session when remember me is checked", async () => {
-    signInWithPassword.mockResolvedValue({ error: null });
+  it("asks for a persistent session when remember me is checked", async () => {
+    signInWithPassword.mockResolvedValue({ error: null, session: null });
     const user = userEvent.setup();
     renderForm();
 
@@ -149,8 +147,11 @@ describe("LoginForm", () => {
     await user.click(screen.getByLabelText("Ghi nhớ đăng nhập"));
     await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
-    await waitFor(() => expect(signInWithPassword).toHaveBeenCalled());
-    expect(forgetSessionOnBrowserClose).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(signInWithPassword).toHaveBeenCalledWith(
+        expect.objectContaining({ rememberMe: true }),
+      ),
+    );
   });
 
   // Forgot password is a page of its own now, with room to say what happened
@@ -165,7 +166,7 @@ describe("LoginForm", () => {
     await user.click(link);
 
     expect(onLeave).toHaveBeenCalled();
-    expect(resetPasswordForEmail).not.toHaveBeenCalled();
+    expect(sendPasswordResetLink).not.toHaveBeenCalled();
   });
 
   // Each role lands where its work is.
@@ -174,9 +175,7 @@ describe("LoginForm", () => {
     ["STAFF", "/admin"],
   ])("sends %s to the administration area", async (role, home) => {
     signInWithPassword.mockResolvedValue({
-      data: {
-        user: { id: "u1", email: "admin@example.com", app_metadata: { role } },
-      },
+      session: { userId: "u1", email: "admin@example.com", role },
       error: null,
     });
     const user = userEvent.setup();
@@ -191,13 +190,7 @@ describe("LoginForm", () => {
 
   it("leaves a learner on the page they signed in from", async () => {
     signInWithPassword.mockResolvedValue({
-      data: {
-        user: {
-          id: "u2",
-          email: "learner@example.com",
-          app_metadata: { role: "LEARNER" },
-        },
-      },
+      session: { userId: "u2", email: "learner@example.com", role: "LEARNER" },
       error: null,
     });
     const user = userEvent.setup();

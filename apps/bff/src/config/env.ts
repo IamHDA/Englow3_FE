@@ -82,6 +82,17 @@ export const env = {
     10000,
   ),
   allowedOrigins: parseAllowedOrigins(process.env.CORS_ALLOWED_ORIGINS),
+  production: process.env.NODE_ENV === "production" || !!process.env.VERCEL,
+  /**
+   * Proxy hops in front of this app. On Vercel there is exactly one, and
+   * without trusting it every caller has Vercel's own address - so the
+   * per-IP rate limit would be one bucket shared by all users.
+   */
+  trustProxyHops: process.env.TRUST_PROXY_HOPS
+    ? positiveInt("TRUST_PROXY_HOPS", process.env.TRUST_PROXY_HOPS)
+    : process.env.VERCEL
+      ? 1
+      : 0,
 
   /**
    * Requests one IP may make per window.

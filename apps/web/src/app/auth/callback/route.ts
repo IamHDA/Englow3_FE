@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { safeNext } from "@/features/auth/safeNext";
 import { homeForRole, toAuthSession } from "@/features/auth/types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-/** Only a same-origin path is safe to redirect to; anything else falls back to "/". */
-function safeNext(next: string | null): string {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
-}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);

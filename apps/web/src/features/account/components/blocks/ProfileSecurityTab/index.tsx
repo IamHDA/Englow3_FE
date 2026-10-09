@@ -15,7 +15,8 @@ import { KeyRound, Mail, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { supabase } from "@/lib/supabase/client";
+import { sendPasswordResetLink } from "@/features/auth/api/authClient";
+import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import type { AccountProfile } from "../../../types";
 
 import classes from "./ProfileSecurityTab.module.css";
@@ -25,7 +26,7 @@ type ProfileSecurityTabProps = {
 };
 
 export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const [isSendingReset, setIsSendingReset] = useState(false);
 
   async function handleResetPassword() {
@@ -39,12 +40,7 @@ export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
     });
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        profile.email,
-        {
-          redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
-        },
-      );
+      const { error } = await sendPasswordResetLink(profile.email);
 
       if (error) {
         notifications.update({
@@ -54,7 +50,7 @@ export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
           withCloseButton: true,
           color: "warn",
           title: t.account.resetEmailErrorTitle,
-          message: error.message,
+          message: authErrorMessage(error, isVi),
         });
         return;
       }

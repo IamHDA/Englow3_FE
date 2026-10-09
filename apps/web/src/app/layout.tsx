@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Lexend, Source_Sans_3 } from "next/font/google";
 import { Suspense } from "react";
 
@@ -19,6 +20,7 @@ import { getServerSession } from "@/features/auth/server/getServerSession";
 import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
 import { UserTourProvider } from "@/features/tour";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
+import { JitlessZod } from "@/lib/zod/JitlessZod";
 import { NavigationProgress } from "@/shared/components/NavigationProgress";
 import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
 import { theme } from "@/lib/mantine/theme";
@@ -57,6 +59,10 @@ export default async function RootLayout({
   // Hai nguồn độc lập, ghép lại ở đây chứ không feature nào biết về feature kia:
   // `auth` trả lời "có đăng nhập không", `account` trả lời "người này là ai".
   // Chỗ điều kiện dưới chính là ranh giới - `account` không tự đi đọc cookie.
+  // The nonce proxy.ts made for this response: the one inline script this
+  // layout writes (the colour-scheme bootstrap) must carry it or the browser's
+  // policy refuses to run it.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   const session = await getServerSession();
   const initialProfile = session
     ? await getAccountProfile()
@@ -69,17 +75,18 @@ export default async function RootLayout({
       className={`${heading.variable} ${body.variable}`}
     >
       <head>
-        <ColorSchemeScript defaultColorScheme="light" />
+        <ColorSchemeScript defaultColorScheme="light" nonce={nonce} />
       </head>
       <body suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light">
+          <JitlessZod />
           <Notifications position="top-right" zIndex={1000} />
           {/* useSearchParams inside needs a Suspense boundary of its own, or
               every page would render client-side only. */}
           <Suspense fallback={null}>
             <NavigationProgress />
           </Suspense>
-          <ApolloWrapper>
+          <ApolloWrapper nonce={nonce}>
             <AuthProvider initialSession={session}>
               <AccountProvider initialProfile={initialProfile}>
                 <LanguageProvider>

@@ -38,19 +38,17 @@ export const DICTATION_LEVELS: Array<{
   labelEn: string;
 }> = [
   { value: "ALL", labelVi: "Mọi trình độ", labelEn: "All Levels" },
+  // `value` là bậc CEFR mà bài học lưu ở `targetLevel`; trước đây là các tên
+  // "Beginner"... không bài nào mang, nên chọn bậc nào cũng ra danh sách rỗng.
+  { value: "A1", labelVi: "A1 · Mới bắt đầu", labelEn: "A1 · Beginner" },
+  { value: "A2", labelVi: "A2 · Sơ cấp", labelEn: "A2 · Elementary" },
+  { value: "B1", labelVi: "B1 · Trung cấp", labelEn: "B1 · Intermediate" },
   {
-    value: "Beginner",
-    labelVi: "Người mới bắt đầu",
-    labelEn: "Beginner",
+    value: "B2",
+    labelVi: "B2 · Trung cấp nâng cao",
+    labelEn: "B2 · Upper Intermediate",
   },
-  { value: "Elementary", labelVi: "Sơ cấp", labelEn: "Elementary" },
-  { value: "Intermediate", labelVi: "Trung cấp", labelEn: "Intermediate" },
-  {
-    value: "Upper Intermediate",
-    labelVi: "Trung cấp nâng cao",
-    labelEn: "Upper Intermediate",
-  },
-  { value: "Advanced", labelVi: "Nâng cao", labelEn: "Advanced" },
+  { value: "C1", labelVi: "C1 · Nâng cao", labelEn: "C1 · Advanced" },
 ];
 
 export const DICTATION_STATUSES: Array<{

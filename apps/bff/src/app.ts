@@ -1,10 +1,12 @@
 import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import { expressMiddleware } from "@as-integrations/express4";
 import express from "express";
 
+import { env } from "./config/env.js";
 import { corsMiddleware, rateLimitMiddleware } from "./config/middleware.js";
 import { createContext, type GraphQLContext } from "./graphql/context.js";
 import { formatError, logServerErrors } from "./graphql/errors.js";
+import { queryLimitRule } from "./graphql/limits.js";
 import { resolvers, typeDefs } from "./graphql/schema.js";
 import { importRoute } from "./http/importRoute.js";
 import { authoringRoute } from "./http/authoringRoute.js";
@@ -20,6 +22,10 @@ export async function createApp() {
     resolvers,
     formatError,
     plugins: [logServerErrors],
+    validationRules: [queryLimitRule()],
+    // The schema is in the repository for anyone building against it; a
+    // deployed BFF has no reason to hand it to whoever asks.
+    introspection: !env.production,
     // Apollo defaults this to true outside NODE_ENV=production, which would
     // put internal file paths in every client-visible error. Off always -
     // debug from server logs, not the response.
@@ -28,6 +34,7 @@ export async function createApp() {
   await apollo.start();
 
   const app = express();
+  app.set("trust proxy", env.trustProxyHops);
   app.use(
     "/graphql",
     corsMiddleware(),

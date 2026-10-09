@@ -1,4 +1,4 @@
-import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
+import type { ExpressContextFunctionArgument } from "@as-integrations/express4";
 import { GraphQLError } from "graphql";
 import { AssessmentApi } from "../modules/assessment/assessment.api.js";
 

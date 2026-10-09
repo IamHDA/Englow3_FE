@@ -8,7 +8,7 @@ import { useRef, useState } from "react";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 
 import { AuthProvider } from "@/features/auth/constants/authOptions";
-import { supabase } from "@/lib/supabase/client";
+import { startOAuth } from "@/features/auth/api/authClient";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 export function AuthSocialButtons() {
@@ -20,17 +20,17 @@ export function AuthSocialButtons() {
     pending.current = true;
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      });
-      if (error) {
+      const result = await startOAuth(provider);
+      if (result.error) {
         notifications.show({
           color: "warn",
           title: isVi ? "Không thể đăng nhập" : "Could not sign in",
-          message: authErrorMessage(error, isVi),
+          message: authErrorMessage(result.error, isVi),
         });
+        return;
       }
+      // The server holds the PKCE verifier; the page only follows the link.
+      window.location.assign(result.url);
     } catch {
       notifications.show({
         color: "warn",

@@ -27,7 +27,7 @@ import {
 } from "@/features/auth/constants/authOptions";
 import { Gender } from "@/lib/graphql/generated";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
-import { supabase } from "@/lib/supabase/client";
+import { signUp } from "@/features/auth/api/authClient";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
@@ -154,26 +154,21 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   async function onSubmit(values: RegisterValues) {
     try {
-      const { error } = await supabase.auth.signUp({
+      const result = await signUp({
         email: values.email,
         password: values.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: values.fullName,
-            display_name: values.nickname,
-            birth_date: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
-            gender: values.gender,
-          },
-        },
+        fullName: values.fullName,
+        displayName: values.nickname,
+        birthDate: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
+        gender: values.gender,
       });
-      if (error) {
+      if (result.error) {
         notifications.show({
           color: "warn",
           title: isVi
             ? "Không thể tạo tài khoản"
             : "Could not create the account",
-          message: authErrorMessage(error, isVi),
+          message: authErrorMessage(result.error, isVi),
         });
         return;
       }

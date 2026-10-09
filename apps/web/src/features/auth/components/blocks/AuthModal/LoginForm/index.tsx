@@ -18,9 +18,10 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { signInWithPassword } from "@/features/auth/api/authClient";
+import { announceSessionChange } from "@/features/auth/api/sessionSync";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
-import { homeForRole, toAuthSession } from "@/features/auth/types";
-import { forgetSessionOnBrowserClose, supabase } from "@/lib/supabase/client";
+import { homeForRole } from "@/features/auth/types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
@@ -62,25 +63,20 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
 
   async function onSubmit({ email, password, rememberMe }: LoginValues) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
+      const result = await signInWithPassword({ email, password, rememberMe });
+      if (result.error) {
         notifications.show({
           color: "warn",
           title: isVi ? "Không thể đăng nhập" : "Could not sign in",
-          message: authErrorMessage(error, isVi),
+          message: authErrorMessage(result.error, isVi),
         });
         return;
       }
-      if (!rememberMe) {
-        forgetSessionOnBrowserClose();
-      }
+      announceSessionChange();
       onSuccess();
       // Each role lands where its work is: staff and administrators in the
       // administration area, a learner on the page they signed in from.
-      const home = homeForRole(toAuthSession(data?.user)?.role);
+      const home = homeForRole(result.session?.role);
       if (home) {
         router.push(home);
       } else {

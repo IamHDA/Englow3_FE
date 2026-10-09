@@ -16,9 +16,8 @@ import {
 import { IconFileUpload, IconUpload } from "@tabler/icons-react";
 import React, { useRef, useState } from "react";
 
-import { supabase } from "@/lib/supabase/client";
-
 import {
+  ImportSessionExpiredError,
   importDictation,
   importFlashcards,
   validateDictationImport,
@@ -70,43 +69,31 @@ export function FlashcardImportPanel({
     setBusy(true);
     setError(null);
     try {
-      // Read at the moment of upload rather than held in state: a token taken
-      // when the screen opened can have expired by the time a large file is
-      // chosen and sent.
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) {
-        setError(
-          tr(
-            "Phiên đăng nhập đã hết hạn. Đăng nhập lại rồi thử lại.",
-            "Your session has expired. Sign in again and retry.",
-          ),
-        );
-        return;
-      }
-
       const json = await file.text();
       if (isDictation) {
         setReport(
           commit
-            ? await importDictation(json, token)
-            : await validateDictationImport(json, token),
+            ? await importDictation(json)
+            : await validateDictationImport(json),
         );
       } else if (setId) {
         setReport(
           commit
-            ? await importFlashcards(setId, json, token)
-            : await validateFlashcardImport(json, token),
+            ? await importFlashcards(setId, json)
+            : await validateFlashcardImport(json),
         );
       }
     } catch (failure) {
       setReport(null);
       setError(
-        failure instanceof Error
-          ? failure.message
-          : tr("Không đọc được tệp.", "Could not read the file."),
+        failure instanceof ImportSessionExpiredError
+          ? tr(
+              "Phiên đăng nhập đã hết hạn. Đăng nhập lại rồi thử lại.",
+              "Your session has expired. Sign in again and retry.",
+            )
+          : failure instanceof Error
+            ? failure.message
+            : tr("Không đọc được tệp.", "Could not read the file."),
       );
     } finally {
       pending.current = false;

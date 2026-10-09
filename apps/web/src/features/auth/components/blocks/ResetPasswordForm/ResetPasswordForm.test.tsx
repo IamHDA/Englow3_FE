@@ -13,13 +13,12 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace, refresh }),
 }));
 
-const updateUser = vi.fn();
-vi.mock("@/lib/supabase/client", () => ({
-  supabase: {
-    auth: {
-      updateUser: (...args: unknown[]) => updateUser(...args),
-    },
-  },
+const setNewPassword = vi.fn();
+vi.mock("@/features/auth/api/authClient", () => ({
+  setNewPassword: (...args: unknown[]) => setNewPassword(...args),
+}));
+vi.mock("@/features/auth/api/sessionSync", () => ({
+  announceSessionChange: vi.fn(),
 }));
 
 const notificationsShow = vi.fn();
@@ -36,14 +35,14 @@ function renderForm() {
 }
 
 beforeEach(() => {
-  updateUser.mockReset();
+  setNewPassword.mockReset();
   notificationsShow.mockReset();
   replace.mockReset();
   refresh.mockReset();
 });
 
 describe("ResetPasswordForm", () => {
-  it("shows a validation error on empty submit and does not call Supabase", async () => {
+  it("shows a validation error on empty submit and sends nothing", async () => {
     const user = userEvent.setup();
     renderForm();
 
@@ -52,7 +51,7 @@ describe("ResetPasswordForm", () => {
     expect(
       await screen.findByText("Mật khẩu tối thiểu 8 ký tự"),
     ).toBeInTheDocument();
-    expect(updateUser).not.toHaveBeenCalled();
+    expect(setNewPassword).not.toHaveBeenCalled();
   });
 
   it("rejects a password missing complexity requirements", async () => {
@@ -65,7 +64,7 @@ describe("ResetPasswordForm", () => {
     expect(
       await screen.findByText("Mật khẩu cần ít nhất 1 chữ hoa"),
     ).toBeInTheDocument();
-    expect(updateUser).not.toHaveBeenCalled();
+    expect(setNewPassword).not.toHaveBeenCalled();
   });
 
   // Typed blind, so typed twice - a typo would lock the learner out again.
@@ -83,11 +82,11 @@ describe("ResetPasswordForm", () => {
     expect(
       await screen.findByText("Mật khẩu nhập lại không khớp"),
     ).toBeInTheDocument();
-    expect(updateUser).not.toHaveBeenCalled();
+    expect(setNewPassword).not.toHaveBeenCalled();
   });
 
   it("updates the password and redirects home", async () => {
-    updateUser.mockResolvedValue({ error: null });
+    setNewPassword.mockResolvedValue({ error: null });
     const user = userEvent.setup();
     renderForm();
 
@@ -99,9 +98,7 @@ describe("ResetPasswordForm", () => {
     await user.click(screen.getByRole("button", { name: "Đặt lại mật khẩu" }));
 
     await waitFor(() =>
-      expect(updateUser).toHaveBeenCalledWith({
-        password: "NewPassword123!",
-      }),
+      expect(setNewPassword).toHaveBeenCalledWith("NewPassword123!"),
     );
     expect(notificationsShow).toHaveBeenCalledWith(
       expect.objectContaining({ color: "green" }),
@@ -110,11 +107,8 @@ describe("ResetPasswordForm", () => {
   });
 
   it("shows a toast when Supabase rejects the update", async () => {
-    updateUser.mockResolvedValue({
-      error: {
-        message: "New password should be different from the old password.",
-        code: "same_password",
-      },
+    setNewPassword.mockResolvedValue({
+      error: { code: "same_password", status: 422 },
     });
     const user = userEvent.setup();
     renderForm();

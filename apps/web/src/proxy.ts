@@ -1,6 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { contentSecurityPolicy, createNonce } from "@/config/securityHeaders";
+import {
+  hardenedCookieOptions,
+  isHttps,
+  SESSION_ONLY_COOKIE,
+} from "@/lib/supabase/cookies";
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -45,7 +52,34 @@ function isMemberOnly(pathname: string): boolean {
  * proxy; at the project root under its old name it was never run at all.
  */
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  // One nonce per response. It goes to the page twice: in the policy the
+  // browser enforces, and on the request, where Next.js reads it back to stamp
+  // its own inline scripts and where the root layout takes it for the scripts
+  // it writes itself (x-nonce).
+  const nonce = createNonce();
+  const policy = contentSecurityPolicy({
+    nonce,
+    development: process.env.NODE_ENV === "development",
+  });
+
+  // Built from the request as it is *now*: after the session refresh below has
+  // rewritten the cookies, a copy taken earlier would still carry the old ones.
+  const proceed = () => {
+    const headers = new Headers(request.headers);
+    headers.set("x-nonce", nonce);
+    headers.set("content-security-policy", policy);
+    const next = NextResponse.next({ request: { headers } });
+    next.headers.set("content-security-policy", policy);
+    return next;
+  };
+
+  let response = proceed();
+
+  // The refresh below rewrites the auth cookies, and has to write them the way
+  // the server client does: HttpOnly, and without an expiry for someone who
+  // signed in without "remember me".
+  const secure = isHttps(request.headers, request.nextUrl.protocol);
+  const sessionOnly = request.cookies.get(SESSION_ONLY_COOKIE)?.value === "1";
 
   const supabase = createServerClient(supabaseUrl!, supabaseAnonKey!, {
     cookies: {
@@ -54,9 +88,13 @@ export async function proxy(request: NextRequest) {
         for (const { name, value } of cookiesToSet) {
           request.cookies.set(name, value);
         }
-        response = NextResponse.next({ request });
+        response = proceed();
         for (const { name, value, options } of cookiesToSet) {
-          response.cookies.set(name, value, options);
+          response.cookies.set(
+            name,
+            value,
+            hardenedCookieOptions(options, { secure, sessionOnly }),
+          );
         }
       },
     },
@@ -74,6 +112,7 @@ export async function proxy(request: NextRequest) {
     landing.pathname = "/";
     landing.search = "";
     const redirect = NextResponse.redirect(landing);
+    redirect.headers.set("content-security-policy", policy);
     // Carry over whatever getClaims() just wrote, e.g. a cleared stale token.
     for (const cookie of response.cookies.getAll()) {
       redirect.cookies.set(cookie);
@@ -86,6 +125,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // /api is left out: its routes read (and refresh) the session themselves,
+    // and this proxy would buffer an uploaded body before they saw it.
+    "/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

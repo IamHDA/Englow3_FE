@@ -1,7 +1,6 @@
 "use client";
 
 import { ApolloLink, HttpLink } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
 import {
   ApolloClient,
   ApolloNextAppProvider,
@@ -10,47 +9,28 @@ import {
 
 import { finalize } from "rxjs";
 
-import { env } from "@/config/env";
-import { supabase } from "@/lib/supabase/client";
+import { CSRF_HEADER, CSRF_VALUE } from "@/lib/security/csrf";
 import { beginRequest, endRequest } from "@/shared/network/pendingRequests";
 
-let cachedAccessToken: string | null = null;
-let tokenExpiresAt = 0;
-
-if (typeof window !== "undefined") {
-  supabase.auth.onAuthStateChange((_event, session) => {
-    cachedAccessToken = session?.access_token ?? null;
-    tokenExpiresAt = Date.now() + 30000;
-  });
-}
-
 function makeClient() {
+  // In the browser the request goes to this app's own /api/graphql, which adds
+  // the token from the HttpOnly session cookie and passes it on to the BFF -
+  // the page never holds a token. The one place this runs on a server is the
+  // server render of a client component, which has no cookie to read and so
+  // reaches the BFF as a guest, exactly as it did before; a relative address
+  // means nothing there, so it takes the BFF's.
   const httpLink = new HttpLink({
-    uri: env.bffGraphqlUrl,
+    uri:
+      typeof window === "undefined"
+        ? (process.env.BFF_GRAPHQL_URL ??
+          process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ??
+          "http://localhost:4000/graphql")
+        : "/api/graphql",
+    credentials: "same-origin",
+    headers: { [CSRF_HEADER]: CSRF_VALUE },
     fetchOptions: {
       keepalive: true,
     },
-  });
-
-  const authLink = setContext(async (_, { headers }) => {
-    const now = Date.now();
-    let token = cachedAccessToken;
-
-    if (!token || now > tokenExpiresAt) {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      token = session?.access_token ?? null;
-      cachedAccessToken = token;
-      tokenExpiresAt = now + 30000;
-    }
-
-    return {
-      headers: {
-        ...headers,
-        ...(token ? { authorization: `Bearer ${token}` } : {}),
-      },
-    };
   });
 
   // Counts every operation from start to finish - success, error or
@@ -75,7 +55,7 @@ function makeClient() {
         },
       },
     }),
-    link: ApolloLink.from([pendingLink, authLink, httpLink]),
+    link: ApolloLink.from([pendingLink, httpLink]),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: "cache-first",
@@ -96,9 +76,18 @@ function makeClient() {
   });
 }
 
-export function ApolloWrapper({ children }: React.PropsWithChildren) {
+type ApolloWrapperProps = React.PropsWithChildren<{
+  /**
+   * The script nonce of this response (see proxy.ts). Apollo hands the data it
+   * fetched on the server to the browser through an inline script; without the
+   * nonce the page's policy refuses to run it and every query is fetched again.
+   */
+  nonce?: string;
+}>;
+
+export function ApolloWrapper({ children, nonce }: ApolloWrapperProps) {
   return (
-    <ApolloNextAppProvider makeClient={makeClient}>
+    <ApolloNextAppProvider makeClient={makeClient} extraScriptProps={{ nonce }}>
       {children}
     </ApolloNextAppProvider>
   );

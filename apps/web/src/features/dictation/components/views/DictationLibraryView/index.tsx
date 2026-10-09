@@ -31,6 +31,14 @@ interface DictationLibraryViewProps {
 /** Một trang bài nghe chép. Phân trang thật sẽ cần khi thư viện vượt con số này. */
 const PAGE_SIZE = 50;
 
+const CEFR_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+/** Bậc CEFR làm thước độ khó; bài chưa gắn bậc xếp cuối. */
+function levelRank(level: string | null | undefined): number {
+  const rank = CEFR_ORDER.indexOf(level ?? "");
+  return rank === -1 ? CEFR_ORDER.length : rank;
+}
+
 export function DictationLibraryView({
   initialTab = "lessons",
 }: DictationLibraryViewProps) {
@@ -103,7 +111,10 @@ export function DictationLibraryView({
       })
       .sort((a, b) => {
         if (selectedSort === "difficulty") {
-          return a.sentenceCount - b.sentenceCount;
+          return (
+            levelRank(a.targetLevel) - levelRank(b.targetLevel) ||
+            a.sentenceCount - b.sentenceCount
+          );
         }
         if (selectedSort === "progress") {
           return progressPercent(b) - progressPercent(a);

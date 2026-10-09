@@ -6,7 +6,8 @@ export type PracticeTask = AssessmentTaskFieldsFragment;
 export type PracticeAttempt = AssessmentAttemptFieldsFragment;
 export type Criterion = {
   key: string;
-  score: number;
+  /** Absent in a learner's copy: the server withholds the per-criterion bands. */
+  score?: number;
   feedback: string;
   quote?: string;
   audioStart?: number;
@@ -19,6 +20,10 @@ export type PracticeReport = {
   strengths: string[];
   improvements: string[];
   estimated: true;
+  /** True when the server left out each criterion's score (the learner view). */
+  scoresHidden?: boolean;
+  /** The weakest criterion, named so "practise this next" works without the scores. */
+  focusCriterion?: string;
 };
 export const criterionLabels: Record<string, string> = {
   TASK_RESPONSE: "Đáp ứng yêu cầu đề",
@@ -83,9 +88,11 @@ export function parseReport(value?: string | null): PracticeReport | null {
           c &&
           typeof c.key === "string" &&
           typeof c.feedback === "string" &&
-          Number.isFinite(c.score) &&
-          c.score >= 0 &&
-          c.score <= 9,
+          (r.scoresHidden === true && c.score === undefined
+            ? true
+            : Number.isFinite(c.score) &&
+              (c.score as number) >= 0 &&
+              (c.score as number) <= 9),
       ) &&
       r.strengths.every((s: unknown) => typeof s === "string") &&
       r.improvements.every((s: unknown) => typeof s === "string")

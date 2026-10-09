@@ -6,11 +6,11 @@ import {
   registerApolloClient,
 } from "@apollo/client-integration-nextjs";
 
-import { env } from "@/config/env";
+import { bffGraphqlUrl } from "@/server/bff";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
-  const httpLink = new HttpLink({ uri: env.bffGraphqlUrl });
+  const httpLink = new HttpLink({ uri: bffGraphqlUrl });
 
   const authLink = setContext(async (_, { headers }) => {
     const supabase = await createSupabaseServerClient();

@@ -4,6 +4,8 @@ import { SECURITY_HEADERS } from "./src/config/securityHeaders";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  // `next dev` otherwise writes an AGENTS.md into the app folder on first run.
+  agentRules: false,
   // Announcing the framework tells an attacker which CVE list to read first.
   poweredByHeader: false,
   async headers() {

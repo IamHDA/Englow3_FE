@@ -1,18 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 
-import { supabase } from "@/lib/supabase/client";
 import { clearBrowserDrafts } from "@/shared/storage/browserDrafts";
 
-import { toAuthSession, type AuthSession } from "@/features/auth/types";
+import { signOutOfServer } from "@/features/auth/api/authClient";
+import {
+  announceSessionChange,
+  onSessionChangeElsewhere,
+} from "@/features/auth/api/sessionSync";
+import type { AuthSession } from "@/features/auth/types";
 
 import { AuthContext } from "./context";
 export { AuthContext } from "./context";
@@ -22,6 +20,10 @@ type AuthProviderProps = {
    * Tính sẵn từ server (root layout) nên HTML đầu tiên đã đúng trạng thái -
    * không nháy giữa "chưa biết" và "đã biết ai đăng nhập". Cũng vì vậy mà
    * context không có cờ `loading`: câu trả lời có ngay từ lần render đầu.
+   *
+   * Phiên nằm trong cookie HttpOnly mà trang không đọc được, nên đây là nguồn
+   * duy nhất: sau mỗi lần đăng nhập/đăng xuất `router.refresh()` bắt root
+   * layout tính lại và prop này đổi theo.
    */
   initialSession: AuthSession | null;
   children: ReactNode;
@@ -29,42 +31,36 @@ type AuthProviderProps = {
 
 export function AuthProvider({ initialSession, children }: AuthProviderProps) {
   const router = useRouter();
-  const [session, setSession] = useState(initialSession);
+  const session = initialSession;
 
   /**
-   * Id đang được phản ánh trên màn hình. Supabase bắn `INITIAL_SESSION` ngay
-   * khi subscribe (mọi lần mount) và `TOKEN_REFRESHED` định kỳ - cả hai đều
-   * mang đúng người dùng cũ. So id trước khi setState để hai sự kiện đó không
-   * kéo theo một vòng fetch BFF thừa ở AccountProvider.
+   * Id đang được phản ánh trên màn hình. Prop đổi cả khi chỉ làm tươi trang
+   * (cùng người dùng) nên phải so id trước khi dọn bản nháp của người cũ.
    */
   const currentUserId = useRef(initialSession?.userId ?? null);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, supabaseSession) => {
-      const nextSession = toAuthSession(supabaseSession?.user);
-      if (nextSession?.userId === currentUserId.current) return;
+    const nextUserId = initialSession?.userId ?? null;
+    if (nextUserId === currentUserId.current) return;
+    // Đăng xuất, hoặc đổi sang người khác: bản nháp trong trình duyệt thuộc về
+    // người trước, không được để người sau thấy.
+    if (currentUserId.current) void clearBrowserDrafts();
+    currentUserId.current = nextUserId;
+  }, [initialSession]);
 
-      if (
-        _event === "SIGNED_OUT" ||
-        (currentUserId.current && currentUserId.current !== nextSession?.userId)
-      )
-        void clearBrowserDrafts();
-      currentUserId.current = nextSession?.userId ?? null;
-      setSession(nextSession);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  // Tab khác đăng nhập/đăng xuất: hỏi lại server thay vì giữ tài khoản cũ.
+  useEffect(() => onSessionChangeElsewhere(() => router.refresh()), [router]);
 
   const signOut = useCallback(async () => {
     await clearBrowserDrafts();
-    await supabase.auth.signOut();
-    // Cần cả hai: signOut cập nhật context phía client, còn refresh bắt root
-    // layout tính lại initialSession/initialProfile - thiếu nó thì lần điều
-    // hướng server tiếp theo dựng lại đúng trạng thái cũ.
-    router.refresh();
+    try {
+      await signOutOfServer();
+    } finally {
+      announceSessionChange();
+      // Bắt root layout tính lại initialSession/initialProfile - thiếu nó thì
+      // lần điều hướng server tiếp theo dựng lại đúng trạng thái cũ.
+      router.refresh();
+    }
   }, [router]);
 
   return (

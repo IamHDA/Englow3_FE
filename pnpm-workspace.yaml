@@ -6,3 +6,18 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+# Patch-level fixes for advisories in transitive dependencies (pnpm audit),
+# each kept within the major version that was already resolved.
+overrides:
+  "proxy-addr": "^2.0.8"
+  "qs": "^6.16.0"
+  "shell-quote": "^1.11.0"
+  "nanoid@3": "^3.3.18"
+  "js-yaml@4": "^4.3.2"
+  "compression": "^1.8.2"
+  "source-map-js": "^1.2.2"
+  "brace-expansion@5": "^5.0.12"
+  "@graphql-tools/utils@12": "^12.0.3"
+  "@xmldom/xmldom@0.8": "^0.8.15"
+  "@xmldom/xmldom@0.9": "^0.9.12"

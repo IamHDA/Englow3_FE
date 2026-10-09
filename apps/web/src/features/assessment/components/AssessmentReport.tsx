@@ -28,6 +28,35 @@ export function AssessmentReport({ attempt }: { attempt: PracticeAttempt }) {
           : "The result is incomplete. Reload or contact your teacher."}
       </Alert>
     );
+  // The server leaves the per-criterion bands out of a learner's copy; staff and admins still get them.
+  const scoresShown = report.criteria.every((c) => typeof c.score === "number");
+  const focusKey =
+    report.focusCriterion ??
+    [...report.criteria].sort((a, b) => (a.score ?? 0) - (b.score ?? 0))[0].key;
+  const strengthsAndNext = (
+    <SimpleGrid cols={{ base: 1, sm: 2 }}>
+      <Card withBorder>
+        <Text fw={700} mb="sm">
+          {isVi ? "Điểm làm tốt" : "Strengths"}
+        </Text>
+        <List>
+          {report.strengths.map((s, i) => (
+            <List.Item key={i}>{s}</List.Item>
+          ))}
+        </List>
+      </Card>
+      <Card withBorder>
+        <Text fw={700} mb="sm">
+          {isVi ? "Bước cải thiện tiếp theo" : "Next improvements"}
+        </Text>
+        <List>
+          {report.improvements.map((s, i) => (
+            <List.Item key={i}>{s}</List.Item>
+          ))}
+        </List>
+      </Card>
+    </SimpleGrid>
+  );
   return (
     <Stack>
       <Card withBorder radius="lg" p="xl">
@@ -55,12 +84,20 @@ export function AssessmentReport({ attempt }: { attempt: PracticeAttempt }) {
             : "An estimate for this practice response, not an official IELTS result."}
         </Text>
       </Card>
+      {!scoresShown && strengthsAndNext}
+      {!scoresShown && (
+        <Title order={3}>
+          {isVi ? "Nhận xét chi tiết theo tiêu chí" : "Feedback by criterion"}
+        </Title>
+      )}
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
         {report.criteria.map((c) => (
           <Card key={c.key} withBorder radius="md">
             <Group justify="space-between">
               <Text fw={600}>{tx(criterionLabels[c.key] ?? c.key)}</Text>
-              <Badge size="lg">{c.score.toFixed(1)}</Badge>
+              {typeof c.score === "number" && (
+                <Badge size="lg">{c.score.toFixed(1)}</Badge>
+              )}
             </Group>
             <Text size="sm" mt="sm" style={{ whiteSpace: "pre-wrap" }}>
               {c.feedback}
@@ -99,28 +136,7 @@ export function AssessmentReport({ attempt }: { attempt: PracticeAttempt }) {
           </Card>
         ))}
       </SimpleGrid>
-      <SimpleGrid cols={{ base: 1, sm: 2 }}>
-        <Card withBorder>
-          <Text fw={700} mb="sm">
-            {isVi ? "Điểm làm tốt" : "Strengths"}
-          </Text>
-          <List>
-            {report.strengths.map((s, i) => (
-              <List.Item key={i}>{s}</List.Item>
-            ))}
-          </List>
-        </Card>
-        <Card withBorder>
-          <Text fw={700} mb="sm">
-            {isVi ? "Bước cải thiện tiếp theo" : "Next improvements"}
-          </Text>
-          <List>
-            {report.improvements.map((s, i) => (
-              <List.Item key={i}>{s}</List.Item>
-            ))}
-          </List>
-        </Card>
-      </SimpleGrid>
+      {scoresShown && strengthsAndNext}
       <Card withBorder>
         <Stack>
           <Title order={3}>
@@ -130,20 +146,13 @@ export function AssessmentReport({ attempt }: { attempt: PracticeAttempt }) {
             {isVi
               ? "Ưu tiên tiêu chí cần cải thiện: "
               : "Start with the criterion needing most improvement: "}
-            {tx(
-              criterionLabels[
-                [...report.criteria].sort((a, b) => a.score - b.score)[0].key
-              ],
-            )}
-            .
+            {tx(criterionLabels[focusKey])}.
           </Text>
           <Group>
             <Button
               component={Link}
               href={
-                attempt.skill === "SPEAKING" &&
-                [...report.criteria].sort((a, b) => a.score - b.score)[0]
-                  .key === "PRONUNCIATION"
+                attempt.skill === "SPEAKING" && focusKey === "PRONUNCIATION"
                   ? "/study/pronunciation"
                   : `/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}`
               }

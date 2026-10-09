@@ -15,13 +15,13 @@ name: CI
 # forever on "Expected — Waiting for status to be reported". Skipping docs pays
 # off for deploys, not for a two-minute validation run.
 on:
-  # testing is where work lands before dev, so it is the branch where a break is
-  # cheapest to find. It was not watched at all, which made it the one branch
-  # people push to and nothing checks.
-  push:
-    branches: [main, dev, testing]
   pull_request:
     branches: [main, dev, testing]
+  # A push is validated by `deploy.yml`, which calls this workflow first and
+  # deploys only if it passes. A push trigger here as well would run everything
+  # twice, and the two runs share a concurrency group - one would cancel the
+  # other.
+  workflow_call:
 
 concurrency:
   # Keyed on the branch name, not on the PR number: `head_ref` is set only on

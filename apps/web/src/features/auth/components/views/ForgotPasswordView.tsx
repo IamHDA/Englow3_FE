@@ -15,7 +15,7 @@ import Link from "next/link";
 
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { ForgotPasswordForm } from "@/features/auth/components/blocks/ForgotPasswordForm";
-import { supabase } from "@/lib/supabase/client";
+import { sendPasswordResetLink } from "@/features/auth/api/authClient";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 type ForgotPasswordViewProps = {
@@ -27,9 +27,7 @@ async function sendResetLink(
   email: string,
   isVi: boolean,
 ): Promise<string | null> {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
-  });
+  const { error } = await sendPasswordResetLink(email);
   return error ? authErrorMessage(error, isVi) : null;
 }
 

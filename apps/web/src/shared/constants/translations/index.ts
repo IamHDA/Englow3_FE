@@ -519,6 +519,7 @@ export interface DictationTranslations {
   hintFirstLettersLabel: string;
   hintRevealWordLabel: string;
   hintTranslationLabel: string;
+  meaningLabel: string;
   hintPartialTranscriptLabel: string;
   collapseHints: string;
   needHint: string;
@@ -1365,6 +1366,7 @@ export const translations: Record<Language, AppTranslations> = {
       hintFirstLettersLabel: "Gợi ý các chữ cái đầu tiên",
       hintRevealWordLabel: "Mở khóa 1 từ khóa quan trọng",
       hintTranslationLabel: "Xem bản dịch tiếng Việt",
+      meaningLabel: "Nghĩa",
       hintPartialTranscriptLabel: "Xem trích đoạn đầu của câu",
       collapseHints: "Thu gọn gợi ý",
       needHint: "Bạn cần gợi ý?",
@@ -2272,6 +2274,7 @@ export const translations: Record<Language, AppTranslations> = {
       hintFirstLettersLabel: "First letter of each word",
       hintRevealWordLabel: "Reveal 1 key word",
       hintTranslationLabel: "Vietnamese translation",
+      meaningLabel: "Meaning",
       hintPartialTranscriptLabel: "Sentence opening excerpt",
       collapseHints: "Collapse hints",
       needHint: "Need a hint?",

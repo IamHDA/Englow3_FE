@@ -1,3 +1,5 @@
+import { CSRF_HEADER, CSRF_VALUE } from "@/lib/security/csrf";
+
 /** What the backend says a file would do, or did. */
 export interface FlashcardImportReport {
   committed: boolean;
@@ -14,9 +16,18 @@ export interface FlashcardImportReport {
   sentenceCount?: number;
 }
 
-const BFF_REST_URL = (
-  process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ?? "http://localhost:4000/graphql"
-).replace(/\/graphql$/, "/rest");
+/**
+ * This app's own route, which adds the signed-in user's token on the server and
+ * passes the request on to the BFF. The page holds no token to attach.
+ */
+const REST_URL = "/api/bff/rest";
+
+/** The server had no session to send on: it expired, or the user signed out elsewhere. */
+export class ImportSessionExpiredError extends Error {
+  constructor() {
+    super("SESSION_EXPIRED");
+  }
+}
 
 /**
  * Uploads a batch over REST rather than GraphQL.
@@ -28,19 +39,20 @@ const BFF_REST_URL = (
 async function post(
   path: string,
   json: string,
-  token: string,
 ): Promise<FlashcardImportReport> {
-  const response = await fetch(`${BFF_REST_URL}${path}`, {
+  const response = await fetch(`${REST_URL}${path}`, {
     method: "POST",
     headers: {
-      authorization: `Bearer ${token}`,
       "content-type": "application/json",
+      [CSRF_HEADER]: CSRF_VALUE,
     },
     body: json,
+    credentials: "same-origin",
     signal: AbortSignal.timeout(60_000),
   });
 
   const body = await response.text();
+  if (response.status === 401) throw new ImportSessionExpiredError();
   if (!response.ok) {
     // The backend's message is shown as it came: it names the row or the
     // reason, and replacing it with a generic line would throw that away.
@@ -73,15 +85,14 @@ function readMessage(body: string): string {
   }
 }
 
-export function validateFlashcardImport(json: string, token: string) {
-  return post("/admin/flashcards/import/validate", json, token);
+export function validateFlashcardImport(json: string) {
+  return post("/admin/flashcards/import/validate", json);
 }
 
-export function importFlashcards(setId: string, json: string, token: string) {
+export function importFlashcards(setId: string, json: string) {
   return post(
     `/admin/flashcards/sets/${encodeURIComponent(setId)}/import`,
     json,
-    token,
   );
 }
 
@@ -92,10 +103,10 @@ export function importFlashcards(setId: string, json: string, token: string) {
  * four lines and thirty of forty are the same number of lessons and very
  * different amounts of content.
  */
-export function validateDictationImport(json: string, token: string) {
-  return post("/admin/dictation/import/validate", json, token);
+export function validateDictationImport(json: string) {
+  return post("/admin/dictation/import/validate", json);
 }
 
-export function importDictation(json: string, token: string) {
-  return post("/admin/dictation/import", json, token);
+export function importDictation(json: string) {
+  return post("/admin/dictation/import", json);
 }

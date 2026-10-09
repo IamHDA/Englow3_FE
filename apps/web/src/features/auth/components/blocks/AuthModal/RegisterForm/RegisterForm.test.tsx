@@ -13,12 +13,8 @@ vi.mock("next/navigation", () => ({
 }));
 
 const signUp = vi.fn();
-vi.mock("@/lib/supabase/client", () => ({
-  supabase: {
-    auth: {
-      signUp: (...args: unknown[]) => signUp(...args),
-    },
-  },
+vi.mock("@/features/auth/api/authClient", () => ({
+  signUp: (...args: unknown[]) => signUp(...args),
 }));
 
 const notificationsShow = vi.fn();
@@ -58,7 +54,7 @@ beforeEach(() => {
 });
 
 describe("RegisterForm", () => {
-  it("shows validation errors on empty submit and does not call Supabase", async () => {
+  it("shows validation errors on empty submit and sends nothing", async () => {
     const user = userEvent.setup();
     renderForm();
 
@@ -147,14 +143,10 @@ describe("RegisterForm", () => {
       expect(signUp).toHaveBeenCalledWith({
         email: "vana@example.com",
         password: VALID_PASSWORD,
-        options: expect.objectContaining({
-          data: {
-            full_name: "Nguyễn Văn A",
-            display_name: "vana",
-            birth_date: "2000-06-15",
-            gender: "MALE",
-          },
-        }),
+        fullName: "Nguyễn Văn A",
+        displayName: "vana",
+        birthDate: "2000-06-15",
+        gender: "MALE",
       }),
     );
     expect(notificationsShow).toHaveBeenCalledWith(
@@ -166,10 +158,7 @@ describe("RegisterForm", () => {
 
   it("shows a toast when Supabase rejects the sign up", async () => {
     signUp.mockResolvedValue({
-      error: {
-        message: "User already registered",
-        code: "user_already_exists",
-      },
+      error: { code: "user_already_exists", status: 422 },
     });
     const user = userEvent.setup();
     renderForm();
