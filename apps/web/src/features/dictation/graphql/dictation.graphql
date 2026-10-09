@@ -8,6 +8,7 @@ fragment DictationLessonFields on DictationLesson {
   completedSentenceCount
   totalDurationSeconds
   lastPractisedAt
+  publishedAt
 }
 
 fragment DictationSentenceFields on DictationSentence {

@@ -382,6 +382,8 @@ export type DictationLesson = {
   completedSentenceCount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   lastPractisedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** When the lesson went live; what "newest first" sorts on. */
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
   sentenceCount: Scalars['Int']['output'];
   slug: Scalars['String']['output'];
   targetLevel?: Maybe<Scalars['String']['output']>;
@@ -701,6 +703,17 @@ export type ExamSectionPart = {
   questionSets: Array<ExamQuestionSet>;
   title: Scalars['String']['output'];
 };
+
+/**
+ * How the learner catalogue is ordered, applied to the whole catalogue before
+ * it is cut into pages. Papers that tie come out as a numbered series
+ * ("Test 2" before "Test 10").
+ */
+export type ExamSortBy =
+  | 'LEVEL_ASC'
+  | 'LEVEL_DESC'
+  | 'NEWEST'
+  | 'SCORE_DESC';
 
 /**
  * DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. There is
@@ -1634,6 +1647,7 @@ export type QueryExamsArgs = {
   examType?: InputMaybe<ExamType>;
   page?: InputMaybe<Scalars['Int']['input']>;
   size?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<ExamSortBy>;
   targetLevel?: InputMaybe<TargetLevel>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2213,6 +2227,7 @@ export type ResolversTypes = ResolversObject<{
   ExamQuestionSet: ResolverTypeWrapper<ExamQuestionSet>;
   ExamSectionDetail: ResolverTypeWrapper<ExamSectionDetail>;
   ExamSectionPart: ResolverTypeWrapper<ExamSectionPart>;
+  ExamSortBy: ExamSortBy;
   ExamStatus: ExamStatus;
   ExamType: ExamType;
   Flashcard: ResolverTypeWrapper<Flashcard>;
@@ -2609,6 +2624,7 @@ export type DictationLessonResolvers<ContextType = GraphQLContext, ParentType ex
   completedSentenceCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastPractisedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   sentenceCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   targetLevel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3086,7 +3102,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   examAttempts?: Resolver<ResolversTypes['ExamAttemptPage'], ParentType, ContextType, RequireFields<QueryExamAttemptsArgs, 'page' | 'size'>>;
   examDraft?: Resolver<ResolversTypes['ExamDraft'], ParentType, ContextType, RequireFields<QueryExamDraftArgs, 'attemptId'>>;
   examOutline?: Resolver<ResolversTypes['ExamOutline'], ParentType, ContextType, RequireFields<QueryExamOutlineArgs, 'examId'>>;
-  exams?: Resolver<ResolversTypes['LearnerExamPage'], ParentType, ContextType, RequireFields<QueryExamsArgs, 'page' | 'size'>>;
+  exams?: Resolver<ResolversTypes['LearnerExamPage'], ParentType, ContextType, RequireFields<QueryExamsArgs, 'page' | 'size' | 'sortBy'>>;
   flashcardSet?: Resolver<ResolversTypes['FlashcardSetDetail'], ParentType, ContextType, RequireFields<QueryFlashcardSetArgs, 'id'>>;
   flashcardSets?: Resolver<ResolversTypes['FlashcardSetPage'], ParentType, ContextType, RequireFields<QueryFlashcardSetsArgs, 'page' | 'size'>>;
   flashcardStats?: Resolver<ResolversTypes['FlashcardStats'], ParentType, ContextType, RequireFields<QueryFlashcardStatsArgs, 'periodDays'>>;

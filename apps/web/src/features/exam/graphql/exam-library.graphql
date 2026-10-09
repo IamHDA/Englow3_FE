@@ -4,6 +4,7 @@ query ExamLibrary(
   $certificateVariant: CertificateVariant
   $targetLevel: TargetLevel
   $title: String
+  $sortBy: ExamSortBy
   $page: Int
   $size: Int
 ) {
@@ -13,6 +14,7 @@ query ExamLibrary(
     certificateVariant: $certificateVariant
     targetLevel: $targetLevel
     title: $title
+    sortBy: $sortBy
     page: $page
     size: $size
   ) {

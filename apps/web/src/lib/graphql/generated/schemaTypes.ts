@@ -390,6 +390,8 @@ export type DictationLesson = {
   completedSentenceCount: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   lastPractisedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /** When the lesson went live; what "newest first" sorts on. */
+  publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
   sentenceCount: Scalars["Int"]["output"];
   slug: Scalars["String"]["output"];
   targetLevel?: Maybe<Scalars["String"]["output"]>;
@@ -711,6 +713,18 @@ export type ExamSectionPart = {
   questionSets: Array<ExamQuestionSet>;
   title: Scalars["String"]["output"];
 };
+
+/**
+ * How the learner catalogue is ordered, applied to the whole catalogue before
+ * it is cut into pages. Papers that tie come out as a numbered series
+ * ("Test 2" before "Test 10").
+ */
+export enum ExamSortBy {
+  LEVEL_ASC = "LEVEL_ASC",
+  LEVEL_DESC = "LEVEL_DESC",
+  NEWEST = "NEWEST",
+  SCORE_DESC = "SCORE_DESC",
+}
 
 /**
  * DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. There is
@@ -1591,6 +1605,7 @@ export type QueryExamsArgs = {
   examType?: InputMaybe<ExamType>;
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
+  sortBy?: InputMaybe<ExamSortBy>;
   targetLevel?: InputMaybe<TargetLevel>;
   title?: InputMaybe<Scalars["String"]["input"]>;
 };

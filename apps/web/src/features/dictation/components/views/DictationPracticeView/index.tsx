@@ -49,6 +49,7 @@ const EMPTY_LESSON = {
   completedSentenceCount: 0,
   totalDurationSeconds: 0,
   lastPractisedAt: null,
+  publishedAt: null,
 };
 
 export function DictationPracticeView({

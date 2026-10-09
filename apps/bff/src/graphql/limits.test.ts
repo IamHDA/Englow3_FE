@@ -37,6 +37,16 @@ describe("queryLimitRule", () => {
     ]);
   });
 
+  // Code generation asks a running server for its schema with the standard
+  // introspection query, which is nested far deeper than the limit.
+  it("lets an introspection query through however deep it nests", () => {
+    const nested =
+      "{ __schema { types { fields { type { ofType { ofType { ofType { ofType { name } } } } } } } } }";
+
+    expect(errorsFor(nested)).toEqual([]);
+    expect(errorsFor('{ __type(name: "Node") { name } }')).toEqual([]);
+  });
+
   it("does not loop on a fragment that spreads itself", () => {
     expect(() =>
       errorsFor("fragment F on Node { child { ...F } } { node { ...F } }"),

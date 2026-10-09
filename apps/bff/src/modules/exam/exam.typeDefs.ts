@@ -42,6 +42,18 @@ export const examTypeDefs = /* GraphQL */ `
     C2
   }
 
+  """
+  How the learner catalogue is ordered, applied to the whole catalogue before
+  it is cut into pages. Papers that tie come out as a numbered series
+  ("Test 2" before "Test 10").
+  """
+  enum ExamSortBy {
+    NEWEST
+    LEVEL_ASC
+    LEVEL_DESC
+    SCORE_DESC
+  }
+
   type ExamListItem {
     id: ID!
     title: String!
@@ -155,6 +167,7 @@ export const examTypeDefs = /* GraphQL */ `
       certificateVariant: CertificateVariant
       targetLevel: TargetLevel
       title: String
+      sortBy: ExamSortBy = NEWEST
       page: Int = 0
       size: Int = 20
     ): LearnerExamPage!

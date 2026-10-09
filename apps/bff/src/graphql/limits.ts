@@ -79,6 +79,20 @@ export function queryLimitRule(limits = QUERY_LIMITS) {
         }
       },
       OperationDefinition(node) {
+        // Introspection (`__schema`, `__type`) is a tool asking for the shape
+        // of the schema, and the standard introspection query is nested deeper
+        // than any real screen. It is switched off where it matters
+        // (introspection is off in production), so exempting it here only keeps
+        // code generation working against a local server.
+        if (
+          node.selectionSet.selections.every(
+            (selection) =>
+              selection.kind === Kind.FIELD &&
+              selection.name.value.startsWith("__"),
+          )
+        ) {
+          return;
+        }
         if (node.selectionSet.selections.length > limits.maxRootFields) {
           context.reportError(
             new GraphQLError(

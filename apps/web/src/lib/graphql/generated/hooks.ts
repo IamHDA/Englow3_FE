@@ -1050,6 +1050,7 @@ export type DictationLessonFieldsFragment = {
   completedSentenceCount: number;
   totalDurationSeconds: number;
   lastPractisedAt: string | null;
+  publishedAt: string | null;
 };
 
 export type DictationSentenceFieldsFragment = {
@@ -1089,6 +1090,7 @@ export type DictationLessonsQuery = {
       completedSentenceCount: number;
       totalDurationSeconds: number;
       lastPractisedAt: string | null;
+      publishedAt: string | null;
     }>;
   };
 };
@@ -1109,6 +1111,7 @@ export type DictationLessonDetailQuery = {
       completedSentenceCount: number;
       totalDurationSeconds: number;
       lastPractisedAt: string | null;
+      publishedAt: string | null;
     };
     sentences: Array<{
       id: string;
@@ -1646,6 +1649,7 @@ export type ExamLibraryQueryVariables = Exact<{
   certificateVariant?: Types.CertificateVariant | null | undefined;
   targetLevel?: Types.TargetLevel | null | undefined;
   title?: string | null | undefined;
+  sortBy?: Types.ExamSortBy | null | undefined;
   page?: number | null | undefined;
   size?: number | null | undefined;
 }>;
@@ -2557,6 +2561,7 @@ export const DictationLessonFieldsFragmentDoc = gql`
     completedSentenceCount
     totalDurationSeconds
     lastPractisedAt
+    publishedAt
   }
 `;
 export const DictationSentenceFieldsFragmentDoc = gql`
@@ -7239,6 +7244,7 @@ export const ExamLibraryDocument = gql`
     $certificateVariant: CertificateVariant
     $targetLevel: TargetLevel
     $title: String
+    $sortBy: ExamSortBy
     $page: Int
     $size: Int
   ) {
@@ -7248,6 +7254,7 @@ export const ExamLibraryDocument = gql`
       certificateVariant: $certificateVariant
       targetLevel: $targetLevel
       title: $title
+      sortBy: $sortBy
       page: $page
       size: $size
     ) {
@@ -7293,6 +7300,7 @@ export const ExamLibraryDocument = gql`
  *      certificateVariant: // value for 'certificateVariant'
  *      targetLevel: // value for 'targetLevel'
  *      title: // value for 'title'
+ *      sortBy: // value for 'sortBy'
  *      page: // value for 'page'
  *      size: // value for 'size'
  *   },

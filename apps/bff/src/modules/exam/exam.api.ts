@@ -50,6 +50,7 @@ export class ExamApi {
       certificateVariant: params.certificateVariant,
       targetLevel: params.targetLevel,
       title: params.title,
+      sortBy: params.sortBy,
       page: params.page ?? 0,
       size: params.size ?? 20,
     });

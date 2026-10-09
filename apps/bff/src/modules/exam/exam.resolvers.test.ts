@@ -103,7 +103,11 @@ describe("Query.exams", () => {
     });
 
     await expect(
-      examResolvers.Query.exams({}, { page: 0, size: 20 }, ctx),
+      examResolvers.Query.exams(
+        {},
+        { page: 0, size: 20, sortBy: "NEWEST" },
+        ctx,
+      ),
     ).rejects.toThrow("Missing or invalid access token");
     expect(searchAsLearner).not.toHaveBeenCalled();
   });
@@ -132,13 +136,21 @@ describe("Query.exams", () => {
 
     const res = await examResolvers.Query.exams(
       {},
-      { certificateType: "TOEIC", targetLevel: "B1", page: 0, size: 20 },
+      {
+        certificateType: "TOEIC",
+        targetLevel: "B1",
+        sortBy: "LEVEL_DESC",
+        page: 0,
+        size: 20,
+      },
       ctx,
     );
 
+    // sortBy goes to the backend, which orders the whole catalogue before cutting the page.
     expect(searchAsLearner).toHaveBeenCalledWith({
       certificateType: "TOEIC",
       targetLevel: "B1",
+      sortBy: "LEVEL_DESC",
       page: 0,
       size: 20,
     });

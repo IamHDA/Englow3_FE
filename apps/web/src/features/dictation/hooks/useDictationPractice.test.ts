@@ -18,6 +18,7 @@ const lesson: DictationLesson = {
   completedSentenceCount: 0,
   totalDurationSeconds: 8,
   lastPractisedAt: null,
+  publishedAt: null,
 };
 
 const sentence: DictationSentence = {

@@ -25,6 +25,7 @@ import type { ExamFiltersState } from "../../../types";
 import type {
   CertificateType,
   CertificateVariant,
+  ExamSortBy,
   ExamType,
   TargetLevel,
 } from "@/lib/graphql/generated/schemaTypes";
@@ -68,10 +69,18 @@ export function ExamLibraryView() {
           ? (filters.targetLevel as TargetLevel)
           : undefined,
       title: filters.searchQuery ? filters.searchQuery.trim() : undefined,
+      // Ordered by the server over the whole catalogue, so the order holds across pages.
+      sortBy: filters.sortBy as ExamSortBy,
       page: filters.page,
       size: PAGE_SIZE,
     };
-  }, [activeTab, filters.targetLevel, filters.searchQuery, filters.page]);
+  }, [
+    activeTab,
+    filters.targetLevel,
+    filters.searchQuery,
+    filters.sortBy,
+    filters.page,
+  ]);
 
   const { data, loading, error, refetch } = useExamLibraryQuery({
     variables: queryVariables,
@@ -99,25 +108,7 @@ export function ExamLibraryView() {
   const totalPages = Math.max(examPage?.totalPages ?? 1, 1);
   const currentPage = filters.page;
 
-  // Sorting items client-side if needed (e.g. by targetLevel or title)
-  const sortedItems = useMemo(() => {
-    const rawItems = examPage?.items;
-    if (!rawItems || !rawItems.length) return [];
-    const list = [...rawItems];
-
-    if (filters.sortBy === "LEVEL_ASC") {
-      list.sort((a, b) =>
-        (a.targetLevel ?? "").localeCompare(b.targetLevel ?? ""),
-      );
-    } else if (filters.sortBy === "LEVEL_DESC") {
-      list.sort((a, b) =>
-        (b.targetLevel ?? "").localeCompare(a.targetLevel ?? ""),
-      );
-    } else if (filters.sortBy === "SCORE_DESC") {
-      list.sort((a, b) => (b.maxRawScore ?? 0) - (a.maxRawScore ?? 0));
-    }
-    return list;
-  }, [examPage?.items, filters.sortBy]);
+  const sortedItems = examPage?.items ?? [];
 
   // Pagination calculation
   const startItem = totalItems > 0 ? currentPage * PAGE_SIZE + 1 : 0;

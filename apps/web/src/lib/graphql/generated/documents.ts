@@ -1047,6 +1047,7 @@ export type DictationLessonFieldsFragment = {
   completedSentenceCount: number;
   totalDurationSeconds: number;
   lastPractisedAt: string | null;
+  publishedAt: string | null;
 };
 
 export type DictationSentenceFieldsFragment = {
@@ -1086,6 +1087,7 @@ export type DictationLessonsQuery = {
       completedSentenceCount: number;
       totalDurationSeconds: number;
       lastPractisedAt: string | null;
+      publishedAt: string | null;
     }>;
   };
 };
@@ -1106,6 +1108,7 @@ export type DictationLessonDetailQuery = {
       completedSentenceCount: number;
       totalDurationSeconds: number;
       lastPractisedAt: string | null;
+      publishedAt: string | null;
     };
     sentences: Array<{
       id: string;
@@ -1643,6 +1646,7 @@ export type ExamLibraryQueryVariables = Exact<{
   certificateVariant?: Types.CertificateVariant | null | undefined;
   targetLevel?: Types.TargetLevel | null | undefined;
   title?: string | null | undefined;
+  sortBy?: Types.ExamSortBy | null | undefined;
   page?: number | null | undefined;
   size?: number | null | undefined;
 }>;
@@ -2678,6 +2682,7 @@ export const DictationLessonFieldsFragmentDoc = {
             name: { kind: "Name", value: "totalDurationSeconds" },
           },
           { kind: "Field", name: { kind: "Name", value: "lastPractisedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
         ],
       },
     },
@@ -7172,6 +7177,7 @@ export const DictationLessonsDocument = {
             name: { kind: "Name", value: "totalDurationSeconds" },
           },
           { kind: "Field", name: { kind: "Name", value: "lastPractisedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
         ],
       },
     },
@@ -7276,6 +7282,7 @@ export const DictationLessonDetailDocument = {
             name: { kind: "Name", value: "totalDurationSeconds" },
           },
           { kind: "Field", name: { kind: "Name", value: "lastPractisedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
         ],
       },
     },
@@ -9287,6 +9294,17 @@ export const ExamLibraryDocument = {
         },
         {
           kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "sortBy" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "ExamSortBy" },
+          },
+        },
+        {
+          kind: "VariableDefinition",
           variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
           type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
         },
@@ -9341,6 +9359,14 @@ export const ExamLibraryDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "sortBy" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "sortBy" },
                 },
               },
               {

@@ -10,6 +10,8 @@ export const dictationTypeDefs = /* GraphQL */ `
     completedSentenceCount: Int!
     totalDurationSeconds: Int!
     lastPractisedAt: DateTime
+    """When the lesson went live; what "newest first" sorts on."""
+    publishedAt: DateTime
   }
 
   type DictationLessonPage {

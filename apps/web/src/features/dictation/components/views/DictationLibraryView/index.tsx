@@ -2,7 +2,8 @@
 
 import { Alert, Stack } from "@mantine/core";
 import { useAllDictationLessons } from "../../../hooks/useAllDictationLessons";
-import { lessonStatus, progressPercent } from "../../../lessonProgress";
+import { sortLessons } from "../../../lessonOrder";
+import { lessonStatus } from "../../../lessonProgress";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import { useDictationStatsQuery } from "@/lib/graphql/generated/hooks";
@@ -24,14 +25,6 @@ import { Page } from "@/shared/components/Page";
 
 interface DictationLibraryViewProps {
   initialTab?: "lessons" | "stats";
-}
-
-const CEFR_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2"];
-
-/** Bậc CEFR làm thước độ khó; bài chưa gắn bậc xếp cuối. */
-function levelRank(level: string | null | undefined): number {
-  const rank = CEFR_ORDER.indexOf(level ?? "");
-  return rank === -1 ? CEFR_ORDER.length : rank;
 }
 
 export function DictationLibraryView({
@@ -83,8 +76,8 @@ export function DictationLibraryView({
   // Lọc và sắp xếp tại chỗ trên cả thư viện (đã tải đủ mọi trang): gửi thêm
   // tham số lên server chỉ đổi một lượt round trip lấy một vòng lặp.
   const filteredLessons = useMemo(() => {
-    return lessons
-      .filter((lesson) => {
+    return sortLessons(
+      lessons.filter((lesson) => {
         if (selectedTopic !== "ALL" && lesson.topic !== selectedTopic) {
           return false;
         }
@@ -98,19 +91,9 @@ export function DictationLibraryView({
           return false;
         }
         return true;
-      })
-      .sort((a, b) => {
-        if (selectedSort === "difficulty") {
-          return (
-            levelRank(a.targetLevel) - levelRank(b.targetLevel) ||
-            a.sentenceCount - b.sentenceCount
-          );
-        }
-        if (selectedSort === "progress") {
-          return progressPercent(b) - progressPercent(a);
-        }
-        return 0;
-      });
+      }),
+      selectedSort,
+    );
   }, [lessons, selectedLevel, selectedSort, selectedStatus, selectedTopic]);
 
   if (loading && lessons.length === 0) {
