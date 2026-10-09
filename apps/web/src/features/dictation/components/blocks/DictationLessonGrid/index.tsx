@@ -4,6 +4,7 @@ import { Card, SimpleGrid, Text } from "@mantine/core";
 import { Clock, Headphones } from "lucide-react";
 import { LibraryCard } from "@/shared/components/LibraryCard";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { topicLabel } from "../../../constants/dictationData";
 import {
   estimatedTime,
   lastPractisedLabel,
@@ -26,7 +27,7 @@ export function DictationLessonGrid({
   lessons,
   emptyMessage,
 }: DictationLessonGridProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
 
   if (lessons.length === 0) {
     return (
@@ -55,7 +56,7 @@ export function DictationLessonGrid({
         return (
           <LibraryCard
             key={lesson.id}
-            eyebrow={lesson.topic}
+            eyebrow={topicLabel(lesson.topic, isVi)}
             level={lesson.targetLevel}
             status={
               completed

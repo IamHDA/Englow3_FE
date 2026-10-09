@@ -29,7 +29,12 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { Page } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { parseReport, statusLabels, statusLabelsEn } from "../types";
+import {
+  parseReport,
+  skillLabel,
+  statusLabels,
+  statusLabelsEn,
+} from "../types";
 export function AssessmentHistory({
   initial = {},
 }: {
@@ -157,7 +162,7 @@ export function AssessmentHistory({
                   <Stack gap={4} style={{ flex: 1, minWidth: 180 }}>
                     <Text fw={600}>{a.task.title}</Text>
                     <Text size="sm" c="dimmed">
-                      {a.skill} ·{" "}
+                      {skillLabel(a.skill, isVi)} ·{" "}
                       {new Date(a.createdAt).toLocaleString(
                         isVi ? "vi-VN" : "en-US",
                       )}
@@ -303,7 +308,7 @@ export function AssessmentNotifications({ full = false }: { full?: boolean }) {
         {(full ? items : items.slice(0, 3)).map((n) => (
           <Group key={n.attemptId} justify="space-between">
             <Text style={{ flex: 1, minWidth: 160 }}>
-              {n.skill} · {n.title}
+              {skillLabel(n.skill, isVi)} · {n.title}
             </Text>
             <Badge variant="light">v{n.version}</Badge>
             <Button
@@ -349,7 +354,7 @@ export function AssessmentResumeCard() {
         {drafts.slice(0, 2).map((a) => (
           <Group key={a.id} justify="space-between">
             <Text style={{ flex: 1, minWidth: 160 }}>
-              {a.skill} · {a.task.title}
+              {skillLabel(a.skill, isVi)} · {a.task.title}
             </Text>
             <Button
               component={Link}

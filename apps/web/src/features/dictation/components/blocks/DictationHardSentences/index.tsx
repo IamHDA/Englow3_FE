@@ -14,6 +14,7 @@ import {
 import { ArrowRight, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { topicLabel } from "../../../constants/dictationData";
 import type { DifficultSentenceItem } from "../../../types";
 
 interface DictationHardSentencesProps {
@@ -23,7 +24,7 @@ interface DictationHardSentencesProps {
 export function DictationHardSentences({
   sentences,
 }: DictationHardSentencesProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
 
   return (
     <Paper radius="md" p="lg" withBorder bg="white">
@@ -54,7 +55,7 @@ export function DictationHardSentences({
                 <Stack gap={4} style={{ flex: 1 }}>
                   <Group gap="xs">
                     <Badge size="xs" variant="light" color="navy">
-                      {s.topic}
+                      {topicLabel(s.topic, isVi)}
                     </Badge>
                     <Badge size="xs" color="warn" variant="light">
                       {t.dictation.avgAccuracyPrefix}: {s.avgAccuracyPercent}%

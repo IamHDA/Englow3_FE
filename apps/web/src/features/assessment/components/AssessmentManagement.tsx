@@ -37,7 +37,13 @@ import {
   useAssessmentTransitionTaskMutation,
 } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
-import { statusLabels, statusLabelsEn, type PracticeTask } from "../types";
+import {
+  skillLabel,
+  statusLabels,
+  statusLabelsEn,
+  taskTypeLabel,
+  type PracticeTask,
+} from "../types";
 import { TaskInstructions } from "./TaskInstructions";
 export function AssessmentManagement({
   initial = {},
@@ -327,7 +333,8 @@ export function AssessmentManagement({
                     <Stack gap={3}>
                       <Text fw={700}>{task.title}</Text>
                       <Text size="xs" c="dimmed">
-                        {task.skill} · {task.taskType.replaceAll("_", " ")}
+                        {skillLabel(task.skill, isVi)} ·{" "}
+                        {taskTypeLabel(task.taskType)}
                       </Text>
                       <Badge w="fit-content">
                         {(isVi ? statusLabels : statusLabelsEn)[task.status]}
@@ -453,11 +460,13 @@ export function AssessmentManagement({
                       {attempt.task.title} · {attempt.learnerId?.slice(0, 8)}
                     </Text>
                     <Text size="xs" c="dimmed">
-                      {attempt.skill} ·{" "}
+                      {skillLabel(attempt.skill, isVi)} ·{" "}
                       {attempt.submittedAt
-                        ? new Date(attempt.submittedAt).toLocaleString("vi-VN")
+                        ? new Date(attempt.submittedAt).toLocaleString(
+                            isVi ? "vi-VN" : "en-US",
+                          )
                         : ""}{" "}
-                      · mã {attempt.id.slice(0, 8)}
+                      · {isVi ? "mã" : "ID"} {attempt.id.slice(0, 8)}
                     </Text>
                     <Badge mt="xs">
                       {(isVi ? statusLabels : statusLabelsEn)[attempt.status]}
@@ -515,7 +524,8 @@ export function AssessmentManagement({
           {preview && (
             <Stack>
               <Badge w="fit-content">
-                {preview.skill} · {preview.taskType}
+                {skillLabel(preview.skill, isVi)} ·{" "}
+                {taskTypeLabel(preview.taskType)}
               </Badge>
               <Text fw={700}>{tx("Đề và hướng dẫn")}</Text>
               <TaskInstructions text={preview.instructions} />

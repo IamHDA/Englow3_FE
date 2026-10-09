@@ -32,6 +32,17 @@ export const DICTATION_TOPICS: Array<{
   },
 ];
 
+/**
+ * Tên chủ đề theo ngôn ngữ đang chọn. Chủ đề lưu trong DB bằng tiếng Anh (đó
+ * cũng là giá trị bộ lọc), nên hiện thẳng nó ở giao diện tiếng Việt là để lộ
+ * chuỗi chưa dịch; chủ đề lạ (từ lô nhập cũ) hiện đúng như đã lưu.
+ */
+export function topicLabel(topic: string, isVi: boolean): string {
+  const known = DICTATION_TOPICS.find((item) => item.value === topic);
+  if (!known) return topic;
+  return isVi ? known.labelVi : known.labelEn;
+}
+
 export const DICTATION_LEVELS: Array<{
   value: string;
   labelVi: string;

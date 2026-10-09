@@ -23,7 +23,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useAssessmentRecorder } from "../hooks/useAssessmentRecorder";
-import type { PracticeTask } from "../types";
+import { taskTypeLabel, type PracticeTask } from "../types";
 import { MicrophoneCheck } from "./MicrophoneCheck";
 import { TaskInstructions } from "./TaskInstructions";
 export function AssessmentTaskView({ id }: { id: string }) {
@@ -189,7 +189,7 @@ function TaskWorkbench({
         </Button>
         <Title order={1}>{task.title}</Title>
         <Group>
-          <Text size="sm">{task.taskType.replaceAll("_", " ")}</Text>
+          <Text size="sm">{taskTypeLabel(task.taskType)}</Text>
           <Text size="sm" c="dimmed">
             {Math.round(task.timeLimitSeconds / 60)} {tx("phút gợi ý")}
           </Text>

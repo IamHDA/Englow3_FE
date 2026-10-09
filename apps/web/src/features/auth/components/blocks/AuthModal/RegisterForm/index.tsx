@@ -242,6 +242,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         }
         placeholder={t.auth.createPasswordPlaceholder}
         error={errors.password?.message}
+        visibilityToggleButtonProps={{
+          "aria-label": isVi
+            ? "Hiện hoặc ẩn mật khẩu"
+            : "Show or hide password",
+        }}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
             <EyeOff aria-hidden="true" size={20} />

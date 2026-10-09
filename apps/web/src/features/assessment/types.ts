@@ -25,6 +25,25 @@ export type PracticeReport = {
   /** The weakest criterion, named so "practise this next" works without the scores. */
   focusCriterion?: string;
 };
+/**
+ * What a skill and a task type are called on screen. The API carries them as
+ * enum values (`WRITING`, `TASK_1`); printing those showed capital letters and
+ * an underscore to everyone, in either language.
+ *
+ * "Task 1" and "Part 2" stay as they are in Vietnamese too: that is how IELTS
+ * names them, and a learner preparing for it hears them that way.
+ */
+export function skillLabel(skill: string, isVi: boolean): string {
+  if (skill === "WRITING") return isVi ? "Viết" : "Writing";
+  if (skill === "SPEAKING") return isVi ? "Nói" : "Speaking";
+  return skill;
+}
+
+export function taskTypeLabel(taskType: string): string {
+  const spaced = taskType.replaceAll("_", " ").toLowerCase();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
 export const criterionLabels: Record<string, string> = {
   TASK_RESPONSE: "Đáp ứng yêu cầu đề",
   COHERENCE_COHESION: "Mạch lạc và liên kết",

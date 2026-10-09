@@ -116,6 +116,11 @@ export function ResetPasswordForm() {
         label={tr("Mật khẩu mới", "New password")}
         placeholder={tr("Nhập mật khẩu mới", "Enter a new password")}
         error={errors.password?.message}
+        visibilityToggleButtonProps={{
+          "aria-label": isVi
+            ? "Hiện hoặc ẩn mật khẩu"
+            : "Show or hide password",
+        }}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
             <EyeOff aria-hidden="true" size={20} />
@@ -131,6 +136,11 @@ export function ResetPasswordForm() {
         label={tr("Nhập lại mật khẩu mới", "Repeat the new password")}
         placeholder={tr("Nhập lại để chắc chắn", "Type it again to be sure")}
         error={errors.confirmPassword?.message}
+        visibilityToggleButtonProps={{
+          "aria-label": isVi
+            ? "Hiện hoặc ẩn mật khẩu"
+            : "Show or hide password",
+        }}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
             <EyeOff aria-hidden="true" size={20} />

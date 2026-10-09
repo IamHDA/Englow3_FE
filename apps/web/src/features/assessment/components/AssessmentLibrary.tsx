@@ -21,6 +21,7 @@ import { useAssessmentCatalogQuery } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { taskTypeLabel } from "../types";
 import { instructionsPreview } from "./TaskInstructions";
 export function AssessmentLibrary({ skill }: { skill: AssessmentSkill }) {
   const { isVi } = useLanguage();
@@ -82,9 +83,7 @@ export function AssessmentLibrary({ skill }: { skill: AssessmentSkill }) {
             {query.data.assessmentTasks.items.map((task) => (
               <Card key={task.id} withBorder radius="lg" p="lg">
                 <Stack h="100%">
-                  <Badge w="fit-content">
-                    {task.taskType.replaceAll("_", " ")}
-                  </Badge>
+                  <Badge w="fit-content">{taskTypeLabel(task.taskType)}</Badge>
                   <Title order={3}>{task.title}</Title>
                   <Text size="sm" lineClamp={4}>
                     {instructionsPreview(task.instructions)}

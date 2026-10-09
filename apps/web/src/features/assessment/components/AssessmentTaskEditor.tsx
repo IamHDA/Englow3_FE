@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useAssessmentText } from "../hooks/useAssessmentText";
 import {
   Alert,
@@ -20,7 +21,7 @@ import {
   useAssessmentCreateTaskMutation,
   useAssessmentEditTaskMutation,
 } from "@/lib/graphql/generated/hooks";
-import type { PracticeTask } from "../types";
+import { skillLabel, taskTypeLabel, type PracticeTask } from "../types";
 import { assessmentTemplates } from "../templates";
 import { useRecoverableForm } from "@/shared/hooks/useRecoverableForm";
 import { EditorFrame } from "@/shared/components/EditorFrame";
@@ -37,6 +38,7 @@ export function AssessmentTaskEditor({
   done: () => Promise<unknown>;
 }) {
   const tx = useAssessmentText();
+  const { isVi } = useLanguage();
   const draft = useRecoverableForm<AssessmentTaskInput>(
     `task:${task?.id ?? "new"}:${task?.version ?? 0}`,
     {
@@ -150,8 +152,14 @@ export function AssessmentTaskEditor({
         <Select
           label={tx("Kỹ năng")}
           data={[
-            { value: AssessmentSkill.WRITING, label: "Writing" },
-            { value: AssessmentSkill.SPEAKING, label: "Speaking" },
+            {
+              value: AssessmentSkill.WRITING,
+              label: skillLabel("WRITING", isVi),
+            },
+            {
+              value: AssessmentSkill.SPEAKING,
+              label: skillLabel("SPEAKING", isVi),
+            },
           ]}
           value={value.skill}
           disabled={busy || Boolean(task)}
@@ -168,11 +176,10 @@ export function AssessmentTaskEditor({
         />
         <Select
           label={tx("Dạng bài")}
-          data={
-            value.skill === AssessmentSkill.WRITING
-              ? ["TASK_1", "TASK_2"]
-              : ["PART_1", "PART_2", "PART_3"]
-          }
+          data={(value.skill === AssessmentSkill.WRITING
+            ? ["TASK_1", "TASK_2"]
+            : ["PART_1", "PART_2", "PART_3"]
+          ).map((type) => ({ value: type, label: taskTypeLabel(type) }))}
           value={value.taskType}
           disabled={busy}
           onChange={(v) => {

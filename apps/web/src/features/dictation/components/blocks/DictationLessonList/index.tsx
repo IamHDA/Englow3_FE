@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { DICTATION_LEVELS } from "../../../constants/dictationData";
+import { DICTATION_LEVELS, topicLabel } from "../../../constants/dictationData";
 import {
   estimatedTime,
   lessonStatus,
@@ -109,7 +109,7 @@ export function DictationLessonList({
                   </Table.Td>
                   <Table.Td>
                     <Badge size="xs" variant="light" color="navy">
-                      {lesson.topic}
+                      {topicLabel(lesson.topic, isVi)}
                     </Badge>
                   </Table.Td>
                   <Table.Td>

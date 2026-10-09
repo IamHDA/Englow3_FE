@@ -116,7 +116,7 @@ export function DictationFilters({
               size="lg"
               radius="md"
               onClick={() => onViewModeChange("grid")}
-              aria-label="Grid view"
+              aria-label={isVi ? "Xem dạng lưới" : "Grid view"}
             >
               <LayoutGrid size={18} />
             </ActionIcon>
@@ -129,7 +129,7 @@ export function DictationFilters({
               size="lg"
               radius="md"
               onClick={() => onViewModeChange("list")}
-              aria-label="List view"
+              aria-label={isVi ? "Xem dạng danh sách" : "List view"}
             >
               <List size={18} />
             </ActionIcon>
