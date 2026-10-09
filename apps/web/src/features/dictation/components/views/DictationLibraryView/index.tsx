@@ -1,13 +1,11 @@
 "use client";
 
 import { Alert, Stack } from "@mantine/core";
+import { useAllDictationLessons } from "../../../hooks/useAllDictationLessons";
 import { lessonStatus, progressPercent } from "../../../lessonProgress";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
-import {
-  useDictationLessonsQuery,
-  useDictationStatsQuery,
-} from "@/lib/graphql/generated/hooks";
+import { useDictationStatsQuery } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { STATS_PERIOD_DAYS, toStatsData } from "./statsMapping";
 import { DictationLibrarySkeleton } from "../../blocks/DictationLibrarySkeleton";
@@ -27,9 +25,6 @@ import { Page } from "@/shared/components/Page";
 interface DictationLibraryViewProps {
   initialTab?: "lessons" | "stats";
 }
-
-/** Một trang bài nghe chép. Phân trang thật sẽ cần khi thư viện vượt con số này. */
-const PAGE_SIZE = 50;
 
 const CEFR_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
@@ -67,12 +62,7 @@ export function DictationLibraryView({
     ? toStatsData(statsData.dictationStats, period, isVi)
     : null;
 
-  const { data, loading, error } = useDictationLessonsQuery({
-    variables: { size: PAGE_SIZE },
-    fetchPolicy: "cache-and-network",
-  });
-
-  const lessons = useMemo(() => data?.dictationLessons.items ?? [], [data]);
+  const { lessons, loading, error } = useAllDictationLessons();
 
   // Thẻ "tiếp tục học" là bài được luyện gần nhất, lấy từ chính danh sách này.
   // Người học chưa luyện bài nào thì không có gì để tiếp tục, nên thẻ biến mất
@@ -90,8 +80,8 @@ export function DictationLibraryView({
     );
   }, [lessons]);
 
-  // Lọc và sắp xếp tại chỗ: một trang năm mươi bài thì gửi thêm tham số lên
-  // server chỉ đổi một lượt round trip lấy một vòng lặp.
+  // Lọc và sắp xếp tại chỗ trên cả thư viện (đã tải đủ mọi trang): gửi thêm
+  // tham số lên server chỉ đổi một lượt round trip lấy một vòng lặp.
   const filteredLessons = useMemo(() => {
     return lessons
       .filter((lesson) => {
