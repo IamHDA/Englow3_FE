@@ -32,6 +32,7 @@ export async function POST(request: Request) {
   }
 
   return forwardToBff(bffGraphqlUrl, {
+    timeoutMs: 12_000,
     method: "POST",
     body,
     contentType: request.headers.get("content-type") ?? "application/json",

@@ -29,6 +29,11 @@ import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentResultRead } from "./AssessmentResultRead";
 import { statusLabels, wordCount, type PracticeAttempt } from "../types";
 import { TaskInstructions } from "./TaskInstructions";
+/**
+ * Chiều cao còn lại dưới thanh đầu trang (cao 77px, dính trên cùng) để kết quả
+ * chấm vừa trọn một khung màn hình thay vì kéo dài trang.
+ */
+const RESULT_FRAME_HEIGHT = "calc(100dvh - 77px)";
 export function AssessmentAttemptView({ id }: { id: string }) {
   const tx = useAssessmentText();
   const query = useAssessmentAttemptDetailQuery({
@@ -38,16 +43,29 @@ export function AssessmentAttemptView({ id }: { id: string }) {
   const status = query.data?.assessmentAttempt.status;
   const { startPolling, stopPolling, refetch } = query;
   useEffect(() => {
-    if (status === "QUEUED" || status === "NEEDS_REVIEW")
-      startPolling(status === "QUEUED" ? 3000 : 30000);
-    else stopPolling();
-    const onFocus = () => {
-      void refetch().catch(() => {});
+    const updatePolling = () => {
+      if (
+        document.visibilityState !== "hidden" &&
+        navigator.onLine &&
+        (status === "QUEUED" || status === "NEEDS_REVIEW")
+      )
+        startPolling(status === "QUEUED" ? 5000 : 30000);
+      else stopPolling();
     };
+    updatePolling();
+    const onFocus = () => {
+      updatePolling();
+      if (document.visibilityState !== "hidden" && navigator.onLine)
+        void refetch().catch(() => {});
+    };
+    document.addEventListener("visibilitychange", onFocus);
+    window.addEventListener("online", onFocus);
     window.addEventListener("focus", onFocus);
     return () => {
       stopPolling();
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("online", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
     };
   }, [status, startPolling, stopPolling, refetch]);
   if (query.loading && !query.data)
@@ -118,27 +136,33 @@ function AttemptContent({
       setBusy(false);
     }
   }
+  // Bài đã chấm: kết quả lên đầu, đề và bài làm là tab trong phần kết quả.
+  const completed = attempt.status === "COMPLETED";
   return (
-    <Container size="lg" py="xl">
-      <Stack gap="lg">
+    <Container
+      size="lg"
+      py={completed ? "sm" : "xl"}
+      h={completed ? { base: "auto", md: RESULT_FRAME_HEIGHT } : undefined}
+      mih={completed ? { md: 600 } : undefined}
+    >
+      <Stack
+        gap={completed ? "xs" : "lg"}
+        h={completed ? { md: "100%" } : undefined}
+      >
         <Group justify="space-between">
           <Button
             component={Link}
             href={`/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}`}
             variant="subtle"
+            size={completed ? "compact-md" : "sm"}
           >
             {tx("← Lịch sử và đề luyện")}
           </Button>
           <Badge>{tx(statusLabels[attempt.status])}</Badge>
         </Group>
-        <Title order={1}>{attempt.task.title}</Title>
-        <Card withBorder>
-          <TaskInstructions text={attempt.task.instructions} />
-        </Card>
-        {attempt.status === "DRAFT" && attempt.skill === "WRITING" ? (
-          <WritingEditor key={attempt.id} attempt={attempt} refresh={refresh} />
-        ) : (
-          <>
+        <Stack gap={4}>
+          <Title order={completed ? 3 : 1}>{attempt.task.title}</Title>
+          {completed && (
             <Text size="xs" c="dimmed">
               {attempt.submittedAt
                 ? tx("Đã nộp ") +
@@ -147,14 +171,35 @@ function AttemptContent({
                   )
                 : tx("Bản ghi chưa nộp")}
             </Text>
-            {attempt.audioUrl && (
+          )}
+        </Stack>
+        {!completed && (
+          <Card withBorder>
+            <TaskInstructions text={attempt.task.instructions} />
+          </Card>
+        )}
+        {attempt.status === "DRAFT" && attempt.skill === "WRITING" ? (
+          <WritingEditor key={attempt.id} attempt={attempt} refresh={refresh} />
+        ) : (
+          <>
+            {!completed && (
+              <Text size="xs" c="dimmed">
+                {attempt.submittedAt
+                  ? tx("Đã nộp ") +
+                    new Date(attempt.submittedAt).toLocaleString(
+                      isVi ? "vi-VN" : "en-US",
+                    )
+                  : tx("Bản ghi chưa nộp")}
+              </Text>
+            )}
+            {!completed && attempt.audioUrl && (
               <audio
                 controls
                 src={attempt.audioUrl}
                 style={{ width: "100%" }}
               />
             )}
-            {attempt.answerText && (
+            {!completed && attempt.answerText && (
               <Card withBorder>
                 <Text fw={600}>
                   {tx("Bài viết của bạn")} · {attempt.wordCount} {tx("từ")}
@@ -226,19 +271,21 @@ function AttemptContent({
             )}
             {attempt.status === "COMPLETED" && (
               <>
-                <AssessmentReport attempt={attempt} />
-                <AssessmentResultRead
-                  key={attempt.version}
-                  id={attempt.id}
-                  version={attempt.version}
-                />
-                <Button
-                  component={Link}
-                  href={`/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}/${attempt.taskId}`}
-                  variant="light"
-                >
-                  {tx("Luyện thêm một lần")}
-                </Button>
+                <AssessmentReport attempt={attempt} withContext />
+                <Group justify="space-between" align="center">
+                  <AssessmentResultRead
+                    key={attempt.version}
+                    id={attempt.id}
+                    version={attempt.version}
+                  />
+                  <Button
+                    component={Link}
+                    href={`/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}/${attempt.taskId}`}
+                    variant="light"
+                  >
+                    {tx("Luyện thêm một lần")}
+                  </Button>
+                </Group>
               </>
             )}
             {error && <Alert color="red">{error}</Alert>}

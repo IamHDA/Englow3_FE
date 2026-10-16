@@ -140,6 +140,9 @@ jobs:
           token: ${{ secrets.VERCEL_TOKEN }}
           target: ${{ needs.setup.outputs.target }}
           scope: ${{ env.VERCEL_SCOPE }}
+          runtime-env: |
+            ${{ github.ref_name == 'testing' && format('BFF_GRAPHQL_URL=https://{0}/graphql', env.TEST_ALIAS_BFF) || '' }}
+            ${{ github.ref_name == 'testing' && 'SERVICE_WARMUP_ENABLED=true' || '' }}
           alias: >-
             ${{ (github.event_name == 'push' && github.ref_name == 'dev' && env.DEV_ALIAS_WEB) ||
                 (github.event_name == 'push' && github.ref_name == 'testing' && env.TEST_ALIAS_WEB) ||
@@ -181,8 +184,10 @@ jobs:
             ${{ (github.event_name == 'push' && github.ref_name == 'dev' && env.DEV_ALIAS_BFF) ||
                 (github.event_name == 'push' && github.ref_name == 'testing' && env.TEST_ALIAS_BFF) ||
                 '' }}
-          runtime-env: >-
+          runtime-env: |
             ${{ github.ref_name == 'testing' && format('BACKEND_URL={0}', env.TEST_BACKEND_URL) || '' }}
+            ${{ github.ref_name == 'testing' && 'BACKEND_TIMEOUT_MS=10000' || '' }}
+            ${{ github.ref_name == 'testing' && vars.AI_TESTING_HEALTH_URL != '' && format('AI_HEALTH_URL={0}', vars.AI_TESTING_HEALTH_URL) || '' }}
 
       - name: Summary
         env:

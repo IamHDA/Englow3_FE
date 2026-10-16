@@ -12,7 +12,11 @@ const auth = vi.hoisted(() => ({
 }));
 const guardOnboarding = vi.hoisted(() => vi.fn());
 
-vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
+const route = vi.hoisted(() => ({ pathname: "/exams" }));
+vi.mock("next/navigation", () => ({ usePathname: () => route.pathname }));
+vi.mock("@/shared/styles/landingFont", () => ({
+  landingFont: { variable: "landing-font" },
+}));
 
 // The real modal pulls in the Supabase client; what matters here is only
 // whether the header asked for it.
@@ -60,9 +64,28 @@ function linkTo(href: string) {
 beforeEach(() => {
   vi.clearAllMocks();
   auth.session = null;
+  route.pathname = "/exams";
 });
 
 describe("SiteHeaderNav", () => {
+  it("uses public section links on the guest landing page and keeps sign in available", async () => {
+    route.pathname = "/";
+    renderNav();
+    expect(linkTo("#how-it-works")).toBeTruthy();
+    expect(linkTo("#learning-path")).toBeTruthy();
+    expect(linkTo("#features")).toBeTruthy();
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("button", { name: "Tiếng Việt" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Mở menu giới thiệu", hidden: true }),
+    );
+    fireEvent.click(await screen.findByRole("button", { name: "Đăng nhập" }));
+    expect(screen.getByText("login form")).toBeTruthy();
+  });
+
   // Every feature needs an account. A guest who clicks one is asked to sign
   // in where they are, not sent to a page whose every request would fail.
   it("opens the login form instead of navigating when signed out", () => {

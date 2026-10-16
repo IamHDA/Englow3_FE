@@ -594,6 +594,7 @@ export interface DictationTranslations {
   periodAllTime: string;
   noLessonsPublished: string;
   noLessonsMatchFilters: string;
+  showingLessonsRange: string;
   couldNotLoadLessons: string;
   checkConnectionReload: string;
   backToLibraryButton: string;
@@ -1449,6 +1450,7 @@ export const translations: Record<Language, AppTranslations> = {
       noLessonsMatchFilters:
         "Không có bài nào khớp bộ lọc. Thử đổi chủ đề, trình độ hoặc trạng thái.",
       couldNotLoadLessons: "Không tải được bài học",
+      showingLessonsRange: "Hiển thị {start}–{end} / {total} bài nghe",
       checkConnectionReload: "Kiểm tra kết nối rồi tải lại trang.",
       backToLibraryButton: "Trở về Thư viện",
     },
@@ -2357,6 +2359,7 @@ export const translations: Record<Language, AppTranslations> = {
       noLessonsMatchFilters:
         "No lessons match these filters. Try another topic, level or status.",
       couldNotLoadLessons: "Could not load lessons",
+      showingLessonsRange: "Showing {start}–{end} of {total} listening lessons",
       checkConnectionReload: "Check your connection and reload the page.",
       backToLibraryButton: "Back to Library",
     },

@@ -11,6 +11,7 @@ import {
   Text,
   ThemeIcon,
   Tooltip,
+  UnstyledButton,
 } from "@mantine/core";
 import {
   IconBulb,
@@ -41,7 +42,12 @@ export function Flashcard3DCard({
   const { t } = useLanguage();
 
   return (
-    <Box className={styles.cardContainer} onClick={onFlip}>
+    <Box
+      className={styles.cardContainer}
+      onClick={onFlip}
+      role="group"
+      aria-label={card.lemma}
+    >
       <Box className={`${styles.flipper} ${isFlipped ? styles.flipped : ""}`}>
         {/* FRONT SIDE */}
         <Card
@@ -49,6 +55,8 @@ export function Flashcard3DCard({
           padding="xl"
           bg="var(--mantine-color-body)"
           className={styles.frontCard}
+          aria-hidden={isFlipped}
+          inert={isFlipped}
         >
           {/* Top Info Bar */}
           <Group justify="space-between" align="center">
@@ -114,12 +122,19 @@ export function Flashcard3DCard({
           </Stack>
 
           {/* Flip Hint Footer */}
-          <Group justify="center" align="center" gap={6} c="dimmed">
+          <UnstyledButton
+            className={styles.flipButton}
+            aria-label={t.flashcard.flipCard}
+            onClick={(event) => {
+              event.stopPropagation();
+              onFlip();
+            }}
+          >
             <IconFlipHorizontal size={16} />
             <Text fz="xs" fw={500}>
               {t.flashcard.flipHintFooter}
             </Text>
-          </Group>
+          </UnstyledButton>
         </Card>
 
         {/* BACK SIDE */}
@@ -128,6 +143,8 @@ export function Flashcard3DCard({
           padding="xl"
           bg="var(--mantine-color-body)"
           className={styles.backCard}
+          aria-hidden={!isFlipped}
+          inert={!isFlipped}
         >
           {/* Top Bar */}
           <Group justify="space-between" align="center">
@@ -234,11 +251,25 @@ export function Flashcard3DCard({
           </Stack>
 
           {/* Footer Back */}
-          <Group justify="center" align="center" gap={6} c="dimmed">
-            <IconSparkles size={14} />
-            <Text fz="xs" fw={500}>
-              {t.flashcard.rateRetentionFooter}
-            </Text>
+          <Group justify="space-between" align="center" gap={6} c="dimmed">
+            <UnstyledButton
+              className={styles.flipButton}
+              onClick={(event) => {
+                event.stopPropagation();
+                onFlip();
+              }}
+            >
+              <IconFlipHorizontal size={16} aria-hidden="true" />
+              <Text fz="sm" fw={600}>
+                {t.flashcard.flipBack}
+              </Text>
+            </UnstyledButton>
+            <Group gap={6}>
+              <IconSparkles size={14} />
+              <Text fz="xs" fw={500}>
+                {t.flashcard.rateRetentionFooter}
+              </Text>
+            </Group>
           </Group>
         </Card>
       </Box>

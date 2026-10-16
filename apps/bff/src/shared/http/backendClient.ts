@@ -91,7 +91,18 @@ export class BackendClient {
         Date.now() - start,
       );
     }
-    return (await response.json()) as T;
+    const result = (await response.json()) as T;
+    console.info(
+      JSON.stringify({
+        event: "backend_request",
+        requestId: this.requestId,
+        method,
+        path,
+        status: response.status,
+        durationMs: Date.now() - start,
+      }),
+    );
+    return result;
   }
 }
 

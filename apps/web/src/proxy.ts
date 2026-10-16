@@ -1,5 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
+import { probeServices } from "@/server/serviceStatus";
 
 import { contentSecurityPolicy, createNonce } from "@/config/securityHeaders";
 import {
@@ -51,7 +56,17 @@ function isMemberOnly(pathname: string): boolean {
  * only looks for this file inside src/, and Next 16 renamed middleware to
  * proxy; at the project root under its old name it was never run at all.
  */
-export async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest, event: NextFetchEvent) {
+  if (
+    process.env.SERVICE_WARMUP_ENABLED === "true" &&
+    request.method === "GET" &&
+    (request.headers.get("sec-fetch-dest") === "document" ||
+      request.headers.get("accept")?.includes("text/html")) &&
+    !request.headers.has("next-router-prefetch") &&
+    request.headers.get("purpose") !== "prefetch"
+  ) {
+    event.waitUntil(probeServices());
+  }
   // One nonce per response. It goes to the page twice: in the policy the
   // browser enforces, and on the request, where Next.js reads it back to stamp
   // its own inline scripts and where the root layout takes it for the scripts
@@ -60,6 +75,7 @@ export async function proxy(request: NextRequest) {
   const policy = contentSecurityPolicy({
     nonce,
     development: process.env.NODE_ENV === "development",
+    pageUrl: request.nextUrl.href,
   });
 
   // Built from the request as it is *now*: after the session refresh below has

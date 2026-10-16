@@ -14,7 +14,6 @@ import { Lexend, Source_Sans_3 } from "next/font/google";
 import { Suspense } from "react";
 
 import { AccountProvider } from "@/features/account";
-import { getAccountProfile } from "@/features/account/server/getAccountProfile";
 import { AuthProvider } from "@/features/auth";
 import { getServerSession } from "@/features/auth/server/getServerSession";
 import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
@@ -23,6 +22,7 @@ import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { JitlessZod } from "@/lib/zod/JitlessZod";
 import { NavigationProgress } from "@/shared/components/NavigationProgress";
 import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
+import { ServiceRecovery } from "@/shared/components/ServiceRecovery";
 import { theme } from "@/lib/mantine/theme";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
@@ -64,9 +64,8 @@ export default async function RootLayout({
   // policy refuses to run it.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   const session = await getServerSession();
-  const initialProfile = session
-    ? await getAccountProfile()
-    : { profile: null, hasError: false };
+  // Profile data must never block the authenticated shell while the BE wakes.
+  const initialProfile = { profile: null, hasError: false };
 
   return (
     <html
@@ -86,8 +85,9 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <NavigationProgress />
           </Suspense>
-          <ApolloWrapper nonce={nonce}>
-            <AuthProvider initialSession={session}>
+          <AuthProvider initialSession={session}>
+            <ApolloWrapper key={session?.userId ?? "guest"} nonce={nonce}>
+              <ServiceRecovery />
               <AccountProvider initialProfile={initialProfile}>
                 <LanguageProvider>
                   <OnboardingProvider>
@@ -105,8 +105,8 @@ export default async function RootLayout({
                   </OnboardingProvider>
                 </LanguageProvider>
               </AccountProvider>
-            </AuthProvider>
-          </ApolloWrapper>
+            </ApolloWrapper>
+          </AuthProvider>
         </MantineProvider>
       </body>
     </html>

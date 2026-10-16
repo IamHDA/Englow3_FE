@@ -26,7 +26,10 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.useFakeTimers();
   microphone.mockResolvedValue({ getTracks: () => [{ stop: stopTrack }] });
-  vi.stubGlobal("navigator", { mediaDevices: { getUserMedia: microphone } });
+  vi.stubGlobal("navigator", {
+    onLine: true,
+    mediaDevices: { getUserMedia: microphone },
+  });
   vi.stubGlobal(
     "AudioContext",
     class {
@@ -107,15 +110,12 @@ describe("speech failure recovery", () => {
     });
     expect(result.current.phase).toBe("assessing");
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1500);
+      await vi.advanceTimersByTimeAsync(3000);
     });
-    expect(result.current.phase).toBe("error");
+    expect(result.current.phase).toBe("assessing");
     expect(result.current.attempt?.id).toBe("attempt");
-    act(() => {
-      result.current.checkAssessmentAgain();
-    });
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1500);
+      await vi.advanceTimersByTimeAsync(3000);
     });
     expect(result.current.phase).toBe("done");
     expect(start).toHaveBeenCalledTimes(1);

@@ -20,6 +20,7 @@ import { useCurrentUserLazyQuery } from "@/lib/graphql/generated/hooks";
 import type { OnboardingStateFieldsFragment } from "@/lib/graphql/generated";
 
 import type { AccountProfileResult } from "@/features/account/types";
+import { onBackendRecovered } from "@/shared/network/serviceAvailability";
 
 type AccountContextValue = AccountProfileResult & {
   /** Đang gọi BFF lấy hồ sơ (sau khi đăng nhập, hoặc thử lại sau lỗi). */
@@ -42,7 +43,7 @@ export const AccountContext = createContext<AccountContextValue | null>(null);
 const NO_PROFILE: AccountProfileResult = { profile: null, hasError: false };
 
 type AccountProviderProps = {
-  /** Tính sẵn từ server (root layout) nên tên và avatar có ngay trong HTML. */
+  /** Optional preloaded data; the root shell does not wait for the backend. */
   initialProfile: AccountProfileResult;
   children: ReactNode;
 };
@@ -69,6 +70,7 @@ export function AccountProvider({
     initialProfile.profile ? (session?.userId ?? null) : null,
   );
   const requestVersion = useRef(0);
+  const needsRecovery = useRef(false);
 
   // Dùng chung một nhánh lỗi với effect dưới: gọi lại `loadProfile()` rồi ghi
   // kết quả vào state, không phân biệt "lần đầu" hay "gọi lại theo yêu cầu".
@@ -78,12 +80,22 @@ export function AccountProvider({
     try {
       const { data, error } = await loadProfile();
       if (version !== requestVersion.current) return;
+      needsRecovery.current = Boolean(error);
       setFetched({ profile: data?.me ?? null, hasError: Boolean(error) });
     } catch {
       if (version !== requestVersion.current) return;
+      needsRecovery.current = true;
       setFetched({ profile: null, hasError: true });
     }
   }, [loadProfile, session?.userId]);
+
+  useEffect(
+    () =>
+      onBackendRecovered(() => {
+        if (needsRecovery.current && session?.userId) void refresh();
+      }),
+    [refresh, session?.userId],
+  );
 
   useEffect(() => {
     const userId = session?.userId ?? null;
@@ -138,7 +150,8 @@ export function AccountProvider({
   const value = useMemo<AccountContextValue>(
     () => ({
       ...(session ? fetched : NO_PROFILE),
-      loading,
+      loading:
+        loading || Boolean(session && !fetched.profile && !fetched.hasError),
       refresh,
       applyOnboardingState,
     }),
@@ -151,6 +164,7 @@ export function AccountProvider({
     const isVi = readStoredLanguage() === "vi";
 
     notifications.show({
+      id: "account-profile-unavailable",
       color: "warn",
       // Not "please sign in again": the session is fine, it is the server
       // that did not answer, and signing in again would not help.
@@ -158,8 +172,8 @@ export function AccountProvider({
         ? "Không tải được thông tin tài khoản"
         : "Could not load your account",
       message: isVi
-        ? "Máy chủ chưa phản hồi. Tải lại trang sau ít phút."
-        : "The server did not answer. Reload the page in a few minutes.",
+        ? "Máy chủ chưa phản hồi. Thông tin sẽ tự cập nhật khi kết nối trở lại."
+        : "The server did not answer. Your information will update when the connection recovers.",
     });
   }, [value.hasError]);
 

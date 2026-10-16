@@ -1,6 +1,7 @@
 "use client";
 
-import { Alert, Stack } from "@mantine/core";
+import { Alert, Box, Pagination, Stack, Text } from "@mantine/core";
+import { paginationControlProps } from "@/shared/a11y/paginationControls";
 import { useAllDictationLessons } from "../../../hooks/useAllDictationLessons";
 import { sortLessons } from "../../../lessonOrder";
 import { lessonStatus } from "../../../lessonProgress";
@@ -10,7 +11,7 @@ import { useDictationStatsQuery } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { STATS_PERIOD_DAYS, toStatsData } from "./statsMapping";
 import { DictationLibrarySkeleton } from "../../blocks/DictationLibrarySkeleton";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { DictationCharts } from "../../blocks/DictationCharts";
 import { DictationFilters } from "../../blocks/DictationFilters";
 import { DictationHardSentences } from "../../blocks/DictationHardSentences";
@@ -27,6 +28,8 @@ interface DictationLibraryViewProps {
   initialTab?: "lessons" | "stats";
 }
 
+const PAGE_SIZE = 12;
+
 export function DictationLibraryView({
   initialTab = "lessons",
 }: DictationLibraryViewProps) {
@@ -36,6 +39,8 @@ export function DictationLibraryView({
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [selectedSort, setSelectedSort] = useState("recent");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [page, setPage] = useState(1);
+  const rangeRef = useRef<HTMLParagraphElement>(null);
 
   const [period, setPeriod] = useState<
     "7 Days" | "30 Days" | "3 Months" | "All Time"
@@ -96,6 +101,22 @@ export function DictationLibraryView({
     );
   }, [lessons, selectedLevel, selectedSort, selectedStatus, selectedTopic]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredLessons.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const visibleLessons = filteredLessons.slice(start, start + PAGE_SIZE);
+
+  const changeFilter = (setter: (value: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
+  };
+
+  const changePage = (nextPage: number) => {
+    setPage(nextPage);
+    rangeRef.current?.focus({ preventScroll: true });
+    rangeRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+  };
+
   if (loading && lessons.length === 0) {
     return <DictationLibrarySkeleton />;
   }
@@ -120,13 +141,13 @@ export function DictationLibraryView({
 
             <DictationFilters
               selectedTopic={selectedTopic}
-              onTopicChange={setSelectedTopic}
+              onTopicChange={changeFilter(setSelectedTopic)}
               selectedLevel={selectedLevel}
-              onLevelChange={setSelectedLevel}
+              onLevelChange={changeFilter(setSelectedLevel)}
               selectedStatus={selectedStatus}
-              onStatusChange={setSelectedStatus}
+              onStatusChange={changeFilter(setSelectedStatus)}
               selectedSort={selectedSort}
-              onSortChange={setSelectedSort}
+              onSortChange={changeFilter(setSelectedSort)}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
             />
@@ -137,16 +158,66 @@ export function DictationLibraryView({
               </Alert>
             )}
 
+            <Text
+              ref={rangeRef}
+              component="p"
+              size="sm"
+              c="dimmed"
+              role="status"
+              aria-atomic="true"
+              tabIndex={-1}
+              style={{ scrollMarginTop: 100 }}
+            >
+              {t.dictation.showingLessonsRange
+                .replace(
+                  "{start}",
+                  String(filteredLessons.length ? start + 1 : 0),
+                )
+                .replace("{end}", String(start + visibleLessons.length))
+                .replace("{total}", String(filteredLessons.length))}
+            </Text>
+
             {viewMode === "grid" ? (
               <DictationLessonGrid
-                lessons={filteredLessons}
+                lessons={visibleLessons}
                 emptyMessage={emptyMessage}
               />
             ) : (
               <DictationLessonList
-                lessons={filteredLessons}
+                lessons={visibleLessons}
                 emptyMessage={emptyMessage}
               />
+            )}
+
+            {totalPages > 1 && (
+              <Box
+                component="nav"
+                aria-label={
+                  isVi ? "Phân trang bài nghe" : "Listening lesson pages"
+                }
+              >
+                <Pagination
+                  total={totalPages}
+                  value={currentPage}
+                  onChange={changePage}
+                  getControlProps={paginationControlProps(isVi)}
+                  getItemProps={(number) => ({
+                    "aria-label": isVi ? `Trang ${number}` : `Page ${number}`,
+                  })}
+                  layout="responsive"
+                  formatLabel={({ page, totalPages }) =>
+                    isVi
+                      ? `Trang ${page} / ${totalPages}`
+                      : `Page ${page} / ${totalPages}`
+                  }
+                  siblings={0}
+                  size="md"
+                  styles={{ control: { minWidth: 44, height: 44 } }}
+                  radius="md"
+                  color="teal"
+                  w="100%"
+                />
+              </Box>
             )}
           </Stack>
         ) : (

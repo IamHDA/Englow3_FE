@@ -10,6 +10,7 @@ import { queryLimitRule } from "./graphql/limits.js";
 import { resolvers, typeDefs } from "./graphql/schema.js";
 import { importRoute } from "./http/importRoute.js";
 import { authoringRoute } from "./http/authoringRoute.js";
+import { serviceStatusRoute } from "./http/serviceStatus.js";
 
 /**
  * The one place Express and Apollo are configured. The long-running server and
@@ -35,6 +36,11 @@ export async function createApp() {
 
   const app = express();
   app.set("trust proxy", env.trustProxyHops);
+  app.use(
+    "/system",
+    rateLimitMiddleware(),
+    serviceStatusRoute(env.backendUrl, process.env.AI_HEALTH_URL),
+  );
   app.use(
     "/graphql",
     corsMiddleware(),

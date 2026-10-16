@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { AuthModal, useAuth } from "@/features/auth";
+import { AuthModal, homeForRole, useAuth } from "@/features/auth";
 import { useOnboarding } from "@/features/onboarding";
 
 /** Where the button goes once the learner is signed in and set up. */
@@ -27,12 +27,13 @@ export function HomeCtaButton({ label, ...buttonProps }: HomeCtaButtonProps) {
   const [authOpened, auth] = useDisclosure(false);
 
   const arrow = <ArrowRight aria-hidden="true" size={22} strokeWidth={2.5} />;
+  const workspaceHref = homeForRole(session?.role);
 
-  if (session && !requiresOnboarding) {
+  if (session && (workspaceHref || !requiresOnboarding)) {
     return (
       <Button
         component={Link}
-        href={READY_LEARNER_HREF}
+        href={workspaceHref ?? READY_LEARNER_HREF}
         rightSection={arrow}
         {...buttonProps}
       >

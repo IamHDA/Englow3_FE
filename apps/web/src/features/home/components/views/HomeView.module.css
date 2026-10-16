@@ -1,15 +1,1136 @@
-/*
- * Plain divs: these are full-bleed backgrounds behind the Containers, and
- * background colour is a CSS concern. Box would add nothing over a div here.
- */
 .page {
-  flex: 1;
-  background-color: var(--mantine-color-ink-0);
+  --landing-strong: var(--mantine-color-brand-9);
+  --landing-primary: var(--mantine-color-brand-7);
+  --landing-accent: var(--mantine-color-orange-5);
+  --landing-accent-text: var(--mantine-color-orange-7);
+  --landing-surface: var(--mantine-color-ink-0);
+  --landing-ink: var(--mantine-color-ink-8);
+  font-family: var(--font-landing), sans-serif;
+  color: var(--landing-ink);
+  background: white;
+  font-size: 14px;
+  line-height: 1.5;
 }
-
-/* The hero sits on plain white, divided from the page by a hairline. */
-.heroBackdrop {
-  background: var(--mantine-color-white);
-  border-bottom: 1px solid var(--mantine-color-ink-2);
-  padding-bottom: 16px;
+.container {
+  width: min(1140px, calc(100% - 64px));
+  margin-inline: auto;
+}
+.page :is(h1, h2, h3, p) {
+  margin: 0;
+}
+.page :is(h1, h2, h3, button, a) {
+  font-family: var(--font-landing), sans-serif;
+}
+.page h2 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.page h2 > span {
+  color: var(--landing-accent-text);
+}
+.page h3 {
+  font-weight: 600;
+}
+.page .sectionDescription {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--mantine-color-ink-6);
+  max-width: 940px;
+}
+.hero {
+  position: relative;
+  isolation: isolate;
+  background: var(--landing-strong);
+  color: white;
+}
+.heroPhoto {
+  object-fit: cover;
+  object-position: center 57%;
+  z-index: -2;
+}
+.heroShade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--landing-strong) 83%, transparent);
+}
+.heroInner {
+  min-height: 605px;
+  padding: 96px 64px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.hero h1 {
+  font-size: clamp(44px, 4.9vw, 70.56px);
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  max-width: 1100px;
+  color: white;
+}
+.heroDescription {
+  max-width: 690px;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-top: 24px !important;
+  color: white;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 30px;
+}
+.page :is(button, a).primary {
+  --button-bg: var(--landing-accent);
+  --button-hover: var(--mantine-color-orange-4);
+  --button-color: var(--mantine-color-ink-9);
+  --button-bd: 1px solid var(--landing-accent);
+  background: var(--landing-accent);
+  color: var(--mantine-color-ink-9);
+  border-color: var(--landing-accent);
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 5px;
+  padding-inline: 22px;
+}
+.page :is(button, a).primary:hover {
+  background: var(--mantine-color-orange-4);
+  border-color: var(--mantine-color-orange-4);
+}
+.page a.secondary {
+  --button-bg: white;
+  --button-color: var(--landing-primary);
+  --button-hover: var(--mantine-color-ink-0);
+  color: var(--landing-primary);
+  background: white;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 5px;
+  padding-inline: 22px;
+}
+.heroNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 24px !important;
+  color: white;
+}
+.heroNote svg {
+  flex-shrink: 0;
+}
+.numbersSection {
+  padding-block: 80px;
+  background: var(--landing-surface);
+  min-height: 409px;
+}
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 42px 0 0;
+}
+.numbers > div {
+  border-right: 1px solid var(--mantine-color-ink-2);
+  text-align: center;
+  padding-inline: 40px;
+}
+.numbers > div:last-child {
+  border-right: 0;
+}
+.numbers dt {
+  font-size: 58px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--landing-primary);
+}
+.numbers > div:nth-child(2) dt {
+  color: var(--landing-accent-text);
+}
+.numbers dd {
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 290px;
+  margin: 12px auto 0;
+  color: var(--mantine-color-ink-6);
+}
+.stepsSection {
+  padding-block: 80px 64px;
+  scroll-margin-top: 84px;
+}
+.journeyTabs[data-orientation] {
+  --d: 250px;
+  position: relative;
+  height: calc(2 * var(--d));
+  margin-top: 76px;
+  display: block;
+}
+.diamondList[data-orientation] {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border: 0;
+  z-index: 2;
+}
+.diamondList[data-orientation]::before {
+  display: none;
+}
+button.diamondTab {
+  position: absolute;
+  width: var(--d);
+  height: var(--d);
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: white;
+  color: white;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+button.diamondTab:nth-child(1) {
+  left: calc(100% - 3 * var(--d));
+  top: 0;
+}
+button.diamondTab:nth-child(2) {
+  left: calc(100% - 2 * var(--d));
+  top: 0;
+}
+button.diamondTab:nth-child(3) {
+  left: calc(100% - var(--d));
+  top: 0;
+}
+button.diamondTab:nth-child(4) {
+  left: calc(100% - 2.5 * var(--d));
+  top: calc(0.5 * var(--d));
+}
+button.diamondTab:nth-child(5) {
+  left: calc(100% - 1.5 * var(--d));
+  top: calc(0.5 * var(--d));
+}
+.diamondFace {
+  position: absolute;
+  inset: 6px;
+  background: var(--mantine-color-brand-8);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.diamondFace::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 50%;
+  background: var(--mantine-color-brand-7);
+}
+.diamondTab:nth-child(2) .diamondFace {
+  background: var(--mantine-color-brand-9);
+}
+.diamondTab:nth-child(2) .diamondFace::after {
+  background: var(--mantine-color-brand-8);
+}
+.diamondTab:nth-child(3) .diamondFace {
+  background: var(--mantine-color-brand-9);
+}
+.diamondTab:nth-child(3) .diamondFace::after {
+  background: var(--mantine-color-brand-7);
+}
+button.diamondTab[data-active] .diamondFace {
+  background: var(--mantine-color-brand-9);
+}
+button.diamondTab[data-active] .diamondFace::after {
+  background: var(--mantine-color-brand-7);
+}
+button.diamondTab:hover .diamondFace {
+  background: var(--mantine-color-brand-9);
+}
+button.diamondTab:focus-visible {
+  background: var(--landing-accent-text);
+}
+.diamondTab :global(.mantine-Tabs-tabLabel) {
+  position: static;
+  white-space: normal;
+}
+.diamondText {
+  position: relative;
+  z-index: 1;
+  width: 64%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: auto;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.stepNumber {
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+.loopDiamond {
+  position: absolute;
+  top: var(--d);
+  left: calc(100% - 2 * var(--d));
+  width: var(--d);
+  height: var(--d);
+  background: white;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+}
+.loopDiamond .diamondFace {
+  background: var(--mantine-color-orange-5);
+}
+.loopDiamond .diamondFace::after {
+  background: var(--mantine-color-orange-4);
+}
+.loopText {
+  position: relative;
+  color: var(--mantine-color-ink-9);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+  max-width: 63%;
+  text-align: center;
+  white-space: pre-line;
+}
+.stepPanel {
+  position: absolute;
+  top: calc(0.5 * var(--d));
+  left: 0;
+  width: 66%;
+  height: calc(1.5 * var(--d));
+  overflow: hidden;
+  clip-path: polygon(0 0, 50% 0, 100% 100%, 0 100%);
+  background: var(--landing-strong);
+  color: white;
+}
+.stepPhoto {
+  object-fit: cover;
+  object-position: center 65%;
+}
+.stepShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--landing-strong) 8%, transparent),
+    color-mix(in srgb, var(--landing-strong) 92%, transparent)
+  );
+}
+.stepCopy {
+  position: absolute;
+  inset: auto auto 34px 32px;
+  max-width: 58%;
+}
+.stepCopy h3 {
+  font-size: 23px;
+  line-height: 1.5;
+}
+.stepCopy p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.stepPanel:focus-visible {
+  outline: 3px solid var(--landing-accent-text);
+  outline-offset: 4px;
+}
+.stepPanel:focus-visible .stepShade {
+  box-shadow: inset 0 0 0 4px white;
+}
+.tutorSection {
+  position: relative;
+  isolation: isolate;
+  margin-top: 0;
+  background: var(--mantine-color-brand-9);
+  color: white;
+}
+.tutorPattern {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+.tutorGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  padding-block: 80px;
+  align-items: start;
+  min-height: 473px;
+}
+.tutorCopy h2 {
+  color: white;
+}
+.tutorCopy p {
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 470px;
+  margin-top: 18px;
+}
+.conversation {
+  background: white;
+  color: var(--mantine-color-ink-6);
+  border-top: 3px solid var(--landing-accent-text);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  font-size: 12px;
+  color: var(--landing-strong);
+}
+.chatHeader > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+}
+.chatHeader > span:last-child {
+  font-size: 10px;
+  color: var(--mantine-color-ink-6);
+}
+.chatBody {
+  padding: 8px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.studentBubble {
+  align-self: flex-end;
+  background: var(--landing-primary);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px 10px 3px 10px;
+  max-width: 88%;
+}
+.chatDisclaimer {
+  font-size: 10px;
+  line-height: 1.5;
+  padding: 10px 18px;
+  border-top: 1px solid var(--mantine-color-ink-2);
+  color: var(--mantine-color-ink-6);
+}
+.pathSection {
+  padding-block: 80px;
+  scroll-margin-top: 84px;
+}
+.eyebrow {
+  color: var(--landing-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  margin-bottom: 24px !important;
+  text-transform: uppercase;
+}
+.pathGrid {
+  margin-top: 40px;
+  background: var(--mantine-color-brand-9);
+  border-top: 3px solid var(--landing-accent-text);
+  padding: 40px;
+  border-radius: 6px;
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 40px;
+  color: white;
+  align-items: start;
+}
+.journeyPoster {
+  position: relative;
+  min-height: 430px;
+  background: var(--mantine-color-brand-9);
+  overflow: hidden;
+  border: 1px solid var(--mantine-color-brand-7);
+  border-radius: 5px;
+}
+.posterArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.posterContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 34px 16px 24px;
+}
+.posterContent .brand {
+  width: 130px;
+  height: auto;
+  margin-bottom: 30px;
+}
+.posterContent > strong {
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--mantine-color-brand-0);
+  text-shadow: 0 1px 8px var(--mantine-color-brand-7);
+}
+.posterContent > p {
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 230px;
+  margin-top: 16px;
+  color: white;
+}
+.posterSymbol {
+  margin-top: 46px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--mantine-color-brand-0);
+}
+.pathListTitle {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 22px !important;
+  text-transform: uppercase;
+}
+.pathCopy {
+  min-width: 0;
+}
+.pathList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pathList li {
+  display: flex;
+  gap: 18px;
+  position: relative;
+  padding-bottom: 32px;
+}
+.pathList li:last-child {
+  padding-bottom: 0;
+}
+.pathList li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 34px;
+  bottom: 8px;
+  border-left: 1px solid var(--mantine-color-brand-7);
+}
+.pathList li > span {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  border: 1px solid var(--mantine-color-brand-3);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pathList h3 {
+  font-size: 18px;
+  line-height: 1.6;
+  color: white;
+}
+.pathList p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--mantine-color-brand-0);
+  margin-top: 6px;
+}
+.featuresSection {
+  padding-block: 80px;
+  background: var(--landing-surface);
+  scroll-margin-top: 84px;
+}
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+.feature {
+  border: 1px solid var(--mantine-color-ink-2);
+  border-top: 2px solid var(--landing-accent-text);
+  border-radius: 6px;
+  background: white;
+  padding: 24px;
+}
+.feature > span {
+  color: var(--mantine-color-ink-6);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.feature h3 {
+  font-size: 18px;
+  line-height: 1.5;
+  margin-top: 12px;
+}
+.feature p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--mantine-color-ink-6);
+  margin-top: 14px;
+}
+.ctaSection {
+  position: relative;
+  isolation: isolate;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: white;
+}
+.ctaPhoto {
+  filter: grayscale(1);
+  z-index: -2;
+  object-fit: cover;
+  object-position: center 55%;
+}
+.ctaShade {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: color-mix(in srgb, var(--landing-strong) 82%, transparent);
+}
+.ctaInner {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.brand {
+  object-fit: contain;
+  background: white;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.ctaInner > .brand {
+  width: 200px;
+  height: auto;
+  margin-bottom: 22px;
+}
+.ctaInner h2 {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: pre-line;
+  text-transform: none;
+  max-width: 480px;
+  color: white;
+}
+.ctaInner p {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 670px;
+  margin: 20px 0 26px;
+}
+.footer {
+  position: relative;
+  isolation: isolate;
+  background: var(--landing-primary);
+  color: white;
+}
+.footerPhoto {
+  object-fit: cover;
+  object-position: center 52%;
+  z-index: -2;
+}
+.footerShade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--landing-strong) 92%, transparent);
+}
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 50px;
+  padding-block: 64px 44px;
+}
+.footerBrand .brand {
+  width: 160px;
+  height: auto;
+}
+.footerBrand p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 20px;
+  max-width: 245px;
+  color: white;
+}
+.footer nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.footer strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.footer a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-size: 13px;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+.footer :is(button, a).footerCta {
+  min-height: 44px;
+  padding: 0;
+  color: white;
+  --button-color: white;
+  --button-hover: transparent;
+  font-size: 13px;
+  font-weight: 400;
+}
+.footerAccess p {
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 210px;
+  color: white;
+}
+.footerLanguages button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+.footerLanguages button:hover {
+  text-decoration: underline;
+}
+.footerLanguages button[aria-pressed="true"] {
+  font-weight: 700;
+}
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-block: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 12px;
+  color: white;
+}
+.page :is(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--landing-accent-text);
+  outline-offset: 3px;
+}
+.hero :is(a, button):focus-visible,
+.ctaSection button:focus-visible,
+.footer :is(button, a):focus-visible {
+  outline-color: white;
+}
+@media (max-width: 74em) {
+  .journeyTabs[data-orientation] {
+    --d: 210px;
+  }
+  .page h2 {
+    font-size: 31px;
+  }
+  .stepCopy {
+    inset-inline-start: 26px;
+    inset-block-end: 26px;
+    max-width: 58%;
+  }
+  .stepCopy h3 {
+    font-size: 20px;
+  }
+  .stepCopy p {
+    font-size: 12px;
+  }
+  .tutorGrid {
+    gap: 40px;
+  }
+  .pathGrid {
+    padding: 32px;
+    gap: 32px;
+  }
+  .journeyPoster {
+    min-height: 400px;
+  }
+  .posterContent > strong {
+    font-size: 28px;
+  }
+  .footerGrid {
+    gap: 32px;
+  }
+}
+@media (max-width: 62em) {
+  .heroInner {
+    min-height: 570px;
+    padding-inline: 32px;
+  }
+  .hero h1 {
+    font-size: 54px;
+    line-height: 1.35;
+  }
+  .heroDescription {
+    max-width: 640px;
+  }
+  .journeyTabs[data-orientation] {
+    --d: 165px;
+  }
+  .stepCopy {
+    inset-inline-start: 22px;
+    inset-block-end: 22px;
+  }
+  .stepCopy h3 {
+    font-size: 18px;
+  }
+  .stepCopy p {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .diamondText {
+    font-size: 11px;
+  }
+  .stepNumber {
+    font-size: 36px;
+  }
+  .loopText {
+    font-size: 11px;
+  }
+  .tutorGrid {
+    gap: 28px;
+  }
+  .page h2 {
+    font-size: 28px;
+  }
+  .tutorCopy p {
+    font-size: 13px;
+  }
+  .pathGrid {
+    grid-template-columns: 0.8fr 1.2fr;
+    padding: 24px;
+    gap: 24px;
+  }
+  .posterContent {
+    padding-inline: 12px;
+  }
+  .posterContent > strong {
+    font-size: 25px;
+  }
+  .posterContent > p {
+    font-size: 12px;
+  }
+  .pathList p {
+    font-size: 13px;
+  }
+  .features {
+    gap: 16px;
+  }
+  .feature {
+    padding: 20px;
+  }
+  .feature h3 {
+    font-size: 16px;
+  }
+  .feature p {
+    font-size: 13px;
+  }
+  .footerGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .footerBrand .brand {
+    width: 140px;
+  }
+  .footerBrand p {
+    font-size: 12px;
+  }
+}
+@media (max-width: 48em) {
+  .container {
+    width: calc(100% - 40px);
+  }
+  .heroInner {
+    min-height: 600px;
+    padding: 110px 24px 60px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 6.5vw, 44px);
+    line-height: 1.4;
+  }
+  .heroDescription {
+    font-size: 14px;
+    max-width: 530px;
+    margin-top: 24px !important;
+  }
+  .actions {
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .page :is(button, a).primary,
+  .page a.secondary {
+    font-size: 12px;
+    padding-inline: 16px;
+  }
+  .heroNote {
+    align-items: flex-start;
+    font-size: 11px;
+    max-width: 360px;
+    margin-top: 24px !important;
+  }
+  .heroNote svg {
+    margin-top: 1px;
+  }
+  .heroPhoto {
+    object-position: 50% center;
+  }
+  .page h2 {
+    font-size: 26px;
+    line-height: 1.45;
+  }
+  .page .sectionDescription {
+    font-size: 13px;
+  }
+  .numbersSection,
+  .pathSection,
+  .featuresSection {
+    padding-block: 48px;
+  }
+  .numbersSection {
+    min-height: 0;
+  }
+  .numbers {
+    margin-top: 28px;
+  }
+  .numbers > div {
+    padding-inline: 12px;
+  }
+  .numbers dt {
+    font-size: 42px;
+  }
+  .numbers dd {
+    font-size: 11px;
+    margin-top: 10px;
+  }
+  .stepsSection {
+    padding-block: 48px;
+    scroll-margin-top: 76px;
+  }
+  .journeyTabs[data-orientation] {
+    --d: clamp(90px, 28vw, 160px);
+    height: auto;
+    margin-top: 32px;
+    padding-top: calc(2 * var(--d) + 22px);
+  }
+  .diamondList[data-orientation] {
+    height: calc(2 * var(--d));
+  }
+  .diamondFace {
+    inset: 4px;
+  }
+  .diamondText {
+    width: 68%;
+    font-size: 10px;
+    gap: 3px;
+  }
+  .stepNumber {
+    font-size: 27px;
+  }
+  .loopText {
+    font-size: 9px;
+    line-height: 1.3;
+  }
+  .stepPanel {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: 250px;
+    clip-path: none;
+  }
+  .stepCopy {
+    inset: auto 24px 24px;
+    max-width: none;
+  }
+  .stepCopy h3 {
+    font-size: 21px;
+  }
+  .stepCopy p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .stepPhoto {
+    object-position: center 56%;
+  }
+  .tutorGrid {
+    grid-template-columns: 1fr;
+    padding-block: 48px;
+    gap: 28px;
+  }
+  .tutorCopy h2 {
+    font-size: 27px;
+  }
+  .tutorCopy p {
+    max-width: none;
+    font-size: 14px;
+    margin-top: 14px;
+  }
+  .chatBody {
+    font-size: 13px;
+  }
+  .pathGrid {
+    grid-template-columns: 1fr;
+    margin-top: 28px;
+    padding: 24px;
+    gap: 32px;
+  }
+  .journeyPoster {
+    min-height: 380px;
+    max-width: 420px;
+    width: 100%;
+    justify-self: center;
+  }
+  .posterContent > strong {
+    font-size: 32px;
+  }
+  .posterContent > p {
+    font-size: 13px;
+  }
+  .posterSymbol {
+    margin-top: 32px;
+  }
+  .pathList h3 {
+    font-size: 17px;
+  }
+  .pathList p {
+    font-size: 14px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    margin-bottom: 18px !important;
+  }
+  .features {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 28px;
+  }
+  .feature {
+    padding: 22px;
+  }
+  .feature h3 {
+    font-size: 19px;
+  }
+  .feature p {
+    font-size: 14px;
+  }
+  .ctaSection {
+    min-height: 440px;
+  }
+  .ctaInner {
+    padding-block: 48px;
+  }
+  .ctaInner h2 {
+    font-size: 30px;
+  }
+  .ctaInner p {
+    font-size: 14px;
+  }
+  .ctaInner > .brand {
+    width: 170px;
+  }
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+    padding-block: 44px 32px;
+  }
+  .footerBrand .brand {
+    width: 150px;
+  }
+  .footerBrand p {
+    font-size: 13px;
+  }
+  .footerBottom {
+    flex-direction: column;
+    gap: 12px;
+    padding-block: 24px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 23em) {
+  .heroInner {
+    padding-inline: 20px;
+  }
+  .hero h1 {
+    font-size: 31px;
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+  }
+  .actions > :is(button, a) {
+    width: 100%;
+  }
+  .numbers > div {
+    padding-inline: 8px;
+  }
+  .numbers dt {
+    font-size: 36px;
+  }
+  .numbers dd {
+    font-size: 10px;
+  }
+  .diamondText {
+    font-size: 9px;
+  }
+  .loopText {
+    font-size: 8px;
+  }
+  .stepNumber {
+    font-size: 23px;
+  }
+  .pathGrid {
+    padding: 20px;
+  }
+  .posterContent > strong {
+    font-size: 28px;
+  }
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page :is(a, button) {
+    transition: none;
+  }
 }

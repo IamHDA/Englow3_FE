@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
 import { Fragment, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
-import { AuthModal, useAuth } from "@/features/auth";
+import { AuthModal, isBackOfficeRole, useAuth } from "@/features/auth";
 import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
@@ -33,6 +33,7 @@ import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
 import { SiteHeaderOnboardingButton } from "./SiteHeaderOnboardingButton";
 import { SiteHeaderUserMenu } from "./SiteHeaderUserMenu";
+import { SiteHeaderGuestNav } from "./SiteHeaderGuestNav";
 
 /** Active tab matches the link itself or any of its sub-routes. */
 function isLinkActive(pathname: string, href: string): boolean {
@@ -84,6 +85,26 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
       return;
     }
     guardOnboarding(event);
+  }
+
+  if (pathname === "/welcome" || (!session && pathname === "/")) {
+    return (
+      <>
+        <SiteHeaderGuestNav
+          onLogin={login.open}
+          accountHref={
+            session
+              ? isBackOfficeRole(session.role)
+                ? "/admin"
+                : "/"
+              : undefined
+          }
+        >
+          {children}
+        </SiteHeaderGuestNav>
+        <AuthModal opened={loginOpened} onClose={login.close} />
+      </>
+    );
   }
 
   return (

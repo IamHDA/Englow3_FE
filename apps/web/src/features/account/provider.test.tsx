@@ -51,6 +51,34 @@ beforeEach(() => {
 });
 
 describe("AccountProvider", () => {
+  it("recovers the failed profile when backend readiness returns", async () => {
+    const services = await import("@/shared/network/serviceAvailability");
+    mocks.load.mockRejectedValueOnce(new Error("Backend unavailable"));
+    render(tree());
+    await screen.findByText("failed");
+    mocks.load.mockResolvedValueOnce({
+      data: { me: { id: "recovered-profile" } },
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(
+          Response.json({ backend: "unavailable", ai: "unconfigured" }),
+        )
+        .mockResolvedValueOnce(
+          Response.json({ backend: "ready", ai: "unconfigured" }),
+        ),
+    );
+    const stop = services.mountServiceChecks();
+    await waitFor(() =>
+      expect(services.serviceSnapshot().backend).toBe("unavailable"),
+    );
+    act(() => services.retryServices());
+    await screen.findByText("recovered-profile");
+    stop();
+    vi.unstubAllGlobals();
+  });
   it("loads the profile in Strict Mode", async () => {
     mocks.load.mockResolvedValueOnce({ data: { me: { id: "profile-id" } } });
     render(<StrictMode>{tree()}</StrictMode>);

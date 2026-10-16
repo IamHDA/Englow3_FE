@@ -21,13 +21,13 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { SpeakingAttempt } from "../types";
 
 /** Nhịp hỏi kết quả. Chấm một câu thường mất vài giây, nên hỏi dày hơn là phí. */
-const POLL_INTERVAL_MS = 1500;
+const POLL_INTERVAL_MS = 3000;
 
 /**
  * Bỏ cuộc sau chừng này. Backend vẫn thử lại tiếp ở hàng đợi, nên đây chỉ là
  * lúc màn hình ngừng xoay và nói thẳng - không phải lúc công việc bị huỷ.
  */
-const POLL_TIMEOUT_MS = 90_000;
+const POLL_TIMEOUT_MS = 180_000;
 
 export type PracticePhase =
   "idle" | "recording" | "uploading" | "assessing" | "done" | "error";
@@ -268,6 +268,7 @@ export function useSpeakingPractice({
         return;
       }
 
+      if (!navigator.onLine || document.visibilityState === "hidden") return;
       polling = true;
       try {
         const polled = await fetchAttempt({ variables: { id: attemptId } });
@@ -275,6 +276,7 @@ export function useSpeakingPractice({
         const latest = polled.data?.speakingAttempt;
         if (latest === undefined) throw new Error("Assessment unavailable");
 
+        setErrorMessage(null);
         if (latest.status === SpeakingAttemptStatus.ASSESSED) {
           clearInterval(timer);
           setAttempt(latest);
@@ -292,12 +294,10 @@ export function useSpeakingPractice({
         }
       } catch {
         if (cancelled) return;
-        clearInterval(timer);
-        setPhase("error");
         setErrorMessage(
           tr(
-            "Mất kết nối khi lấy kết quả. Bản ghi vẫn được giữ; hãy kiểm tra lại thay vì ghi lại.",
-            "Lost the connection while fetching the result. The recording is kept - check again instead of re-recording.",
+            "Kết nối đang gián đoạn. Bản ghi đã lưu; đang tự kiểm tra lại kết quả.",
+            "Connection interrupted. Your recording is saved; checking the result again automatically.",
           ),
         );
       } finally {

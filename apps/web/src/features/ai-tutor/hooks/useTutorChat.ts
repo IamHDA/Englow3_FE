@@ -106,59 +106,37 @@ export function useTutorChat(initialConversationId?: string) {
       stopPolling();
       const version = generation.current;
       pollStartedAt.current = Date.now();
-
-      try {
-        if (!(await pollOnce(id, version))) {
+      let delay = POLL_INTERVAL_MS;
+      const step = async () => {
+        if (version !== generation.current) return;
+        if (Date.now() - (pollStartedAt.current ?? 0) >= POLL_TIMEOUT_MS) {
+          setError(
+            tr(
+              "Gia sư đang xử lý lâu hơn thường lệ. Câu hỏi đã lưu; mở lại cuộc trò chuyện để kiểm tra kết quả.",
+              "The tutor is taking longer than usual. Your question is saved; reopen the conversation to check the answer.",
+            ),
+          );
           return;
         }
-      } catch {
+        if (navigator.onLine && document.visibilityState !== "hidden") {
+          try {
+            if (!(await pollOnce(id, version))) return;
+            if (version === generation.current) setError(null);
+          } catch {
+            if (version !== generation.current) return;
+            setError(
+              tr(
+                "Kết nối đang gián đoạn. Câu hỏi đã lưu; đang tự kiểm tra lại.",
+                "Connection interrupted. Your question is saved; checking again automatically.",
+              ),
+            );
+          }
+        }
         if (version !== generation.current) return;
-        setError(
-          tr(
-            tr(
-              "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
-              "Could not fetch the answer. Check the connection and try again.",
-            ),
-            "Could not fetch the answer. Check the connection and try again.",
-          ),
-        );
-        return;
-      }
-
-      const schedule = () => {
-        pollTimer.current = setTimeout(() => {
-          void (async () => {
-            try {
-              if (!(await pollOnce(id, version))) {
-                return;
-              }
-              if (Date.now() - (pollStartedAt.current ?? 0) > POLL_TIMEOUT_MS) {
-                stopPolling();
-                // Câu trả lời vẫn có thể về sau - hàng đợi chưa bỏ cuộc - nên
-                // nói rõ là "mở lại sau", đừng nói là hỏng.
-                setError(
-                  tr(
-                    "Gia sư trả lời lâu hơn thường lệ. Bạn mở lại cuộc trò chuyện này sau nhé.",
-                    "The tutor is taking longer than usual. Open this conversation again later.",
-                  ),
-                );
-                return;
-              }
-              if (version === generation.current) schedule();
-            } catch {
-              if (version !== generation.current) return;
-              stopPolling();
-              setError(
-                tr(
-                  "Không lấy được câu trả lời. Kiểm tra kết nối rồi thử lại.",
-                  "Could not fetch the answer. Check the connection and try again.",
-                ),
-              );
-            }
-          })();
-        }, POLL_INTERVAL_MS);
+        pollTimer.current = setTimeout(() => void step(), delay);
+        delay = Math.min(Math.round(delay * 1.5), 10_000);
       };
-      if (version === generation.current) schedule();
+      await step();
     },
     [pollOnce, stopPolling],
   );

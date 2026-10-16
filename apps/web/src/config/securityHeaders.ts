@@ -33,17 +33,26 @@
  *
  * Local development is the one place those services are plain http - object
  * storage on :9000 - and "https:" alone blocked every request the app made.
- * `next dev` also needs eval for React's debugging. Both are added for
- * development only; a production build gets exactly the policy above.
+ * `next dev` also needs eval for React's debugging. A production preview on
+ * a loopback HTTP origin still needs MinIO, but never needs eval or a forced
+ * HTTPS upgrade. Deployed pages keep the HTTPS-only policy.
  */
 export function contentSecurityPolicy({
   nonce,
   development,
+  pageUrl,
 }: {
   nonce: string;
   development: boolean;
+  pageUrl?: string;
 }): string {
-  const local = development ? " http://localhost:* ws://localhost:*" : "";
+  const localPreview = isLoopbackHttpPage(pageUrl);
+  const local = development
+    ? " http://localhost:* http://127.0.0.1:*"
+    : localPreview
+      ? " http://localhost:9000 http://127.0.0.1:9000"
+      : "";
+  const websocket = development ? " ws://localhost:* ws://127.0.0.1:*" : "";
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${development ? " 'unsafe-eval'" : ""}`,
@@ -53,7 +62,7 @@ export function contentSecurityPolicy({
     // blob: is the recording the learner just made, played back before upload.
     `media-src 'self' blob: https:${local}`,
     "font-src 'self' data:",
-    `connect-src 'self' https: wss:${local}`,
+    `connect-src 'self' https: wss:${local}${websocket}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -61,8 +70,21 @@ export function contentSecurityPolicy({
     // browsers honour only the latter.
     "frame-ancestors 'none'",
     // Would rewrite the local http services to https, which they do not serve.
-    ...(development ? [] : ["upgrade-insecure-requests"]),
+    ...(development || localPreview ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
+}
+
+function isLoopbackHttpPage(pageUrl?: string): boolean {
+  if (!pageUrl) return false;
+  try {
+    const url = new URL(pageUrl);
+    return (
+      url.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)
+    );
+  } catch {
+    return false;
+  }
 }
 
 /** A fresh, unguessable value for one response's script nonce. */

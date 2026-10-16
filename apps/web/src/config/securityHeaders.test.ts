@@ -56,6 +56,44 @@ describe("contentSecurityPolicy", () => {
     expect(directive(policy, "object-src")).toBe("object-src 'none'");
     expect(directive(policy, "base-uri")).toBe("base-uri 'self'");
   });
+
+  it.each([
+    "http://localhost:3000/",
+    "http://127.0.0.1:3000/admin",
+    "http://[::1]:3000/",
+  ])(
+    "supports a production HTTP preview at %s without allowing eval",
+    (pageUrl) => {
+      const policy = contentSecurityPolicy({
+        nonce: "preview",
+        development: false,
+        pageUrl,
+      });
+      for (const name of ["connect-src", "media-src", "img-src"]) {
+        expect(directive(policy, name)).toContain("http://localhost:9000");
+        expect(directive(policy, name)).toContain("http://127.0.0.1:9000");
+      }
+      expect(policy).not.toContain("upgrade-insecure-requests");
+      expect(policy).not.toContain("unsafe-eval");
+      expect(policy).not.toContain("http://localhost:*");
+      expect(directive(policy, "script-src")).toContain(
+        "'nonce-preview' 'strict-dynamic'",
+      );
+    },
+  );
+
+  it.each([
+    "https://englow3-web-test.vercel.app/",
+    "http://englow3.example/",
+    "http://localhost.example/",
+    "http://127.0.0.1.example/",
+    "https://localhost:3000/",
+    "invalid",
+  ])("keeps HTTPS restrictions for %s", (pageUrl) => {
+    expect(
+      contentSecurityPolicy({ nonce: "abc123", development: false, pageUrl }),
+    ).toBe(production());
+  });
 });
 
 describe("createNonce", () => {

@@ -7,7 +7,8 @@ import {
   InMemoryCache,
 } from "@apollo/client-integration-nextjs";
 
-import { finalize } from "rxjs";
+import { finalize, tap } from "rxjs";
+import { backendUnavailable } from "@/shared/network/serviceAvailability";
 
 import { CSRF_HEADER, CSRF_VALUE } from "@/lib/security/csrf";
 import { beginRequest, endRequest } from "@/shared/network/pendingRequests";
@@ -38,7 +39,24 @@ function makeClient() {
   // answer, rather than leave a skeleton up with no explanation.
   const pendingLink = new ApolloLink((operation, forward) => {
     beginRequest();
-    return forward(operation).pipe(finalize(endRequest));
+    return forward(operation).pipe(
+      tap({
+        next: (result) => {
+          if (
+            result.errors?.some(
+              (error) => error.extensions?.code === "BACKEND_UNAVAILABLE",
+            )
+          )
+            backendUnavailable();
+        },
+        error: (error: unknown) => {
+          const status = (error as { statusCode?: number })?.statusCode;
+          if (error instanceof TypeError || (status != null && status >= 500))
+            backendUnavailable();
+        },
+      }),
+      finalize(endRequest),
+    );
   });
 
   return new ApolloClient({

@@ -185,6 +185,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
 
         {/* 3D Flashcard */}
         <Flashcard3DCard
+          key={currentCard.id}
           card={currentCard}
           isFlipped={isFlipped}
           onFlip={flipCard}

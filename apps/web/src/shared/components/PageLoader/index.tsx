@@ -28,7 +28,6 @@ export function PageLoader({ label = "Đang tải…" }: PageLoaderProps) {
         width={48}
         height={52}
         className={classes.mark}
-        priority
       />
       <Loader color="orange.5" type="dots" size="md" />
       <Text size="sm" c="ink.6">

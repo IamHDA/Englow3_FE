@@ -5,6 +5,26 @@
   padding-inline: var(--mantine-spacing-md);
 }
 
+.guestLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  color: var(--mantine-color-ink-6);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.guestActions > button {
+  min-height: 44px;
+}
+
+.guestLink:hover {
+  color: var(--mantine-color-brand-8);
+  background: var(--mantine-color-brand-0);
+}
+
 @media (min-width: $mantine-breakpoint-md) {
   .inner {
     height: 76px;
@@ -164,5 +184,72 @@ div.studyDropdown {
 @media (prefers-reduced-motion: reduce) {
   .studyIconTile {
     transition: none;
+  }
+}
+
+.landingNav {
+  max-width: 1140px;
+  height: 72px;
+  padding-inline: 24px;
+  font-family: var(--font-landing), sans-serif;
+}
+.landingLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.landingLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.landingLanguage {
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: white;
+  font:
+    600 12px var(--font-landing),
+    sans-serif;
+  cursor: pointer;
+}
+.landingLanguage > span {
+  display: grid;
+  place-items: center;
+  margin: auto;
+  width: 24px;
+  height: 24px;
+  background: white;
+  color: var(--mantine-color-brand-9);
+  border-radius: 2px;
+}
+.landingLanguage[aria-pressed="true"] > span {
+  background: var(--mantine-color-brand-7);
+  color: white;
+}
+.landingLanguage:hover > span {
+  background: var(--mantine-color-brand-1);
+  color: var(--mantine-color-brand-9);
+}
+.landingNav :is(a, button):focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+@media (max-width: 74em) {
+  .landingNav {
+    margin-inline: 32px;
+  }
+}
+@media (max-width: 48em) {
+  .landingNav {
+    height: 64px;
+    margin-inline: 20px;
+    padding-inline: 0;
   }
 }
