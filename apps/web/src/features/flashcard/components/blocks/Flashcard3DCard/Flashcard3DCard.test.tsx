@@ -1,11 +1,12 @@
 import { MantineProvider } from "@mantine/core";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { useState } from "react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { FlashcardReviewStatus } from "@/lib/graphql/generated";
 import { theme } from "@/lib/mantine/theme";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
 import type { FlashcardItem } from "../../../types";
+import { useFlashcardStudy } from "../../../hooks/useFlashcardStudy";
 import { Flashcard3DCard } from "./index";
 
 const card: FlashcardItem = {
@@ -29,18 +30,23 @@ const card: FlashcardItem = {
   lapseCount: 0,
 };
 
+const cards = [card];
+
 function Harness({ onSpeak = vi.fn(), onFlip = vi.fn() }) {
-  const [flipped, setFlipped] = useState(false);
+  const { isFlipped, flipCard } = useFlashcardStudy({
+    cards,
+    setName: "Travel",
+  });
   return (
     <MantineProvider theme={theme}>
       <LanguageProvider>
         <Flashcard3DCard
           card={card}
-          isFlipped={flipped}
+          isFlipped={isFlipped}
           onSpeak={onSpeak}
           onFlip={() => {
             onFlip();
-            setFlipped((value) => !value);
+            flipCard();
           }}
         />
       </LanguageProvider>
@@ -49,6 +55,48 @@ function Harness({ onSpeak = vi.fn(), onFlip = vi.fn() }) {
 }
 
 describe("Flashcard face interaction", () => {
+  it("lets Space flip the card after clicking any speaker with the pointer", async () => {
+    const user = userEvent.setup();
+    const onSpeak = vi.fn();
+    const onFlip = vi.fn();
+    render(<Harness onSpeak={onSpeak} onFlip={onFlip} />);
+    const frontSpeakers = screen
+      .getAllByRole("button")
+      .filter((button) => button.getAttribute("aria-label") !== "Lật thẻ");
+
+    for (const speaker of frontSpeakers) {
+      await user.click(speaker);
+      expect(screen.getByRole("group", { name: "airport" })).toHaveFocus();
+      await user.keyboard(" ");
+      expect(screen.getByRole("button", { name: "Lật lại" })).toBeVisible();
+      await user.click(screen.getByRole("button", { name: "Lật lại" }));
+    }
+
+    await user.click(screen.getByRole("button", { name: "Lật thẻ" }));
+    const backSpeaker = screen
+      .getAllByRole("button")
+      .find((button) => button.getAttribute("aria-label") !== null)!;
+    await user.click(backSpeaker);
+    await user.keyboard(" ");
+    expect(screen.getByRole("button", { name: "Lật thẻ" })).toBeVisible();
+    expect(onSpeak).toHaveBeenCalledTimes(3);
+  });
+
+  it("preserves native keyboard activation of the focused audio button", async () => {
+    const user = userEvent.setup();
+    const onSpeak = vi.fn();
+    const onFlip = vi.fn();
+    render(<Harness onSpeak={onSpeak} onFlip={onFlip} />);
+    const speaker = screen
+      .getAllByRole("button")
+      .find((button) => button.getAttribute("aria-label") !== "Lật thẻ")!;
+    speaker.focus();
+    await user.keyboard(" ");
+    expect(onSpeak).toHaveBeenCalledTimes(1);
+    expect(onFlip).not.toHaveBeenCalled();
+    expect(speaker).toHaveFocus();
+  });
+
   it("exposes only the current face and flips back exactly once", () => {
     const onFlip = vi.fn();
     render(<Harness onFlip={onFlip} />);

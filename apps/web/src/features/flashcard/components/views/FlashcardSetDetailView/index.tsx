@@ -31,6 +31,7 @@ import { FlashcardStudySkeleton } from "../../blocks/FlashcardStudySkeleton";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 import { masteredPercent as computeMasteredPercent } from "../../../setProgress";
+import { learnerSetDescription } from "../../../setDescription";
 
 interface FlashcardSetDetailViewProps {
   setId: string;
@@ -64,6 +65,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
   }
 
   const set = data.flashcardSet.set;
+  const description = learnerSetDescription(set.description);
   const cards = data.flashcardSet.cards;
   const masteredPercent = computeMasteredPercent(set);
   const lastStudiedLabel = set.lastStudiedAt
@@ -115,18 +117,27 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                   <Badge variant="filled" color="indigo" size="md">
                     {set.topic}
                   </Badge>
-                  {set.dueCount > 0 ? (
-                    <Badge variant="filled" color="orange" size="sm">
-                      {t.flashcard.cardsDueTodayBadge.replace(
-                        "{count}",
-                        String(set.dueCount),
-                      )}
-                    </Badge>
-                  ) : (
-                    <Badge variant="light" color="teal" size="sm">
-                      {t.flashcard.completedForTodayBadge}
-                    </Badge>
-                  )}
+                  <Badge
+                    variant={set.dueCount > 0 ? "filled" : "light"}
+                    color={
+                      set.dueCount > 0
+                        ? "orange"
+                        : set.lastStudiedAt
+                          ? "teal"
+                          : "gray"
+                    }
+                    size="sm"
+                    role="status"
+                  >
+                    {set.dueCount > 0
+                      ? t.flashcard.cardsDueTodayBadge.replace(
+                          "{count}",
+                          String(set.dueCount),
+                        )
+                      : set.lastStudiedAt
+                        ? t.flashcard.nothingDueTodayMessage
+                        : t.flashcard.notStudiedYet}
+                  </Badge>
                 </Group>
                 <Title order={2} fw={700} c="dark.9">
                   {set.name}
@@ -134,9 +145,11 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
               </Stack>
             </Group>
 
-            <Text fz="sm" c="dimmed">
-              {set.description}
-            </Text>
+            {description && (
+              <Text fz="sm" c="dimmed">
+                {description}
+              </Text>
+            )}
 
             <Group gap="xl" mt="xs">
               <Group gap="xs">

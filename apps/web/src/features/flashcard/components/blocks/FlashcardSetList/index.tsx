@@ -15,6 +15,7 @@ import Link from "next/link";
 import React from "react";
 import { FlashcardSet } from "../../../types";
 import { formatLastStudied, masteredPercent } from "../../../setProgress";
+import { learnerSetDescription } from "../../../setDescription";
 
 interface FlashcardSetListProps {
   sets: FlashcardSet[];
@@ -45,7 +46,7 @@ export function FlashcardSetList({ sets }: FlashcardSetListProps) {
                   {set.name}
                 </Text>
                 <Text fz="xs" c="dimmed" lineClamp={1}>
-                  {set.description}
+                  {learnerSetDescription(set.description)}
                 </Text>
               </Table.Td>
               <Table.Td>

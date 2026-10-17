@@ -50,6 +50,13 @@ export function FlashcardDashboardView({
   const [selectedSort, setSelectedSort] = useState("due");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  const changeTab = (tab: "decks" | "stats") => {
+    setActiveTab(tab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    window.history.replaceState(null, "", url);
+  };
+
   const { isVi, t } = useLanguage();
   const [period, setPeriod] =
     useState<keyof typeof STATS_PERIOD_DAYS>("7 Days");
@@ -116,7 +123,7 @@ export function FlashcardDashboardView({
   return (
     <Page>
       <Stack gap="xl">
-        <FlashcardHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        <FlashcardHeader activeTab={activeTab} onTabChange={changeTab} />
 
         {activeTab === "decks" ? (
           <>

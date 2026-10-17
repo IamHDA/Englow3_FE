@@ -256,7 +256,6 @@ export interface FlashcardTranslations {
   backToDecksButton: string;
   studyDeckNowButton: string;
   cardsDueTodayBadge: string;
-  completedForTodayBadge: string;
   totalCardsLabel: string;
   lastStudiedLabel: string;
   masteredColonLabel: string;
@@ -1094,7 +1093,6 @@ export const translations: Record<Language, AppTranslations> = {
       backToDecksButton: "Quay lại danh sách bộ thẻ",
       studyDeckNowButton: "Học ngay bộ từ này",
       cardsDueTodayBadge: "{count} từ cần ôn tập hôm nay",
-      completedForTodayBadge: "Đã hoàn thành mục tiêu hôm nay",
       totalCardsLabel: "Tổng số từ:",
       lastStudiedLabel: "Lần học gần nhất:",
       masteredColonLabel: "Đã thuộc:",
@@ -1999,7 +1997,6 @@ export const translations: Record<Language, AppTranslations> = {
       backToDecksButton: "Back to Decks",
       studyDeckNowButton: "Study Deck Now",
       cardsDueTodayBadge: "{count} cards due today",
-      completedForTodayBadge: "Completed for today",
       totalCardsLabel: "Total cards:",
       lastStudiedLabel: "Last studied:",
       masteredColonLabel: "Mastered:",

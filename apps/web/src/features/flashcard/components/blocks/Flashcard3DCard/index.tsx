@@ -21,7 +21,7 @@ import {
   IconVolume,
   IconVolume2,
 } from "@tabler/icons-react";
-import React from "react";
+import React, { useRef } from "react";
 import { FlashcardItem } from "../../../types";
 import styles from "./Flashcard3DCard.module.css";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -40,9 +40,18 @@ export function Flashcard3DCard({
   onSpeak,
 }: Flashcard3DCardProps) {
   const { t } = useLanguage();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const handleSpeak = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onSpeak(card.lemma);
+    // Pointer playback returns to study shortcuts; keyboard playback keeps native button focus.
+    if (event.detail > 0) cardRef.current?.focus({ preventScroll: true });
+  };
 
   return (
     <Box
+      ref={cardRef}
+      tabIndex={-1}
       className={styles.cardContainer}
       onClick={onFlip}
       role="group"
@@ -78,10 +87,7 @@ export function Flashcard3DCard({
                   color="indigo"
                   size="lg"
                   radius="xl"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSpeak(card.lemma);
-                  }}
+                  onClick={handleSpeak}
                   aria-label={t.flashcard.listenAudioAria}
                 >
                   <IconVolume size={20} />
@@ -110,10 +116,7 @@ export function Flashcard3DCard({
                 color="indigo"
                 size="sm"
                 radius="xl"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSpeak(card.lemma);
-                }}
+                onClick={handleSpeak}
                 aria-label={t.flashcard.pronounceWordAria}
               >
                 <IconVolume2 size={14} />
@@ -164,10 +167,7 @@ export function Flashcard3DCard({
               color="indigo"
               size="md"
               radius="xl"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSpeak(card.lemma);
-              }}
+              onClick={handleSpeak}
               aria-label={t.flashcard.listenAgainAria}
             >
               <IconVolume size={18} />
