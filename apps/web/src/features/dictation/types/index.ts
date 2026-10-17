@@ -114,6 +114,7 @@ export interface DifficultSentenceItem {
 }
 
 export interface DictationHistoryItem {
+  lessonId: string;
   id: string;
   date: string;
   lessonTitle: string;

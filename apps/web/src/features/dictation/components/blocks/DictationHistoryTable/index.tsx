@@ -95,7 +95,9 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
                   <Table.Td style={{ textAlign: "right" }}>
                     <Button
                       component={Link}
-                      href="/study/dictation/ordering-food-at-a-restaurant"
+                      href={
+                        "/study/dictation/" + encodeURIComponent(h.lessonId)
+                      }
                       size="xs"
                       variant="subtle"
                       color="navy"

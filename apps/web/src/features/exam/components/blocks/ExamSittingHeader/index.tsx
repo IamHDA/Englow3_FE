@@ -41,7 +41,9 @@ export function ExamSittingHeader({
 }: ExamSittingHeaderProps) {
   const { t, isVi } = useLanguage();
   const progressPercent =
-    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    totalQuestions > 0
+      ? Math.min(100, Math.max(0, (answeredCount / totalQuestions) * 100))
+      : 0;
 
   return (
     <Box className={classes.headerRoot}>

@@ -9,7 +9,6 @@ import {
   Group,
   Loader,
   Pagination,
-  Progress,
   Select,
   Stack,
   Text,
@@ -76,9 +75,7 @@ export function AssessmentHistory({
     fetchPolicy: "cache-and-network",
   });
   const items = query.data?.assessmentHistory.items ?? [];
-  const completed = items.filter(
-    (a) => a.status === "COMPLETED" && parseReport(a.report),
-  );
+
   return (
     <Page>
       <Stack gap="lg">
@@ -232,38 +229,6 @@ export function AssessmentHistory({
             onChange={setPage}
             total={query.data!.assessmentHistory.totalPages}
           />
-        )}
-        {completed.length > 0 && (
-          <Card withBorder>
-            <Stack>
-              <Title order={2}>
-                {t(
-                  "Điểm các bài đang hiển thị",
-                  "Scores for the displayed work",
-                )}
-              </Title>
-              <Text size="sm" c="dimmed">
-                {t(
-                  "Theo thứ tự thời gian. Các đề và người chấm có thể khác nhau; dùng nhận xét từng tiêu chí để chọn bước luyện tiếp.",
-                  "In chronological order. Tasks and reviewers may differ; use criterion feedback to guide your next practice.",
-                )}
-              </Text>
-              {[...completed].reverse().map((a) => (
-                <Stack key={a.id} gap={4}>
-                  <Group justify="space-between">
-                    <Text size="sm">{a.task.title}</Text>
-                    <Text fw={600}>
-                      {parseReport(a.report)!.overall.toFixed(1)}/9
-                    </Text>
-                  </Group>
-                  <Progress
-                    value={(parseReport(a.report)!.overall / 9) * 100}
-                    aria-label={a.task.title}
-                  />
-                </Stack>
-              ))}
-            </Stack>
-          </Card>
         )}
       </Stack>
     </Page>

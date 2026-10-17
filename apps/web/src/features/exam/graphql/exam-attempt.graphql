@@ -21,6 +21,12 @@ fragment ExamAttemptFields on ExamAttempt {
     title
   }
 }
+query ActiveExamAttempt($examId: ID!, $mode: ExamAttemptMode!) {
+  activeExamAttempt(examId: $examId, mode: $mode) {
+    ...ExamAttemptFields
+  }
+}
+
 query ExamDraft($attemptId: ID!) {
   examDraft(attemptId: $attemptId) {
     answers {

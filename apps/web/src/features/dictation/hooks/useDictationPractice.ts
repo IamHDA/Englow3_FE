@@ -163,7 +163,6 @@ export function useDictationPractice(
   }, [recordAnswer, typedText]);
 
   const tryAgain = useCallback(() => {
-    setTypedText("");
     setIsChecked(false);
     setDiffResult(null);
     setSubmissionError(false);

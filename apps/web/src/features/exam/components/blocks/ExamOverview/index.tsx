@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Badge,
@@ -16,6 +16,7 @@ import {
   Text,
   ThemeIcon,
   Title,
+  Modal,
 } from "@mantine/core";
 import {
   Clock,
@@ -35,6 +36,11 @@ import type {
 import { ExamPracticePicker } from "../ExamPracticePicker";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./ExamOverview.module.css";
+import {
+  useActiveExamAttemptQuery,
+  useAttemptPaperQuery,
+} from "@/lib/graphql/generated/hooks";
+import { ExamAttemptMode, OpenAttemptChoice } from "@/lib/graphql/generated";
 
 export interface ExamOverviewProps {
   /**
@@ -49,7 +55,7 @@ export interface ExamOverviewProps {
   outlineFailed: boolean;
   onRetryOutline: () => void;
   starting: boolean;
-  onStart: (choice: ExamStartChoice) => void;
+  onStart: (choice: ExamStartChoice, onOpen?: OpenAttemptChoice) => void;
 }
 
 export function ExamOverview({
@@ -65,6 +71,19 @@ export function ExamOverview({
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   // Bài kiểm tra đầu vào quyết định trình độ nên chỉ làm trọn đề.
   const practiceAllowed = exam.examType !== "PLACEMENT";
+  const [resumeOpened, setResumeOpened] = useState(false);
+  const [previewAt, setPreviewAt] = useState(0);
+  const activeQuery = useActiveExamAttemptQuery({
+    variables: { examId: exam.id, mode: ExamAttemptMode.PRACTICE },
+    skip: !practiceAllowed,
+    fetchPolicy: "network-only",
+  });
+  const active = activeQuery.data?.activeExamAttempt;
+  const preview = useAttemptPaperQuery({
+    variables: { attemptId: active?.id ?? "" },
+    skip: !resumeOpened || !active,
+    fetchPolicy: "network-only",
+  });
 
   const durationMinutes = Math.round(exam.durationSeconds / 60);
 
@@ -202,12 +221,47 @@ export function ExamOverview({
                   sections={outline}
                   loading={outlineLoading}
                   failed={outlineFailed}
-                  starting={starting}
+                  starting={
+                    starting || activeQuery.loading || !!activeQuery.error
+                  }
+                  hasActiveAttempt={!!active}
+                  onResume={() => {
+                    setPreviewAt(Date.now());
+                    setResumeOpened(true);
+                  }}
                   onRetry={onRetryOutline}
                   onStart={(partIds, timeLimitMinutes) =>
-                    onStart({ mode: "PRACTICE", partIds, timeLimitMinutes })
+                    (!active ||
+                      window.confirm(
+                        tr(
+                          "Làm bài mới sẽ nộp bài luyện tập dở với các đáp án đã lưu. Tiếp tục?",
+                          "Starting a new practice submits the saved answers of your unfinished practice. Continue?",
+                        ),
+                      )) &&
+                    onStart(
+                      { mode: "PRACTICE", partIds, timeLimitMinutes },
+                      OpenAttemptChoice.REPLACE,
+                    )
                   }
                 />
+                {activeQuery.error && (
+                  <Stack>
+                    <Text c="red">
+                      {tr(
+                        "Không tải được bài luyện tập dở.",
+                        "Could not load unfinished practice.",
+                      )}
+                    </Text>
+                    <Button
+                      variant="subtle"
+                      onClick={() =>
+                        void activeQuery.refetch().catch(() => undefined)
+                      }
+                    >
+                      {tr("Thử lại", "Retry")}
+                    </Button>
+                  </Stack>
+                )}
               </Tabs.Panel>
               <Tabs.Panel value="full">
                 <Stack gap="lg">
@@ -387,6 +441,110 @@ export function ExamOverview({
           )}
         </Stack>
       </Card>
+      <Modal
+        opened={resumeOpened}
+        onClose={() => setResumeOpened(false)}
+        centered
+        title={tr("Tiếp tục bài luyện tập", "Resume practice")}
+      >
+        <Stack>
+          <Text fw={700}>{exam.title}</Text>
+          {active ? (
+            <>
+              <Text>
+                {active.timeLimitSeconds == null
+                  ? tr("Không giới hạn thời gian", "Untimed")
+                  : tr("Thời lượng: ", "Time limit: ") +
+                    Math.round(active.timeLimitSeconds / 60) +
+                    tr(" phút", " minutes")}
+              </Text>
+              {active.timeLimitSeconds != null && (
+                <Text>
+                  {tr("Còn lại khi mở: ", "Remaining when opened: ") +
+                    Math.max(
+                      0,
+                      Math.ceil(
+                        (Date.parse(active.expiresAt) - previewAt) / 60000,
+                      ),
+                    ) +
+                    tr(" phút", " minutes")}
+                </Text>
+              )}
+              {preview.loading ? (
+                <Text role="status">
+                  {tr("Đang tải cấu hình…", "Loading configuration…")}
+                </Text>
+              ) : preview.error ? (
+                <Stack>
+                  <Text c="red">
+                    {tr(
+                      "Không tải được cấu hình.",
+                      "Could not load configuration.",
+                    )}
+                  </Text>
+                  <Button
+                    onClick={() =>
+                      void preview.refetch().catch(() => undefined)
+                    }
+                  >
+                    {tr("Thử lại", "Retry")}
+                  </Button>
+                </Stack>
+              ) : (
+                preview.data?.attemptPaper.sections.map((section) => (
+                  <Stack key={section.id} gap="xs">
+                    {section.parts.map((part) => (
+                      <Stack key={part.id} gap={2}>
+                        <Text fw={600}>{part.title}</Text>
+                        {part.questionSets.map((set) => (
+                          <Text key={set.id} size="sm">
+                            {set.title || tr("Nhóm câu hỏi", "Question set")} ·{" "}
+                            {set.questions.length} {tr("câu", "questions")}
+                          </Text>
+                        ))}
+                      </Stack>
+                    ))}
+                  </Stack>
+                ))
+              )}
+              <Group justify="flex-end">
+                <Button
+                  variant="default"
+                  onClick={() => setResumeOpened(false)}
+                >
+                  {tr("Hủy", "Cancel")}
+                </Button>
+                <Button
+                  disabled={!preview.data || !!preview.error || preview.loading}
+                  loading={starting}
+                  onClick={() => {
+                    onStart(
+                      {
+                        mode: "PRACTICE",
+                        partIds: active.parts.map((part) => part.id),
+                        timeLimitMinutes:
+                          active.timeLimitSeconds == null
+                            ? null
+                            : active.timeLimitSeconds / 60,
+                      },
+                      OpenAttemptChoice.RESUME,
+                    );
+                  }}
+                >
+                  {tr("Tiếp tục", "Continue")}
+                </Button>
+              </Group>
+            </>
+          ) : (
+            <Text>
+              {tr(
+                "Bài luyện tập này không còn khả dụng.",
+                "This practice is no longer available.",
+              )}
+            </Text>
+          )}
+        </Stack>
+      </Modal>
     </Box>
   );
 }

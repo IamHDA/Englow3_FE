@@ -9,6 +9,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        isSigningOut: false,
         session: { userId: owner, email: null, role: "STAFF" },
         signOut: async () => {},
       }}

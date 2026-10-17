@@ -1388,6 +1388,37 @@ export type ExamAttemptFieldsFragment = {
   }>;
 };
 
+export type ActiveExamAttemptQueryVariables = Exact<{
+  examId: string | number;
+  mode: Types.ExamAttemptMode;
+}>;
+
+export type ActiveExamAttemptQuery = {
+  activeExamAttempt: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+    examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
+    }>;
+  } | null;
+};
+
 export type ExamDraftQueryVariables = Exact<{
   attemptId: string | number;
 }>;
@@ -1771,11 +1802,13 @@ export type FlashcardFieldsFragment = {
 export type FlashcardSetsQueryVariables = Exact<{
   topic?: string | null | undefined;
   title?: string | null | undefined;
+  sortBy?: string | null | undefined;
   page?: number | null | undefined;
   size?: number | null | undefined;
 }>;
 
 export type FlashcardSetsQuery = {
+  flashcardCatalogueInfo: { topics: Array<string>; totalDueCount: number };
   flashcardSets: {
     page: number;
     size: number;
@@ -1796,12 +1829,37 @@ export type FlashcardSetsQuery = {
   };
 };
 
+export type FlashcardSetSummaryQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type FlashcardSetSummaryQuery = {
+  flashcardSetSummary: {
+    id: string;
+    slug: string;
+    name: string;
+    description: string;
+    topic: string;
+    targetLevel: string | null;
+    cardCount: number;
+    dueCount: number;
+    masteredCount: number;
+    lastStudiedAt: string | null;
+  };
+};
+
 export type FlashcardSetDetailQueryVariables = Exact<{
   id: string | number;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
 }>;
 
 export type FlashcardSetDetailQuery = {
   flashcardSet: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
     set: {
       id: string;
       slug: string;
@@ -8234,6 +8292,123 @@ export const RejectExamDocument = {
     },
   ],
 } as unknown as DocumentNode<RejectExamMutation, RejectExamMutationVariables>;
+export const ActiveExamAttemptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ActiveExamAttempt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "examId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "mode" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "ExamAttemptMode" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "activeExamAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "examId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "examId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "mode" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "mode" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ExamAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ExamAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ExamAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "expiresAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "scoredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ActiveExamAttemptQuery,
+  ActiveExamAttemptQueryVariables
+>;
 export const ExamDraftDocument = {
   kind: "Document",
   definitions: [
@@ -9693,6 +9868,14 @@ export const FlashcardSetsDocument = {
         },
         {
           kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "sortBy" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
           variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
           type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
         },
@@ -9705,6 +9888,20 @@ export const FlashcardSetsDocument = {
       selectionSet: {
         kind: "SelectionSet",
         selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "flashcardCatalogueInfo" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "topics" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "totalDueCount" },
+                },
+              ],
+            },
+          },
           {
             kind: "Field",
             name: { kind: "Name", value: "flashcardSets" },
@@ -9723,6 +9920,14 @@ export const FlashcardSetsDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "sortBy" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "sortBy" },
                 },
               },
               {
@@ -9793,6 +9998,80 @@ export const FlashcardSetsDocument = {
     },
   ],
 } as unknown as DocumentNode<FlashcardSetsQuery, FlashcardSetsQueryVariables>;
+export const FlashcardSetSummaryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FlashcardSetSummary" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "flashcardSetSummary" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "FlashcardSetFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FlashcardSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FlashcardSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "name" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "cardCount" } },
+          { kind: "Field", name: { kind: "Name", value: "dueCount" } },
+          { kind: "Field", name: { kind: "Name", value: "masteredCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastStudiedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  FlashcardSetSummaryQuery,
+  FlashcardSetSummaryQueryVariables
+>;
 export const FlashcardSetDetailDocument = {
   kind: "Document",
   definitions: [
@@ -9809,6 +10088,16 @@ export const FlashcardSetDetailDocument = {
             type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
           },
         },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -9823,6 +10112,22 @@ export const FlashcardSetDetailDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
                 },
               },
             ],
@@ -9855,6 +10160,10 @@ export const FlashcardSetDetailDocument = {
                     ],
                   },
                 },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
               ],
             },
           },

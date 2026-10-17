@@ -1,7 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { notifications } from "@mantine/notifications";
+import { readStoredLanguage } from "@/shared/context/LanguageContext";
+import { authErrorMessage } from "./authErrorMessage";
 
 import { clearBrowserDrafts } from "@/shared/storage/browserDrafts";
 
@@ -32,6 +41,8 @@ type AuthProviderProps = {
 export function AuthProvider({ initialSession, children }: AuthProviderProps) {
   const router = useRouter();
   const session = initialSession;
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const signingOut = useRef(false);
 
   /**
    * Id đang được phản ánh trên màn hình. Prop đổi cả khi chỉ làm tươi trang
@@ -52,10 +63,51 @@ export function AuthProvider({ initialSession, children }: AuthProviderProps) {
   useEffect(() => onSessionChangeElsewhere(() => router.refresh()), [router]);
 
   const signOut = useCallback(async () => {
-    await clearBrowserDrafts();
+    const isVi = readStoredLanguage() === "vi";
+    if (signingOut.current) return;
+    signingOut.current = true;
+    setIsSigningOut(true);
+    const id = notifications.show({
+      loading: true,
+      autoClose: false,
+      withCloseButton: false,
+      message: isVi ? "Đang đăng xuất…" : "Signing out…",
+    });
     try {
-      await signOutOfServer();
+      // Local storage cleanup must not prevent the server from ending the session.
+      await clearBrowserDrafts().catch(() => undefined);
+      const response = await signOutOfServer();
+      if (response.error) {
+        notifications.update({
+          id,
+          loading: false,
+          autoClose: 5000,
+          withCloseButton: true,
+          color: "red",
+          message: authErrorMessage(response.error, isVi),
+        });
+        return;
+      }
+      notifications.update({
+        id,
+        loading: false,
+        autoClose: 2500,
+        withCloseButton: true,
+        color: "teal",
+        message: isVi ? "Đã đăng xuất" : "Signed out",
+      });
+    } catch {
+      notifications.update({
+        id,
+        loading: false,
+        autoClose: 5000,
+        withCloseButton: true,
+        color: "red",
+        message: authErrorMessage(null, isVi),
+      });
     } finally {
+      signingOut.current = false;
+      setIsSigningOut(false);
       announceSessionChange();
       // Bắt root layout tính lại initialSession/initialProfile - thiếu nó thì
       // lần điều hướng server tiếp theo dựng lại đúng trạng thái cũ.
@@ -64,7 +116,7 @@ export function AuthProvider({ initialSession, children }: AuthProviderProps) {
   }, [router]);
 
   return (
-    <AuthContext.Provider value={{ session, signOut }}>
+    <AuthContext.Provider value={{ session, signOut, isSigningOut }}>
       {children}
     </AuthContext.Provider>
   );

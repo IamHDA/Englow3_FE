@@ -37,6 +37,8 @@ export interface ExamPracticePickerProps {
   starting: boolean;
   onRetry: () => void;
   onStart: (partIds: string[], timeLimitMinutes: number | null) => void;
+  onResume?: () => void;
+  hasActiveAttempt?: boolean;
 }
 
 /**
@@ -51,6 +53,8 @@ export function ExamPracticePicker({
   starting,
   onRetry,
   onStart,
+  onResume,
+  hasActiveAttempt = false,
 }: ExamPracticePickerProps) {
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
@@ -182,6 +186,11 @@ export function ExamPracticePicker({
                   `${chosen.length} part${chosen.length === 1 ? "" : "s"} · ${questionTotal} question${questionTotal === 1 ? "" : "s"}`,
                 )}
           </Text>
+          {hasActiveAttempt && (
+            <Button variant="light" onClick={onResume} disabled={starting}>
+              {tr("Làm tiếp bài dở", "Continue unfinished practice")}
+            </Button>
+          )}
           <Button
             radius="xl"
             rightSection={<Play size={16} />}
@@ -194,7 +203,7 @@ export function ExamPracticePicker({
               )
             }
           >
-            {tr("Bắt đầu luyện tập", "Start practice")}
+            {tr("Làm bài mới", "Start a new practice")}
           </Button>
         </Group>
       </Group>

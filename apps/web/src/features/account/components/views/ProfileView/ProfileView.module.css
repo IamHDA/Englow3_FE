@@ -39,6 +39,22 @@
   transition: all 0.15s ease;
 }
 
+.tabItem[data-active] {
+  background-color: var(--mantine-color-navy-9);
+  color: white;
+}
+
+@media (max-width: 36em) {
+  .tabsList {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tabItem {
+    flex: 1 1 auto;
+    padding-inline: 8px;
+  }
+}
+
 .errorPaper,
 .unauthPaper {
   background-color: var(--mantine-color-body);

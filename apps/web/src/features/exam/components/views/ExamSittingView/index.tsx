@@ -11,6 +11,7 @@ import { useApolloClient } from "@apollo/client/react";
 import {
   ExamDraftDocument,
   ExamAttemptResultDocument,
+  AttemptPaperDocument,
 } from "@/lib/graphql/generated/documents";
 import { useExamAutosave } from "../../../hooks/useExamAutosave";
 import { useRouter } from "next/navigation";
@@ -60,6 +61,7 @@ import { ExamResultView } from "../../blocks/ExamResultView";
 import type { ExamAttemptResult, ExamStartChoice } from "../../../types";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
+import { sanitizeExamAnswers } from "../../../examAnswers";
 
 interface ExamSittingViewProps {
   examId: string;
@@ -130,6 +132,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const [result, setResult] = useState<ExamAttemptResult | null>(null);
   const pending = useRef(false);
   const [sendFailed, setSendFailed] = useState(false);
+  const [savingAndSubmitting, setSavingAndSubmitting] = useState(false);
 
   // Bản tóm tắt đề cho màn giới thiệu - đọc được trước khi đồng hồ chạy.
   const {
@@ -162,14 +165,27 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   } = useAttemptPaperQuery({
     variables: { attemptId: attemptId ?? "" },
     skip: attemptId === null,
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "cache-first",
   });
 
   const paper = data?.attemptPaper;
+  const paperQuestions = useMemo(
+    () =>
+      paper?.sections.flatMap((section) =>
+        section.parts.flatMap((part) =>
+          part.questionSets.flatMap((set) => set.questions),
+        ),
+      ) ?? [],
+    [paper],
+  );
   const isPlacement = detailData?.exam?.examType === ExamType.PLACEMENT;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const validAnswers = useMemo(
+    () => sanitizeExamAnswers(paperQuestions, answers),
+    [paperQuestions, answers],
+  );
   const [flaggedIds, setFlaggedIds] = useState<Set<string>>(new Set());
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
@@ -214,52 +230,59 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
     )
       return;
     pending.current = true;
+    setSavingAndSubmitting(true);
     setSendFailed(false);
 
-    setSubmitModalOpen(false);
+    setSubmitModalOpen(true);
 
-    if (!expiresAt || Date.now() < Date.parse(expiresAt)) {
-      if (!(await autosave.flush(answers))) {
-        pending.current = false;
+    try {
+      if (!expiresAt || Date.now() < Date.parse(expiresAt)) {
+        if (!(await autosave.flush(validAnswers))) {
+          setSendFailed(true);
+          return;
+        }
+      }
+      const payload = Object.entries(validAnswers).map(
+        ([questionId, selectedOptionId]) => ({
+          questionId,
+          selectedOptionIds: Array.isArray(selectedOptionId)
+            ? selectedOptionId
+            : [selectedOptionId],
+        }),
+      );
+
+      const response = await submitAttempt({
+        variables: { attemptId, answers: payload },
+      }).catch(() => null);
+
+      if (!response?.data) {
         setSendFailed(true);
         return;
       }
-    }
-    const payload = Object.entries(answers).map(
-      ([questionId, selectedOptionId]) => ({
-        questionId,
-        selectedOptionIds: Array.isArray(selectedOptionId)
-          ? selectedOptionId
-          : [selectedOptionId],
-      }),
-    );
 
-    const response = await submitAttempt({
-      variables: { attemptId, answers: payload },
-    }).catch(() => null);
+      setResult(response.data.submitExamAttempt);
+      try {
+        sessionStorage.removeItem(storageKey(attemptId));
+      } catch {
+        // ignore storage errors
+      }
 
-    pending.current = false;
-    if (!response?.data) {
-      setSendFailed(true);
-      return;
-    }
-
-    setResult(response.data.submitExamAttempt);
-    try {
-      sessionStorage.removeItem(storageKey(attemptId));
+      // Chấm xong một đề xếp trình độ là backend vừa ghi trình độ và đẩy bước
+      // onboarding. Đọc lại hồ sơ ngay, nếu không thì header và popup vẫn hiện
+      // trạng thái cũ cho tới lần tải trang kế tiếp.
+      if (isPlacement) {
+        await refreshProfile().catch(() => undefined);
+      }
+      setSubmitModalOpen(false);
     } catch {
-      // ignore storage errors
-    }
-
-    // Chấm xong một đề xếp trình độ là backend vừa ghi trình độ và đẩy bước
-    // onboarding. Đọc lại hồ sơ ngay, nếu không thì header và popup vẫn hiện
-    // trạng thái cũ cho tới lần tải trang kế tiếp.
-    if (isPlacement) {
-      await refreshProfile().catch(() => undefined);
+      setSendFailed(true);
+    } finally {
+      pending.current = false;
+      setSavingAndSubmitting(false);
     }
   }, [
     attemptId,
-    answers,
+    validAnswers,
     submitAttempt,
     isPlacement,
     refreshProfile,
@@ -362,10 +385,12 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         }
         return null;
       });
-      pending.current = false;
 
       const attempt = response?.data?.startExamAttempt;
-      if (!attempt) return;
+      if (!attempt) {
+        pending.current = false;
+        return;
+      }
       setBlockedChoice(null);
       setUntimed(attempt.timeLimitSeconds == null);
       setPractice(attempt.mode === ExamAttemptMode.PRACTICE);
@@ -375,12 +400,26 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       setOpeningDraft(true);
       setDraftLoadFailed(false);
       try {
-        const response = await client.query({
-          query: ExamDraftDocument,
-          variables: { attemptId: attempt.id },
-          fetchPolicy: "network-only",
-        });
-        if (!response.data) throw new Error("Missing draft");
+        const [response, paperResponse] = await Promise.all([
+          client.query({
+            query: ExamDraftDocument,
+            variables: { attemptId: attempt.id },
+            fetchPolicy: "network-only",
+          }),
+          client.query({
+            query: AttemptPaperDocument,
+            variables: { attemptId: attempt.id },
+            fetchPolicy: "network-only",
+          }),
+        ]);
+        if (!response.data || !paperResponse.data)
+          throw new Error("Missing draft or paper");
+        const questions = paperResponse.data.attemptPaper.sections.flatMap(
+          (section) =>
+            section.parts.flatMap((part) =>
+              part.questionSets.flatMap((set) => set.questions),
+            ),
+        );
         const draft = response.data.examDraft;
         const serverAnswers = Object.fromEntries(
           draft.answers
@@ -390,21 +429,39 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         const restored = readProgress(attempt.id);
         const useLocal =
           restored && (restored.updatedAt ?? 0) > Date.parse(draft.savedAt);
-        const currentAnswers = useLocal ? restored.answers : serverAnswers;
+        const cleanServerAnswers = sanitizeExamAnswers(
+          questions,
+          serverAnswers,
+        );
+        const currentAnswers = sanitizeExamAnswers(
+          questions,
+          useLocal ? restored.answers : serverAnswers,
+        );
         autosave.initialize(
           attempt.id,
           draft.version,
-          serverAnswers,
+          cleanServerAnswers,
           currentAnswers,
         );
         setAnswers(currentAnswers);
-        setFlaggedIds(new Set(restored?.flaggedIds ?? []));
-        setCurrentIndex(restored?.currentIndex ?? 0);
+        const questionIds = new Set(questions.map((question) => question.id));
+        setFlaggedIds(
+          new Set(
+            (restored?.flaggedIds ?? []).filter((id) => questionIds.has(id)),
+          ),
+        );
+        setCurrentIndex(
+          Math.min(
+            restored?.currentIndex ?? 0,
+            Math.max(0, questions.length - 1),
+          ),
+        );
         setAttemptId(attempt.id);
         setExpiresAt(attempt.expiresAt);
       } catch {
         setDraftLoadFailed(true);
       } finally {
+        pending.current = false;
         setOpeningDraft(false);
       }
     },
@@ -584,7 +641,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
           outlineFailed={!!outlineError && !outlineData}
           onRetryOutline={() => void refetchOutline().catch(() => undefined)}
           starting={starting || openingDraft}
-          onStart={(choice) => void handleStart(choice)}
+          onStart={(choice, onOpen) => void handleStart(choice, onOpen)}
         />
         <Modal
           opened={blockedChoice !== null}
@@ -661,7 +718,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         }
         isWarning={!untimed && isWarning}
         isCritical={!untimed && isCritical}
-        answeredCount={Object.keys(answers).length}
+        answeredCount={Object.keys(validAnswers).length}
         totalQuestions={flatQuestions.length}
         onSubmitClick={() => setSubmitModalOpen(true)}
         onExitClick={() => {
@@ -805,10 +862,13 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       <SubmitModal
         opened={submitModalOpen}
         totalQuestions={flatQuestions.length}
-        answeredCount={Object.keys(answers).length}
+        answeredCount={Object.keys(validAnswers).length}
         flaggedCount={flaggedIds.size}
-        submitting={submitting}
-        onClose={() => setSubmitModalOpen(false)}
+        submitting={submitting || savingAndSubmitting}
+        error={sendFailed}
+        onClose={() => {
+          if (!savingAndSubmitting) setSubmitModalOpen(false);
+        }}
         onConfirmSubmit={handleFinalSubmit}
       />
     </Box>

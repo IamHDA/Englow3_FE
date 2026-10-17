@@ -3,6 +3,22 @@ import { describe, expect, it, vi } from "vitest";
 import { examResolvers } from "./exam.resolvers.js";
 import { makeContext } from "../../test/makeContext.js";
 
+describe("Query.activeExamAttempt", () => {
+  it.each(["FULL", "PRACTICE"] as const)(
+    "looks up only the requested %s mode",
+    async (mode) => {
+      const activeAttempt = vi.fn().mockResolvedValue(null);
+      const ctx = makeContext({ apis: { examApi: { activeAttempt } } });
+      const result = await examResolvers.Query.activeExamAttempt(
+        {},
+        { examId: "exam", mode },
+        ctx,
+      );
+      expect(activeAttempt).toHaveBeenCalledWith("exam", mode);
+      expect(result).toBeNull();
+    },
+  );
+});
 describe("Query.adminExams", () => {
   it("fails before calling the backend when there is no token", () => {
     const searchAsAdmin = vi.fn();

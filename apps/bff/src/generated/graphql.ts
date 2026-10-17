@@ -756,6 +756,12 @@ export type Flashcard = {
   status: FlashcardReviewStatus;
 };
 
+export type FlashcardCatalogueInfo = {
+  __typename?: 'FlashcardCatalogueInfo';
+  topics: Array<Scalars['String']['output']>;
+  totalDueCount: Scalars['Int']['output'];
+};
+
 export type FlashcardDailyActivity = {
   __typename?: 'FlashcardDailyActivity';
   cardCount: Scalars['Int']['output'];
@@ -824,7 +830,11 @@ export type FlashcardSet = {
 export type FlashcardSetDetail = {
   __typename?: 'FlashcardSetDetail';
   cards: Array<Flashcard>;
+  page: Scalars['Int']['output'];
   set: FlashcardSet;
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
 };
 
 export type FlashcardSetPage = {
@@ -1066,7 +1076,7 @@ export type Mutation = {
   startAssessment: AssessmentUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
-   * backend enforces one live attempt per learner and exam, so calling this
+   * backend enforces one live attempt per learner, exam and mode, so calling this
    * twice does not create two.
    */
   startExamAttempt: ExamAttempt;
@@ -1407,6 +1417,7 @@ export type OverviewContentKind =
 
 export type Query = {
   __typename?: 'Query';
+  activeExamAttempt?: Maybe<ExamAttempt>;
   /**
    * The authoring list for one kind of content, at every status. Omitting
    * status asks for all of them, so this serves both the full list and the
@@ -1474,7 +1485,9 @@ export type Query = {
   examOutline: ExamOutline;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
+  flashcardCatalogueInfo: FlashcardCatalogueInfo;
   flashcardSet: FlashcardSetDetail;
+  flashcardSetSummary: FlashcardSet;
   flashcardSets: FlashcardSetPage;
   /**
    * Everything the statistics screen shows, in one call. Six round trips to
@@ -1510,6 +1523,12 @@ export type Query = {
   speakingPrompts: SpeakingPromptPage;
   tutorConversation: TutorConversation;
   tutorConversations: Array<TutorConversationSummary>;
+};
+
+
+export type QueryActiveExamAttemptArgs = {
+  examId: Scalars['ID']['input'];
+  mode: ExamAttemptMode;
 };
 
 
@@ -1655,12 +1674,20 @@ export type QueryExamsArgs = {
 
 export type QueryFlashcardSetArgs = {
   id: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryFlashcardSetSummaryArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
 export type QueryFlashcardSetsArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   size?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   topic?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2231,6 +2258,7 @@ export type ResolversTypes = ResolversObject<{
   ExamStatus: ExamStatus;
   ExamType: ExamType;
   Flashcard: ResolverTypeWrapper<Flashcard>;
+  FlashcardCatalogueInfo: ResolverTypeWrapper<FlashcardCatalogueInfo>;
   FlashcardDailyActivity: ResolverTypeWrapper<FlashcardDailyActivity>;
   FlashcardDifficultCard: ResolverTypeWrapper<FlashcardDifficultCard>;
   FlashcardReview: ResolverTypeWrapper<FlashcardReview>;
@@ -2347,6 +2375,7 @@ export type ResolversParentTypes = ResolversObject<{
   ExamSectionDetail: ExamSectionDetail;
   ExamSectionPart: ExamSectionPart;
   Flashcard: Flashcard;
+  FlashcardCatalogueInfo: FlashcardCatalogueInfo;
   FlashcardDailyActivity: FlashcardDailyActivity;
   FlashcardDifficultCard: FlashcardDifficultCard;
   FlashcardReview: FlashcardReview;
@@ -2884,6 +2913,11 @@ export type FlashcardResolvers<ContextType = GraphQLContext, ParentType extends 
   status?: Resolver<ResolversTypes['FlashcardReviewStatus'], ParentType, ContextType>;
 }>;
 
+export type FlashcardCatalogueInfoResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FlashcardCatalogueInfo'] = ResolversParentTypes['FlashcardCatalogueInfo']> = ResolversObject<{
+  topics?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  totalDueCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
 export type FlashcardDailyActivityResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FlashcardDailyActivity'] = ResolversParentTypes['FlashcardDailyActivity']> = ResolversObject<{
   cardCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   day?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -2930,7 +2964,11 @@ export type FlashcardSetResolvers<ContextType = GraphQLContext, ParentType exten
 
 export type FlashcardSetDetailResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FlashcardSetDetail'] = ResolversParentTypes['FlashcardSetDetail']> = ResolversObject<{
   cards?: Resolver<Array<ResolversTypes['Flashcard']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   set?: Resolver<ResolversTypes['FlashcardSet'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
 export type FlashcardSetPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FlashcardSetPage'] = ResolversParentTypes['FlashcardSetPage']> = ResolversObject<{
@@ -3076,6 +3114,7 @@ export type OverviewContentCountsResolvers<ContextType = GraphQLContext, ParentT
 }>;
 
 export type QueryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  activeExamAttempt?: Resolver<Maybe<ResolversTypes['ExamAttempt']>, ParentType, ContextType, RequireFields<QueryActiveExamAttemptArgs, 'examId' | 'mode'>>;
   adminContent?: Resolver<ResolversTypes['ContentReviewPage'], ParentType, ContextType, RequireFields<QueryAdminContentArgs, 'kind' | 'page' | 'size'>>;
   adminExams?: Resolver<ResolversTypes['ExamPage'], ParentType, ContextType, RequireFields<QueryAdminExamsArgs, 'page' | 'size'>>;
   adminOverview?: Resolver<ResolversTypes['AdminOverview'], ParentType, ContextType>;
@@ -3103,8 +3142,10 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   examDraft?: Resolver<ResolversTypes['ExamDraft'], ParentType, ContextType, RequireFields<QueryExamDraftArgs, 'attemptId'>>;
   examOutline?: Resolver<ResolversTypes['ExamOutline'], ParentType, ContextType, RequireFields<QueryExamOutlineArgs, 'examId'>>;
   exams?: Resolver<ResolversTypes['LearnerExamPage'], ParentType, ContextType, RequireFields<QueryExamsArgs, 'page' | 'size' | 'sortBy'>>;
-  flashcardSet?: Resolver<ResolversTypes['FlashcardSetDetail'], ParentType, ContextType, RequireFields<QueryFlashcardSetArgs, 'id'>>;
-  flashcardSets?: Resolver<ResolversTypes['FlashcardSetPage'], ParentType, ContextType, RequireFields<QueryFlashcardSetsArgs, 'page' | 'size'>>;
+  flashcardCatalogueInfo?: Resolver<ResolversTypes['FlashcardCatalogueInfo'], ParentType, ContextType>;
+  flashcardSet?: Resolver<ResolversTypes['FlashcardSetDetail'], ParentType, ContextType, RequireFields<QueryFlashcardSetArgs, 'id' | 'page' | 'size'>>;
+  flashcardSetSummary?: Resolver<ResolversTypes['FlashcardSet'], ParentType, ContextType, RequireFields<QueryFlashcardSetSummaryArgs, 'id'>>;
+  flashcardSets?: Resolver<ResolversTypes['FlashcardSetPage'], ParentType, ContextType, RequireFields<QueryFlashcardSetsArgs, 'page' | 'size' | 'sortBy'>>;
   flashcardStats?: Resolver<ResolversTypes['FlashcardStats'], ParentType, ContextType, RequireFields<QueryFlashcardStatsArgs, 'periodDays'>>;
   flashcardStudyQueue?: Resolver<Array<ResolversTypes['Flashcard']>, ParentType, ContextType, RequireFields<QueryFlashcardStudyQueueArgs, 'limit' | 'setId'>>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3361,6 +3402,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   ExamSectionDetail?: ExamSectionDetailResolvers<ContextType>;
   ExamSectionPart?: ExamSectionPartResolvers<ContextType>;
   Flashcard?: FlashcardResolvers<ContextType>;
+  FlashcardCatalogueInfo?: FlashcardCatalogueInfoResolvers<ContextType>;
   FlashcardDailyActivity?: FlashcardDailyActivityResolvers<ContextType>;
   FlashcardDifficultCard?: FlashcardDifficultCardResolvers<ContextType>;
   FlashcardReview?: FlashcardReviewResolvers<ContextType>;

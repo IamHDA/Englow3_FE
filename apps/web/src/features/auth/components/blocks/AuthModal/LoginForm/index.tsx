@@ -14,7 +14,7 @@ import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -50,6 +50,15 @@ type LoginFormProps = {
 
 export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   const router = useRouter();
+  const [isNavigating, startTransition] = useTransition();
+  const [authenticated, setAuthenticated] = useState(false);
+  const completed = useRef(false);
+  useEffect(() => {
+    if (authenticated && !isNavigating && !completed.current) {
+      completed.current = true;
+      onSuccess();
+    }
+  }, [authenticated, isNavigating, onSuccess]);
   const { t, isVi } = useLanguage();
   const schema = useMemo(() => loginSchema(isVi), [isVi]);
   const {
@@ -62,6 +71,7 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   });
 
   async function onSubmit({ email, password, rememberMe }: LoginValues) {
+    if (authenticated || isNavigating) return;
     try {
       const result = await signInWithPassword({ email, password, rememberMe });
       if (result.error) {
@@ -73,15 +83,14 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
         return;
       }
       announceSessionChange();
-      onSuccess();
+      setAuthenticated(true);
       // Each role lands where its work is: staff and administrators in the
       // administration area, a learner on the page they signed in from.
       const home = homeForRole(result.session?.role);
-      if (home) {
-        router.push(home);
-      } else {
-        router.refresh();
-      }
+      startTransition(() => {
+        if (home) router.push(home);
+        else router.refresh();
+      });
     } catch {
       notifications.show({
         color: "warn",
@@ -152,7 +161,7 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
 
       <Button
         type="submit"
-        loading={isSubmitting}
+        loading={isSubmitting || isNavigating || authenticated}
         color="orange.5"
         radius={12}
         h={48}

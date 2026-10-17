@@ -13,6 +13,7 @@ import {
 import { Flag } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionPalette.module.css";
+import { isExamAnswerPresent } from "../../../examAnswers";
 
 export interface FlatQuestionItem {
   globalIndex: number;
@@ -40,7 +41,9 @@ export function QuestionPalette({
   onSelectQuestion,
 }: QuestionPaletteProps) {
   const { t } = useLanguage();
-  const answeredCount = Object.keys(answers).length;
+  const answeredCount = questions.filter((question) =>
+    isExamAnswerPresent(answers[question.questionId]),
+  ).length;
   const flaggedCount = flaggedQuestionIds.size;
   const totalCount = questions.length;
 
@@ -83,7 +86,7 @@ export function QuestionPalette({
         {/* Palette Grid */}
         <SimpleGrid cols={5} spacing={6}>
           {questions.map((q) => {
-            const isAnswered = !!answers[q.questionId];
+            const isAnswered = isExamAnswerPresent(answers[q.questionId]);
             const isFlagged = flaggedQuestionIds.has(q.questionId);
             const isCurrent = q.globalIndex === currentIndex;
 

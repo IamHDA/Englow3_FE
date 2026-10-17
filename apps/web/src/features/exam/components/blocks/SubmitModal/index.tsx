@@ -22,6 +22,7 @@ export interface SubmitModalProps {
   flaggedCount: number;
   /** Đang gửi bài lên server - khoá nút, nhưng chốt chặn thật là tính bất biến của backend. */
   submitting: boolean;
+  error?: boolean;
   onClose: () => void;
   onConfirmSubmit: () => void;
 }
@@ -32,17 +33,23 @@ export function SubmitModal({
   answeredCount,
   flaggedCount,
   submitting,
+  error = false,
   onClose,
   onConfirmSubmit,
 }: SubmitModalProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const unansweredCount = totalQuestions - answeredCount;
   const hasUnanswered = unansweredCount > 0;
 
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={() => {
+        if (!submitting) onClose();
+      }}
+      closeOnClickOutside={!submitting}
+      closeOnEscape={!submitting}
+      withCloseButton={!submitting}
       title={
         <Text fw={700} size="md" c="navy.9">
           {t.exam.confirmModalTitle}
@@ -53,6 +60,18 @@ export function SubmitModal({
       padding="lg"
     >
       <Stack gap="md">
+        {submitting && (
+          <Text role="status">
+            {isVi ? "Đang lưu và nộp bài…" : "Saving and submitting…"}
+          </Text>
+        )}
+        {error && (
+          <Text c="red" role="alert">
+            {isVi
+              ? "Chưa hoàn tất nộp bài. Đáp án vẫn được giữ, hãy thử lại."
+              : "Submission did not complete. Your answers are preserved; please retry."}
+          </Text>
+        )}
         {hasUnanswered ? (
           <Paper p="sm" radius="md" bg="orange.0" withBorder>
             <Group gap="xs">
@@ -134,7 +153,13 @@ export function SubmitModal({
         </Text>
 
         <Group justify="flex-end" gap="xs" pt="sm">
-          <Button variant="default" radius="xl" size="sm" onClick={onClose}>
+          <Button
+            variant="default"
+            radius="xl"
+            size="sm"
+            onClick={onClose}
+            disabled={submitting}
+          >
             {t.exam.continueDoing}
           </Button>
           <Button

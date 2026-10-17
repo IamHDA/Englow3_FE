@@ -70,6 +70,7 @@ export function toStatsData(
       // Không có id trên dòng lịch sử - nó là một nhóm theo ngày và bài.
       id: `${session.day}-${session.lessonId}`,
       date: formatDay(session.day, isVi),
+      lessonId: session.lessonId,
       lessonTitle: session.lessonTitle,
       sentenceCountLabel: isVi
         ? `${session.sentenceCount} câu`

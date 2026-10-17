@@ -196,6 +196,7 @@ export const examTypeDefs = /* GraphQL */ `
     practice is picked from. No question content.
     """
     examOutline(examId: ID!): ExamOutline!
+    activeExamAttempt(examId: ID!, mode: ExamAttemptMode!): ExamAttempt
 
     """
     The scored attempt. Carries the answer key, so it is only worth reading
@@ -454,7 +455,7 @@ export const examTypeDefs = /* GraphQL */ `
     ): ExamDraft!
     """
     Opens an attempt, or returns the one already open with resumed: true. The
-    backend enforces one live attempt per learner and exam, so calling this
+    backend enforces one live attempt per learner, exam and mode, so calling this
     twice does not create two.
     """
     startExamAttempt(examId: ID!, input: StartExamAttemptInput): ExamAttempt!

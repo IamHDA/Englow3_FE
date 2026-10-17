@@ -34,11 +34,6 @@ export function DictationHintDrawer({
 
   const hints = [
     {
-      key: "wordCount",
-      label: t.dictation.hintWordCountLabel,
-      value: `${sentence.hintWordCount} ${t.dictation.wordsUnit}`,
-    },
-    {
       key: "firstLetters",
       label: t.dictation.hintFirstLettersLabel,
       value: sentence.hintFirstLetters,
@@ -59,6 +54,9 @@ export function DictationHintDrawer({
       value: sentence.hintPartialTranscript,
     },
   ];
+
+  if (!hints.some((hint) => hint.value !== null && hint.value !== ""))
+    return null;
 
   return (
     <Paper radius="md" withBorder p="sm" bg="white">
@@ -96,6 +94,11 @@ export function DictationHintDrawer({
             .filter((h) => h.value !== null && h.value !== "")
             .map((h) => {
               const isRevealed = Boolean(revealedHints[h.key]);
+
+              if (
+                !hints.some((hint) => hint.value !== null && hint.value !== "")
+              )
+                return null;
 
               return (
                 <Paper

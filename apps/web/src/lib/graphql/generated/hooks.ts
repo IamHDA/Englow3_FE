@@ -1391,6 +1391,37 @@ export type ExamAttemptFieldsFragment = {
   }>;
 };
 
+export type ActiveExamAttemptQueryVariables = Exact<{
+  examId: string | number;
+  mode: Types.ExamAttemptMode;
+}>;
+
+export type ActiveExamAttemptQuery = {
+  activeExamAttempt: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number;
+    scorePercentage: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+    examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
+    }>;
+  } | null;
+};
+
 export type ExamDraftQueryVariables = Exact<{
   attemptId: string | number;
 }>;
@@ -1774,11 +1805,13 @@ export type FlashcardFieldsFragment = {
 export type FlashcardSetsQueryVariables = Exact<{
   topic?: string | null | undefined;
   title?: string | null | undefined;
+  sortBy?: string | null | undefined;
   page?: number | null | undefined;
   size?: number | null | undefined;
 }>;
 
 export type FlashcardSetsQuery = {
+  flashcardCatalogueInfo: { topics: Array<string>; totalDueCount: number };
   flashcardSets: {
     page: number;
     size: number;
@@ -1799,12 +1832,37 @@ export type FlashcardSetsQuery = {
   };
 };
 
+export type FlashcardSetSummaryQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type FlashcardSetSummaryQuery = {
+  flashcardSetSummary: {
+    id: string;
+    slug: string;
+    name: string;
+    description: string;
+    topic: string;
+    targetLevel: string | null;
+    cardCount: number;
+    dueCount: number;
+    masteredCount: number;
+    lastStudiedAt: string | null;
+  };
+};
+
 export type FlashcardSetDetailQueryVariables = Exact<{
   id: string | number;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
 }>;
 
 export type FlashcardSetDetailQuery = {
   flashcardSet: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
     set: {
       id: string;
       slug: string;
@@ -6585,6 +6643,111 @@ export type RejectExamMutationOptions = ApolloReactCommon.MutationHookOptions<
   RejectExamMutation,
   RejectExamMutationVariables
 >;
+export const ActiveExamAttemptDocument = gql`
+  query ActiveExamAttempt($examId: ID!, $mode: ExamAttemptMode!) {
+    activeExamAttempt(examId: $examId, mode: $mode) {
+      ...ExamAttemptFields
+    }
+  }
+  ${ExamAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useActiveExamAttemptQuery__
+ *
+ * To run a query within a React component, call `useActiveExamAttemptQuery` and pass it any options that fit your needs.
+ * When your component renders, `useActiveExamAttemptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useActiveExamAttemptQuery({
+ *   variables: {
+ *      examId: // value for 'examId'
+ *      mode: // value for 'mode'
+ *   },
+ * });
+ */
+export function useActiveExamAttemptQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ActiveExamAttemptQuery,
+    ActiveExamAttemptQueryVariables
+  > &
+    (
+      | { variables: ActiveExamAttemptQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ActiveExamAttemptQuery,
+    ActiveExamAttemptQueryVariables
+  >(ActiveExamAttemptDocument, options);
+}
+export function useActiveExamAttemptLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ActiveExamAttemptQuery,
+    ActiveExamAttemptQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ActiveExamAttemptQuery,
+    ActiveExamAttemptQueryVariables
+  >(ActiveExamAttemptDocument, options);
+}
+export function useActiveExamAttemptSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ActiveExamAttemptQuery,
+    ActiveExamAttemptQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ActiveExamAttemptQuery,
+  ActiveExamAttemptQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useActiveExamAttemptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ActiveExamAttemptQuery,
+        ActiveExamAttemptQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ActiveExamAttemptQuery | undefined,
+  ActiveExamAttemptQueryVariables
+>;
+export function useActiveExamAttemptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ActiveExamAttemptQuery,
+        ActiveExamAttemptQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ActiveExamAttemptQuery,
+    ActiveExamAttemptQueryVariables
+  >(ActiveExamAttemptDocument, options as any);
+}
+export type ActiveExamAttemptQueryHookResult = ReturnType<
+  typeof useActiveExamAttemptQuery
+>;
+export type ActiveExamAttemptLazyQueryHookResult = ReturnType<
+  typeof useActiveExamAttemptLazyQuery
+>;
+export type ActiveExamAttemptSuspenseQueryHookResult = ReturnType<
+  typeof useActiveExamAttemptSuspenseQuery
+>;
+export type ActiveExamAttemptQueryResult = ApolloReactCommon.QueryResult<
+  ActiveExamAttemptQuery,
+  ActiveExamAttemptQueryVariables
+>;
 export const ExamDraftDocument = gql`
   query ExamDraft($attemptId: ID!) {
     examDraft(attemptId: $attemptId) {
@@ -7709,8 +7872,24 @@ export type ExamOutlineQueryResult = ApolloReactCommon.QueryResult<
   ExamOutlineQueryVariables
 >;
 export const FlashcardSetsDocument = gql`
-  query FlashcardSets($topic: String, $title: String, $page: Int, $size: Int) {
-    flashcardSets(topic: $topic, title: $title, page: $page, size: $size) {
+  query FlashcardSets(
+    $topic: String
+    $title: String
+    $sortBy: String
+    $page: Int
+    $size: Int
+  ) {
+    flashcardCatalogueInfo {
+      topics
+      totalDueCount
+    }
+    flashcardSets(
+      topic: $topic
+      title: $title
+      sortBy: $sortBy
+      page: $page
+      size: $size
+    ) {
       items {
         ...FlashcardSetFields
       }
@@ -7737,6 +7916,7 @@ export const FlashcardSetsDocument = gql`
  *   variables: {
  *      topic: // value for 'topic'
  *      title: // value for 'title'
+ *      sortBy: // value for 'sortBy'
  *      page: // value for 'page'
  *      size: // value for 'size'
  *   },
@@ -7817,15 +7997,123 @@ export type FlashcardSetsQueryResult = ApolloReactCommon.QueryResult<
   FlashcardSetsQuery,
   FlashcardSetsQueryVariables
 >;
+export const FlashcardSetSummaryDocument = gql`
+  query FlashcardSetSummary($id: ID!) {
+    flashcardSetSummary(id: $id) {
+      ...FlashcardSetFields
+    }
+  }
+  ${FlashcardSetFieldsFragmentDoc}
+`;
+
+/**
+ * __useFlashcardSetSummaryQuery__
+ *
+ * To run a query within a React component, call `useFlashcardSetSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlashcardSetSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlashcardSetSummaryQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFlashcardSetSummaryQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    FlashcardSetSummaryQuery,
+    FlashcardSetSummaryQueryVariables
+  > &
+    (
+      | { variables: FlashcardSetSummaryQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FlashcardSetSummaryQuery,
+    FlashcardSetSummaryQueryVariables
+  >(FlashcardSetSummaryDocument, options);
+}
+export function useFlashcardSetSummaryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlashcardSetSummaryQuery,
+    FlashcardSetSummaryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FlashcardSetSummaryQuery,
+    FlashcardSetSummaryQueryVariables
+  >(FlashcardSetSummaryDocument, options);
+}
+export function useFlashcardSetSummarySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FlashcardSetSummaryQuery,
+    FlashcardSetSummaryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardSetSummaryQuery,
+  FlashcardSetSummaryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFlashcardSetSummarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardSetSummaryQuery,
+        FlashcardSetSummaryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FlashcardSetSummaryQuery | undefined,
+  FlashcardSetSummaryQueryVariables
+>;
+export function useFlashcardSetSummarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FlashcardSetSummaryQuery,
+        FlashcardSetSummaryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FlashcardSetSummaryQuery,
+    FlashcardSetSummaryQueryVariables
+  >(FlashcardSetSummaryDocument, options as any);
+}
+export type FlashcardSetSummaryQueryHookResult = ReturnType<
+  typeof useFlashcardSetSummaryQuery
+>;
+export type FlashcardSetSummaryLazyQueryHookResult = ReturnType<
+  typeof useFlashcardSetSummaryLazyQuery
+>;
+export type FlashcardSetSummarySuspenseQueryHookResult = ReturnType<
+  typeof useFlashcardSetSummarySuspenseQuery
+>;
+export type FlashcardSetSummaryQueryResult = ApolloReactCommon.QueryResult<
+  FlashcardSetSummaryQuery,
+  FlashcardSetSummaryQueryVariables
+>;
 export const FlashcardSetDetailDocument = gql`
-  query FlashcardSetDetail($id: ID!) {
-    flashcardSet(id: $id) {
+  query FlashcardSetDetail($id: ID!, $page: Int, $size: Int) {
+    flashcardSet(id: $id, page: $page, size: $size) {
       set {
         ...FlashcardSetFields
       }
       cards {
         ...FlashcardFields
       }
+      page
+      size
+      totalItems
+      totalPages
     }
   }
   ${FlashcardSetFieldsFragmentDoc}
@@ -7845,6 +8133,8 @@ export const FlashcardSetDetailDocument = gql`
  * const { data, loading, error } = useFlashcardSetDetailQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
  *   },
  * });
  */

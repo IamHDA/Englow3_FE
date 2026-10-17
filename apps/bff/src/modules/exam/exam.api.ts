@@ -24,6 +24,16 @@ const ATTEMPT_BASE_PATH = "/api/exam-attempts";
 export class ExamApi {
   constructor(private readonly client: BackendClient) {}
 
+  async activeAttempt(
+    examId: string,
+    mode: string,
+  ): Promise<ExamAttemptResponse | null> {
+    const attempts = await this.client.get<ExamAttemptResponse[]>(
+      `${EXAM_BASE_PATH}/${encodeURIComponent(examId)}/active-attempts?${toQueryString({ mode })}`,
+    );
+    return attempts[0] ?? null;
+  }
+
   draft(
     attemptId: string,
   ): Promise<import("../../generated/graphql.js").ExamDraft> {
@@ -70,7 +80,7 @@ export class ExamApi {
   /**
    * Opens an attempt, or hands back the one already open - the backend answers
    * 201 for a new attempt and 200 with `resumed: true` for an existing one, and
-   * a unique index stops a learner holding two at once.
+   * a unique index permits only one active attempt per paper and mode.
    */
   startAttempt(
     examId: string,

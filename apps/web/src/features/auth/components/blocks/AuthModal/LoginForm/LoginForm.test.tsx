@@ -93,7 +93,7 @@ describe("LoginForm", () => {
       }),
     );
     expect(refresh).toHaveBeenCalled();
-    expect(onSuccess).toHaveBeenCalled();
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
   });
 
   // Supabase's own text is English and written for developers; the learner

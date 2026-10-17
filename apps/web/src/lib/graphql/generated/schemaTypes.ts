@@ -769,6 +769,12 @@ export type Flashcard = {
   status: FlashcardReviewStatus;
 };
 
+export type FlashcardCatalogueInfo = {
+  __typename?: "FlashcardCatalogueInfo";
+  topics: Array<Scalars["String"]["output"]>;
+  totalDueCount: Scalars["Int"]["output"];
+};
+
 export type FlashcardDailyActivity = {
   __typename?: "FlashcardDailyActivity";
   cardCount: Scalars["Int"]["output"];
@@ -838,7 +844,11 @@ export type FlashcardSet = {
 export type FlashcardSetDetail = {
   __typename?: "FlashcardSetDetail";
   cards: Array<Flashcard>;
+  page: Scalars["Int"]["output"];
   set: FlashcardSet;
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
 };
 
 export type FlashcardSetPage = {
@@ -1083,7 +1093,7 @@ export type Mutation = {
   startAssessment: AssessmentUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
-   * backend enforces one live attempt per learner and exam, so calling this
+   * backend enforces one live attempt per learner, exam and mode, so calling this
    * twice does not create two.
    */
   startExamAttempt: ExamAttempt;
@@ -1387,6 +1397,7 @@ export enum OverviewContentKind {
 
 export type Query = {
   __typename?: "Query";
+  activeExamAttempt?: Maybe<ExamAttempt>;
   /**
    * The authoring list for one kind of content, at every status. Omitting
    * status asks for all of them, so this serves both the full list and the
@@ -1454,7 +1465,9 @@ export type Query = {
   examOutline: ExamOutline;
   /** Learner exam catalogue search - returns published exams. */
   exams: LearnerExamPage;
+  flashcardCatalogueInfo: FlashcardCatalogueInfo;
   flashcardSet: FlashcardSetDetail;
+  flashcardSetSummary: FlashcardSet;
   flashcardSets: FlashcardSetPage;
   /**
    * Everything the statistics screen shows, in one call. Six round trips to
@@ -1490,6 +1503,11 @@ export type Query = {
   speakingPrompts: SpeakingPromptPage;
   tutorConversation: TutorConversation;
   tutorConversations: Array<TutorConversationSummary>;
+};
+
+export type QueryActiveExamAttemptArgs = {
+  examId: Scalars["ID"]["input"];
+  mode: ExamAttemptMode;
 };
 
 export type QueryAdminContentArgs = {
@@ -1612,11 +1630,18 @@ export type QueryExamsArgs = {
 
 export type QueryFlashcardSetArgs = {
   id: Scalars["ID"]["input"];
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryFlashcardSetSummaryArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type QueryFlashcardSetsArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
+  sortBy?: InputMaybe<Scalars["String"]["input"]>;
   title?: InputMaybe<Scalars["String"]["input"]>;
   topic?: InputMaybe<Scalars["String"]["input"]>;
 };

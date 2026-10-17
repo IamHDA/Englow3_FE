@@ -72,6 +72,15 @@ export const flashcardTypeDefs = /* GraphQL */ `
   type FlashcardSetDetail {
     set: FlashcardSet!
     cards: [Flashcard!]!
+    page: Int!
+    size: Int!
+    totalItems: Int!
+    totalPages: Int!
+  }
+
+  type FlashcardCatalogueInfo {
+    topics: [String!]!
+    totalDueCount: Int!
   }
 
   type FlashcardReview {
@@ -125,11 +134,14 @@ export const flashcardTypeDefs = /* GraphQL */ `
     flashcardSets(
       topic: String
       title: String
+      sortBy: String = "due"
       page: Int = 0
       size: Int = 20
     ): FlashcardSetPage!
 
-    flashcardSet(id: ID!): FlashcardSetDetail!
+    flashcardSet(id: ID!, page: Int = 0, size: Int = 30): FlashcardSetDetail!
+    flashcardSetSummary(id: ID!): FlashcardSet!
+    flashcardCatalogueInfo: FlashcardCatalogueInfo!
 
     """
     What to study now: cards that are due, then unseen ones to fill the

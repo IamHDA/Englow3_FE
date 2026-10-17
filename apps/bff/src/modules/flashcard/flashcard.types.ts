@@ -14,7 +14,11 @@ export type FlashcardResponse =
 
 // GET /api/flashcards/sets/{id}
 export type FlashcardSetDetailResponse =
-  paths["/api/flashcards/sets/{id}"]["get"]["responses"][200]["content"]["application/json"];
+  paths["/api/flashcards/sets/{id}"]["get"]["responses"][200]["content"]["application/json"] &
+    Pick<
+      FlashcardSetPageResponse,
+      "page" | "size" | "totalItems" | "totalPages"
+    >;
 
 // POST /api/flashcards/{id}/reviews
 export type FlashcardReviewResponse =

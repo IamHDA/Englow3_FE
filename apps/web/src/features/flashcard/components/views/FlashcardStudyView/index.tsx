@@ -16,7 +16,7 @@ import { useFlashcardStudy } from "../../../hooks/useFlashcardStudy";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import {
-  useFlashcardSetDetailQuery,
+  useFlashcardSetSummaryQuery,
   useFlashcardStudyQueueQuery,
   useRateFlashcardMutation,
 } from "@/lib/graphql/generated/hooks";
@@ -46,13 +46,13 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
     variables: { setId },
     fetchPolicy: "network-only",
   });
-  const { data: setData } = useFlashcardSetDetailQuery({
+  const { data: setData } = useFlashcardSetSummaryQuery({
     variables: { id: setId },
   });
   const [rateFlashcard] = useRateFlashcardMutation();
 
   const cards = queueData?.flashcardStudyQueue ?? [];
-  const set = setData?.flashcardSet.set;
+  const set = setData?.flashcardSetSummary;
 
   const {
     currentIndex,

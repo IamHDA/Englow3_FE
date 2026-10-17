@@ -1,6 +1,7 @@
 "use client";
 
-import { Alert, Box, Pagination, Stack, Text } from "@mantine/core";
+import { Alert, Box, Button, Pagination, Stack, Text } from "@mantine/core";
+import { DictationStatsSkeleton } from "../../blocks/DictationStatsSkeleton";
 import { paginationControlProps } from "@/shared/a11y/paginationControls";
 import { useAllDictationLessons } from "../../../hooks/useAllDictationLessons";
 import { sortLessons } from "../../../lessonOrder";
@@ -34,6 +35,12 @@ export function DictationLibraryView({
   initialTab = "lessons",
 }: DictationLibraryViewProps) {
   const [activeTab, setActiveTab] = useState<"lessons" | "stats">(initialTab);
+  const changeTab = (tab: "lessons" | "stats") => {
+    setActiveTab(tab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    window.history.replaceState(null, "", url);
+  };
   const [selectedTopic, setSelectedTopic] = useState("ALL");
   const [selectedLevel, setSelectedLevel] = useState("ALL");
   const [selectedStatus, setSelectedStatus] = useState("ALL");
@@ -50,7 +57,12 @@ export function DictationLibraryView({
 
   // Chỉ gọi khi người dùng mở tab thống kê - xem danh sách bài thì không phải
   // trả giá cho một lượt tổng hợp mình chưa nhìn tới.
-  const { data: statsData } = useDictationStatsQuery({
+  const {
+    data: statsData,
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = useDictationStatsQuery({
     variables: { periodDays: STATS_PERIOD_DAYS[period] },
     skip: activeTab !== "stats",
     fetchPolicy: "cache-and-network",
@@ -117,7 +129,7 @@ export function DictationLibraryView({
     rangeRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
   };
 
-  if (loading && lessons.length === 0) {
+  if (activeTab === "lessons" && loading && lessons.length === 0) {
     return <DictationLibrarySkeleton />;
   }
 
@@ -131,7 +143,7 @@ export function DictationLibraryView({
   return (
     <Page>
       <Stack gap="xl">
-        <DictationHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        <DictationHeader activeTab={activeTab} onTabChange={changeTab} />
 
         {activeTab === "lessons" ? (
           <Stack gap="lg">
@@ -220,6 +232,14 @@ export function DictationLibraryView({
               </Box>
             )}
           </Stack>
+        ) : statsError ? (
+          <Alert color="warn" title={t.dictation.couldNotLoadLessons}>
+            <Button onClick={() => void refetchStats().catch(() => undefined)}>
+              {isVi ? "Thử lại" : "Retry"}
+            </Button>
+          </Alert>
+        ) : statsLoading && !stats ? (
+          <DictationStatsSkeleton />
         ) : (
           stats && (
             <Stack gap="xl">

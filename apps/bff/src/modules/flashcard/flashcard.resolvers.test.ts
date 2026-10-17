@@ -12,7 +12,11 @@ describe("Query.flashcardSets", () => {
     });
 
     expect(() =>
-      flashcardResolvers.Query.flashcardSets({}, { page: 0, size: 20 }, ctx),
+      flashcardResolvers.Query.flashcardSets(
+        {},
+        { page: 0, size: 20, sortBy: "due" },
+        ctx,
+      ),
     ).toThrow("Missing or invalid access token");
     expect(searchFlashcardSets).not.toHaveBeenCalled();
   });
@@ -25,11 +29,15 @@ describe("Query.flashcardSets", () => {
 
     await flashcardResolvers.Query.flashcardSets(
       {},
-      { page: 0, size: 5000 },
+      { page: 0, size: 5000, sortBy: "due" },
       ctx,
     );
 
-    expect(searchFlashcardSets).toHaveBeenCalledWith({ page: 0, size: 100 });
+    expect(searchFlashcardSets).toHaveBeenCalledWith({
+      page: 0,
+      size: 100,
+      sortBy: "due",
+    });
   });
 
   it("forwards the filters as given", async () => {
@@ -40,7 +48,13 @@ describe("Query.flashcardSets", () => {
 
     await flashcardResolvers.Query.flashcardSets(
       {},
-      { topic: "TOEIC", title: "unit 1", page: 2, size: 10 },
+      {
+        topic: "TOEIC",
+        title: "unit 1",
+        page: 2,
+        size: 10,
+        sortBy: "progress",
+      },
       ctx,
     );
 
@@ -49,11 +63,22 @@ describe("Query.flashcardSets", () => {
       title: "unit 1",
       page: 2,
       size: 10,
+      sortBy: "progress",
     });
   });
 });
 
 describe("Query.flashcardStudyQueue", () => {
+  it("forwards the card page and caps its size", async () => {
+    const getFlashcardSet = vi.fn().mockResolvedValue({});
+    const ctx = makeContext({ apis: { flashcardApi: { getFlashcardSet } } });
+    await flashcardResolvers.Query.flashcardSet(
+      {},
+      { id: "deck", page: 2, size: 5000 },
+      ctx,
+    );
+    expect(getFlashcardSet).toHaveBeenCalledWith("deck", 2, 100);
+  });
   it("caps the queue length", async () => {
     const getStudyQueue = vi.fn().mockResolvedValue([]);
     const ctx = makeContext({ apis: { flashcardApi: { getStudyQueue } } });

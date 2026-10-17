@@ -2,14 +2,20 @@
 
 import {
   Alert,
+  Button,
+  Pagination,
+  Skeleton,
   Group,
   Paper,
   SegmentedControl,
   Stack,
   Text,
 } from "@mantine/core";
-import { useMemo, useState } from "react";
-import { FlashcardDashboardSkeleton } from "../../blocks/FlashcardDashboardSkeleton";
+import { useEffect, useState } from "react";
+import {
+  flashcardFiltersFromUrl,
+  type FlashcardCatalogueFilters,
+} from "../../../catalogueFilters";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
 // hooks để Server Component không kéo theo "@apollo/client/react".
 import {
@@ -29,25 +35,43 @@ import { FlashcardSetList } from "../../blocks/FlashcardSetList";
 import { FlashcardStatsOverview } from "../../blocks/FlashcardStatsOverview";
 import { Page } from "@/shared/components/Page";
 
-/** Một trang bộ thẻ. Phân trang thật sẽ cần tới khi thư viện vượt quá con số này. */
-const PAGE_SIZE = 50;
-
-/** Tỉ lệ đã thuộc, suy ra từ hai con số backend trả về chứ không lưu sẵn. */
-function masteredShare(set: { masteredCount: number; cardCount: number }) {
-  return set.cardCount === 0 ? 0 : set.masteredCount / set.cardCount;
-}
+const PAGE_SIZE = 20;
 
 interface FlashcardDashboardViewProps {
   initialTab?: "decks" | "stats";
+  initialFilters?: FlashcardCatalogueFilters;
 }
 
 export function FlashcardDashboardView({
   initialTab = "decks",
+  initialFilters = flashcardFiltersFromUrl({}),
 }: FlashcardDashboardViewProps) {
   const [activeTab, setActiveTab] = useState<"decks" | "stats">(initialTab);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTopic, setSelectedTopic] = useState("ALL");
-  const [selectedSort, setSelectedSort] = useState("due");
+  const [filters, setFilters] = useState(initialFilters);
+  const { q: searchQuery, topic: selectedTopic, sort: selectedSort } = filters;
+  useEffect(() => {
+    const restore = () => {
+      const params = new URL(window.location.href).searchParams;
+      const values = Object.fromEntries(
+        [...params.keys()].map((key) => [key, params.get(key) ?? undefined]),
+      );
+      setFilters(flashcardFiltersFromUrl(values));
+      setActiveTab(values.tab === "stats" ? "stats" : "decks");
+    };
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, []);
+  const changeFilters = (patch: Partial<FlashcardCatalogueFilters>) => {
+    const next = { ...filters, ...patch, page: patch.page ?? 1 };
+    setFilters(next);
+    const url = new URL(window.location.href);
+    for (const [key, value] of Object.entries(next)) {
+      if ((key === "topic" && value === "ALL") || value === "")
+        url.searchParams.delete(key);
+      else url.searchParams.set(key, String(value));
+    }
+    window.history.pushState(null, "", url);
+  };
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const changeTab = (tab: "decks" | "stats") => {
@@ -63,7 +87,12 @@ export function FlashcardDashboardView({
 
   // Chỉ gọi khi người dùng mở tab thống kê - mở trang để xem bộ thẻ thì không
   // phải trả giá cho một lượt tổng hợp mình chưa nhìn tới.
-  const { data: statsData } = useFlashcardStatsQuery({
+  const {
+    data: statsData,
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = useFlashcardStatsQuery({
     variables: { periodDays: STATS_PERIOD_DAYS[period] },
     skip: activeTab !== "stats",
     fetchPolicy: "cache-and-network",
@@ -73,52 +102,25 @@ export function FlashcardDashboardView({
     ? toStatsData(statsData.flashcardStats, period, isVi)
     : null;
 
-  const { data, loading, error } = useFlashcardSetsQuery({
-    variables: { size: PAGE_SIZE },
-    fetchPolicy: "cache-and-network",
-  });
-
-  const sets = useMemo(() => data?.flashcardSets.items ?? [], [data]);
-
-  const totalDueCount = useMemo(
-    () => sets.reduce((acc, set) => acc + set.dueCount, 0),
-    [sets],
+  const { data, previousData, loading, error, refetch } = useFlashcardSetsQuery(
+    {
+      variables: {
+        size: PAGE_SIZE,
+        page: filters.page - 1,
+        topic: selectedTopic === "ALL" ? null : selectedTopic,
+        title: searchQuery || null,
+        sortBy: selectedSort,
+      },
+      skip: activeTab !== "decks",
+      fetchPolicy: "network-only",
+    },
   );
 
-  // Lọc và sắp xếp tại chỗ: một trang hai mươi bộ thì gửi thêm tham số lên
-  // server chỉ đổi một lượt round trip lấy một vòng lặp.
-  const filteredSets = useMemo(() => {
-    return sets
-      .filter((set) => {
-        if (selectedTopic !== "ALL" && set.topic !== selectedTopic) {
-          return false;
-        }
-        if (
-          searchQuery.trim() &&
-          !set.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !set.description.toLowerCase().includes(searchQuery.toLowerCase())
-        ) {
-          return false;
-        }
-        return true;
-      })
-      .sort((a, b) => {
-        if (selectedSort === "due") {
-          return b.dueCount - a.dueCount;
-        }
-        if (selectedSort === "progress") {
-          return masteredShare(b) - masteredShare(a);
-        }
-        if (selectedSort === "cards") {
-          return b.cardCount - a.cardCount;
-        }
-        return 0;
-      });
-  }, [sets, searchQuery, selectedSort, selectedTopic]);
-
-  if (loading && sets.length === 0) {
-    return <FlashcardDashboardSkeleton />;
-  }
+  const sets = data?.flashcardSets.items ?? [];
+  const catalogueInfo =
+    data?.flashcardCatalogueInfo ?? previousData?.flashcardCatalogueInfo;
+  const totalDueCount = catalogueInfo?.totalDueCount ?? 0;
+  const filteredSets = sets;
 
   return (
     <Page>
@@ -127,9 +129,15 @@ export function FlashcardDashboardView({
 
         {activeTab === "decks" ? (
           <>
-            {error && sets.length === 0 && (
+            {error && (
               <Alert color="warn" title={t.flashcard.couldNotLoadSets}>
                 {t.dictation.checkConnectionReload}
+                <Button
+                  variant="subtle"
+                  onClick={() => void refetch().catch(() => undefined)}
+                >
+                  {isVi ? "Thử lại" : "Retry"}
+                </Button>
               </Alert>
             )}
 
@@ -141,22 +149,28 @@ export function FlashcardDashboardView({
             />
 
             <FlashcardFilters
+              topics={catalogueInfo?.topics ?? []}
               searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
+              onSearchChange={(q) => changeFilters({ q })}
               selectedTopic={selectedTopic}
-              onTopicChange={setSelectedTopic}
+              onTopicChange={(topic) => changeFilters({ topic })}
               selectedSort={selectedSort}
-              onSortChange={setSelectedSort}
+              onSortChange={(sort) => changeFilters({ sort })}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
             />
 
-            {filteredSets.length === 0 && !error ? (
+            {loading ? (
+              <Stack aria-busy="true">
+                <Skeleton h={160} />
+                <Skeleton h={160} />
+              </Stack>
+            ) : filteredSets.length === 0 && !error ? (
               // Trống thì nói vì sao: chưa có bộ nào, hay bộ lọc loại hết.
               // Trước đây chỗ này để trắng, trông như trang tải hỏng.
               <Paper withBorder radius="md" p="xl">
                 <Text ta="center" c="dimmed" fz="sm">
-                  {sets.length === 0
+                  {selectedTopic === "ALL" && !searchQuery
                     ? t.flashcard.noSetsPublished
                     : t.flashcard.noSetsMatchFilters}
                 </Text>
@@ -166,7 +180,27 @@ export function FlashcardDashboardView({
             ) : (
               <FlashcardSetList sets={filteredSets} />
             )}
+            {(data?.flashcardSets.totalPages ?? 0) > 1 && (
+              <Pagination
+                total={data!.flashcardSets.totalPages}
+                value={filters.page}
+                onChange={(page) => changeFilters({ page })}
+                disabled={loading}
+              />
+            )}
           </>
+        ) : statsError ? (
+          <Alert color="warn" title={t.flashcard.couldNotLoadSets}>
+            <Button onClick={() => void refetchStats().catch(() => undefined)}>
+              {isVi ? "Thử lại" : "Retry"}
+            </Button>
+          </Alert>
+        ) : statsLoading && !stats ? (
+          <Stack aria-busy="true">
+            <Skeleton h={100} />
+            <Skeleton h={260} />
+            <Skeleton h={180} />
+          </Stack>
         ) : (
           stats && (
             <>

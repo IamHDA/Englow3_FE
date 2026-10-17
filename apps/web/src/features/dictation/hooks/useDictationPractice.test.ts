@@ -47,6 +47,20 @@ const submission: DictationSubmission = {
 };
 
 describe("useDictationPractice", () => {
+  it("keeps typed text when trying again and records the edited answer", async () => {
+    const checkSentence = vi.fn().mockResolvedValue(submission);
+    const { result } = renderHook(() =>
+      useDictationPractice(lesson, [sentence], checkSentence),
+    );
+    act(() => result.current.handleType("Good mornin"));
+    await act(async () => result.current.checkAnswer());
+    act(() => result.current.tryAgain());
+    expect(result.current.typedText).toBe("Good mornin");
+    expect(result.current.isChecked).toBe(false);
+    act(() => result.current.handleType("Good morning"));
+    await act(async () => result.current.checkAnswer());
+    expect(checkSentence).toHaveBeenLastCalledWith(sentence.id, "Good morning");
+  });
   it("keeps the answer when grading fails", async () => {
     const checkSentence = vi.fn().mockRejectedValue(new Error("offline"));
     const { result } = renderHook(() =>

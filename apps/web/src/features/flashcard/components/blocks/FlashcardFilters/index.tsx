@@ -14,6 +14,7 @@ import React from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface FlashcardFiltersProps {
+  topics?: string[];
   searchQuery: string;
   onSearchChange: (val: string) => void;
   selectedTopic: string;
@@ -25,6 +26,7 @@ interface FlashcardFiltersProps {
 }
 
 export function FlashcardFilters({
+  topics: availableTopics = [],
   searchQuery,
   onSearchChange,
   selectedTopic,
@@ -38,10 +40,15 @@ export function FlashcardFilters({
 
   const topics = [
     { key: "ALL", label: t.flashcard.allTopicsChip },
-    { key: "IELTS", label: "IELTS" },
-    { key: "TOEIC", label: "TOEIC" },
-    { key: "Daily Conversation", label: t.flashcard.dailyConversationChip },
-    { key: "Travel", label: t.flashcard.travelChip },
+    ...availableTopics.map((key) => ({
+      key,
+      label:
+        key === "Daily Conversation"
+          ? t.flashcard.dailyConversationChip
+          : key === "Travel"
+            ? t.flashcard.travelChip
+            : key,
+    })),
   ];
 
   return (

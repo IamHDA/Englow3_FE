@@ -15,12 +15,25 @@ const FLASHCARD_BASE_PATH = "/api/flashcards";
 export class FlashcardApi {
   constructor(private readonly client: BackendClient) {}
 
+  catalogueInfo(): Promise<{ topics: string[]; totalDueCount: number }> {
+    return this.client.get(FLASHCARD_BASE_PATH + "/sets/catalogue-info");
+  }
+
+  setSummary(
+    id: string,
+  ): Promise<import("./flashcard.types.js").FlashcardSetResponse> {
+    return this.client.get(
+      FLASHCARD_BASE_PATH + "/sets/" + encodeURIComponent(id) + "/summary",
+    );
+  }
+
   searchFlashcardSets(
     params: QueryFlashcardSetsArgs,
   ): Promise<FlashcardSetPageResponse> {
     const query = toQueryString({
       topic: params.topic,
       title: params.title,
+      sortBy: params.sortBy ?? "due",
       page: params.page ?? 0,
       size: params.size ?? 20,
     });
@@ -28,9 +41,17 @@ export class FlashcardApi {
     return this.client.get(`${FLASHCARD_BASE_PATH}/sets?${query}`);
   }
 
-  getFlashcardSet(id: string): Promise<FlashcardSetDetailResponse> {
+  getFlashcardSet(
+    id: string,
+    page = 0,
+    size = 30,
+  ): Promise<FlashcardSetDetailResponse> {
     return this.client.get(
-      `${FLASHCARD_BASE_PATH}/sets/${encodeURIComponent(id)}`,
+      FLASHCARD_BASE_PATH +
+        "/sets/" +
+        encodeURIComponent(id) +
+        "?" +
+        toQueryString({ page, size }),
     );
   }
 

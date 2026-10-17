@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import {
   Alert,
   Button,
@@ -35,7 +37,25 @@ import { ProfileTargetCard } from "../../blocks/ProfileTargetCard";
 import classes from "./ProfileView.module.css";
 import { PageHeader } from "@/shared/components/Page";
 
-export function ProfileView() {
+function validTab(tab: string | null) {
+  return tab === "learning" || tab === "security" ? tab : "info";
+}
+
+export function ProfileView({ initialTab = "info" }: { initialTab?: string }) {
+  const [tab, setTab] = useState(validTab(initialTab));
+  useEffect(() => {
+    const restore = () =>
+      setTab(validTab(new URL(window.location.href).searchParams.get("tab")));
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, []);
+  const changeTab = (next: string | null) => {
+    const selected = validTab(next);
+    setTab(selected);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", selected);
+    window.history.replaceState(null, "", url);
+  };
   const { profile, loading, hasError, refresh } = useAccountProfile();
   const [updateProfile, { loading: isSubmitting }] = useUpdateProfileMutation();
   const { t } = useLanguage();
@@ -133,7 +153,13 @@ export function ProfileView() {
 
         {/* Right Column: Interactive Tabs */}
         <Grid.Col span={{ base: 12, lg: 8 }}>
-          <Tabs defaultValue="info" variant="outline" radius="md">
+          <Tabs
+            value={tab}
+            onChange={changeTab}
+            variant="pills"
+            radius="md"
+            keepMounted
+          >
             <Tabs.List mb="md" className={classes.tabsList}>
               <Tabs.Tab
                 value="info"

@@ -32,8 +32,24 @@ fragment FlashcardFields on Flashcard {
   lapseCount
 }
 
-query FlashcardSets($topic: String, $title: String, $page: Int, $size: Int) {
-  flashcardSets(topic: $topic, title: $title, page: $page, size: $size) {
+query FlashcardSets(
+  $topic: String
+  $title: String
+  $sortBy: String
+  $page: Int
+  $size: Int
+) {
+  flashcardCatalogueInfo {
+    topics
+    totalDueCount
+  }
+  flashcardSets(
+    topic: $topic
+    title: $title
+    sortBy: $sortBy
+    page: $page
+    size: $size
+  ) {
     items {
       ...FlashcardSetFields
     }
@@ -44,14 +60,24 @@ query FlashcardSets($topic: String, $title: String, $page: Int, $size: Int) {
   }
 }
 
-query FlashcardSetDetail($id: ID!) {
-  flashcardSet(id: $id) {
+query FlashcardSetSummary($id: ID!) {
+  flashcardSetSummary(id: $id) {
+    ...FlashcardSetFields
+  }
+}
+
+query FlashcardSetDetail($id: ID!, $page: Int, $size: Int) {
+  flashcardSet(id: $id, page: $page, size: $size) {
     set {
       ...FlashcardSetFields
     }
     cards {
       ...FlashcardFields
     }
+    page
+    size
+    totalItems
+    totalPages
   }
 }
 

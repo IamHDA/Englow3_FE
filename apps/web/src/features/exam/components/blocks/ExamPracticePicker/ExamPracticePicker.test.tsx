@@ -58,9 +58,35 @@ function renderPicker(onStart = vi.fn()) {
 }
 
 const startButton = () =>
-  screen.getByRole("button", { name: /luyện tập|start practice/i });
+  screen.getByRole("button", { name: /Làm bài mới|Start a new practice/i });
 
 describe("ExamPracticePicker", () => {
+  it("can preview an unfinished practice before selecting parts for a new attempt", () => {
+    const onResume = vi.fn();
+    const onStart = vi.fn();
+    render(
+      <MantineProvider>
+        <ExamPracticePicker
+          sections={sections}
+          loading={false}
+          failed={false}
+          starting={false}
+          onRetry={vi.fn()}
+          onStart={onStart}
+          hasActiveAttempt
+          onResume={onResume}
+        />
+      </MantineProvider>,
+    );
+    expect(startButton()).toBeDisabled();
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Làm tiếp bài dở|Continue unfinished practice/i,
+      }),
+    );
+    expect(onResume).toHaveBeenCalledOnce();
+    expect(onStart).not.toHaveBeenCalled();
+  });
   it("cannot start until a part is chosen", () => {
     renderPicker();
     expect(startButton()).toBeDisabled();

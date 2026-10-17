@@ -8,10 +8,15 @@ export const metadata: Metadata = {
   description: "Quản lý thông tin tài khoản và thông tin cá nhân trên Englow3",
 };
 
-export default function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
   return (
     <Page>
-      <ProfileView />
+      <ProfileView initialTab={tab} />
     </Page>
   );
 }

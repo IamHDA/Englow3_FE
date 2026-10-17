@@ -30,7 +30,7 @@ export function SiteHeaderUserMenu({
   // Đăng xuất đi qua AuthProvider chứ không gọi thẳng supabase ở đây: nếu gọi
   // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
   // là chuẩn.
-  const { session, signOut } = useAuth();
+  const { session, signOut, isSigningOut } = useAuth();
   const { t, isVi } = useLanguage();
   const { canReplay, replay } = useUserTour();
 
@@ -95,7 +95,8 @@ export function SiteHeaderUserMenu({
         <Menu.Divider />
         <Menu.Item
           leftSection={<LogOut aria-hidden="true" size={16} />}
-          onClick={() => signOut()}
+          disabled={isSigningOut}
+          onClick={() => void signOut()}
         >
           {t.nav.logout}
         </Menu.Item>

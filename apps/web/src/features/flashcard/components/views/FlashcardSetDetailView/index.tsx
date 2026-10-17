@@ -8,10 +8,12 @@ import {
   Card,
   Group,
   Progress,
+  Pagination,
   Stack,
   Table,
   Text,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconArrowLeft,
@@ -21,7 +23,7 @@ import {
   IconVolume,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { FlashcardReviewStatus } from "@/lib/graphql/generated";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
@@ -39,8 +41,9 @@ interface FlashcardSetDetailViewProps {
 
 export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
   const { isVi, t } = useLanguage();
+  const [page, setPage] = useState(1);
   const { data, loading, error, refetch } = useFlashcardSetDetailQuery({
-    variables: { id: setId },
+    variables: { id: setId, page: page - 1, size: 30 },
     fetchPolicy: "cache-and-network",
   });
 
@@ -195,7 +198,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
               <Text fw={700} fz="md" c="dark.9">
                 {t.flashcard.deckWordListTitle.replace(
                   "{count}",
-                  String(cards.length),
+                  String(set.cardCount),
                 )}
               </Text>
               <Text fz="xs" c="dimmed">
@@ -203,84 +206,121 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
               </Text>
             </Group>
 
-            <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>{t.dictation.wordColumn}</Table.Th>
-                  <Table.Th>{t.flashcard.ipaColumn}</Table.Th>
-                  <Table.Th>{t.flashcard.partOfSpeechColumn}</Table.Th>
-                  <Table.Th>{t.flashcard.definitionColumn}</Table.Th>
-                  <Table.Th>{t.flashcard.englishMeaningColumn}</Table.Th>
-                  <Table.Th>{t.flashcard.statusColumn}</Table.Th>
-                  <Table.Th ta="right">{t.flashcard.audioColumn}</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {cards.map((card) => (
-                  <Table.Tr key={card.id}>
-                    <Table.Td>
-                      <Text fw={700} c="indigo">
-                        {card.lemma}
-                      </Text>
-                    </Table.Td>
-                    <Table.Td>
-                      <Text fz="xs" c="dimmed" fs="italic">
-                        {card.ipaUs}
-                      </Text>
-                    </Table.Td>
-                    <Table.Td>
-                      <Badge variant="outline" color="gray" size="xs">
-                        {card.partOfSpeech}
-                      </Badge>
-                    </Table.Td>
-                    <Table.Td>
-                      <Text fz="sm">{card.definitionVi}</Text>
-                    </Table.Td>
-                    <Table.Td>
-                      <Text fz="xs" c="dimmed">
-                        {card.definitionEn}
-                      </Text>
-                    </Table.Td>
-                    <Table.Td>
-                      {card.status === FlashcardReviewStatus.MASTERED && (
-                        <Badge color="teal" variant="light" size="xs">
-                          {t.flashcard.mastered}
-                        </Badge>
-                      )}
-                      {card.status === FlashcardReviewStatus.REVIEW && (
-                        <Badge color="indigo" variant="light" size="xs">
-                          {t.flashcard.reviewStatusBadge}
-                        </Badge>
-                      )}
-                      {card.status === FlashcardReviewStatus.LEARNING && (
-                        <Badge color="blue" variant="light" size="xs">
-                          {t.flashcard.learningStatusBadge}
-                        </Badge>
-                      )}
-                      {card.status === FlashcardReviewStatus.NEW && (
-                        <Badge color="gray" variant="light" size="xs">
-                          {t.flashcard.newStatusBadge}
-                        </Badge>
-                      )}
-                    </Table.Td>
-                    <Table.Td ta="right">
-                      <ActionIcon
-                        variant="subtle"
-                        color="indigo"
-                        size="sm"
-                        onClick={() => handleSpeak(card.lemma)}
-                        aria-label={t.flashcard.listenWordAria.replace(
-                          "{word}",
-                          card.lemma,
-                        )}
-                      >
-                        <IconVolume size={16} />
-                      </ActionIcon>
-                    </Table.Td>
+            <Table.ScrollContainer minWidth={900}>
+              <Table
+                verticalSpacing="sm"
+                horizontalSpacing="md"
+                highlightOnHover
+                styles={{ td: { verticalAlign: "top" } }}
+              >
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>{t.dictation.wordColumn}</Table.Th>
+                    <Table.Th>{t.flashcard.ipaColumn}</Table.Th>
+                    <Table.Th>{t.flashcard.partOfSpeechColumn}</Table.Th>
+                    <Table.Th>{t.flashcard.definitionColumn}</Table.Th>
+                    <Table.Th>{t.flashcard.englishMeaningColumn}</Table.Th>
+                    <Table.Th>{t.flashcard.statusColumn}</Table.Th>
+                    <Table.Th ta="right">{t.flashcard.audioColumn}</Table.Th>
                   </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
+                </Table.Thead>
+                <Table.Tbody>
+                  {cards.map((card) => (
+                    <Table.Tr key={card.id}>
+                      <Table.Td>
+                        <Text fw={700} c="indigo">
+                          {card.lemma}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td>
+                        <Text fz="xs" c="dimmed" fs="italic">
+                          {card.ipaUs}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td>
+                        <Tooltip
+                          label={card.partOfSpeech}
+                          events={{ hover: true, focus: true, touch: true }}
+                        >
+                          <Badge
+                            tabIndex={0}
+                            variant="outline"
+                            color="gray"
+                            size="sm"
+                          >
+                            {(
+                              {
+                                noun: "N",
+                                adjective: "ADJ",
+                                verb: "V",
+                                adverb: "ADV",
+                                pronoun: "PRON",
+                                preposition: "PREP",
+                                conjunction: "CONJ",
+                                interjection: "INT",
+                              } as Record<string, string>
+                            )[card.partOfSpeech.toLowerCase()] ??
+                              card.partOfSpeech}
+                          </Badge>
+                        </Tooltip>
+                      </Table.Td>
+                      <Table.Td>
+                        <Text fz="sm">{card.definitionVi}</Text>
+                      </Table.Td>
+                      <Table.Td>
+                        <Text fz="xs" c="dimmed">
+                          {card.definitionEn}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td miw={140}>
+                        {card.status === FlashcardReviewStatus.MASTERED && (
+                          <Badge color="teal" variant="light" size="xs">
+                            {t.flashcard.mastered}
+                          </Badge>
+                        )}
+                        {card.status === FlashcardReviewStatus.REVIEW && (
+                          <Badge color="indigo" variant="light" size="xs">
+                            {t.flashcard.reviewStatusBadge}
+                          </Badge>
+                        )}
+                        {card.status === FlashcardReviewStatus.LEARNING && (
+                          <Badge color="blue" variant="light" size="xs">
+                            {t.flashcard.learningStatusBadge}
+                          </Badge>
+                        )}
+                        {card.status === FlashcardReviewStatus.NEW && (
+                          <Badge color="gray" variant="light" size="xs">
+                            {t.flashcard.newStatusBadge}
+                          </Badge>
+                        )}
+                      </Table.Td>
+                      <Table.Td ta="right">
+                        <ActionIcon
+                          variant="subtle"
+                          color="indigo"
+                          size="sm"
+                          onClick={() => handleSpeak(card.lemma)}
+                          aria-label={t.flashcard.listenWordAria.replace(
+                            "{word}",
+                            card.lemma,
+                          )}
+                        >
+                          <IconVolume size={16} />
+                        </ActionIcon>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Table.ScrollContainer>
+            {(data.flashcardSet.totalPages ?? 0) > 1 && (
+              <Pagination
+                total={data.flashcardSet.totalPages}
+                value={page}
+                onChange={setPage}
+                disabled={loading}
+              />
+            )}
           </Stack>
         </Card>
       </Stack>

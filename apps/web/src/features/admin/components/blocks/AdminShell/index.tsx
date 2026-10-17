@@ -32,7 +32,7 @@ import { useAssessmentWorkloadQuery } from "@/lib/graphql/generated/hooks";
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [opened, { toggle, close }] = useDisclosure(false);
-  const { session, signOut } = useAuth();
+  const { session, signOut, isSigningOut } = useAuth();
   const { profile } = useAccountProfile();
   const { replay } = useUserTour();
   const { isVi, toggleLanguage } = useLanguage();
@@ -213,6 +213,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               justify="flex-start"
               leftSection={<LogOut size={16} />}
               onClick={() => void signOut()}
+              loading={isSigningOut}
             >
               {isVi ? "Đăng xuất" : "Sign out"}
             </Button>

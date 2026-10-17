@@ -3,6 +3,10 @@ import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 export const examResolvers = {
   Query: {
+    activeExamAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.activeAttempt(args.examId, args.mode);
+    },
     examDraft: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.draft(args.attemptId);
