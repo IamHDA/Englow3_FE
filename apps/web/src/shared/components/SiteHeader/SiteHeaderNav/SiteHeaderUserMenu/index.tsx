@@ -20,7 +20,13 @@ export function SiteHeaderUserMenu({
   // Đăng xuất đi qua AuthProvider chứ không gọi thẳng supabase ở đây: nếu gọi
   // thẳng thì có hai đường đăng xuất song song và context không biết đường nào
   // là chuẩn.
+<<<<<<< Updated upstream
   const { signOut } = useAuth();
+=======
+  const { session, signOut, isSigningOut } = useAuth();
+  const { t, isVi } = useLanguage();
+  const { canReplay, replay } = useUserTour();
+>>>>>>> Stashed changes
 
   // "Hồ sơ của tôi" và "Cài đặt" chặn khi chưa onboarding; "Đăng xuất" thì
   // không - đó là lối thoát cuối cùng, chặn nốt thì người dùng kẹt hẳn trong
@@ -61,7 +67,8 @@ export function SiteHeaderUserMenu({
         <Menu.Divider />
         <Menu.Item
           leftSection={<LogOut aria-hidden="true" size={16} />}
-          onClick={() => signOut()}
+          disabled={isSigningOut}
+          onClick={() => void signOut()}
         >
           Đăng xuất
         </Menu.Item>

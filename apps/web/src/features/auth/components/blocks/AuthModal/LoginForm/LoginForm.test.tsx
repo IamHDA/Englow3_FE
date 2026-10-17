@@ -95,7 +95,7 @@ describe("LoginForm", () => {
       }),
     );
     expect(refresh).toHaveBeenCalled();
-    expect(onSuccess).toHaveBeenCalled();
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
   });
 
   it("shows a toast when Supabase rejects the credentials", async () => {

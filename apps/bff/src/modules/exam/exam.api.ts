@@ -10,6 +10,116 @@ const ADMIN_EXAM_BASE_PATH = "/api/admin/exams";
 export class ExamApi {
   constructor(private readonly client: BackendClient) {}
 
+<<<<<<< Updated upstream
+=======
+  async activeAttempt(
+    examId: string,
+    mode: string,
+  ): Promise<ExamAttemptResponse | null> {
+    const attempts = await this.client.get<ExamAttemptResponse[]>(
+      EXAM_BASE_PATH +
+        "/" +
+        encodeURIComponent(examId) +
+        "/active-attempts?" +
+        toQueryString({ mode }),
+    );
+    return attempts[0] ?? null;
+  }
+
+  draft(
+    attemptId: string,
+  ): Promise<import("../../generated/graphql.js").ExamDraft> {
+    return this.client.get(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/draft`,
+    );
+  }
+  saveDraft(
+    attemptId: string,
+    version: number,
+    answers: SubmittedAnswer[],
+  ): Promise<import("../../generated/graphql.js").ExamDraft> {
+    return this.client.put(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/draft`,
+      { version, answers },
+    );
+  }
+
+  /** Learner search on the backend (/api/exams) - returns published exams. */
+  searchAsLearner(params: QueryExamsArgs): Promise<LearnerExamPageResponse> {
+    const query = toQueryString({
+      examType: params.examType,
+      certificateType: params.certificateType,
+      certificateVariant: params.certificateVariant,
+      targetLevel: params.targetLevel,
+      title: params.title,
+      sortBy: params.sortBy,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    });
+
+    return this.client.get(`${EXAM_BASE_PATH}?${query}`);
+  }
+
+  /** The placement paper to sit. 404 when the deployment has none published. */
+  getPlacementExam(): Promise<LearnerExamItemResponse> {
+    return this.client.get(`${EXAM_BASE_PATH}/placement`);
+  }
+
+  getByIdAsLearner(id: string): Promise<LearnerExamItemResponse> {
+    return this.client.get(`${EXAM_BASE_PATH}/${encodeURIComponent(id)}`);
+  }
+
+  /**
+   * Opens an attempt, or hands back the one already open - the backend answers
+   * 201 for a new attempt and 200 with `resumed: true` for an existing one, and
+   * a unique index permits only one active attempt per paper and mode.
+   */
+  startAttempt(
+    examId: string,
+    request?: StartExamAttemptRequest,
+  ): Promise<ExamAttemptResponse> {
+    return this.client.post(
+      `${EXAM_BASE_PATH}/${encodeURIComponent(examId)}/attempts`,
+      request,
+    );
+  }
+
+  /** Skills and parts with question counts - what a practice is picked from. */
+  getOutline(examId: string): Promise<ExamOutlineResponse> {
+    return this.client.get(
+      `${EXAM_BASE_PATH}/${encodeURIComponent(examId)}/outline`,
+    );
+  }
+
+  /** The paper is reachable only through an attempt, never by exam id. */
+  getAttemptPaper(attemptId: string): Promise<ExamPaperResponse> {
+    return this.client.get(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/paper`,
+    );
+  }
+
+  submitAttempt(
+    attemptId: string,
+    answers: SubmittedAnswer[],
+  ): Promise<ExamAttemptResponse> {
+    return this.client.post(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/submit`,
+      { answers },
+    );
+  }
+
+  /** The learner's own sittings, newest first. No review data on these rows. */
+  listAttempts(page: number, size: number): Promise<ExamAttemptPageResponse> {
+    return this.client.get(`${ATTEMPT_BASE_PATH}?page=${page}&size=${size}`);
+  }
+
+  getAttemptResult(attemptId: string): Promise<ExamAttemptResponse> {
+    return this.client.get(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/result`,
+    );
+  }
+
+>>>>>>> Stashed changes
   /** Admin-only on the backend (@PreAuthorize hasRole ADMIN) - it answers 403 for anyone else. */
   searchAsAdmin(params: SearchExamsParams): Promise<ExamPageResponse> {
     const query = new URLSearchParams();

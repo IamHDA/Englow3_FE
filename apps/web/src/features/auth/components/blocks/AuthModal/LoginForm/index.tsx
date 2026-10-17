@@ -13,6 +13,10 @@ import {
 import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+<<<<<<< Updated upstream
+=======
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+>>>>>>> Stashed changes
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -34,6 +38,20 @@ type LoginFormProps = {
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const router = useRouter();
+<<<<<<< Updated upstream
+=======
+  const [isNavigating, startTransition] = useTransition();
+  const [authenticated, setAuthenticated] = useState(false);
+  const completed = useRef(false);
+  useEffect(() => {
+    if (authenticated && !isNavigating && !completed.current) {
+      completed.current = true;
+      onSuccess();
+    }
+  }, [authenticated, isNavigating, onSuccess]);
+  const { t, isVi } = useLanguage();
+  const schema = useMemo(() => loginSchema(isVi), [isVi]);
+>>>>>>> Stashed changes
   const {
     register,
     handleSubmit,
@@ -46,11 +64,35 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   });
 
   async function onSubmit({ email, password, rememberMe }: LoginValues) {
+<<<<<<< Updated upstream
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) {
+=======
+    if (authenticated || isNavigating) return;
+    try {
+      const result = await signInWithPassword({ email, password, rememberMe });
+      if (result.error) {
+        notifications.show({
+          color: "warn",
+          title: isVi ? "Không thể đăng nhập" : "Could not sign in",
+          message: authErrorMessage(result.error, isVi),
+        });
+        return;
+      }
+      announceSessionChange();
+      setAuthenticated(true);
+      // Each role lands where its work is: staff and administrators in the
+      // administration area, a learner on the page they signed in from.
+      const home = homeForRole(result.session?.role);
+      startTransition(() => {
+        if (home) router.push(home);
+        else router.refresh();
+      });
+    } catch {
+>>>>>>> Stashed changes
       notifications.show({
         color: "warn",
         title: "Không thể đăng nhập",
@@ -158,7 +200,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
       <Button
         type="submit"
-        loading={isSubmitting}
+        loading={isSubmitting || isNavigating || authenticated}
         color="orange.5"
         radius={12}
         h={48}
