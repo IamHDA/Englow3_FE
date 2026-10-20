@@ -19,7 +19,11 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { readTutorStream } from "./tutorStream";
 import type { TutorConversationSummary, TutorMessage } from "../types";
-import { POLL_INTERVAL_MS, POLL_TIMEOUT_MS } from "../constants/tutorChat";
+import {
+  FAST_POLL_WINDOW_MS,
+  POLL_INTERVAL_MS,
+  POLL_TIMEOUT_MS,
+} from "../constants/tutorChat";
 
 export type TutorMode = "GENERAL" | "CORRECTION" | "CONVERSATION" | "PRACTICE";
 type Delivery = {
@@ -286,6 +290,7 @@ export function useTutorChat(
       let cursor = "";
       let tryStream = streamEnabled.current;
       const step = async () => {
+        let responsive = false;
         if (version !== generation.current) return;
         if (Date.now() - started >= POLL_TIMEOUT_MS) {
           setError(
@@ -375,6 +380,7 @@ export function useTutorChat(
               setUpdated((value) => value + 1);
               return;
             }
+            responsive = true;
           } catch {
             if (version !== generation.current) return;
             setError(
@@ -386,8 +392,12 @@ export function useTutorChat(
           }
         }
         if (version !== generation.current) return;
+        // Healthy, short replies should not sit ready behind a ten-second polling gap.
+        delay =
+          responsive && Date.now() - started < FAST_POLL_WINDOW_MS
+            ? POLL_INTERVAL_MS
+            : Math.min(Math.round(delay * 1.5), 10000);
         timer.current = setTimeout(() => void step(), delay);
-        delay = Math.min(Math.round(delay * 1.5), 10000);
       };
       void step();
     },

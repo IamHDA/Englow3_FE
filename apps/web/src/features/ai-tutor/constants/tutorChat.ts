@@ -1,6 +1,9 @@
 /** Nhịp hỏi lại khi còn lượt đang chờ. Trả lời thường mất vài giây. */
 export const POLL_INTERVAL_MS = 1500;
 
+/** Keep short replies responsive before backing off longer-running work. */
+export const FAST_POLL_WINDOW_MS = 30_000;
+
 /**
  * Ngừng hỏi sau chừng này. Hàng đợi ở backend vẫn thử lại tiếp, nên đây chỉ là
  * lúc màn hình thôi quay và nói thẳng - không phải lúc câu hỏi bị huỷ.

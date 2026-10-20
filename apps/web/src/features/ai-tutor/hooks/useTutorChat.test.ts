@@ -85,6 +85,77 @@ beforeEach(() => {
 });
 
 describe("Tutor delivery and recovery", () => {
+  it("shows an eight-second reply promptly instead of waiting for a long polling backoff", async () => {
+    vi.useFakeTimers();
+    const started = Date.now();
+    api.reply.mockImplementation(async () => ({
+      data: { tutorReply: Date.now() - started >= 8000 ? ready : pending },
+    }));
+    const hook = renderHook(() => useTutorChat(undefined, "learner"));
+    try {
+      await act(async () => {
+        await hook.result.current.send("Explain articles");
+      });
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(9500);
+      });
+      expect(hook.result.current.waiting).toBe(false);
+      expect(hook.result.current.messages[1].content).toContain("vowel");
+      expect(api.send).toHaveBeenCalledTimes(1);
+      const calls = api.reply.mock.calls.length;
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(30000);
+      });
+      expect(api.reply).toHaveBeenCalledTimes(calls);
+    } finally {
+      hook.unmount();
+      vi.useRealTimers();
+    }
+  });
+
+  it("backs off interrupted connections and stops checking after unmount", async () => {
+    vi.useFakeTimers();
+    api.reply.mockRejectedValue(new Error("offline"));
+    const hook = renderHook(() => useTutorChat(undefined, "learner"));
+    try {
+      await act(async () => {
+        await hook.result.current.send("Explain articles");
+      });
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(30000);
+      });
+      expect(api.reply.mock.calls.length).toBeLessThanOrEqual(7);
+      expect(api.send).toHaveBeenCalledTimes(1);
+      hook.unmount();
+      const calls = api.reply.mock.calls.length;
+      await vi.advanceTimersByTimeAsync(60000);
+      expect(api.reply).toHaveBeenCalledTimes(calls);
+    } finally {
+      hook.unmount();
+      vi.useRealTimers();
+    }
+  });
+
+  it("reduces polling frequency for long-running pending work", async () => {
+    vi.useFakeTimers();
+    api.reply.mockResolvedValue({ data: { tutorReply: pending } });
+    const hook = renderHook(() => useTutorChat(undefined, "learner"));
+    try {
+      await act(async () => {
+        await hook.result.current.send("Explain articles");
+      });
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(120000);
+      });
+      expect(hook.result.current.waiting).toBe(true);
+      expect(api.reply.mock.calls.length).toBeLessThan(40);
+      expect(api.send).toHaveBeenCalledTimes(1);
+    } finally {
+      hook.unmount();
+      vi.useRealTimers();
+    }
+  });
+
   it("sends a client UUID and polls only the pending reply", async () => {
     const { result } = renderHook(() => useTutorChat(undefined, "learner"));
     await act(async () => {
