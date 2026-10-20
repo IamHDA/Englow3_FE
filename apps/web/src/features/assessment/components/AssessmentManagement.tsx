@@ -80,7 +80,7 @@ export function AssessmentManagement({
             initial.attemptStatus as AssessmentAttemptStatus,
           )
         ? initial.attemptStatus!
-        : "NEEDS_REVIEW",
+        : null,
   );
   const tasks = useAssessmentAuthoringQuery({
     variables: {
