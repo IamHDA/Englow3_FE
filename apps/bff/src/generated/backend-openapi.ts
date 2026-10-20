@@ -1716,6 +1716,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/user/me/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["current"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/tutor/usage": {
         parameters: {
             query?: never;
@@ -3956,6 +3972,10 @@ export interface components {
             transcript?: string;
             /** Format: int64 */
             version: number;
+        };
+        "com.englow3.user.dto.response.UserBootstrapResponse": {
+            user: components["schemas"]["com.englow3.user.dto.response.UserInformationResponse"];
+            onboardingState: components["schemas"]["com.englow3.user.dto.response.OnboardingStateResponse"];
         };
         "com.englow3.tutor.dto.result.TutorUsageResult": {
             enabled: boolean;
@@ -14745,6 +14765,80 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["com.englow3.user.dto.response.UserInformationResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    current: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.user.dto.response.UserBootstrapResponse"];
                 };
             };
             /** @description Invalid request */

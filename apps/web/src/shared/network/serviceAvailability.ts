@@ -21,6 +21,10 @@ let generation = 0;
 let startedAt = 0;
 let delay = 2000;
 let failed = false;
+// The observed testing startup exceeds four minutes. Keep recovery bounded,
+// but long enough to receive readiness without requiring another refresh.
+const RECOVERY_BUDGET_MS = 6 * 60_000;
+const MAX_PROBE_DELAY_MS = 10_000;
 
 function publish(next: Partial<AvailabilitySnapshot>) {
   snapshot = { ...snapshot, ...next };
@@ -43,7 +47,7 @@ export const onBackendRecovered = (listener: () => void) => {
 
 async function check(version: number) {
   if (!mounted || version !== generation) return;
-  if (Date.now() - startedAt >= 120_000) {
+  if (Date.now() - startedAt >= RECOVERY_BUDGET_MS) {
     publish({ checking: false, exhausted: true });
     return;
   }
@@ -94,7 +98,7 @@ async function check(version: number) {
     () => void check(version),
     retryAfter || delay + Math.random() * 500,
   );
-  delay = Math.min(delay * 2, 10_000);
+  delay = Math.min(delay * 2, MAX_PROBE_DELAY_MS);
 }
 
 export function retryServices() {

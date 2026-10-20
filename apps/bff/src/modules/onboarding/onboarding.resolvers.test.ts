@@ -3,6 +3,45 @@ import { describe, expect, it, vi } from "vitest";
 import { onboardingResolvers } from "./onboarding.resolvers.js";
 import type { LearningPurposeResponse } from "./onboarding.types.js";
 import { makeContext } from "../../test/makeContext.js";
+import type { UserInformationResponse } from "../user/user.types.js";
+
+describe("bootstrap onboarding snapshot", () => {
+  it("does not make a second REST call for a preloaded snapshot", async () => {
+    const getCurrentState = vi.fn();
+    const ctx = makeContext({ apis: { onboardingApi: { getCurrentState } } });
+    const snapshot = { step: "COMPLETED" };
+    const parent = { onboardingState: snapshot } as UserInformationResponse;
+    expect(await onboardingResolvers.Me.onboardingState(parent, {}, ctx)).toBe(
+      snapshot,
+    );
+    expect(getCurrentState).not.toHaveBeenCalled();
+  });
+  it("does not fetch learner state when bootstrap explicitly returns null", async () => {
+    const getCurrentState = vi.fn();
+    const ctx = makeContext({ apis: { onboardingApi: { getCurrentState } } });
+    expect(
+      await onboardingResolvers.Me.onboardingState(
+        { onboardingState: null } as UserInformationResponse,
+        {},
+        ctx,
+      ),
+    ).toBeNull();
+    expect(getCurrentState).not.toHaveBeenCalled();
+  });
+  it("retains the legacy resolver for a profile mutation or an older backend", async () => {
+    const snapshot = { step: "CURRENT_LEVEL" };
+    const getCurrentState = vi.fn().mockResolvedValue(snapshot);
+    const ctx = makeContext({ apis: { onboardingApi: { getCurrentState } } });
+    expect(
+      await onboardingResolvers.Me.onboardingState(
+        {} as UserInformationResponse,
+        {},
+        ctx,
+      ),
+    ).toBe(snapshot);
+    expect(getCurrentState).toHaveBeenCalledOnce();
+  });
+});
 
 describe("Query.learningPurposes", () => {
   it("fails before calling the backend when there is no token", () => {

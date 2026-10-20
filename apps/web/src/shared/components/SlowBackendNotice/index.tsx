@@ -25,9 +25,8 @@ const NOTICE_ID = "slow-backend";
  * Says what is happening when data takes unusually long.
  *
  * The backend runs on a free host that sleeps when nobody has used it for a
- * while, and waking it takes up to a minute. Without this, every screen sat on
- * its skeleton for that minute and looked broken. Mounted once, it watches all
- * requests; no screen has to know.
+ * while, and the observed Java startup can take several minutes. Mounted once,
+ * it watches all requests; no screen has to know.
  */
 export function SlowBackendNotice() {
   const { isVi } = useLanguage();

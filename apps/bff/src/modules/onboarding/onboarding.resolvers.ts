@@ -44,7 +44,9 @@ export const onboardingResolvers = {
     // Nullable in the schema: if this call fails, graphql-js resolves the
     // field to null and adds an entry to the `errors` array rather than
     // failing the whole `me` query - the rest of Me still renders.
-    onboardingState: (_parent, __, ctx) =>
-      ctx.apis.onboardingApi.getCurrentState(),
+    onboardingState: (parent, __, ctx) =>
+      parent.onboardingState !== undefined
+        ? parent.onboardingState
+        : ctx.apis.onboardingApi.getCurrentState(),
   },
 } satisfies Resolvers;
