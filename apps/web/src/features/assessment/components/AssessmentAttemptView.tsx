@@ -272,6 +272,14 @@ function AttemptContent({
             {attempt.status === "COMPLETED" && (
               <>
                 <AssessmentReport attempt={attempt} withContext />
+                <Button
+                  component={Link}
+                  href={`/ai-tutor?assessmentAttempt=${encodeURIComponent(attempt.id)}`}
+                  variant="light"
+                  mih={44}
+                >
+                  {tx("Nhờ Tutor giải thích phản hồi")}
+                </Button>
                 <Group justify="space-between" align="center">
                   <AssessmentResultRead
                     key={attempt.version}

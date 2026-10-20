@@ -309,6 +309,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     return (
       <Page width="focus">
         <QuizResultSummary
+          attemptId={scored.id}
           result={{
             quizId: scored.quizId,
             quizTitle: scored.quizTitle,

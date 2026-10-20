@@ -9,6 +9,9 @@ import { formatError, logServerErrors } from "./graphql/errors.js";
 import { queryLimitRule } from "./graphql/limits.js";
 import { resolvers, typeDefs } from "./graphql/schema.js";
 import { importRoute } from "./http/importRoute.js";
+import { tutorStreamRoute } from "./http/tutorStreamRoute.js";
+import { tutorAudioRoute } from "./http/tutorAudioRoute.js";
+import { tutorDataRoute } from "./http/tutorDataRoute.js";
 import { authoringRoute } from "./http/authoringRoute.js";
 import { serviceStatusRoute } from "./http/serviceStatus.js";
 
@@ -54,6 +57,9 @@ export async function createApp() {
   // Content import goes over REST. A generated batch is a multi-megabyte file,
   // and raising the GraphQL body cap for every query to carry one upload would
   // be paying for the exception on every request.
+  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), tutorStreamRoute());
+  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), tutorAudioRoute());
+  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), tutorDataRoute());
   app.use("/rest", corsMiddleware(), rateLimitMiddleware(), importRoute());
   app.use("/rest", corsMiddleware(), rateLimitMiddleware(), authoringRoute());
 

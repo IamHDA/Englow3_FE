@@ -71,6 +71,18 @@ export type TutorMessageFieldsFragment = {
   reported: boolean;
   createdAt: string;
   answeredAt: string | null;
+  revision: number;
+  restartCount: number;
+  summary: boolean | null;
+  correction: string | null;
+  reportStatus: string | null;
+  sources: Array<{
+    label: string;
+    resourceId: string;
+    title: string;
+    versionNumber: number;
+    excerpt: string;
+  }>;
 };
 
 export type TutorConversationSummaryFieldsFragment = {
@@ -80,6 +92,13 @@ export type TutorConversationSummaryFieldsFragment = {
   messageCount: number;
   lastMessageAt: string;
   createdAt: string;
+  archivedAt: string | null;
+  useLearningContext: boolean;
+  quizAttemptId: string | null;
+  quizQuestionId: string | null;
+  assessmentAttemptId: string | null;
+  examAttemptId: string | null;
+  examQuestionId: string | null;
 };
 
 export type TutorConversationsQueryVariables = Exact<{ [key: string]: never }>;
@@ -92,6 +111,13 @@ export type TutorConversationsQuery = {
     messageCount: number;
     lastMessageAt: string;
     createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
   }>;
 };
 
@@ -108,6 +134,13 @@ export type TutorConversationQuery = {
       messageCount: number;
       lastMessageAt: string;
       createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
     };
     messages: Array<{
       id: string;
@@ -120,6 +153,18 @@ export type TutorConversationQuery = {
       reported: boolean;
       createdAt: string;
       answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
     }>;
   };
 };
@@ -128,6 +173,14 @@ export type SendTutorMessageMutationVariables = Exact<{
   conversationId?: string | number | null | undefined;
   message: string;
   topic?: string | null | undefined;
+  clientMessageId?: string | number | null | undefined;
+  mode?: string | null | undefined;
+  personalized?: boolean | null | undefined;
+  quizAttemptId?: string | number | null | undefined;
+  quizQuestionId?: string | number | null | undefined;
+  assessmentAttemptId?: string | number | null | undefined;
+  examAttemptId?: string | number | null | undefined;
+  examQuestionId?: string | number | null | undefined;
 }>;
 
 export type SendTutorMessageMutation = {
@@ -139,6 +192,13 @@ export type SendTutorMessageMutation = {
       messageCount: number;
       lastMessageAt: string;
       createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
     };
     messages: Array<{
       id: string;
@@ -151,6 +211,18 @@ export type SendTutorMessageMutation = {
       reported: boolean;
       createdAt: string;
       answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
     }>;
   };
 };
@@ -167,6 +239,13 @@ export type ArchiveTutorConversationMutation = {
     messageCount: number;
     lastMessageAt: string;
     createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
   };
 };
 
@@ -188,8 +267,828 @@ export type ReportTutorMessageMutation = {
     reported: boolean;
     createdAt: string;
     answeredAt: string | null;
+    revision: number;
+    restartCount: number;
+    summary: boolean | null;
+    correction: string | null;
+    reportStatus: string | null;
+    sources: Array<{
+      label: string;
+      resourceId: string;
+      title: string;
+      versionNumber: number;
+      excerpt: string;
+    }>;
   };
 };
+
+export type TutorUsageQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorUsageQuery = {
+  tutorUsage: {
+    enabled: boolean;
+    limit: number;
+    used: number;
+    remaining: number;
+    resetsAt: string;
+    maxMessageLength: number;
+    streaming: boolean;
+    voice: boolean;
+    allowedModes: Array<string>;
+    supportedContexts: Array<string>;
+    memorySupported: boolean;
+  };
+};
+
+export type TutorHistoryQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+  search?: string | null | undefined;
+  archived?: boolean | null | undefined;
+}>;
+
+export type TutorHistoryQuery = {
+  tutorHistory: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    }>;
+  };
+};
+
+export type TutorMessagesQueryVariables = Exact<{
+  id: string | number;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type TutorMessagesQuery = {
+  tutorMessages: {
+    page: number;
+    totalPages: number;
+    totalElements: number;
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type TutorReplyQueryVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+}>;
+
+export type TutorReplyQuery = {
+  tutorReply: {
+    id: string;
+    orderNo: number;
+    role: Types.TutorMessageRole;
+    status: Types.TutorMessageStatus;
+    content: string | null;
+    errorCode: string | null;
+    model: string | null;
+    reported: boolean;
+    createdAt: string;
+    answeredAt: string | null;
+    revision: number;
+    restartCount: number;
+    summary: boolean | null;
+    correction: string | null;
+    reportStatus: string | null;
+    sources: Array<{
+      label: string;
+      resourceId: string;
+      title: string;
+      versionNumber: number;
+      excerpt: string;
+    }>;
+  };
+};
+
+export type TutorReceiptQueryVariables = Exact<{
+  clientMessageId: string | number;
+}>;
+
+export type TutorReceiptQuery = {
+  tutorReceipt: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type RetryTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  clientMessageId: string | number;
+}>;
+
+export type RetryTutorReplyMutation = {
+  retryTutorReply: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type RegenerateTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  clientMessageId: string | number;
+}>;
+
+export type RegenerateTutorReplyMutation = {
+  regenerateTutorReply: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type CancelTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+}>;
+
+export type CancelTutorReplyMutation = {
+  cancelTutorReply: {
+    id: string;
+    orderNo: number;
+    role: Types.TutorMessageRole;
+    status: Types.TutorMessageStatus;
+    content: string | null;
+    errorCode: string | null;
+    model: string | null;
+    reported: boolean;
+    createdAt: string;
+    answeredAt: string | null;
+    revision: number;
+    restartCount: number;
+    summary: boolean | null;
+    correction: string | null;
+    reportStatus: string | null;
+    sources: Array<{
+      label: string;
+      resourceId: string;
+      title: string;
+      versionNumber: number;
+      excerpt: string;
+    }>;
+  };
+};
+
+export type RestoreTutorConversationMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type RestoreTutorConversationMutation = {
+  restoreTutorConversation: {
+    id: string;
+    title: string;
+    topic: string | null;
+    messageCount: number;
+    lastMessageAt: string;
+    createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
+  };
+};
+
+export type RenameTutorConversationMutationVariables = Exact<{
+  id: string | number;
+  title: string;
+}>;
+
+export type RenameTutorConversationMutation = {
+  renameTutorConversation: {
+    id: string;
+    title: string;
+    topic: string | null;
+    messageCount: number;
+    lastMessageAt: string;
+    createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
+  };
+};
+
+export type TutorResourceFieldsFragment = {
+  id: string;
+  documentId: string;
+  versionNumber: number;
+  title: string;
+  body: string;
+  status: string;
+  authorId: string;
+  reviewNote: string | null;
+  rowVersion: number;
+};
+
+export type TutorReportFieldsFragment = {
+  id: string;
+  messageId: string;
+  revision: number;
+  question: string | null;
+  answer: string | null;
+  learnerNote: string | null;
+  status: string;
+  assignedTo: string | null;
+  reviewerNote: string | null;
+  correction: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+};
+
+export type TutorResourcesQueryVariables = Exact<{
+  status?: string | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type TutorResourcesQuery = {
+  tutorResources: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      documentId: string;
+      versionNumber: number;
+      title: string;
+      body: string;
+      status: string;
+      authorId: string;
+      reviewNote: string | null;
+      rowVersion: number;
+    }>;
+  };
+};
+
+export type TutorResourceQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TutorResourceQuery = {
+  tutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type TutorReportsQueryVariables = Exact<{
+  status?: string | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type TutorReportsQuery = {
+  tutorReports: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      messageId: string;
+      revision: number;
+      question: string | null;
+      answer: string | null;
+      learnerNote: string | null;
+      status: string;
+      assignedTo: string | null;
+      reviewerNote: string | null;
+      correction: string | null;
+      createdAt: string;
+      resolvedAt: string | null;
+    }>;
+  };
+};
+
+export type TutorReportQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TutorReportQuery = {
+  tutorReport: {
+    id: string;
+    messageId: string;
+    revision: number;
+    question: string | null;
+    answer: string | null;
+    learnerNote: string | null;
+    status: string;
+    assignedTo: string | null;
+    reviewerNote: string | null;
+    correction: string | null;
+    createdAt: string;
+    resolvedAt: string | null;
+  };
+};
+
+export type TutorStaffMembersQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorStaffMembersQuery = {
+  tutorStaffMembers: Array<{ id: string; displayName: string }>;
+};
+
+export type CreateTutorResourceMutationVariables = Exact<{
+  input: Types.TutorResourceInput;
+}>;
+
+export type CreateTutorResourceMutation = {
+  createTutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type UpdateTutorResourceMutationVariables = Exact<{
+  id: string | number;
+  input: Types.TutorResourceInput;
+}>;
+
+export type UpdateTutorResourceMutation = {
+  updateTutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type ReviewTutorResourceMutationVariables = Exact<{
+  id: string | number;
+  input: Types.TutorReviewInput;
+}>;
+
+export type ReviewTutorResourceMutation = {
+  reviewTutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type ReviewTutorReportMutationVariables = Exact<{
+  id: string | number;
+  input: Types.TutorReviewInput;
+}>;
+
+export type ReviewTutorReportMutation = {
+  reviewTutorReport: {
+    id: string;
+    messageId: string;
+    revision: number;
+    question: string | null;
+    answer: string | null;
+    learnerNote: string | null;
+    status: string;
+    assignedTo: string | null;
+    reviewerNote: string | null;
+    correction: string | null;
+    createdAt: string;
+    resolvedAt: string | null;
+  };
+};
+
+export type TutorOperationsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorOperationsQuery = {
+  tutorOperations: {
+    pending: number;
+    running: number;
+    completedToday: number;
+    failedToday: number;
+    oldestPendingAt: string | null;
+    scope: string;
+    metrics: {
+      samples: number;
+      queueP95Ms: number | null;
+      completionP95Ms: number | null;
+      knownInputTokens: number;
+      knownOutputTokens: number;
+      unknownUsageJobs: number;
+      failures: Array<{ code: string; count: number }>;
+    } | null;
+  };
+};
+
+export type TutorReplyHistoryQueryVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+}>;
+
+export type TutorReplyHistoryQuery = {
+  tutorReplyHistory: {
+    currentRevision: number;
+    canSelect: boolean;
+    items: Array<{
+      revision: number;
+      status: string;
+      content: string | null;
+      model: string | null;
+      correction: string | null;
+    }>;
+  };
+};
+
+export type SelectTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  revision: number;
+  clientMessageId: string | number;
+}>;
+
+export type SelectTutorReplyMutation = {
+  selectTutorReply: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type BranchTutorConversationMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  message: string;
+  clientMessageId: string | number;
+  personalized?: boolean | null | undefined;
+}>;
+
+export type BranchTutorConversationMutation = {
+  branchTutorConversation: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type TutorPolicyQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorPolicyQuery = {
+  tutorPolicy: {
+    accepting: boolean;
+    allowedModes: Array<string>;
+    version: number;
+    environmentEnabled: boolean;
+    model: string;
+    dailyLimit: number;
+    streamingEnabled: boolean;
+    voiceEnabled: boolean;
+  };
+};
+
+export type UpdateTutorPolicyMutationVariables = Exact<{
+  input: Types.TutorPolicyInput;
+}>;
+
+export type UpdateTutorPolicyMutation = {
+  updateTutorPolicy: {
+    accepting: boolean;
+    allowedModes: Array<string>;
+    version: number;
+    environmentEnabled: boolean;
+    model: string;
+    dailyLimit: number;
+    streamingEnabled: boolean;
+    voiceEnabled: boolean;
+  };
+};
+
+export type TutorMemoryQueryVariables = Exact<{
+  conversationId: string | number;
+}>;
+
+export type TutorMemoryQuery = {
+  tutorMemory: {
+    enabled: boolean;
+    content: string | null;
+    throughOrder: number;
+    remainingMessages: number;
+    pendingMessageId: string | null;
+    batchSize: number;
+  };
+};
+
+export type SummarizeTutorConversationMutationVariables = Exact<{
+  conversationId: string | number;
+  clientMessageId: string | number;
+}>;
+
+export type SummarizeTutorConversationMutation = {
+  summarizeTutorConversation: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type ClearTutorMemoryMutationVariables = Exact<{
+  conversationId: string | number;
+}>;
+
+export type ClearTutorMemoryMutation = { clearTutorMemory: boolean };
 
 export type AssessmentTaskFieldsFragment = {
   id: string;
@@ -2541,6 +3440,18 @@ export const TutorMessageFieldsFragmentDoc = gql`
     reported
     createdAt
     answeredAt
+    revision
+    restartCount
+    summary
+    correction
+    reportStatus
+    sources {
+      label
+      resourceId
+      title
+      versionNumber
+      excerpt
+    }
   }
 `;
 export const TutorConversationSummaryFieldsFragmentDoc = gql`
@@ -2551,6 +3462,42 @@ export const TutorConversationSummaryFieldsFragmentDoc = gql`
     messageCount
     lastMessageAt
     createdAt
+    archivedAt
+    useLearningContext
+    quizAttemptId
+    quizQuestionId
+    assessmentAttemptId
+    examAttemptId
+    examQuestionId
+  }
+`;
+export const TutorResourceFieldsFragmentDoc = gql`
+  fragment TutorResourceFields on TutorResource {
+    id
+    documentId
+    versionNumber
+    title
+    body
+    status
+    authorId
+    reviewNote
+    rowVersion
+  }
+`;
+export const TutorReportFieldsFragmentDoc = gql`
+  fragment TutorReportFields on TutorReport {
+    id
+    messageId
+    revision
+    question
+    answer
+    learnerNote
+    status
+    assignedTo
+    reviewerNote
+    correction
+    createdAt
+    resolvedAt
   }
 `;
 export const AssessmentTaskFieldsFragmentDoc = gql`
@@ -3241,11 +4188,27 @@ export const SendTutorMessageDocument = gql`
     $conversationId: ID
     $message: String!
     $topic: String
+    $clientMessageId: ID
+    $mode: String
+    $personalized: Boolean
+    $quizAttemptId: ID
+    $quizQuestionId: ID
+    $assessmentAttemptId: ID
+    $examAttemptId: ID
+    $examQuestionId: ID
   ) {
     sendTutorMessage(
       conversationId: $conversationId
       message: $message
       topic: $topic
+      clientMessageId: $clientMessageId
+      mode: $mode
+      personalized: $personalized
+      quizAttemptId: $quizAttemptId
+      quizQuestionId: $quizQuestionId
+      assessmentAttemptId: $assessmentAttemptId
+      examAttemptId: $examAttemptId
+      examQuestionId: $examQuestionId
     ) {
       conversation {
         ...TutorConversationSummaryFields
@@ -3281,6 +4244,14 @@ export type SendTutorMessageMutationFn = (
  *      conversationId: // value for 'conversationId'
  *      message: // value for 'message'
  *      topic: // value for 'topic'
+ *      clientMessageId: // value for 'clientMessageId'
+ *      mode: // value for 'mode'
+ *      personalized: // value for 'personalized'
+ *      quizAttemptId: // value for 'quizAttemptId'
+ *      quizQuestionId: // value for 'quizQuestionId'
+ *      assessmentAttemptId: // value for 'assessmentAttemptId'
+ *      examAttemptId: // value for 'examAttemptId'
+ *      examQuestionId: // value for 'examQuestionId'
  *   },
  * });
  */
@@ -3423,6 +4394,2364 @@ export type ReportTutorMessageMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     ReportTutorMessageMutation,
     ReportTutorMessageMutationVariables
+  >;
+export const TutorUsageDocument = gql`
+  query TutorUsage {
+    tutorUsage {
+      enabled
+      limit
+      used
+      remaining
+      resetsAt
+      maxMessageLength
+      streaming
+      voice
+      allowedModes
+      supportedContexts
+      memorySupported
+    }
+  }
+`;
+
+/**
+ * __useTutorUsageQuery__
+ *
+ * To run a query within a React component, call `useTutorUsageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorUsageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorUsageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTutorUsageQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorUsageQuery,
+    TutorUsageQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<TutorUsageQuery, TutorUsageQueryVariables>(
+    TutorUsageDocument,
+    options,
+  );
+}
+export function useTutorUsageLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorUsageQuery,
+    TutorUsageQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorUsageQuery,
+    TutorUsageQueryVariables
+  >(TutorUsageDocument, options);
+}
+export function useTutorUsageSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorUsageQuery,
+    TutorUsageQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorUsageQuery,
+  TutorUsageQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorUsageSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorUsageQuery,
+        TutorUsageQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorUsageQuery | undefined,
+  TutorUsageQueryVariables
+>;
+export function useTutorUsageSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorUsageQuery,
+        TutorUsageQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorUsageQuery,
+    TutorUsageQueryVariables
+  >(TutorUsageDocument, options as any);
+}
+export type TutorUsageQueryHookResult = ReturnType<typeof useTutorUsageQuery>;
+export type TutorUsageLazyQueryHookResult = ReturnType<
+  typeof useTutorUsageLazyQuery
+>;
+export type TutorUsageSuspenseQueryHookResult = ReturnType<
+  typeof useTutorUsageSuspenseQuery
+>;
+export type TutorUsageQueryResult = ApolloReactCommon.QueryResult<
+  TutorUsageQuery,
+  TutorUsageQueryVariables
+>;
+export const TutorHistoryDocument = gql`
+  query TutorHistory(
+    $page: Int
+    $size: Int
+    $search: String
+    $archived: Boolean
+  ) {
+    tutorHistory(
+      page: $page
+      size: $size
+      search: $search
+      archived: $archived
+    ) {
+      items {
+        ...TutorConversationSummaryFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorHistoryQuery__
+ *
+ * To run a query within a React component, call `useTutorHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorHistoryQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *      search: // value for 'search'
+ *      archived: // value for 'archived'
+ *   },
+ * });
+ */
+export function useTutorHistoryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorHistoryQuery,
+    TutorHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorHistoryQuery,
+    TutorHistoryQueryVariables
+  >(TutorHistoryDocument, options);
+}
+export function useTutorHistoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorHistoryQuery,
+    TutorHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorHistoryQuery,
+    TutorHistoryQueryVariables
+  >(TutorHistoryDocument, options);
+}
+export function useTutorHistorySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorHistoryQuery,
+    TutorHistoryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorHistoryQuery,
+  TutorHistoryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorHistoryQuery,
+        TutorHistoryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorHistoryQuery | undefined,
+  TutorHistoryQueryVariables
+>;
+export function useTutorHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorHistoryQuery,
+        TutorHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorHistoryQuery,
+    TutorHistoryQueryVariables
+  >(TutorHistoryDocument, options as any);
+}
+export type TutorHistoryQueryHookResult = ReturnType<
+  typeof useTutorHistoryQuery
+>;
+export type TutorHistoryLazyQueryHookResult = ReturnType<
+  typeof useTutorHistoryLazyQuery
+>;
+export type TutorHistorySuspenseQueryHookResult = ReturnType<
+  typeof useTutorHistorySuspenseQuery
+>;
+export type TutorHistoryQueryResult = ApolloReactCommon.QueryResult<
+  TutorHistoryQuery,
+  TutorHistoryQueryVariables
+>;
+export const TutorMessagesDocument = gql`
+  query TutorMessages($id: ID!, $page: Int, $size: Int) {
+    tutorMessages(id: $id, page: $page, size: $size) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+      page
+      totalPages
+      totalElements
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorMessagesQuery__
+ *
+ * To run a query within a React component, call `useTutorMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorMessagesQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useTutorMessagesQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorMessagesQuery,
+    TutorMessagesQueryVariables
+  > &
+    (
+      | { variables: TutorMessagesQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorMessagesQuery,
+    TutorMessagesQueryVariables
+  >(TutorMessagesDocument, options);
+}
+export function useTutorMessagesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorMessagesQuery,
+    TutorMessagesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorMessagesQuery,
+    TutorMessagesQueryVariables
+  >(TutorMessagesDocument, options);
+}
+export function useTutorMessagesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorMessagesQuery,
+    TutorMessagesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorMessagesQuery,
+  TutorMessagesQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorMessagesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorMessagesQuery,
+        TutorMessagesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorMessagesQuery | undefined,
+  TutorMessagesQueryVariables
+>;
+export function useTutorMessagesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorMessagesQuery,
+        TutorMessagesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorMessagesQuery,
+    TutorMessagesQueryVariables
+  >(TutorMessagesDocument, options as any);
+}
+export type TutorMessagesQueryHookResult = ReturnType<
+  typeof useTutorMessagesQuery
+>;
+export type TutorMessagesLazyQueryHookResult = ReturnType<
+  typeof useTutorMessagesLazyQuery
+>;
+export type TutorMessagesSuspenseQueryHookResult = ReturnType<
+  typeof useTutorMessagesSuspenseQuery
+>;
+export type TutorMessagesQueryResult = ApolloReactCommon.QueryResult<
+  TutorMessagesQuery,
+  TutorMessagesQueryVariables
+>;
+export const TutorReplyDocument = gql`
+  query TutorReply($conversationId: ID!, $messageId: ID!) {
+    tutorReply(conversationId: $conversationId, messageId: $messageId) {
+      ...TutorMessageFields
+    }
+  }
+  ${TutorMessageFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorReplyQuery__
+ *
+ * To run a query within a React component, call `useTutorReplyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorReplyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorReplyQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useTutorReplyQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorReplyQuery,
+    TutorReplyQueryVariables
+  > &
+    (
+      | { variables: TutorReplyQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<TutorReplyQuery, TutorReplyQueryVariables>(
+    TutorReplyDocument,
+    options,
+  );
+}
+export function useTutorReplyLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorReplyQuery,
+    TutorReplyQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorReplyQuery,
+    TutorReplyQueryVariables
+  >(TutorReplyDocument, options);
+}
+export function useTutorReplySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorReplyQuery,
+    TutorReplyQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReplyQuery,
+  TutorReplyQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorReplySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReplyQuery,
+        TutorReplyQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReplyQuery | undefined,
+  TutorReplyQueryVariables
+>;
+export function useTutorReplySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReplyQuery,
+        TutorReplyQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorReplyQuery,
+    TutorReplyQueryVariables
+  >(TutorReplyDocument, options as any);
+}
+export type TutorReplyQueryHookResult = ReturnType<typeof useTutorReplyQuery>;
+export type TutorReplyLazyQueryHookResult = ReturnType<
+  typeof useTutorReplyLazyQuery
+>;
+export type TutorReplySuspenseQueryHookResult = ReturnType<
+  typeof useTutorReplySuspenseQuery
+>;
+export type TutorReplyQueryResult = ApolloReactCommon.QueryResult<
+  TutorReplyQuery,
+  TutorReplyQueryVariables
+>;
+export const TutorReceiptDocument = gql`
+  query TutorReceipt($clientMessageId: ID!) {
+    tutorReceipt(clientMessageId: $clientMessageId) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorReceiptQuery__
+ *
+ * To run a query within a React component, call `useTutorReceiptQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorReceiptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorReceiptQuery({
+ *   variables: {
+ *      clientMessageId: // value for 'clientMessageId'
+ *   },
+ * });
+ */
+export function useTutorReceiptQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorReceiptQuery,
+    TutorReceiptQueryVariables
+  > &
+    (
+      | { variables: TutorReceiptQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorReceiptQuery,
+    TutorReceiptQueryVariables
+  >(TutorReceiptDocument, options);
+}
+export function useTutorReceiptLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorReceiptQuery,
+    TutorReceiptQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorReceiptQuery,
+    TutorReceiptQueryVariables
+  >(TutorReceiptDocument, options);
+}
+export function useTutorReceiptSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorReceiptQuery,
+    TutorReceiptQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReceiptQuery,
+  TutorReceiptQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorReceiptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReceiptQuery,
+        TutorReceiptQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReceiptQuery | undefined,
+  TutorReceiptQueryVariables
+>;
+export function useTutorReceiptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReceiptQuery,
+        TutorReceiptQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorReceiptQuery,
+    TutorReceiptQueryVariables
+  >(TutorReceiptDocument, options as any);
+}
+export type TutorReceiptQueryHookResult = ReturnType<
+  typeof useTutorReceiptQuery
+>;
+export type TutorReceiptLazyQueryHookResult = ReturnType<
+  typeof useTutorReceiptLazyQuery
+>;
+export type TutorReceiptSuspenseQueryHookResult = ReturnType<
+  typeof useTutorReceiptSuspenseQuery
+>;
+export type TutorReceiptQueryResult = ApolloReactCommon.QueryResult<
+  TutorReceiptQuery,
+  TutorReceiptQueryVariables
+>;
+export const RetryTutorReplyDocument = gql`
+  mutation RetryTutorReply(
+    $conversationId: ID!
+    $messageId: ID!
+    $clientMessageId: ID!
+  ) {
+    retryTutorReply(
+      conversationId: $conversationId
+      messageId: $messageId
+      clientMessageId: $clientMessageId
+    ) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+export type RetryTutorReplyMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RetryTutorReplyMutation,
+    RetryTutorReplyMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRetryTutorReplyMutation__
+ *
+ * To run a mutation, you first call `useRetryTutorReplyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRetryTutorReplyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [retryTutorReplyMutation, { data, loading, error }] = useRetryTutorReplyMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *      clientMessageId: // value for 'clientMessageId'
+ *   },
+ * });
+ */
+export function useRetryTutorReplyMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RetryTutorReplyMutation,
+    RetryTutorReplyMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RetryTutorReplyMutation,
+    RetryTutorReplyMutationVariables
+  >(RetryTutorReplyDocument, options);
+}
+export type RetryTutorReplyMutationHookResult = ReturnType<
+  typeof useRetryTutorReplyMutation
+>;
+export type RetryTutorReplyMutationResult =
+  ApolloReactCommon.MutationResult<RetryTutorReplyMutation>;
+export type RetryTutorReplyMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RetryTutorReplyMutation,
+    RetryTutorReplyMutationVariables
+  >;
+export const RegenerateTutorReplyDocument = gql`
+  mutation RegenerateTutorReply(
+    $conversationId: ID!
+    $messageId: ID!
+    $clientMessageId: ID!
+  ) {
+    regenerateTutorReply(
+      conversationId: $conversationId
+      messageId: $messageId
+      clientMessageId: $clientMessageId
+    ) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+export type RegenerateTutorReplyMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RegenerateTutorReplyMutation,
+    RegenerateTutorReplyMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRegenerateTutorReplyMutation__
+ *
+ * To run a mutation, you first call `useRegenerateTutorReplyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegenerateTutorReplyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [regenerateTutorReplyMutation, { data, loading, error }] = useRegenerateTutorReplyMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *      clientMessageId: // value for 'clientMessageId'
+ *   },
+ * });
+ */
+export function useRegenerateTutorReplyMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RegenerateTutorReplyMutation,
+    RegenerateTutorReplyMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RegenerateTutorReplyMutation,
+    RegenerateTutorReplyMutationVariables
+  >(RegenerateTutorReplyDocument, options);
+}
+export type RegenerateTutorReplyMutationHookResult = ReturnType<
+  typeof useRegenerateTutorReplyMutation
+>;
+export type RegenerateTutorReplyMutationResult =
+  ApolloReactCommon.MutationResult<RegenerateTutorReplyMutation>;
+export type RegenerateTutorReplyMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RegenerateTutorReplyMutation,
+    RegenerateTutorReplyMutationVariables
+  >;
+export const CancelTutorReplyDocument = gql`
+  mutation CancelTutorReply($conversationId: ID!, $messageId: ID!) {
+    cancelTutorReply(conversationId: $conversationId, messageId: $messageId) {
+      ...TutorMessageFields
+    }
+  }
+  ${TutorMessageFieldsFragmentDoc}
+`;
+export type CancelTutorReplyMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CancelTutorReplyMutation,
+    CancelTutorReplyMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useCancelTutorReplyMutation__
+ *
+ * To run a mutation, you first call `useCancelTutorReplyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelTutorReplyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelTutorReplyMutation, { data, loading, error }] = useCancelTutorReplyMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useCancelTutorReplyMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CancelTutorReplyMutation,
+    CancelTutorReplyMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CancelTutorReplyMutation,
+    CancelTutorReplyMutationVariables
+  >(CancelTutorReplyDocument, options);
+}
+export type CancelTutorReplyMutationHookResult = ReturnType<
+  typeof useCancelTutorReplyMutation
+>;
+export type CancelTutorReplyMutationResult =
+  ApolloReactCommon.MutationResult<CancelTutorReplyMutation>;
+export type CancelTutorReplyMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CancelTutorReplyMutation,
+    CancelTutorReplyMutationVariables
+  >;
+export const RestoreTutorConversationDocument = gql`
+  mutation RestoreTutorConversation($id: ID!) {
+    restoreTutorConversation(id: $id) {
+      ...TutorConversationSummaryFields
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+`;
+export type RestoreTutorConversationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RestoreTutorConversationMutation,
+    RestoreTutorConversationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRestoreTutorConversationMutation__
+ *
+ * To run a mutation, you first call `useRestoreTutorConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreTutorConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreTutorConversationMutation, { data, loading, error }] = useRestoreTutorConversationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreTutorConversationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RestoreTutorConversationMutation,
+    RestoreTutorConversationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RestoreTutorConversationMutation,
+    RestoreTutorConversationMutationVariables
+  >(RestoreTutorConversationDocument, options);
+}
+export type RestoreTutorConversationMutationHookResult = ReturnType<
+  typeof useRestoreTutorConversationMutation
+>;
+export type RestoreTutorConversationMutationResult =
+  ApolloReactCommon.MutationResult<RestoreTutorConversationMutation>;
+export type RestoreTutorConversationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RestoreTutorConversationMutation,
+    RestoreTutorConversationMutationVariables
+  >;
+export const RenameTutorConversationDocument = gql`
+  mutation RenameTutorConversation($id: ID!, $title: String!) {
+    renameTutorConversation(id: $id, title: $title) {
+      ...TutorConversationSummaryFields
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+`;
+export type RenameTutorConversationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RenameTutorConversationMutation,
+    RenameTutorConversationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRenameTutorConversationMutation__
+ *
+ * To run a mutation, you first call `useRenameTutorConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameTutorConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameTutorConversationMutation, { data, loading, error }] = useRenameTutorConversationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *   },
+ * });
+ */
+export function useRenameTutorConversationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RenameTutorConversationMutation,
+    RenameTutorConversationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RenameTutorConversationMutation,
+    RenameTutorConversationMutationVariables
+  >(RenameTutorConversationDocument, options);
+}
+export type RenameTutorConversationMutationHookResult = ReturnType<
+  typeof useRenameTutorConversationMutation
+>;
+export type RenameTutorConversationMutationResult =
+  ApolloReactCommon.MutationResult<RenameTutorConversationMutation>;
+export type RenameTutorConversationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RenameTutorConversationMutation,
+    RenameTutorConversationMutationVariables
+  >;
+export const TutorResourcesDocument = gql`
+  query TutorResources($status: String, $page: Int) {
+    tutorResources(status: $status, page: $page) {
+      items {
+        ...TutorResourceFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${TutorResourceFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorResourcesQuery__
+ *
+ * To run a query within a React component, call `useTutorResourcesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorResourcesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorResourcesQuery({
+ *   variables: {
+ *      status: // value for 'status'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useTutorResourcesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorResourcesQuery,
+    TutorResourcesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorResourcesQuery,
+    TutorResourcesQueryVariables
+  >(TutorResourcesDocument, options);
+}
+export function useTutorResourcesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorResourcesQuery,
+    TutorResourcesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorResourcesQuery,
+    TutorResourcesQueryVariables
+  >(TutorResourcesDocument, options);
+}
+export function useTutorResourcesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorResourcesQuery,
+    TutorResourcesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorResourcesQuery,
+  TutorResourcesQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorResourcesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorResourcesQuery,
+        TutorResourcesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorResourcesQuery | undefined,
+  TutorResourcesQueryVariables
+>;
+export function useTutorResourcesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorResourcesQuery,
+        TutorResourcesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorResourcesQuery,
+    TutorResourcesQueryVariables
+  >(TutorResourcesDocument, options as any);
+}
+export type TutorResourcesQueryHookResult = ReturnType<
+  typeof useTutorResourcesQuery
+>;
+export type TutorResourcesLazyQueryHookResult = ReturnType<
+  typeof useTutorResourcesLazyQuery
+>;
+export type TutorResourcesSuspenseQueryHookResult = ReturnType<
+  typeof useTutorResourcesSuspenseQuery
+>;
+export type TutorResourcesQueryResult = ApolloReactCommon.QueryResult<
+  TutorResourcesQuery,
+  TutorResourcesQueryVariables
+>;
+export const TutorResourceDocument = gql`
+  query TutorResource($id: ID!) {
+    tutorResource(id: $id) {
+      ...TutorResourceFields
+    }
+  }
+  ${TutorResourceFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorResourceQuery__
+ *
+ * To run a query within a React component, call `useTutorResourceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorResourceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorResourceQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTutorResourceQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorResourceQuery,
+    TutorResourceQueryVariables
+  > &
+    (
+      | { variables: TutorResourceQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorResourceQuery,
+    TutorResourceQueryVariables
+  >(TutorResourceDocument, options);
+}
+export function useTutorResourceLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorResourceQuery,
+    TutorResourceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorResourceQuery,
+    TutorResourceQueryVariables
+  >(TutorResourceDocument, options);
+}
+export function useTutorResourceSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorResourceQuery,
+    TutorResourceQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorResourceQuery,
+  TutorResourceQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorResourceSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorResourceQuery,
+        TutorResourceQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorResourceQuery | undefined,
+  TutorResourceQueryVariables
+>;
+export function useTutorResourceSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorResourceQuery,
+        TutorResourceQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorResourceQuery,
+    TutorResourceQueryVariables
+  >(TutorResourceDocument, options as any);
+}
+export type TutorResourceQueryHookResult = ReturnType<
+  typeof useTutorResourceQuery
+>;
+export type TutorResourceLazyQueryHookResult = ReturnType<
+  typeof useTutorResourceLazyQuery
+>;
+export type TutorResourceSuspenseQueryHookResult = ReturnType<
+  typeof useTutorResourceSuspenseQuery
+>;
+export type TutorResourceQueryResult = ApolloReactCommon.QueryResult<
+  TutorResourceQuery,
+  TutorResourceQueryVariables
+>;
+export const TutorReportsDocument = gql`
+  query TutorReports($status: String, $page: Int) {
+    tutorReports(status: $status, page: $page) {
+      items {
+        ...TutorReportFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${TutorReportFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorReportsQuery__
+ *
+ * To run a query within a React component, call `useTutorReportsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorReportsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorReportsQuery({
+ *   variables: {
+ *      status: // value for 'status'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useTutorReportsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorReportsQuery,
+    TutorReportsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorReportsQuery,
+    TutorReportsQueryVariables
+  >(TutorReportsDocument, options);
+}
+export function useTutorReportsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorReportsQuery,
+    TutorReportsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorReportsQuery,
+    TutorReportsQueryVariables
+  >(TutorReportsDocument, options);
+}
+export function useTutorReportsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorReportsQuery,
+    TutorReportsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReportsQuery,
+  TutorReportsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorReportsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReportsQuery,
+        TutorReportsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReportsQuery | undefined,
+  TutorReportsQueryVariables
+>;
+export function useTutorReportsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReportsQuery,
+        TutorReportsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorReportsQuery,
+    TutorReportsQueryVariables
+  >(TutorReportsDocument, options as any);
+}
+export type TutorReportsQueryHookResult = ReturnType<
+  typeof useTutorReportsQuery
+>;
+export type TutorReportsLazyQueryHookResult = ReturnType<
+  typeof useTutorReportsLazyQuery
+>;
+export type TutorReportsSuspenseQueryHookResult = ReturnType<
+  typeof useTutorReportsSuspenseQuery
+>;
+export type TutorReportsQueryResult = ApolloReactCommon.QueryResult<
+  TutorReportsQuery,
+  TutorReportsQueryVariables
+>;
+export const TutorReportDocument = gql`
+  query TutorReport($id: ID!) {
+    tutorReport(id: $id) {
+      ...TutorReportFields
+    }
+  }
+  ${TutorReportFieldsFragmentDoc}
+`;
+
+/**
+ * __useTutorReportQuery__
+ *
+ * To run a query within a React component, call `useTutorReportQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorReportQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorReportQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTutorReportQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorReportQuery,
+    TutorReportQueryVariables
+  > &
+    (
+      | { variables: TutorReportQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<TutorReportQuery, TutorReportQueryVariables>(
+    TutorReportDocument,
+    options,
+  );
+}
+export function useTutorReportLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorReportQuery,
+    TutorReportQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorReportQuery,
+    TutorReportQueryVariables
+  >(TutorReportDocument, options);
+}
+export function useTutorReportSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorReportQuery,
+    TutorReportQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReportQuery,
+  TutorReportQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorReportSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReportQuery,
+        TutorReportQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReportQuery | undefined,
+  TutorReportQueryVariables
+>;
+export function useTutorReportSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReportQuery,
+        TutorReportQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorReportQuery,
+    TutorReportQueryVariables
+  >(TutorReportDocument, options as any);
+}
+export type TutorReportQueryHookResult = ReturnType<typeof useTutorReportQuery>;
+export type TutorReportLazyQueryHookResult = ReturnType<
+  typeof useTutorReportLazyQuery
+>;
+export type TutorReportSuspenseQueryHookResult = ReturnType<
+  typeof useTutorReportSuspenseQuery
+>;
+export type TutorReportQueryResult = ApolloReactCommon.QueryResult<
+  TutorReportQuery,
+  TutorReportQueryVariables
+>;
+export const TutorStaffMembersDocument = gql`
+  query TutorStaffMembers {
+    tutorStaffMembers {
+      id
+      displayName
+    }
+  }
+`;
+
+/**
+ * __useTutorStaffMembersQuery__
+ *
+ * To run a query within a React component, call `useTutorStaffMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorStaffMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorStaffMembersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTutorStaffMembersQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorStaffMembersQuery,
+    TutorStaffMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorStaffMembersQuery,
+    TutorStaffMembersQueryVariables
+  >(TutorStaffMembersDocument, options);
+}
+export function useTutorStaffMembersLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorStaffMembersQuery,
+    TutorStaffMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorStaffMembersQuery,
+    TutorStaffMembersQueryVariables
+  >(TutorStaffMembersDocument, options);
+}
+export function useTutorStaffMembersSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorStaffMembersQuery,
+    TutorStaffMembersQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorStaffMembersQuery,
+  TutorStaffMembersQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorStaffMembersSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorStaffMembersQuery,
+        TutorStaffMembersQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorStaffMembersQuery | undefined,
+  TutorStaffMembersQueryVariables
+>;
+export function useTutorStaffMembersSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorStaffMembersQuery,
+        TutorStaffMembersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorStaffMembersQuery,
+    TutorStaffMembersQueryVariables
+  >(TutorStaffMembersDocument, options as any);
+}
+export type TutorStaffMembersQueryHookResult = ReturnType<
+  typeof useTutorStaffMembersQuery
+>;
+export type TutorStaffMembersLazyQueryHookResult = ReturnType<
+  typeof useTutorStaffMembersLazyQuery
+>;
+export type TutorStaffMembersSuspenseQueryHookResult = ReturnType<
+  typeof useTutorStaffMembersSuspenseQuery
+>;
+export type TutorStaffMembersQueryResult = ApolloReactCommon.QueryResult<
+  TutorStaffMembersQuery,
+  TutorStaffMembersQueryVariables
+>;
+export const CreateTutorResourceDocument = gql`
+  mutation CreateTutorResource($input: TutorResourceInput!) {
+    createTutorResource(input: $input) {
+      ...TutorResourceFields
+    }
+  }
+  ${TutorResourceFieldsFragmentDoc}
+`;
+export type CreateTutorResourceMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CreateTutorResourceMutation,
+    CreateTutorResourceMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useCreateTutorResourceMutation__
+ *
+ * To run a mutation, you first call `useCreateTutorResourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTutorResourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTutorResourceMutation, { data, loading, error }] = useCreateTutorResourceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTutorResourceMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateTutorResourceMutation,
+    CreateTutorResourceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CreateTutorResourceMutation,
+    CreateTutorResourceMutationVariables
+  >(CreateTutorResourceDocument, options);
+}
+export type CreateTutorResourceMutationHookResult = ReturnType<
+  typeof useCreateTutorResourceMutation
+>;
+export type CreateTutorResourceMutationResult =
+  ApolloReactCommon.MutationResult<CreateTutorResourceMutation>;
+export type CreateTutorResourceMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CreateTutorResourceMutation,
+    CreateTutorResourceMutationVariables
+  >;
+export const UpdateTutorResourceDocument = gql`
+  mutation UpdateTutorResource($id: ID!, $input: TutorResourceInput!) {
+    updateTutorResource(id: $id, input: $input) {
+      ...TutorResourceFields
+    }
+  }
+  ${TutorResourceFieldsFragmentDoc}
+`;
+export type UpdateTutorResourceMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UpdateTutorResourceMutation,
+    UpdateTutorResourceMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUpdateTutorResourceMutation__
+ *
+ * To run a mutation, you first call `useUpdateTutorResourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTutorResourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTutorResourceMutation, { data, loading, error }] = useUpdateTutorResourceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateTutorResourceMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateTutorResourceMutation,
+    UpdateTutorResourceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UpdateTutorResourceMutation,
+    UpdateTutorResourceMutationVariables
+  >(UpdateTutorResourceDocument, options);
+}
+export type UpdateTutorResourceMutationHookResult = ReturnType<
+  typeof useUpdateTutorResourceMutation
+>;
+export type UpdateTutorResourceMutationResult =
+  ApolloReactCommon.MutationResult<UpdateTutorResourceMutation>;
+export type UpdateTutorResourceMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UpdateTutorResourceMutation,
+    UpdateTutorResourceMutationVariables
+  >;
+export const ReviewTutorResourceDocument = gql`
+  mutation ReviewTutorResource($id: ID!, $input: TutorReviewInput!) {
+    reviewTutorResource(id: $id, input: $input) {
+      ...TutorResourceFields
+    }
+  }
+  ${TutorResourceFieldsFragmentDoc}
+`;
+export type ReviewTutorResourceMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ReviewTutorResourceMutation,
+    ReviewTutorResourceMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useReviewTutorResourceMutation__
+ *
+ * To run a mutation, you first call `useReviewTutorResourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReviewTutorResourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reviewTutorResourceMutation, { data, loading, error }] = useReviewTutorResourceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useReviewTutorResourceMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ReviewTutorResourceMutation,
+    ReviewTutorResourceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ReviewTutorResourceMutation,
+    ReviewTutorResourceMutationVariables
+  >(ReviewTutorResourceDocument, options);
+}
+export type ReviewTutorResourceMutationHookResult = ReturnType<
+  typeof useReviewTutorResourceMutation
+>;
+export type ReviewTutorResourceMutationResult =
+  ApolloReactCommon.MutationResult<ReviewTutorResourceMutation>;
+export type ReviewTutorResourceMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ReviewTutorResourceMutation,
+    ReviewTutorResourceMutationVariables
+  >;
+export const ReviewTutorReportDocument = gql`
+  mutation ReviewTutorReport($id: ID!, $input: TutorReviewInput!) {
+    reviewTutorReport(id: $id, input: $input) {
+      ...TutorReportFields
+    }
+  }
+  ${TutorReportFieldsFragmentDoc}
+`;
+export type ReviewTutorReportMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ReviewTutorReportMutation,
+    ReviewTutorReportMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useReviewTutorReportMutation__
+ *
+ * To run a mutation, you first call `useReviewTutorReportMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReviewTutorReportMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reviewTutorReportMutation, { data, loading, error }] = useReviewTutorReportMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useReviewTutorReportMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ReviewTutorReportMutation,
+    ReviewTutorReportMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ReviewTutorReportMutation,
+    ReviewTutorReportMutationVariables
+  >(ReviewTutorReportDocument, options);
+}
+export type ReviewTutorReportMutationHookResult = ReturnType<
+  typeof useReviewTutorReportMutation
+>;
+export type ReviewTutorReportMutationResult =
+  ApolloReactCommon.MutationResult<ReviewTutorReportMutation>;
+export type ReviewTutorReportMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ReviewTutorReportMutation,
+    ReviewTutorReportMutationVariables
+  >;
+export const TutorOperationsDocument = gql`
+  query TutorOperations {
+    tutorOperations {
+      pending
+      running
+      completedToday
+      failedToday
+      oldestPendingAt
+      scope
+      metrics {
+        samples
+        queueP95Ms
+        completionP95Ms
+        knownInputTokens
+        knownOutputTokens
+        unknownUsageJobs
+        failures {
+          code
+          count
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useTutorOperationsQuery__
+ *
+ * To run a query within a React component, call `useTutorOperationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorOperationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorOperationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTutorOperationsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorOperationsQuery,
+    TutorOperationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorOperationsQuery,
+    TutorOperationsQueryVariables
+  >(TutorOperationsDocument, options);
+}
+export function useTutorOperationsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorOperationsQuery,
+    TutorOperationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorOperationsQuery,
+    TutorOperationsQueryVariables
+  >(TutorOperationsDocument, options);
+}
+export function useTutorOperationsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorOperationsQuery,
+    TutorOperationsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorOperationsQuery,
+  TutorOperationsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorOperationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorOperationsQuery,
+        TutorOperationsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorOperationsQuery | undefined,
+  TutorOperationsQueryVariables
+>;
+export function useTutorOperationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorOperationsQuery,
+        TutorOperationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorOperationsQuery,
+    TutorOperationsQueryVariables
+  >(TutorOperationsDocument, options as any);
+}
+export type TutorOperationsQueryHookResult = ReturnType<
+  typeof useTutorOperationsQuery
+>;
+export type TutorOperationsLazyQueryHookResult = ReturnType<
+  typeof useTutorOperationsLazyQuery
+>;
+export type TutorOperationsSuspenseQueryHookResult = ReturnType<
+  typeof useTutorOperationsSuspenseQuery
+>;
+export type TutorOperationsQueryResult = ApolloReactCommon.QueryResult<
+  TutorOperationsQuery,
+  TutorOperationsQueryVariables
+>;
+export const TutorReplyHistoryDocument = gql`
+  query TutorReplyHistory($conversationId: ID!, $messageId: ID!) {
+    tutorReplyHistory(conversationId: $conversationId, messageId: $messageId) {
+      currentRevision
+      canSelect
+      items {
+        revision
+        status
+        content
+        model
+        correction
+      }
+    }
+  }
+`;
+
+/**
+ * __useTutorReplyHistoryQuery__
+ *
+ * To run a query within a React component, call `useTutorReplyHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorReplyHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorReplyHistoryQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useTutorReplyHistoryQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorReplyHistoryQuery,
+    TutorReplyHistoryQueryVariables
+  > &
+    (
+      | { variables: TutorReplyHistoryQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TutorReplyHistoryQuery,
+    TutorReplyHistoryQueryVariables
+  >(TutorReplyHistoryDocument, options);
+}
+export function useTutorReplyHistoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorReplyHistoryQuery,
+    TutorReplyHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorReplyHistoryQuery,
+    TutorReplyHistoryQueryVariables
+  >(TutorReplyHistoryDocument, options);
+}
+export function useTutorReplyHistorySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorReplyHistoryQuery,
+    TutorReplyHistoryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReplyHistoryQuery,
+  TutorReplyHistoryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorReplyHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReplyHistoryQuery,
+        TutorReplyHistoryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorReplyHistoryQuery | undefined,
+  TutorReplyHistoryQueryVariables
+>;
+export function useTutorReplyHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorReplyHistoryQuery,
+        TutorReplyHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorReplyHistoryQuery,
+    TutorReplyHistoryQueryVariables
+  >(TutorReplyHistoryDocument, options as any);
+}
+export type TutorReplyHistoryQueryHookResult = ReturnType<
+  typeof useTutorReplyHistoryQuery
+>;
+export type TutorReplyHistoryLazyQueryHookResult = ReturnType<
+  typeof useTutorReplyHistoryLazyQuery
+>;
+export type TutorReplyHistorySuspenseQueryHookResult = ReturnType<
+  typeof useTutorReplyHistorySuspenseQuery
+>;
+export type TutorReplyHistoryQueryResult = ApolloReactCommon.QueryResult<
+  TutorReplyHistoryQuery,
+  TutorReplyHistoryQueryVariables
+>;
+export const SelectTutorReplyDocument = gql`
+  mutation SelectTutorReply(
+    $conversationId: ID!
+    $messageId: ID!
+    $revision: Int!
+    $clientMessageId: ID!
+  ) {
+    selectTutorReply(
+      conversationId: $conversationId
+      messageId: $messageId
+      revision: $revision
+      clientMessageId: $clientMessageId
+    ) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+export type SelectTutorReplyMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SelectTutorReplyMutation,
+    SelectTutorReplyMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSelectTutorReplyMutation__
+ *
+ * To run a mutation, you first call `useSelectTutorReplyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSelectTutorReplyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [selectTutorReplyMutation, { data, loading, error }] = useSelectTutorReplyMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *      revision: // value for 'revision'
+ *      clientMessageId: // value for 'clientMessageId'
+ *   },
+ * });
+ */
+export function useSelectTutorReplyMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SelectTutorReplyMutation,
+    SelectTutorReplyMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SelectTutorReplyMutation,
+    SelectTutorReplyMutationVariables
+  >(SelectTutorReplyDocument, options);
+}
+export type SelectTutorReplyMutationHookResult = ReturnType<
+  typeof useSelectTutorReplyMutation
+>;
+export type SelectTutorReplyMutationResult =
+  ApolloReactCommon.MutationResult<SelectTutorReplyMutation>;
+export type SelectTutorReplyMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SelectTutorReplyMutation,
+    SelectTutorReplyMutationVariables
+  >;
+export const BranchTutorConversationDocument = gql`
+  mutation BranchTutorConversation(
+    $conversationId: ID!
+    $messageId: ID!
+    $message: String!
+    $clientMessageId: ID!
+    $personalized: Boolean
+  ) {
+    branchTutorConversation(
+      conversationId: $conversationId
+      messageId: $messageId
+      message: $message
+      clientMessageId: $clientMessageId
+      personalized: $personalized
+    ) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+export type BranchTutorConversationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    BranchTutorConversationMutation,
+    BranchTutorConversationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useBranchTutorConversationMutation__
+ *
+ * To run a mutation, you first call `useBranchTutorConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBranchTutorConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [branchTutorConversationMutation, { data, loading, error }] = useBranchTutorConversationMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      messageId: // value for 'messageId'
+ *      message: // value for 'message'
+ *      clientMessageId: // value for 'clientMessageId'
+ *      personalized: // value for 'personalized'
+ *   },
+ * });
+ */
+export function useBranchTutorConversationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    BranchTutorConversationMutation,
+    BranchTutorConversationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    BranchTutorConversationMutation,
+    BranchTutorConversationMutationVariables
+  >(BranchTutorConversationDocument, options);
+}
+export type BranchTutorConversationMutationHookResult = ReturnType<
+  typeof useBranchTutorConversationMutation
+>;
+export type BranchTutorConversationMutationResult =
+  ApolloReactCommon.MutationResult<BranchTutorConversationMutation>;
+export type BranchTutorConversationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    BranchTutorConversationMutation,
+    BranchTutorConversationMutationVariables
+  >;
+export const TutorPolicyDocument = gql`
+  query TutorPolicy {
+    tutorPolicy {
+      accepting
+      allowedModes
+      version
+      environmentEnabled
+      model
+      dailyLimit
+      streamingEnabled
+      voiceEnabled
+    }
+  }
+`;
+
+/**
+ * __useTutorPolicyQuery__
+ *
+ * To run a query within a React component, call `useTutorPolicyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorPolicyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorPolicyQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTutorPolicyQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TutorPolicyQuery,
+    TutorPolicyQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<TutorPolicyQuery, TutorPolicyQueryVariables>(
+    TutorPolicyDocument,
+    options,
+  );
+}
+export function useTutorPolicyLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorPolicyQuery,
+    TutorPolicyQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorPolicyQuery,
+    TutorPolicyQueryVariables
+  >(TutorPolicyDocument, options);
+}
+export function useTutorPolicySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorPolicyQuery,
+    TutorPolicyQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorPolicyQuery,
+  TutorPolicyQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorPolicySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorPolicyQuery,
+        TutorPolicyQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorPolicyQuery | undefined,
+  TutorPolicyQueryVariables
+>;
+export function useTutorPolicySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorPolicyQuery,
+        TutorPolicyQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorPolicyQuery,
+    TutorPolicyQueryVariables
+  >(TutorPolicyDocument, options as any);
+}
+export type TutorPolicyQueryHookResult = ReturnType<typeof useTutorPolicyQuery>;
+export type TutorPolicyLazyQueryHookResult = ReturnType<
+  typeof useTutorPolicyLazyQuery
+>;
+export type TutorPolicySuspenseQueryHookResult = ReturnType<
+  typeof useTutorPolicySuspenseQuery
+>;
+export type TutorPolicyQueryResult = ApolloReactCommon.QueryResult<
+  TutorPolicyQuery,
+  TutorPolicyQueryVariables
+>;
+export const UpdateTutorPolicyDocument = gql`
+  mutation UpdateTutorPolicy($input: TutorPolicyInput!) {
+    updateTutorPolicy(input: $input) {
+      accepting
+      allowedModes
+      version
+      environmentEnabled
+      model
+      dailyLimit
+      streamingEnabled
+      voiceEnabled
+    }
+  }
+`;
+export type UpdateTutorPolicyMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UpdateTutorPolicyMutation,
+    UpdateTutorPolicyMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUpdateTutorPolicyMutation__
+ *
+ * To run a mutation, you first call `useUpdateTutorPolicyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTutorPolicyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTutorPolicyMutation, { data, loading, error }] = useUpdateTutorPolicyMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateTutorPolicyMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateTutorPolicyMutation,
+    UpdateTutorPolicyMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UpdateTutorPolicyMutation,
+    UpdateTutorPolicyMutationVariables
+  >(UpdateTutorPolicyDocument, options);
+}
+export type UpdateTutorPolicyMutationHookResult = ReturnType<
+  typeof useUpdateTutorPolicyMutation
+>;
+export type UpdateTutorPolicyMutationResult =
+  ApolloReactCommon.MutationResult<UpdateTutorPolicyMutation>;
+export type UpdateTutorPolicyMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UpdateTutorPolicyMutation,
+    UpdateTutorPolicyMutationVariables
+  >;
+export const TutorMemoryDocument = gql`
+  query TutorMemory($conversationId: ID!) {
+    tutorMemory(conversationId: $conversationId) {
+      enabled
+      content
+      throughOrder
+      remainingMessages
+      pendingMessageId
+      batchSize
+    }
+  }
+`;
+
+/**
+ * __useTutorMemoryQuery__
+ *
+ * To run a query within a React component, call `useTutorMemoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorMemoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorMemoryQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useTutorMemoryQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TutorMemoryQuery,
+    TutorMemoryQueryVariables
+  > &
+    (
+      | { variables: TutorMemoryQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<TutorMemoryQuery, TutorMemoryQueryVariables>(
+    TutorMemoryDocument,
+    options,
+  );
+}
+export function useTutorMemoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TutorMemoryQuery,
+    TutorMemoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TutorMemoryQuery,
+    TutorMemoryQueryVariables
+  >(TutorMemoryDocument, options);
+}
+export function useTutorMemorySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TutorMemoryQuery,
+    TutorMemoryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorMemoryQuery,
+  TutorMemoryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTutorMemorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorMemoryQuery,
+        TutorMemoryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TutorMemoryQuery | undefined,
+  TutorMemoryQueryVariables
+>;
+export function useTutorMemorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TutorMemoryQuery,
+        TutorMemoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TutorMemoryQuery,
+    TutorMemoryQueryVariables
+  >(TutorMemoryDocument, options as any);
+}
+export type TutorMemoryQueryHookResult = ReturnType<typeof useTutorMemoryQuery>;
+export type TutorMemoryLazyQueryHookResult = ReturnType<
+  typeof useTutorMemoryLazyQuery
+>;
+export type TutorMemorySuspenseQueryHookResult = ReturnType<
+  typeof useTutorMemorySuspenseQuery
+>;
+export type TutorMemoryQueryResult = ApolloReactCommon.QueryResult<
+  TutorMemoryQuery,
+  TutorMemoryQueryVariables
+>;
+export const SummarizeTutorConversationDocument = gql`
+  mutation SummarizeTutorConversation(
+    $conversationId: ID!
+    $clientMessageId: ID!
+  ) {
+    summarizeTutorConversation(
+      conversationId: $conversationId
+      clientMessageId: $clientMessageId
+    ) {
+      conversation {
+        ...TutorConversationSummaryFields
+      }
+      messages {
+        ...TutorMessageFields
+      }
+    }
+  }
+  ${TutorConversationSummaryFieldsFragmentDoc}
+  ${TutorMessageFieldsFragmentDoc}
+`;
+export type SummarizeTutorConversationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SummarizeTutorConversationMutation,
+    SummarizeTutorConversationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSummarizeTutorConversationMutation__
+ *
+ * To run a mutation, you first call `useSummarizeTutorConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSummarizeTutorConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [summarizeTutorConversationMutation, { data, loading, error }] = useSummarizeTutorConversationMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      clientMessageId: // value for 'clientMessageId'
+ *   },
+ * });
+ */
+export function useSummarizeTutorConversationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SummarizeTutorConversationMutation,
+    SummarizeTutorConversationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SummarizeTutorConversationMutation,
+    SummarizeTutorConversationMutationVariables
+  >(SummarizeTutorConversationDocument, options);
+}
+export type SummarizeTutorConversationMutationHookResult = ReturnType<
+  typeof useSummarizeTutorConversationMutation
+>;
+export type SummarizeTutorConversationMutationResult =
+  ApolloReactCommon.MutationResult<SummarizeTutorConversationMutation>;
+export type SummarizeTutorConversationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SummarizeTutorConversationMutation,
+    SummarizeTutorConversationMutationVariables
+  >;
+export const ClearTutorMemoryDocument = gql`
+  mutation ClearTutorMemory($conversationId: ID!) {
+    clearTutorMemory(conversationId: $conversationId)
+  }
+`;
+export type ClearTutorMemoryMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ClearTutorMemoryMutation,
+    ClearTutorMemoryMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useClearTutorMemoryMutation__
+ *
+ * To run a mutation, you first call `useClearTutorMemoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearTutorMemoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearTutorMemoryMutation, { data, loading, error }] = useClearTutorMemoryMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useClearTutorMemoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ClearTutorMemoryMutation,
+    ClearTutorMemoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ClearTutorMemoryMutation,
+    ClearTutorMemoryMutationVariables
+  >(ClearTutorMemoryDocument, options);
+}
+export type ClearTutorMemoryMutationHookResult = ReturnType<
+  typeof useClearTutorMemoryMutation
+>;
+export type ClearTutorMemoryMutationResult =
+  ApolloReactCommon.MutationResult<ClearTutorMemoryMutation>;
+export type ClearTutorMemoryMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ClearTutorMemoryMutation,
+    ClearTutorMemoryMutationVariables
   >;
 export const AssessmentWorkloadDocument = gql`
   query AssessmentWorkload {

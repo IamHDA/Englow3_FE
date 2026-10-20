@@ -9,6 +9,18 @@ fragment TutorMessageFields on TutorMessage {
   reported
   createdAt
   answeredAt
+  revision
+  restartCount
+  summary
+  correction
+  reportStatus
+  sources {
+    label
+    resourceId
+    title
+    versionNumber
+    excerpt
+  }
 }
 
 fragment TutorConversationSummaryFields on TutorConversationSummary {
@@ -18,6 +30,13 @@ fragment TutorConversationSummaryFields on TutorConversationSummary {
   messageCount
   lastMessageAt
   createdAt
+  archivedAt
+  useLearningContext
+  quizAttemptId
+  quizQuestionId
+  assessmentAttemptId
+  examAttemptId
+  examQuestionId
 }
 
 query TutorConversations {
@@ -41,11 +60,27 @@ mutation SendTutorMessage(
   $conversationId: ID
   $message: String!
   $topic: String
+  $clientMessageId: ID
+  $mode: String
+  $personalized: Boolean
+  $quizAttemptId: ID
+  $quizQuestionId: ID
+  $assessmentAttemptId: ID
+  $examAttemptId: ID
+  $examQuestionId: ID
 ) {
   sendTutorMessage(
     conversationId: $conversationId
     message: $message
     topic: $topic
+    clientMessageId: $clientMessageId
+    mode: $mode
+    personalized: $personalized
+    quizAttemptId: $quizAttemptId
+    quizQuestionId: $quizQuestionId
+    assessmentAttemptId: $assessmentAttemptId
+    examAttemptId: $examAttemptId
+    examQuestionId: $examQuestionId
   ) {
     conversation {
       ...TutorConversationSummaryFields
@@ -74,4 +109,333 @@ mutation ReportTutorMessage(
   ) {
     ...TutorMessageFields
   }
+}
+
+query TutorUsage {
+  tutorUsage {
+    enabled
+    limit
+    used
+    remaining
+    resetsAt
+    maxMessageLength
+    streaming
+    voice
+    allowedModes
+    supportedContexts
+    memorySupported
+  }
+}
+query TutorHistory(
+  $page: Int
+  $size: Int
+  $search: String
+  $archived: Boolean
+) {
+  tutorHistory(page: $page, size: $size, search: $search, archived: $archived) {
+    items {
+      ...TutorConversationSummaryFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+query TutorMessages($id: ID!, $page: Int, $size: Int) {
+  tutorMessages(id: $id, page: $page, size: $size) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+    page
+    totalPages
+    totalElements
+  }
+}
+query TutorReply($conversationId: ID!, $messageId: ID!) {
+  tutorReply(conversationId: $conversationId, messageId: $messageId) {
+    ...TutorMessageFields
+  }
+}
+query TutorReceipt($clientMessageId: ID!) {
+  tutorReceipt(clientMessageId: $clientMessageId) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+mutation RetryTutorReply(
+  $conversationId: ID!
+  $messageId: ID!
+  $clientMessageId: ID!
+) {
+  retryTutorReply(
+    conversationId: $conversationId
+    messageId: $messageId
+    clientMessageId: $clientMessageId
+  ) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+mutation RegenerateTutorReply(
+  $conversationId: ID!
+  $messageId: ID!
+  $clientMessageId: ID!
+) {
+  regenerateTutorReply(
+    conversationId: $conversationId
+    messageId: $messageId
+    clientMessageId: $clientMessageId
+  ) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+mutation CancelTutorReply($conversationId: ID!, $messageId: ID!) {
+  cancelTutorReply(conversationId: $conversationId, messageId: $messageId) {
+    ...TutorMessageFields
+  }
+}
+mutation RestoreTutorConversation($id: ID!) {
+  restoreTutorConversation(id: $id) {
+    ...TutorConversationSummaryFields
+  }
+}
+mutation RenameTutorConversation($id: ID!, $title: String!) {
+  renameTutorConversation(id: $id, title: $title) {
+    ...TutorConversationSummaryFields
+  }
+}
+
+fragment TutorResourceFields on TutorResource {
+  id
+  documentId
+  versionNumber
+  title
+  body
+  status
+  authorId
+  reviewNote
+  rowVersion
+}
+fragment TutorReportFields on TutorReport {
+  id
+  messageId
+  revision
+  question
+  answer
+  learnerNote
+  status
+  assignedTo
+  reviewerNote
+  correction
+  createdAt
+  resolvedAt
+}
+query TutorResources($status: String, $page: Int) {
+  tutorResources(status: $status, page: $page) {
+    items {
+      ...TutorResourceFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+query TutorResource($id: ID!) {
+  tutorResource(id: $id) {
+    ...TutorResourceFields
+  }
+}
+query TutorReports($status: String, $page: Int) {
+  tutorReports(status: $status, page: $page) {
+    items {
+      ...TutorReportFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+query TutorReport($id: ID!) {
+  tutorReport(id: $id) {
+    ...TutorReportFields
+  }
+}
+query TutorStaffMembers {
+  tutorStaffMembers {
+    id
+    displayName
+  }
+}
+mutation CreateTutorResource($input: TutorResourceInput!) {
+  createTutorResource(input: $input) {
+    ...TutorResourceFields
+  }
+}
+mutation UpdateTutorResource($id: ID!, $input: TutorResourceInput!) {
+  updateTutorResource(id: $id, input: $input) {
+    ...TutorResourceFields
+  }
+}
+mutation ReviewTutorResource($id: ID!, $input: TutorReviewInput!) {
+  reviewTutorResource(id: $id, input: $input) {
+    ...TutorResourceFields
+  }
+}
+mutation ReviewTutorReport($id: ID!, $input: TutorReviewInput!) {
+  reviewTutorReport(id: $id, input: $input) {
+    ...TutorReportFields
+  }
+}
+
+query TutorOperations {
+  tutorOperations {
+    pending
+    running
+    completedToday
+    failedToday
+    oldestPendingAt
+    scope
+    metrics {
+      samples
+      queueP95Ms
+      completionP95Ms
+      knownInputTokens
+      knownOutputTokens
+      unknownUsageJobs
+      failures {
+        code
+        count
+      }
+    }
+  }
+}
+
+query TutorReplyHistory($conversationId: ID!, $messageId: ID!) {
+  tutorReplyHistory(conversationId: $conversationId, messageId: $messageId) {
+    currentRevision
+    canSelect
+    items {
+      revision
+      status
+      content
+      model
+      correction
+    }
+  }
+}
+mutation SelectTutorReply(
+  $conversationId: ID!
+  $messageId: ID!
+  $revision: Int!
+  $clientMessageId: ID!
+) {
+  selectTutorReply(
+    conversationId: $conversationId
+    messageId: $messageId
+    revision: $revision
+    clientMessageId: $clientMessageId
+  ) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+mutation BranchTutorConversation(
+  $conversationId: ID!
+  $messageId: ID!
+  $message: String!
+  $clientMessageId: ID!
+  $personalized: Boolean
+) {
+  branchTutorConversation(
+    conversationId: $conversationId
+    messageId: $messageId
+    message: $message
+    clientMessageId: $clientMessageId
+    personalized: $personalized
+  ) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+
+query TutorPolicy {
+  tutorPolicy {
+    accepting
+    allowedModes
+    version
+    environmentEnabled
+    model
+    dailyLimit
+    streamingEnabled
+    voiceEnabled
+  }
+}
+mutation UpdateTutorPolicy($input: TutorPolicyInput!) {
+  updateTutorPolicy(input: $input) {
+    accepting
+    allowedModes
+    version
+    environmentEnabled
+    model
+    dailyLimit
+    streamingEnabled
+    voiceEnabled
+  }
+}
+
+query TutorMemory($conversationId: ID!) {
+  tutorMemory(conversationId: $conversationId) {
+    enabled
+    content
+    throughOrder
+    remainingMessages
+    pendingMessageId
+    batchSize
+  }
+}
+mutation SummarizeTutorConversation(
+  $conversationId: ID!
+  $clientMessageId: ID!
+) {
+  summarizeTutorConversation(
+    conversationId: $conversationId
+    clientMessageId: $clientMessageId
+  ) {
+    conversation {
+      ...TutorConversationSummaryFields
+    }
+    messages {
+      ...TutorMessageFields
+    }
+  }
+}
+mutation ClearTutorMemory($conversationId: ID!) {
+  clearTutorMemory(conversationId: $conversationId)
 }

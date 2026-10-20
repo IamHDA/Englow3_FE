@@ -1,11 +1,8 @@
 "use client";
-
-import { useLanguage } from "@/shared/hooks/useLanguage";
-
+import { useState } from "react";
 import {
-  ActionIcon,
   Alert,
-  Box,
+  Button,
   Group,
   Loader,
   Paper,
@@ -14,142 +11,329 @@ import {
   Tooltip,
 } from "@mantine/core";
 import {
-  IconAlertTriangle,
+  IconCopy,
   IconFlag,
-  IconFlagFilled,
+  IconRefresh,
+  IconPlayerStop,
 } from "@tabler/icons-react";
-import React from "react";
-
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import {
   TutorMessageRole,
   TutorMessageStatus,
 } from "@/lib/graphql/generated/schemaTypes";
-
 import type { TutorMessage } from "../../../types";
-
-interface TutorMessageBubbleProps {
+import classes from "./TutorMessageBubble.module.css";
+interface Props {
   message: TutorMessage;
-  onReport: (messageId: string) => void;
+  onReport: (id: string) => void;
+  onRetry?: (id: string) => void;
+  onHistory?: (id: string) => void;
+  onBranch?: (id: string, text: string) => void;
+  onRegenerate?: (id: string) => void;
+  onCancel?: (id: string) => void;
+  last?: boolean;
+  disabled?: boolean;
 }
-
-/** Lỗi kỹ thuật không phải thứ người học đọc được - dịch sang câu họ hiểu. */
-function explain(errorCode: string | null | undefined, isVi: boolean): string {
-  switch (errorCode) {
-    case "TUTOR_REPLY_EMPTY":
-      return isVi
-        ? "Gia sư không đưa ra được câu trả lời cho câu hỏi này. Thử hỏi lại theo cách khác nhé."
-        : "The tutor could not answer this question. Try asking it another way.";
-    case "TUTOR_SERVICE_UNREACHABLE":
-      return isVi
-        ? "Không kết nối được tới gia sư. Thử lại sau ít phút."
-        : "Could not reach the tutor. Try again in a few minutes.";
-    default:
-      return isVi
-        ? "Câu hỏi này chưa được trả lời. Bạn thử gửi lại nhé."
-        : "This question was not answered. Try sending it again.";
-  }
-}
-
-/**
- * Một lượt trong cuộc trò chuyện.
- *
- * Ba trạng thái hiện ba thứ khác nhau, và đó là chủ đích: đang chờ thì quay,
- * hỏng thì nói vì sao, có trả lời thì hiện trả lời. Gộp "chưa trả lời" với
- * "trả lời rỗng" làm một sẽ để người học ngồi nhìn một ô trống mãi không đầy.
- */
 export function TutorMessageBubble({
   message,
   onReport,
-}: TutorMessageBubbleProps) {
+  onRetry,
+  onHistory,
+  onBranch,
+  onRegenerate,
+  onCancel,
+  last,
+  disabled,
+}: Props) {
   const { isVi } = useLanguage();
-  const fromLearner = message.role === TutorMessageRole.USER;
-
-  if (fromLearner) {
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  if (message.role === TutorMessageRole.USER)
     return (
-      <Group justify="flex-end" align="flex-start" wrap="nowrap">
+      <Group justify="flex-end">
         <Paper
-          bg="blue.6"
+          bg="brand.7"
           c="white"
-          p="sm"
+          p="md"
           radius="lg"
-          maw="80%"
-          style={{ whiteSpace: "pre-wrap" }}
+          className={classes.message}
         >
-          <Text size="sm">{message.content}</Text>
+          <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
+            {message.summary
+              ? tr(
+                  "Tổng kết và cập nhật ghi nhớ cuộc trò chuyện.",
+                  "Summarize and update conversation memory.",
+                )
+              : message.content}
+          </Text>
+          {onBranch && !message.summary && (
+            <Button
+              variant="white"
+              color="brand"
+              size="sm"
+              mih={44}
+              mt="sm"
+              disabled={disabled}
+              onClick={() => onBranch(message.id, message.content ?? "")}
+            >
+              {tr("Chỉnh sửa ở cuộc mới", "Edit in a new conversation")}
+            </Button>
+          )}
         </Paper>
       </Group>
     );
-  }
-
-  if (message.status === TutorMessageStatus.PENDING) {
+  if (message.status === TutorMessageStatus.PENDING)
     return (
-      <Group align="center" gap="xs">
-        <Loader size="xs" type="dots" />
-        <Text size="sm" c="dimmed">
-          {isVi
-            ? "Gia sư đang soạn câu trả lời…"
-            : "The tutor is writing an answer…"}
-        </Text>
-      </Group>
-    );
-  }
-
-  if (message.status === TutorMessageStatus.FAILED) {
-    return (
-      <Alert
-        color="orange"
-        icon={<IconAlertTriangle size={16} />}
-        variant="light"
-        maw="85%"
-      >
-        <Text size="sm">{explain(message.errorCode, isVi)}</Text>
-      </Alert>
-    );
-  }
-
-  return (
-    <Group justify="flex-start" align="flex-start" wrap="nowrap" gap="xs">
-      <Paper withBorder p="sm" radius="lg" maw="85%">
-        <Stack gap={6}>
-          <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
-            {message.content}
-          </Text>
-          <Group justify="space-between" gap="xs">
-            {/* Model hiện ngay trên câu trả lời: một câu đọc thấy sai cần
-                truy được là cái gì sinh ra nó. */}
-            <Text size="xs" c="dimmed">
-              {message.model ?? (isVi ? "Gia sư AI" : "AI Tutor")}
+      <Paper withBorder p="md" radius="lg" className={classes.message}>
+        <Stack gap="xs">
+          <Group role="status" aria-live="polite">
+            <Loader size="sm" type="dots" />
+            <Text size="sm">
+              {tr(
+                "Đã lưu câu hỏi · Gia sư đang chuẩn bị câu trả lời",
+                "Question saved · The tutor is preparing a reply",
+              )}
             </Text>
-            <Tooltip
-              label={
-                message.reported
-                  ? isVi
-                    ? "Bạn đã báo câu trả lời này"
-                    : "You reported this answer"
-                  : isVi
-                    ? "Báo câu trả lời sai hoặc không phù hợp"
-                    : "Report a wrong or unsuitable answer"
-              }
-            >
-              <ActionIcon
-                variant="subtle"
-                size="sm"
-                color={message.reported ? "orange" : "gray"}
-                disabled={message.reported}
-                onClick={() => onReport(message.id)}
-                aria-label={isVi ? "Báo câu trả lời này" : "Report this answer"}
-              >
-                {message.reported ? (
-                  <IconFlagFilled size={14} />
-                ) : (
-                  <IconFlag size={14} />
-                )}
-              </ActionIcon>
-            </Tooltip>
           </Group>
+          <Text size="xs" c="dimmed">
+            {tr(
+              "Bạn có thể rời trang rồi mở lại cuộc trò chuyện.",
+              "You can leave and reopen this conversation later.",
+            )}
+          </Text>
+          {message.content && (
+            <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
+              {message.content}
+            </Text>
+          )}
+          {onCancel && (
+            <Button
+              size="sm"
+              mih={44}
+              variant="subtle"
+              leftSection={<IconPlayerStop size={16} />}
+              disabled={disabled}
+              onClick={() => onCancel(message.id)}
+            >
+              {tr("Dừng lượt này", "Stop this reply")}
+            </Button>
+          )}
         </Stack>
       </Paper>
-      <Box />
-    </Group>
+    );
+  if (
+    message.status === TutorMessageStatus.FAILED ||
+    message.status === TutorMessageStatus.CANCELLED
+  )
+    return (
+      <Alert color="orange" radius="md" className={classes.message}>
+        <Stack gap="xs">
+          <Text size="sm">
+            {message.status === TutorMessageStatus.CANCELLED
+              ? tr(
+                  "Đã dừng trả lời. Câu hỏi vẫn được giữ.",
+                  "Reply stopped. Your question is kept.",
+                )
+              : tr(
+                  "Gia sư chưa trả lời được câu này. Câu hỏi vẫn được giữ.",
+                  "The tutor could not answer this question. Your question is kept.",
+                )}
+          </Text>
+          {last &&
+            onRetry &&
+            !message.summary &&
+            (message.restartCount ?? message.revision ?? 0) < 3 && (
+              <Button
+                variant="light"
+                disabled={disabled}
+                onClick={() => onRetry(message.id)}
+                leftSection={<IconRefresh size={16} />}
+              >
+                {tr("Thử trả lời lại", "Retry reply")}
+              </Button>
+            )}
+          {onHistory && message.revision > 0 && (
+            <Button
+              variant="subtle"
+              mih={44}
+              onClick={() => onHistory(message.id)}
+            >
+              {tr(
+                "Xem và chọn đáp án trước",
+                "View and select an earlier answer",
+              )}
+            </Button>
+          )}
+        </Stack>
+      </Alert>
+    );
+  return (
+    <Paper withBorder p="md" radius="lg" className={classes.message}>
+      <Stack gap="sm">
+        <Text size="xs" fw={700} c="brand.8">
+          {message.summary
+            ? tr("TỔNG KẾT AI · CÓ THỂ SAI", "AI SUMMARY · MAY BE INCORRECT")
+            : tr("GIA SƯ ENGLOW3", "ENGLOW3 TUTOR")}
+        </Text>
+        {message.sources.length === 0 && (
+          <Text size="xs" c="dimmed">
+            {tr(
+              "Phản hồi AI · chưa có trích dẫn học liệu",
+              "AI response · no learning-material citations",
+            )}
+          </Text>
+        )}
+        <div className={classes.markdown}>
+          <Markdown
+            remarkPlugins={[remarkGfm]}
+            skipHtml
+            urlTransform={(url) =>
+              /^https:\/\//i.test(url) || /^\/(?!\/)/.test(url) ? url : ""
+            }
+            components={{
+              img: () => null,
+              a: ({ href, children }) =>
+                href ? (
+                  <a href={href} target="_blank" rel="noopener noreferrer">
+                    {children}
+                  </a>
+                ) : (
+                  <span>{children}</span>
+                ),
+              table: ({ children }) => (
+                <div style={{ overflowX: "auto" }}>
+                  <table>{children}</table>
+                </div>
+              ),
+            }}
+          >
+            {message.content ?? ""}
+          </Markdown>
+        </div>
+        {message.sources?.length > 0 && (
+          <details>
+            <summary>
+              {tr(
+                "Học liệu tham khảo tại thời điểm trả lời",
+                "Reference material at the time of this reply",
+              )}
+            </summary>
+            <Stack gap="sm" mt="sm">
+              {message.sources.map((source) => (
+                <div key={source.label}>
+                  <Text size="sm" fw={600}>
+                    [{source.label}] {source.title} · v{source.versionNumber}
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {source.excerpt}
+                  </Text>
+                </div>
+              ))}
+            </Stack>
+          </details>
+        )}
+        {message.reportStatus && (
+          <Text size="xs" c="dimmed">
+            {tr("Báo cáo: ", "Report: ")}
+            {(
+              {
+                OPEN: tr("Đã tiếp nhận", "Received"),
+                ASSIGNED: tr("Đang kiểm tra", "Under review"),
+                PROPOSED: tr("Đang duyệt kết luận", "Awaiting resolution"),
+                RESOLVED: tr("Đã xử lý", "Resolved"),
+                DISMISSED: tr("Đã đóng", "Closed"),
+              } as Record<string, string>
+            )[message.reportStatus] ?? tr("Đã tiếp nhận", "Received")}
+          </Text>
+        )}
+        {message.correction && (
+          <Alert
+            color="brand"
+            title={tr(
+              "Đính chính từ đội ngũ Englow3",
+              "Correction from the Englow3 team",
+            )}
+          >
+            <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
+              {message.correction}
+            </Text>
+          </Alert>
+        )}
+        <Group gap="xs">
+          {onHistory && message.revision > 0 && (
+            <Button
+              variant="subtle"
+              mih={44}
+              size="sm"
+              onClick={() => onHistory(message.id)}
+            >
+              {tr("Lịch sử đáp án", "Answer history")}
+            </Button>
+          )}
+          <Button
+            variant="subtle"
+            size="sm"
+            mih={44}
+            leftSection={<IconCopy size={16} />}
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(message.content ?? "");
+                setCopyStatus(tr("Đã sao chép", "Copied"));
+              } catch {
+                setCopyStatus(
+                  tr(
+                    "Chưa sao chép được. Hãy chọn văn bản để sao chép.",
+                    "Could not copy. Select the text to copy it.",
+                  ),
+                );
+              }
+            }}
+          >
+            {tr("Sao chép", "Copy")}
+          </Button>
+          {last &&
+            onRegenerate &&
+            !message.summary &&
+            (message.restartCount ?? message.revision ?? 0) < 3 && (
+              <Tooltip
+                label={tr(
+                  "Dùng một lượt AI mới; câu trả lời cũ được lưu lịch sử",
+                  "Uses a new AI request; the old answer is preserved",
+                )}
+              >
+                <Button
+                  variant="subtle"
+                  size="sm"
+                  mih={44}
+                  disabled={disabled}
+                  onClick={() => onRegenerate(message.id)}
+                  leftSection={<IconRefresh size={16} />}
+                >
+                  {tr("Trả lời cách khác", "Regenerate")}
+                </Button>
+              </Tooltip>
+            )}
+          <Button
+            variant="subtle"
+            size="sm"
+            mih={44}
+            disabled={message.reported || disabled}
+            onClick={() => onReport(message.id)}
+            leftSection={<IconFlag size={16} />}
+          >
+            {message.reported
+              ? tr("Đã báo cáo", "Reported")
+              : tr("Báo câu trả lời sai", "Report answer")}
+          </Button>
+        </Group>
+        {copyStatus && (
+          <Text size="xs" role="status">
+            {copyStatus}
+          </Text>
+        )}
+      </Stack>
+    </Paper>
   );
 }

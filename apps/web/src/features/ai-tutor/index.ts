@@ -9,3 +9,5 @@ export * from "./components/blocks/TutorStarters";
 
 // Views
 export * from "./components/views/AiTutorView";
+
+export { TutorManagementView } from "./components/views/TutorManagementView";

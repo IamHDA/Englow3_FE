@@ -11,6 +11,8 @@ configure({ asyncUtilTimeout: 3000 });
 // The files that test server code run under plain Node, which has no window;
 // everything below is about the DOM that component tests render into.
 if (typeof window !== "undefined") {
+  // Combobox scrolls selected options; jsdom has no layout/scroll implementation.
+  Element.prototype.scrollIntoView ??= () => {};
   // Mantine probes matchMedia while computing responsive styles; jsdom has no
   // implementation.
   window.matchMedia =

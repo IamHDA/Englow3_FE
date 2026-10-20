@@ -68,6 +68,18 @@ export type TutorMessageFieldsFragment = {
   reported: boolean;
   createdAt: string;
   answeredAt: string | null;
+  revision: number;
+  restartCount: number;
+  summary: boolean | null;
+  correction: string | null;
+  reportStatus: string | null;
+  sources: Array<{
+    label: string;
+    resourceId: string;
+    title: string;
+    versionNumber: number;
+    excerpt: string;
+  }>;
 };
 
 export type TutorConversationSummaryFieldsFragment = {
@@ -77,6 +89,13 @@ export type TutorConversationSummaryFieldsFragment = {
   messageCount: number;
   lastMessageAt: string;
   createdAt: string;
+  archivedAt: string | null;
+  useLearningContext: boolean;
+  quizAttemptId: string | null;
+  quizQuestionId: string | null;
+  assessmentAttemptId: string | null;
+  examAttemptId: string | null;
+  examQuestionId: string | null;
 };
 
 export type TutorConversationsQueryVariables = Exact<{ [key: string]: never }>;
@@ -89,6 +108,13 @@ export type TutorConversationsQuery = {
     messageCount: number;
     lastMessageAt: string;
     createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
   }>;
 };
 
@@ -105,6 +131,13 @@ export type TutorConversationQuery = {
       messageCount: number;
       lastMessageAt: string;
       createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
     };
     messages: Array<{
       id: string;
@@ -117,6 +150,18 @@ export type TutorConversationQuery = {
       reported: boolean;
       createdAt: string;
       answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
     }>;
   };
 };
@@ -125,6 +170,14 @@ export type SendTutorMessageMutationVariables = Exact<{
   conversationId?: string | number | null | undefined;
   message: string;
   topic?: string | null | undefined;
+  clientMessageId?: string | number | null | undefined;
+  mode?: string | null | undefined;
+  personalized?: boolean | null | undefined;
+  quizAttemptId?: string | number | null | undefined;
+  quizQuestionId?: string | number | null | undefined;
+  assessmentAttemptId?: string | number | null | undefined;
+  examAttemptId?: string | number | null | undefined;
+  examQuestionId?: string | number | null | undefined;
 }>;
 
 export type SendTutorMessageMutation = {
@@ -136,6 +189,13 @@ export type SendTutorMessageMutation = {
       messageCount: number;
       lastMessageAt: string;
       createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
     };
     messages: Array<{
       id: string;
@@ -148,6 +208,18 @@ export type SendTutorMessageMutation = {
       reported: boolean;
       createdAt: string;
       answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
     }>;
   };
 };
@@ -164,6 +236,13 @@ export type ArchiveTutorConversationMutation = {
     messageCount: number;
     lastMessageAt: string;
     createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
   };
 };
 
@@ -185,8 +264,828 @@ export type ReportTutorMessageMutation = {
     reported: boolean;
     createdAt: string;
     answeredAt: string | null;
+    revision: number;
+    restartCount: number;
+    summary: boolean | null;
+    correction: string | null;
+    reportStatus: string | null;
+    sources: Array<{
+      label: string;
+      resourceId: string;
+      title: string;
+      versionNumber: number;
+      excerpt: string;
+    }>;
   };
 };
+
+export type TutorUsageQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorUsageQuery = {
+  tutorUsage: {
+    enabled: boolean;
+    limit: number;
+    used: number;
+    remaining: number;
+    resetsAt: string;
+    maxMessageLength: number;
+    streaming: boolean;
+    voice: boolean;
+    allowedModes: Array<string>;
+    supportedContexts: Array<string>;
+    memorySupported: boolean;
+  };
+};
+
+export type TutorHistoryQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+  search?: string | null | undefined;
+  archived?: boolean | null | undefined;
+}>;
+
+export type TutorHistoryQuery = {
+  tutorHistory: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    }>;
+  };
+};
+
+export type TutorMessagesQueryVariables = Exact<{
+  id: string | number;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type TutorMessagesQuery = {
+  tutorMessages: {
+    page: number;
+    totalPages: number;
+    totalElements: number;
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type TutorReplyQueryVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+}>;
+
+export type TutorReplyQuery = {
+  tutorReply: {
+    id: string;
+    orderNo: number;
+    role: Types.TutorMessageRole;
+    status: Types.TutorMessageStatus;
+    content: string | null;
+    errorCode: string | null;
+    model: string | null;
+    reported: boolean;
+    createdAt: string;
+    answeredAt: string | null;
+    revision: number;
+    restartCount: number;
+    summary: boolean | null;
+    correction: string | null;
+    reportStatus: string | null;
+    sources: Array<{
+      label: string;
+      resourceId: string;
+      title: string;
+      versionNumber: number;
+      excerpt: string;
+    }>;
+  };
+};
+
+export type TutorReceiptQueryVariables = Exact<{
+  clientMessageId: string | number;
+}>;
+
+export type TutorReceiptQuery = {
+  tutorReceipt: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type RetryTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  clientMessageId: string | number;
+}>;
+
+export type RetryTutorReplyMutation = {
+  retryTutorReply: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type RegenerateTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  clientMessageId: string | number;
+}>;
+
+export type RegenerateTutorReplyMutation = {
+  regenerateTutorReply: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type CancelTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+}>;
+
+export type CancelTutorReplyMutation = {
+  cancelTutorReply: {
+    id: string;
+    orderNo: number;
+    role: Types.TutorMessageRole;
+    status: Types.TutorMessageStatus;
+    content: string | null;
+    errorCode: string | null;
+    model: string | null;
+    reported: boolean;
+    createdAt: string;
+    answeredAt: string | null;
+    revision: number;
+    restartCount: number;
+    summary: boolean | null;
+    correction: string | null;
+    reportStatus: string | null;
+    sources: Array<{
+      label: string;
+      resourceId: string;
+      title: string;
+      versionNumber: number;
+      excerpt: string;
+    }>;
+  };
+};
+
+export type RestoreTutorConversationMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type RestoreTutorConversationMutation = {
+  restoreTutorConversation: {
+    id: string;
+    title: string;
+    topic: string | null;
+    messageCount: number;
+    lastMessageAt: string;
+    createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
+  };
+};
+
+export type RenameTutorConversationMutationVariables = Exact<{
+  id: string | number;
+  title: string;
+}>;
+
+export type RenameTutorConversationMutation = {
+  renameTutorConversation: {
+    id: string;
+    title: string;
+    topic: string | null;
+    messageCount: number;
+    lastMessageAt: string;
+    createdAt: string;
+    archivedAt: string | null;
+    useLearningContext: boolean;
+    quizAttemptId: string | null;
+    quizQuestionId: string | null;
+    assessmentAttemptId: string | null;
+    examAttemptId: string | null;
+    examQuestionId: string | null;
+  };
+};
+
+export type TutorResourceFieldsFragment = {
+  id: string;
+  documentId: string;
+  versionNumber: number;
+  title: string;
+  body: string;
+  status: string;
+  authorId: string;
+  reviewNote: string | null;
+  rowVersion: number;
+};
+
+export type TutorReportFieldsFragment = {
+  id: string;
+  messageId: string;
+  revision: number;
+  question: string | null;
+  answer: string | null;
+  learnerNote: string | null;
+  status: string;
+  assignedTo: string | null;
+  reviewerNote: string | null;
+  correction: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+};
+
+export type TutorResourcesQueryVariables = Exact<{
+  status?: string | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type TutorResourcesQuery = {
+  tutorResources: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      documentId: string;
+      versionNumber: number;
+      title: string;
+      body: string;
+      status: string;
+      authorId: string;
+      reviewNote: string | null;
+      rowVersion: number;
+    }>;
+  };
+};
+
+export type TutorResourceQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TutorResourceQuery = {
+  tutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type TutorReportsQueryVariables = Exact<{
+  status?: string | null | undefined;
+  page?: number | null | undefined;
+}>;
+
+export type TutorReportsQuery = {
+  tutorReports: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      messageId: string;
+      revision: number;
+      question: string | null;
+      answer: string | null;
+      learnerNote: string | null;
+      status: string;
+      assignedTo: string | null;
+      reviewerNote: string | null;
+      correction: string | null;
+      createdAt: string;
+      resolvedAt: string | null;
+    }>;
+  };
+};
+
+export type TutorReportQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TutorReportQuery = {
+  tutorReport: {
+    id: string;
+    messageId: string;
+    revision: number;
+    question: string | null;
+    answer: string | null;
+    learnerNote: string | null;
+    status: string;
+    assignedTo: string | null;
+    reviewerNote: string | null;
+    correction: string | null;
+    createdAt: string;
+    resolvedAt: string | null;
+  };
+};
+
+export type TutorStaffMembersQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorStaffMembersQuery = {
+  tutorStaffMembers: Array<{ id: string; displayName: string }>;
+};
+
+export type CreateTutorResourceMutationVariables = Exact<{
+  input: Types.TutorResourceInput;
+}>;
+
+export type CreateTutorResourceMutation = {
+  createTutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type UpdateTutorResourceMutationVariables = Exact<{
+  id: string | number;
+  input: Types.TutorResourceInput;
+}>;
+
+export type UpdateTutorResourceMutation = {
+  updateTutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type ReviewTutorResourceMutationVariables = Exact<{
+  id: string | number;
+  input: Types.TutorReviewInput;
+}>;
+
+export type ReviewTutorResourceMutation = {
+  reviewTutorResource: {
+    id: string;
+    documentId: string;
+    versionNumber: number;
+    title: string;
+    body: string;
+    status: string;
+    authorId: string;
+    reviewNote: string | null;
+    rowVersion: number;
+  };
+};
+
+export type ReviewTutorReportMutationVariables = Exact<{
+  id: string | number;
+  input: Types.TutorReviewInput;
+}>;
+
+export type ReviewTutorReportMutation = {
+  reviewTutorReport: {
+    id: string;
+    messageId: string;
+    revision: number;
+    question: string | null;
+    answer: string | null;
+    learnerNote: string | null;
+    status: string;
+    assignedTo: string | null;
+    reviewerNote: string | null;
+    correction: string | null;
+    createdAt: string;
+    resolvedAt: string | null;
+  };
+};
+
+export type TutorOperationsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorOperationsQuery = {
+  tutorOperations: {
+    pending: number;
+    running: number;
+    completedToday: number;
+    failedToday: number;
+    oldestPendingAt: string | null;
+    scope: string;
+    metrics: {
+      samples: number;
+      queueP95Ms: number | null;
+      completionP95Ms: number | null;
+      knownInputTokens: number;
+      knownOutputTokens: number;
+      unknownUsageJobs: number;
+      failures: Array<{ code: string; count: number }>;
+    } | null;
+  };
+};
+
+export type TutorReplyHistoryQueryVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+}>;
+
+export type TutorReplyHistoryQuery = {
+  tutorReplyHistory: {
+    currentRevision: number;
+    canSelect: boolean;
+    items: Array<{
+      revision: number;
+      status: string;
+      content: string | null;
+      model: string | null;
+      correction: string | null;
+    }>;
+  };
+};
+
+export type SelectTutorReplyMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  revision: number;
+  clientMessageId: string | number;
+}>;
+
+export type SelectTutorReplyMutation = {
+  selectTutorReply: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type BranchTutorConversationMutationVariables = Exact<{
+  conversationId: string | number;
+  messageId: string | number;
+  message: string;
+  clientMessageId: string | number;
+  personalized?: boolean | null | undefined;
+}>;
+
+export type BranchTutorConversationMutation = {
+  branchTutorConversation: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type TutorPolicyQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TutorPolicyQuery = {
+  tutorPolicy: {
+    accepting: boolean;
+    allowedModes: Array<string>;
+    version: number;
+    environmentEnabled: boolean;
+    model: string;
+    dailyLimit: number;
+    streamingEnabled: boolean;
+    voiceEnabled: boolean;
+  };
+};
+
+export type UpdateTutorPolicyMutationVariables = Exact<{
+  input: Types.TutorPolicyInput;
+}>;
+
+export type UpdateTutorPolicyMutation = {
+  updateTutorPolicy: {
+    accepting: boolean;
+    allowedModes: Array<string>;
+    version: number;
+    environmentEnabled: boolean;
+    model: string;
+    dailyLimit: number;
+    streamingEnabled: boolean;
+    voiceEnabled: boolean;
+  };
+};
+
+export type TutorMemoryQueryVariables = Exact<{
+  conversationId: string | number;
+}>;
+
+export type TutorMemoryQuery = {
+  tutorMemory: {
+    enabled: boolean;
+    content: string | null;
+    throughOrder: number;
+    remainingMessages: number;
+    pendingMessageId: string | null;
+    batchSize: number;
+  };
+};
+
+export type SummarizeTutorConversationMutationVariables = Exact<{
+  conversationId: string | number;
+  clientMessageId: string | number;
+}>;
+
+export type SummarizeTutorConversationMutation = {
+  summarizeTutorConversation: {
+    conversation: {
+      id: string;
+      title: string;
+      topic: string | null;
+      messageCount: number;
+      lastMessageAt: string;
+      createdAt: string;
+      archivedAt: string | null;
+      useLearningContext: boolean;
+      quizAttemptId: string | null;
+      quizQuestionId: string | null;
+      assessmentAttemptId: string | null;
+      examAttemptId: string | null;
+      examQuestionId: string | null;
+    };
+    messages: Array<{
+      id: string;
+      orderNo: number;
+      role: Types.TutorMessageRole;
+      status: Types.TutorMessageStatus;
+      content: string | null;
+      errorCode: string | null;
+      model: string | null;
+      reported: boolean;
+      createdAt: string;
+      answeredAt: string | null;
+      revision: number;
+      restartCount: number;
+      summary: boolean | null;
+      correction: string | null;
+      reportStatus: string | null;
+      sources: Array<{
+        label: string;
+        resourceId: string;
+        title: string;
+        versionNumber: number;
+        excerpt: string;
+      }>;
+    }>;
+  };
+};
+
+export type ClearTutorMemoryMutationVariables = Exact<{
+  conversationId: string | number;
+}>;
+
+export type ClearTutorMemoryMutation = { clearTutorMemory: boolean };
 
 export type AssessmentTaskFieldsFragment = {
   id: string;
@@ -2549,6 +3448,28 @@ export const TutorMessageFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "reported" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -2573,11 +3494,81 @@ export const TutorConversationSummaryFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "messageCount" } },
           { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
         ],
       },
     },
   ],
 } as unknown as DocumentNode<TutorConversationSummaryFieldsFragment, unknown>;
+export const TutorResourceFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorResourceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorResource" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "documentId" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "authorId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "rowVersion" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorResourceFieldsFragment, unknown>;
+export const TutorReportFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorReportFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorReport" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "messageId" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "question" } },
+          { kind: "Field", name: { kind: "Name", value: "answer" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "assignedTo" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "resolvedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorReportFieldsFragment, unknown>;
 export const AssessmentTaskFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -3447,6 +4438,19 @@ export const TutorConversationsDocument = {
           { kind: "Field", name: { kind: "Name", value: "messageCount" } },
           { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
         ],
       },
     },
@@ -3542,6 +4546,19 @@ export const TutorConversationDocument = {
           { kind: "Field", name: { kind: "Name", value: "messageCount" } },
           { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
         ],
       },
     },
@@ -3565,6 +4582,28 @@ export const TutorConversationDocument = {
           { kind: "Field", name: { kind: "Name", value: "reported" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -3611,6 +4650,67 @@ export const SendTutorMessageDocument = {
           },
           type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "mode" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "personalized" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "quizAttemptId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "quizQuestionId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "examAttemptId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "examQuestionId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -3641,6 +4741,70 @@ export const SendTutorMessageDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "topic" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "mode" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "mode" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "personalized" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "personalized" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "quizAttemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "quizAttemptId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "quizQuestionId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "quizQuestionId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "assessmentAttemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "assessmentAttemptId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "examAttemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "examAttemptId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "examQuestionId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "examQuestionId" },
                 },
               },
             ],
@@ -3698,6 +4862,19 @@ export const SendTutorMessageDocument = {
           { kind: "Field", name: { kind: "Name", value: "messageCount" } },
           { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
         ],
       },
     },
@@ -3721,6 +4898,28 @@ export const SendTutorMessageDocument = {
           { kind: "Field", name: { kind: "Name", value: "reported" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -3794,6 +4993,19 @@ export const ArchiveTutorConversationDocument = {
           { kind: "Field", name: { kind: "Name", value: "messageCount" } },
           { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
         ],
       },
     },
@@ -3903,6 +5115,28 @@ export const ReportTutorMessageDocument = {
           { kind: "Field", name: { kind: "Name", value: "reported" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
         ],
       },
     },
@@ -3910,6 +5144,3108 @@ export const ReportTutorMessageDocument = {
 } as unknown as DocumentNode<
   ReportTutorMessageMutation,
   ReportTutorMessageMutationVariables
+>;
+export const TutorUsageDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorUsage" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorUsage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "enabled" } },
+                { kind: "Field", name: { kind: "Name", value: "limit" } },
+                { kind: "Field", name: { kind: "Name", value: "used" } },
+                { kind: "Field", name: { kind: "Name", value: "remaining" } },
+                { kind: "Field", name: { kind: "Name", value: "resetsAt" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "maxMessageLength" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "streaming" } },
+                { kind: "Field", name: { kind: "Name", value: "voice" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allowedModes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "supportedContexts" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "memorySupported" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorUsageQuery, TutorUsageQueryVariables>;
+export const TutorHistoryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorHistory" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "search" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "archived" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorHistory" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "search" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "search" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "archived" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "archived" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorHistoryQuery, TutorHistoryQueryVariables>;
+export const TutorMessagesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorMessages" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorMessages" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "totalElements" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorMessagesQuery, TutorMessagesQueryVariables>;
+export const TutorReplyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorReply" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorReply" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorMessageFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorReplyQuery, TutorReplyQueryVariables>;
+export const TutorReceiptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorReceipt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorReceipt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorReceiptQuery, TutorReceiptQueryVariables>;
+export const RetryTutorReplyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RetryTutorReply" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "retryTutorReply" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RetryTutorReplyMutation,
+  RetryTutorReplyMutationVariables
+>;
+export const RegenerateTutorReplyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RegenerateTutorReply" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "regenerateTutorReply" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RegenerateTutorReplyMutation,
+  RegenerateTutorReplyMutationVariables
+>;
+export const CancelTutorReplyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CancelTutorReply" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "cancelTutorReply" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorMessageFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CancelTutorReplyMutation,
+  CancelTutorReplyMutationVariables
+>;
+export const RestoreTutorConversationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RestoreTutorConversation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "restoreTutorConversation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: {
+                    kind: "Name",
+                    value: "TutorConversationSummaryFields",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RestoreTutorConversationMutation,
+  RestoreTutorConversationMutationVariables
+>;
+export const RenameTutorConversationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RenameTutorConversation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "title" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "renameTutorConversation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "title" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "title" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: {
+                    kind: "Name",
+                    value: "TutorConversationSummaryFields",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RenameTutorConversationMutation,
+  RenameTutorConversationMutationVariables
+>;
+export const TutorResourcesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorResources" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "status" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorResources" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "status" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorResourceFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorResourceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorResource" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "documentId" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "authorId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "rowVersion" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorResourcesQuery, TutorResourcesQueryVariables>;
+export const TutorResourceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorResource" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorResource" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorResourceFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorResourceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorResource" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "documentId" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "authorId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "rowVersion" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorResourceQuery, TutorResourceQueryVariables>;
+export const TutorReportsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorReports" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "status" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorReports" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "status" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorReportFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorReportFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorReport" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "messageId" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "question" } },
+          { kind: "Field", name: { kind: "Name", value: "answer" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "assignedTo" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "resolvedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorReportsQuery, TutorReportsQueryVariables>;
+export const TutorReportDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorReport" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorReport" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorReportFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorReportFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorReport" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "messageId" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "question" } },
+          { kind: "Field", name: { kind: "Name", value: "answer" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "assignedTo" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "resolvedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorReportQuery, TutorReportQueryVariables>;
+export const TutorStaffMembersDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorStaffMembers" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorStaffMembers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TutorStaffMembersQuery,
+  TutorStaffMembersQueryVariables
+>;
+export const CreateTutorResourceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateTutorResource" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TutorResourceInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createTutorResource" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorResourceFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorResourceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorResource" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "documentId" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "authorId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "rowVersion" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateTutorResourceMutation,
+  CreateTutorResourceMutationVariables
+>;
+export const UpdateTutorResourceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateTutorResource" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TutorResourceInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateTutorResource" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorResourceFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorResourceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorResource" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "documentId" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "authorId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "rowVersion" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateTutorResourceMutation,
+  UpdateTutorResourceMutationVariables
+>;
+export const ReviewTutorResourceDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ReviewTutorResource" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TutorReviewInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "reviewTutorResource" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorResourceFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorResourceFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorResource" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "documentId" } },
+          { kind: "Field", name: { kind: "Name", value: "versionNumber" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "authorId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "rowVersion" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ReviewTutorResourceMutation,
+  ReviewTutorResourceMutationVariables
+>;
+export const ReviewTutorReportDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ReviewTutorReport" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TutorReviewInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "reviewTutorReport" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TutorReportFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorReportFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorReport" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "messageId" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "question" } },
+          { kind: "Field", name: { kind: "Name", value: "answer" } },
+          { kind: "Field", name: { kind: "Name", value: "learnerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "assignedTo" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerNote" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "resolvedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ReviewTutorReportMutation,
+  ReviewTutorReportMutationVariables
+>;
+export const TutorOperationsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorOperations" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorOperations" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "pending" } },
+                { kind: "Field", name: { kind: "Name", value: "running" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "completedToday" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "failedToday" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "oldestPendingAt" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "scope" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "metrics" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "samples" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "queueP95Ms" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "completionP95Ms" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "knownInputTokens" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "knownOutputTokens" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "unknownUsageJobs" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "failures" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "code" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "count" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TutorOperationsQuery,
+  TutorOperationsQueryVariables
+>;
+export const TutorReplyHistoryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorReplyHistory" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorReplyHistory" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "currentRevision" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "canSelect" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "revision" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "content" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "model" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "correction" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TutorReplyHistoryQuery,
+  TutorReplyHistoryQueryVariables
+>;
+export const SelectTutorReplyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SelectTutorReply" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "revision" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "selectTutorReply" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "revision" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "revision" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SelectTutorReplyMutation,
+  SelectTutorReplyMutationVariables
+>;
+export const BranchTutorConversationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "BranchTutorConversation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "message" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "personalized" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "branchTutorConversation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "message" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "message" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "personalized" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "personalized" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  BranchTutorConversationMutation,
+  BranchTutorConversationMutationVariables
+>;
+export const TutorPolicyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorPolicy" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorPolicy" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "accepting" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allowedModes" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "version" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "environmentEnabled" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "model" } },
+                { kind: "Field", name: { kind: "Name", value: "dailyLimit" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "streamingEnabled" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "voiceEnabled" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorPolicyQuery, TutorPolicyQueryVariables>;
+export const UpdateTutorPolicyDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UpdateTutorPolicy" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TutorPolicyInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateTutorPolicy" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "accepting" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allowedModes" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "version" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "environmentEnabled" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "model" } },
+                { kind: "Field", name: { kind: "Name", value: "dailyLimit" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "streamingEnabled" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "voiceEnabled" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateTutorPolicyMutation,
+  UpdateTutorPolicyMutationVariables
+>;
+export const TutorMemoryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TutorMemory" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tutorMemory" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "enabled" } },
+                { kind: "Field", name: { kind: "Name", value: "content" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "throughOrder" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "remainingMessages" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "pendingMessageId" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "batchSize" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TutorMemoryQuery, TutorMemoryQueryVariables>;
+export const SummarizeTutorConversationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SummarizeTutorConversation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientMessageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "summarizeTutorConversation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientMessageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientMessageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "conversation" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "TutorConversationSummaryFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "messages" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TutorMessageFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorConversationSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorConversationSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "messageCount" } },
+          { kind: "Field", name: { kind: "Name", value: "lastMessageAt" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "archivedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "useLearningContext" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "quizAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "quizQuestionId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAttemptId" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "examQuestionId" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TutorMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TutorMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "role" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "content" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "model" } },
+          { kind: "Field", name: { kind: "Name", value: "reported" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "answeredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "revision" } },
+          { kind: "Field", name: { kind: "Name", value: "restartCount" } },
+          { kind: "Field", name: { kind: "Name", value: "summary" } },
+          { kind: "Field", name: { kind: "Name", value: "correction" } },
+          { kind: "Field", name: { kind: "Name", value: "reportStatus" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sources" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "label" } },
+                { kind: "Field", name: { kind: "Name", value: "resourceId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "versionNumber" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SummarizeTutorConversationMutation,
+  SummarizeTutorConversationMutationVariables
+>;
+export const ClearTutorMemoryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ClearTutorMemory" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "clearTutorMemory" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ClearTutorMemoryMutation,
+  ClearTutorMemoryMutationVariables
 >;
 export const AssessmentWorkloadDocument = {
   kind: "Document",

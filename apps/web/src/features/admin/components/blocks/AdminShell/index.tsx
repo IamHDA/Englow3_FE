@@ -72,6 +72,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
       icon: ClipboardList,
     },
     {
+      href: "/admin/ai-tutor",
+      label: isVi ? "Gia sư AI" : "AI Tutor",
+      icon: CircleHelp,
+    },
+    {
       href: "/admin/assessments",
       label: "Writing & Speaking",
       icon: ClipboardList,

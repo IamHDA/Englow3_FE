@@ -1,233 +1,418 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
 import {
   TutorMessageRole,
   TutorMessageStatus,
 } from "@/lib/graphql/generated/schemaTypes";
-
-import { useTutorChat } from "./useTutorChat";
 import type { TutorMessage } from "../types";
+import { useTutorChat } from "./useTutorChat";
+import { CombinedGraphQLErrors } from "@apollo/client";
 
-const sendMessage = vi.fn();
-const fetchConversation = vi.fn();
-
-vi.mock("@/lib/graphql/generated/hooks", () => ({
-  useSendTutorMessageMutation: () => [sendMessage],
-  useTutorConversationLazyQuery: () => [fetchConversation],
+const api = vi.hoisted(() => ({
+  send: vi.fn(),
+  summarize: vi.fn(),
+  branch: vi.fn(),
+  messages: vi.fn(),
+  reply: vi.fn(),
+  receipt: vi.fn(),
+  retry: vi.fn(),
+  regenerate: vi.fn(),
+  cancel: vi.fn(),
 }));
-
-function message(
-  id: string,
-  role: TutorMessageRole,
-  status: TutorMessageStatus,
-  content: string | null,
-): TutorMessage {
-  return {
-    __typename: "TutorMessage",
-    id,
-    orderNo: 1,
-    role,
-    status,
-    content,
-    errorCode: null,
-    model: null,
-    reported: false,
-    createdAt: "2026-01-01T00:00:00Z",
-    answeredAt: null,
-  } as TutorMessage;
-}
-
-const QUESTION = message(
-  "m1",
-  TutorMessageRole.USER,
-  TutorMessageStatus.READY,
-  "What is a gerund?",
-);
-const PENDING = message(
-  "m2",
-  TutorMessageRole.ASSISTANT,
-  TutorMessageStatus.PENDING,
-  null,
-);
-const ANSWERED = message(
-  "m2",
-  TutorMessageRole.ASSISTANT,
-  TutorMessageStatus.READY,
-  "A verb used as a noun.",
-);
-
-function sent(conversationId = "c1", messages = [QUESTION, PENDING]) {
-  return {
-    data: {
-      sendTutorMessage: {
-        conversation: { id: conversationId, messageCount: messages.length },
-        messages,
-      },
-    },
-  };
-}
-
-function polled(messages: TutorMessage[]) {
-  return { data: { tutorConversation: { messages } } };
-}
-
+vi.mock("@/lib/graphql/generated/hooks", () => ({
+  useSummarizeTutorConversationMutation: () => [api.summarize],
+  useSendTutorMessageMutation: () => [api.send],
+  useBranchTutorConversationMutation: () => [api.branch],
+  useTutorMessagesLazyQuery: () => [api.messages],
+  useTutorReplyLazyQuery: () => [api.reply],
+  useTutorReceiptLazyQuery: () => [api.receipt],
+  useRetryTutorReplyMutation: () => [api.retry],
+  useRegenerateTutorReplyMutation: () => [api.regenerate],
+  useCancelTutorReplyMutation: () => [api.cancel],
+}));
+const question: TutorMessage = {
+  id: "q",
+  orderNo: 1,
+  role: TutorMessageRole.USER,
+  status: TutorMessageStatus.READY,
+  content: "Explain articles",
+  errorCode: null,
+  model: null,
+  reported: false,
+  createdAt: "2026-01-01T00:00:00Z",
+  answeredAt: null,
+  revision: 0,
+  restartCount: 0,
+  correction: null,
+  reportStatus: null,
+  sources: [],
+  summary: false,
+};
+const pending: TutorMessage = {
+  ...question,
+  id: "a",
+  orderNo: 2,
+  role: TutorMessageRole.ASSISTANT,
+  status: TutorMessageStatus.PENDING,
+  content: null,
+};
+const ready: TutorMessage = {
+  ...pending,
+  status: TutorMessageStatus.READY,
+  content: "Use an before a vowel sound.",
+};
+const summary = {
+  id: "c1",
+  title: "Articles",
+  messageCount: 2,
+  topic: "GENERAL",
+  createdAt: "2026-01-01T00:00:00Z",
+  lastMessageAt: "2026-01-01T00:00:00Z",
+  archivedAt: null,
+  useLearningContext: true,
+};
+const thread = { conversation: summary, messages: [question, pending] };
 beforeEach(() => {
   vi.clearAllMocks();
+  sessionStorage.clear();
+  api.send.mockResolvedValue({ data: { sendTutorMessage: thread } });
+  api.reply.mockResolvedValue({ data: { tutorReply: ready } });
+  api.messages.mockResolvedValue({
+    data: {
+      tutorMessages: { ...thread, page: 0, totalPages: 1, totalElements: 2 },
+    },
+  });
 });
 
-describe("useTutorChat", () => {
-  it("returns failure so the composer can retain an unsent draft", async () => {
-    sendMessage.mockRejectedValueOnce(new Error("offline"));
-    const { result } = renderHook(() => useTutorChat());
+describe("Tutor delivery and recovery", () => {
+  it("sends a client UUID and polls only the pending reply", async () => {
+    const { result } = renderHook(() => useTutorChat(undefined, "learner"));
     await act(async () => {
-      expect(await result.current.send("Keep my draft")).toBe(false);
+      expect(await result.current.send("Explain articles")).toBe(true);
     });
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.messages).toEqual([]);
+    expect(api.send.mock.calls[0][0].variables.clientMessageId).toMatch(
+      /^[0-9a-f-]{36}$/,
+    );
+    expect(api.reply).toHaveBeenCalledWith({
+      variables: { conversationId: "c1", messageId: "a" },
+    });
+    await waitFor(() => expect(result.current.waiting).toBe(false));
+    expect(result.current.messages.map((m) => m.id)).toEqual(["q", "a"]);
   });
-
-  it("does not let an old conversation response replace the newly opened one", async () => {
-    let finish!: (value: ReturnType<typeof polled>) => void;
-    fetchConversation.mockImplementationOnce(
+  it("keeps an unconfirmed request and does not create another send", async () => {
+    api.send.mockRejectedValueOnce(new Error("network lost"));
+    const { result } = renderHook(() => useTutorChat(undefined, "learner"));
+    await act(async () => {
+      expect(await result.current.send("Explain articles")).toBe(false);
+    });
+    expect(result.current.unconfirmed).toBe(true);
+    await act(async () => {
+      expect(await result.current.send("Explain articles")).toBe(false);
+    });
+    expect(api.send).toHaveBeenCalledTimes(1);
+    const key = api.send.mock.calls[0][0].variables.clientMessageId;
+    api.receipt.mockResolvedValue({
+      data: { tutorReceipt: { ...thread, messages: [question, ready] } },
+    });
+    await act(async () => {
+      await result.current.recover();
+    });
+    expect(api.receipt).toHaveBeenCalledWith({
+      variables: { clientMessageId: key },
+    });
+    expect(result.current.unconfirmed).toBe(false);
+    expect(result.current.messages[1].content).toContain("vowel");
+    expect(api.send).toHaveBeenCalledTimes(1);
+  });
+  it("recovers the same delivery ID after the screen is remounted", async () => {
+    api.send.mockRejectedValueOnce(new Error("lost response"));
+    const first = renderHook(() => useTutorChat(undefined, "learner"));
+    await act(async () => {
+      await first.result.current.send("Explain articles");
+    });
+    const key = api.send.mock.calls[0][0].variables.clientMessageId;
+    first.unmount();
+    const second = renderHook(() => useTutorChat(undefined, "learner"));
+    expect(second.result.current.unconfirmed).toBe(true);
+    api.receipt.mockResolvedValue({
+      data: { tutorReceipt: { ...thread, messages: [question, ready] } },
+    });
+    await act(async () => {
+      await second.result.current.recover();
+    });
+    expect(api.receipt).toHaveBeenCalledWith({
+      variables: { clientMessageId: key },
+    });
+  });
+  it("does not expose another account's outbox", async () => {
+    api.send.mockRejectedValueOnce(new Error("lost response"));
+    const first = renderHook(() => useTutorChat(undefined, "learner-a"));
+    await act(async () => {
+      await first.result.current.send("Explain articles");
+    });
+    first.unmount();
+    const second = renderHook(() => useTutorChat(undefined, "learner-b"));
+    expect(second.result.current.unconfirmed).toBe(false);
+    expect(second.result.current.messages).toEqual([]);
+  });
+  it("ignores an old conversation read arriving after another one", async () => {
+    let finish: (value: unknown) => void = () => undefined;
+    api.messages.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
           finish = resolve;
         }),
     );
-    fetchConversation.mockResolvedValueOnce(polled([ANSWERED]));
+    api.messages.mockResolvedValueOnce({
+      data: {
+        tutorMessages: {
+          conversation: { ...summary, id: "new" },
+          messages: [ready],
+          page: 0,
+          totalPages: 1,
+          totalElements: 1,
+        },
+      },
+    });
     const { result } = renderHook(() => useTutorChat());
-    let old!: Promise<void>;
+    let previous: Promise<void>;
     act(() => {
-      old = result.current.open("old");
+      previous = result.current.open("old");
     });
     await act(async () => {
       await result.current.open("new");
     });
     await act(async () => {
-      finish(polled([QUESTION, PENDING]));
-      await old;
+      finish({
+        data: {
+          tutorMessages: {
+            ...thread,
+            page: 0,
+            totalPages: 1,
+            totalElements: 2,
+          },
+        },
+      });
+      await previous!;
     });
     expect(result.current.conversationId).toBe("new");
-    expect(result.current.messages).toEqual([ANSWERED]);
+    expect(result.current.messages).toEqual([ready]);
   });
-  it("shows the question and a pending turn as soon as it is sent", async () => {
-    sendMessage.mockResolvedValue(sent());
-    fetchConversation.mockResolvedValue(polled([QUESTION, PENDING]));
-
+  it("blocks another question while a reply is pending", async () => {
+    api.reply.mockImplementation(() => new Promise(() => undefined));
     const { result } = renderHook(() => useTutorChat());
     await act(async () => {
-      await result.current.send("What is a gerund?");
+      await result.current.send("Explain articles");
     });
-
-    expect(result.current.messages).toHaveLength(2);
     expect(result.current.waiting).toBe(true);
+    await act(async () => {
+      expect(await result.current.send("Another question")).toBe(false);
+    });
+    expect(api.send).toHaveBeenCalledTimes(1);
   });
-
-  it("stops waiting once the answer lands", async () => {
-    sendMessage.mockResolvedValue(sent());
-    fetchConversation.mockResolvedValue(polled([QUESTION, ANSWERED]));
-
+  it("cancels the reply and stops waiting", async () => {
+    api.reply.mockImplementation(() => new Promise(() => undefined));
+    api.cancel.mockResolvedValue({
+      data: {
+        cancelTutorReply: { ...pending, status: TutorMessageStatus.CANCELLED },
+      },
+    });
     const { result } = renderHook(() => useTutorChat());
     await act(async () => {
-      await result.current.send("What is a gerund?");
+      await result.current.send("Explain articles");
     });
-
+    await act(async () => {
+      await result.current.cancel("a");
+    });
+    expect(result.current.waiting).toBe(false);
+    expect(result.current.messages[1].status).toBe(
+      TutorMessageStatus.CANCELLED,
+    );
+  });
+  it("retries a failed answer without duplicating the question", async () => {
+    api.messages.mockResolvedValue({
+      data: {
+        tutorMessages: {
+          ...thread,
+          messages: [
+            question,
+            { ...pending, status: TutorMessageStatus.FAILED },
+          ],
+          page: 0,
+          totalPages: 1,
+          totalElements: 2,
+        },
+      },
+    });
+    api.reply.mockResolvedValue({
+      data: { tutorReply: { ...ready, revision: 1 } },
+    });
+    api.retry.mockResolvedValue({
+      data: {
+        retryTutorReply: {
+          ...thread,
+          messages: [question, { ...pending, revision: 1 }],
+        },
+      },
+    });
+    const { result } = renderHook(() => useTutorChat());
+    await act(async () => {
+      await result.current.open("c1");
+    });
+    await act(async () => {
+      await result.current.restart("a");
+    });
+    expect(result.current.messages).toHaveLength(2);
+    expect(result.current.messages[1].revision).toBe(1);
+    expect(api.send).not.toHaveBeenCalled();
+  });
+  it("does not erase a new account's outbox when an old account's send finishes late", async () => {
+    let finish: (value: unknown) => void = () => undefined;
+    api.send.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const { result, rerender } = renderHook(
+      ({ account }) => useTutorChat(undefined, account),
+      { initialProps: { account: "account-a" } },
+    );
+    let pendingSend: Promise<boolean>;
+    act(() => {
+      pendingSend = result.current.send("Explain articles");
+    });
+    const saved = {
+      key: "another-delivery",
+      kind: "send",
+      message: "Different question",
+      mode: "GENERAL",
+      personalized: false,
+      created: Date.now(),
+    };
+    sessionStorage.setItem(
+      "englow:tutor:outbox:account-b",
+      JSON.stringify(saved),
+    );
+    rerender({ account: "account-b" });
+    expect(result.current.unconfirmed).toBe(true);
+    await act(async () => {
+      finish({ data: { sendTutorMessage: thread } });
+      await pendingSend;
+    });
+    expect(result.current.messages).toEqual([]);
+    expect(result.current.unconfirmed).toBe(true);
+    expect(
+      JSON.parse(sessionStorage.getItem("englow:tutor:outbox:account-b")!).key,
+    ).toBe(saved.key);
+  });
+  it("uses a durable client ID when editing a question into a new conversation", async () => {
+    api.branch.mockResolvedValue({
+      data: {
+        branchTutorConversation: {
+          ...thread,
+          conversation: { ...summary, id: "branch" },
+        },
+      },
+    });
+    const { result } = renderHook(() => useTutorChat(undefined, "learner"));
+    await act(async () => {
+      await result.current.open("c1");
+    });
     await waitFor(() => expect(result.current.waiting).toBe(false));
-    expect(result.current.messages.at(-1)?.content).toBe(
-      "A verb used as a noun.",
+    await act(async () => {
+      expect(
+        await result.current.branch("q", "Explain definite articles", false),
+      ).toBe(true);
+    });
+    expect(api.branch.mock.calls[0][0].variables).toMatchObject({
+      conversationId: "c1",
+      messageId: "q",
+      message: "Explain definite articles",
+      personalized: false,
+    });
+    expect(api.branch.mock.calls[0][0].variables.clientMessageId).toMatch(
+      /^[0-9a-f-]{36}$/,
     );
+    expect(result.current.conversationId).toBe("branch");
   });
+});
 
-  // Gửi câu hỏi thứ hai chỉ trả về hai lượt mới. Thay vì nối, mà thay thế, thì
-  // lịch sử biến mất ngay giữa cuộc trò chuyện.
-  it("keeps the earlier turns when a second question is sent", async () => {
-    fetchConversation.mockResolvedValue(polled([QUESTION, ANSWERED]));
-    sendMessage.mockResolvedValue(sent());
-
-    const { result } = renderHook(() => useTutorChat());
-    await act(async () => {
-      await result.current.send("What is a gerund?");
-    });
-    await waitFor(() => expect(result.current.waiting).toBe(false));
-
-    const second = message(
-      "m3",
-      TutorMessageRole.USER,
-      TutorMessageStatus.READY,
-      "Give me an example.",
-    );
-    sendMessage.mockResolvedValue(sent("c1", [second, PENDING]));
-    fetchConversation.mockResolvedValue(
-      polled([QUESTION, ANSWERED, second, ANSWERED]),
-    );
-
-    await act(async () => {
-      await result.current.send("Give me an example.");
-    });
-
-    await waitFor(() => expect(result.current.messages.length).toBe(4));
+it("recovers an uncertain summary through its receipt without another AI request", async () => {
+  const { result } = renderHook(() => useTutorChat(undefined, "learner"));
+  await act(async () => {
+    await result.current.open("c1");
   });
-
-  it("does not send an empty question", async () => {
-    const { result } = renderHook(() => useTutorChat());
-
-    await act(async () => {
-      await result.current.send("   ");
-    });
-
-    expect(sendMessage).not.toHaveBeenCalled();
+  await waitFor(() => expect(result.current.waiting).toBe(false));
+  api.summarize.mockRejectedValueOnce(new Error("response lost"));
+  await act(async () => {
+    expect(await result.current.summarize()).toBe(false);
   });
-
-  it("explains itself when the question cannot be sent", async () => {
-    sendMessage.mockRejectedValue(new Error("network"));
-
-    const { result } = renderHook(() => useTutorChat());
-    await act(async () => {
-      await result.current.send("What is a gerund?");
-    });
-
-    expect(result.current.error).toContain("Không gửi được");
-    expect(result.current.sending).toBe(false);
+  const key = api.summarize.mock.calls[0][0].variables.clientMessageId;
+  expect(result.current.unconfirmed).toBe(true);
+  await act(async () => {
+    expect(await result.current.summarize()).toBe(false);
   });
-
-  // Một lượt FAILED đã xong - không còn gì để chờ, nên vòng hỏi phải dừng thay
-  // vì quay mãi bên cạnh một câu đã báo là hỏng.
-  it("stops waiting on a turn that failed", async () => {
-    sendMessage.mockResolvedValue(sent());
-    fetchConversation.mockResolvedValue(
-      polled([
-        QUESTION,
-        message(
-          "m2",
-          TutorMessageRole.ASSISTANT,
-          TutorMessageStatus.FAILED,
-          null,
-        ),
-      ]),
-    );
-
-    const { result } = renderHook(() => useTutorChat());
-    await act(async () => {
-      await result.current.send("What is a gerund?");
-    });
-
-    await waitFor(() => expect(result.current.waiting).toBe(false));
+  const completed = {
+    conversation: { ...summary, messageCount: 4 },
+    messages: [
+      question,
+      ready,
+      { ...question, id: "memory-q", orderNo: 3, summary: true },
+      {
+        ...ready,
+        id: "memory-a",
+        orderNo: 4,
+        summary: true,
+        content: "Synthetic AI notes",
+      },
+    ],
+  };
+  api.receipt.mockResolvedValue({ data: { tutorReceipt: completed } });
+  api.messages.mockResolvedValue({
+    data: {
+      tutorMessages: { ...completed, page: 0, totalPages: 1, totalElements: 4 },
+    },
   });
-
-  it("clears the thread when a new conversation is started", async () => {
-    sendMessage.mockResolvedValue(sent());
-    fetchConversation.mockResolvedValue(polled([QUESTION, ANSWERED]));
-
-    const { result } = renderHook(() => useTutorChat());
-    await act(async () => {
-      await result.current.send("What is a gerund?");
-    });
-    await waitFor(() => expect(result.current.messages.length).toBe(2));
-
-    act(() => result.current.reset());
-
-    expect(result.current.messages).toHaveLength(0);
-    expect(result.current.conversationId).toBeUndefined();
+  await act(async () => {
+    await result.current.recover();
   });
+  expect(api.receipt).toHaveBeenCalledWith({
+    variables: { clientMessageId: key },
+  });
+  expect(api.summarize).toHaveBeenCalledTimes(1);
+  expect(api.send).not.toHaveBeenCalled();
+  expect(result.current.unconfirmed).toBe(false);
+  expect(result.current.acceptedDelivery).toBeNull();
+  expect(
+    result.current.messages.some((message) => message.id === "memory-a"),
+  ).toBe(true);
+});
+
+it("treats an unassessed study context as a definite refusal and preserves the caller's draft", async () => {
+  api.send.mockRejectedValueOnce(
+    new CombinedGraphQLErrors({
+      errors: [
+        {
+          message: "Not assessed",
+          extensions: {
+            code: "CONFLICT",
+            backendCode: "TUTOR_CONTEXT_NOT_READY",
+          },
+        },
+      ],
+    }),
+  );
+  const { result } = renderHook(() => useTutorChat(undefined, "learner"));
+  const id = "c60bcb3a-a40a-48db-9681-6a176d65cf0f";
+  await act(async () => {
+    expect(
+      await result.current.send("Explain my feedback", "GENERAL", false, {
+        assessmentAttemptId: id,
+      }),
+    ).toBe(false);
+  });
+  expect(api.send.mock.calls[0][0].variables.assessmentAttemptId).toBe(id);
+  expect(result.current.unconfirmed).toBe(false);
+  expect(result.current.error).toContain("chưa có kết quả chấm");
 });

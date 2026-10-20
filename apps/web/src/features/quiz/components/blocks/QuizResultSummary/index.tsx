@@ -29,13 +29,15 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 interface QuizResultSummaryProps {
   result: QuizSessionResult;
   onRestart: () => void;
+  attemptId?: string;
 }
 
 export function QuizResultSummary({
   result,
   onRestart,
+  attemptId,
 }: QuizResultSummaryProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const isPassed = result.isPassed;
   const statusColor = isPassed ? "teal" : "orange";
 
@@ -205,6 +207,19 @@ export function QuizResultSummary({
                 )}
               </Group>
 
+              {attemptId && (
+                <Button
+                  component={Link}
+                  href={`/ai-tutor?${new URLSearchParams({ quizAttempt: attemptId, quizQuestion: rev.questionId })}`}
+                  variant="light"
+                  color="brand"
+                  mih={44}
+                >
+                  {isVi
+                    ? "Nhờ Tutor giải thích câu này"
+                    : "Ask Tutor to explain this question"}
+                </Button>
+              )}
               {/* Explanation note */}
               <Card
                 withBorder

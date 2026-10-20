@@ -34,6 +34,7 @@ type Forward = {
   body?: BodyInit | null;
   contentType?: string | null;
   timeoutMs?: number;
+  signal?: AbortSignal;
   /** What to answer when the BFF cannot be reached at all. */
   unreachable: () => Response;
 };
@@ -45,7 +46,14 @@ type Forward = {
  */
 export async function forwardToBff(
   url: string,
-  { method, body, contentType, timeoutMs = TIMEOUT_MS, unreachable }: Forward,
+  {
+    method,
+    body,
+    contentType,
+    timeoutMs = TIMEOUT_MS,
+    signal,
+    unreachable,
+  }: Forward,
 ): Promise<Response> {
   const start = performance.now();
   const requestId = crypto.randomUUID();
@@ -61,7 +69,9 @@ export async function forwardToBff(
       body: body ?? undefined,
       // A request body that is a stream must say it will not be replayed.
       ...(body && typeof body !== "string" ? { duplex: "half" } : {}),
-      signal: AbortSignal.timeout(timeoutMs),
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)])
+        : AbortSignal.timeout(timeoutMs),
       cache: "no-store",
     } as RequestInit);
   } catch {

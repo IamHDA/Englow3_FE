@@ -985,6 +985,9 @@ export type Mutation = {
    */
   archiveExam: Exam;
   archiveTutorConversation: TutorConversationSummary;
+  branchTutorConversation: TutorConversation;
+  cancelTutorReply: TutorMessage;
+  clearTutorMemory: Scalars['Boolean']['output'];
   completeMyTour: UserTourStatus;
   /**
    * Final step. Refuses with ONBOARDING_PURPOSE_REQUIRED,
@@ -993,6 +996,7 @@ export type Mutation = {
    */
   completeOnboarding: OnboardingState;
   createAssessmentTask: AssessmentTask;
+  createTutorResource: TutorResource;
   editAssessmentTask: AssessmentTask;
   gradeAssessment: AssessmentAttempt;
   /** DRAFT -> PUBLISHED, skipping review. Administrators only. */
@@ -1010,6 +1014,7 @@ export type Mutation = {
    */
   rateFlashcard: FlashcardReview;
   readAssessmentResult: Scalars['Boolean']['output'];
+  regenerateTutorReply: TutorConversation;
   /**
    * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
    * backend refuses a blank one with REVIEW_NOTE_REQUIRED, because "rejected"
@@ -1022,6 +1027,7 @@ export type Mutation = {
    * "rejected" alone leaves the author nothing to change.
    */
   rejectExam: Exam;
+  renameTutorConversation: TutorConversationSummary;
   /** Reports an answer as wrong or inappropriate. The note is optional. */
   reportTutorMessage: TutorMessage;
   requestAssessmentReview: AssessmentAttempt;
@@ -1038,7 +1044,11 @@ export type Mutation = {
    * extensions.backendCode: EXAM_NOT_ARCHIVED.
    */
   restoreExam: Exam;
+  restoreTutorConversation: TutorConversationSummary;
   retryAssessment: AssessmentAttempt;
+  retryTutorReply: TutorConversation;
+  reviewTutorReport: TutorReport;
+  reviewTutorResource: TutorResource;
   saveAssessmentDraft: AssessmentAttempt;
   saveExamDraft: ExamDraft;
   /**
@@ -1054,6 +1064,7 @@ export type Mutation = {
    * completeOnboarding is called.
    */
   selectTargetSkills: OnboardingState;
+  selectTutorReply: TutorConversation;
   /**
    * Sends a question. Omit conversationId to start a new thread - whether one
    * already exists is not the learner's concern.
@@ -1126,8 +1137,11 @@ export type Mutation = {
    * actually in storage.
    */
   submitSpeakingAttempt: SpeakingAttempt;
+  summarizeTutorConversation: TutorConversation;
   transitionAssessmentTask: AssessmentTask;
   updateProfile: Me;
+  updateTutorPolicy: TutorPolicy;
+  updateTutorResource: TutorResource;
 };
 
 
@@ -1158,8 +1172,33 @@ export type MutationArchiveTutorConversationArgs = {
 };
 
 
+export type MutationBranchTutorConversationArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  message: Scalars['String']['input'];
+  messageId: Scalars['ID']['input'];
+  personalized?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type MutationCancelTutorReplyArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationClearTutorMemoryArgs = {
+  conversationId: Scalars['ID']['input'];
+};
+
+
 export type MutationCreateAssessmentTaskArgs = {
   input: AssessmentTaskInput;
+};
+
+
+export type MutationCreateTutorResourceArgs = {
+  input: TutorResourceInput;
 };
 
 
@@ -1203,6 +1242,13 @@ export type MutationReadAssessmentResultArgs = {
 };
 
 
+export type MutationRegenerateTutorReplyArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
 export type MutationRejectContentArgs = {
   id: Scalars['ID']['input'];
   kind: ContentKind;
@@ -1213,6 +1259,12 @@ export type MutationRejectContentArgs = {
 export type MutationRejectExamArgs = {
   id: Scalars['ID']['input'];
   note: Scalars['String']['input'];
+};
+
+
+export type MutationRenameTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
 };
 
 
@@ -1239,8 +1291,32 @@ export type MutationRestoreExamArgs = {
 };
 
 
+export type MutationRestoreTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRetryAssessmentArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationRetryTutorReplyArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationReviewTutorReportArgs = {
+  id: Scalars['ID']['input'];
+  input: TutorReviewInput;
+};
+
+
+export type MutationReviewTutorResourceArgs = {
+  id: Scalars['ID']['input'];
+  input: TutorReviewInput;
 };
 
 
@@ -1268,9 +1344,25 @@ export type MutationSelectTargetSkillsArgs = {
 };
 
 
+export type MutationSelectTutorReplyArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+  revision: Scalars['Int']['input'];
+};
+
+
 export type MutationSendTutorMessageArgs = {
+  assessmentAttemptId?: InputMaybe<Scalars['ID']['input']>;
+  clientMessageId?: InputMaybe<Scalars['ID']['input']>;
   conversationId?: InputMaybe<Scalars['ID']['input']>;
+  examAttemptId?: InputMaybe<Scalars['ID']['input']>;
+  examQuestionId?: InputMaybe<Scalars['ID']['input']>;
   message: Scalars['String']['input'];
+  mode?: InputMaybe<Scalars['String']['input']>;
+  personalized?: InputMaybe<Scalars['Boolean']['input']>;
+  quizAttemptId?: InputMaybe<Scalars['ID']['input']>;
+  quizQuestionId?: InputMaybe<Scalars['ID']['input']>;
   topic?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1355,6 +1447,12 @@ export type MutationSubmitSpeakingAttemptArgs = {
 };
 
 
+export type MutationSummarizeTutorConversationArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+};
+
+
 export type MutationTransitionAssessmentTaskArgs = {
   action: Scalars['String']['input'];
   id: Scalars['ID']['input'];
@@ -1364,6 +1462,17 @@ export type MutationTransitionAssessmentTaskArgs = {
 
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
+};
+
+
+export type MutationUpdateTutorPolicyArgs = {
+  input: TutorPolicyInput;
+};
+
+
+export type MutationUpdateTutorResourceArgs = {
+  id: Scalars['ID']['input'];
+  input: TutorResourceInput;
 };
 
 export type OnboardingState = {
@@ -1523,6 +1632,20 @@ export type Query = {
   speakingPrompts: SpeakingPromptPage;
   tutorConversation: TutorConversation;
   tutorConversations: Array<TutorConversationSummary>;
+  tutorHistory: TutorHistoryPage;
+  tutorMemory: TutorMemory;
+  tutorMessages: TutorMessagePage;
+  tutorOperations: TutorOperations;
+  tutorPolicy: TutorPolicy;
+  tutorReceipt: TutorConversation;
+  tutorReply: TutorMessage;
+  tutorReplyHistory: TutorReplyHistory;
+  tutorReport: TutorReport;
+  tutorReports: TutorReportPage;
+  tutorResource: TutorResource;
+  tutorResources: TutorResourcePage;
+  tutorStaffMembers: Array<TutorStaffMember>;
+  tutorUsage: TutorUsage;
 };
 
 
@@ -1747,6 +1870,65 @@ export type QuerySpeakingPromptsArgs = {
 
 export type QueryTutorConversationArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorHistoryArgs = {
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTutorMemoryArgs = {
+  conversationId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorMessagesArgs = {
+  id: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTutorReceiptArgs = {
+  clientMessageId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReplyArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReplyHistoryArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReportArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReportsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryTutorResourceArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorResourcesArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
 };
 
 /**
@@ -2062,13 +2244,45 @@ export type TutorConversation = {
 
 export type TutorConversationSummary = {
   __typename?: 'TutorConversationSummary';
+  archivedAt?: Maybe<Scalars['DateTime']['output']>;
+  assessmentAttemptId?: Maybe<Scalars['ID']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  examAttemptId?: Maybe<Scalars['ID']['output']>;
+  examQuestionId?: Maybe<Scalars['ID']['output']>;
   id: Scalars['ID']['output'];
   lastMessageAt: Scalars['DateTime']['output'];
   messageCount: Scalars['Int']['output'];
+  quizAttemptId?: Maybe<Scalars['ID']['output']>;
+  quizQuestionId?: Maybe<Scalars['ID']['output']>;
   /** Taken from the first thing the learner said, so the list reads as what they asked. */
   title: Scalars['String']['output'];
   topic?: Maybe<Scalars['String']['output']>;
+  useLearningContext: Scalars['Boolean']['output'];
+};
+
+export type TutorFailureCount = {
+  __typename?: 'TutorFailureCount';
+  code: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+};
+
+export type TutorHistoryPage = {
+  __typename?: 'TutorHistoryPage';
+  items: Array<TutorConversationSummary>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type TutorMemory = {
+  __typename?: 'TutorMemory';
+  batchSize: Scalars['Int']['output'];
+  content?: Maybe<Scalars['String']['output']>;
+  enabled: Scalars['Boolean']['output'];
+  pendingMessageId?: Maybe<Scalars['ID']['output']>;
+  remainingMessages: Scalars['Int']['output'];
+  throughOrder: Scalars['Int']['output'];
 };
 
 export type TutorMessage = {
@@ -2080,15 +2294,30 @@ export type TutorMessage = {
    * would make that impossible.
    */
   content?: Maybe<Scalars['String']['output']>;
+  correction?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   /** Why no answer came, when none did. */
   errorCode?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   model?: Maybe<Scalars['String']['output']>;
   orderNo: Scalars['Int']['output'];
+  reportStatus?: Maybe<Scalars['String']['output']>;
   reported: Scalars['Boolean']['output'];
+  restartCount: Scalars['Int']['output'];
+  revision: Scalars['Int']['output'];
   role: TutorMessageRole;
+  sources: Array<TutorSource>;
   status: TutorMessageStatus;
+  summary?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type TutorMessagePage = {
+  __typename?: 'TutorMessagePage';
+  conversation: TutorConversationSummary;
+  messages: Array<TutorMessage>;
+  page: Scalars['Int']['output'];
+  totalElements: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
 };
 
 export type TutorMessageRole =
@@ -2100,9 +2329,157 @@ export type TutorMessageRole =
  * PENDING; the learner's own message is READY the moment it arrives.
  */
 export type TutorMessageStatus =
+  | 'CANCELLED'
   | 'FAILED'
   | 'PENDING'
   | 'READY';
+
+export type TutorOperations = {
+  __typename?: 'TutorOperations';
+  completedToday: Scalars['Int']['output'];
+  failedToday: Scalars['Int']['output'];
+  metrics?: Maybe<TutorQueueMetrics>;
+  oldestPendingAt?: Maybe<Scalars['DateTime']['output']>;
+  pending: Scalars['Int']['output'];
+  running: Scalars['Int']['output'];
+  scope: Scalars['String']['output'];
+};
+
+export type TutorPolicy = {
+  __typename?: 'TutorPolicy';
+  accepting: Scalars['Boolean']['output'];
+  allowedModes: Array<Scalars['String']['output']>;
+  dailyLimit: Scalars['Int']['output'];
+  environmentEnabled: Scalars['Boolean']['output'];
+  model: Scalars['String']['output'];
+  streamingEnabled: Scalars['Boolean']['output'];
+  version: Scalars['Int']['output'];
+  voiceEnabled: Scalars['Boolean']['output'];
+};
+
+export type TutorPolicyInput = {
+  accepting: Scalars['Boolean']['input'];
+  allowedModes: Array<Scalars['String']['input']>;
+  reason: Scalars['String']['input'];
+  version: Scalars['Int']['input'];
+};
+
+export type TutorQueueMetrics = {
+  __typename?: 'TutorQueueMetrics';
+  completionP95Ms?: Maybe<Scalars['Float']['output']>;
+  failures: Array<TutorFailureCount>;
+  knownInputTokens: Scalars['Float']['output'];
+  knownOutputTokens: Scalars['Float']['output'];
+  queueP95Ms?: Maybe<Scalars['Float']['output']>;
+  samples: Scalars['Int']['output'];
+  unknownUsageJobs: Scalars['Int']['output'];
+};
+
+export type TutorReplyHistory = {
+  __typename?: 'TutorReplyHistory';
+  canSelect: Scalars['Boolean']['output'];
+  currentRevision: Scalars['Int']['output'];
+  items: Array<TutorReplyVersion>;
+};
+
+export type TutorReplyVersion = {
+  __typename?: 'TutorReplyVersion';
+  content?: Maybe<Scalars['String']['output']>;
+  correction?: Maybe<Scalars['String']['output']>;
+  model?: Maybe<Scalars['String']['output']>;
+  revision: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
+
+export type TutorReport = {
+  __typename?: 'TutorReport';
+  answer?: Maybe<Scalars['String']['output']>;
+  assignedTo?: Maybe<Scalars['ID']['output']>;
+  correction?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  learnerNote?: Maybe<Scalars['String']['output']>;
+  messageId: Scalars['ID']['output'];
+  question?: Maybe<Scalars['String']['output']>;
+  resolvedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewerNote?: Maybe<Scalars['String']['output']>;
+  revision: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
+
+export type TutorReportPage = {
+  __typename?: 'TutorReportPage';
+  items: Array<TutorReport>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type TutorResource = {
+  __typename?: 'TutorResource';
+  authorId: Scalars['ID']['output'];
+  body: Scalars['String']['output'];
+  documentId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  rowVersion: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type TutorResourceInput = {
+  body: Scalars['String']['input'];
+  rowVersion?: InputMaybe<Scalars['Int']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type TutorResourcePage = {
+  __typename?: 'TutorResourcePage';
+  items: Array<TutorResource>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type TutorReviewInput = {
+  action: Scalars['String']['input'];
+  assignedTo?: InputMaybe<Scalars['ID']['input']>;
+  correction?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type TutorSource = {
+  __typename?: 'TutorSource';
+  excerpt: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  resourceId: Scalars['ID']['output'];
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type TutorStaffMember = {
+  __typename?: 'TutorStaffMember';
+  displayName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
+export type TutorUsage = {
+  __typename?: 'TutorUsage';
+  allowedModes: Array<Scalars['String']['output']>;
+  enabled: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  maxMessageLength: Scalars['Int']['output'];
+  memorySupported: Scalars['Boolean']['output'];
+  remaining: Scalars['Int']['output'];
+  resetsAt: Scalars['DateTime']['output'];
+  streaming: Scalars['Boolean']['output'];
+  supportedContexts: Array<Scalars['String']['output']>;
+  used: Scalars['Int']['output'];
+  voice: Scalars['Boolean']['output'];
+};
 
 export type UpdateProfileInput = {
   birthDate?: InputMaybe<Scalars['Date']['input']>;
@@ -2314,9 +2691,28 @@ export type ResolversTypes = ResolversObject<{
   TargetLevel: TargetLevel;
   TutorConversation: ResolverTypeWrapper<TutorConversation>;
   TutorConversationSummary: ResolverTypeWrapper<TutorConversationSummary>;
+  TutorFailureCount: ResolverTypeWrapper<TutorFailureCount>;
+  TutorHistoryPage: ResolverTypeWrapper<TutorHistoryPage>;
+  TutorMemory: ResolverTypeWrapper<TutorMemory>;
   TutorMessage: ResolverTypeWrapper<TutorMessage>;
+  TutorMessagePage: ResolverTypeWrapper<TutorMessagePage>;
   TutorMessageRole: TutorMessageRole;
   TutorMessageStatus: TutorMessageStatus;
+  TutorOperations: ResolverTypeWrapper<TutorOperations>;
+  TutorPolicy: ResolverTypeWrapper<TutorPolicy>;
+  TutorPolicyInput: TutorPolicyInput;
+  TutorQueueMetrics: ResolverTypeWrapper<TutorQueueMetrics>;
+  TutorReplyHistory: ResolverTypeWrapper<TutorReplyHistory>;
+  TutorReplyVersion: ResolverTypeWrapper<TutorReplyVersion>;
+  TutorReport: ResolverTypeWrapper<TutorReport>;
+  TutorReportPage: ResolverTypeWrapper<TutorReportPage>;
+  TutorResource: ResolverTypeWrapper<TutorResource>;
+  TutorResourceInput: TutorResourceInput;
+  TutorResourcePage: ResolverTypeWrapper<TutorResourcePage>;
+  TutorReviewInput: TutorReviewInput;
+  TutorSource: ResolverTypeWrapper<TutorSource>;
+  TutorStaffMember: ResolverTypeWrapper<TutorStaffMember>;
+  TutorUsage: ResolverTypeWrapper<TutorUsage>;
   UpdateProfileInput: UpdateProfileInput;
   UserTourStatus: ResolverTypeWrapper<UserTourStatus>;
 }>;
@@ -2417,7 +2813,26 @@ export type ResolversParentTypes = ResolversObject<{
   SubmitAnswerInput: SubmitAnswerInput;
   TutorConversation: TutorConversation;
   TutorConversationSummary: TutorConversationSummary;
+  TutorFailureCount: TutorFailureCount;
+  TutorHistoryPage: TutorHistoryPage;
+  TutorMemory: TutorMemory;
   TutorMessage: TutorMessage;
+  TutorMessagePage: TutorMessagePage;
+  TutorOperations: TutorOperations;
+  TutorPolicy: TutorPolicy;
+  TutorPolicyInput: TutorPolicyInput;
+  TutorQueueMetrics: TutorQueueMetrics;
+  TutorReplyHistory: TutorReplyHistory;
+  TutorReplyVersion: TutorReplyVersion;
+  TutorReport: TutorReport;
+  TutorReportPage: TutorReportPage;
+  TutorResource: TutorResource;
+  TutorResourceInput: TutorResourceInput;
+  TutorResourcePage: TutorResourcePage;
+  TutorReviewInput: TutorReviewInput;
+  TutorSource: TutorSource;
+  TutorStaffMember: TutorStaffMember;
+  TutorUsage: TutorUsage;
   UpdateProfileInput: UpdateProfileInput;
   UserTourStatus: UserTourStatus;
 }>;
@@ -3056,26 +3471,37 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   archiveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationArchiveContentArgs, 'id' | 'kind'>>;
   archiveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationArchiveExamArgs, 'id'>>;
   archiveTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationArchiveTutorConversationArgs, 'id'>>;
+  branchTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationBranchTutorConversationArgs, 'clientMessageId' | 'conversationId' | 'message' | 'messageId'>>;
+  cancelTutorReply?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationCancelTutorReplyArgs, 'conversationId' | 'messageId'>>;
+  clearTutorMemory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationClearTutorMemoryArgs, 'conversationId'>>;
   completeMyTour?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   completeOnboarding?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType>;
   createAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationCreateAssessmentTaskArgs, 'input'>>;
+  createTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationCreateTutorResourceArgs, 'input'>>;
   editAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationEditAssessmentTaskArgs, 'id' | 'input' | 'version'>>;
   gradeAssessment?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationGradeAssessmentArgs, 'id' | 'note' | 'report' | 'version'>>;
   publishContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationPublishContentArgs, 'id' | 'kind'>>;
   publishExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationPublishExamArgs, 'id'>>;
   rateFlashcard?: Resolver<ResolversTypes['FlashcardReview'], ParentType, ContextType, RequireFields<MutationRateFlashcardArgs, 'flashcardId' | 'rating' | 'timeSpentSeconds'>>;
   readAssessmentResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationReadAssessmentResultArgs, 'id' | 'version'>>;
+  regenerateTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationRegenerateTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId'>>;
   rejectContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationRejectContentArgs, 'id' | 'kind' | 'note'>>;
   rejectExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationRejectExamArgs, 'id' | 'note'>>;
+  renameTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationRenameTutorConversationArgs, 'id' | 'title'>>;
   reportTutorMessage?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationReportTutorMessageArgs, 'conversationId' | 'messageId'>>;
   requestAssessmentReview?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationRequestAssessmentReviewArgs, 'id'>>;
   restoreContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationRestoreContentArgs, 'id' | 'kind'>>;
   restoreExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationRestoreExamArgs, 'id'>>;
+  restoreTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationRestoreTutorConversationArgs, 'id'>>;
   retryAssessment?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationRetryAssessmentArgs, 'id'>>;
+  retryTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationRetryTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId'>>;
+  reviewTutorReport?: Resolver<ResolversTypes['TutorReport'], ParentType, ContextType, RequireFields<MutationReviewTutorReportArgs, 'id' | 'input'>>;
+  reviewTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationReviewTutorResourceArgs, 'id' | 'input'>>;
   saveAssessmentDraft?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationSaveAssessmentDraftArgs, 'answerText' | 'id' | 'version'>>;
   saveExamDraft?: Resolver<ResolversTypes['ExamDraft'], ParentType, ContextType, RequireFields<MutationSaveExamDraftArgs, 'answers' | 'attemptId' | 'version'>>;
   selectLearningPurposes?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectLearningPurposesArgs, 'purposeIds'>>;
   selectTargetSkills?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectTargetSkillsArgs, 'skills'>>;
+  selectTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSelectTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId' | 'revision'>>;
   sendTutorMessage?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSendTutorMessageArgs, 'message'>>;
   setCertificateTarget?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCertificateTargetArgs, 'certificateType'>>;
   setCurrentLevel?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCurrentLevelArgs, 'level'>>;
@@ -3091,8 +3517,11 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   submitExamForReview?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationSubmitExamForReviewArgs, 'id'>>;
   submitQuizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<MutationSubmitQuizAttemptArgs, 'answers' | 'attemptId'>>;
   submitSpeakingAttempt?: Resolver<ResolversTypes['SpeakingAttempt'], ParentType, ContextType, RequireFields<MutationSubmitSpeakingAttemptArgs, 'attemptId'>>;
+  summarizeTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSummarizeTutorConversationArgs, 'clientMessageId' | 'conversationId'>>;
   transitionAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationTransitionAssessmentTaskArgs, 'action' | 'id'>>;
   updateProfile?: Resolver<ResolversTypes['Me'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
+  updateTutorPolicy?: Resolver<ResolversTypes['TutorPolicy'], ParentType, ContextType, RequireFields<MutationUpdateTutorPolicyArgs, 'input'>>;
+  updateTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationUpdateTutorResourceArgs, 'id' | 'input'>>;
 }>;
 
 export type OnboardingStateResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['OnboardingState'] = ResolversParentTypes['OnboardingState']> = ResolversObject<{
@@ -3162,6 +3591,20 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   speakingPrompts?: Resolver<ResolversTypes['SpeakingPromptPage'], ParentType, ContextType, RequireFields<QuerySpeakingPromptsArgs, 'page' | 'size'>>;
   tutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<QueryTutorConversationArgs, 'id'>>;
   tutorConversations?: Resolver<Array<ResolversTypes['TutorConversationSummary']>, ParentType, ContextType>;
+  tutorHistory?: Resolver<ResolversTypes['TutorHistoryPage'], ParentType, ContextType, RequireFields<QueryTutorHistoryArgs, 'archived' | 'page' | 'search' | 'size'>>;
+  tutorMemory?: Resolver<ResolversTypes['TutorMemory'], ParentType, ContextType, RequireFields<QueryTutorMemoryArgs, 'conversationId'>>;
+  tutorMessages?: Resolver<ResolversTypes['TutorMessagePage'], ParentType, ContextType, RequireFields<QueryTutorMessagesArgs, 'id' | 'page' | 'size'>>;
+  tutorOperations?: Resolver<ResolversTypes['TutorOperations'], ParentType, ContextType>;
+  tutorPolicy?: Resolver<ResolversTypes['TutorPolicy'], ParentType, ContextType>;
+  tutorReceipt?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<QueryTutorReceiptArgs, 'clientMessageId'>>;
+  tutorReply?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<QueryTutorReplyArgs, 'conversationId' | 'messageId'>>;
+  tutorReplyHistory?: Resolver<ResolversTypes['TutorReplyHistory'], ParentType, ContextType, RequireFields<QueryTutorReplyHistoryArgs, 'conversationId' | 'messageId'>>;
+  tutorReport?: Resolver<ResolversTypes['TutorReport'], ParentType, ContextType, RequireFields<QueryTutorReportArgs, 'id'>>;
+  tutorReports?: Resolver<ResolversTypes['TutorReportPage'], ParentType, ContextType, RequireFields<QueryTutorReportsArgs, 'page' | 'status'>>;
+  tutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<QueryTutorResourceArgs, 'id'>>;
+  tutorResources?: Resolver<ResolversTypes['TutorResourcePage'], ParentType, ContextType, RequireFields<QueryTutorResourcesArgs, 'page' | 'status'>>;
+  tutorStaffMembers?: Resolver<Array<ResolversTypes['TutorStaffMember']>, ParentType, ContextType>;
+  tutorUsage?: Resolver<ResolversTypes['TutorUsage'], ParentType, ContextType>;
 }>;
 
 export type QuestionOptionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['QuestionOption'] = ResolversParentTypes['QuestionOption']> = ResolversObject<{
@@ -3326,25 +3769,183 @@ export type TutorConversationResolvers<ContextType = GraphQLContext, ParentType 
 }>;
 
 export type TutorConversationSummaryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorConversationSummary'] = ResolversParentTypes['TutorConversationSummary']> = ResolversObject<{
+  archivedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  assessmentAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  examAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  examQuestionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastMessageAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   messageCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  quizAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  quizQuestionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   topic?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  useLearningContext?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+}>;
+
+export type TutorFailureCountResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorFailureCount'] = ResolversParentTypes['TutorFailureCount']> = ResolversObject<{
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorHistoryPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorHistoryPage'] = ResolversParentTypes['TutorHistoryPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['TutorConversationSummary']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorMemoryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorMemory'] = ResolversParentTypes['TutorMemory']> = ResolversObject<{
+  batchSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  enabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  pendingMessageId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  remainingMessages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  throughOrder?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
 export type TutorMessageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorMessage'] = ResolversParentTypes['TutorMessage']> = ResolversObject<{
   answeredAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  correction?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   errorCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   model?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  reportStatus?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   reported?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  restartCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  revision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['TutorMessageRole'], ParentType, ContextType>;
+  sources?: Resolver<Array<ResolversTypes['TutorSource']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['TutorMessageStatus'], ParentType, ContextType>;
+  summary?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+}>;
+
+export type TutorMessagePageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorMessagePage'] = ResolversParentTypes['TutorMessagePage']> = ResolversObject<{
+  conversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType>;
+  messages?: Resolver<Array<ResolversTypes['TutorMessage']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalElements?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorOperationsResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorOperations'] = ResolversParentTypes['TutorOperations']> = ResolversObject<{
+  completedToday?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  failedToday?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  metrics?: Resolver<Maybe<ResolversTypes['TutorQueueMetrics']>, ParentType, ContextType>;
+  oldestPendingAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  pending?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  running?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type TutorPolicyResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorPolicy'] = ResolversParentTypes['TutorPolicy']> = ResolversObject<{
+  accepting?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  allowedModes?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  dailyLimit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  environmentEnabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  model?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  streamingEnabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  voiceEnabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+}>;
+
+export type TutorQueueMetricsResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorQueueMetrics'] = ResolversParentTypes['TutorQueueMetrics']> = ResolversObject<{
+  completionP95Ms?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  failures?: Resolver<Array<ResolversTypes['TutorFailureCount']>, ParentType, ContextType>;
+  knownInputTokens?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  knownOutputTokens?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  queueP95Ms?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  samples?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  unknownUsageJobs?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorReplyHistoryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorReplyHistory'] = ResolversParentTypes['TutorReplyHistory']> = ResolversObject<{
+  canSelect?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  currentRevision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['TutorReplyVersion']>, ParentType, ContextType>;
+}>;
+
+export type TutorReplyVersionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorReplyVersion'] = ResolversParentTypes['TutorReplyVersion']> = ResolversObject<{
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  correction?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  model?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  revision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type TutorReportResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorReport'] = ResolversParentTypes['TutorReport']> = ResolversObject<{
+  answer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  assignedTo?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  correction?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  learnerNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  messageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  question?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  resolvedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  reviewerNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  revision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type TutorReportPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorReportPage'] = ResolversParentTypes['TutorReportPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['TutorReport']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorResourceResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorResource'] = ResolversParentTypes['TutorResource']> = ResolversObject<{
+  authorId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  documentId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  reviewNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  rowVersion?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  versionNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorResourcePageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorResourcePage'] = ResolversParentTypes['TutorResourcePage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['TutorResource']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorSourceResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorSource'] = ResolversParentTypes['TutorSource']> = ResolversObject<{
+  excerpt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resourceId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  versionNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TutorStaffMemberResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorStaffMember'] = ResolversParentTypes['TutorStaffMember']> = ResolversObject<{
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type TutorUsageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorUsage'] = ResolversParentTypes['TutorUsage']> = ResolversObject<{
+  allowedModes?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  enabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  limit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  maxMessageLength?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  memorySupported?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  remaining?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  resetsAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  streaming?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  supportedContexts?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  used?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  voice?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
 export type UserTourStatusResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['UserTourStatus'] = ResolversParentTypes['UserTourStatus']> = ResolversObject<{
@@ -3436,7 +4037,23 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   SpeakingWord?: SpeakingWordResolvers<ContextType>;
   TutorConversation?: TutorConversationResolvers<ContextType>;
   TutorConversationSummary?: TutorConversationSummaryResolvers<ContextType>;
+  TutorFailureCount?: TutorFailureCountResolvers<ContextType>;
+  TutorHistoryPage?: TutorHistoryPageResolvers<ContextType>;
+  TutorMemory?: TutorMemoryResolvers<ContextType>;
   TutorMessage?: TutorMessageResolvers<ContextType>;
+  TutorMessagePage?: TutorMessagePageResolvers<ContextType>;
+  TutorOperations?: TutorOperationsResolvers<ContextType>;
+  TutorPolicy?: TutorPolicyResolvers<ContextType>;
+  TutorQueueMetrics?: TutorQueueMetricsResolvers<ContextType>;
+  TutorReplyHistory?: TutorReplyHistoryResolvers<ContextType>;
+  TutorReplyVersion?: TutorReplyVersionResolvers<ContextType>;
+  TutorReport?: TutorReportResolvers<ContextType>;
+  TutorReportPage?: TutorReportPageResolvers<ContextType>;
+  TutorResource?: TutorResourceResolvers<ContextType>;
+  TutorResourcePage?: TutorResourcePageResolvers<ContextType>;
+  TutorSource?: TutorSourceResolvers<ContextType>;
+  TutorStaffMember?: TutorStaffMemberResolvers<ContextType>;
+  TutorUsage?: TutorUsageResolvers<ContextType>;
   UserTourStatus?: UserTourStatusResolvers<ContextType>;
 }>;
 

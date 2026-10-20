@@ -1,0 +1,36 @@
+.layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: var(--mantine-spacing-lg);
+  align-items: start;
+}
+.chat {
+  min-width: 0;
+}
+.thread {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--mantine-radius-md);
+  min-height: 52px;
+}
+.thread:hover {
+  background: var(--mantine-color-gray-0);
+}
+.thread[data-active] {
+  background: var(--mantine-color-brand-0);
+  color: var(--mantine-color-brand-9);
+}
+.mobileHistory {
+  display: none;
+}
+@media (max-width: 62em) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .desktopHistory {
+    display: none;
+  }
+  .mobileHistory {
+    display: inline-flex;
+  }
+}

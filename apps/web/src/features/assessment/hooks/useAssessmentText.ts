@@ -2,6 +2,7 @@
 import { useCallback } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 const messages: Record<string, string> = {
+  "Nhờ Tutor giải thích phản hồi": "Ask Tutor to explain this feedback",
   "Tải nháp xuống máy": "Download draft",
   "Tải bản hiện hành": "Reload current version",
   "Tải bản mới sẽ thay nội dung đang nhập. Hãy tải nháp xuống trước để đối chiếu. Tiếp tục?":

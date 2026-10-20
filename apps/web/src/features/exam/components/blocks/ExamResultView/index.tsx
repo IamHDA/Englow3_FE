@@ -478,6 +478,18 @@ export function ExamResultView({
                             })}
                           </Stack>
 
+                          {review && (
+                            <Button
+                              component={Link}
+                              href={`/ai-tutor?examAttempt=${encodeURIComponent(attempt.id)}&examQuestion=${encodeURIComponent(item.questionId)}`}
+                              variant="light"
+                              mih={44}
+                            >
+                              {isVi
+                                ? "Nhờ Tutor giải thích câu này"
+                                : "Ask Tutor to explain this question"}
+                            </Button>
+                          )}
                           {/* Explanation Note */}
                           {(review?.explanation || correctExplanation) && (
                             <Box p="sm" className={classes.explanationBox}>
