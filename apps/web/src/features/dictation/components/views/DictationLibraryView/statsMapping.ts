@@ -59,6 +59,7 @@ export function toStatsData(
     })),
     difficultSentences: stats.difficultSentences.map((sentence) => ({
       id: sentence.sentenceId,
+      lessonId: sentence.lessonId,
       text: sentence.text,
       avgAccuracyPercent: sentence.accuracyPercent,
       attemptsCount: sentence.attemptCount,
@@ -78,7 +79,6 @@ export function toStatsData(
       accuracyLabel: `${session.accuracyPercent}%`,
       studyTimeLabel: formatDuration(session.listeningSeconds, isVi),
       // Số gợi ý đã dùng chưa được ghi lại - cần một cột trên dictation_attempts.
-      hintsUsedLabel: "—",
     })),
   };
 }

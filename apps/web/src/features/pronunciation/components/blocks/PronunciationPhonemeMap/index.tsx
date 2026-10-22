@@ -1,10 +1,12 @@
 "use client";
 
 import { Box, Card, Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconVolume } from "@tabler/icons-react";
 import React from "react";
 import { IpaChartSound } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { firstExampleWord, speakEnglish } from "../../../speakExample";
 
 interface PronunciationPhonemeMapProps {
   sounds: IpaChartSound[];
@@ -13,16 +15,19 @@ interface PronunciationPhonemeMapProps {
 export function PronunciationPhonemeMap({
   sounds,
 }: PronunciationPhonemeMapProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
 
-  const handleSpeak = (symbol: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    // Speak symbol or fallback to representative sound
-    const soundChar = symbol.replace(/\//g, "");
-    const utterance = new SpeechSynthesisUtterance(soundChar);
-    utterance.lang = "en-US";
-    window.speechSynthesis.speak(utterance);
+  const handleSpeak = (item: IpaChartSound) => {
+    // Giọng đọc của trình duyệt không đọc được ký hiệu IPA, nên đọc từ ví dụ.
+    const word = firstExampleWord(item.example);
+    if (!word || !speakEnglish(word)) {
+      notifications.show({
+        color: "warn",
+        message: isVi
+          ? "Trình duyệt này không có giọng đọc tiếng Anh."
+          : "This browser has no English text-to-speech voice.",
+      });
+    }
   };
 
   const vowels = sounds.filter((s) => s.type !== "consonant");
@@ -56,8 +61,12 @@ export function PronunciationPhonemeMap({
                 radius="sm"
                 style={{
                   cursor: "pointer",
+                  textAlign: "left",
                 }}
-                onClick={() => handleSpeak(item.symbol)}
+                component="button"
+                type="button"
+                aria-label={`${item.symbol} - ${item.example}`}
+                onClick={() => handleSpeak(item)}
               >
                 <Group justify="space-between" align="center">
                   <Stack gap={2}>
@@ -89,8 +98,12 @@ export function PronunciationPhonemeMap({
                 radius="sm"
                 style={{
                   cursor: "pointer",
+                  textAlign: "left",
                 }}
-                onClick={() => handleSpeak(item.symbol)}
+                component="button"
+                type="button"
+                aria-label={`${item.symbol} - ${item.example}`}
+                onClick={() => handleSpeak(item)}
               >
                 <Group justify="space-between" align="center">
                   <Stack gap={2}>

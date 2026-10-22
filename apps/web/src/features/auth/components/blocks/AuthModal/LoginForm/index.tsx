@@ -6,7 +6,12 @@ import {
   Checkbox,
   Flex,
   Group,
+  Loader,
+  LoadingOverlay,
   PasswordInput,
+  Portal,
+  Stack,
+  Text,
   TextInput,
   UnstyledButton,
 } from "@mantine/core";
@@ -99,6 +104,11 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
     }
   }
 
+  // Từ lúc bấm đến lúc trang kế tiếp sẵn sàng mất một, hai giây (hỏi Supabase,
+  // rồi dựng lại trang). Nút xoay một mình dễ như đứng hình trên trang chủ,
+  // nên che cả màn hình bằng một tình trạng rõ ràng cho tới khi chuyển xong.
+  const signingIn = isSubmitting || isNavigating || authenticated;
+
   return (
     <Flex
       component="form"
@@ -107,6 +117,26 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
       noValidate
       gap={18}
     >
+      {signingIn && (
+        <Portal>
+          <LoadingOverlay
+            visible
+            zIndex={1000}
+            overlayProps={{ blur: 3, backgroundOpacity: 0.85 }}
+            style={{ position: "fixed", inset: 0 }}
+            loaderProps={{
+              children: (
+                <Stack align="center" gap="sm" role="status">
+                  <Loader color="orange.5" />
+                  <Text fw={600}>
+                    {isVi ? "Đang đăng nhập…" : "Signing you in…"}
+                  </Text>
+                </Stack>
+              ),
+            }}
+          />
+        </Portal>
+      )}
       <TextInput
         {...register("email")}
         type="email"
@@ -161,7 +191,7 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
 
       <Button
         type="submit"
-        loading={isSubmitting || isNavigating || authenticated}
+        loading={signingIn}
         color="orange.5"
         radius={12}
         h={48}

@@ -1,6 +1,8 @@
 export const progressTypeDefs = /* GraphQL */ `
   enum DailyTaskKind {
-    """Cards the spaced-repetition schedule says are due."""
+    """
+    Cards the spaced-repetition schedule says are due.
+    """
     FLASHCARD_REVIEW
     DICTATION
     QUIZ
@@ -28,16 +30,24 @@ export const progressTypeDefs = /* GraphQL */ `
   type DailyTask {
     kind: DailyTaskKind!
     status: DailyTaskStatus!
-    """The set, lesson or quiz to open. The link is built from this and the kind."""
+    """
+    The set, lesson or quiz to open. The link is built from this and the kind.
+    """
     targetId: ID!
     title: String!
     order: Int!
-    """Cards due, sentences left, or questions in the quiz."""
+    """
+    Cards due, sentences left, or questions in the quiz.
+    """
     unitsRemaining: Int!
     unitsDoneToday: Int!
-    """How far through it the learner is, or null if they have never opened it."""
+    """
+    How far through it the learner is, or null if they have never opened it.
+    """
     completionPercent: Int
-    """What finishing it pays, from the same weights the counter pays from."""
+    """
+    What finishing it pays, from the same weights the counter pays from.
+    """
     xpReward: Int!
   }
 
@@ -49,9 +59,13 @@ export const progressTypeDefs = /* GraphQL */ `
   }
 
   type DailyPath {
-    """Consecutive days with any practice, counted across every feature."""
+    """
+    Consecutive days with any practice, counted across every feature.
+    """
     streakDays: Int!
-    """Derived from the activity tables on every read. There is no points ledger."""
+    """
+    Derived from the activity tables on every read. There is no points ledger.
+    """
     totalXp: Int!
     level: Int!
     xpIntoLevel: Int!

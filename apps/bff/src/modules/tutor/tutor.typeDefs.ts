@@ -62,19 +62,105 @@ export const tutorTypeDefs = /* GraphQL */ `
     messages: [TutorMessage!]!
   }
 
-  type TutorFailureCount { code: String!, count: Int! }
-  type TutorQueueMetrics { samples: Int!, queueP95Ms: Float, completionP95Ms: Float, knownInputTokens: Float!, knownOutputTokens: Float!, unknownUsageJobs: Int!, failures: [TutorFailureCount!]! }
-  type TutorOperations { pending: Int!, running: Int!, completedToday: Int!, failedToday: Int!, oldestPendingAt: DateTime, scope: String!, metrics: TutorQueueMetrics }
-  type TutorSource { label: String!, resourceId: ID!, title: String!, versionNumber: Int!, excerpt: String! }
-  type TutorResource { id: ID!, documentId: ID!, versionNumber: Int!, title: String!, body: String!, status: String!, authorId: ID!, reviewNote: String, rowVersion: Int! }
-  type TutorResourcePage { items: [TutorResource!]!, page: Int!, size: Int!, totalItems: Int!, totalPages: Int! }
-  type TutorReport { id: ID!, messageId: ID!, revision: Int!, question: String, answer: String, learnerNote: String, status: String!, assignedTo: ID, reviewerNote: String, correction: String, createdAt: DateTime!, resolvedAt: DateTime }
-  type TutorReportPage { items: [TutorReport!]!, page: Int!, size: Int!, totalItems: Int!, totalPages: Int! }
-  type TutorStaffMember { id: ID!, displayName: String! }
-  input TutorResourceInput { title: String!, body: String!, rowVersion: Int = 0 }
-  input TutorReviewInput { action: String!, assignedTo: ID, note: String, correction: String }
-  type TutorPolicy { accepting: Boolean!, allowedModes: [String!]!, version: Int!, environmentEnabled: Boolean!, model: String!, dailyLimit: Int!, streamingEnabled: Boolean!, voiceEnabled: Boolean! }
-  input TutorPolicyInput { accepting: Boolean!, allowedModes: [String!]!, version: Int!, reason: String! }
+  type TutorFailureCount {
+    code: String!
+    count: Int!
+  }
+  type TutorQueueMetrics {
+    samples: Int!
+    queueP95Ms: Float
+    completionP95Ms: Float
+    knownInputTokens: Float!
+    knownOutputTokens: Float!
+    unknownUsageJobs: Int!
+    failures: [TutorFailureCount!]!
+  }
+  type TutorOperations {
+    pending: Int!
+    running: Int!
+    completedToday: Int!
+    failedToday: Int!
+    oldestPendingAt: DateTime
+    scope: String!
+    metrics: TutorQueueMetrics
+  }
+  type TutorSource {
+    label: String!
+    resourceId: ID!
+    title: String!
+    versionNumber: Int!
+    excerpt: String!
+  }
+  type TutorResource {
+    id: ID!
+    documentId: ID!
+    versionNumber: Int!
+    title: String!
+    body: String!
+    status: String!
+    authorId: ID!
+    reviewNote: String
+    rowVersion: Int!
+  }
+  type TutorResourcePage {
+    items: [TutorResource!]!
+    page: Int!
+    size: Int!
+    totalItems: Int!
+    totalPages: Int!
+  }
+  type TutorReport {
+    id: ID!
+    messageId: ID!
+    revision: Int!
+    question: String
+    answer: String
+    learnerNote: String
+    status: String!
+    assignedTo: ID
+    reviewerNote: String
+    correction: String
+    createdAt: DateTime!
+    resolvedAt: DateTime
+  }
+  type TutorReportPage {
+    items: [TutorReport!]!
+    page: Int!
+    size: Int!
+    totalItems: Int!
+    totalPages: Int!
+  }
+  type TutorStaffMember {
+    id: ID!
+    displayName: String!
+  }
+  input TutorResourceInput {
+    title: String!
+    body: String!
+    rowVersion: Int = 0
+  }
+  input TutorReviewInput {
+    action: String!
+    assignedTo: ID
+    note: String
+    correction: String
+  }
+  type TutorPolicy {
+    accepting: Boolean!
+    allowedModes: [String!]!
+    version: Int!
+    environmentEnabled: Boolean!
+    model: String!
+    dailyLimit: Int!
+    streamingEnabled: Boolean!
+    voiceEnabled: Boolean!
+  }
+  input TutorPolicyInput {
+    accepting: Boolean!
+    allowedModes: [String!]!
+    version: Int!
+    reason: String!
+  }
   type TutorUsage {
     enabled: Boolean!
     limit: Int!
@@ -102,9 +188,26 @@ export const tutorTypeDefs = /* GraphQL */ `
     totalPages: Int!
     totalElements: Int!
   }
-  type TutorMemory { enabled: Boolean!, content: String, throughOrder: Int!, remainingMessages: Int!, pendingMessageId: ID, batchSize: Int! }
-  type TutorReplyVersion { revision: Int!, status: String!, content: String, model: String, correction: String }
-  type TutorReplyHistory { currentRevision: Int!, canSelect: Boolean!, items: [TutorReplyVersion!]! }
+  type TutorMemory {
+    enabled: Boolean!
+    content: String
+    throughOrder: Int!
+    remainingMessages: Int!
+    pendingMessageId: ID
+    batchSize: Int!
+  }
+  type TutorReplyVersion {
+    revision: Int!
+    status: String!
+    content: String
+    model: String
+    correction: String
+  }
+  type TutorReplyHistory {
+    currentRevision: Int!
+    canSelect: Boolean!
+    items: [TutorReplyVersion!]!
+  }
   extend type Query {
     tutorMemory(conversationId: ID!): TutorMemory!
     tutorPolicy: TutorPolicy!
@@ -117,7 +220,12 @@ export const tutorTypeDefs = /* GraphQL */ `
     tutorReport(id: ID!): TutorReport!
     tutorStaffMembers: [TutorStaffMember!]!
     tutorReceipt(clientMessageId: ID!): TutorConversation!
-    tutorHistory(page: Int = 0, size: Int = 20, search: String = "", archived: Boolean = false): TutorHistoryPage!
+    tutorHistory(
+      page: Int = 0
+      size: Int = 20
+      search: String = ""
+      archived: Boolean = false
+    ): TutorHistoryPage!
     tutorMessages(id: ID!, page: Int = 0, size: Int = 30): TutorMessagePage!
     tutorReply(conversationId: ID!, messageId: ID!): TutorMessage!
     tutorConversations: [TutorConversationSummary!]!
@@ -125,11 +233,25 @@ export const tutorTypeDefs = /* GraphQL */ `
   }
 
   extend type Mutation {
-    summarizeTutorConversation(conversationId: ID!,clientMessageId: ID!): TutorConversation!
+    summarizeTutorConversation(
+      conversationId: ID!
+      clientMessageId: ID!
+    ): TutorConversation!
     clearTutorMemory(conversationId: ID!): Boolean!
     updateTutorPolicy(input: TutorPolicyInput!): TutorPolicy!
-    selectTutorReply(conversationId: ID!, messageId: ID!, revision: Int!, clientMessageId: ID!): TutorConversation!
-    branchTutorConversation(conversationId: ID!, messageId: ID!, message: String!, clientMessageId: ID!, personalized: Boolean): TutorConversation!
+    selectTutorReply(
+      conversationId: ID!
+      messageId: ID!
+      revision: Int!
+      clientMessageId: ID!
+    ): TutorConversation!
+    branchTutorConversation(
+      conversationId: ID!
+      messageId: ID!
+      message: String!
+      clientMessageId: ID!
+      personalized: Boolean
+    ): TutorConversation!
     createTutorResource(input: TutorResourceInput!): TutorResource!
     updateTutorResource(id: ID!, input: TutorResourceInput!): TutorResource!
     reviewTutorResource(id: ID!, input: TutorReviewInput!): TutorResource!
@@ -155,8 +277,16 @@ export const tutorTypeDefs = /* GraphQL */ `
     archiveTutorConversation(id: ID!): TutorConversationSummary!
     restoreTutorConversation(id: ID!): TutorConversationSummary!
     renameTutorConversation(id: ID!, title: String!): TutorConversationSummary!
-    retryTutorReply(conversationId: ID!, messageId: ID!, clientMessageId: ID!): TutorConversation!
-    regenerateTutorReply(conversationId: ID!, messageId: ID!, clientMessageId: ID!): TutorConversation!
+    retryTutorReply(
+      conversationId: ID!
+      messageId: ID!
+      clientMessageId: ID!
+    ): TutorConversation!
+    regenerateTutorReply(
+      conversationId: ID!
+      messageId: ID!
+      clientMessageId: ID!
+    ): TutorConversation!
     cancelTutorReply(conversationId: ID!, messageId: ID!): TutorMessage!
 
     "Reports an answer as wrong or inappropriate. The note is optional."

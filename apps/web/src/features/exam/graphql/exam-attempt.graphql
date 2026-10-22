@@ -158,3 +158,9 @@ query ExamAttemptHistory($page: Int, $size: Int) {
     totalPages
   }
 }
+
+# The browser is still on a full sitting. Resolves to whether it is still open;
+# a sitting nobody has reported on for a couple of minutes is ended by the backend.
+mutation HeartbeatExamAttempt($attemptId: ID!) {
+  heartbeatExamAttempt(attemptId: $attemptId)
+}

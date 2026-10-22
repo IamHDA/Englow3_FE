@@ -44,7 +44,6 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
                 <Table.Th>{t.dictation.sentencesColumn}</Table.Th>
                 <Table.Th>{t.dictation.accuracyScore}</Table.Th>
                 <Table.Th>{t.dictation.durationColumn}</Table.Th>
-                <Table.Th>{t.dictation.hintsColumn}</Table.Th>
                 <Table.Th style={{ textAlign: "right" }}>
                   {t.dictation.actionColumn}
                 </Table.Th>
@@ -85,11 +84,6 @@ export function DictationHistoryTable({ history }: DictationHistoryTableProps) {
                   <Table.Td>
                     <Text size="xs" c="ink.6">
                       {h.studyTimeLabel}
-                    </Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="xs" c="ink.6">
-                      {h.hintsUsedLabel}
                     </Text>
                   </Table.Td>
                   <Table.Td style={{ textAlign: "right" }}>

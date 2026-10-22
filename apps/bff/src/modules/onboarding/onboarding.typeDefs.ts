@@ -52,7 +52,9 @@ export const onboardingTypeDefs = /* GraphQL */ `
 
   input LearningGoalInput {
     certificateType: TargetCertificate!
-    """Only a certificate learner may send this - the backend refuses it otherwise."""
+    """
+    Only a certificate learner may send this - the backend refuses it otherwise.
+    """
     targetScore: Float
     targetDate: Date
   }
@@ -88,7 +90,9 @@ export const onboardingTypeDefs = /* GraphQL */ `
     """
     setCurrentLevel(level: CefrLevel!): OnboardingState!
 
-    """Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done."""
+    """
+    Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done.
+    """
     setLearningGoal(input: LearningGoalInput!): OnboardingState!
 
     """

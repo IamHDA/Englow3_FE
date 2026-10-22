@@ -454,6 +454,12 @@ export const examTypeDefs = /* GraphQL */ `
       answers: [SubmitAnswerInput!]!
     ): ExamDraft!
     """
+    The browser is still on a full sitting. Returns whether the sitting is still
+    open: a sitting nobody has reported on for a couple of minutes is ended by
+    the backend, and a screen that was away learns that here.
+    """
+    heartbeatExamAttempt(attemptId: ID!): Boolean!
+    """
     Opens an attempt, or returns the one already open with resumed: true. The
     backend enforces one live attempt per learner, exam and mode, so calling this
     twice does not create two.

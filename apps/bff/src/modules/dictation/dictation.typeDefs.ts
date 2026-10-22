@@ -6,11 +6,15 @@ export const dictationTypeDefs = /* GraphQL */ `
     topic: String!
     targetLevel: String
     sentenceCount: Int!
-    """Per learner: sentences whose best attempt cleared the completion threshold."""
+    """
+    Per learner: sentences whose best attempt cleared the completion threshold.
+    """
     completedSentenceCount: Int!
     totalDurationSeconds: Int!
     lastPractisedAt: DateTime
-    """When the lesson went live; what "newest first" sorts on."""
+    """
+    When the lesson went live; what "newest first" sorts on.
+    """
     publishedAt: DateTime
   }
 
@@ -23,17 +27,26 @@ export const dictationTypeDefs = /* GraphQL */ `
   }
 
   """
-  A sentence as the learner practises it. There is no transcript on this type
-  at all - the answer is a different shape entirely, produced only once they
-  have committed one of their own.
+  A sentence as the learner practises it. It carries the transcript so the
+  screen can mark an answer the moment it is typed instead of waiting on a
+  round trip per check. What is recorded is still the server's: a submission
+  is scored again from the stored transcript.
   """
   type DictationSentence {
     id: ID!
     orderNo: Int!
-    """Pre-signed and short-lived."""
+    "What is said in the audio, for marking an answer in the browser."
+    text: String!
+    "The Vietnamese meaning, shown with the result."
+    translationVi: String
+    """
+    Pre-signed and short-lived.
+    """
     audioUrl: String!
     audioDurationSeconds: Int!
-    """Counted by the same scorer that marks the answer, so the two agree."""
+    """
+    Counted by the same scorer that marks the answer, so the two agree.
+    """
     hintWordCount: Int!
     hintFirstLetters: String
     hintRevealWord: String
@@ -46,7 +59,9 @@ export const dictationTypeDefs = /* GraphQL */ `
     """
     audioStartMs: Int
     audioEndMs: Int
-    """The learner's best attempt on this line so far. Null if never tried."""
+    """
+    The learner's best attempt on this line so far. Null if never tried.
+    """
     bestAccuracyPercent: Float
   }
 
@@ -55,7 +70,9 @@ export const dictationTypeDefs = /* GraphQL */ `
     sentences: [DictationSentence!]!
   }
 
-  """The only type that carries the transcript."""
+  """
+  The only type that carries the transcript.
+  """
   type DictationSubmission {
     sentenceId: ID!
     correctText: String!
@@ -86,6 +103,8 @@ export const dictationTypeDefs = /* GraphQL */ `
 
   type DictationDifficultSentence {
     sentenceId: ID!
+    "The lesson the line belongs to - where its practise button leads."
+    lessonId: ID!
     text: String!
     topic: String!
     accuracyPercent: Int!
@@ -129,7 +148,9 @@ export const dictationTypeDefs = /* GraphQL */ `
   """
   type MistakeSentence {
     sentenceId: ID!
-    """Pre-signed and short-lived."""
+    """
+    Pre-signed and short-lived.
+    """
     audioUrl: String!
     audioDurationSeconds: Int!
     "Where the line sits inside audioUrl, for a lesson cut from one passage."
@@ -137,10 +158,14 @@ export const dictationTypeDefs = /* GraphQL */ `
     audioEndMs: Int
     lessonId: ID!
     lessonTitle: String!
-    """Their best attempt so far - the reason this line is still in the queue."""
+    """
+    Their best attempt so far - the reason this line is still in the queue.
+    """
     bestAccuracyPercent: Int!
     attemptCount: Int!
-    """The last thing they typed, so the screen can show what changed."""
+    """
+    The last thing they typed, so the screen can show what changed.
+    """
     lastResponse: String
   }
 

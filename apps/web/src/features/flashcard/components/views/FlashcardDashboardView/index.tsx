@@ -32,6 +32,7 @@ import { FlashcardHeroCard } from "../../blocks/FlashcardHeroCard";
 import { FlashcardHistoryTable } from "../../blocks/FlashcardHistoryTable";
 import { FlashcardSetGrid } from "../../blocks/FlashcardSetGrid";
 import { FlashcardSetList } from "../../blocks/FlashcardSetList";
+import { FlashcardStatsSkeleton } from "../../blocks/FlashcardStatsSkeleton";
 import { FlashcardStatsOverview } from "../../blocks/FlashcardStatsOverview";
 import { Page } from "@/shared/components/Page";
 
@@ -196,11 +197,7 @@ export function FlashcardDashboardView({
             </Button>
           </Alert>
         ) : statsLoading && !stats ? (
-          <Stack aria-busy="true">
-            <Skeleton h={100} />
-            <Skeleton h={260} />
-            <Skeleton h={180} />
-          </Stack>
+          <FlashcardStatsSkeleton />
         ) : (
           stats && (
             <>

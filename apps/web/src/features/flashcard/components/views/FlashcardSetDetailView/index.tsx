@@ -34,6 +34,7 @@ import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 import { masteredPercent as computeMasteredPercent } from "../../../setProgress";
 import { learnerSetDescription } from "../../../setDescription";
+import { abbreviatePartOfSpeech } from "../../../partOfSpeech";
 
 interface FlashcardSetDetailViewProps {
   setId: string;
@@ -237,7 +238,7 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                           {card.ipaUs}
                         </Text>
                       </Table.Td>
-                      <Table.Td>
+                      <Table.Td miw={64}>
                         <Tooltip
                           label={card.partOfSpeech}
                           events={{ hover: true, focus: true, touch: true }}
@@ -247,20 +248,17 @@ export function FlashcardSetDetailView({ setId }: FlashcardSetDetailViewProps) {
                             variant="outline"
                             color="gray"
                             size="sm"
+                            // Mantine cắt chữ của Badge bằng dấu ba chấm; "ADJ" trong
+                            // một cột hẹp thành "A..". Cột đã đủ rộng, nên để chữ hiện đủ.
+                            styles={{
+                              root: { overflow: "visible" },
+                              label: {
+                                overflow: "visible",
+                                textOverflow: "clip",
+                              },
+                            }}
                           >
-                            {(
-                              {
-                                noun: "N",
-                                adjective: "ADJ",
-                                verb: "V",
-                                adverb: "ADV",
-                                pronoun: "PRON",
-                                preposition: "PREP",
-                                conjunction: "CONJ",
-                                interjection: "INT",
-                              } as Record<string, string>
-                            )[card.partOfSpeech.toLowerCase()] ??
-                              card.partOfSpeech}
+                            {abbreviatePartOfSpeech(card.partOfSpeech)}
                           </Badge>
                         </Tooltip>
                       </Table.Td>

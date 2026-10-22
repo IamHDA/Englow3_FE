@@ -33,7 +33,6 @@ export interface CommonTranslations {
   start: string;
   finish: string;
   submit: string;
-  hint: string;
   search: string;
   filter: string;
   all: string;
@@ -472,7 +471,6 @@ export interface DictationTranslations {
   historyTitle: string;
   sessionMetricsTitle: string;
   replaysCount: string;
-  hintsUsedCount: string;
   accuracyBreakdown: string;
   accuracyOverTime: string;
   practiceActivity: string;
@@ -513,23 +511,15 @@ export interface DictationTranslations {
   avgAccuracyPrefix: string;
   attemptsSuffix: string;
   practiceButton: string;
-  hintWordCountLabel: string;
   wordsUnit: string;
-  hintFirstLettersLabel: string;
-  hintRevealWordLabel: string;
-  hintTranslationLabel: string;
   meaningLabel: string;
-  hintPartialTranscriptLabel: string;
   collapseHints: string;
   needHint: string;
-  hintsUsedBadge: string;
-  hintsCounterNote: string;
   unlockHint: string;
   dateColumn: string;
   lessonColumn: string;
   sentencesColumn: string;
   durationColumn: string;
-  hintsColumn: string;
   actionColumn: string;
   noSessionsYet: string;
   detailsButton: string;
@@ -569,7 +559,6 @@ export interface DictationTranslations {
   continueToNextButton: string;
   tryNextButton: string;
   reviewMistakesCount: string;
-  hintsUnit: string;
   perfectSentencesLabel: string;
   sentencesWithMistakesLabel: string;
   sentencesToReviewTitle: string;
@@ -862,7 +851,6 @@ export const translations: Record<Language, AppTranslations> = {
       start: "Bắt đầu",
       finish: "Hoàn thành",
       submit: "Nộp bài",
-      hint: "Gợi ý",
       search: "Tìm kiếm...",
       filter: "Bộ lọc",
       all: "Tất cả",
@@ -1319,7 +1307,6 @@ export const translations: Record<Language, AppTranslations> = {
       historyTitle: "Lịch sử các buổi luyện tập",
       sessionMetricsTitle: "Chi tiết phiên học",
       replaysCount: "Số lần nghe lại",
-      hintsUsedCount: "Số gợi ý đã dùng",
       accuracyBreakdown: "Phân bổ độ chính xác",
       accuracyOverTime: "Độ chính xác theo thời gian",
       practiceActivity: "Hoạt động luyện tập",
@@ -1360,24 +1347,15 @@ export const translations: Record<Language, AppTranslations> = {
       avgAccuracyPrefix: "Chính xác TB",
       attemptsSuffix: "lần thử",
       practiceButton: "Luyện tập",
-      hintWordCountLabel: "Xem số lượng từ trong câu",
       wordsUnit: "từ",
-      hintFirstLettersLabel: "Gợi ý các chữ cái đầu tiên",
-      hintRevealWordLabel: "Mở khóa 1 từ khóa quan trọng",
-      hintTranslationLabel: "Xem bản dịch tiếng Việt",
       meaningLabel: "Nghĩa",
-      hintPartialTranscriptLabel: "Xem trích đoạn đầu của câu",
       collapseHints: "Thu gọn gợi ý",
       needHint: "Bạn cần gợi ý?",
-      hintsUsedBadge: "Đã dùng: {count} gợi ý",
-      hintsCounterNote:
-        "* Mỗi gợi ý được mở sẽ tính vào số gợi ý đã dùng trong thống kê buổi học.",
       unlockHint: "Mở xem",
       dateColumn: "Thời gian",
       lessonColumn: "Bài học",
       sentencesColumn: "Số câu",
       durationColumn: "Thời lượng",
-      hintsColumn: "Gợi ý dùng",
       actionColumn: "Xem lại",
       noSessionsYet: "Chưa có buổi luyện tập nào.",
       detailsButton: "Chi tiết",
@@ -1420,7 +1398,6 @@ export const translations: Record<Language, AppTranslations> = {
       continueToNextButton: "Tiếp tục gỡ câu tiếp theo",
       tryNextButton: "Thử lại câu tiếp theo",
       reviewMistakesCount: "Luyện câu sai ({count})",
-      hintsUnit: "gợi ý",
       perfectSentencesLabel: "Câu chuẩn xác 100%:",
       sentencesWithMistakesLabel: "Câu có từ chưa chuẩn:",
       sentencesToReviewTitle: "Các câu có lỗi cần ôn tập ({count})",
@@ -1761,7 +1738,6 @@ export const translations: Record<Language, AppTranslations> = {
       start: "Start",
       finish: "Finish",
       submit: "Submit",
-      hint: "Hint",
       search: "Search...",
       filter: "Filter",
       all: "All",
@@ -2225,7 +2201,6 @@ export const translations: Record<Language, AppTranslations> = {
       historyTitle: "Practice History",
       sessionMetricsTitle: "Session Metrics",
       replaysCount: "Audio Replays",
-      hintsUsedCount: "Hints Utilized",
       accuracyBreakdown: "Accuracy Breakdown",
       accuracyOverTime: "Accuracy Over Time",
       practiceActivity: "Practice Activity",
@@ -2268,24 +2243,15 @@ export const translations: Record<Language, AppTranslations> = {
       avgAccuracyPrefix: "Avg. Accuracy",
       attemptsSuffix: "attempts",
       practiceButton: "Practice",
-      hintWordCountLabel: "Word count in sentence",
       wordsUnit: "words",
-      hintFirstLettersLabel: "First letter of each word",
-      hintRevealWordLabel: "Reveal 1 key word",
-      hintTranslationLabel: "Vietnamese translation",
       meaningLabel: "Meaning",
-      hintPartialTranscriptLabel: "Sentence opening excerpt",
       collapseHints: "Collapse hints",
       needHint: "Need a hint?",
-      hintsUsedBadge: "Used: {count} hints",
-      hintsCounterNote:
-        "* Each unlocked hint counts toward the hints used in session stats.",
       unlockHint: "Unlock",
       dateColumn: "Date",
       lessonColumn: "Lesson",
       sentencesColumn: "Sentences",
       durationColumn: "Duration",
-      hintsColumn: "Hints",
       actionColumn: "Action",
       noSessionsYet: "No sessions yet.",
       detailsButton: "Details",
@@ -2328,7 +2294,6 @@ export const translations: Record<Language, AppTranslations> = {
       continueToNextButton: "Continue to next sentence",
       tryNextButton: "Try next sentence",
       reviewMistakesCount: "Review Mistakes ({count})",
-      hintsUnit: "hints",
       perfectSentencesLabel: "100% Accurate Sentences:",
       sentencesWithMistakesLabel: "Sentences with Mistakes:",
       sentencesToReviewTitle: "Sentences to Review ({count})",

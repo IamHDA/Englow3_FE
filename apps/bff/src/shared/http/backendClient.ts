@@ -17,8 +17,12 @@ export class BackendClient {
     return this.request<T>("GET", path);
   }
 
-  post<T>(path: string, body?: unknown): Promise<T> {
-    return this.request<T>("POST", path, body);
+  /**
+   * `timeoutMs` stretches the wait for one call that is slow by nature - grading
+   * a whole paper is - where everything else keeps the shared, short limit.
+   */
+  post<T>(path: string, body?: unknown, timeoutMs?: number): Promise<T> {
+    return this.request<T>("POST", path, body, timeoutMs);
   }
 
   put<T>(path: string, body?: unknown): Promise<T> {
@@ -38,7 +42,12 @@ export class BackendClient {
    * backend's own status and body on as they are. Only a failure to reach the
    * backend throws; a refusal comes back as a Response like any other.
    */
-  async send(method: string, path: string, body?: unknown): Promise<Response> {
+  async send(
+    method: string,
+    path: string,
+    body?: unknown,
+    timeoutMs: number = this.timeoutMs,
+  ): Promise<Response> {
     // A FormData body sets its own multipart content-type, boundary included.
     const upload = body instanceof FormData;
     const start = Date.now();
@@ -59,7 +68,7 @@ export class BackendClient {
           : body === undefined
             ? undefined
             : JSON.stringify(body),
-        signal: AbortSignal.timeout(this.timeoutMs),
+        signal: AbortSignal.timeout(timeoutMs),
       });
     } catch {
       // Connection refused, DNS failure, or the timeout above firing - the
@@ -80,9 +89,10 @@ export class BackendClient {
     method: string,
     path: string,
     body?: unknown,
+    timeoutMs?: number,
   ): Promise<T> {
     const start = Date.now();
-    const response = await this.send(method, path, body);
+    const response = await this.send(method, path, body, timeoutMs);
     if (!response.ok) {
       throw await BackendError.fromResponse(
         response,

@@ -37,3 +37,14 @@ describe("computeWordDiff", () => {
     expect(res.items.every((it) => it.type === "missing")).toBe(true);
   });
 });
+
+describe("computeWordDiff word definition", () => {
+  it("ignores punctuation of every kind and a lone dash, like the backend scorer", () => {
+    const diff = computeWordDiff(
+      "Well - it’s [fine], isn’t it?",
+      "well its fine isnt it",
+    );
+    expect(diff.mistakesCount).toBe(0);
+    expect(diff.accuracyPercent).toBe(100);
+  });
+});

@@ -12,7 +12,6 @@ export * from "./components/blocks/DictationLessonGrid";
 export * from "./components/blocks/DictationLessonList";
 export * from "./components/blocks/DictationAudioPlayer";
 export * from "./components/blocks/DictationInputArea";
-export * from "./components/blocks/DictationHintDrawer";
 export * from "./components/blocks/DictationDiffResult";
 export * from "./components/blocks/DictationSessionSummary";
 export * from "./components/blocks/DictationMistakeQueue";

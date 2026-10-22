@@ -14,7 +14,6 @@ it("opens the lesson belonging to each history row", () => {
       sentenceCountLabel: "3",
       accuracyLabel: "90%",
       studyTimeLabel: "5m",
-      hintsUsedLabel: "—",
     }),
   );
   render(

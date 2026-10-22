@@ -6,14 +6,14 @@ import type {
 } from "@/lib/graphql/generated/documents";
 
 /**
- * Bài và câu như BFF trả về. Lấy thẳng hình dạng codegen sinh - đặc biệt quan
- * trọng ở đây: câu KHÔNG có trường transcript, nên không màn nào đọc được đáp
- * án trước khi người học gõ.
+ * Bài và câu như BFF trả về, lấy thẳng hình dạng codegen sinh. Câu mang cả
+ * transcript để màn luyện tập chấm ngay trên trình duyệt; điểm được lưu vẫn là
+ * điểm server chấm lại.
  */
 export type DictationLesson = DictationLessonFieldsFragment;
 export type DictationSentence = DictationSentenceFieldsFragment;
 
-/** Kết quả chấm - shape duy nhất mang transcript, chỉ có sau khi đã nộp. */
+/** Kết quả server chấm cho một lần nộp (màn ôn câu sai vẫn chấm theo đường này). */
 export type DictationSubmission = SubmitDictationMutation["submitDictation"];
 
 export type DictationLevel =
@@ -68,7 +68,6 @@ export type MistakeSentence =
 
 export interface SessionMetrics {
   replays: number;
-  hintsUsed: number;
   perfectSentences: number;
   sentencesWithMistakes: number;
 }
@@ -90,8 +89,10 @@ export interface DictationSessionSummaryData {
   breakdown: PerformanceBreakdown;
   mistakes: Array<{
     id: string;
-    sentenceLabel: string;
+    /** Số thứ tự câu; chữ "Câu"/"Sentence" do giao diện chọn theo ngôn ngữ. */
+    sentenceNumber: number;
     accuracyPercent: number;
+    /** Rỗng khi người học bỏ qua câu - giao diện tự ghi "(Bỏ qua)"/"(Skipped)". */
     learnerAnswer: string;
     correctAnswer: string;
   }>;
@@ -107,6 +108,7 @@ export interface MissedWordItem {
 
 export interface DifficultSentenceItem {
   id: string;
+  lessonId: string;
   text: string;
   avgAccuracyPercent: number;
   attemptsCount: number;
@@ -121,7 +123,6 @@ export interface DictationHistoryItem {
   sentenceCountLabel: string;
   accuracyLabel: string;
   studyTimeLabel: string;
-  hintsUsedLabel: string;
 }
 
 export interface DictationStatsData {

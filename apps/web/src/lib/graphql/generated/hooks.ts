@@ -1955,12 +1955,10 @@ export type DictationLessonFieldsFragment = {
 export type DictationSentenceFieldsFragment = {
   id: string;
   orderNo: number;
+  text: string;
+  translationVi: string | null;
   audioUrl: string;
   audioDurationSeconds: number;
-  hintWordCount: number;
-  hintFirstLetters: string | null;
-  hintRevealWord: string | null;
-  hintPartialTranscript: string | null;
   audioStartMs: number | null;
   audioEndMs: number | null;
   bestAccuracyPercent: number | null;
@@ -2015,12 +2013,10 @@ export type DictationLessonDetailQuery = {
     sentences: Array<{
       id: string;
       orderNo: number;
+      text: string;
+      translationVi: string | null;
       audioUrl: string;
       audioDurationSeconds: number;
-      hintWordCount: number;
-      hintFirstLetters: string | null;
-      hintRevealWord: string | null;
-      hintPartialTranscript: string | null;
       audioStartMs: number | null;
       audioEndMs: number | null;
       bestAccuracyPercent: number | null;
@@ -2071,6 +2067,7 @@ export type DictationStatsQuery = {
     }>;
     difficultSentences: Array<{
       sentenceId: string;
+      lessonId: string;
       text: string;
       topic: string;
       accuracyPercent: number;
@@ -2572,6 +2569,12 @@ export type ExamAttemptHistoryQuery = {
     }>;
   };
 };
+
+export type HeartbeatExamAttemptMutationVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type HeartbeatExamAttemptMutation = { heartbeatExamAttempt: boolean };
 
 export type ExamLibraryQueryVariables = Exact<{
   examType?: Types.ExamType | null | undefined;
@@ -3573,12 +3576,10 @@ export const DictationSentenceFieldsFragmentDoc = gql`
   fragment DictationSentenceFields on DictationSentence {
     id
     orderNo
+    text
+    translationVi
     audioUrl
     audioDurationSeconds
-    hintWordCount
-    hintFirstLetters
-    hintRevealWord
-    hintPartialTranscript
     audioStartMs
     audioEndMs
     bestAccuracyPercent
@@ -9317,6 +9318,7 @@ export const DictationStatsDocument = gql`
       }
       difficultSentences {
         sentenceId
+        lessonId
         text
         topic
         accuracyPercent
@@ -10729,6 +10731,57 @@ export type ExamAttemptHistoryQueryResult = ApolloReactCommon.QueryResult<
   ExamAttemptHistoryQuery,
   ExamAttemptHistoryQueryVariables
 >;
+export const HeartbeatExamAttemptDocument = gql`
+  mutation HeartbeatExamAttempt($attemptId: ID!) {
+    heartbeatExamAttempt(attemptId: $attemptId)
+  }
+`;
+export type HeartbeatExamAttemptMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    HeartbeatExamAttemptMutation,
+    HeartbeatExamAttemptMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useHeartbeatExamAttemptMutation__
+ *
+ * To run a mutation, you first call `useHeartbeatExamAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHeartbeatExamAttemptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [heartbeatExamAttemptMutation, { data, loading, error }] = useHeartbeatExamAttemptMutation({
+ *   variables: {
+ *      attemptId: // value for 'attemptId'
+ *   },
+ * });
+ */
+export function useHeartbeatExamAttemptMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    HeartbeatExamAttemptMutation,
+    HeartbeatExamAttemptMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    HeartbeatExamAttemptMutation,
+    HeartbeatExamAttemptMutationVariables
+  >(HeartbeatExamAttemptDocument, options);
+}
+export type HeartbeatExamAttemptMutationHookResult = ReturnType<
+  typeof useHeartbeatExamAttemptMutation
+>;
+export type HeartbeatExamAttemptMutationResult =
+  ApolloReactCommon.MutationResult<HeartbeatExamAttemptMutation>;
+export type HeartbeatExamAttemptMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    HeartbeatExamAttemptMutation,
+    HeartbeatExamAttemptMutationVariables
+  >;
 export const ExamLibraryDocument = gql`
   query ExamLibrary(
     $examType: ExamType

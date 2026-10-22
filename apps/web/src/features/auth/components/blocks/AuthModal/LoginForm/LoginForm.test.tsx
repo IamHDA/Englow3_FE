@@ -76,6 +76,18 @@ describe("LoginForm", () => {
     expect(signInWithPassword).not.toHaveBeenCalled();
   });
 
+  it("covers the page with a signing-in status while the sign-in is pending", async () => {
+    const user = userEvent.setup();
+    signInWithPassword.mockReturnValue(new Promise(() => {}));
+    renderForm();
+
+    await user.type(screen.getByLabelText("Email"), "learner@example.com");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password123");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
+
+    expect(await screen.findByText("Đang đăng nhập…")).toBeInTheDocument();
+  });
+
   it("submits valid credentials and calls onSuccess", async () => {
     signInWithPassword.mockResolvedValue({ error: null, session: null });
     const user = userEvent.setup();

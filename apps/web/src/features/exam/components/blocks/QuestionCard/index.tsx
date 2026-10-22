@@ -18,6 +18,7 @@ import { ArrowLeft, ArrowRight, Flag, Headphones, Volume2 } from "lucide-react";
 import type { ExamPaper } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionCard.module.css";
+import { OnceOnlyAudio } from "./OnceOnlyAudio";
 
 type Section = ExamPaper["sections"][number];
 type Part = Section["parts"][number];
@@ -40,6 +41,11 @@ export interface QuestionCardProps {
   onNextQuestion: () => void;
   hasPrev: boolean;
   hasNext: boolean;
+  /**
+   * Thi thật: âm thanh nghe một lần, không tua. Truyền mã lượt thi để nhớ đoạn
+   * nào đã nghe; bỏ trống (bài luyện tập) thì dùng trình phát thường.
+   */
+  audioOnceForAttempt?: string;
 }
 
 export function QuestionCard({
@@ -58,6 +64,7 @@ export function QuestionCard({
   onNextQuestion,
   hasPrev,
   hasNext,
+  audioOnceForAttempt,
 }: QuestionCardProps) {
   const { t, isVi } = useLanguage();
   const multiple = question.questionType === "MULTIPLE_CHOICE";
@@ -101,14 +108,23 @@ export function QuestionCard({
               {part.content && (
                 <Text style={{ whiteSpace: "pre-wrap" }}>{part.content}</Text>
               )}
-              {part.audioUrl && (
-                <audio
-                  controls
-                  preload="none"
-                  src={part.audioUrl}
-                  style={{ width: "100%" }}
-                />
-              )}
+              {part.audioUrl &&
+                (audioOnceForAttempt ? (
+                  <OnceOnlyAudio
+                    key={`part-${part.id}`}
+                    src={part.audioUrl}
+                    audioId={`part-${part.id}`}
+                    attemptId={audioOnceForAttempt}
+                    label={t.exam.audioStimulus}
+                  />
+                ) : (
+                  <audio
+                    controls
+                    preload="none"
+                    src={part.audioUrl}
+                    style={{ width: "100%" }}
+                  />
+                ))}
               {part.imageUrl && (
                 <Image
                   src={part.imageUrl}
@@ -162,9 +178,19 @@ export function QuestionCard({
                     {t.exam.audioStimulus}
                   </Text>
                 </Group>
-                <audio controls preload="none" src={questionSet.audioUrl}>
-                  {t.exam.audioStimulus}
-                </audio>
+                {audioOnceForAttempt ? (
+                  <OnceOnlyAudio
+                    key={`set-${questionSet.id}`}
+                    src={questionSet.audioUrl}
+                    audioId={`set-${questionSet.id}`}
+                    attemptId={audioOnceForAttempt}
+                    label={t.exam.audioStimulus}
+                  />
+                ) : (
+                  <audio controls preload="none" src={questionSet.audioUrl}>
+                    {t.exam.audioStimulus}
+                  </audio>
+                )}
               </Box>
             )}
           </Card>

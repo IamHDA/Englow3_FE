@@ -19,13 +19,12 @@ import {
 import { DictationPracticeSkeleton } from "../../blocks/DictationPracticeSkeleton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 import { useDictationPractice } from "../../../hooks/useDictationPractice";
 import { DictationAudioPlayer } from "../../blocks/DictationAudioPlayer";
 import { DictationDiffResult } from "../../blocks/DictationDiffResult";
-import { DictationHintDrawer } from "../../blocks/DictationHintDrawer";
 import { DictationInputArea } from "../../blocks/DictationInputArea";
 import { DictationSessionSummary } from "../../blocks/DictationSessionSummary";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
@@ -57,7 +56,6 @@ export function DictationPracticeView({
 }: DictationPracticeViewProps) {
   const router = useRouter();
   const { isVi, t } = useLanguage();
-  const [hintDrawerOpen, setHintDrawerOpen] = useState(false);
 
   const { data, loading, error, refetch } = useDictationLessonDetailQuery({
     variables: { id: lessonId },
@@ -72,15 +70,15 @@ export function DictationPracticeView({
   );
 
   /**
-   * Chấm một câu. Trả về null khi gọi hỏng, và hook sẽ không ghi kết quả -
-   * thà không có gì còn hơn ghi một con số tự bịa ở client.
+   * Ghi một lần trả lời lên server. Câu đã được chấm ngay trên trình duyệt;
+   * đây chỉ là việc lưu, và server chấm lại từ transcript của nó rồi mới ghi.
    */
-  const checkSentence = useCallback(
+  const recordAttempt = useCallback(
     async (sentenceId: string, typed: string) => {
       const response = await submitDictation({
         variables: { sentenceId, response: typed },
       }).catch(() => null);
-      return response?.data?.submitDictation ?? null;
+      return Boolean(response?.data?.submitDictation);
     },
     [submitDictation],
   );
@@ -88,7 +86,7 @@ export function DictationPracticeView({
   const practice = useDictationPractice(
     lesson ?? EMPTY_LESSON,
     sentences,
-    checkSentence,
+    recordAttempt,
   );
   const updateReplayCount = practice.setReplayCount;
 
@@ -230,34 +228,34 @@ export function DictationPracticeView({
           onChangeSpeed={audio.changeSpeed}
         />
 
-        {/* Hint Drawer */}
-        <DictationHintDrawer
-          sentence={practice.currentSentence}
-          hintsUsedCount={practice.hintsUsedCount}
-          revealedHints={practice.revealedHints}
-          onRevealHint={practice.revealHint}
-          isOpen={hintDrawerOpen}
-          onToggle={() => setHintDrawerOpen((prev) => !prev)}
-        />
-
         {/* Typing Input Area */}
         <DictationInputArea
           value={practice.typedText}
           onChange={practice.handleType}
-          onCheckAnswer={practice.checkAnswer}
+          onSubmit={practice.submitOrAdvance}
           onSkip={practice.skipSentence}
-          disabled={practice.isChecked || practice.isSubmitting}
-          checking={practice.isSubmitting}
+          checked={practice.isChecked}
+          disabled={practice.isAdvancing}
+          focusKey={practice.currentIndex}
         />
 
-        {practice.submissionError && (
+        {practice.unsavedCount > 0 && !practice.isSaving && (
           <Alert
-            color="red"
-            title={t.dictation.checkAnswerErrorTitle}
-            withCloseButton
-            onClose={practice.clearSubmissionError}
+            color="yellow"
+            title={
+              isVi ? "Chưa lưu được một số câu" : "Some answers are not saved"
+            }
           >
-            {t.dictation.checkConnectionReload}
+            {isVi
+              ? "Kết quả vẫn hiện bình thường nhưng chưa được ghi vào lịch sử. Kiểm tra kết nối rồi thử lại."
+              : "Your results are shown as usual but are not in your history yet. Check your connection and try again."}
+            <Button
+              variant="subtle"
+              size="compact-sm"
+              onClick={practice.retrySaving}
+            >
+              {isVi ? "Lưu lại" : "Save again"}
+            </Button>
           </Alert>
         )}
 
@@ -265,8 +263,8 @@ export function DictationPracticeView({
         {practice.isChecked && practice.diffResult && (
           <DictationDiffResult
             diff={practice.diffResult}
-            expectedSentence={practice.currentCorrectText}
-            translationVi={practice.currentTranslation}
+            expectedSentence={practice.currentSentence.text}
+            translationVi={practice.currentSentence.translationVi ?? null}
             onNextSentence={practice.nextSentence}
             onTryAgain={practice.tryAgain}
             onListenAgain={audio.replay}

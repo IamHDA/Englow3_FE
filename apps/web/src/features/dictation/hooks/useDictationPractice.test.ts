@@ -1,11 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type {
-  DictationLesson,
-  DictationSentence,
-  DictationSubmission,
-} from "../types";
+import type { DictationLesson, DictationSentence } from "../types";
 import { useDictationPractice } from "./useDictationPractice";
 
 const lesson: DictationLesson = {
@@ -14,123 +10,171 @@ const lesson: DictationLesson = {
   title: "Everyday English",
   topic: "Daily Conversation",
   targetLevel: "A2",
-  sentenceCount: 1,
+  sentenceCount: 2,
   completedSentenceCount: 0,
   totalDurationSeconds: 8,
   lastPractisedAt: null,
   publishedAt: null,
 };
 
-const sentence: DictationSentence = {
-  id: "sentence-1",
-  orderNo: 1,
-  audioUrl: "https://example.test/audio.wav",
-  audioDurationSeconds: 8,
-  hintWordCount: 3,
-  hintFirstLetters: null,
-  hintRevealWord: null,
-  hintPartialTranscript: null,
-  audioStartMs: null,
-  audioEndMs: null,
-  bestAccuracyPercent: null,
-};
+function sentence(
+  id: string,
+  text: string,
+  orderNo: number,
+): DictationSentence {
+  return {
+    id,
+    orderNo,
+    text,
+    translationVi: "Chào buổi sáng",
+    audioUrl: "https://example.test/audio.wav",
+    audioDurationSeconds: 8,
+    audioStartMs: null,
+    audioEndMs: null,
+    bestAccuracyPercent: null,
+  };
+}
 
-const submission: DictationSubmission = {
-  sentenceId: sentence.id,
-  correctText: "Good morning",
-  translationVi: null,
-  response: "Good morning",
-  accuracyPercent: 100,
-  correctWordCount: 2,
-  totalWordCount: 2,
-  cleared: true,
-};
+const first = sentence("sentence-1", "Good morning", 1);
+const second = sentence("sentence-2", "See you soon", 2);
+
+function setup(
+  record = vi.fn().mockResolvedValue(true),
+  sentences = [first, second],
+) {
+  const hook = renderHook(() =>
+    useDictationPractice(lesson, sentences, record),
+  );
+  return { ...hook, record };
+}
+
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => vi.useRealTimers());
 
 describe("useDictationPractice", () => {
-  it("keeps typed text when trying again and records the edited answer", async () => {
-    const checkSentence = vi.fn().mockResolvedValue(submission);
-    const { result } = renderHook(() =>
-      useDictationPractice(lesson, [sentence], checkSentence),
-    );
+  it("marks an answer at once, without waiting for the server", () => {
+    const record = vi.fn(() => new Promise<boolean>(() => {}));
+    const { result } = setup(record);
+
     act(() => result.current.handleType("Good mornin"));
-    await act(async () => result.current.checkAnswer());
-    act(() => result.current.tryAgain());
-    expect(result.current.typedText).toBe("Good mornin");
+    act(() => result.current.checkAnswer());
+
+    expect(result.current.isChecked).toBe(true);
+    expect(result.current.diffResult?.mistakesCount).toBeGreaterThan(0);
+    expect(record).toHaveBeenCalledWith(first.id, "Good mornin");
+  });
+
+  it("keeps the typed text when it is edited after a check, and records the new answer", () => {
+    const { result, record } = setup();
+
+    act(() => result.current.handleType("Good mornin"));
+    act(() => result.current.checkAnswer());
+    act(() => result.current.handleType("Good mornin "));
+
+    expect(result.current.typedText).toBe("Good mornin ");
     expect(result.current.isChecked).toBe(false);
-    act(() => result.current.handleType("Good morning"));
-    await act(async () => result.current.checkAnswer());
-    expect(checkSentence).toHaveBeenLastCalledWith(sentence.id, "Good morning");
-  });
-  it("keeps the answer when grading fails", async () => {
-    const checkSentence = vi.fn().mockRejectedValue(new Error("offline"));
-    const { result } = renderHook(() =>
-      useDictationPractice(lesson, [sentence], checkSentence),
-    );
 
     act(() => result.current.handleType("Good morning"));
-    await act(async () => result.current.checkAnswer());
-
-    expect(result.current.currentIndex).toBe(0);
-    expect(result.current.typedText).toBe("Good morning");
-    expect(result.current.isChecked).toBe(false);
-    expect(result.current.submissionError).toBe(true);
+    act(() => result.current.checkAnswer());
+    expect(record).toHaveBeenLastCalledWith(first.id, "Good morning");
   });
 
-  it("does not skip unless the server records the skipped answer", async () => {
-    const checkSentence = vi.fn().mockResolvedValue(null);
-    const { result } = renderHook(() =>
-      useDictationPractice(lesson, [sentence], checkSentence),
-    );
+  it("moves on by itself after a perfect answer", () => {
+    const { result } = setup();
 
-    await act(async () => result.current.skipSentence());
-
-    expect(checkSentence).toHaveBeenCalledWith(sentence.id, "");
+    act(() => result.current.handleType("good morning!"));
+    act(() => result.current.checkAnswer());
+    expect(result.current.isAdvancing).toBe(true);
     expect(result.current.currentIndex).toBe(0);
-    expect(result.current.isCompleted).toBe(false);
-    expect(result.current.submissionError).toBe(true);
-  });
 
-  it("prevents two submissions for the same sentence", async () => {
-    let finish!: (value: DictationSubmission) => void;
-    const checkSentence = vi.fn(
-      () =>
-        new Promise<DictationSubmission>((resolve) => {
-          finish = resolve;
-        }),
-    );
-    const { result } = renderHook(() =>
-      useDictationPractice(lesson, [sentence], checkSentence),
-    );
-    let request!: Promise<void>;
     act(() => {
-      request = result.current.checkAnswer();
+      vi.advanceTimersByTime(1000);
     });
-    await act(async () => result.current.skipSentence());
-    expect(checkSentence).toHaveBeenCalledOnce();
-    await act(async () => {
-      finish(submission);
-      await request;
+
+    expect(result.current.currentIndex).toBe(1);
+    expect(result.current.typedText).toBe("");
+    expect(result.current.isChecked).toBe(false);
+  });
+
+  it("does not move on if the learner edits during the pause", () => {
+    const { result } = setup();
+
+    act(() => result.current.handleType("Good morning"));
+    act(() => result.current.checkAnswer());
+    act(() => result.current.handleType("Good morning, everyone"));
+    act(() => {
+      vi.advanceTimersByTime(2000);
     });
+
     expect(result.current.currentIndex).toBe(0);
   });
 
-  it("uses measured session values", async () => {
-    const checkSentence = vi.fn().mockResolvedValue(submission);
-    const { result } = renderHook(() =>
-      useDictationPractice(lesson, [sentence], checkSentence),
-    );
+  it("checks on the first Enter and goes to the next sentence on the second", () => {
+    const { result } = setup();
+
+    act(() => result.current.handleType("Good mornin"));
+    act(() => result.current.submitOrAdvance());
+    expect(result.current.isChecked).toBe(true);
+    expect(result.current.currentIndex).toBe(0);
+
+    act(() => result.current.submitOrAdvance());
+    expect(result.current.currentIndex).toBe(1);
+  });
+
+  it("ignores Enter on an empty answer", () => {
+    const { result, record } = setup();
+
+    act(() => result.current.submitOrAdvance());
+
+    expect(result.current.isChecked).toBe(false);
+    expect(record).not.toHaveBeenCalled();
+  });
+
+  it("skips straight on and still records the skipped line", () => {
+    const { result, record } = setup();
+
+    act(() => result.current.skipSentence());
+
+    expect(record).toHaveBeenCalledWith(first.id, "");
+    expect(result.current.currentIndex).toBe(1);
+  });
+
+  it("keeps the result and flags the answer as unsaved when the server cannot be reached", async () => {
+    const record = vi.fn().mockRejectedValue(new Error("offline"));
+    const { result } = setup(record);
+
+    act(() => result.current.handleType("Good mornin"));
+    act(() => result.current.checkAnswer());
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+
+    expect(record).toHaveBeenCalledTimes(3);
+    expect(result.current.isChecked).toBe(true);
+    expect(result.current.typedText).toBe("Good mornin");
+    expect(result.current.unsavedCount).toBe(1);
+
+    record.mockResolvedValue(true);
+    await act(async () => {
+      result.current.retrySaving();
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(result.current.unsavedCount).toBe(0);
+  });
+
+  it("uses measured session values", () => {
+    const { result } = setup(undefined, [first]);
 
     act(() => {
       result.current.setReplayCount(2);
       result.current.handleType("Good morning");
     });
-    await act(async () => result.current.checkAnswer());
+    act(() => result.current.checkAnswer());
     act(() => result.current.nextSentence());
 
     expect(result.current.isCompleted).toBe(true);
     expect(result.current.summaryData.metrics.replays).toBe(2);
-    expect(result.current.summaryData.studyDurationFormatted).not.toBe(
-      "6m 15s",
-    );
+    expect(result.current.summaryData.metrics.perfectSentences).toBe(1);
   });
 });

@@ -21,10 +21,14 @@ export const quizTypeDefs = /* GraphQL */ `
     category: String!
     targetLevel: String
     timeLimitSeconds: Int!
-    """Percentage, so a quiz can gain a question without its pass mark shifting."""
+    """
+    Percentage, so a quiz can gain a question without its pass mark shifting.
+    """
     passingScorePercent: Int!
     questionCount: Int!
-    """Per learner. Null until they have finished one."""
+    """
+    Per learner. Null until they have finished one.
+    """
     bestScorePercent: Float
     attemptCount: Int!
   }
@@ -56,7 +60,9 @@ export const quizTypeDefs = /* GraphQL */ `
     title: String!
     prompt: String!
     points: Int!
-    """FILL_BLANK renders as "<before> ___ <after>"; null on every other type."""
+    """
+    FILL_BLANK renders as "<before> ___ <after>"; null on every other type.
+    """
     beforeText: String
     afterText: String
     originalSentence: String
@@ -102,16 +108,22 @@ export const quizTypeDefs = /* GraphQL */ `
     startedAt: DateTime!
     expiresAt: DateTime!
     submittedAt: DateTime
-    """Null until the attempt is scored."""
+    """
+    Null until the attempt is scored.
+    """
     score: Float
     maxScore: Float!
     scorePercentage: Float
     correctAnswerCount: Int
     questionCount: Int!
     passed: Boolean
-    """True when the backend handed back an attempt that was already open."""
+    """
+    True when the backend handed back an attempt that was already open.
+    """
     resumed: Boolean!
-    """Empty while the attempt is IN_PROGRESS - it carries the answer key."""
+    """
+    Empty while the attempt is IN_PROGRESS - it carries the answer key.
+    """
     reviews: [QuizQuestionReview!]!
   }
 
@@ -132,10 +144,14 @@ export const quizTypeDefs = /* GraphQL */ `
       size: Int = 20
     ): QuizPage!
 
-    """The paper to sit, reachable only through an open attempt."""
+    """
+    The paper to sit, reachable only through an open attempt.
+    """
     quizPaper(attemptId: ID!): QuizPaper!
 
-    """The scored attempt. Carries the answer key, so only worth reading once scored."""
+    """
+    The scored attempt. Carries the answer key, so only worth reading once scored.
+    """
     quizAttempt(id: ID!): QuizAttempt!
   }
 
@@ -150,6 +166,9 @@ export const quizTypeDefs = /* GraphQL */ `
     Submits and scores in one step. A question left out is marked wrong rather
     than skipped, so the percentage means what it says.
     """
-    submitQuizAttempt(attemptId: ID!, answers: [QuizAnswerInput!]!): QuizAttempt!
+    submitQuizAttempt(
+      attemptId: ID!
+      answers: [QuizAnswerInput!]!
+    ): QuizAttempt!
   }
 `;

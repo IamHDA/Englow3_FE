@@ -11,8 +11,9 @@ export type DictationLessonResponse =
 // GET /api/dictation/lessons/{id}
 export type DictationLessonDetailResponse =
   paths["/api/dictation/lessons/{id}"]["get"]["responses"][200]["content"]["application/json"];
-// A sentence as the learner practises it. There is deliberately no transcript
-// field: the answer arrives only in the response to a submission.
+// A sentence as the learner practises it. It carries the transcript so the
+// screen can mark an answer at once; the score that is stored is still the
+// server's, from a submission.
 export type DictationSentenceResponse =
   DictationLessonDetailResponse["sentences"][number];
 

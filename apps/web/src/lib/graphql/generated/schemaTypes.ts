@@ -379,6 +379,8 @@ export type DictationDifficultSentence = {
   __typename?: "DictationDifficultSentence";
   accuracyPercent: Scalars["Int"]["output"];
   attemptCount: Scalars["Int"]["output"];
+  /** The lesson the line belongs to - where its practise button leads. */
+  lessonId: Scalars["ID"]["output"];
   sentenceId: Scalars["ID"]["output"];
   text: Scalars["String"]["output"];
   topic: Scalars["String"]["output"];
@@ -424,9 +426,10 @@ export type DictationMissedWord = {
 };
 
 /**
- * A sentence as the learner practises it. There is no transcript on this type
- * at all - the answer is a different shape entirely, produced only once they
- * have committed one of their own.
+ * A sentence as the learner practises it. It carries the transcript so the
+ * screen can mark an answer the moment it is typed instead of waiting on a
+ * round trip per check. What is recorded is still the server's: a submission
+ * is scored again from the stored transcript.
  */
 export type DictationSentence = {
   __typename?: "DictationSentence";
@@ -450,6 +453,10 @@ export type DictationSentence = {
   hintWordCount: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   orderNo: Scalars["Int"]["output"];
+  /** What is said in the audio, for marking an answer in the browser. */
+  text: Scalars["String"]["output"];
+  /** The Vietnamese meaning, shown with the result. */
+  translationVi?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type DictationSessionSummary = {
@@ -1016,6 +1023,12 @@ export type Mutation = {
   createTutorResource: TutorResource;
   editAssessmentTask: AssessmentTask;
   gradeAssessment: AssessmentAttempt;
+  /**
+   * The browser is still on a full sitting. Returns whether the sitting is still
+   * open: a sitting nobody has reported on for a couple of minutes is ended by
+   * the backend, and a screen that was away learns that here.
+   */
+  heartbeatExamAttempt: Scalars["Boolean"]["output"];
   /** DRAFT -> PUBLISHED, skipping review. Administrators only. */
   publishContent: ContentReview;
   /**
@@ -1220,6 +1233,10 @@ export type MutationGradeAssessmentArgs = {
   report: Scalars["String"]["input"];
   transcript?: InputMaybe<Scalars["String"]["input"]>;
   version: Scalars["Int"]["input"];
+};
+
+export type MutationHeartbeatExamAttemptArgs = {
+  attemptId: Scalars["ID"]["input"];
 };
 
 export type MutationPublishContentArgs = {

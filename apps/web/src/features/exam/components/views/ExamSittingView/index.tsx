@@ -22,7 +22,10 @@ import {
   Card,
   Grid,
   Group,
+  Loader,
+  LoadingOverlay,
   Modal,
+  Portal,
   Stack,
   Text,
   Title,
@@ -56,6 +59,7 @@ import {
   type FlatQuestionItem,
 } from "../../blocks/QuestionPalette";
 import { SubmitModal } from "../../blocks/SubmitModal";
+import { useExamPresence } from "../../../hooks/useExamPresence";
 import { ExamResultView } from "../../blocks/ExamResultView";
 
 import type { ExamAttemptResult, ExamStartChoice } from "../../../types";
@@ -132,6 +136,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const [result, setResult] = useState<ExamAttemptResult | null>(null);
   const pending = useRef(false);
   const [sendFailed, setSendFailed] = useState(false);
+  // Mã lỗi của backend khi nộp không được - hiện ra để biết nộp hỏng vì sao, thay
+  // vì một câu chung cho mọi nguyên nhân.
+  const [submitCode, setSubmitCode] = useState<string | null>(null);
+  // Máy chủ đã kết thúc lượt thi (bỏ dở quá thời gian ân hạn, hoặc đã chốt): chỉ còn lấy kết quả.
+  const [ended, setEnded] = useState(false);
   const [savingAndSubmitting, setSavingAndSubmitting] = useState(false);
 
   // Bản tóm tắt đề cho màn giới thiệu - đọc được trước khi đồng hồ chạy.
@@ -251,14 +260,31 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         }),
       );
 
+      let failure: unknown = null;
       const response = await submitAttempt({
         variables: { attemptId, answers: payload },
-      }).catch(() => null);
+      }).catch((error: unknown) => {
+        failure = error;
+        return null;
+      });
 
       if (!response?.data) {
+        const code = failure ? backendCodeOf(failure) : null;
+        // Lượt thi đã được chốt ở máy chủ (hết giờ, hoặc đã bị kết thúc vì bỏ dở):
+        // không có gì để nộp nữa, lấy kết quả đã chấm thay vì báo lỗi.
+        if (
+          code === "ATTEMPT_ALREADY_FINALIZED" ||
+          code === "ATTEMPT_EXPIRED"
+        ) {
+          setSubmitModalOpen(false);
+          setEnded(true);
+          return;
+        }
+        setSubmitCode(code);
         setSendFailed(true);
         return;
       }
+      setSubmitCode(null);
 
       setResult(response.data.submitExamAttempt);
       try {
@@ -300,8 +326,15 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const expired =
     expiresAt !== null && remainingSeconds === 0 && result === null;
 
+  // Thi thật: lượt thi bị bỏ dở thì kết thúc. Trình duyệt báo "tôi còn ở đây" đều
+  // đặn; hết thời gian ân hạn không có tín hiệu nào thì backend chấm phần đã lưu.
+  // Bài luyện tập không như vậy - nó cho thoát ra rồi làm tiếp.
+  const fullSitting = attemptId !== null && !practice && result === null;
+  useExamPresence(attemptId, fullSitting, () => setEnded(true));
+  const closedByServer = expired || ended;
+
   useEffect(() => {
-    if (!expired || !attemptId || result) return;
+    if (!closedByServer || !attemptId || result) return;
     let active = true;
     const readResult = async () => {
       try {
@@ -321,7 +354,19 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       active = false;
       clearInterval(timer);
     };
-  }, [expired, attemptId, result, client]);
+  }, [closedByServer, attemptId, result, client]);
+
+  // Rời trang giữa bài thi thật (đóng tab, tải lại, gõ địa chỉ khác) hoặc giữa lúc
+  // đang nộp thì trình duyệt hỏi lại trước đã.
+  useEffect(() => {
+    if (!fullSitting && !savingAndSubmitting) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [fullSitting, savingAndSubmitting]);
 
   async function reloadServerDraft() {
     if (
@@ -722,6 +767,19 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         totalQuestions={flatQuestions.length}
         onSubmitClick={() => setSubmitModalOpen(true)}
         onExitClick={() => {
+          if (!practice) {
+            // Thi thật: thoát là kết thúc lượt thi, không có "làm tiếp" như bài luyện tập.
+            if (
+              window.confirm(
+                isVi
+                  ? "Thoát khỏi bài thi thật sẽ nộp bài ngay với các đáp án hiện có và kết thúc lượt thi. Bạn sẽ không thể làm tiếp. Bạn có chắc không?"
+                  : "Leaving a full test submits your answers now and ends the attempt. You will not be able to continue. Are you sure?",
+              )
+            ) {
+              void handleFinalSubmit();
+            }
+            return;
+          }
           if (window.confirm(t.exam.exitConfirm)) {
             router.push("/exams");
           }
@@ -775,6 +833,8 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
             {isVi
               ? "Chưa nộp được bài. Đáp án được giữ lại; kiểm tra kết nối rồi nộp lại."
               : "Submission failed. Your answers are kept; check your connection and submit again."}
+            {submitCode &&
+              ` (${isVi ? "mã lỗi" : "error code"}: ${submitCode})`}
             <Button
               variant="subtle"
               loading={submitting}
@@ -810,6 +870,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
                 style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
               >
                 <QuestionCard
+                  audioOnceForAttempt={!practice ? attemptId : undefined}
                   section={currentSection}
                   part={currentPart}
                   questionSet={currentQuestionSet}
@@ -871,6 +932,34 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         }}
         onConfirmSubmit={handleFinalSubmit}
       />
+      {/* Đang nộp, hoặc phiên thi đã bị kết thúc: che toàn màn hình và chặn mọi thao
+          tác cho tới khi có kết quả, để không ai bỏ sang trang khác giữa chừng. */}
+      {(savingAndSubmitting || (ended && !result)) && (
+        <Portal>
+          <LoadingOverlay
+            visible
+            zIndex={4000}
+            overlayProps={{ blur: 2, backgroundOpacity: 0.8 }}
+            style={{ position: "fixed", inset: 0 }}
+            loaderProps={{
+              children: (
+                <Stack align="center" gap="sm" role="status">
+                  <Loader />
+                  <Text fw={600}>
+                    {ended && !savingAndSubmitting
+                      ? isVi
+                        ? "Phiên thi đã kết thúc. Đang lấy kết quả…"
+                        : "The sitting has ended. Fetching your result…"
+                      : isVi
+                        ? "Đang nộp bài, vui lòng không rời trang…"
+                        : "Submitting - please do not leave this page…"}
+                  </Text>
+                </Stack>
+              ),
+            }}
+          />
+        </Portal>
+      )}
     </Box>
   );
 }

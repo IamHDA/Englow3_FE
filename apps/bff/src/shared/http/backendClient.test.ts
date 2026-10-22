@@ -229,4 +229,20 @@ describe("createBackendClient", () => {
       expect(createBackendClient({ authorization }).token).toBeNull();
     }
   });
+
+  it("lets one call wait longer than the shared limit", async () => {
+    const timeout = vi.spyOn(AbortSignal, "timeout");
+    const fetchMock = vi.fn(() =>
+      Promise.resolve(jsonResponse(200, { ok: true })),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const client = new BackendClient("http://backend.internal", 5000, "t", "r");
+
+    await client.post("/slow", {}, 55_000);
+    await client.post("/fast", {});
+
+    expect(timeout).toHaveBeenNthCalledWith(1, 55_000);
+    expect(timeout).toHaveBeenNthCalledWith(2, 5000);
+    timeout.mockRestore();
+  });
 });

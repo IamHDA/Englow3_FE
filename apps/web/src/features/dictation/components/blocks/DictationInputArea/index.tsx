@@ -11,40 +11,44 @@ import {
   Textarea,
 } from "@mantine/core";
 import { Check, SkipForward } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 interface DictationInputAreaProps {
   value: string;
   onChange: (val: string) => void;
-  onCheckAnswer: () => void;
+  /** Enter và nút chính: chưa chấm thì chấm, đã chấm mà chưa sửa thì sang câu kế. */
+  onSubmit: () => void;
   onSkip: () => void;
+  /** Đã chấm và chưa sửa chữ nào kể từ đó. */
+  checked?: boolean;
   disabled?: boolean;
-  checking?: boolean;
+  /** Đổi giá trị này (sang câu mới) thì đưa con trỏ về ô nhập. */
+  focusKey?: string | number;
 }
 
 export function DictationInputArea({
   value,
   onChange,
-  onCheckAnswer,
+  onSubmit,
   onSkip,
+  checked = false,
   disabled = false,
-  checking = false,
+  focusKey,
 }: DictationInputAreaProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
 
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, [focusKey]);
+
+  // Một câu chép là một dòng: Enter là chấm, không xuống dòng (Shift+Enter vẫn xuống dòng).
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (
-      !disabled &&
-      value.trim() &&
-      !e.nativeEvent.isComposing &&
-      (e.ctrlKey || e.metaKey) &&
-      e.key === "Enter"
-    ) {
-      e.preventDefault();
-      onCheckAnswer();
-    }
+    if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing) return;
+    e.preventDefault();
+    if (!disabled && (checked || value.trim())) onSubmit();
   };
 
   return (
@@ -59,7 +63,8 @@ export function DictationInputArea({
           value={value}
           onChange={(e) => onChange(e.currentTarget.value)}
           onKeyDown={handleKeyDown}
-          disabled={disabled}
+          ref={inputRef}
+          readOnly={disabled}
           styles={{
             input: {
               fontSize: 16,
@@ -87,9 +92,13 @@ export function DictationInputArea({
               •
             </Text>
             <Group gap={4} visibleFrom="sm">
-              <Kbd size="xs">Ctrl</Kbd> + <Kbd size="xs">Enter</Kbd>
+              <Kbd size="xs">Enter</Kbd>
               <Text size="xs" c="ink.5">
-                {t.dictation.toCheckHint}
+                {checked
+                  ? isVi
+                    ? "để sang câu tiếp theo"
+                    : "for the next sentence"
+                  : t.dictation.toCheckHint}
               </Text>
             </Group>
           </Group>
@@ -112,13 +121,12 @@ export function DictationInputArea({
               color="navy"
               size="sm"
               radius="md"
-              onClick={onCheckAnswer}
-              disabled={disabled || value.trim().length === 0}
-              loading={checking}
+              onClick={onSubmit}
+              disabled={disabled || (!checked && value.trim().length === 0)}
               leftSection={<Check size={15} />}
               fw={600}
             >
-              {t.dictation.checkAnswer}
+              {checked ? t.dictation.nextSentence : t.dictation.checkAnswer}
             </Button>
           </Group>
         </Flex>

@@ -14,12 +14,10 @@ fragment DictationLessonFields on DictationLesson {
 fragment DictationSentenceFields on DictationSentence {
   id
   orderNo
+  text
+  translationVi
   audioUrl
   audioDurationSeconds
-  hintWordCount
-  hintFirstLetters
-  hintRevealWord
-  hintPartialTranscript
   audioStartMs
   audioEndMs
   bestAccuracyPercent
@@ -82,6 +80,7 @@ query DictationStats($periodDays: Int) {
     }
     difficultSentences {
       sentenceId
+      lessonId
       text
       topic
       accuracyPercent

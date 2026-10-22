@@ -255,7 +255,7 @@ export function DictationMistakeQueue({
       <DictationInputArea
         value={inputVal}
         onChange={setInputVal}
-        onCheckAnswer={() => void handleCheck()}
+        onSubmit={() => void handleCheck()}
         onSkip={handleSkip}
         disabled={isChecked || checking}
       />

@@ -1952,12 +1952,10 @@ export type DictationLessonFieldsFragment = {
 export type DictationSentenceFieldsFragment = {
   id: string;
   orderNo: number;
+  text: string;
+  translationVi: string | null;
   audioUrl: string;
   audioDurationSeconds: number;
-  hintWordCount: number;
-  hintFirstLetters: string | null;
-  hintRevealWord: string | null;
-  hintPartialTranscript: string | null;
   audioStartMs: number | null;
   audioEndMs: number | null;
   bestAccuracyPercent: number | null;
@@ -2012,12 +2010,10 @@ export type DictationLessonDetailQuery = {
     sentences: Array<{
       id: string;
       orderNo: number;
+      text: string;
+      translationVi: string | null;
       audioUrl: string;
       audioDurationSeconds: number;
-      hintWordCount: number;
-      hintFirstLetters: string | null;
-      hintRevealWord: string | null;
-      hintPartialTranscript: string | null;
       audioStartMs: number | null;
       audioEndMs: number | null;
       bestAccuracyPercent: number | null;
@@ -2068,6 +2064,7 @@ export type DictationStatsQuery = {
     }>;
     difficultSentences: Array<{
       sentenceId: string;
+      lessonId: string;
       text: string;
       topic: string;
       accuracyPercent: number;
@@ -2569,6 +2566,12 @@ export type ExamAttemptHistoryQuery = {
     }>;
   };
 };
+
+export type HeartbeatExamAttemptMutationVariables = Exact<{
+  attemptId: string | number;
+}>;
+
+export type HeartbeatExamAttemptMutation = { heartbeatExamAttempt: boolean };
 
 export type ExamLibraryQueryVariables = Exact<{
   examType?: Types.ExamType | null | undefined;
@@ -3752,17 +3755,12 @@ export const DictationSentenceFieldsFragmentDoc = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "text" } },
+          { kind: "Field", name: { kind: "Name", value: "translationVi" } },
           { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "audioDurationSeconds" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "hintWordCount" } },
-          { kind: "Field", name: { kind: "Name", value: "hintFirstLetters" } },
-          { kind: "Field", name: { kind: "Name", value: "hintRevealWord" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "hintPartialTranscript" },
           },
           { kind: "Field", name: { kind: "Name", value: "audioStartMs" } },
           { kind: "Field", name: { kind: "Name", value: "audioEndMs" } },
@@ -11692,17 +11690,12 @@ export const DictationLessonDetailDocument = {
         selections: [
           { kind: "Field", name: { kind: "Name", value: "id" } },
           { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+          { kind: "Field", name: { kind: "Name", value: "text" } },
+          { kind: "Field", name: { kind: "Name", value: "translationVi" } },
           { kind: "Field", name: { kind: "Name", value: "audioUrl" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "audioDurationSeconds" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "hintWordCount" } },
-          { kind: "Field", name: { kind: "Name", value: "hintFirstLetters" } },
-          { kind: "Field", name: { kind: "Name", value: "hintRevealWord" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "hintPartialTranscript" },
           },
           { kind: "Field", name: { kind: "Name", value: "audioStartMs" } },
           { kind: "Field", name: { kind: "Name", value: "audioEndMs" } },
@@ -11913,6 +11906,10 @@ export const DictationStatsDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "sentenceId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "lessonId" },
                       },
                       { kind: "Field", name: { kind: "Name", value: "text" } },
                       { kind: "Field", name: { kind: "Name", value: "topic" } },
@@ -13742,6 +13739,51 @@ export const ExamAttemptHistoryDocument = {
 } as unknown as DocumentNode<
   ExamAttemptHistoryQuery,
   ExamAttemptHistoryQueryVariables
+>;
+export const HeartbeatExamAttemptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "HeartbeatExamAttempt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "attemptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "heartbeatExamAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "attemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "attemptId" },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  HeartbeatExamAttemptMutation,
+  HeartbeatExamAttemptMutationVariables
 >;
 export const ExamLibraryDocument = {
   kind: "Document",

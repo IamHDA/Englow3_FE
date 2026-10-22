@@ -44,14 +44,31 @@
   color: white;
 }
 
+/*
+ * Điện thoại: ba tab chia đều một hàng, biểu tượng nằm trên chữ. Trước đây chúng
+ * tự xuống dòng nên tab thứ ba rớt xuống hàng riêng và thanh tab trông vỡ.
+ */
 @media (max-width: 36em) {
   .tabsList {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 4px;
   }
   .tabItem {
-    flex: 1 1 auto;
-    padding-inline: 8px;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: auto;
+    padding: 8px 4px;
+    gap: 4px;
+    font-size: 12.5px;
+    line-height: 1.25;
+    text-align: center;
+  }
+  .tabItem :global(.mantine-Tabs-tabSection) {
+    margin: 0;
+  }
+  .tabItem :global(.mantine-Tabs-tabLabel) {
+    white-space: normal;
   }
 }
 

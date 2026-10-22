@@ -9,6 +9,7 @@ import {
   Group,
   Loader,
   Pagination,
+  SegmentedControl,
   Select,
   Stack,
   Text,
@@ -54,6 +55,11 @@ export function AssessmentHistory({
       : null,
   );
   const [title, setTitle] = useState(initial.title ?? "");
+  // "Chưa đọc" là một cách xem của cùng danh sách này, không phải một khối thứ
+  // hai với thanh phân trang riêng giữa trang.
+  const [view, setView] = useState<"all" | "unread">(
+    initial.view === "unread" ? "unread" : "all",
+  );
   const [page, setPage] = useState(
     Math.min(10000, Math.max(1, Number.parseInt(initial.page ?? "1", 10) || 1)),
   );
@@ -63,18 +69,29 @@ export function AssessmentHistory({
     if (skill) params.set("skill", skill);
     if (status) params.set("status", status);
     if (title) params.set("title", title);
+    if (view === "unread") params.set("view", "unread");
     if (page > 1) params.set("page", String(page));
     window.history.replaceState(
       null,
       "",
       `/study/assessments${params.size ? `?${params}` : ""}`,
     );
-  }, [skill, status, title, page]);
+  }, [skill, status, title, view, page]);
   const query = useAssessmentHistoryQuery({
     variables: { skill, status, title: term || null, page: page - 1 },
     fetchPolicy: "cache-and-network",
   });
   const items = query.data?.assessmentHistory.items ?? [];
+  const unreadQuery = useAssessmentNotificationsQuery({
+    variables: { page: view === "unread" ? page - 1 : 0 },
+    fetchPolicy: "cache-and-network",
+  });
+  const unread = unreadQuery.data?.assessmentNotifications;
+  const unreadCount = unread?.totalItems ?? 0;
+  const showingUnread = view === "unread";
+  const totalPages = showingUnread
+    ? (unread?.totalPages ?? 0)
+    : (query.data?.assessmentHistory.totalPages ?? 0);
 
   return (
     <Page>
@@ -98,147 +115,174 @@ export function AssessmentHistory({
             </Button>
           </Group>
         </Group>
-        <AssessmentNotifications full />
-        <Card withBorder>
-          <Group align="flex-end">
-            <TextInput
-              style={{ flex: 1, minWidth: 200 }}
-              label={t("Tìm theo đề", "Search prompts")}
-              value={title}
-              onChange={(e) => {
-                setTitle(e.currentTarget.value);
-                setPage(1);
-              }}
-            />
-            <Select
-              label={t("Kỹ năng", "Skill")}
-              data={["WRITING", "SPEAKING"]}
-              clearable
-              value={skill}
-              onChange={(v) => {
-                setSkill(v as AssessmentSkill | null);
-                setPage(1);
-              }}
-            />
-            <Select
-              label={t("Trạng thái", "Status")}
-              clearable
-              data={Object.values(AssessmentAttemptStatus).map((value) => ({
-                value,
-                label: (isVi ? statusLabels : statusLabelsEn)[value],
-              }))}
-              value={status}
-              onChange={(v) => {
-                setStatus(v as AssessmentAttemptStatus | null);
-                setPage(1);
-              }}
-            />
-          </Group>
-        </Card>
-        {query.error && (
-          <Alert color="orange">
-            {t(
-              "Không cập nhật được danh sách.",
-              "Could not refresh your work.",
-            )}{" "}
-            <Button
-              variant="light"
-              onClick={() => void query.refetch().catch(() => {})}
-            >
-              {t("Thử lại", "Retry")}
-            </Button>
-          </Alert>
-        )}
-        {query.loading && !query.data ? (
-          <Loader />
-        ) : items.length ? (
-          <Stack>
-            {items.map((a) => (
-              <Card key={a.id} withBorder radius="lg">
-                <Group justify="space-between" align="flex-start">
-                  <Stack gap={4} style={{ flex: 1, minWidth: 180 }}>
-                    <Text fw={600}>{a.task.title}</Text>
-                    <Text size="sm" c="dimmed">
-                      {skillLabel(a.skill, isVi)} ·{" "}
-                      {new Date(a.createdAt).toLocaleString(
-                        isVi ? "vi-VN" : "en-US",
-                      )}
-                    </Text>
-                    <Group>
-                      <Badge variant="light">
-                        {(isVi ? statusLabels : statusLabelsEn)[a.status]}
-                      </Badge>
-                      {a.report && (
-                        <Text fw={700}>
-                          {parseReport(a.report)?.overall.toFixed(1)} / 9
-                        </Text>
-                      )}
-                    </Group>
-                  </Stack>
-                  <Button
-                    component={Link}
-                    href={`/study/assessments/attempts/${a.id}`}
-                    variant={a.status === "DRAFT" ? "filled" : "light"}
-                  >
-                    {a.status === "DRAFT"
-                      ? t("Tiếp tục", "Resume")
-                      : a.status === "COMPLETED"
-                        ? t("Xem kết quả", "Read result")
-                        : t("Xem trạng thái", "View status")}
-                  </Button>
-                </Group>
-              </Card>
-            ))}
-          </Stack>
+        <SegmentedControl
+          value={view}
+          onChange={(next) => {
+            setView(next as "all" | "unread");
+            setPage(1);
+          }}
+          data={[
+            { value: "all", label: t("Tất cả bài", "All work") },
+            {
+              value: "unread",
+              label:
+                t("Chưa đọc", "Unread") +
+                (unreadCount > 0 ? ` · ${unreadCount}` : ""),
+            },
+          ]}
+          w="fit-content"
+        />
+        {showingUnread ? (
+          <UnreadResults
+            items={unread?.items ?? []}
+            loading={unreadQuery.loading && !unread}
+            error={Boolean(unreadQuery.error)}
+            onRetry={() => void unreadQuery.refetch().catch(() => {})}
+          />
         ) : (
-          !query.error && (
+          <>
             <Card withBorder>
-              <Stack>
-                <Text>
-                  {skill || status || title
-                    ? t(
-                        "Không có bài khớp bộ lọc.",
-                        "No work matches these filters.",
-                      )
-                    : t(
-                        "Bạn chưa có bài luyện. Chọn đề Writing hoặc Speaking để bắt đầu.",
-                        "Choose a Writing or Speaking prompt to begin.",
-                      )}
-                </Text>
-                {(skill || status || title) && (
-                  <Button
-                    variant="light"
-                    onClick={() => {
-                      setSkill(null);
-                      setStatus(null);
-                      setTitle("");
-                      setPage(1);
-                    }}
-                  >
-                    {t("Xóa bộ lọc", "Clear filters")}
-                  </Button>
-                )}
-              </Stack>
+              <Group align="flex-end">
+                <TextInput
+                  style={{ flex: 1, minWidth: 200 }}
+                  label={t("Tìm theo đề", "Search prompts")}
+                  value={title}
+                  onChange={(e) => {
+                    setTitle(e.currentTarget.value);
+                    setPage(1);
+                  }}
+                />
+                <Select
+                  label={t("Kỹ năng", "Skill")}
+                  data={["WRITING", "SPEAKING"]}
+                  clearable
+                  value={skill}
+                  onChange={(v) => {
+                    setSkill(v as AssessmentSkill | null);
+                    setPage(1);
+                  }}
+                />
+                <Select
+                  label={t("Trạng thái", "Status")}
+                  clearable
+                  data={Object.values(AssessmentAttemptStatus).map((value) => ({
+                    value,
+                    label: (isVi ? statusLabels : statusLabelsEn)[value],
+                  }))}
+                  value={status}
+                  onChange={(v) => {
+                    setStatus(v as AssessmentAttemptStatus | null);
+                    setPage(1);
+                  }}
+                />
+              </Group>
             </Card>
-          )
+            {query.error && (
+              <Alert color="orange">
+                {t(
+                  "Không cập nhật được danh sách.",
+                  "Could not refresh your work.",
+                )}{" "}
+                <Button
+                  variant="light"
+                  onClick={() => void query.refetch().catch(() => {})}
+                >
+                  {t("Thử lại", "Retry")}
+                </Button>
+              </Alert>
+            )}
+            {query.loading && !query.data ? (
+              <Loader />
+            ) : items.length ? (
+              <Stack>
+                {items.map((a) => (
+                  <Card key={a.id} withBorder radius="lg">
+                    <Group justify="space-between" align="flex-start">
+                      <Stack gap={4} style={{ flex: 1, minWidth: 180 }}>
+                        <Text fw={600}>{a.task.title}</Text>
+                        <Text size="sm" c="dimmed">
+                          {skillLabel(a.skill, isVi)} ·{" "}
+                          {new Date(a.createdAt).toLocaleString(
+                            isVi ? "vi-VN" : "en-US",
+                          )}
+                        </Text>
+                        <Group>
+                          <Badge variant="light">
+                            {(isVi ? statusLabels : statusLabelsEn)[a.status]}
+                          </Badge>
+                          {a.report && (
+                            <Text fw={700}>
+                              {parseReport(a.report)?.overall.toFixed(1)} / 9
+                            </Text>
+                          )}
+                        </Group>
+                      </Stack>
+                      <Button
+                        component={Link}
+                        href={`/study/assessments/attempts/${a.id}`}
+                        variant={a.status === "DRAFT" ? "filled" : "light"}
+                      >
+                        {a.status === "DRAFT"
+                          ? t("Tiếp tục", "Resume")
+                          : a.status === "COMPLETED"
+                            ? t("Xem kết quả", "Read result")
+                            : t("Xem trạng thái", "View status")}
+                      </Button>
+                    </Group>
+                  </Card>
+                ))}
+              </Stack>
+            ) : (
+              !query.error && (
+                <Card withBorder>
+                  <Stack>
+                    <Text>
+                      {skill || status || title
+                        ? t(
+                            "Không có bài khớp bộ lọc.",
+                            "No work matches these filters.",
+                          )
+                        : t(
+                            "Bạn chưa có bài luyện. Chọn đề Writing hoặc Speaking để bắt đầu.",
+                            "Choose a Writing or Speaking prompt to begin.",
+                          )}
+                    </Text>
+                    {(skill || status || title) && (
+                      <Button
+                        variant="light"
+                        onClick={() => {
+                          setSkill(null);
+                          setStatus(null);
+                          setTitle("");
+                          setPage(1);
+                        }}
+                      >
+                        {t("Xóa bộ lọc", "Clear filters")}
+                      </Button>
+                    )}
+                  </Stack>
+                </Card>
+              )
+            )}
+          </>
         )}
-        {(query.data?.assessmentHistory.totalPages ?? 0) > 1 && (
+        {totalPages > 1 && (
           <Pagination
             getControlProps={paginationControlProps(isVi)}
             value={page}
             onChange={setPage}
-            total={query.data!.assessmentHistory.totalPages}
+            total={totalPages}
           />
         )}
       </Stack>
     </Page>
   );
 }
-export function AssessmentNotifications({ full = false }: { full?: boolean }) {
+/** Gọn cho trang chủ: ba kết quả mới nhất chưa đọc, và lối sang danh sách đầy đủ. */
+export function AssessmentNotifications() {
   const { isVi } = useLanguage();
-  const [page, setPage] = useState(1);
   const query = useAssessmentNotificationsQuery({
-    variables: { page: page - 1 },
+    variables: { page: 0 },
     fetchPolicy: "cache-and-network",
   });
   const items = query.data?.assessmentNotifications.items ?? [];
@@ -264,13 +308,15 @@ export function AssessmentNotifications({ full = false }: { full?: boolean }) {
             {isVi ? "Kết quả chưa đọc" : "Unread results"} ·{" "}
             {query.data!.assessmentNotifications.totalItems}
           </Title>
-          {!full && (
-            <Button component={Link} href="/study/assessments" variant="subtle">
-              {isVi ? "Xem tất cả" : "View all"}
-            </Button>
-          )}
+          <Button
+            component={Link}
+            href="/study/assessments?view=unread"
+            variant="subtle"
+          >
+            {isVi ? "Xem tất cả" : "View all"}
+          </Button>
         </Group>
-        {(full ? items : items.slice(0, 3)).map((n) => (
+        {items.slice(0, 3).map((n) => (
           <Group key={n.attemptId} justify="space-between">
             <Text style={{ flex: 1, minWidth: 160 }}>
               {skillLabel(n.skill, isVi)} · {n.title}
@@ -285,16 +331,84 @@ export function AssessmentNotifications({ full = false }: { full?: boolean }) {
             </Button>
           </Group>
         ))}
-        {full && query.data!.assessmentNotifications.totalPages > 1 && (
-          <Pagination
-            getControlProps={paginationControlProps(isVi)}
-            value={page}
-            total={query.data!.assessmentNotifications.totalPages}
-            onChange={setPage}
-          />
-        )}
       </Stack>
     </Card>
+  );
+}
+
+/** Các kết quả chưa đọc, dựng cùng kiểu thẻ với lịch sử để hai cách xem trông như một danh sách. */
+function UnreadResults({
+  items,
+  loading,
+  error,
+  onRetry,
+}: {
+  items: Array<{
+    attemptId: string;
+    title: string;
+    skill: AssessmentSkill;
+    version: number;
+    assessedAt?: string | null;
+  }>;
+  loading: boolean;
+  error: boolean;
+  onRetry: () => void;
+}) {
+  const { isVi } = useLanguage();
+  const t = (vi: string, en: string) => (isVi ? vi : en);
+  if (loading) return <Loader />;
+  if (error && !items.length)
+    return (
+      <Alert color="orange">
+        {t(
+          "Không tải được kết quả chưa đọc.",
+          "Could not load unread results.",
+        )}{" "}
+        <Button variant="light" onClick={onRetry}>
+          {t("Thử lại", "Retry")}
+        </Button>
+      </Alert>
+    );
+  if (!items.length)
+    return (
+      <Card withBorder>
+        <Text>
+          {t("Bạn đã đọc hết kết quả.", "You have read every result.")}
+        </Text>
+      </Card>
+    );
+  return (
+    <Stack>
+      {items.map((n) => (
+        <Card key={n.attemptId} withBorder radius="lg">
+          <Group justify="space-between" align="flex-start">
+            <Stack gap={4} style={{ flex: 1, minWidth: 180 }}>
+              <Text fw={600}>{n.title}</Text>
+              <Text size="sm" c="dimmed">
+                {skillLabel(n.skill, isVi)}
+                {n.assessedAt &&
+                  ` · ${new Date(n.assessedAt).toLocaleString(
+                    isVi ? "vi-VN" : "en-US",
+                  )}`}
+              </Text>
+              <Group>
+                <Badge variant="filled" color="blue">
+                  {t("Chưa đọc", "Unread")}
+                </Badge>
+                <Badge variant="light">v{n.version}</Badge>
+              </Group>
+            </Stack>
+            <Button
+              component={Link}
+              href={`/study/assessments/attempts/${n.attemptId}`}
+              variant="light"
+            >
+              {t("Đọc kết quả", "Read result")}
+            </Button>
+          </Group>
+        </Card>
+      ))}
+    </Stack>
   );
 }
 export function AssessmentResumeCard() {

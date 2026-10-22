@@ -77,7 +77,7 @@ export function DictationHardSentences({
 
                 <Button
                   component={Link}
-                  href="/study/dictation/ordering-food-at-a-restaurant"
+                  href={`/study/dictation/${encodeURIComponent(s.lessonId)}`}
                   size="xs"
                   variant="outline"
                   color="navy"

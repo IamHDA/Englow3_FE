@@ -19,6 +19,14 @@ import type {
 
 const ADMIN_EXAM_BASE_PATH = "/api/admin/exams";
 const EXAM_BASE_PATH = "/api/exams";
+/**
+ * Grading a whole paper is the slowest thing the backend does for a learner, and
+ * the shared limit (10s) is far shorter: a 200-question test timed out here while
+ * the backend was still writing it, and the learner was told it could not be
+ * submitted. Kept under the 60s the function itself may run.
+ */
+const SUBMIT_TIMEOUT_MS = 55_000;
+
 const ATTEMPT_BASE_PATH = "/api/exam-attempts";
 
 export class ExamApi {
@@ -50,6 +58,15 @@ export class ExamApi {
       `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/draft`,
       { version, answers },
     );
+  }
+
+  /** The browser is still on this sitting. Resolves to whether it is still open. */
+  async heartbeat(attemptId: string): Promise<boolean> {
+    const response = await this.client.post<{ open: boolean }>(
+      `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/heartbeat`,
+      {},
+    );
+    return response.open;
   }
 
   /** Learner search on the backend (/api/exams) - returns published exams. */
@@ -113,6 +130,7 @@ export class ExamApi {
     return this.client.post(
       `${ATTEMPT_BASE_PATH}/${encodeURIComponent(attemptId)}/submit`,
       { answers },
+      SUBMIT_TIMEOUT_MS,
     );
   }
 

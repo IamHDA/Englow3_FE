@@ -1,8 +1,13 @@
 import type { DiffItem, DiffResult } from "../types";
 
+/**
+ * Cùng định nghĩa "một từ" với bộ chấm của backend (DictationScorer): bỏ mọi
+ * dấu câu ASCII và dấu nháy cong, không phân biệt hoa thường. Hai bên mà hiểu
+ * khác nhau thì điểm hiện ngay trên màn hình sẽ lệch điểm server lưu.
+ */
 function cleanWord(word: string): string {
   return word
-    .replace(/[.,/#!$%^&*;:{}=\-_`~()?"'’]/g, "")
+    .replace(/[!-/:-@[-`{-~‘’“”]/g, "")
     .trim()
     .toLowerCase();
 }
@@ -14,8 +19,14 @@ export function computeWordDiff(
   expectedText: string,
   actualText: string,
 ): DiffResult {
-  const expectedTokens = expectedText.trim().split(/\s+/).filter(Boolean);
-  const actualTokens = actualText.trim().split(/\s+/).filter(Boolean);
+  // Một token chỉ toàn dấu câu (ví dụ "-") không phải từ, như phía backend.
+  const tokens = (text: string) =>
+    text
+      .trim()
+      .split(/\s+/)
+      .filter((token) => cleanWord(token) !== "");
+  const expectedTokens = tokens(expectedText);
+  const actualTokens = tokens(actualText);
 
   if (expectedTokens.length === 0) {
     return {

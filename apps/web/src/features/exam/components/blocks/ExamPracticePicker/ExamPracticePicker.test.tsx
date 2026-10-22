@@ -87,6 +87,37 @@ describe("ExamPracticePicker", () => {
     expect(onResume).toHaveBeenCalledOnce();
     expect(onStart).not.toHaveBeenCalled();
   });
+  // Picking other parts for a practice that is still open changed nothing about it, so the setup stayed
+  // looking editable while the old practice came back unchanged.
+  it("locks the setup while a practice is unfinished, until it is set aside", () => {
+    const onStart = vi.fn();
+    render(
+      <MantineProvider>
+        <ExamPracticePicker
+          sections={sections}
+          loading={false}
+          failed={false}
+          starting={false}
+          onRetry={vi.fn()}
+          onStart={onStart}
+          hasActiveAttempt
+          onResume={vi.fn()}
+        />
+      </MantineProvider>,
+    );
+    expect(screen.getByLabelText("Part 1: Photographs")).toBeDisabled();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Bỏ bài dở, thiết lập bài mới|Set it aside and start fresh/i,
+      }),
+    );
+
+    expect(screen.getByLabelText("Part 1: Photographs")).toBeEnabled();
+    fireEvent.click(screen.getByLabelText("Part 1: Photographs"));
+    expect(startButton()).toBeEnabled();
+  });
+
   it("cannot start until a part is chosen", () => {
     renderPicker();
     expect(startButton()).toBeDisabled();

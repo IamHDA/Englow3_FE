@@ -65,6 +65,10 @@ export const examResolvers = {
         args.answers,
       );
     },
+    heartbeatExamAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.heartbeat(args.attemptId);
+    },
     startExamAttempt: (_, args, ctx) => {
       ctx.requireToken();
       const input = args.input;

@@ -60,6 +60,11 @@ export function ExamPracticePicker({
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [limit, setLimit] = useState<string>(NO_LIMIT);
+  // Có bài dở thì phần thiết lập bị khóa: chọn lại part hay giờ làm cho một bài
+  // sẽ không đổi gì ở bài đang dở, nên trông như đã đổi mà thật ra không. Muốn
+  // thiết lập lại thì phải chọn bỏ bài dở trước.
+  const [unlocked, setUnlocked] = useState(false);
+  const locked = hasActiveAttempt && !unlocked;
 
   if (loading) {
     return <Skeleton height={180} radius="md" />;
@@ -103,6 +108,41 @@ export function ExamPracticePicker({
 
   return (
     <Stack gap="md">
+      {locked && (
+        <Alert
+          color="blue"
+          title={tr(
+            "Bạn đang có một bài luyện tập dở",
+            "You have an unfinished practice",
+          )}
+        >
+          <Stack gap="xs">
+            <Text size="sm">
+              {tr(
+                "Làm tiếp sẽ giữ nguyên các part, thời gian và đáp án của bài đó. Muốn chọn part hoặc thời gian khác, hãy bỏ bài đang dở trước.",
+                "Continuing keeps that practice's parts, clock and answers. To pick other parts or another clock, set the unfinished practice aside first.",
+              )}
+            </Text>
+            <Group gap="xs">
+              <Button size="xs" onClick={onResume} disabled={starting}>
+                {tr("Làm tiếp bài dở", "Continue unfinished practice")}
+              </Button>
+              <Button
+                size="xs"
+                variant="default"
+                onClick={() => setUnlocked(true)}
+                disabled={starting}
+              >
+                {tr(
+                  "Bỏ bài dở, thiết lập bài mới",
+                  "Set it aside and start fresh",
+                )}
+              </Button>
+            </Group>
+          </Stack>
+        </Alert>
+      )}
+
       <Text size="sm" c="ink.6">
         {tr(
           "Chọn một hoặc nhiều part để luyện. Bài luyện tập chỉ lưu vào lịch sử, không tính vào tiến độ, điểm cao nhất hay kiểm tra đầu vào.",
@@ -128,7 +168,7 @@ export function ExamPracticePicker({
                 }
                 checked={allOn}
                 indeterminate={someOn && !allOn}
-                disabled={ids.length === 0}
+                disabled={ids.length === 0 || locked}
                 onChange={(event) => toggle(ids, event.currentTarget.checked)}
               />
               <Stack gap={8} pl="lg">
@@ -137,7 +177,7 @@ export function ExamPracticePicker({
                     <Checkbox
                       label={part.title}
                       checked={selected.has(part.id)}
-                      disabled={part.questionCount === 0}
+                      disabled={part.questionCount === 0 || locked}
                       onChange={(event) =>
                         toggle([part.id], event.currentTarget.checked)
                       }
@@ -168,6 +208,7 @@ export function ExamPracticePicker({
           w={220}
           value={limit}
           allowDeselect={false}
+          disabled={locked}
           onChange={(value) => setLimit(value ?? NO_LIMIT)}
           data={[
             { value: NO_LIMIT, label: tr("Không giới hạn", "No limit") },
@@ -186,7 +227,7 @@ export function ExamPracticePicker({
                   `${chosen.length} part${chosen.length === 1 ? "" : "s"} · ${questionTotal} question${questionTotal === 1 ? "" : "s"}`,
                 )}
           </Text>
-          {hasActiveAttempt && (
+          {hasActiveAttempt && !locked && (
             <Button variant="light" onClick={onResume} disabled={starting}>
               {tr("Làm tiếp bài dở", "Continue unfinished practice")}
             </Button>
@@ -194,7 +235,7 @@ export function ExamPracticePicker({
           <Button
             radius="xl"
             rightSection={<Play size={16} />}
-            disabled={chosen.length === 0}
+            disabled={chosen.length === 0 || locked}
             loading={starting}
             onClick={() =>
               onStart(

@@ -6,19 +6,22 @@ import type {
   DictationLesson,
   DictationSentence,
   DictationSessionSummaryData,
-  DictationSubmission,
   DiffResult,
 } from "../types";
 
 /**
- * Gửi một câu lên server và nhận lại điểm kèm transcript. Hook không tự gọi
- * Apollo: nó không biết gì về BFF, và giữ nguyên như vậy thì còn test được mà
- * không cần mock schema.
+ * Ghi một lần trả lời lên server. Trả về `true` khi server đã nhận. Hook không
+ * tự gọi Apollo: nó không biết gì về BFF, và giữ nguyên như vậy thì còn test
+ * được mà không cần mock schema.
  */
-type CheckSentence = (
-  sentenceId: string,
-  typed: string,
-) => Promise<DictationSubmission | null>;
+type RecordAttempt = (sentenceId: string, typed: string) => Promise<boolean>;
+
+/** Số lần thử ghi một câu trước khi báo là chưa lưu được. */
+const SAVE_ATTEMPTS = 3;
+/** Một câu đúng hoàn toàn dừng lại chừng này để người học thấy, rồi sang câu tiếp. */
+const AUTO_ADVANCE_MS = 900;
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function formatDuration(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
@@ -26,28 +29,32 @@ function formatDuration(totalSeconds: number): string {
   return minutes === 0 ? `${seconds}s` : `${minutes}m ${seconds}s`;
 }
 
+type Unsaved = { sentenceId: string; answer: string };
+
+/**
+ * Luyện một bài nghe chép. Chấm ngay trên trình duyệt: câu đã có transcript
+ * từ lúc mở bài, nên Enter cho kết quả tức thì, không chờ mạng. Server vẫn là
+ * nơi lưu: mỗi lần chấm được gửi nền, server chấm lại từ transcript của nó và
+ * chỉ điểm đó mới được ghi. Gửi hỏng không làm mất câu trả lời hay chặn người
+ * học - nó hiện thành cảnh báo "chưa lưu" kèm nút thử lại.
+ */
 export function useDictationPractice(
   lesson: DictationLesson,
   sentences: DictationSentence[],
-  checkSentence: CheckSentence,
+  recordAttempt: RecordAttempt,
 ) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typedText, setTypedText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [diffResult, setDiffResult] = useState<DiffResult | null>(null);
-  const [hintsUsedCount, setHintsUsedCount] = useState(0);
-  const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>(
-    {},
-  );
   const [isCompleted, setIsCompleted] = useState(false);
-  const pending = useRef(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionError, setSubmissionError] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [replayCount, setReplayCountState] = useState(0);
   const [clockStarted, setClockStarted] = useState(false);
+  const [unsaved, setUnsaved] = useState<Unsaved[]>([]);
+  const [savingCount, setSavingCount] = useState(0);
   const startedAtRef = useRef<number | null>(null);
-  const clearSubmissionError = useCallback(() => setSubmissionError(false), []);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const updateReplayCount = useCallback(
     (count: number) => setReplayCountState(count),
     [],
@@ -71,6 +78,14 @@ export function useDictationPractice(
     return () => clearInterval(timer);
   }, [clockStarted, isCompleted]);
 
+  const cancelAdvance = useCallback(() => {
+    if (advanceTimer.current !== null) {
+      clearTimeout(advanceTimer.current);
+      advanceTimer.current = null;
+    }
+  }, []);
+  useEffect(() => cancelAdvance, [cancelAdvance]);
+
   // Per-sentence recorded results
   const [completedResults, setCompletedResults] = useState<
     Array<{
@@ -88,94 +103,73 @@ export function useDictationPractice(
 
   const totalSentences = sentences.length;
 
+  /** Gửi nền một câu, thử lại vài lần; hỏng hẳn thì ghi vào danh sách chưa lưu. */
+  const persist = useCallback(
+    async (sentenceId: string, answer: string) => {
+      setSavingCount((count) => count + 1);
+      let saved = false;
+      for (let attempt = 0; attempt < SAVE_ATTEMPTS && !saved; attempt++) {
+        saved = await recordAttempt(sentenceId, answer).catch(() => false);
+        if (!saved && attempt + 1 < SAVE_ATTEMPTS) {
+          await wait(600 * (attempt + 1));
+        }
+      }
+      setSavingCount((count) => count - 1);
+      setUnsaved((list) => {
+        const rest = list.filter(
+          (item) => !(item.sentenceId === sentenceId && item.answer === answer),
+        );
+        return saved ? rest : [...rest, { sentenceId, answer }];
+      });
+    },
+    [recordAttempt],
+  );
+
+  const retrySaving = useCallback(() => {
+    for (const item of unsaved) void persist(item.sentenceId, item.answer);
+  }, [unsaved, persist]);
+
+  /** Sửa chữ sau khi đã chấm thì kết quả cũ hết đúng - bỏ đi để chấm lại, giữ nguyên chữ đã gõ. */
   const handleType = useCallback(
     (value: string) => {
       startClock();
+      cancelAdvance();
       setTypedText(value);
+      setIsChecked(false);
+      setDiffResult(null);
     },
-    [startClock],
+    [startClock, cancelAdvance],
   );
 
-  const revealHint = useCallback(
-    (hintKey: string) => {
+  /** Chấm một câu trả lời trên trình duyệt, ghi vào kết quả phiên và gửi nền lên server. */
+  const gradeAndRecord = useCallback(
+    (answer: string): DiffResult | null => {
+      if (!currentSentence || isCompleted) return null;
       startClock();
-      setRevealedHints((prev) => {
-        if (!prev[hintKey]) {
-          setHintsUsedCount((c) => c + 1);
-          return { ...prev, [hintKey]: true };
-        }
-        return prev;
-      });
+      const diff = computeWordDiff(currentSentence.text, answer);
+      setCompletedResults((prev) => [
+        ...prev.filter((r) => r.sentence.id !== currentSentence.id),
+        {
+          sentence: currentSentence,
+          learnerAnswer: answer,
+          correctText: currentSentence.text,
+          translationVi: currentSentence.translationVi ?? null,
+          diff,
+        },
+      ]);
+      void persist(currentSentence.id, answer);
+      return diff;
     },
-    [startClock],
+    [currentSentence, isCompleted, startClock, persist],
   );
-
-  /**
-   * Chấm bài. Con số là của server; `computeWordDiff` ở đây chỉ để tô màu chỗ
-   * sai trên transcript vừa nhận về, nên hai bên không thể nói khác nhau.
-   */
-  const recordAnswer = useCallback(
-    async (answer: string) => {
-      if (!currentSentence || pending.current || isCompleted) return null;
-      pending.current = true;
-      startClock();
-      setSubmissionError(false);
-      setIsSubmitting(true);
-      try {
-        const submission = await checkSentence(currentSentence.id, answer);
-        if (!submission) throw new Error("Submission unavailable");
-
-        const diff: DiffResult = {
-          ...computeWordDiff(submission.correctText, answer),
-          accuracyPercent: Math.round(submission.accuracyPercent),
-          correctWordsCount: submission.correctWordCount,
-          totalWordsCount: submission.totalWordCount,
-        };
-
-        setCompletedResults((prev) => [
-          ...prev.filter((r) => r.sentence.id !== currentSentence.id),
-          {
-            sentence: currentSentence,
-            learnerAnswer: answer,
-            correctText: submission.correctText,
-            translationVi: submission.translationVi ?? null,
-            diff,
-          },
-        ]);
-
-        return diff;
-      } catch {
-        setSubmissionError(true);
-        return null;
-      } finally {
-        pending.current = false;
-        setIsSubmitting(false);
-      }
-    },
-    [currentSentence, checkSentence, isCompleted, startClock],
-  );
-
-  const checkAnswer = useCallback(async () => {
-    const diff = await recordAnswer(typedText);
-    if (!diff) return;
-    setDiffResult(diff);
-    setIsChecked(true);
-  }, [recordAnswer, typedText]);
-
-  const tryAgain = useCallback(() => {
-    setIsChecked(false);
-    setDiffResult(null);
-    setSubmissionError(false);
-  }, []);
 
   const nextSentence = useCallback(() => {
-    if (pending.current) return;
+    cancelAdvance();
     if (currentIndex + 1 < totalSentences) {
       setCurrentIndex((prev) => prev + 1);
       setTypedText("");
       setIsChecked(false);
       setDiffResult(null);
-      setRevealedHints({});
     } else {
       if (startedAtRef.current !== null) {
         setElapsedSeconds(
@@ -184,33 +178,61 @@ export function useDictationPractice(
       }
       setIsCompleted(true);
     }
-  }, [currentIndex, totalSentences]);
+  }, [currentIndex, totalSentences, cancelAdvance]);
+
+  const nextRef = useRef(nextSentence);
+  useEffect(() => {
+    nextRef.current = nextSentence;
+  }, [nextSentence]);
+
+  const checkAnswer = useCallback(() => {
+    if (!typedText.trim()) return;
+    const diff = gradeAndRecord(typedText);
+    if (!diff) return;
+    setDiffResult(diff);
+    setIsChecked(true);
+    // Đúng hết thì không còn gì để xem lại: sang câu kế sau một nhịp ngắn.
+    if (diff.mistakesCount === 0) {
+      cancelAdvance();
+      advanceTimer.current = setTimeout(
+        () => nextRef.current(),
+        AUTO_ADVANCE_MS,
+      );
+    }
+  }, [typedText, gradeAndRecord, cancelAdvance]);
+
+  /** Enter: chưa chấm thì chấm; đã chấm mà chưa sửa gì thì sang câu kế. */
+  const submitOrAdvance = useCallback(() => {
+    if (isChecked) nextSentence();
+    else checkAnswer();
+  }, [isChecked, nextSentence, checkAnswer]);
+
+  const tryAgain = useCallback(() => {
+    cancelAdvance();
+    setIsChecked(false);
+    setDiffResult(null);
+  }, [cancelAdvance]);
 
   // Bỏ qua vẫn là một lần trả lời - ghi lại chuỗi rỗng để lịch sử phản ánh đúng
   // những câu người học né, chứ không phải những câu họ chưa gặp.
-  const skipSentence = useCallback(async () => {
-    const result = await recordAnswer("");
-    if (!result) return;
+  const skipSentence = useCallback(() => {
+    if (!gradeAndRecord("")) return;
     nextSentence();
-  }, [recordAnswer, nextSentence]);
+  }, [gradeAndRecord, nextSentence]);
 
   const restartPractice = useCallback(() => {
-    if (pending.current) return;
+    cancelAdvance();
     setCurrentIndex(0);
     setTypedText("");
     setIsChecked(false);
     setDiffResult(null);
-    setHintsUsedCount(0);
-    setRevealedHints({});
     setCompletedResults([]);
     setIsCompleted(false);
-    setIsSubmitting(false);
-    setSubmissionError(false);
     setElapsedSeconds(0);
     setReplayCountState(0);
     setClockStarted(false);
     startedAtRef.current = null;
-  }, []);
+  }, [cancelAdvance]);
 
   // Summary computed data
   const summaryData: DictationSessionSummaryData = useMemo(() => {
@@ -236,9 +258,9 @@ export function useDictationPractice(
       .filter((r) => r.diff.mistakesCount > 0)
       .map((r, i) => ({
         id: r.sentence.id,
-        sentenceLabel: `Sentence ${r.sentence.orderNo || i + 1}`,
+        sentenceNumber: r.sentence.orderNo || i + 1,
         accuracyPercent: r.diff.accuracyPercent,
-        learnerAnswer: r.learnerAnswer || "(Bỏ qua)",
+        learnerAnswer: r.learnerAnswer,
         correctAnswer: r.correctText,
       }));
 
@@ -254,7 +276,6 @@ export function useDictationPractice(
       studyDurationFormatted: formatDuration(elapsedSeconds),
       metrics: {
         replays: replayCount,
-        hintsUsed: hintsUsedCount,
         perfectSentences: perfectCount,
         sentencesWithMistakes: mistakesList.length,
       },
@@ -273,41 +294,31 @@ export function useDictationPractice(
   }, [
     completedResults,
     elapsedSeconds,
-    hintsUsedCount,
     lesson.targetLevel,
     lesson.title,
     replayCount,
   ]);
 
-  /** Transcript của câu vừa chấm. Rỗng cho tới khi người học nộp - đó là cả ý đồ. */
-  const currentResult = completedResults.find(
-    (r) => r.sentence.id === currentSentence?.id,
-  );
-  const currentCorrectText = currentResult?.correctText ?? "";
-  /** Nghĩa tiếng Việt của câu vừa chấm, nếu bài có - đến cùng lúc với transcript. */
-  const currentTranslation = currentResult?.translationVi ?? null;
-
   return {
     currentIndex,
     totalSentences,
     currentSentence,
-    currentCorrectText,
-    currentTranslation,
     typedText,
     isChecked,
-    isSubmitting,
-    submissionError,
-    clearSubmissionError,
+    /** Đúng hết và đang chuyển sang câu kế - khoá ô nhập trong nhịp ngắn đó. */
+    isAdvancing: isChecked && diffResult?.mistakesCount === 0,
+    /** Số lần chấm chưa gửi xong lên server (đang gửi hoặc đã hỏng). */
+    unsavedCount: unsaved.length,
+    isSaving: savingCount > 0,
+    retrySaving,
     setReplayCount: updateReplayCount,
     startSession: startClock,
     diffResult,
-    hintsUsedCount,
-    revealedHints,
     isCompleted,
     summaryData,
     handleType,
-    revealHint,
     checkAnswer,
+    submitOrAdvance,
     tryAgain,
     nextSentence,
     skipSentence,

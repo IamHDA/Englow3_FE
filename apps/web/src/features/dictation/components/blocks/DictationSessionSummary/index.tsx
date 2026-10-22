@@ -39,7 +39,7 @@ export function DictationSessionSummary({
   onRestart,
   onReviewMistakes,
 }: DictationSessionSummaryProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
 
   const kpiCards = [
     {
@@ -168,14 +168,6 @@ export function DictationSessionSummary({
                   </Text>
                   <Text size="sm" fw={700} c="ink.9">
                     {summary.metrics.replays} {t.dictation.timesUnit}
-                  </Text>
-                </Group>
-                <Group justify="space-between">
-                  <Text size="sm" c="ink.6">
-                    {t.dictation.hintsUsedCount}:
-                  </Text>
-                  <Text size="sm" fw={700} c="orange.8">
-                    {summary.metrics.hintsUsed} {t.dictation.hintsUnit}
                   </Text>
                 </Group>
                 <Group justify="space-between">
@@ -332,7 +324,7 @@ export function DictationSessionSummary({
                     <Paper key={m.id} radius="md" p="sm" withBorder bg="ink.0">
                       <Group justify="space-between" align="flex-start" mb={4}>
                         <Badge size="xs" variant="outline" color="navy">
-                          {m.sentenceLabel}
+                          {isVi ? "Câu" : "Sentence"} {m.sentenceNumber}
                         </Badge>
                         <Badge size="xs" color="warn" variant="light">
                           {m.accuracyPercent}%
@@ -347,7 +339,11 @@ export function DictationSessionSummary({
                               fontWeight: 600,
                             }}
                           >
-                            “{m.learnerAnswer}”
+                            {m.learnerAnswer
+                              ? `“${m.learnerAnswer}”`
+                              : isVi
+                                ? "(Bỏ qua)"
+                                : "(Skipped)"}
                           </span>
                         </Text>
                         <Text size="xs" c="ink.6">

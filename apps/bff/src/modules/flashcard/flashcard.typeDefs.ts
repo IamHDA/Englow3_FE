@@ -24,7 +24,9 @@ export const flashcardTypeDefs = /* GraphQL */ `
     name: String!
     description: String!
     topic: String!
-    """Null on a set that deliberately mixes levels."""
+    """
+    Null on a set that deliberately mixes levels.
+    """
     targetLevel: String
     cardCount: Int!
     """
@@ -33,7 +35,9 @@ export const flashcardTypeDefs = /* GraphQL */ `
     """
     dueCount: Int!
     masteredCount: Int!
-    """Null until the learner has answered a card in this set."""
+    """
+    Null until the learner has answered a card in this set.
+    """
     lastStudiedAt: DateTime
   }
 
@@ -50,11 +54,15 @@ export const flashcardTypeDefs = /* GraphQL */ `
     orderNo: Int!
     lemma: String!
     partOfSpeech: String!
-    """Which sense the card teaches - "bank (river)" is not "bank (money)"."""
+    """
+    Which sense the card teaches - "bank (river)" is not "bank (money)".
+    """
     senseLabel: String!
     ipaUs: String!
     ipaUk: String
-    """Pre-signed and short-lived - the backend resolves the object key."""
+    """
+    Pre-signed and short-lived - the backend resolves the object key.
+    """
     audioUsUrl: String
     audioUkUrl: String
     definitionEn: String!
@@ -64,7 +72,9 @@ export const flashcardTypeDefs = /* GraphQL */ `
     mnemonicTipVi: String
     cefrLevel: String
     status: FlashcardReviewStatus!
-    """Null for a card the learner has never answered."""
+    """
+    Null for a card the learner has never answered.
+    """
     dueAt: DateTime
     lapseCount: Int!
   }
@@ -123,7 +133,9 @@ export const flashcardTypeDefs = /* GraphQL */ `
     cardsStudied: Int!
     retentionPercent: Int!
     studySeconds: Int!
-    """Counted over a year, not the period - a 7-day view still shows a 40-day streak."""
+    """
+    Counted over a year, not the period - a 7-day view still shows a 40-day streak.
+    """
     streakDays: Int!
     activity: [FlashcardDailyActivity!]!
     difficultCards: [FlashcardDifficultCard!]!

@@ -17,14 +17,20 @@ export const speakingTypeDefs = /* GraphQL */ `
     title: String!
     category: String!
     targetLevel: String
-    """What the learner is asked to say. The accuracy score is accuracy against this."""
+    """
+    What the learner is asked to say. The accuracy score is accuracy against this.
+    """
     referenceText: String!
     ipaTranscript: String
     translationVi: String
-    """The sound being drilled, e.g. "/iː/ vs /ɪ/"."""
+    """
+    The sound being drilled, e.g. "/iː/ vs /ɪ/".
+    """
     phonemeTarget: String
     tips: [String!]!
-    """Per learner. Null until they have finished one."""
+    """
+    Per learner. Null until they have finished one.
+    """
     bestScorePercent: Float
   }
 
@@ -45,7 +51,9 @@ export const speakingTypeDefs = /* GraphQL */ `
     orderNo: Int!
     word: String!
     accuracyPercent: Float
-    """The provider's own label: Mispronunciation, Omission, Insertion, None."""
+    """
+    The provider's own label: Mispronunciation, Omission, Insertion, None.
+    """
     errorType: String
     offsetMs: Int
     durationMs: Int
@@ -66,24 +74,34 @@ export const speakingTypeDefs = /* GraphQL */ `
     promptTitle: String!
     referenceText: String!
     status: SpeakingAttemptStatus!
-    """Pre-signed and short-lived."""
+    """
+    Pre-signed and short-lived.
+    """
     audioUrl: String!
-    """What the provider heard. Null until assessed."""
+    """
+    What the provider heard. Null until assessed.
+    """
     recognizedText: String
     accuracyPercent: Float
     fluencyPercent: Float
     completenessPercent: Float
     prosodyPercent: Float
     pronunciationPercent: Float
-    """Why no score will arrive, when none will."""
+    """
+    Why no score will arrive, when none will.
+    """
     errorCode: String
     createdAt: DateTime!
     assessedAt: DateTime
-    """Empty while the assessment is still queued."""
+    """
+    Empty while the assessment is still queued.
+    """
     words: [SpeakingWord!]!
   }
 
-  """Where to put a recording, and for how long that offer stands."""
+  """
+  Where to put a recording, and for how long that offer stands.
+  """
   type SpeakingUploadTicket {
     attemptId: ID!
     """
@@ -93,7 +111,9 @@ export const speakingTypeDefs = /* GraphQL */ `
     """
     uploadUrl: String!
     contentType: String!
-    """Told to the client so it can say "start again" rather than failing on an expired URL."""
+    """
+    Told to the client so it can say "start again" rather than failing on an expired URL.
+    """
     expiresInSeconds: Int!
   }
 
@@ -107,10 +127,14 @@ export const speakingTypeDefs = /* GraphQL */ `
 
     speakingPrompt(id: ID!): SpeakingPrompt!
 
-    """What the screen polls while it waits for a score."""
+    """
+    What the screen polls while it waits for a score.
+    """
     speakingAttempt(id: ID!): SpeakingAttempt!
 
-    """This learner's own attempts at one prompt, newest first. No word breakdown."""
+    """
+    This learner's own attempts at one prompt, newest first. No word breakdown.
+    """
     speakingAttempts(promptId: ID!): [SpeakingAttempt!]!
   }
 

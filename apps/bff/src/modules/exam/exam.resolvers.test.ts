@@ -392,3 +392,33 @@ describe("Mutation.submitExamForReview", () => {
     expect(submitForReviewAsAdmin).toHaveBeenCalledWith("e-1");
   });
 });
+
+describe("Mutation.heartbeatExamAttempt", () => {
+  it("reports the sitting as seen and returns whether it is still open", async () => {
+    const heartbeat = vi.fn().mockResolvedValue(true);
+    const ctx = makeContext({ apis: { examApi: { heartbeat } } });
+
+    const open = await examResolvers.Mutation.heartbeatExamAttempt(
+      {},
+      { attemptId: "attempt-1" },
+      ctx,
+    );
+
+    expect(heartbeat).toHaveBeenCalledWith("attempt-1");
+    expect(open).toBe(true);
+  });
+
+  it("needs a signed-in caller", () => {
+    const heartbeat = vi.fn();
+    const ctx = makeContext({ token: null, apis: { examApi: { heartbeat } } });
+
+    expect(() =>
+      examResolvers.Mutation.heartbeatExamAttempt(
+        {},
+        { attemptId: "attempt-1" },
+        ctx,
+      ),
+    ).toThrow();
+    expect(heartbeat).not.toHaveBeenCalled();
+  });
+});
