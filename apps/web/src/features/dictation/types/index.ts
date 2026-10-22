@@ -56,6 +56,14 @@ export interface DiffResult {
   }>;
 }
 
+export interface DictationProgressiveFeedback {
+  correct: boolean;
+  words: Array<{
+    text: string;
+    state: "correct" | "hint" | "masked";
+  }>;
+}
+
 /**
  * Một câu người học hay sai, kèm đủ thứ để luyện lại.
  *

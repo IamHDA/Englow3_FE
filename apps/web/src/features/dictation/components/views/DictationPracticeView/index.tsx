@@ -24,7 +24,6 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useDictationAudio } from "../../../hooks/useDictationAudio";
 import { useDictationPractice } from "../../../hooks/useDictationPractice";
 import { DictationAudioPlayer } from "../../blocks/DictationAudioPlayer";
-import { DictationDiffResult } from "../../blocks/DictationDiffResult";
 import { DictationInputArea } from "../../blocks/DictationInputArea";
 import { DictationSessionSummary } from "../../blocks/DictationSessionSummary";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
@@ -235,6 +234,7 @@ export function DictationPracticeView({
           onSubmit={practice.submitOrAdvance}
           onSkip={practice.skipSentence}
           checked={practice.isChecked}
+          feedback={practice.progressiveFeedback}
           disabled={practice.isAdvancing}
           focusKey={practice.currentIndex}
         />
@@ -257,21 +257,6 @@ export function DictationPracticeView({
               {isVi ? "Lưu lại" : "Save again"}
             </Button>
           </Alert>
-        )}
-
-        {/* Checked Result Diff */}
-        {practice.isChecked && practice.diffResult && (
-          <DictationDiffResult
-            diff={practice.diffResult}
-            expectedSentence={practice.currentSentence.text}
-            translationVi={practice.currentSentence.translationVi ?? null}
-            onNextSentence={practice.nextSentence}
-            onTryAgain={practice.tryAgain}
-            onListenAgain={audio.replay}
-            isLastSentence={
-              practice.currentIndex + 1 >= practice.totalSentences
-            }
-          />
         )}
       </Stack>
     </Page>

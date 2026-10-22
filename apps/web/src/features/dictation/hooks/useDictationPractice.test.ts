@@ -59,8 +59,12 @@ describe("useDictationPractice", () => {
     act(() => result.current.handleType("Good mornin"));
     act(() => result.current.checkAnswer());
 
-    expect(result.current.isChecked).toBe(true);
+    expect(result.current.isChecked).toBe(false);
     expect(result.current.diffResult?.mistakesCount).toBeGreaterThan(0);
+    expect(result.current.progressiveFeedback?.words).toEqual([
+      { text: "Good", state: "correct" },
+      { text: "morning", state: "hint" },
+    ]);
     expect(record).toHaveBeenCalledWith(first.id, "Good mornin");
   });
 
@@ -73,6 +77,10 @@ describe("useDictationPractice", () => {
 
     expect(result.current.typedText).toBe("Good mornin ");
     expect(result.current.isChecked).toBe(false);
+    expect(result.current.progressiveFeedback?.words[1]).toEqual({
+      text: "morning",
+      state: "hint",
+    });
 
     act(() => result.current.handleType("Good morning"));
     act(() => result.current.checkAnswer());
@@ -109,15 +117,27 @@ describe("useDictationPractice", () => {
     expect(result.current.currentIndex).toBe(0);
   });
 
-  it("checks on the first Enter and goes to the next sentence on the second", () => {
-    const { result } = setup();
+  it("reveals one word per check instead of advancing an incomplete answer", () => {
+    const { result, record } = setup();
 
-    act(() => result.current.handleType("Good mornin"));
+    act(() => result.current.handleType("Good"));
+    act(() => result.current.submitOrAdvance());
+    expect(result.current.isChecked).toBe(false);
+    expect(result.current.currentIndex).toBe(0);
+    expect(result.current.progressiveFeedback?.words[1]).toEqual({
+      text: "morning",
+      state: "hint",
+    });
+
+    act(() => result.current.submitOrAdvance());
+    expect(result.current.currentIndex).toBe(0);
+    expect(record).toHaveBeenCalledTimes(1);
+
+    act(() => result.current.handleType("Good morning"));
     act(() => result.current.submitOrAdvance());
     expect(result.current.isChecked).toBe(true);
-    expect(result.current.currentIndex).toBe(0);
 
-    act(() => result.current.submitOrAdvance());
+    act(() => vi.advanceTimersByTime(1000));
     expect(result.current.currentIndex).toBe(1);
   });
 
@@ -150,8 +170,9 @@ describe("useDictationPractice", () => {
     });
 
     expect(record).toHaveBeenCalledTimes(3);
-    expect(result.current.isChecked).toBe(true);
+    expect(result.current.isChecked).toBe(false);
     expect(result.current.typedText).toBe("Good mornin");
+    expect(result.current.progressiveFeedback).not.toBeNull();
     expect(result.current.unsavedCount).toBe(1);
 
     record.mockResolvedValue(true);

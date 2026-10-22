@@ -10,9 +10,10 @@ import {
   Text,
   Textarea,
 } from "@mantine/core";
-import { Check, SkipForward } from "lucide-react";
+import { CircleCheck, Check, SkipForward, TriangleAlert } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import type { DictationProgressiveFeedback } from "../../../types";
 
 interface DictationInputAreaProps {
   value: string;
@@ -22,6 +23,7 @@ interface DictationInputAreaProps {
   onSkip: () => void;
   /** Đã chấm và chưa sửa chữ nào kể từ đó. */
   checked?: boolean;
+  feedback?: DictationProgressiveFeedback | null;
   disabled?: boolean;
   /** Đổi giá trị này (sang câu mới) thì đưa con trỏ về ô nhập. */
   focusKey?: string | number;
@@ -33,6 +35,7 @@ export function DictationInputArea({
   onSubmit,
   onSkip,
   checked = false,
+  feedback = null,
   disabled = false,
   focusKey,
 }: DictationInputAreaProps) {
@@ -73,6 +76,46 @@ export function DictationInputArea({
             },
           }}
         />
+
+        {feedback && (
+          <Stack gap={6} role="status" aria-live="polite">
+            <Group gap={6}>
+              {feedback.correct ? (
+                <CircleCheck size={18} color="var(--mantine-color-teal-7)" />
+              ) : (
+                <TriangleAlert
+                  size={18}
+                  color="var(--mantine-color-yellow-7)"
+                />
+              )}
+              <Text fw={600} c={feedback.correct ? "teal.7" : "yellow.8"}>
+                {feedback.correct
+                  ? isVi
+                    ? "Chính xác"
+                    : "Correct"
+                  : isVi
+                    ? "Chưa chính xác"
+                    : "Incorrect"}
+              </Text>
+            </Group>
+
+            <Group gap={6} wrap="wrap">
+              {feedback.words.map((word, index) => (
+                <Text
+                  component="span"
+                  key={`${index}-${word.text}`}
+                  fw={word.state === "hint" ? 700 : 500}
+                  c={word.state === "hint" ? "teal.7" : "ink.8"}
+                  style={{
+                    letterSpacing: word.state === "masked" ? 1 : undefined,
+                  }}
+                >
+                  {word.text}
+                </Text>
+              ))}
+            </Group>
+          </Stack>
+        )}
 
         <Flex
           direction={{ base: "column", sm: "row" }}

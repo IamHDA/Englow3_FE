@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeWordDiff } from "./diff";
+import { computeProgressiveFeedback, computeWordDiff } from "./diff";
 
 describe("computeWordDiff", () => {
   it("returns 100% accuracy on exact match ignoring punctuation and case", () => {
@@ -46,5 +46,32 @@ describe("computeWordDiff word definition", () => {
     );
     expect(diff.mistakesCount).toBe(0);
     expect(diff.accuracyPercent).toBe(100);
+  });
+});
+
+describe("computeProgressiveFeedback", () => {
+  it("reveals only the next word and masks the remainder", () => {
+    const feedback = computeProgressiveFeedback(
+      "Today is November 26th.",
+      "Today",
+    );
+
+    expect(feedback.correct).toBe(false);
+    expect(feedback.words).toEqual([
+      { text: "Today", state: "correct" },
+      { text: "is", state: "hint" },
+      { text: "********", state: "masked" },
+      { text: "*****", state: "masked" },
+    ]);
+  });
+
+  it("shows the full sentence only when it is correct", () => {
+    const feedback = computeProgressiveFeedback(
+      "Today is November 26th.",
+      "today is november 26th",
+    );
+
+    expect(feedback.correct).toBe(true);
+    expect(feedback.words.every((word) => word.state === "correct")).toBe(true);
   });
 });

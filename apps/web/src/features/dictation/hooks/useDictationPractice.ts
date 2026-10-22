@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { computeWordDiff } from "../utils/diff";
+import { computeProgressiveFeedback, computeWordDiff } from "../utils/diff";
 import type {
   DictationLesson,
   DictationSentence,
@@ -47,6 +47,7 @@ export function useDictationPractice(
   const [typedText, setTypedText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [diffResult, setDiffResult] = useState<DiffResult | null>(null);
+  const [feedbackAnswer, setFeedbackAnswer] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [replayCount, setReplayCountState] = useState(0);
@@ -129,16 +130,19 @@ export function useDictationPractice(
     for (const item of unsaved) void persist(item.sentenceId, item.answer);
   }, [unsaved, persist]);
 
-  /** Sửa chữ sau khi đã chấm thì kết quả cũ hết đúng - bỏ đi để chấm lại, giữ nguyên chữ đã gõ. */
+  /** Giữ gợi ý lần chấm trước trong lúc người học bổ sung câu trả lời. */
   const handleType = useCallback(
     (value: string) => {
       startClock();
       cancelAdvance();
       setTypedText(value);
+      if (isChecked) {
+        setFeedbackAnswer(null);
+        setDiffResult(null);
+      }
       setIsChecked(false);
-      setDiffResult(null);
     },
-    [startClock, cancelAdvance],
+    [startClock, cancelAdvance, isChecked],
   );
 
   /** Chấm một câu trả lời trên trình duyệt, ghi vào kết quả phiên và gửi nền lên server. */
@@ -170,6 +174,7 @@ export function useDictationPractice(
       setTypedText("");
       setIsChecked(false);
       setDiffResult(null);
+      setFeedbackAnswer(null);
     } else {
       if (startedAtRef.current !== null) {
         setElapsedSeconds(
@@ -187,10 +192,12 @@ export function useDictationPractice(
 
   const checkAnswer = useCallback(() => {
     if (!typedText.trim()) return;
+    if (typedText === feedbackAnswer) return;
     const diff = gradeAndRecord(typedText);
     if (!diff) return;
+    setFeedbackAnswer(typedText);
     setDiffResult(diff);
-    setIsChecked(true);
+    setIsChecked(diff.mistakesCount === 0);
     // Đúng hết thì không còn gì để xem lại: sang câu kế sau một nhịp ngắn.
     if (diff.mistakesCount === 0) {
       cancelAdvance();
@@ -199,19 +206,13 @@ export function useDictationPractice(
         AUTO_ADVANCE_MS,
       );
     }
-  }, [typedText, gradeAndRecord, cancelAdvance]);
+  }, [typedText, feedbackAnswer, gradeAndRecord, cancelAdvance]);
 
   /** Enter: chưa chấm thì chấm; đã chấm mà chưa sửa gì thì sang câu kế. */
   const submitOrAdvance = useCallback(() => {
     if (isChecked) nextSentence();
     else checkAnswer();
   }, [isChecked, nextSentence, checkAnswer]);
-
-  const tryAgain = useCallback(() => {
-    cancelAdvance();
-    setIsChecked(false);
-    setDiffResult(null);
-  }, [cancelAdvance]);
 
   // Bỏ qua vẫn là một lần trả lời - ghi lại chuỗi rỗng để lịch sử phản ánh đúng
   // những câu người học né, chứ không phải những câu họ chưa gặp.
@@ -226,6 +227,7 @@ export function useDictationPractice(
     setTypedText("");
     setIsChecked(false);
     setDiffResult(null);
+    setFeedbackAnswer(null);
     setCompletedResults([]);
     setIsCompleted(false);
     setElapsedSeconds(0);
@@ -299,6 +301,14 @@ export function useDictationPractice(
     replayCount,
   ]);
 
+  const progressiveFeedback = useMemo(
+    () =>
+      currentSentence && feedbackAnswer !== null
+        ? computeProgressiveFeedback(currentSentence.text, feedbackAnswer)
+        : null,
+    [currentSentence, feedbackAnswer],
+  );
+
   return {
     currentIndex,
     totalSentences,
@@ -314,12 +324,12 @@ export function useDictationPractice(
     setReplayCount: updateReplayCount,
     startSession: startClock,
     diffResult,
+    progressiveFeedback,
     isCompleted,
     summaryData,
     handleType,
     checkAnswer,
     submitOrAdvance,
-    tryAgain,
     nextSentence,
     skipSentence,
     restartPractice,

@@ -1,4 +1,8 @@
-import type { DiffItem, DiffResult } from "../types";
+import type {
+  DictationProgressiveFeedback,
+  DiffItem,
+  DiffResult,
+} from "../types";
 
 /**
  * Cùng định nghĩa "một từ" với bộ chấm của backend (DictationScorer): bỏ mọi
@@ -12,6 +16,55 @@ function cleanWord(word: string): string {
     .toLowerCase();
 }
 
+function words(text: string): string[] {
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter((token) => cleanWord(token) !== "");
+}
+
+/**
+ * Daily Dictation-style feedback: keep the correct prefix, reveal one next
+ * word, and mask everything after it until the learner checks again.
+ */
+export function computeProgressiveFeedback(
+  expectedText: string,
+  actualText: string,
+): DictationProgressiveFeedback {
+  const expectedWords = words(expectedText);
+  const actualWords = words(actualText);
+  let correctPrefix = 0;
+
+  while (
+    correctPrefix < expectedWords.length &&
+    correctPrefix < actualWords.length &&
+    cleanWord(expectedWords[correctPrefix]) ===
+      cleanWord(actualWords[correctPrefix])
+  ) {
+    correctPrefix++;
+  }
+
+  const correct =
+    correctPrefix === expectedWords.length &&
+    actualWords.length === expectedWords.length;
+
+  return {
+    correct,
+    words: expectedWords.map((word, index) => ({
+      text:
+        correct || index <= correctPrefix
+          ? word
+          : Array.from(word, () => "*").join(""),
+      state:
+        correct || index < correctPrefix
+          ? "correct"
+          : index === correctPrefix
+            ? "hint"
+            : "masked",
+    })),
+  };
+}
+
 /**
  * Word alignment using Longest Common Subsequence (LCS)
  */
@@ -20,13 +73,8 @@ export function computeWordDiff(
   actualText: string,
 ): DiffResult {
   // Một token chỉ toàn dấu câu (ví dụ "-") không phải từ, như phía backend.
-  const tokens = (text: string) =>
-    text
-      .trim()
-      .split(/\s+/)
-      .filter((token) => cleanWord(token) !== "");
-  const expectedTokens = tokens(expectedText);
-  const actualTokens = tokens(actualText);
+  const expectedTokens = words(expectedText);
+  const actualTokens = words(actualText);
 
   if (expectedTokens.length === 0) {
     return {
