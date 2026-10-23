@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   ClipboardList,
   CircleHelp,
+  CreditCard,
   Layers,
   LayoutDashboard,
   LogOut,
@@ -81,6 +82,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
       label: "Writing & Speaking",
       icon: ClipboardList,
     },
+    // Changing a plan is the administrator's alone.
+    ...(admin
+      ? [
+          {
+            href: "/admin/subscriptions",
+            label: isVi ? "Gói dịch vụ" : "Plans",
+            icon: CreditCard,
+          },
+        ]
+      : []),
   ];
   return (
     <AppShell

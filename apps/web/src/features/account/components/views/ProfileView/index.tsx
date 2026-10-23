@@ -30,6 +30,7 @@ import { ProfileForm } from "../../blocks/ProfileForm";
 import type { ProfileFormValues } from "../../blocks/ProfileForm/schema";
 import { ProfileHeader } from "../../blocks/ProfileHeader";
 import { ProfileLearningTab } from "../../blocks/ProfileLearningTab";
+import { ProfilePlanCard } from "../../blocks/ProfilePlanCard";
 import { ProfileSecurityTab } from "../../blocks/ProfileSecurityTab";
 import { ProfileSkeleton } from "../../blocks/ProfileSkeleton";
 import { ProfileTargetCard } from "../../blocks/ProfileTargetCard";
@@ -148,6 +149,7 @@ export function ProfileView({ initialTab = "info" }: { initialTab?: string }) {
           <Stack gap="lg">
             <ProfileHeader profile={profile} />
             <ProfileTargetCard profile={profile} />
+            <ProfilePlanCard />
           </Stack>
         </Grid.Col>
 

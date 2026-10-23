@@ -189,6 +189,10 @@ const vi = {
   footerCta: "Vào tài khoản để tiếp tục hành trình của bạn.",
   login: "Đăng nhập",
   footerNote: "Học đều đặn. Tiến bộ mỗi ngày.",
+  legalNav: "Thông tin pháp lý",
+  pricingNav: "Bảng giá",
+  termsNav: "Điều khoản sử dụng",
+  privacyNav: "Chính sách bảo mật",
 };
 const en: typeof vi = {
   loopTile: "Repeat each day,\ngrow a little stronger",
@@ -381,5 +385,9 @@ const en: typeof vi = {
   footerCta: "Sign in to continue your learning journey.",
   login: "Sign in",
   footerNote: "Learn consistently. Grow every day.",
+  legalNav: "Legal",
+  pricingNav: "Pricing",
+  termsNav: "Terms of service",
+  privacyNav: "Privacy policy",
 };
 export const landingContent = { vi, en };

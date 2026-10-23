@@ -52,6 +52,8 @@ describe("/api/bff/rest", () => {
     ["POST", `admin/flashcards/sets/${UUID}/import`],
     ["POST", "admin/dictation/import"],
     ["POST", "admin/dictation/import/validate"],
+    ["PUT", "admin/subscriptions"],
+    ["POST", "admin/subscriptions/revoke"],
   ])("passes %s %s on with the token added", async (method, path) => {
     const handler = { GET, POST, PUT }[method as "GET" | "POST" | "PUT"];
 
@@ -76,6 +78,7 @@ describe("/api/bff/rest", () => {
     "admin/authoring/exam/x",
     `admin/authoring/EXAM/${UUID}/../../../actuator`,
     "admin/dictation/import/extra",
+    "admin/subscriptions/other",
     "learner/anything",
     "",
   ])("does not reach %j, which is not a path the screens use", async (path) => {

@@ -1,3 +1,4 @@
+import { reportError } from "../../observability/errorReporting.js";
 import { BackendError } from "./backendError.js";
 
 /**
@@ -16,6 +17,7 @@ export function logServerError({
   error: unknown;
 }) {
   const backend = error instanceof BackendError ? error : undefined;
+  reportError(error, { requestId, where });
 
   console.error(
     JSON.stringify({

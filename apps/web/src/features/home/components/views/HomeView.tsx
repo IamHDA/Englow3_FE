@@ -425,6 +425,11 @@ export function HomeView() {
               © {new Date().getFullYear()} Englow3 · {c.footerNote}
             </span>
             <span>{c.skills.join(" · ")}</span>
+            <nav aria-label={c.legalNav} className={classes.footerLegal}>
+              <a href="/pricing">{c.pricingNav}</a>
+              <a href="/terms">{c.termsNav}</a>
+              <a href="/privacy">{c.privacyNav}</a>
+            </nav>
           </div>
         </div>
       </footer>

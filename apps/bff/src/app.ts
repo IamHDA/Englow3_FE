@@ -3,6 +3,7 @@ import { expressMiddleware } from "@as-integrations/express4";
 import express from "express";
 
 import { env } from "./config/env.js";
+import { initErrorReporting } from "./observability/errorReporting.js";
 import { corsMiddleware, rateLimitMiddleware } from "./config/middleware.js";
 import { createContext, type GraphQLContext } from "./graphql/context.js";
 import { formatError, logServerErrors } from "./graphql/errors.js";
@@ -13,6 +14,7 @@ import { tutorStreamRoute } from "./http/tutorStreamRoute.js";
 import { tutorAudioRoute } from "./http/tutorAudioRoute.js";
 import { tutorDataRoute } from "./http/tutorDataRoute.js";
 import { authoringRoute } from "./http/authoringRoute.js";
+import { accountRoute } from "./http/accountRoute.js";
 import { serviceStatusRoute } from "./http/serviceStatus.js";
 
 /**
@@ -21,6 +23,7 @@ import { serviceStatusRoute } from "./http/serviceStatus.js";
  * in both - which is the point: `/rest` once existed locally and not deployed.
  */
 export async function createApp() {
+  initErrorReporting();
   const apollo = new ApolloServer<GraphQLContext>({
     typeDefs,
     resolvers,
@@ -62,6 +65,7 @@ export async function createApp() {
   app.use("/rest", corsMiddleware(), rateLimitMiddleware(), tutorDataRoute());
   app.use("/rest", corsMiddleware(), rateLimitMiddleware(), importRoute());
   app.use("/rest", corsMiddleware(), rateLimitMiddleware(), authoringRoute());
+  app.use("/rest", corsMiddleware(), rateLimitMiddleware(), accountRoute());
 
   return app;
 }

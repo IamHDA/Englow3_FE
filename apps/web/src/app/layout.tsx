@@ -22,8 +22,10 @@ import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { JitlessZod } from "@/lib/zod/JitlessZod";
 import { NavigationProgress } from "@/shared/components/NavigationProgress";
 import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
+import { CookieNotice } from "@/shared/components/CookieNotice";
 import { ServiceRecovery } from "@/shared/components/ServiceRecovery";
 import { theme } from "@/lib/mantine/theme";
+import { siteUrl } from "@/config/siteUrl";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
 import { SkipLink } from "@/shared/components/SkipLink";
@@ -45,10 +47,30 @@ const body = Source_Sans_3({
   display: "swap",
 });
 
+const title = "Englow3 — Chinh phục tiếng Anh cùng Trí tuệ AI";
+const description =
+  "Chấm điểm phát âm AI theo thời gian thực, lộ trình học hàng ngày thích ứng, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.";
+
 export const metadata: Metadata = {
-  title: "Englow3 — Chinh phục tiếng Anh cùng Trí tuệ AI",
-  description:
-    "Chấm điểm phát âm AI theo thời gian thực, lộ trình học hàng ngày thích ứng, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
+  metadataBase: new URL(siteUrl()),
+  title,
+  description,
+  // What other sites show when a link is shared. Without these a pasted link
+  // is a bare URL, which is the first impression most visitors get.
+  openGraph: {
+    type: "website",
+    siteName: "Englow3",
+    locale: "vi_VN",
+    title,
+    description,
+    images: [{ url: "/englow3_hero.png", alt: "Englow3" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/englow3_hero.png"],
+  },
 };
 
 export default async function RootLayout({
@@ -101,6 +123,7 @@ export default async function RootLayout({
                         {children}
                       </main>
                       <OnboardingGate />
+                      <CookieNotice />
                     </UserTourProvider>
                   </OnboardingProvider>
                 </LanguageProvider>

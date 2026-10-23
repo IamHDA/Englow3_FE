@@ -311,11 +311,27 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         label={
           <Text size="sm" c="ink.7" component="span">
             {t.auth.termsAgreementPre}{" "}
-            <Text component="span" fw={600} c="navy.9">
+            <Text
+              component="a"
+              href="/terms"
+              target="_blank"
+              rel="noopener"
+              fw={600}
+              c="navy.9"
+              td="underline"
+            >
               {t.auth.termsOfService}
             </Text>{" "}
             {t.auth.andWord}{" "}
-            <Text component="span" fw={600} c="navy.9">
+            <Text
+              component="a"
+              href="/privacy"
+              target="_blank"
+              rel="noopener"
+              fw={600}
+              c="navy.9"
+              td="underline"
+            >
               {t.auth.privacyPolicy}
             </Text>
             {t.auth.termsAgreementPost ? ` ${t.auth.termsAgreementPost}` : "."}

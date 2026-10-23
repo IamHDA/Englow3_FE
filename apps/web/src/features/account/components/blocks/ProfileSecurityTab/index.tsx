@@ -18,6 +18,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import { sendPasswordResetLink } from "@/features/auth/api/authClient";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import type { AccountProfile } from "../../../types";
+import { ProfileDataCard } from "../ProfileDataCard";
 
 import classes from "./ProfileSecurityTab.module.css";
 
@@ -125,6 +126,8 @@ export function ProfileSecurityTab({ profile }: ProfileSecurityTabProps) {
           </Paper>
         </Stack>
       </Paper>
+
+      <ProfileDataCard email={profile.email} />
     </Stack>
   );
 }

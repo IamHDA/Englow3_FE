@@ -21,6 +21,7 @@ const ALLOWED = new RegExp(
     `|flashcards/import/validate` +
     `|flashcards/sets/${UUID}/import` +
     `|dictation/import(/validate)?` +
+    `|subscriptions(/revoke)?` +
     `)$`,
 );
 
