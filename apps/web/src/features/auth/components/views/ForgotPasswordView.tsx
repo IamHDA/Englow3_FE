@@ -37,7 +37,7 @@ export function ForgotPasswordView({
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   return (
-    <Center mih="100vh" bg="ink.0" px="md" py="xl">
+    <Center flex={1} bg="ink.0" px="md" py="xl">
       <Paper
         radius={20}
         shadow="md"
