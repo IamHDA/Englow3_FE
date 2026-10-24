@@ -99,7 +99,27 @@ it("uses this deployment's callback for password-reset email", async () => {
     200,
   );
   expect(api.resetPasswordForEmail).toHaveBeenCalledWith(body.email, {
-    redirectTo: "https://englow.example/auth/callback?next=/auth/reset",
+    redirectTo: "https://englow.example/auth/callback",
+  });
+});
+it("keeps the allowlisted testing callback when the server URL is internal", async () => {
+  const response = await forgot(
+    new Request("http://localhost:3000/api/auth/forgot", {
+      method: "POST",
+      headers: {
+        host: "localhost:3000",
+        "x-forwarded-host": "englow3-web-test.vercel.app",
+        origin: "https://englow3-web-test.vercel.app",
+        [CSRF_HEADER]: CSRF_VALUE,
+        "content-type": "application/json",
+        "x-forwarded-for": crypto.randomUUID(),
+      },
+      body: JSON.stringify({ email: body.email }),
+    }),
+  );
+  expect(response.status).toBe(200);
+  expect(api.resetPasswordForEmail).toHaveBeenCalledWith(body.email, {
+    redirectTo: "https://englow3-web-test.vercel.app/auth/callback",
   });
 });
 it("rejects weak password changes before touching the signed-in account", async () => {

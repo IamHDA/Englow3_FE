@@ -61,6 +61,17 @@ it("uses the SDK recovery marker when Supabase fell back to the root URL", async
     "https://englow.example/auth/reset",
   );
 });
+it("opens reset for a recovery callback without a next query or flow id", async () => {
+  exchange.mockResolvedValue({
+    ...success(),
+    data: { ...success().data, redirectType: "recovery" },
+  });
+  const response = await GET(request("code=recovery-code"));
+  expect(exchange).toHaveBeenCalledWith("recovery-code", undefined);
+  expect(response.headers.get("location")).toBe(
+    "https://englow.example/auth/reset",
+  );
+});
 it("offers another reset link for expired recovery tokens", async () => {
   exchange.mockResolvedValue({
     data: { user: null },
