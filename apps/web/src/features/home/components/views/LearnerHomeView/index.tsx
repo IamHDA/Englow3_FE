@@ -26,6 +26,8 @@ import {
   Mic,
   PenLine,
   Sparkles,
+  Route,
+  UserRound,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -66,11 +68,21 @@ type Shortcut = {
   vi: string;
   en: string;
   tone: string;
+  tourTarget: string;
 };
 
 const SHORTCUTS: Shortcut[] = [
   {
+    href: "/study/daily-path",
+    icon: Route,
+    vi: "Lộ trình",
+    en: "Daily path",
+    tone: "teal",
+    tourTarget: "learner-daily-path",
+  },
+  {
     href: "/study/writing",
+    tourTarget: "learner-writing",
     icon: PenLine,
     vi: "Luyện viết",
     en: "Writing",
@@ -78,6 +90,7 @@ const SHORTCUTS: Shortcut[] = [
   },
   {
     href: "/study/speaking",
+    tourTarget: "learner-speaking",
     icon: Mic,
     vi: "Luyện nói",
     en: "Speaking",
@@ -85,6 +98,7 @@ const SHORTCUTS: Shortcut[] = [
   },
   {
     href: "/study/flashcards",
+    tourTarget: "learner-flashcards",
     icon: Layers,
     vi: "Thẻ từ",
     en: "Flashcards",
@@ -92,6 +106,7 @@ const SHORTCUTS: Shortcut[] = [
   },
   {
     href: "/study/dictation",
+    tourTarget: "learner-dictation",
     icon: Headphones,
     vi: "Nghe chép",
     en: "Dictation",
@@ -99,6 +114,7 @@ const SHORTCUTS: Shortcut[] = [
   },
   {
     href: "/study/pronunciation",
+    tourTarget: "learner-pronunciation",
     icon: Mic,
     vi: "Phát âm",
     en: "Pronunciation",
@@ -106,6 +122,7 @@ const SHORTCUTS: Shortcut[] = [
   },
   {
     href: "/exams",
+    tourTarget: "learner-exams",
     icon: ClipboardCheck,
     vi: "Thi thử",
     en: "Mock exams",
@@ -113,10 +130,19 @@ const SHORTCUTS: Shortcut[] = [
   },
   {
     href: "/ai-tutor",
+    tourTarget: "learner-ai-tutor",
     icon: Bot,
     vi: "Gia sư AI",
     en: "AI tutor",
     tone: "cyan",
+  },
+  {
+    href: "/profile",
+    icon: UserRound,
+    vi: "Hồ sơ",
+    en: "Profile",
+    tone: "navy",
+    tourTarget: "learner-profile",
   },
 ];
 
@@ -314,26 +340,29 @@ export function LearnerHomeView() {
                 {t.home.practiceSectionTitle}
               </Title>
               <SimpleGrid cols={{ base: 3, sm: 5 }} spacing="sm">
-                {SHORTCUTS.map(({ href, icon: Icon, vi, en, tone }) => (
-                  <UnstyledButton
-                    key={href}
-                    component={Link}
-                    href={href}
-                    className={classes.shortcut}
-                  >
-                    <ThemeIcon
-                      variant="light"
-                      color={tone}
-                      size={44}
-                      radius="md"
+                {SHORTCUTS.map(
+                  ({ href, icon: Icon, vi, en, tone, tourTarget }) => (
+                    <UnstyledButton
+                      key={href}
+                      component={Link}
+                      href={href}
+                      data-tour={tourTarget}
+                      className={classes.shortcut}
                     >
-                      <Icon size={22} aria-hidden="true" />
-                    </ThemeIcon>
-                    <Text fw={600} size="sm" mt={8}>
-                      {isVi ? vi : en}
-                    </Text>
-                  </UnstyledButton>
-                ))}
+                      <ThemeIcon
+                        variant="light"
+                        color={tone}
+                        size={44}
+                        radius="md"
+                      >
+                        <Icon size={22} aria-hidden="true" />
+                      </ThemeIcon>
+                      <Text fw={600} size="sm" mt={8}>
+                        {isVi ? vi : en}
+                      </Text>
+                    </UnstyledButton>
+                  ),
+                )}
               </SimpleGrid>
             </Stack>
           </Stack>

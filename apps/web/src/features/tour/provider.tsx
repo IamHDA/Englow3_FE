@@ -1,18 +1,6 @@
 "use client";
 
-import {
-  Alert,
-  Badge,
-  Button,
-  Group,
-  Modal,
-  Progress,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
@@ -23,18 +11,14 @@ import {
   useCompleteMyTourMutation,
   useMyTourStatusQuery,
 } from "@/lib/graphql/generated/hooks";
-import { useLanguage } from "@/shared/hooks/useLanguage";
+import { TourSpotlight } from "./TourSpotlight";
 
-import {
-  ADMIN_TOUR,
-  LEARNER_TOUR,
-  STAFF_TOUR,
-  type TourStep,
-} from "./constants/tourSteps";
+import { ADMIN_TOUR, LEARNER_TOUR, STAFF_TOUR } from "./constants/tourSteps";
 
 type UserTourContextValue = {
   canReplay: boolean;
   replay: () => void;
+  activeTarget: string | null;
 };
 
 const UserTourContext = createContext<UserTourContextValue | null>(null);
@@ -45,7 +29,9 @@ export function useUserTour(): UserTourContextValue {
   return context;
 }
 
-function stepsFor(role: Role): readonly TourStep[] {
+function stepsFor(
+  role: Role,
+): readonly import("./constants/tourSteps").TourStep[] {
   switch (role) {
     case Role.ADMIN:
       return ADMIN_TOUR;
@@ -56,131 +42,16 @@ function stepsFor(role: Role): readonly TourStep[] {
   }
 }
 
-function TourDialog({
-  steps,
-  opened,
-  onDismiss,
-}: {
-  steps: readonly TourStep[];
-  opened: boolean;
-  onDismiss: () => Promise<void>;
-}) {
-  const { isVi } = useLanguage();
-  const [stepIndex, setStepIndex] = useState(0);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
-  const step = steps[stepIndex];
-
-  async function dismiss() {
-    if (busy) return;
-    setBusy(true);
-    setError(false);
-    try {
-      await onDismiss();
-    } catch {
-      setError(true);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <Modal
-      opened={opened}
-      onClose={() => void dismiss()}
-      title={isVi ? "Hướng dẫn sử dụng Englow3" : "Explore Englow3"}
-      centered
-      size={620}
-      radius="lg"
-      closeOnClickOutside={false}
-      closeOnEscape={!busy}
-      withCloseButton={false}
-    >
-      <Stack gap="lg">
-        <Group justify="space-between">
-          <Badge variant="light" color="orange">
-            {isVi
-              ? `Bước ${stepIndex + 1} / ${steps.length}`
-              : `Step ${stepIndex + 1} / ${steps.length}`}
-          </Badge>
-          <Button
-            variant="subtle"
-            color="gray"
-            size="xs"
-            onClick={() => void dismiss()}
-            disabled={busy}
-          >
-            {isVi ? "Bỏ qua" : "Skip"}
-          </Button>
-        </Group>
-        <Progress
-          value={((stepIndex + 1) / steps.length) * 100}
-          color="orange"
-          aria-label={isVi ? "Tiến độ hướng dẫn" : "Tour progress"}
-        />
-        <Stack gap="xs">
-          <Title order={2}>{isVi ? step.titleVi : step.titleEn}</Title>
-          <Text c="dimmed">{isVi ? step.bodyVi : step.bodyEn}</Text>
-        </Stack>
-        <Group gap="xs">
-          {step.links.map((link) => (
-            <Button
-              key={link.href}
-              component={Link}
-              href={link.href}
-              variant="light"
-              color="navy"
-              size="sm"
-            >
-              {isVi ? link.vi : link.en}
-            </Button>
-          ))}
-        </Group>
-        {error && (
-          <Alert color="red" role="alert">
-            {isVi
-              ? "Chưa lưu được hướng dẫn. Vui lòng thử lại."
-              : "Could not save your tour progress. Please retry."}
-          </Alert>
-        )}
-        <Group justify="space-between">
-          <Button
-            variant="subtle"
-            disabled={stepIndex === 0 || busy}
-            onClick={() => setStepIndex((index) => index - 1)}
-          >
-            {isVi ? "Quay lại" : "Back"}
-          </Button>
-          {stepIndex === steps.length - 1 ? (
-            <Button
-              color="orange"
-              loading={busy}
-              onClick={() => void dismiss()}
-            >
-              {isVi ? "Hoàn tất" : "Finish"}
-            </Button>
-          ) : (
-            <Button
-              color="orange"
-              onClick={() => setStepIndex((index) => index + 1)}
-            >
-              {isVi ? "Tiếp" : "Next"}
-            </Button>
-          )}
-        </Group>
-      </Stack>
-    </Modal>
-  );
-}
-
 export function UserTourProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const { profile } = useAccountProfile();
   const { requiresOnboarding } = useOnboarding();
   const pathname = usePathname();
+  const router = useRouter();
   const role = profile?.role;
   const identity = profile ? `${profile.id}:${role}` : null;
   const isBackOffice = role === Role.ADMIN || role === Role.STAFF;
+  const home = isBackOffice ? "/admin" : "/";
   const eligible = Boolean(
     session &&
     profile &&
@@ -207,9 +78,13 @@ export function UserTourProvider({ children }: { children: ReactNode }) {
   );
   const [replayIdentity, setReplayIdentity] = useState<string | null>(null);
   const [replayNumber, setReplayNumber] = useState(0);
+  const [stepIndex, setStepIndex] = useState(0);
+  const steps = role ? stepsFor(role) : [];
+  const index = Math.min(stepIndex, Math.max(0, steps.length - 1));
   const completed = data?.myTourStatus.completed === true;
   const opened =
     eligible &&
+    pathname === home &&
     identity != null &&
     (replayIdentity === identity ||
       (!loading &&
@@ -231,19 +106,35 @@ export function UserTourProvider({ children }: { children: ReactNode }) {
 
   function replay() {
     if (!eligible || !identity) return;
+    setStepIndex(0);
     setReplayNumber((number) => number + 1);
     setReplayIdentity(identity);
+    if (pathname !== home) router.push(home);
+  }
+
+  function pause() {
+    setDismissedIdentity(identity);
+    setReplayIdentity(null);
   }
 
   return (
-    <UserTourContext.Provider value={{ canReplay: eligible, replay }}>
+    <UserTourContext.Provider
+      value={{
+        canReplay: eligible,
+        replay,
+        activeTarget: opened ? steps[index].target : null,
+      }}
+    >
       {children}
       {role && (
-        <TourDialog
+        <TourSpotlight
           key={`${identity}:${replayNumber}`}
-          steps={stepsFor(role)}
+          steps={steps}
+          stepIndex={index}
+          onStepChange={setStepIndex}
           opened={opened}
           onDismiss={dismiss}
+          onPause={pause}
         />
       )}
     </UserTourContext.Provider>

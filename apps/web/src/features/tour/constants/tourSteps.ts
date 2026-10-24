@@ -1,178 +1,185 @@
-export type TourLink = {
-  href: string;
-  vi: string;
-  en: string;
-};
-
 export type TourStep = {
+  target: string;
+  placement?: "bottom" | "right";
   titleVi: string;
   titleEn: string;
   bodyVi: string;
   bodyEn: string;
-  links: TourLink[];
 };
 
 export const LEARNER_TOUR: readonly TourStep[] = [
   {
-    titleVi: "Bắt đầu từ trang chủ",
-    titleEn: "Start from your home page",
+    target: "learner-placement",
+    titleVi: "Bài kiểm tra đầu vào",
+    titleEn: "Check your starting level",
     bodyVi:
-      "Trang chủ chỉ ra việc nên học tiếp, nhiệm vụ hôm nay và các lối tắt tới bài luyện tập.",
+      "Nút này mở bài kiểm tra đầu vào khi có đề được phát hành. Kết quả giúp ghi nhận trình độ của bạn; bạn cũng có thể tự chọn trình độ khi thiết lập mục tiêu.",
     bodyEn:
-      "Your home page shows what to study next, today's tasks and shortcuts to practice.",
-    links: [{ href: "/", vi: "Trang chủ", en: "Home" }],
+      "Open a published placement test here to record your level from the result. You can also choose your own level during goal setup.",
   },
   {
-    titleVi: "Luyện Writing và Speaking",
-    titleEn: "Practise Writing and Speaking",
-    bodyVi:
-      "Chọn đề đã xuất bản, lưu bài viết hoặc ghi âm câu trả lời rồi nộp để nhận điểm và góp ý theo 4 tiêu chí. Xem lại bài trong lịch sử luyện tập.",
-    bodyEn:
-      "Choose a published task, save your essay or record an answer, then submit for four-criterion feedback. Review responses in your practice history.",
-    links: [
-      { href: "/study/writing", vi: "Writing", en: "Writing" },
-      { href: "/study/speaking", vi: "Speaking", en: "Speaking" },
-    ],
-  },
-  {
+    target: "learner-daily-path",
     titleVi: "Theo lộ trình mỗi ngày",
     titleEn: "Follow your daily path",
     bodyVi:
-      "Lộ trình sắp xếp bài học, ghi nhận XP và số ngày học liên tiếp. Bạn có thể chọn bài phù hợp với mình.",
+      "Mở lộ trình tại đây để chọn việc học tiếp theo, xem nhiệm vụ hôm nay, XP và chuỗi ngày học.",
     bodyEn:
-      "Your path organizes tasks, XP and your study streak. Pick a task that suits you.",
-    links: [{ href: "/study/daily-path", vi: "Lộ trình", en: "Daily path" }],
+      "Open your daily path here to choose your next task and see daily goals, XP and your study streak.",
   },
   {
-    titleVi: "Chọn cách luyện tập",
-    titleEn: "Choose how to practise",
+    target: "learner-writing",
+    titleVi: "Luyện viết và nhận góp ý",
+    titleEn: "Practise writing with feedback",
     bodyVi:
-      "Ôn từ bằng Flashcard, làm Quiz để tự kiểm tra và nghe chép Dictation để luyện tai.",
+      "Bấm Luyện viết để chọn đề, lưu bài và nộp chấm. Khi có kết quả, xem điểm và góp ý theo từng tiêu chí.",
     bodyEn:
-      "Review words with flashcards, check yourself with quizzes and practise listening through dictation.",
-    links: [
-      { href: "/study/flashcards", vi: "Flashcard", en: "Flashcards" },
-      { href: "/study/daily-path?tab=quizzes", vi: "Quiz", en: "Quizzes" },
-      { href: "/study/dictation", vi: "Dictation", en: "Dictation" },
-    ],
+      "Choose Writing to pick a task, save your essay and submit it. Review scores and feedback for each criterion when results are ready.",
   },
   {
-    titleVi: "Luyện cùng công cụ AI",
-    titleEn: "Practise with AI tools",
+    target: "learner-speaking",
+    titleVi: "Luyện nói bằng bản ghi âm",
+    titleEn: "Practise speaking with recordings",
     bodyVi:
-      "Gia sư AI hỗ trợ hỏi đáp. Phần luyện nói cho phép ghi âm và xem phân tích phát âm khi dịch vụ chấm giọng nói được bật.",
+      "Bấm Luyện nói để chọn câu hỏi, ghi âm và nộp bài. Nghe lại bản ghi và xem phản hồi trong lịch sử luyện tập.",
     bodyEn:
-      "Ask the AI tutor questions. Speaking practice lets you record and see pronunciation feedback when speech assessment is enabled.",
-    links: [
-      { href: "/ai-tutor", vi: "Gia sư AI", en: "AI tutor" },
-      { href: "/study/pronunciation", vi: "Phát âm", en: "Pronunciation" },
-    ],
+      "Choose Speaking to pick a prompt, record and submit your answer. Replay recordings and review feedback in your practice history.",
   },
   {
-    titleVi: "Thi thử và xem tiến độ",
-    titleEn: "Take exams and track progress",
+    target: "learner-flashcards",
+    titleVi: "Ôn từ bằng thẻ ghi nhớ",
+    titleEn: "Review words with flashcards",
     bodyVi:
-      "Chọn đề thi thử, xem kết quả sau khi nộp bài và mở hồ sơ để theo dõi mục tiêu học tập.",
+      "Mở Thẻ từ để chọn bộ từ, lật thẻ và đánh giá mức ghi nhớ. Kết quả giúp hệ thống sắp lịch ôn lại.",
     bodyEn:
-      "Choose a mock exam, review the result after submission and track your goals in your profile.",
-    links: [
-      { href: "/exams", vi: "Đề thi", en: "Mock exams" },
-      { href: "/profile", vi: "Hồ sơ", en: "Profile" },
-    ],
+      "Open Flashcards to choose a set, flip cards and rate your recall. Your ratings help schedule future reviews.",
+  },
+  {
+    target: "learner-dictation",
+    titleVi: "Luyện nghe chép chính tả",
+    titleEn: "Practise listening with dictation",
+    bodyVi:
+      "Mở Nghe chép, chọn bài, nghe và nhập lại nội dung. Xem đáp án và lỗi sai sau khi nộp.",
+    bodyEn:
+      "Open Dictation, choose a lesson, listen and type what you hear. Review the transcript and mistakes after submitting.",
+  },
+  {
+    target: "learner-pronunciation",
+    titleVi: "Luyện phát âm",
+    titleEn: "Practise pronunciation",
+    bodyVi:
+      "Mở Phát âm để chọn bài luyện và ghi âm. Phân tích phát âm xuất hiện khi dịch vụ chấm giọng nói được bật.",
+    bodyEn:
+      "Open Pronunciation to choose a lesson and record yourself. Analysis is available when speech assessment is enabled.",
+  },
+  {
+    target: "learner-ai-tutor",
+    titleVi: "Hỏi gia sư AI",
+    titleEn: "Ask the AI tutor",
+    bodyVi:
+      "Mở Gia sư AI để hỏi về tiếng Anh, luyện theo tình huống và xem lại lịch sử trao đổi.",
+    bodyEn:
+      "Open the AI tutor to ask English questions, practise scenarios and revisit your conversations.",
+  },
+  {
+    target: "learner-exams",
+    titleVi: "Thi thử và xem kết quả",
+    titleEn: "Take mock exams",
+    bodyVi:
+      "Bấm Thi thử để chọn đề đã xuất bản, xem cấu trúc và bắt đầu làm bài. Kết quả được lưu để xem lại sau khi nộp.",
+    bodyEn:
+      "Choose Mock exams to select a published paper, review its structure and start. Results are saved after submission.",
+  },
+  {
+    target: "learner-profile",
+    titleVi: "Theo dõi hồ sơ và mục tiêu",
+    titleEn: "Review your profile and goals",
+    bodyVi:
+      "Mở Hồ sơ để xem thông tin cá nhân, trình độ và mục tiêu. Bạn có thể mở lại hướng dẫn từ trang chủ hoặc menu tài khoản.",
+    bodyEn:
+      "Open Profile to review your details, level and goals. Replay this guide from the home page or account menu.",
   },
 ];
 
 export const STAFF_TOUR: readonly TourStep[] = [
   {
+    target: "admin-home",
+    placement: "right",
     titleVi: "Xem tổng quan công việc",
     titleEn: "See your work overview",
-    bodyVi: "Trang quản trị cho biết nội dung đang soạn và các mục chờ xử lý.",
+    bodyVi:
+      "Nút Công việc của tôi đưa bạn về tổng quan, nơi theo dõi nội dung đang soạn và việc cần xử lý.",
     bodyEn:
-      "The administration overview shows drafts and items awaiting action.",
-    links: [{ href: "/admin", vi: "Tổng quan", en: "Overview" }],
+      "My work opens an overview of your drafts and tasks that need attention.",
   },
   {
+    target: "admin-assessments",
+    placement: "right",
     titleVi: "Soạn và chấm Writing / Speaking",
     titleEn: "Author and assess Writing / Speaking",
     bodyVi:
-      "Tạo đề viết hoặc nói, gửi admin duyệt và chấm bài nộp của những đề bạn phụ trách theo 4 tiêu chí.",
+      "Mở Writing & Speaking tại đây để tạo đề, gửi duyệt và chấm bài nộp của các đề bạn phụ trách.",
     bodyEn:
-      "Create writing or speaking tasks, submit for approval and assess responses to your tasks using four criteria.",
-    links: [
-      {
-        href: "/admin/assessments",
-        vi: "Writing & Speaking",
-        en: "Writing & Speaking",
-      },
-    ],
+      "Open Writing & Speaking to create tasks, submit them for review and assess your learners' responses.",
   },
   {
+    target: "admin-content",
+    placement: "right",
     titleVi: "Soạn nội dung học",
     titleEn: "Author learning content",
     bodyVi:
-      "Tạo Flashcard, Quiz, Dictation và bài luyện nói trong mục Nội dung học.",
+      "Mở Nội dung học để soạn Flashcard, Quiz, Dictation và bài luyện nói, sau đó gửi bản nháp để admin duyệt.",
     bodyEn:
-      "Create flashcards, quizzes, dictation and speaking prompts in Learning content.",
-    links: [
-      { href: "/admin/content", vi: "Nội dung học", en: "Learning content" },
-    ],
+      "Open Learning content to author lessons and submit drafts for approval.",
   },
   {
-    titleVi: "Gửi duyệt và theo dõi",
-    titleEn: "Submit and follow up",
+    target: "admin-exams",
+    placement: "right",
+    titleVi: "Soạn đề thi và theo dõi duyệt",
+    titleEn: "Author exams and follow reviews",
     bodyVi:
-      "Gửi bản nháp để admin duyệt; theo dõi trạng thái và chỉnh sửa khi bị trả lại. Đề thi có danh sách riêng.",
+      "Mục Đề thi quản lý đề, câu hỏi và trạng thái duyệt. Chỉnh sửa bản bị trả lại trước khi gửi duyệt tiếp.",
     bodyEn:
-      "Submit drafts for admin review, follow their status and revise rejected work. Exams have a separate list.",
-    links: [
-      { href: "/admin/content", vi: "Nội dung", en: "Content" },
-      { href: "/admin/exams", vi: "Đề thi", en: "Exams" },
-    ],
+      "Exams manages your papers, questions and review status. Revise returned drafts before submitting them again.",
   },
 ];
 
 export const ADMIN_TOUR: readonly TourStep[] = [
   {
+    target: "admin-home",
+    placement: "right",
     titleVi: "Theo dõi tổng quan",
     titleEn: "Monitor the overview",
-    bodyVi:
-      "Xem số nội dung chờ duyệt và hoạt động học tập trên trang tổng quan.",
-    bodyEn: "See pending reviews and learning activity in the overview.",
-    links: [{ href: "/admin", vi: "Tổng quan", en: "Overview" }],
+    bodyVi: "Nút Tổng quan mở số liệu hoạt động và các mục đang chờ xử lý.",
+    bodyEn: "Overview opens activity metrics and items awaiting attention.",
   },
   {
+    target: "admin-assessments",
+    placement: "right",
     titleVi: "Duyệt đề và kiểm tra điểm",
     titleEn: "Approve tasks and review grades",
     bodyVi:
-      "Duyệt hoặc trả lại đề Writing / Speaking, theo dõi hàng chờ chấm và điều chỉnh kết quả khi cần.",
+      "Mở Writing & Speaking để duyệt đề, theo dõi hàng chờ chấm và kiểm tra hoặc điều chỉnh kết quả.",
     bodyEn:
-      "Approve or return Writing / Speaking tasks, monitor the grading queue and correct results when needed.",
-    links: [
-      {
-        href: "/admin/assessments",
-        vi: "Writing & Speaking",
-        en: "Writing & Speaking",
-      },
-    ],
+      "Open Writing & Speaking to review tasks, monitor grading and inspect or correct results.",
   },
   {
+    target: "admin-content",
+    placement: "right",
     titleVi: "Duyệt nội dung học",
     titleEn: "Review learning content",
     bodyVi:
-      "Mở nội dung nhân viên gửi, kiểm tra rồi duyệt xuất bản hoặc trả lại kèm lý do.",
+      "Mở Nội dung học để kiểm tra nội dung nhân viên gửi, phát hành hoặc trả lại kèm lý do.",
     bodyEn:
-      "Open staff submissions, review them, then publish or reject with a reason.",
-    links: [
-      { href: "/admin/content", vi: "Nội dung học", en: "Learning content" },
-    ],
+      "Open Learning content to review staff submissions, publish them or return them with feedback.",
   },
   {
+    target: "admin-exams",
+    placement: "right",
     titleVi: "Quản lý đề thi",
     titleEn: "Manage exams",
     bodyVi:
-      "Quản lý đề thi và quy trình duyệt trong mục Đề thi. Bạn có thể mở lại hướng dẫn từ menu quản trị.",
+      "Mở Đề thi để quản lý cấu trúc, câu hỏi và quy trình phát hành đề, bao gồm đề xếp trình độ đầu vào.",
     bodyEn:
-      "Manage exams and their review workflow in Exams. You can replay this tour from the admin menu.",
-    links: [{ href: "/admin/exams", vi: "Đề thi", en: "Exams" }],
+      "Open Exams to manage papers, questions and publishing, including placement tests.",
   },
 ];

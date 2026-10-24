@@ -157,6 +157,7 @@ export function LearnerStartCard() {
             </Text>
             <Button
               color="teal"
+              data-tour="learner-placement"
               leftSection={<ClipboardCheck size={18} aria-hidden="true" />}
               loading={pending}
               onClick={() => void startPlacement()}

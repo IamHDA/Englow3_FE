@@ -35,7 +35,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [opened, { toggle, close }] = useDisclosure(false);
   const { session, signOut, isSigningOut } = useAuth();
   const { profile } = useAccountProfile();
-  const { replay } = useUserTour();
+  const { replay, activeTarget } = useUserTour();
+  const navigationOpened =
+    opened || Boolean(activeTarget?.startsWith("admin-"));
   const { isVi, toggleLanguage } = useLanguage();
   const admin = session?.role === "ADMIN";
   const workload = useAssessmentWorkloadQuery({
@@ -96,14 +98,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <AppShell
       header={{ height: 64 }}
-      navbar={{ width: 264, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      navbar={{
+        width: 264,
+        breakpoint: "sm",
+        collapsed: { mobile: !navigationOpened },
+      }}
       padding={0}
     >
       <AppShell.Header>
         <Group h="100%" px="lg" justify="space-between" wrap="nowrap">
           <Group gap="sm" wrap="nowrap">
             <Burger
-              opened={opened}
+              opened={navigationOpened}
               onClick={toggle}
               hiddenFrom="sm"
               size="sm"
@@ -167,6 +173,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
                   key={href}
                   component={Link}
                   href={href}
+                  data-tour={
+                    href === "/admin"
+                      ? "admin-home"
+                      : href.replace("/admin/", "admin-")
+                  }
                   label={label}
                   leftSection={<Icon size={19} aria-hidden />}
                   rightSection={
