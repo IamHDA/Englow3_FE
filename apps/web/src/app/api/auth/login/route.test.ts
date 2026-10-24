@@ -67,7 +67,10 @@ describe("POST /api/auth/login", () => {
   });
 
   it("ends the session with the browser unless remember me was ticked", async () => {
-    signInWithPassword.mockResolvedValue({ data: { user: null }, error: null });
+    signInWithPassword.mockResolvedValue({
+      data: { user: { id: "u1" } },
+      error: null,
+    });
 
     await POST(call({ ...credentials, rememberMe: false }));
 
@@ -90,6 +93,7 @@ describe("POST /api/auth/login", () => {
 
     expect(response.status).toBe(400);
     expect((await response.json()).error.code).toBe("invalid_credentials");
+    expect(rememberSessionPreference).not.toHaveBeenCalled();
   });
 
   it("answers a provider outage inside the 4xx range, keeping its own status in the body", async () => {

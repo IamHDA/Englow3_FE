@@ -28,6 +28,8 @@ import {
 import { Gender } from "@/lib/graphql/generated";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { signUp } from "@/features/auth/api/authClient";
+import { announceSessionChange } from "@/features/auth/api/sessionSync";
+import { homeForRole } from "@/features/auth/types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
@@ -50,6 +52,7 @@ function registerSchema(isVi: boolean) {
     .object({
       fullName: z
         .string()
+        .trim()
         .min(
           2,
           tr(
@@ -68,6 +71,7 @@ function registerSchema(isVi: boolean) {
         ),
       email: z
         .string()
+        .trim()
         .min(1, tr("Vui lòng nhập email", "Enter your email"))
         .email(tr("Email không hợp lệ", "That email is not valid")),
       password: z
@@ -112,7 +116,9 @@ function registerSchema(isVi: boolean) {
     })
     .refine(
       ({ birthDay, birthMonth, birthYear }) =>
-        isValidCalendarDate(birthDay, birthMonth, birthYear),
+        isValidCalendarDate(birthDay, birthMonth, birthYear) &&
+        new Date(Number(birthYear), Number(birthMonth) - 1, Number(birthDay)) <=
+          new Date(),
       {
         message: tr("Ngày sinh không hợp lệ", "That date does not exist"),
         path: ["birthDay"],
@@ -148,7 +154,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       birthMonth: "",
       birthYear: "",
       gender: Gender.MALE,
-      acceptedTerms: true,
+      acceptedTerms: false,
     },
   });
 
@@ -161,6 +167,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         displayName: values.nickname,
         birthDate: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
         gender: values.gender,
+        acceptedTerms: values.acceptedTerms,
       });
       if (result.error) {
         notifications.show({
@@ -172,12 +179,19 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         });
         return;
       }
+      if (result.session) {
+        announceSessionChange();
+        router.replace(homeForRole(result.session.role) ?? "/");
+        router.refresh();
+        onSuccess();
+        return;
+      }
       notifications.show({
         color: "green",
         title: isVi ? "Kiểm tra email" : "Check your email",
         message: isVi
-          ? "Chúng tôi đã gửi email xác nhận tới hộp thư của bạn."
-          : "We sent a confirmation email to your inbox.",
+          ? "Nếu email này chưa được xác nhận, hãy mở thư Englow3 để hoàn tất đăng ký. Nếu đã có tài khoản, hãy đăng nhập hoặc dùng Quên mật khẩu."
+          : "If this email needs confirmation, open the Englow3 email to finish signing up. If you already have an account, sign in or use Forgot password.",
       });
       router.refresh();
       onSuccess();

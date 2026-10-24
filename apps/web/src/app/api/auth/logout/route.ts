@@ -15,8 +15,8 @@ export async function POST(request: Request) {
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signOut({ scope: "local" });
-  await rememberSessionPreference(false);
   if (error) return authFailure(error);
+  await rememberSessionPreference(false);
 
   return authSuccess();
 }

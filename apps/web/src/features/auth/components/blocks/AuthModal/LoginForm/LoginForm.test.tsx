@@ -15,9 +15,11 @@ vi.mock("next/navigation", () => ({
 
 const signInWithPassword = vi.fn();
 const sendPasswordResetLink = vi.fn();
+const resendConfirmation = vi.fn();
 vi.mock("@/features/auth/api/authClient", () => ({
   signInWithPassword: (...args: unknown[]) => signInWithPassword(...args),
   sendPasswordResetLink: (...args: unknown[]) => sendPasswordResetLink(...args),
+  resendConfirmation: (...args: unknown[]) => resendConfirmation(...args),
 }));
 vi.mock("@/features/auth/api/sessionSync", () => ({
   announceSessionChange: vi.fn(),
@@ -53,6 +55,24 @@ beforeEach(() => {
 });
 
 describe("LoginForm", () => {
+  it("offers a manual resend when a valid account has not confirmed its email", async () => {
+    signInWithPassword.mockResolvedValue({
+      error: { code: "email_not_confirmed" },
+    });
+    resendConfirmation.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    renderForm();
+    await user.type(screen.getByLabelText("Email"), "unconfirmed@example.com");
+    await user.type(screen.getByLabelText("Mật khẩu"), "Password@123");
+    await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
+    const button = await screen.findByRole("button", {
+      name: "Gửi lại email xác nhận",
+    });
+    expect(resendConfirmation).not.toHaveBeenCalled();
+    await user.click(button);
+    expect(resendConfirmation).toHaveBeenCalledWith("unconfirmed@example.com");
+  });
+
   it("shows validation errors on empty submit and sends nothing", async () => {
     const user = userEvent.setup();
     renderForm();

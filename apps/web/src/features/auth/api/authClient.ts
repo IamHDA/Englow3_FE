@@ -31,11 +31,27 @@ async function post<T extends object>(
     },
     body: JSON.stringify(body),
     credentials: "same-origin",
+    signal: AbortSignal.timeout(20_000),
   });
 
-  const payload = await response.json().catch(() => ({}));
+  const payload: unknown = await response.json().catch(() => null);
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return {
+      error: {
+        code: "AUTH_INVALID_RESPONSE",
+        status: response.ok ? 502 : response.status,
+      },
+    };
+  }
   if (!response.ok) {
-    return { error: payload.error ?? { status: response.status } };
+    return {
+      error: ("error" in payload ? (payload.error as AuthApiError) : null) ?? {
+        status: response.status,
+        ...("code" in payload && typeof payload.code === "string"
+          ? { code: payload.code }
+          : {}),
+      },
+    };
   }
   return { error: null, ...payload } as Result<T>;
 }
@@ -55,8 +71,9 @@ export function signUp(values: {
   displayName: string;
   birthDate: string;
   gender: string;
+  acceptedTerms: boolean;
 }) {
-  return post<object>("register", values);
+  return post<{ session: AuthSession | null }>("register", values);
 }
 
 export function signOutOfServer() {
@@ -65,6 +82,10 @@ export function signOutOfServer() {
 
 export function sendPasswordResetLink(email: string) {
   return post<object>("forgot", { email });
+}
+
+export function resendConfirmation(email: string) {
+  return post<object>("resend", { email });
 }
 
 export function setNewPassword(password: string) {

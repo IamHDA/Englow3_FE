@@ -53,7 +53,11 @@ export function AccountProvider({
   children,
 }: AccountProviderProps) {
   const { session } = useAuth();
-  const [fetched, setFetched] = useState(initialProfile);
+  const authUserId = session?.userId ?? null;
+  const [fetched, setFetched] = useState(() => ({
+    ...initialProfile,
+    authUserId,
+  }));
   const [loadProfile, { loading }] = useCurrentUserLazyQuery({
     fetchPolicy: "network-only",
   });
@@ -75,19 +79,23 @@ export function AccountProvider({
   // Dùng chung một nhánh lỗi với effect dưới: gọi lại `loadProfile()` rồi ghi
   // kết quả vào state, không phân biệt "lần đầu" hay "gọi lại theo yêu cầu".
   const refresh = useCallback(async () => {
-    if (!session?.userId) return;
+    if (!authUserId) return;
     const version = ++requestVersion.current;
     try {
       const { data, error } = await loadProfile();
       if (version !== requestVersion.current) return;
-      needsRecovery.current = Boolean(error);
-      setFetched({ profile: data?.me ?? null, hasError: Boolean(error) });
+      needsRecovery.current = Boolean(error) || !data?.me;
+      setFetched({
+        authUserId,
+        profile: data?.me ?? null,
+        hasError: Boolean(error) || !data?.me,
+      });
     } catch {
       if (version !== requestVersion.current) return;
       needsRecovery.current = true;
-      setFetched({ profile: null, hasError: true });
+      setFetched({ authUserId, profile: null, hasError: true });
     }
-  }, [loadProfile, session?.userId]);
+  }, [loadProfile, authUserId]);
 
   useEffect(
     () =>
@@ -123,7 +131,7 @@ export function AccountProvider({
   const applyOnboardingState = useCallback(
     (state: OnboardingStateFieldsFragment) => {
       setFetched((current) =>
-        current.profile == null
+        current.profile == null || current.authUserId !== authUserId
           ? current
           : {
               ...current,
@@ -142,20 +150,23 @@ export function AccountProvider({
             },
       );
     },
-    [],
+    [authUserId],
   );
 
   // Chưa đăng nhập thì không có hồ sơ - suy ra chứ không lưu, nên không bao giờ
   // sót lại tên của người vừa đăng xuất.
+  const current =
+    session && fetched.authUserId === session.userId ? fetched : NO_PROFILE;
   const value = useMemo<AccountContextValue>(
     () => ({
-      ...(session ? fetched : NO_PROFILE),
+      profile: current.profile,
+      hasError: current.hasError,
       loading:
-        loading || Boolean(session && !fetched.profile && !fetched.hasError),
+        loading || Boolean(session && !current.profile && !current.hasError),
       refresh,
       applyOnboardingState,
     }),
-    [session, fetched, loading, refresh, applyOnboardingState],
+    [session, current, loading, refresh, applyOnboardingState],
   );
 
   useEffect(() => {

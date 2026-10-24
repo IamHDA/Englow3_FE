@@ -8,8 +8,9 @@ import { theme } from "@/lib/mantine/theme";
 import { RegisterForm } from "./index";
 
 const refresh = vi.fn();
+const replace = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ refresh }),
+  useRouter: () => ({ refresh, replace }),
 }));
 
 const signUp = vi.fn();
@@ -45,6 +46,7 @@ async function fillValidForm(
   await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Nn]gày/), "15");
   await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Tt]háng/), "6");
   await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Nn]ăm/), "2000");
+  await user.click(screen.getByRole("checkbox"));
 }
 
 beforeEach(() => {
@@ -54,6 +56,27 @@ beforeEach(() => {
 });
 
 describe("RegisterForm", () => {
+  it("requires the learner to explicitly agree to the terms", () => {
+    renderForm();
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+  });
+
+  it("handles a provider that creates a session immediately", async () => {
+    signUp.mockResolvedValue({
+      error: null,
+      session: { userId: "new", role: "LEARNER", email: "vana@example.com" },
+    });
+    const user = userEvent.setup();
+    const { onSuccess } = renderForm();
+    await fillValidForm(user);
+    await user.click(screen.getByRole("button", { name: "Tạo tài khoản" }));
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+    expect(replace).toHaveBeenCalledWith("/");
+    expect(notificationsShow).not.toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Kiểm tra email" }),
+    );
+  });
+
   it("shows validation errors on empty submit and sends nothing", async () => {
     const user = userEvent.setup();
     renderForm();
@@ -122,7 +145,7 @@ describe("RegisterForm", () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.click(screen.getByRole("checkbox")); // uncheck the pre-ticked terms box
+    await user.click(screen.getByRole("checkbox")); // withdraw the explicit consent
     await user.click(screen.getByRole("button", { name: "Tạo tài khoản" }));
 
     expect(
@@ -147,6 +170,7 @@ describe("RegisterForm", () => {
         displayName: "vana",
         birthDate: "2000-06-15",
         gender: "MALE",
+        acceptedTerms: true,
       }),
     );
     expect(notificationsShow).toHaveBeenCalledWith(

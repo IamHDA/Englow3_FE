@@ -66,8 +66,8 @@ export function ForgotPasswordView({
             title={tr("Link đã hết hạn", "Link expired")}
           >
             {tr(
-              "Link đặt lại mật khẩu chỉ dùng được một lần và trong 1 giờ. Nhập email để nhận link mới.",
-              "A reset link works once, for 1 hour. Enter your email to get a new one.",
+              "Link đã hết hạn hoặc đã được dùng. Nhập email để nhận link mới, rồi mở trên cùng trình duyệt đã yêu cầu email.",
+              "The link has expired or already been used. Request a new one and open it in the same browser that requested the email.",
             )}
           </Alert>
         )}

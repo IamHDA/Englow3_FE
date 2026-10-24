@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { authEmail } from "@/features/auth/validation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { authFailure, authSuccess, readAuthRequest } from "@/server/authRoute";
@@ -6,7 +7,7 @@ import { requestOrigin } from "@/server/csrf";
 
 export const dynamic = "force-dynamic";
 
-const body = z.object({ email: z.string().min(1).max(320) });
+const body = z.object({ email: authEmail });
 
 /** Sends the password-reset link; it returns through /auth/callback. */
 export async function POST(request: Request) {

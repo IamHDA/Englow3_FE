@@ -28,6 +28,7 @@ import { announceSessionChange } from "@/features/auth/api/sessionSync";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { homeForRole } from "@/features/auth/types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { ResendConfirmation } from "../../ResendConfirmation";
 
 import classes from "../AuthModal.module.css";
 
@@ -36,6 +37,7 @@ function loginSchema(isVi: boolean) {
   return z.object({
     email: z
       .string()
+      .trim()
       .min(1, tr("Vui lòng nhập email", "Enter your email"))
       .email(tr("Email không hợp lệ", "That email is not valid")),
     password: z
@@ -57,6 +59,7 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
   const router = useRouter();
   const [isNavigating, startTransition] = useTransition();
   const [authenticated, setAuthenticated] = useState(false);
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
   const completed = useRef(false);
   useEffect(() => {
     if (authenticated && !isNavigating && !completed.current) {
@@ -80,6 +83,9 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
     try {
       const result = await signInWithPassword({ email, password, rememberMe });
       if (result.error) {
+        setUnconfirmedEmail(
+          result.error.code === "email_not_confirmed" ? email : null,
+        );
         notifications.show({
           color: "warn",
           title: isVi ? "Không thể đăng nhập" : "Could not sign in",
@@ -167,6 +173,13 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
         }
         classNames={{ label: classes.label, input: classes.input }}
       />
+
+      <Text size="xs" c="ink.7">
+        {isVi
+          ? "Đăng ký bằng Google hoặc Facebook? Dùng đúng nút bên dưới, hoặc chọn Quên mật khẩu để đặt mật khẩu email."
+          : "Signed up with Google or Facebook? Use the matching button below, or choose Forgot password to set an email password."}
+      </Text>
+      {unconfirmedEmail && <ResendConfirmation email={unconfirmedEmail} />}
 
       <Group justify="space-between" wrap="nowrap">
         <Checkbox

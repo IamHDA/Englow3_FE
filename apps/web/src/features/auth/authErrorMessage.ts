@@ -11,6 +11,26 @@ const ACCOUNT_EXISTS: Words = {
 };
 
 const MESSAGES: Record<string, Words> = {
+  BAD_REQUEST: {
+    vi: "Thông tin chưa hợp lệ. Kiểm tra lại các trường và thử lại.",
+    en: "Some details are invalid. Check the fields and try again.",
+  },
+  AUTH_INVALID_RESPONSE: {
+    vi: "Dịch vụ tài khoản chưa phản hồi đúng. Vui lòng thử lại.",
+    en: "The account service returned an invalid response. Please try again.",
+  },
+  provider_disabled: {
+    vi: "Phương thức đăng nhập này chưa khả dụng. Hãy dùng email và mật khẩu.",
+    en: "This sign-in method is unavailable. Use your email and password.",
+  },
+  validation_failed: {
+    vi: "Thông tin chưa hợp lệ. Kiểm tra lại và thử lại.",
+    en: "Some details are invalid. Check them and try again.",
+  },
+  reauthentication_needed: {
+    vi: "Vui lòng đăng nhập lại trước khi đổi mật khẩu.",
+    en: "Sign in again before changing your password.",
+  },
   invalid_credentials: {
     vi: "Email hoặc mật khẩu không đúng.",
     en: "Wrong email or password.",

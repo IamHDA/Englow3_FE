@@ -5,6 +5,7 @@ import {
   NextResponse,
 } from "next/server";
 import { probeServices } from "@/server/serviceStatus";
+import { rootAuthCallback } from "@/features/auth/rootAuthCallback";
 
 import { contentSecurityPolicy, createNonce } from "@/config/securityHeaders";
 import {
@@ -57,6 +58,13 @@ function isMemberOnly(pathname: string): boolean {
  * proxy; at the project root under its old name it was never run at all.
  */
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
+  const authCallback = rootAuthCallback(request.nextUrl);
+  if (authCallback) {
+    const response = NextResponse.redirect(authCallback);
+    response.headers.set("cache-control", "no-store");
+    response.headers.set("referrer-policy", "no-referrer");
+    return response;
+  }
   if (
     process.env.SERVICE_WARMUP_ENABLED === "true" &&
     request.method === "GET" &&

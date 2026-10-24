@@ -31,7 +31,7 @@ import {
 import Link from "next/link";
 
 import { useAccountProfile } from "@/features/account";
-import { useOnboarding } from "@/features/onboarding";
+import { LearnerStartCard } from "@/features/home/components/blocks/LearnerStartCard";
 import {
   DailyQuestsCard,
   levelTitle,
@@ -129,7 +129,6 @@ const SHORTCUTS: Shortcut[] = [
 export function LearnerHomeView() {
   const { isVi, t } = useLanguage();
   const { profile } = useAccountProfile();
-  const { requiresOnboarding, open: openOnboarding } = useOnboarding();
   const { data, loading, error, refetch } = useDailyPathQuery({
     fetchPolicy: "cache-and-network",
   });
@@ -172,16 +171,7 @@ export function LearnerHomeView() {
         )}
       </Group>
 
-      {requiresOnboarding && (
-        <Alert color="orange" radius="lg" title={t.home.finishGoalSetupTitle}>
-          <Group justify="space-between" gap="sm">
-            <Text size="sm">{t.home.finishGoalSetupDescription}</Text>
-            <Button color="orange.5" onClick={openOnboarding}>
-              {t.home.setupNowButton}
-            </Button>
-          </Group>
-        </Alert>
-      )}
+      <LearnerStartCard />
 
       {error && !path && (
         <Alert color="warn" radius="lg">

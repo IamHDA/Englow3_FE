@@ -2,7 +2,7 @@
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
-import { Anchor, Box, SimpleGrid, Text } from "@mantine/core";
+import { Alert, Box, Button, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
 
 import {
@@ -57,6 +57,22 @@ export function CurrentLevelStep({
         />
       }
     >
+      <Alert
+        color="teal"
+        radius="md"
+        mb="lg"
+        title={tr("Chưa rõ trình độ của mình?", "Not sure of your level?")}
+      >
+        <Text size="sm" mb="sm">
+          {tr(
+            "Làm bài kiểm tra đầu vào để hệ thống ghi nhận trình độ từ kết quả. Bạn cũng có thể tự chọn mức bên dưới.",
+            "Take the placement test to set your level from the result, or choose a level below yourself.",
+          )}
+        </Text>
+        <Button color="teal" onClick={onTakePlacementTest} disabled={pending}>
+          {tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
+        </Button>
+      </Alert>
       <Box
         role="group"
         aria-label={tr("Trình độ tiếng Anh hiện tại", "Current English level")}
@@ -74,19 +90,6 @@ export function CurrentLevelStep({
           ))}
         </SimpleGrid>
       </Box>
-
-      <Text size="sm" c="ink.6" ta="center" mt={18}>
-        {tr("Chưa chắc mình ở đâu?", "Not sure where you are?")}{" "}
-        <Anchor
-          component="button"
-          type="button"
-          onClick={onTakePlacementTest}
-          disabled={pending}
-          fw={700}
-        >
-          {tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
-        </Anchor>
-      </Text>
     </OnboardingStepShell>
   );
 }

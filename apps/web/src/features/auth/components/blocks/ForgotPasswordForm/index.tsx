@@ -13,6 +13,7 @@ function forgotPasswordSchema(isVi: boolean) {
   return z.object({
     email: z
       .string()
+      .trim()
       .min(1, isVi ? "Vui lòng nhập email" : "Enter your email")
       .email(isVi ? "Email không hợp lệ" : "That email is not valid"),
   });
@@ -96,12 +97,12 @@ export function ForgotPasswordForm({ onSend }: ForgotPasswordFormProps) {
           {isVi ? (
             <>
               Nếu <b>{sentTo}</b> đã đăng ký Englow3, thư sẽ tới trong vài phút.
-              Link có hiệu lực trong 1 giờ và chỉ dùng được một lần.
+              Link có thời hạn và chỉ dùng được một lần.
             </>
           ) : (
             <>
               If <b>{sentTo}</b> has an Englow3 account, the email will arrive
-              within a few minutes. The link works for 1 hour, and only once.
+              within a few minutes. The link expires and can only be used once.
             </>
           )}
         </Alert>

@@ -56,8 +56,9 @@ export function getBirthMonthOptions(
   }));
 }
 
-export const BIRTH_YEAR_OPTIONS: string[] = Array.from({ length: 60 }, (_, i) =>
-  String(2010 - i),
+export const BIRTH_YEAR_OPTIONS: string[] = Array.from(
+  { length: new Date().getFullYear() - 1900 + 1 },
+  (_, i) => String(new Date().getFullYear() - i),
 );
 
 export function getGenderOptions(t: AppTranslations) {

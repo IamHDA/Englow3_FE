@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { toAuthSession } from "@/features/auth/types";
+import { authEmail } from "@/features/auth/validation";
 import {
   createSupabaseServerClient,
   rememberSessionPreference,
@@ -10,7 +11,7 @@ import { authFailure, authSuccess, readAuthRequest } from "@/server/authRoute";
 export const dynamic = "force-dynamic";
 
 const body = z.object({
-  email: z.string().min(1).max(320),
+  email: authEmail,
   password: z.string().min(1).max(1024),
   rememberMe: z.boolean(),
 });
@@ -24,9 +25,7 @@ export async function POST(request: Request) {
   if (!read.ok) return read.response;
   const { email, password, rememberMe } = read.value;
 
-  // Written before signing in, so the cookies it creates already know whether
-  // they are meant to end with the browser.
-  await rememberSessionPreference(!rememberMe);
+  // A failed sign-in must not change an existing session's lifetime preference.
   const supabase = await createSupabaseServerClient({
     sessionOnly: !rememberMe,
   });
@@ -36,6 +35,9 @@ export async function POST(request: Request) {
     password,
   });
   if (error) return authFailure(error);
+  if (!data.user)
+    return authFailure({ code: "AUTH_INVALID_RESPONSE", status: 503 });
+  await rememberSessionPreference(!rememberMe);
 
   return authSuccess({ session: toAuthSession(data.user) });
 }

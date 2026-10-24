@@ -14,6 +14,21 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("authClient", () => {
+  it("does not report an HTML success page as a successful sign-in", async () => {
+    fetchMock.mockResolvedValue(
+      new Response("<html>proxy challenge</html>", { status: 200 }),
+    );
+    const result = await signInWithPassword({
+      email: "a@example.com",
+      password: "pw",
+      rememberMe: false,
+    });
+    expect(result.error).toMatchObject({
+      code: "AUTH_INVALID_RESPONSE",
+      status: 502,
+    });
+  });
+
   it("posts to this app's own route with the header that marks it as ours", async () => {
     fetchMock.mockResolvedValue(
       Response.json({ session: { userId: "u1", email: null, role: null } }),
@@ -61,7 +76,7 @@ describe("authClient", () => {
 
     const result = await startOAuth("google");
 
-    expect(result.error).toEqual({ status: 502 });
+    expect(result.error).toMatchObject({ status: 502 });
   });
 
   it("lets a network failure through for the caller's connection message", async () => {

@@ -43,7 +43,7 @@ export type AuthSession = {
   role: string | null;
 };
 
-function readRole(user: User): string | null {
+function readRole(user: Pick<User, "app_metadata">): string | null {
   const role = user.app_metadata?.role;
   return typeof role === "string" && role.trim() !== ""
     ? role.trim().toUpperCase()
@@ -52,7 +52,7 @@ function readRole(user: User): string | null {
 
 /** Dùng chung cho cả phía server lẫn client để hai bên không lệch nhau. */
 export function toAuthSession(
-  user: User | null | undefined,
+  user: Pick<User, "id" | "email" | "app_metadata"> | null | undefined,
 ): AuthSession | null {
   if (!user) return null;
 

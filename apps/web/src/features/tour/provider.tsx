@@ -184,7 +184,8 @@ export function UserTourProvider({ children }: { children: ReactNode }) {
   const eligible = Boolean(
     session &&
     profile &&
-    profile.id === session.userId &&
+    // AccountProvider scopes this profile to the authenticated session.
+    // profile.id is the application's UUID; session.userId is Supabase's UUID.
     !pathname.startsWith("/auth") &&
     !requiresOnboarding &&
     (isBackOffice

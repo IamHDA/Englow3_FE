@@ -51,6 +51,30 @@ beforeEach(() => {
 });
 
 describe("AccountProvider", () => {
+  it("hides the old learner profile immediately while the next account is loading", async () => {
+    const profile = { id: "previous-application-id" } as NonNullable<
+      AccountProfileResult["profile"]
+    >;
+    const view = render(tree({ profile, hasError: false }));
+    expect(screen.getByText("previous-application-id")).toBeInTheDocument();
+    let resolveNext!: (value: unknown) => void;
+    mocks.load.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveNext = resolve;
+      }),
+    );
+    mocks.userId = "next-auth-id";
+    view.rerender(tree());
+    expect(
+      screen.queryByText("previous-application-id"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("no profile")).toBeInTheDocument();
+    await waitFor(() => expect(mocks.load).toHaveBeenCalledOnce());
+    await act(async () =>
+      resolveNext({ data: { me: { id: "next-application-id" } } }),
+    );
+    expect(screen.getByText("next-application-id")).toBeInTheDocument();
+  });
   it("recovers the failed profile when backend readiness returns", async () => {
     const services = await import("@/shared/network/serviceAvailability");
     mocks.load.mockRejectedValueOnce(new Error("Backend unavailable"));

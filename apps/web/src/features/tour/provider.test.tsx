@@ -12,6 +12,7 @@ const state = vi.hoisted(() => ({
   requiresOnboarding: false,
   completed: false,
   loading: false,
+  statusError: null as Error | null,
   complete: vi.fn(),
 }));
 
@@ -22,7 +23,7 @@ vi.mock("@/features/auth", () => ({
 vi.mock("@/features/account", () => ({
   useAccountProfile: () => ({
     profile: {
-      id: "u1",
+      id: "application-user-id",
       role: state.role,
       onboardingStep: OnboardingStep.COMPLETED,
     },
@@ -38,7 +39,7 @@ vi.mock("@/lib/graphql/generated/hooks", () => ({
   useMyTourStatusQuery: () => ({
     data: { myTourStatus: { completed: state.completed } },
     loading: state.loading,
-    error: null,
+    error: state.statusError,
   }),
   useCompleteMyTourMutation: () => [state.complete],
 }));
@@ -64,12 +65,32 @@ beforeEach(() => {
   state.requiresOnboarding = false;
   state.completed = false;
   state.loading = false;
+  state.statusError = null;
   state.complete = vi
     .fn()
     .mockResolvedValue({ data: { completeMyTour: { completed: true } } });
 });
 
 describe("UserTourProvider", () => {
+  it("opens for a new learner whose application UUID differs from the Supabase UUID", () => {
+    renderTour();
+    expect(screen.getByRole("dialog")).toBeVisible();
+    expect(screen.getByText("Bắt đầu từ trang chủ")).toBeVisible();
+  });
+
+  it("allows manual guidance if the status request failed, without reopening automatically", () => {
+    state.statusError = new Error("Service unavailable");
+    renderTour();
+    expect(screen.queryByRole("dialog")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Replay tour" }));
+    expect(screen.getByRole("dialog")).toBeVisible();
+  });
+
+  it("does not interrupt password recovery", () => {
+    state.pathname = "/auth/reset";
+    renderTour();
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
   it("waits until learner onboarding has finished", () => {
     state.requiresOnboarding = true;
     renderTour();

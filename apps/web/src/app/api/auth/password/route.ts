@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { newAuthPassword } from "@/features/auth/validation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { authFailure, authSuccess, readAuthRequest } from "@/server/authRoute";
 
 export const dynamic = "force-dynamic";
 
-const body = z.object({ password: z.string().min(1).max(1024) });
+const body = z.object({ password: newAuthPassword });
 
 /**
  * Sets a new password for whoever holds the session - the reset link has
