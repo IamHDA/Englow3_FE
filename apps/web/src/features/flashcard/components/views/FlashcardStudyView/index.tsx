@@ -80,6 +80,15 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
     },
   });
 
+  // Phiên mới thì xin hàng chờ mới. Chạy lại danh sách cũ là chấm lại đúng những
+  // thẻ vừa chấm xong, chưa tới hạn - backend không tính đó là ôn tập, và người
+  // học chỉ thấy lại thứ vừa xem. Lấy lại thất bại thì vẫn ở màn tổng kết để thử lại.
+  const startNextSession = () => {
+    void refetchQueue()
+      .then(() => restartStudy())
+      .catch(() => undefined);
+  };
+
   if (queueLoading && cards.length === 0) {
     return <FlashcardStudySkeleton />;
   }
@@ -105,7 +114,7 @@ export function FlashcardStudyView({ setId }: FlashcardStudyViewProps) {
       <Page width="focus">
         <FlashcardSessionSummary
           summary={summaryData}
-          onRestart={restartStudy}
+          onRestart={startNextSession}
         />
       </Page>
     );
