@@ -7,6 +7,9 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
+minimumReleaseAgeExclude:
+  - node-forge@1.4.1
+
 # Patch-level fixes for advisories in transitive dependencies (pnpm audit),
 # each kept within the major version that was already resolved.
 overrides:
@@ -21,3 +24,19 @@ overrides:
   "@graphql-tools/utils@12": "^12.0.3"
   "@xmldom/xmldom@0.8": "^0.8.15"
   "@xmldom/xmldom@0.9": "^0.9.12"
+  "body-parser@1": "^1.20.9"
+  "body-parser@2": "^2.4.0"
+  "ip-address@10": "^10.7.4"
+  "node-forge@1": "^1.4.1"
+  # metro 0.84.5 parses image headers itself; 0.84.4 still pulled in the
+  # vulnerable image-size@1, which has no fixed 1.x release.
+  "metro@0.84": "^0.84.5"
+  "metro-config@0.84": "^0.84.5"
+  "metro-core@0.84": "^0.84.5"
+
+  # These two cross a major version because the advisory has no fix in the old
+  # one. Both sit only in Expo's dev tooling, and the call sites were checked
+  # against the new API: @expo/cli uses zod's object/enum/safeParse/issues,
+  # xcode only calls require("uuid").v4().
+  "zod@3": "^4.6.6"
+  "uuid@7": "^11.1.1"
