@@ -117,8 +117,10 @@ describe("AccountProvider", () => {
 
     mocks.load.mockResolvedValueOnce({ data: { me: { id: "profile-id" } } });
     await act(async () => screen.getByText("Retry").click());
-    expect(screen.getByText("profile-id")).toBeInTheDocument();
-    expect(screen.getByText("ok")).toBeInTheDocument();
+    // Waited for rather than read at once: the retry settles a few microtasks
+    // after the click, and under a loaded parallel run act() can return first.
+    expect(await screen.findByText("profile-id")).toBeInTheDocument();
+    expect(await screen.findByText("ok")).toBeInTheDocument();
   });
 
   it("handles rejection from an explicit refresh", async () => {
@@ -127,7 +129,7 @@ describe("AccountProvider", () => {
     await screen.findByText("profile-id");
     mocks.load.mockRejectedValueOnce(new Error("Connection refused"));
     await act(async () => screen.getByText("Retry").click());
-    expect(screen.getByText("failed")).toBeInTheDocument();
+    expect(await screen.findByText("failed")).toBeInTheDocument();
   });
 
   it("does not refetch a server profile whose database ID differs from auth ID", () => {

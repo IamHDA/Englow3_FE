@@ -20,5 +20,9 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
+    // The default 5s is a hard ceiling that a page rendering a hundred cards
+    // in jsdom (about a second alone) reached when every worker shared a busy
+    // machine - a timing failure, not a broken page. A hang still fails.
+    testTimeout: 15_000,
   },
 });
