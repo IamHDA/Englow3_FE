@@ -135,6 +135,52 @@ describe("quiz attempt UX", () => {
     ).toBeInTheDocument();
   });
 
+  it("sends the paper itself when the clock runs out", async () => {
+    start.mockResolvedValueOnce({
+      data: {
+        startQuizAttempt: {
+          id: "attempt",
+          expiresAt: new Date(Date.now() + 1500).toISOString(),
+        },
+      },
+    });
+    const user = userEvent.setup();
+    show();
+    await user.click(screen.getByRole("button", { name: "Start" }));
+    await user.click(screen.getByRole("button", { name: "Choose A" }));
+    await waitFor(() => expect(submit).toHaveBeenCalledTimes(1), {
+      timeout: 4000,
+    });
+    expect(submit.mock.calls[0][0].variables.answers).toEqual([
+      { questionId: "q1", response: "a" },
+    ]);
+    expect(
+      await screen.findByRole("button", { name: "Retake" }),
+    ).toBeInTheDocument();
+  });
+
+  it("offers to send again when the paper could not be sent at the deadline", async () => {
+    start.mockResolvedValueOnce({
+      data: {
+        startQuizAttempt: {
+          id: "attempt",
+          expiresAt: new Date(Date.now() + 1000).toISOString(),
+        },
+      },
+    });
+    submit.mockRejectedValueOnce(new Error("offline"));
+    const user = userEvent.setup();
+    show();
+    await user.click(screen.getByRole("button", { name: "Start" }));
+    const again = await screen.findByRole(
+      "button",
+      { name: "Send again" },
+      { timeout: 4000 },
+    );
+    await user.click(again);
+    await waitFor(() => expect(submit).toHaveBeenCalledTimes(2));
+  });
+
   it("keeps selected answers when submission fails and permits retry", async () => {
     submit.mockRejectedValueOnce(new Error("offline"));
     const user = userEvent.setup();

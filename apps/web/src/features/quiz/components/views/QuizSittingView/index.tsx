@@ -155,7 +155,9 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     quiz,
     isActive: attemptId !== null && paper !== undefined,
     expiresAt: paper?.expiresAt ?? attemptExpiresAt,
-    onExpire: () => undefined,
+    // Hết giờ thì bài tự nộp: quiz không có bản nháp trên máy chủ, nên không
+    // nộp là mất hết đáp án. Máy chủ còn nhận trong ít giây sau giờ kết thúc.
+    onExpire: () => void submitAnswers(true),
   });
 
   useEffect(() => {
@@ -176,14 +178,18 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     timeRemainingSeconds === 0 &&
     scored === null;
 
-  /** Sends every question, including the ones left alone - a missing answer is wrong, not absent. */
-  async function handleSubmit() {
+  /**
+   * Sends every question, including the ones left alone - a missing answer is
+   * wrong, not absent. `atDeadline` is the clock sending the paper, or the
+   * learner retrying that send: past the deadline nothing else may submit.
+   */
+  async function submitAnswers(atDeadline: boolean) {
     if (
       attemptId === null ||
       paper === undefined ||
       pending.current ||
       scored ||
-      expired
+      (expired && !atDeadline)
     )
       return;
     pending.current = true;
@@ -212,6 +218,8 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
     }
     pending.current = false;
   }
+
+  const handleSubmit = () => void submitAnswers(false);
 
   async function handleStart() {
     if (pending.current) return;
@@ -374,18 +382,32 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
               : "Submission failed. Your answers are kept on this page; check your connection and submit again."}
           </Alert>
         )}
-        {expired && (
-          <Alert color="orange" role="alert">
+        {expired && submitting && (
+          <Alert color="blue" role="status">
             {isVi
-              ? "Lượt làm bài đã hết hạn. Máy chủ không nhận bài nộp muộn. Bạn có thể bắt đầu lượt mới."
-              : "This attempt has expired. Late submissions are not accepted. You can start a new attempt."}
-            <Button
-              variant="subtle"
-              disabled={submitting}
-              onClick={() => void handleRetake()}
-            >
-              {isVi ? "Bắt đầu lượt mới" : "Start a new attempt"}
-            </Button>
+              ? "Hết giờ - đang nộp bài của bạn…"
+              : "Time is up - submitting your answers…"}
+          </Alert>
+        )}
+        {expired && !submitting && (
+          <Alert color="orange" role="alert">
+            {sendFailed
+              ? isVi
+                ? "Hết giờ nhưng chưa nộp được bài. Đáp án vẫn được giữ trên trang; kiểm tra kết nối rồi gửi lại ngay - máy chủ chỉ nhận thêm trong ít giây sau giờ kết thúc."
+                : "Time is up but your answers could not be sent. They are kept on this page; check your connection and send them again right away - the server only accepts them for a few seconds after the deadline."
+              : isVi
+                ? "Lượt làm bài đã hết hạn. Bạn có thể bắt đầu lượt mới."
+                : "This attempt has expired. You can start a new attempt."}
+            <Group gap="xs" mt="xs">
+              {sendFailed && (
+                <Button onClick={() => void submitAnswers(true)}>
+                  {isVi ? "Gửi lại" : "Send again"}
+                </Button>
+              )}
+              <Button variant="subtle" onClick={() => void handleRetake()}>
+                {isVi ? "Bắt đầu lượt mới" : "Start a new attempt"}
+              </Button>
+            </Group>
           </Alert>
         )}
         {/* Top Header */}
