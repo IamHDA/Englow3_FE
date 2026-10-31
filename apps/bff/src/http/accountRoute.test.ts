@@ -132,7 +132,27 @@ describe("account route", () => {
     );
   });
 
-  it.each([{}, { confirmEmail: "" }, { confirmEmail: 42 }])(
+  it("trims the confirmation email before the backend compares it", async () => {
+    const fetcher = backendAnswering(204);
+    const base = await start(fetcher);
+
+    await call(base, "POST", "/account/erase", {
+      token: "Bearer abc",
+      body: { confirmEmail: " me@example.com " },
+    });
+
+    const [, init] = (fetcher as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect((init as RequestInit).body).toBe(
+      JSON.stringify({ confirmEmail: "me@example.com" }),
+    );
+  });
+
+  it.each([
+    {},
+    { confirmEmail: "" },
+    { confirmEmail: 42 },
+    { confirmEmail: "   " },
+  ])(
     "refuses an erase request with no usable confirmation (%j)",
     async (body) => {
       const fetcher = backendAnswering(204);

@@ -32,18 +32,22 @@ async function audioRequest(
   method = "GET",
   body?: Blob,
 ): Promise<Receipt | null> {
-  const response = await fetch(
-    `/api/tutor/audio?${new URLSearchParams(query)}`,
-    {
-      method,
-      body,
-      headers: {
-        [CSRF_HEADER]: CSRF_VALUE,
-        ...(body ? { "content-type": "audio/wav" } : {}),
-      },
-      signal: AbortSignal.timeout(55_000),
+  const base = "/api/bff/rest/tutor/recordings";
+  const url =
+    method === "DELETE"
+      ? `${base}/${encodeURIComponent(query.recordingId)}`
+      : method === "POST"
+        ? `${base}?${new URLSearchParams(query)}`
+        : `${base}/requests/${encodeURIComponent(query.clientMessageId)}`;
+  const response = await fetch(url, {
+    method,
+    body,
+    headers: {
+      [CSRF_HEADER]: CSRF_VALUE,
+      ...(body ? { "content-type": "audio/wav" } : {}),
     },
-  );
+    signal: AbortSignal.timeout(55_000),
+  });
   if (method === "DELETE" && response.status === 404) return null;
   if (!response.ok) throw new AudioError(response.status);
   return response.status === 204 ? null : response.json();

@@ -60,7 +60,7 @@ async function check(version: number) {
   const timeout = setTimeout(() => attempt.abort(), 6000);
   let retryAfter = 0;
   try {
-    const response = await fetch("/api/system/status", {
+    const response = await fetch("/api/bff/system/status", {
       cache: "no-store",
       signal: attempt.signal,
     });

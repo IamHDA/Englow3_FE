@@ -75,7 +75,7 @@ it("sends the typed email and the CSRF header when deleting", async () => {
 
   await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
   const [url, init] = fetcher.mock.calls[0];
-  expect(url).toBe("/api/account/erase");
+  expect(url).toBe("/api/bff/rest/account/erase");
   expect(init.method).toBe("POST");
   expect(init.headers).toHaveProperty("x-englow-request", "1");
   expect(JSON.parse(init.body)).toEqual({ confirmEmail: EMAIL });

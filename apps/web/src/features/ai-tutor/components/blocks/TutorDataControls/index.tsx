@@ -66,7 +66,7 @@ export function TutorDataControls({
         data[kind] = [];
         for (let page = 0; page <= 100000; page++) {
           const response = await fetch(
-            `/api/tutor/data?${new URLSearchParams({ kind, page: String(page) })}`,
+            `/api/bff/rest/tutor/data?${new URLSearchParams({ kind, page: String(page) })}`,
             {
               headers: { [CSRF_HEADER]: CSRF_VALUE },
               signal: AbortSignal.any([
@@ -122,7 +122,7 @@ export function TutorDataControls({
     setError(false);
     let serverDeleted = false;
     try {
-      const response = await fetch("/api/tutor/data", {
+      const response = await fetch("/api/bff/rest/tutor/data", {
         method: "DELETE",
         headers: { [CSRF_HEADER]: CSRF_VALUE },
         signal: AbortSignal.timeout(40_000),

@@ -14,7 +14,7 @@ import { CSRF_HEADER, CSRF_VALUE } from "@/lib/security/csrf";
 import { beginRequest, endRequest } from "@/shared/network/pendingRequests";
 
 function makeClient() {
-  // In the browser the request goes to this app's own /api/graphql, which adds
+  // In the browser the request goes to this app's own /api/bff/graphql, which adds
   // the token from the HttpOnly session cookie and passes it on to the BFF -
   // the page never holds a token. The one place this runs on a server is the
   // server render of a client component, which has no cookie to read and so
@@ -26,7 +26,7 @@ function makeClient() {
         ? (process.env.BFF_GRAPHQL_URL ??
           process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ??
           "http://localhost:4000/graphql")
-        : "/api/graphql",
+        : "/api/bff/graphql",
     credentials: "same-origin",
     headers: { [CSRF_HEADER]: CSRF_VALUE },
     fetchOptions: {

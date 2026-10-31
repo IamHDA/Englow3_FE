@@ -1,3 +1,5 @@
+import { CSRF_HEADER, CSRF_VALUE } from "@/lib/security/csrf";
+
 import type { TutorMessage } from "../types";
 
 export type TutorEvent = {
@@ -16,8 +18,15 @@ export async function readTutorStream(
   receive: (event: TutorEvent) => void,
 ) {
   const response = await fetch(
-    `/api/tutor/stream?${new URLSearchParams({ conversationId, messageId, cursor })}`,
-    { signal, credentials: "same-origin", cache: "no-store" },
+    `/api/bff/rest/tutor/conversations/${encodeURIComponent(conversationId)}/messages/${encodeURIComponent(messageId)}/events?${new URLSearchParams({ cursor })}`,
+    {
+      signal,
+      credentials: "same-origin",
+      cache: "no-store",
+      // Without it the cross-site check refuses the stream and the chat falls
+      // back to polling for every reply.
+      headers: { [CSRF_HEADER]: CSRF_VALUE },
+    },
   );
   if (
     !response.ok ||
