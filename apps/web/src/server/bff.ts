@@ -12,7 +12,10 @@ export const bffGraphqlUrl =
   process.env.NEXT_PUBLIC_BFF_GRAPHQL_URL ??
   "http://localhost:4000/graphql";
 
-export const bffRestUrl = bffGraphqlUrl.replace(/\/graphql\/?$/, "/rest");
+/** The BFF's origin, which `/graphql`, `/rest` and `/system` hang off. */
+export const bffBaseUrl = bffGraphqlUrl.replace(/\/graphql\/?$/, "");
+
+export const bffRestUrl = `${bffBaseUrl}/rest`;
 
 const TIMEOUT_MS = 60_000;
 

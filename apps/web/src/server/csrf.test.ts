@@ -6,7 +6,7 @@ import { CSRF_HEADER, CSRF_VALUE } from "@/lib/security/csrf";
 import { refuseCrossSite, requestOrigin } from "./csrf";
 
 function request(headers: Record<string, string>) {
-  return new Request("https://englow.example/api/graphql", {
+  return new Request("https://englow.example/api/bff/graphql", {
     method: "POST",
     headers: { host: "englow.example", ...headers },
   });

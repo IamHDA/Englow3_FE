@@ -77,7 +77,7 @@ describe("service recovery", () => {
     expect(
       vi
         .mocked(fetch)
-        .mock.calls.every(([url]) => url === "/api/system/status"),
+        .mock.calls.every(([url]) => url === "/api/bff/system/status"),
     ).toBe(true);
     stop();
     unsubscribe();

@@ -37,7 +37,7 @@ async function failure(response: Response): Promise<AccountApiError> {
 export async function fetchSubscription(
   signal?: AbortSignal,
 ): Promise<Subscription> {
-  const response = await fetch("/api/account/subscription", {
+  const response = await fetch("/api/bff/rest/account/subscription", {
     headers: HEADERS,
     signal,
   });
@@ -47,14 +47,16 @@ export async function fetchSubscription(
 
 /** The whole export as a file's worth of text. */
 export async function fetchExport(): Promise<Blob> {
-  const response = await fetch("/api/account/export", { headers: HEADERS });
+  const response = await fetch("/api/bff/rest/account/export", {
+    headers: HEADERS,
+  });
   if (!response.ok) throw await failure(response);
   return await response.blob();
 }
 
 /** Removes the account. Resolves once the backend has; the session cookie is cleared by the route. */
 export async function eraseAccount(confirmEmail: string): Promise<void> {
-  const response = await fetch("/api/account/erase", {
+  const response = await fetch("/api/bff/rest/account/erase", {
     method: "POST",
     headers: { ...HEADERS, "content-type": "application/json" },
     body: JSON.stringify({ confirmEmail }),

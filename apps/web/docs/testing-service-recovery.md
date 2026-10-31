@@ -6,7 +6,7 @@ Root layout xác thực phiên và trả giao diện trước; AccountProvider t
 
 Khi `SERVICE_WARMUP_ENABLED=true`, document navigation kích hoạt `waitUntil` gọi BFF `/system/status`. BFF kiểm tra readiness BE và AI song song, mỗi probe tối đa 3 giây. HTML không đợi kết quả. Probe không gọi LLM và không gửi token người dùng.
 
-Sau hydration, một coordinator mỗi tab gọi `/api/system/status`. Khi lỗi, nhịp chờ tăng 2/4/8/10 giây, có jitter và giới hạn 120 giây. Chỉ query đang được quan sát và gặp lỗi dịch vụ mới được refetch; AccountProvider phục hồi hồ sơ riêng. Mutation không được tự phát lại. Hết budget có nút kiểm tra lại; offline/ẩn tab giảm traffic. Tên trạng thái không khẳng định Render đang ngủ chỉ từ một timeout.
+Sau hydration, một coordinator mỗi tab gọi `/api/bff/system/status`. Khi lỗi, nhịp chờ tăng 2/4/8/10 giây, có jitter và giới hạn 120 giây. Chỉ query đang được quan sát và gặp lỗi dịch vụ mới được refetch; AccountProvider phục hồi hồ sơ riêng. Mutation không được tự phát lại. Hết budget có nút kiểm tra lại; offline/ẩn tab giảm traffic. Tên trạng thái không khẳng định Render đang ngủ chỉ từ một timeout.
 
 ## Cấu hình testing cần có
 

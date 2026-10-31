@@ -115,7 +115,7 @@ export function accountRoute(
       await relay(res, "/api/user/me/erase", {
         method: "POST",
         authorization,
-        body: JSON.stringify({ confirmEmail }),
+        body: JSON.stringify({ confirmEmail: confirmEmail.trim() }),
         timeoutMs: 30_000,
       });
     },
