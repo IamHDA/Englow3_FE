@@ -11,3 +11,6 @@ build/
 .vercel
 .env*
 scratch/
+
+# Python bytecode from skill scripts
+__pycache__/

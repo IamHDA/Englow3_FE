@@ -1,0 +1,137 @@
+<meta charset="utf-8">
+<title>Nút cam Englow3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: two questions, each answered with real screenshots first and a short explanation after. */
+:root {
+  --bg: #F6F8FB; --surface: #FFFFFF; --fg: #222C45; --muted: #5A6680; --line: #E1E6EF;
+  --brand-ink: #1F2A60; --pass: #15803D; --fail: #C43E33; --flame: #EF800C;
+  --font-display: "Lexend", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #10162B; --surface: #182039; --fg: #E6EAF2; --muted: #A3ADC0; --line: #2A3552; --brand-ink: #D6E7F2; --pass: #4ADE80; --fail: #F87171; --flame: #F39A15; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #10162B; --surface: #182039; --fg: #E6EAF2; --muted: #A3ADC0; --line: #2A3552; --brand-ink: #D6E7F2; --pass: #4ADE80; --fail: #F87171; --flame: #F39A15; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 36px 72px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; color: var(--brand-ink); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.2; }
+h2 { font-size: 24px; }
+h3 { font-size: 17px; }
+p { margin: 0; max-width: 70ch; }
+.muted { color: var(--muted); }
+section { display: grid; gap: 20px; }
+.lead { display: grid; gap: 8px; }
+.q { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* Buttons demo: colors are the literal values under discussion, so they stay fixed in both themes on a white card. */
+.demo { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.opt { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.opt.pick { border: 2px solid var(--flame); }
+.stagebox { background: #FFFFFF; border-radius: 8px; padding: 18px 14px; display: flex; justify-content: center; border: 1px solid #E1E6EF; }
+.btn { font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: 18px; height: 46px; padding: 0 30px; border: 0; border-radius: 8px; display: inline-flex; align-items: center; gap: 10px; }
+.verdict { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.ratio { font-weight: 700; font-variant-numeric: tabular-nums; }
+.ok { color: var(--pass); } .bad { color: var(--fail); }
+.opt p { font-size: 15px; }
+.badge { font-size: 12px; font-weight: 700; background: var(--flame); color: #121A33; border-radius: 99px; padding: 2px 10px; justify-self: start; }
+
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+figure { margin: 0; display: grid; gap: 10px; align-content: start; min-width: 0; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+figcaption { font-size: 15px; color: var(--muted); }
+figcaption b { color: var(--fg); }
+.crops { display: flex; gap: 18px; flex-wrap: wrap; }
+.crops figure { width: min(100%, 300px); }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: grid; gap: 10px; }
+.rule ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+code { font-size: .92em; }
+</style>
+
+<div class="wrap">
+  <header class="lead">
+    <h1>Hai câu hỏi về nút cam</h1>
+    <p class="muted">Giải thích hai điểm cần bạn quyết trong phương án đổi bảng màu. Ảnh chụp từ code thật của branch <code>testing</code>.</p>
+  </header>
+
+  <section aria-labelledby="s1">
+    <div class="lead">
+      <span class="q">Câu 1</span>
+      <h2 id="s1">"Nút cam dùng chữ navy" nghĩa là gì?</h2>
+      <p>Nút cam là nút quan trọng nhất trên màn (Bắt đầu học, Ôn ngay, Đăng nhập). Chữ trên nút cần đọc rõ: chuẩn WCAG yêu cầu độ tương phản giữa chữ và nền ít nhất 4.5:1. Màu cam của logo khá sáng, nên chữ trắng trên nó bị mờ. Có 4 cách xử lý:</p>
+    </div>
+    <div class="demo">
+      <div class="opt">
+        <h3>A. Hiện tại trên branch</h3>
+        <div class="stagebox"><span class="btn" style="background:#F97316;color:#0F172A">Ôn ngay →</span></div>
+        <div class="verdict"><span class="ratio ok">6.4:1</span><span class="muted">đạt</span></div>
+        <p>Cam Tailwind, chữ gần đen. Đọc rõ, nhưng sắc cam không phải cam của logo.</p>
+      </div>
+      <div class="opt">
+        <h3>B. Chữ trắng trên cam logo</h3>
+        <div class="stagebox"><span class="btn" style="background:#EF800C;color:#FFFFFF">Ôn ngay →</span></div>
+        <div class="verdict"><span class="ratio bad">2.7:1</span><span class="muted">không đạt</span></div>
+        <p>Đẹp và quen mắt, nhưng chữ mờ, khó đọc ngoài nắng hoặc với người kém mắt. Bỏ.</p>
+      </div>
+      <div class="opt">
+        <h3>C. Chữ trắng trên cam đậm</h3>
+        <div class="stagebox"><span class="btn" style="background:#C24C0A;color:#FFFFFF">Ôn ngay →</span></div>
+        <div class="verdict"><span class="ratio ok">4.8:1</span><span class="muted">đạt</span></div>
+        <p>Phải làm cam tối đi mới đủ tương phản. Kết quả ngả màu nâu gạch, mất độ rực của ngọn lửa.</p>
+      </div>
+      <div class="opt pick">
+        <span class="badge">Đề xuất</span>
+        <h3>D. Chữ navy trên cam logo</h3>
+        <div class="stagebox"><span class="btn" style="background:#EF800C;color:#121A33">Ôn ngay →</span></div>
+        <div class="verdict"><span class="ratio ok">6.4:1</span><span class="muted">đạt</span></div>
+        <p>Giữ đúng cam lửa của logo, chữ dùng navy của logo. Đây đúng là cặp màu trong logo: lửa cam đặt trên vòng navy. Branch hiện tại cũng đang dùng chữ tối trên nút cam (A), nên đây chỉ là đổi sắc độ, không đổi cách làm.</p>
+      </div>
+    </div>
+    <div class="crops">
+      <figure><img src="btn-hien-tai.webp" alt="Nút Ôn ngay trên branch hiện tại: cam Tailwind, chữ gần đen"><figcaption><b>Hiện tại</b>, chụp từ màn Flashcard.</figcaption></figure>
+      <figure><img src="btn-rest.webp" alt="Nút Ôn ngay với màu mới: cam logo, chữ navy"><figcaption><b>Đề xuất D</b>, bình thường.</figcaption></figure>
+      <figure><img src="btn-hover.webp" alt="Nút Ôn ngay với màu mới khi rê chuột: cam đậm hơn, chữ vẫn navy"><figcaption><b>Đề xuất D</b>, khi rê chuột: nền đậm hơn, chữ vẫn navy (4.3:1, đủ cho chữ đậm cỡ lớn).</figcaption></figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <div class="lead">
+      <span class="q">Câu 2</span>
+      <h2 id="s2">"Một màn nhiều nút cam" là thế nào?</h2>
+      <p>File <code>docs/design-system.md</code> của branch có quy tắc: <b>"Orange appears on at most one action per view"</b>, tức mỗi màn chỉ có tối đa một nút cam. Lý do: cam là màu gây chú ý mạnh nhất. Một nút cam thì mắt biết ngay phải bấm đâu. Nhiều nút cam thì chúng tranh nhau, màn hình trông rực và rối. Đây cũng là một phần lý do bạn thấy giao diện "pha trộn quá nhiều màu".</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="flashcard-hien-tai.webp" alt="Màn Thẻ ghi nhớ 3D hiện tại với 4 nút Ôn ngay màu cam được đánh số 1 đến 4">
+        <figcaption><b>Vi phạm: màn Flashcard hiện tại.</b> 4 nút "Ôn ngay" cam giống hệt nhau (1-4), trong khi hành động chính của màn là nút "Bắt đầu ôn ngay (24 thẻ)" trên banner lại là nút trắng. Bộ thẻ càng nhiều thì càng nhiều nút cam.</figcaption>
+      </figure>
+      <figure>
+        <img src="thi-thu-dung.webp" alt="Màn Thư viện đề thi thử với một nút Tiếp tục màu cam duy nhất">
+        <figcaption><b>Đúng quy tắc: màn Thi thử.</b> Chỉ đề đang làm dở có nút cam "Tiếp tục". Các đề khác dùng nút xanh. Nhìn vào biết ngay nên làm tiếp bài nào.</figcaption>
+      </figure>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="flashcard-mau-moi.webp" alt="Màn Flashcard chỉ đổi bảng màu, vẫn 4 nút cam">
+        <figcaption><b>Chỉ đổi bảng màu.</b> Teal thành navy, cam đổi theo logo, nhưng vẫn 4 nút cam. Phương án màu hiện tại dừng ở đây.</figcaption>
+      </figure>
+      <figure>
+        <img src="flashcard-de-xuat-sua.webp" alt="Màn Flashcard sau khi sửa: nút cam duy nhất trên banner, các nút Ôn ngay trong thẻ màu xanh nhạt">
+        <figcaption><b>Nếu sửa thêm bố cục (minh họa).</b> Nút cam duy nhất là "Bắt đầu ôn ngay (24 thẻ)" trên banner. "Ôn ngay" trong từng thẻ đổi sang nút xanh nhạt. Ảnh này tôi đổi tạm bằng CSS để bạn xem, chưa sửa code.</figcaption>
+      </figure>
+    </div>
+    <div class="rule">
+      <h3>Nếu bạn đồng ý sửa phần này</h3>
+      <ol>
+        <li>Tôi rà các màn, tìm chỗ có từ 2 nút cam trở lên, liệt kê ra cho bạn duyệt trước.</li>
+        <li>Mỗi màn giữ một nút cam cho hành động chính. Các nút còn lại dùng kiểu xanh nhạt như minh họa.</li>
+        <li>Phần này làm riêng một commit, tách khỏi commit đổi bảng màu, để bạn dễ xem và dễ bỏ nếu không thích.</li>
+      </ol>
+    </div>
+  </section>
+</div>
