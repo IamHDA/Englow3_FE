@@ -1,137 +1,517 @@
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <title>Englow3 bảng màu mới</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<meta name="claude:viewport-fit-sides" content="cover" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap"
+/>
 <style>
-/* Layout: a working review tool. Summary and palette first, then a screen list beside a before/after viewer. */
-:root {
-  --bg: #F6F8FB;
-  --surface: #FFFFFF;
-  --fg: #222C45;
-  --muted: #5A6680;
-  --line: #E1E6EF;
-  --brand: #255A8E;
-  --brand-ink: #1F2A60;
-  --brand-tint: #EEF5FA;
-  --flame: #EF800C;
-  --flame-text: #C24C0A;
-  --old: #0F766E;
-  --font-display: "Lexend", system-ui, sans-serif;
-  --font-body: "Source Sans 3", system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #10162B; --surface: #182039; --fg: #E6EAF2; --muted: #A3ADC0; --line: #2A3552;
-    --brand: #7FB3D4; --brand-ink: #D6E7F2; --brand-tint: #1D2A4A; --flame: #F39A15; --flame-text: #F6BB1F; --old: #5EEAD4;
+  /* Layout: a working review tool. Summary and palette first, then a screen list beside a before/after viewer. */
+  :root {
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --fg: #222c45;
+    --muted: #5a6680;
+    --line: #e1e6ef;
+    --brand: #255a8e;
+    --brand-ink: #1f2a60;
+    --brand-tint: #eef5fa;
+    --flame: #ef800c;
+    --flame-text: #c24c0a;
+    --old: #0f766e;
+    --font-display: "Lexend", system-ui, sans-serif;
+    --font-body: "Source Sans 3", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10162b;
+      --surface: #182039;
+      --fg: #e6eaf2;
+      --muted: #a3adc0;
+      --line: #2a3552;
+      --brand: #7fb3d4;
+      --brand-ink: #d6e7f2;
+      --brand-tint: #1d2a4a;
+      --flame: #f39a15;
+      --flame-text: #f6bb1f;
+      --old: #5eead4;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10162b;
+    --surface: #182039;
+    --fg: #e6eaf2;
+    --muted: #a3adc0;
+    --line: #2a3552;
+    --brand: #7fb3d4;
+    --brand-ink: #d6e7f2;
+    --brand-tint: #1d2a4a;
+    --flame: #f39a15;
+    --flame-text: #f6bb1f;
+    --old: #5eead4;
     color-scheme: dark;
   }
-}
-:root[data-theme="dark"] {
-  --bg: #10162B; --surface: #182039; --fg: #E6EAF2; --muted: #A3ADC0; --line: #2A3552;
-  --brand: #7FB3D4; --brand-ink: #D6E7F2; --brand-tint: #1D2A4A; --flame: #F39A15; --flame-text: #F6BB1F; --old: #5EEAD4;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--fg);
-  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
-}
-.wrap {
-  max-width: 1500px; margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 32px 64px;
-  display: grid; gap: 40px;
-}
-h1, h2, h3 { font-family: var(--font-display); font-weight: 600; color: var(--brand-ink); text-wrap: balance; margin: 0; }
-h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; }
-h2 { font-size: 22px; }
-h3 { font-size: 16px; }
-p { margin: 0; max-width: 68ch; }
-.muted { color: var(--muted); }
-header.intro { display: grid; gap: 14px; }
-.logo-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-.logo-row img { height: 44px; width: auto; background: #fff; border-radius: 8px; padding: 4px 8px; border: 1px solid var(--line); }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; min-width: 0; }
-.fact b { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .wrap {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 32px 64px;
+    display: grid;
+    gap: 40px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--brand-ink);
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 36px);
+    line-height: 1.15;
+  }
+  h2 {
+    font-size: 22px;
+  }
+  h3 {
+    font-size: 16px;
+  }
+  p {
+    margin: 0;
+    max-width: 68ch;
+  }
+  .muted {
+    color: var(--muted);
+  }
+  header.intro {
+    display: grid;
+    gap: 14px;
+  }
+  .logo-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .logo-row img {
+    height: 44px;
+    width: auto;
+    background: #fff;
+    border-radius: 8px;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .fact {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .fact b {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+  }
 
-/* Palette */
-section.palette { display: grid; gap: 18px; }
-.scale { display: grid; gap: 6px; }
-.scale-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; }
-.row { display: grid; grid-template-columns: 56px repeat(10, minmax(0, 1fr)); gap: 4px; align-items: stretch; }
-.row .lbl { font-size: 12px; color: var(--muted); align-self: center; }
-.sw { height: 44px; border-radius: 6px; position: relative; display: flex; align-items: flex-end; justify-content: center; font-size: 10px; padding-bottom: 3px; font-variant-numeric: tabular-nums; }
-.sw.logo::after { content: "logo"; position: absolute; top: 3px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.idx { display: grid; grid-template-columns: 56px repeat(10, minmax(0, 1fr)); gap: 4px; font-size: 11px; color: var(--muted); text-align: center; }
-.contrast { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
-table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14px; }
-th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-th { font-weight: 600; color: var(--muted); font-size: 13px; }
-tr:last-child td { border-bottom: 0; }
-.chip { display: inline-flex; align-items: center; gap: 8px; }
-.dot { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(0,0,0,.12); flex: none; }
-.num { font-variant-numeric: tabular-nums; font-weight: 600; }
-.pass { color: #15803D; } .fail { color: #C43E33; }
-:root[data-theme="dark"] .pass { color: #4ADE80; } :root[data-theme="dark"] .fail { color: #F87171; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pass { color: #4ADE80; } :root:not([data-theme="light"]) .fail { color: #F87171; } }
+  /* Palette */
+  section.palette {
+    display: grid;
+    gap: 18px;
+  }
+  .scale {
+    display: grid;
+    gap: 6px;
+  }
+  .scale-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 56px repeat(10, minmax(0, 1fr));
+    gap: 4px;
+    align-items: stretch;
+  }
+  .row .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    align-self: center;
+  }
+  .sw {
+    height: 44px;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-size: 10px;
+    padding-bottom: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .sw.logo::after {
+    content: "logo";
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .idx {
+    display: grid;
+    grid-template-columns: 56px repeat(10, minmax(0, 1fr));
+    gap: 4px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .contrast {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 620px;
+    font-size: 14px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  th {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  tr:last-child td {
+    border-bottom: 0;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    flex: none;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .pass {
+    color: #15803d;
+  }
+  .fail {
+    color: #c43e33;
+  }
+  :root[data-theme="dark"] .pass {
+    color: #4ade80;
+  }
+  :root[data-theme="dark"] .fail {
+    color: #f87171;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .pass {
+      color: #4ade80;
+    }
+    :root:not([data-theme="light"]) .fail {
+      color: #f87171;
+    }
+  }
 
-/* Viewer */
-section.viewer { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; align-items: start; }
-nav.list { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); max-height: calc(100vh - 24px); overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 12px; }
-nav.list h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 4px 8px 2px; font-family: var(--font-body); font-weight: 700; }
-nav.list ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-nav.list a { display: block; padding: 7px 10px; border-radius: 7px; color: var(--fg); text-decoration: none; font-size: 14.5px; line-height: 1.3; }
-nav.list a:hover { background: var(--brand-tint); }
-nav.list a[aria-current="true"] { background: var(--brand); color: #fff; font-weight: 600; }
-.stage { display: grid; gap: 14px; min-width: 0; }
-.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
-.toolbar h2 { font-size: 20px; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); padding: 3px; gap: 2px; }
-.seg button { border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-.seg button[aria-pressed="true"] { background: var(--brand); color: #fff; font-weight: 600; }
-button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
-.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.pane { display: grid; gap: 8px; min-width: 0; }
-.tag { font-size: 13px; font-weight: 700; display: inline-flex; gap: 8px; align-items: center; }
-.tag .dot { width: 10px; height: 10px; border-radius: 99px; border: 0; }
-.shot { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
-.shot img { display: block; width: 100%; height: auto; }
-.pair.narrow { grid-template-columns: repeat(2, minmax(0, 390px)); justify-content: center; }
-.swipe { position: relative; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
-.swipe img { display: block; width: 100%; height: auto; }
-.swipe .top { position: absolute; inset: 0; overflow: hidden; }
-.swipe .top img { width: 100%; height: auto; }
-.swipe .bar { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--flame); transform: translateX(-1.5px); pointer-events: none; }
-.swipe-ctl { display: flex; gap: 12px; align-items: center; font-size: 14px; color: var(--muted); }
-.swipe-ctl input { flex: 1; accent-color: var(--flame); }
-.notes { display: grid; gap: 12px; }
-.notes ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 80ch; }
-@media (max-width: 900px) {
-  section.viewer { grid-template-columns: minmax(0, 1fr); }
-  nav.list { position: static; max-height: 260px; }
-  .pair, .pair.narrow { grid-template-columns: minmax(0, 1fr); }
-  .row, .idx { grid-template-columns: 40px repeat(10, minmax(0, 1fr)); }
-  .sw { font-size: 0; }
-}
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  /* Viewer */
+  section.viewer {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  nav.list {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px;
+    display: grid;
+    gap: 12px;
+  }
+  nav.list h3 {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 8px 2px;
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  nav.list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  nav.list a {
+    display: block;
+    padding: 7px 10px;
+    border-radius: 7px;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 14.5px;
+    line-height: 1.3;
+  }
+  nav.list a:hover {
+    background: var(--brand-tint);
+  }
+  nav.list a[aria-current="true"] {
+    background: var(--brand);
+    color: #fff;
+    font-weight: 600;
+  }
+  .stage {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .toolbar h2 {
+    font-size: 20px;
+  }
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+    padding: 3px;
+    gap: 2px;
+  }
+  .seg button {
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] {
+    background: var(--brand);
+    color: #fff;
+    font-weight: 600;
+  }
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--flame);
+    outline-offset: 2px;
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .pane {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .tag {
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .tag .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 99px;
+    border: 0;
+  }
+  .shot {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .pair.narrow {
+    grid-template-columns: repeat(2, minmax(0, 390px));
+    justify-content: center;
+  }
+  .swipe {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .swipe img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .swipe .top {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .swipe .top img {
+    width: 100%;
+    height: auto;
+  }
+  .swipe .bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--flame);
+    transform: translateX(-1.5px);
+    pointer-events: none;
+  }
+  .swipe-ctl {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .swipe-ctl input {
+    flex: 1;
+    accent-color: var(--flame);
+  }
+  .notes {
+    display: grid;
+    gap: 12px;
+  }
+  .notes ul {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 8px;
+    max-width: 80ch;
+  }
+  @media (max-width: 900px) {
+    section.viewer {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    nav.list {
+      position: static;
+      max-height: 260px;
+    }
+    .pair,
+    .pair.narrow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .row,
+    .idx {
+      grid-template-columns: 40px repeat(10, minmax(0, 1fr));
+    }
+    .sw {
+      font-size: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
 </style>
 
 <div class="wrap">
   <header class="intro">
     <div class="logo-row">
-      <img src="logo.png" alt="Logo Englow3">
-      <span class="muted">Đã áp dụng trên branch <code>claude/gallant-maxwell-yuwpe6</code> (nền <code>testing</code>): commit <code>9fd980a</code> bảng màu, <code>c2e45eb</code> một nút cam mỗi màn</span>
+      <img src="logo.png" alt="Logo Englow3" />
+      <span class="muted"
+        >Đã áp dụng trên branch <code>claude/gallant-maxwell-yuwpe6</code> (nền
+        <code>testing</code>): commit <code>9fd980a</code> bảng màu,
+        <code>c2e45eb</code> một nút cam mỗi màn</span
+      >
     </div>
     <h1>Bảng màu theo logo Englow3</h1>
-    <p>Giao diện hiện tại lấy màu chính là teal từ bảng màu mẫu của ui-ux-pro-max cho mảng e-learning. Logo không có teal: chỉ có một dải xanh (navy đến xanh biển) và một dải lửa (vàng đến cam cháy). Phương án dưới đây giữ nguyên cấu trúc vai trò màu và quy tắc tương phản của design system, chỉ thay sắc độ bằng màu đo trực tiếp từ logo.</p>
+    <p>
+      Giao diện hiện tại lấy màu chính là teal từ bảng màu mẫu của ui-ux-pro-max
+      cho mảng e-learning. Logo không có teal: chỉ có một dải xanh (navy đến
+      xanh biển) và một dải lửa (vàng đến cam cháy). Phương án dưới đây giữ
+      nguyên cấu trúc vai trò màu và quy tắc tương phản của design system, chỉ
+      thay sắc độ bằng màu đo trực tiếp từ logo.
+    </p>
     <div class="facts">
-      <div class="fact"><b>Đổi giá trị, giữ vai trò</b><span class="muted">Thang màu thay trong <code>theme.ts</code>, mọi màn tự đổi theo vì đều dùng token. Nút cam chuyển sang <code>orange.7</code> chữ trắng.</span></div>
-      <div class="fact"><b>Không màu chữ nào dưới 4.5:1</b><span class="muted">Mọi cặp chữ/nền trong bảng bên dưới đạt WCAG AA, như yêu cầu của <code>docs/design-system.md</code>.</span></div>
-      <div class="fact"><b>43 màn, ảnh chụp thật</b><span class="muted">Chạy code thật của branch với dữ liệu giả. Nội dung chữ trong ảnh là dữ liệu mẫu, chỉ màu là thật.</span></div>
+      <div class="fact">
+        <b>Đổi giá trị, giữ vai trò</b
+        ><span class="muted"
+          >Thang màu thay trong <code>theme.ts</code>, mọi màn tự đổi theo vì
+          đều dùng token. Nút cam chuyển sang <code>orange.7</code> chữ
+          trắng.</span
+        >
+      </div>
+      <div class="fact">
+        <b>Không màu chữ nào dưới 4.5:1</b
+        ><span class="muted"
+          >Mọi cặp chữ/nền trong bảng bên dưới đạt WCAG AA, như yêu cầu của
+          <code>docs/design-system.md</code>.</span
+        >
+      </div>
+      <div class="fact">
+        <b>43 màn, ảnh chụp thật</b
+        ><span class="muted"
+          >Chạy code thật của branch với dữ liệu giả. Nội dung chữ trong ảnh là
+          dữ liệu mẫu, chỉ màu là thật.</span
+        >
+      </div>
     </div>
   </header>
 
@@ -140,7 +520,14 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
     <div id="scales"></div>
     <div class="contrast">
       <table>
-        <thead><tr><th>Vai trò</th><th>Hiện tại</th><th>Đề xuất</th><th>Tương phản mới</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Vai trò</th>
+            <th>Hiện tại</th>
+            <th>Đề xuất</th>
+            <th>Tương phản mới</th>
+          </tr>
+        </thead>
         <tbody id="ctable"></tbody>
       </table>
     </div>
@@ -152,19 +539,45 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
       <div class="toolbar">
         <h2 id="view-h">Trang chủ</h2>
         <div class="seg" role="group" aria-label="Cách xem">
-          <button type="button" id="m-side" aria-pressed="true">Song song</button>
-          <button type="button" id="m-swipe" aria-pressed="false">Trượt so sánh</button>
+          <button type="button" id="m-side" aria-pressed="true">
+            Song song
+          </button>
+          <button type="button" id="m-swipe" aria-pressed="false">
+            Trượt so sánh
+          </button>
         </div>
       </div>
       <div id="side" class="pair">
-        <div class="pane"><span class="tag"><span class="dot" style="background:var(--old)"></span>Hiện tại (teal)</span><div class="shot"><img id="img-b" alt=""></div></div>
-        <div class="pane"><span class="tag"><span class="dot" style="background:var(--flame)"></span>Đề xuất (navy + lửa)</span><div class="shot"><img id="img-a" alt=""></div></div>
+        <div class="pane">
+          <span class="tag"
+            ><span class="dot" style="background: var(--old)"></span>Hiện tại
+            (teal)</span
+          >
+          <div class="shot"><img id="img-b" alt="" /></div>
+        </div>
+        <div class="pane">
+          <span class="tag"
+            ><span class="dot" style="background: var(--flame)"></span>Đề xuất
+            (navy + lửa)</span
+          >
+          <div class="shot"><img id="img-a" alt="" /></div>
+        </div>
       </div>
       <div id="swipe" hidden>
-        <div class="swipe-ctl"><span>Hiện tại</span><input id="pos" type="range" min="0" max="100" value="50" aria-label="Vị trí đường chia"><span>Đề xuất</span></div>
+        <div class="swipe-ctl">
+          <span>Hiện tại</span
+          ><input
+            id="pos"
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            aria-label="Vị trí đường chia"
+          /><span>Đề xuất</span>
+        </div>
         <div class="swipe" id="swipe-box">
-          <img id="sw-a" alt="">
-          <div class="top" id="sw-top"><img id="sw-b" alt=""></div>
+          <img id="sw-a" alt="" />
+          <div class="top" id="sw-top"><img id="sw-b" alt="" /></div>
           <div class="bar" id="sw-bar"></div>
         </div>
       </div>
@@ -174,135 +587,334 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   <section class="notes" aria-labelledby="notes-h">
     <h2 id="notes-h">Những gì đã chốt</h2>
     <ul>
-      <li><b>Nút cam dùng chữ trắng trên cam đậm <code>#C24C0A</code></b> (4.8:1, đạt AA). Cam lửa sáng <code>#EF800C</code> giữ cho những chỗ không có chữ: thanh tiến độ, gạch chân menu, điểm nhấn.</li>
-      <li><b>Mỗi màn tối đa một nút cam.</b> Thẻ trong thư viện (flashcard, thi thử, chính tả) không còn nút cam: bài đang dở có nút navy đặc, bài khác có nút navy nhạt. Nút cam nằm trên banner của trang, như "Bắt đầu ôn ngay" ở Flashcard.</li>
-      <li><b>Nút "Hoàn thiện thông tin" trên header và "Tiếp tục thiết lập" ở trang chủ học viên chuyển sang navy</b>, để không thành nút cam thứ hai cạnh nút cam của trang.</li>
-      <li><b>Trang chủ khách vẫn có 2 nút cam</b>, "Bắt đầu học" ở đầu và "Đăng nhập Englow3" ở cuối trang. Đó là cùng một hành động nhắc lại, và hai nút không bao giờ cùng nằm trong một màn hình.</li>
-      <li><b>Màu xanh lá cho trạng thái "đúng/hoàn thành" giữ nguyên.</b> Có một chỗ đang dùng xanh lá cho nút hành động: "Làm bài test đầu vào" ở trang chủ học viên. Chưa sửa trong lần này.</li>
-      <li><b>Màu <code>amber</code> trong thẻ flashcard 3D</b> không có trong theme, nên Mantine dùng màu mặc định của nó. Chưa sửa trong lần này.</li>
+      <li>
+        <b>Nút cam dùng chữ trắng trên cam đậm <code>#C24C0A</code></b> (4.8:1,
+        đạt AA). Cam lửa sáng <code>#EF800C</code> giữ cho những chỗ không có
+        chữ: thanh tiến độ, gạch chân menu, điểm nhấn.
+      </li>
+      <li>
+        <b>Mỗi màn tối đa một nút cam.</b> Thẻ trong thư viện (flashcard, thi
+        thử, chính tả) không còn nút cam: bài đang dở có nút navy đặc, bài khác
+        có nút navy nhạt. Nút cam nằm trên banner của trang, như "Bắt đầu ôn
+        ngay" ở Flashcard.
+      </li>
+      <li>
+        <b
+          >Nút "Hoàn thiện thông tin" trên header và "Tiếp tục thiết lập" ở
+          trang chủ học viên chuyển sang navy</b
+        >, để không thành nút cam thứ hai cạnh nút cam của trang.
+      </li>
+      <li>
+        <b>Trang chủ khách vẫn có 2 nút cam</b>, "Bắt đầu học" ở đầu và "Đăng
+        nhập Englow3" ở cuối trang. Đó là cùng một hành động nhắc lại, và hai
+        nút không bao giờ cùng nằm trong một màn hình.
+      </li>
+      <li>
+        <b>Màu xanh lá cho trạng thái "đúng/hoàn thành" giữ nguyên.</b> Có một
+        chỗ đang dùng xanh lá cho nút hành động: "Làm bài test đầu vào" ở trang
+        chủ học viên. Chưa sửa trong lần này.
+      </li>
+      <li>
+        <b>Màu <code>amber</code> trong thẻ flashcard 3D</b> không có trong
+        theme, nên Mantine dùng màu mặc định của nó. Chưa sửa trong lần này.
+      </li>
     </ul>
   </section>
 </div>
 
 <script>
-const OLD = {
-  brand: ["#F0FDFA","#CCFBF1","#99F6E4","#5EEAD4","#2DD4BF","#14B8A6","#0D9488","#0F766E","#115E59","#134E4A"],
-  orange: ["#FFF7ED","#FFEDD5","#FED7AA","#FDBA74","#FB923C","#F97316","#EA580C","#C2410C","#9A3412","#7C2D12"],
-  ink: ["#F8FAFC","#F1F5F9","#E2E8F0","#CBD5E1","#94A3B8","#5B6A80","#475569","#334155","#1E293B","#0F172A"],
-};
-const NEW = {
-  brand: ["#EEF5FA","#D6E7F2","#ADCFE5","#7FB3D4","#5596C2","#2F7BAD","#296A9F","#255A8E","#22427A","#1F2A60"],
-  orange: ["#FFF6EA","#FFEBCF","#FCD58F","#F6BB1F","#F39A15","#EF800C","#D65909","#C24C0A","#9C3D0A","#6E2C0D"],
-  ink: ["#F6F8FB","#EEF1F6","#E1E6EF","#C8D0DE","#97A2B8","#5A6680","#46526C","#343F58","#222C45","#121A33"],
-};
-const LOGO = { brand: [5, 9], orange: [3, 5, 6], ink: [] };
-const NAMES = {
-  brand: ["brand (navy)", "Màu chính: nút chính, link, viền focus (7), tiêu đề và panel tối (9). Thay teal bằng dải xanh của vòng tròn logo."],
-  orange: ["orange", "Màu nhấn: nút đưa người học đi tiếp (5), chữ cam (7). Thay cam Tailwind bằng dải lửa của logo."],
-  ink: ["ink", "Màu trung tính: nền trang (0), viền (2), chữ phụ (5), chữ thân (7-8). Ngả nhẹ về navy cho hợp màu chính."],
-};
+  const OLD = {
+    brand: [
+      "#F0FDFA",
+      "#CCFBF1",
+      "#99F6E4",
+      "#5EEAD4",
+      "#2DD4BF",
+      "#14B8A6",
+      "#0D9488",
+      "#0F766E",
+      "#115E59",
+      "#134E4A",
+    ],
+    orange: [
+      "#FFF7ED",
+      "#FFEDD5",
+      "#FED7AA",
+      "#FDBA74",
+      "#FB923C",
+      "#F97316",
+      "#EA580C",
+      "#C2410C",
+      "#9A3412",
+      "#7C2D12",
+    ],
+    ink: [
+      "#F8FAFC",
+      "#F1F5F9",
+      "#E2E8F0",
+      "#CBD5E1",
+      "#94A3B8",
+      "#5B6A80",
+      "#475569",
+      "#334155",
+      "#1E293B",
+      "#0F172A",
+    ],
+  };
+  const NEW = {
+    brand: [
+      "#EEF5FA",
+      "#D6E7F2",
+      "#ADCFE5",
+      "#7FB3D4",
+      "#5596C2",
+      "#2F7BAD",
+      "#296A9F",
+      "#255A8E",
+      "#22427A",
+      "#1F2A60",
+    ],
+    orange: [
+      "#FFF6EA",
+      "#FFEBCF",
+      "#FCD58F",
+      "#F6BB1F",
+      "#F39A15",
+      "#EF800C",
+      "#D65909",
+      "#C24C0A",
+      "#9C3D0A",
+      "#6E2C0D",
+    ],
+    ink: [
+      "#F6F8FB",
+      "#EEF1F6",
+      "#E1E6EF",
+      "#C8D0DE",
+      "#97A2B8",
+      "#5A6680",
+      "#46526C",
+      "#343F58",
+      "#222C45",
+      "#121A33",
+    ],
+  };
+  const LOGO = { brand: [5, 9], orange: [3, 5, 6], ink: [] };
+  const NAMES = {
+    brand: [
+      "brand (navy)",
+      "Màu chính: nút chính, link, viền focus (7), tiêu đề và panel tối (9). Thay teal bằng dải xanh của vòng tròn logo.",
+    ],
+    orange: [
+      "orange",
+      "Màu nhấn: nút đưa người học đi tiếp (5), chữ cam (7). Thay cam Tailwind bằng dải lửa của logo.",
+    ],
+    ink: [
+      "ink",
+      "Màu trung tính: nền trang (0), viền (2), chữ phụ (5), chữ thân (7-8). Ngả nhẹ về navy cho hợp màu chính.",
+    ],
+  };
 
-function lum(h) {
-  const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(x => x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
-}
-function ratio(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
-function textOn(h) { return lum(h) > 0.3 ? "#121A33" : "#FFFFFF"; }
+  function lum(h) {
+    const c = [1, 3, 5]
+      .map((i) => parseInt(h.slice(i, i + 2), 16) / 255)
+      .map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+  function ratio(a, b) {
+    const x = lum(a),
+      y = lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+  function textOn(h) {
+    return lum(h) > 0.3 ? "#121A33" : "#FFFFFF";
+  }
 
-const scales = document.getElementById("scales");
-scales.style.display = "grid"; scales.style.gap = "22px";
-for (const key of ["brand", "orange", "ink"]) {
-  const box = document.createElement("div");
-  box.className = "scale";
-  const swatches = (arr, mark) => arr.map((h, i) =>
-    `<div class="sw${mark && LOGO[key].includes(i) ? " logo" : ""}" style="background:${h};color:${textOn(h)}" title="${key}.${i} ${h}">${h.slice(1)}</div>`).join("");
-  box.innerHTML = `
+  const scales = document.getElementById("scales");
+  scales.style.display = "grid";
+  scales.style.gap = "22px";
+  for (const key of ["brand", "orange", "ink"]) {
+    const box = document.createElement("div");
+    box.className = "scale";
+    const swatches = (arr, mark) =>
+      arr
+        .map(
+          (h, i) =>
+            `<div class="sw${mark && LOGO[key].includes(i) ? " logo" : ""}" style="background:${h};color:${textOn(h)}" title="${key}.${i} ${h}">${h.slice(1)}</div>`,
+        )
+        .join("");
+    box.innerHTML = `
     <div class="scale-head"><h3>${NAMES[key][0]}</h3><span class="muted" style="font-size:14px">${NAMES[key][1]}</span></div>
-    <div class="idx"><span></span>${[...Array(10).keys()].map(i => `<span>${i}</span>`).join("")}</div>
+    <div class="idx"><span></span>${[...Array(10).keys()].map((i) => `<span>${i}</span>`).join("")}</div>
     <div class="row"><span class="lbl">Hiện tại</span>${swatches(OLD[key], false)}</div>
     <div class="row"><span class="lbl">Đề xuất</span>${swatches(NEW[key], true)}</div>`;
-  scales.appendChild(box);
-}
+    scales.appendChild(box);
+  }
 
-const W = "#FFFFFF";
-const ROWS = [
-  ["Nút chính, chữ trắng", ["brand", 7], W, true],
-  ["Tiêu đề trên nền trang", ["brand", 9], ["ink", 0], false],
-  ["Link trên nền trắng", ["brand", 7], W, false],
-  ["Nút cam, chữ trắng (trước: cam 5, chữ tối)", ["orange", 7], W, true, { fg: "#0F172A", bg: "#F97316", tok: "orange.5" }],
-  ["Chữ cam (số liệu, nhãn)", ["orange", 7], W, false],
-  ["Chữ phụ trên nền trắng", ["ink", 5], W, false],
-  ["Chữ phụ trên ink-1", ["ink", 5], ["ink", 1], false],
-  ["Chữ thân", ["ink", 8], W, false],
-];
-const BLACK = { old: "#0F172A", new: "#121A33" };
-const tb = document.getElementById("ctable");
-for (const [label, [k, i], bg, isFill, oldOverride] of ROWS) {
-  const pick = (set, which) => {
-    const c = set[k][i];
-    let b = bg === "black" ? BLACK[which] : Array.isArray(bg) ? set[bg[0]][bg[1]] : bg;
-    return isFill ? { fg: b, bg: c, swatch: c } : { fg: c, bg: b, swatch: c };
-  };
-  const o = oldOverride ? { fg: oldOverride.fg, bg: oldOverride.bg, swatch: oldOverride.bg } : pick(OLD, "old");
-  const n = pick(NEW, "new");
-  const oldTok = oldOverride ? oldOverride.tok : `${k}.${i}`;
-  const r = ratio(n.fg, n.bg), ro = ratio(o.fg, o.bg);
-  const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${label}</td>
+  const W = "#FFFFFF";
+  const ROWS = [
+    ["Nút chính, chữ trắng", ["brand", 7], W, true],
+    ["Tiêu đề trên nền trang", ["brand", 9], ["ink", 0], false],
+    ["Link trên nền trắng", ["brand", 7], W, false],
+    [
+      "Nút cam, chữ trắng (trước: cam 5, chữ tối)",
+      ["orange", 7],
+      W,
+      true,
+      { fg: "#0F172A", bg: "#F97316", tok: "orange.5" },
+    ],
+    ["Chữ cam (số liệu, nhãn)", ["orange", 7], W, false],
+    ["Chữ phụ trên nền trắng", ["ink", 5], W, false],
+    ["Chữ phụ trên ink-1", ["ink", 5], ["ink", 1], false],
+    ["Chữ thân", ["ink", 8], W, false],
+  ];
+  const BLACK = { old: "#0F172A", new: "#121A33" };
+  const tb = document.getElementById("ctable");
+  for (const [label, [k, i], bg, isFill, oldOverride] of ROWS) {
+    const pick = (set, which) => {
+      const c = set[k][i];
+      let b =
+        bg === "black"
+          ? BLACK[which]
+          : Array.isArray(bg)
+            ? set[bg[0]][bg[1]]
+            : bg;
+      return isFill ? { fg: b, bg: c, swatch: c } : { fg: c, bg: b, swatch: c };
+    };
+    const o = oldOverride
+      ? { fg: oldOverride.fg, bg: oldOverride.bg, swatch: oldOverride.bg }
+      : pick(OLD, "old");
+    const n = pick(NEW, "new");
+    const oldTok = oldOverride ? oldOverride.tok : `${k}.${i}`;
+    const r = ratio(n.fg, n.bg),
+      ro = ratio(o.fg, o.bg);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${label}</td>
     <td><span class="chip"><span class="dot" style="background:${o.swatch}"></span>${oldTok} ${o.swatch} <span class="muted num">${ro.toFixed(1)}:1</span></span></td>
     <td><span class="chip"><span class="dot" style="background:${n.swatch}"></span>${k}.${i} ${n.swatch}</span></td>
     <td><span class="num ${r >= 4.5 ? "pass" : "fail"}">${r.toFixed(1)}:1</span> <span class="muted">${r >= 4.5 ? "AA" : "dưới AA"}</span></td>`;
-  tb.appendChild(tr);
-}
+    tb.appendChild(tr);
+  }
 
-const GROUPS = [
-  ["Khách", [["01-trang-chu", "Trang chủ"], ["02-trang-chu-mobile", "Trang chủ (mobile)", true], ["03-dang-nhap", "Đăng nhập"], ["04-dang-ky", "Đăng ký"], ["05-bang-gia", "Bảng giá"], ["07-quen-mat-khau", "Quên mật khẩu"], ["09-dieu-khoan", "Điều khoản"]]],
-  ["Onboarding", [["33-onboarding-learning-purposes", "Bước 1: Mục tiêu học"], ["34-onboarding-certificate-target", "Bước 2: Chứng chỉ"], ["35-onboarding-current-level", "Bước 3: Trình độ"], ["36-onboarding-learning-goal", "Bước 4: Mục tiêu điểm"], ["37-onboarding-target-skills", "Bước 5: Kỹ năng"]]],
-  ["Học viên", [["09b-trang-chu-hoc-vien", "Trang chủ học viên"], ["10-lo-trinh-hang-ngay", "Lộ trình hằng ngày"], ["11-menu-hoc-tap", "Menu Học tập"], ["31-menu-tai-khoan", "Menu tài khoản"], ["12-flashcard", "Flashcard"], ["13-flashcard-chi-tiet", "Flashcard: chi tiết bộ"], ["14-flashcard-on-tap", "Flashcard: ôn tập"], ["15-chinh-ta", "Chính tả"], ["16-chinh-ta-bai", "Chính tả: làm bài"], ["17-chinh-ta-xem-lai", "Chính tả: xem lại"], ["18-phat-am", "Phát âm"], ["19-phat-am-bai", "Phát âm: bài luyện"], ["20-noi", "Nói"], ["21-noi-bai", "Nói: bài làm"], ["22-viet", "Viết"], ["23-viet-bai", "Viết: bài làm"], ["24-trac-nghiem", "Trắc nghiệm"], ["25-danh-gia", "Bài đánh giá"], ["26-danh-gia-ket-qua", "Bài đánh giá: kết quả"], ["27-thi-thu", "Thi thử"], ["28-thi-thu-lam-bai", "Thi thử: vào thi"], ["29-gia-su-ai", "Gia sư AI"], ["30-ho-so", "Hồ sơ"], ["32-mobile-lo-trinh", "Lộ trình (mobile)", true]]],
-  ["Admin", [["40-admin-tong-quan", "Tổng quan"], ["41-admin-de-thi", "Đề thi"], ["42-admin-noi-dung", "Nội dung học"], ["43-admin-danh-gia", "Writing & Speaking"], ["44-admin-tao-danh-gia", "Tạo bài đánh giá"], ["45-admin-goi-dang-ky", "Gói dịch vụ"], ["46-admin-gia-su-ai", "Gia sư AI"]]],
-];
-const ALL = new Map();
-const list = document.getElementById("list");
-for (const [g, items] of GROUPS) {
-  const div = document.createElement("div");
-  div.innerHTML = `<h3>${g}</h3><ul>${items.map(([id, name]) => `<li><a href="#${id}" data-id="${id}">${name}</a></li>`).join("")}</ul>`;
-  list.appendChild(div);
-  for (const [id, name, mobile] of items) ALL.set(id, { name, mobile: !!mobile });
-}
+  const GROUPS = [
+    [
+      "Khách",
+      [
+        ["01-trang-chu", "Trang chủ"],
+        ["02-trang-chu-mobile", "Trang chủ (mobile)", true],
+        ["03-dang-nhap", "Đăng nhập"],
+        ["04-dang-ky", "Đăng ký"],
+        ["05-bang-gia", "Bảng giá"],
+        ["07-quen-mat-khau", "Quên mật khẩu"],
+        ["09-dieu-khoan", "Điều khoản"],
+      ],
+    ],
+    [
+      "Onboarding",
+      [
+        ["33-onboarding-learning-purposes", "Bước 1: Mục tiêu học"],
+        ["34-onboarding-certificate-target", "Bước 2: Chứng chỉ"],
+        ["35-onboarding-current-level", "Bước 3: Trình độ"],
+        ["36-onboarding-learning-goal", "Bước 4: Mục tiêu điểm"],
+        ["37-onboarding-target-skills", "Bước 5: Kỹ năng"],
+      ],
+    ],
+    [
+      "Học viên",
+      [
+        ["09b-trang-chu-hoc-vien", "Trang chủ học viên"],
+        ["10-lo-trinh-hang-ngay", "Lộ trình hằng ngày"],
+        ["11-menu-hoc-tap", "Menu Học tập"],
+        ["31-menu-tai-khoan", "Menu tài khoản"],
+        ["12-flashcard", "Flashcard"],
+        ["13-flashcard-chi-tiet", "Flashcard: chi tiết bộ"],
+        ["14-flashcard-on-tap", "Flashcard: ôn tập"],
+        ["15-chinh-ta", "Chính tả"],
+        ["16-chinh-ta-bai", "Chính tả: làm bài"],
+        ["17-chinh-ta-xem-lai", "Chính tả: xem lại"],
+        ["18-phat-am", "Phát âm"],
+        ["19-phat-am-bai", "Phát âm: bài luyện"],
+        ["20-noi", "Nói"],
+        ["21-noi-bai", "Nói: bài làm"],
+        ["22-viet", "Viết"],
+        ["23-viet-bai", "Viết: bài làm"],
+        ["24-trac-nghiem", "Trắc nghiệm"],
+        ["25-danh-gia", "Bài đánh giá"],
+        ["26-danh-gia-ket-qua", "Bài đánh giá: kết quả"],
+        ["27-thi-thu", "Thi thử"],
+        ["28-thi-thu-lam-bai", "Thi thử: vào thi"],
+        ["29-gia-su-ai", "Gia sư AI"],
+        ["30-ho-so", "Hồ sơ"],
+        ["32-mobile-lo-trinh", "Lộ trình (mobile)", true],
+      ],
+    ],
+    [
+      "Admin",
+      [
+        ["40-admin-tong-quan", "Tổng quan"],
+        ["41-admin-de-thi", "Đề thi"],
+        ["42-admin-noi-dung", "Nội dung học"],
+        ["43-admin-danh-gia", "Writing & Speaking"],
+        ["44-admin-tao-danh-gia", "Tạo bài đánh giá"],
+        ["45-admin-goi-dang-ky", "Gói dịch vụ"],
+        ["46-admin-gia-su-ai", "Gia sư AI"],
+      ],
+    ],
+  ];
+  const ALL = new Map();
+  const list = document.getElementById("list");
+  for (const [g, items] of GROUPS) {
+    const div = document.createElement("div");
+    div.innerHTML = `<h3>${g}</h3><ul>${items.map(([id, name]) => `<li><a href="#${id}" data-id="${id}">${name}</a></li>`).join("")}</ul>`;
+    list.appendChild(div);
+    for (const [id, name, mobile] of items)
+      ALL.set(id, { name, mobile: !!mobile });
+  }
 
-const $ = (id) => document.getElementById(id);
-let mode = "side";
-function show(id) {
-  if (!ALL.has(id)) id = "01-trang-chu";
-  const s = ALL.get(id);
-  $("view-h").textContent = s.name;
-  for (const a of list.querySelectorAll("a")) a.setAttribute("aria-current", a.dataset.id === id ? "true" : "false");
-  const b = `before/${id}.webp`, a = `after/${id}.webp`;
-  $("img-b").src = b; $("img-b").alt = `${s.name}, bảng màu hiện tại`;
-  $("img-a").src = a; $("img-a").alt = `${s.name}, bảng màu đề xuất`;
-  $("sw-b").src = b; $("sw-a").src = a; $("sw-a").alt = `${s.name}, so sánh trượt`;
-  $("side").classList.toggle("narrow", s.mobile);
-  $("swipe-box").style.maxWidth = s.mobile ? "390px" : "";
-  $("swipe-box").style.margin = s.mobile ? "0 auto" : "";
-}
-function setPos() {
-  const v = $("pos").value;
-  $("sw-top").style.clipPath = `inset(0 ${100 - v}% 0 0)`;
-  $("sw-bar").style.left = v + "%";
-}
-function setMode(m) {
-  mode = m;
-  $("m-side").setAttribute("aria-pressed", m === "side");
-  $("m-swipe").setAttribute("aria-pressed", m === "swipe");
-  $("side").hidden = m !== "side";
-  $("swipe").hidden = m !== "swipe";
-  try { localStorage.setItem("compare-mode", m); } catch {}
-}
-$("m-side").addEventListener("click", () => setMode("side"));
-$("m-swipe").addEventListener("click", () => setMode("swipe"));
-$("pos").addEventListener("input", setPos);
-window.addEventListener("hashchange", () => show(location.hash.slice(1)));
-try { const m = localStorage.getItem("compare-mode"); if (m === "swipe") setMode("swipe"); } catch {}
-setPos();
-show(location.hash.slice(1));
+  const $ = (id) => document.getElementById(id);
+  let mode = "side";
+  function show(id) {
+    if (!ALL.has(id)) id = "01-trang-chu";
+    const s = ALL.get(id);
+    $("view-h").textContent = s.name;
+    for (const a of list.querySelectorAll("a"))
+      a.setAttribute("aria-current", a.dataset.id === id ? "true" : "false");
+    const b = `before/${id}.webp`,
+      a = `after/${id}.webp`;
+    $("img-b").src = b;
+    $("img-b").alt = `${s.name}, bảng màu hiện tại`;
+    $("img-a").src = a;
+    $("img-a").alt = `${s.name}, bảng màu đề xuất`;
+    $("sw-b").src = b;
+    $("sw-a").src = a;
+    $("sw-a").alt = `${s.name}, so sánh trượt`;
+    $("side").classList.toggle("narrow", s.mobile);
+    $("swipe-box").style.maxWidth = s.mobile ? "390px" : "";
+    $("swipe-box").style.margin = s.mobile ? "0 auto" : "";
+  }
+  function setPos() {
+    const v = $("pos").value;
+    $("sw-top").style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+    $("sw-bar").style.left = v + "%";
+  }
+  function setMode(m) {
+    mode = m;
+    $("m-side").setAttribute("aria-pressed", m === "side");
+    $("m-swipe").setAttribute("aria-pressed", m === "swipe");
+    $("side").hidden = m !== "side";
+    $("swipe").hidden = m !== "swipe";
+    try {
+      localStorage.setItem("compare-mode", m);
+    } catch {}
+  }
+  $("m-side").addEventListener("click", () => setMode("side"));
+  $("m-swipe").addEventListener("click", () => setMode("swipe"));
+  $("pos").addEventListener("input", setPos);
+  window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+  try {
+    const m = localStorage.getItem("compare-mode");
+    if (m === "swipe") setMode("swipe");
+  } catch {}
+  setPos();
+  show(location.hash.slice(1));
 </script>
