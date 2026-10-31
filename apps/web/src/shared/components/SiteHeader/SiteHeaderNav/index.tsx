@@ -15,21 +15,25 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, type ReactNode } from "react";
+import { Fragment, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
-import { useAuth } from "@/features/auth";
+import { AuthModal, isBackOfficeRole, useAuth } from "@/features/auth";
 import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
+import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
+import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
 import {
-  primaryLinks,
+  getPrimaryLinks,
+  getStudyLinks,
   studyIcon as StudyIcon,
-  studyLinks,
 } from "@/shared/constants/navigation";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { SiteHeaderLoginButton } from "./SiteHeaderLoginButton";
 import classes from "./SiteHeaderNav.module.css";
 import { SiteHeaderOnboardingButton } from "./SiteHeaderOnboardingButton";
 import { SiteHeaderUserMenu } from "./SiteHeaderUserMenu";
+import { SiteHeaderGuestNav } from "./SiteHeaderGuestNav";
 
 /** Active tab matches the link itself or any of its sub-routes. */
 function isLinkActive(pathname: string, href: string): boolean {
@@ -48,6 +52,10 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const [drawerOpened, drawer] = useDisclosure(false);
   const pathname = usePathname();
   const isStudyActive = isLinkActive(pathname, "/study");
+  const { t } = useLanguage();
+
+  const studyLinks = getStudyLinks(t.nav);
+  const primaryLinks = getPrimaryLinks(t.nav);
 
   // Hai nguồn tách biệt: `session` quyết định hiện nút đăng nhập hay menu tài
   // khoản, `profile` chỉ lo tên và avatar. BFF hỏng thì mất tên chứ không đá
@@ -55,12 +63,49 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const { session } = useAuth();
   const { profile } = useAccountProfile();
   const accountName =
-    profile?.displayName ?? session?.email ?? ACCOUNT_FALLBACK_NAME;
+    profile?.displayName ??
+    session?.email ??
+    (t.nav.account || ACCOUNT_FALLBACK_NAME);
 
   // Chặn điều hướng tới các trang chức năng khi chưa onboarding xong; nút nhắc
   // ở header dùng `requiresOnboarding` trực tiếp để quyết định có hiện không.
   const { requiresOnboarding } = useOnboarding();
-  const guardNavigation = useOnboardingGuard();
+  const guardOnboarding = useOnboardingGuard();
+
+  // Khách chưa đăng nhập: mọi mục chức năng đều cần tài khoản, nên bấm vào thì
+  // mở form đăng nhập tại chỗ thay vì đưa tới một trang không dùng được.
+  // Một modal duy nhất, đặt ngoài Drawer, dùng chung cho cả nút "Đăng nhập".
+  const [loginOpened, login] = useDisclosure(false);
+
+  function guardNavigation(event: MouseEvent) {
+    if (!session) {
+      event.preventDefault();
+      cancelNavigationProgress();
+      login.open();
+      return;
+    }
+    guardOnboarding(event);
+  }
+
+  if (pathname === "/welcome" || (!session && pathname === "/")) {
+    return (
+      <>
+        <SiteHeaderGuestNav
+          onLogin={login.open}
+          accountHref={
+            session
+              ? isBackOfficeRole(session.role)
+                ? "/admin"
+                : "/"
+              : undefined
+          }
+        >
+          {children}
+        </SiteHeaderGuestNav>
+        <AuthModal opened={loginOpened} onClose={login.close} />
+      </>
+    );
+  }
 
   return (
     <Fragment>
@@ -89,7 +134,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                   data-active={isStudyActive || undefined}
                 >
                   <StudyIcon aria-hidden="true" size={16} strokeWidth={2.5} />
-                  Học tập
+                  {t.nav.study}
                   <ChevronDown
                     aria-hidden="true"
                     size={16}
@@ -145,8 +190,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
           </Group>
         </Group>
 
-        <Group gap={4} wrap="nowrap">
+        <Group gap={8} wrap="nowrap">
           <Group visibleFrom="md" gap={12}>
+            <LanguageSwitcher />
             {session ? (
               <>
                 {requiresOnboarding ? <SiteHeaderOnboardingButton /> : null}
@@ -156,7 +202,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                 />
               </>
             ) : (
-              <SiteHeaderLoginButton />
+              <SiteHeaderLoginButton onClick={login.open} />
             )}
           </Group>
 
@@ -177,7 +223,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         title="Menu"
         hiddenFrom="md"
       >
-        <Stack gap={2}>
+        <Stack gap={10}>
+          <LanguageSwitcher fullWidth />
+
           {studyLinks.map(({ icon: Icon, ...link }) => (
             <Link
               key={link.href}
@@ -227,10 +275,18 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               avatarUrl={profile?.avatarUrl ?? null}
             />
           ) : (
-            <SiteHeaderLoginButton onNavigate={drawer.close} fullWidth />
+            <SiteHeaderLoginButton
+              onClick={() => {
+                drawer.close();
+                login.open();
+              }}
+              fullWidth
+            />
           )}
         </Stack>
       </Drawer>
+
+      <AuthModal opened={loginOpened} onClose={login.close} />
     </Fragment>
   );
 }

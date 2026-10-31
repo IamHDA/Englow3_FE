@@ -1,0 +1,22 @@
+# Weekly dependency updates. Security advisories open their own pull requests
+# regardless of this schedule, so a critical fix does not wait for Monday.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      next:
+        patterns: ["next", "eslint-config-next"]
+      mantine:
+        patterns: ["@mantine/*"]
+      graphql-codegen:
+        patterns: ["@graphql-codegen/*"]
+      sentry:
+        patterns: ["@sentry/*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

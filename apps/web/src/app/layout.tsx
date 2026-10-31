@@ -9,31 +9,68 @@ import {
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import type { Metadata } from "next";
-import { Lora, Work_Sans } from "next/font/google";
+import { headers } from "next/headers";
+import { Lexend, Source_Sans_3 } from "next/font/google";
+import { Suspense } from "react";
 
 import { AccountProvider } from "@/features/account";
-import { getAccountProfile } from "@/features/account/server/getAccountProfile";
 import { AuthProvider } from "@/features/auth";
 import { getServerSession } from "@/features/auth/server/getServerSession";
 import { OnboardingGate, OnboardingProvider } from "@/features/onboarding";
+import { UserTourProvider } from "@/features/tour";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
+import { JitlessZod } from "@/lib/zod/JitlessZod";
+import { NavigationProgress } from "@/shared/components/NavigationProgress";
+import { SlowBackendNotice } from "@/shared/components/SlowBackendNotice";
+import { CookieNotice } from "@/shared/components/CookieNotice";
+import { ServiceRecovery } from "@/shared/components/ServiceRecovery";
 import { theme } from "@/lib/mantine/theme";
+import { siteUrl } from "@/config/siteUrl";
+import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeader } from "@/shared/components/SiteHeader";
+import { SkipLink } from "@/shared/components/SkipLink";
+import { HideInAdmin } from "@/shared/components/SiteHeader/HideInAdmin";
 
-const lora = Lora({
-  variable: "--font-lora",
+// Lexend for headings - designed for reading ease; Source Sans 3 for body
+// copy. Both carry the Vietnamese subset (diacritics render in the font, not a
+// fallback). See apps/web/docs/design-system.md.
+const heading = Lexend({
+  variable: "--font-heading",
   subsets: ["latin", "vietnamese"],
+  display: "swap",
 });
 
-const workSans = Work_Sans({
-  variable: "--font-work-sans",
+const body = Source_Sans_3({
+  variable: "--font-body",
   subsets: ["latin", "vietnamese"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
+
+const title = "Englow3 — Chinh phục tiếng Anh cùng Trí tuệ AI";
+const description =
+  "Chấm điểm phát âm AI theo thời gian thực, lộ trình học hàng ngày thích ứng, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.";
 
 export const metadata: Metadata = {
-  title: "Englow3 — Chinh phục tiếng Anh cùng Trí tuệ AI",
-  description:
-    "Chấm điểm phát âm AI theo thời gian thực, lộ trình học hàng ngày thích ứng, thẻ ghi nhớ 3D, thử thách chính tả và các bài thi thử IELTS/TOEIC đầy đủ.",
+  metadataBase: new URL(siteUrl()),
+  title,
+  description,
+  // What other sites show when a link is shared. Without these a pasted link
+  // is a bare URL, which is the first impression most visitors get.
+  openGraph: {
+    type: "website",
+    siteName: "Englow3",
+    locale: "vi_VN",
+    title,
+    description,
+    images: [{ url: "/englow3_hero.png", alt: "Englow3" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/englow3_hero.png"],
+  },
 };
 
 export default async function RootLayout({
@@ -44,34 +81,55 @@ export default async function RootLayout({
   // Hai nguồn độc lập, ghép lại ở đây chứ không feature nào biết về feature kia:
   // `auth` trả lời "có đăng nhập không", `account` trả lời "người này là ai".
   // Chỗ điều kiện dưới chính là ranh giới - `account` không tự đi đọc cookie.
+  // The nonce proxy.ts made for this response: the one inline script this
+  // layout writes (the colour-scheme bootstrap) must carry it or the browser's
+  // policy refuses to run it.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   const session = await getServerSession();
-  const initialProfile = session
-    ? await getAccountProfile()
-    : { profile: null, hasError: false };
+  // Profile data must never block the authenticated shell while the BE wakes.
+  const initialProfile = { profile: null, hasError: false };
 
   return (
     <html
       lang="vi"
       {...mantineHtmlProps}
-      className={`${lora.variable} ${workSans.variable}`}
+      className={`${heading.variable} ${body.variable}`}
     >
       <head>
-        <ColorSchemeScript defaultColorScheme="light" />
+        <ColorSchemeScript defaultColorScheme="light" nonce={nonce} />
       </head>
       <body suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light">
+          <JitlessZod />
           <Notifications position="top-right" zIndex={1000} />
-          <ApolloWrapper>
-            <AuthProvider initialSession={session}>
+          {/* useSearchParams inside needs a Suspense boundary of its own, or
+              every page would render client-side only. */}
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
+          <AuthProvider initialSession={session}>
+            <ApolloWrapper key={session?.userId ?? "guest"} nonce={nonce}>
+              <ServiceRecovery />
               <AccountProvider initialProfile={initialProfile}>
-                <OnboardingProvider>
-                  <SiteHeader />
-                  <main>{children}</main>
-                  <OnboardingGate />
-                </OnboardingProvider>
+                <LanguageProvider>
+                  <OnboardingProvider>
+                    <UserTourProvider>
+                      <SkipLink />
+                      <HideInAdmin>
+                        <SiteHeader />
+                      </HideInAdmin>
+                      <SlowBackendNotice />
+                      <main id="main-content" tabIndex={-1}>
+                        {children}
+                      </main>
+                      <OnboardingGate />
+                      <CookieNotice />
+                    </UserTourProvider>
+                  </OnboardingProvider>
+                </LanguageProvider>
               </AccountProvider>
-            </AuthProvider>
-          </ApolloWrapper>
+            </ApolloWrapper>
+          </AuthProvider>
         </MantineProvider>
       </body>
     </html>

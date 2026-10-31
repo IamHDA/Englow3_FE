@@ -1,22 +1,17 @@
-export type Gender = "MALE" | "FEMALE" | "OTHER";
+import type { paths } from "../../generated/backend-openapi.js";
 
-export type OnboardingStep =
-  | "LEARNING_PURPOSES"
-  | "CERTIFICATE_TARGET"
-  | "CURRENT_LEVEL"
-  | "LEARNING_GOAL"
-  | "TARGET_SKILLS"
-  | "COMPLETED";
+// Derived from the endpoint's own contract (Phase 07C), not hand-mirrored -
+// GET /api/user/me and PUT /api/user/me/profile answer with the same shape,
+// so one canonical path stands in for both.
+export type UserInformationResponse =
+  paths["/api/user/me"]["get"]["responses"][200]["content"]["application/json"] & {
+    onboardingState?:
+      | import("../onboarding/onboarding.types.js").OnboardingStateResponse
+      | null;
+  };
 
-// mirrors GET /api/user/me exactly as the backend returns it
-export type UserInformationResponse = {
-  id: string;
-  email: string;
-  fullName: string;
-  displayName: string;
-  gender: Gender | null;
-  birthDate: string | null; // "YYYY-MM-DD"
-  avatarUrl: string | null;
-  bannerUrl: string | null;
-  onboardingStep: OnboardingStep;
-};
+export type UserBootstrapResponse =
+  paths["/api/user/me/bootstrap"]["get"]["responses"][200]["content"]["application/json"];
+
+export type UserTourStatusResponse =
+  paths["/api/user/me/tour"]["get"]["responses"][200]["content"]["application/json"];

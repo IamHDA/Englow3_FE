@@ -1,33 +1,16 @@
 import { ApolloServer } from "@apollo/server";
-import { GraphQLError } from "graphql";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import type { GraphQLContext } from "./context.js";
 import { formatError } from "./errors.js";
 import { resolvers, typeDefs } from "./schema.js";
 import type { UserInformationResponse } from "../modules/user/user.types.js";
 import { BackendError } from "../shared/http/backendError.js";
-
-function makeContext(overrides: Partial<GraphQLContext> = {}): GraphQLContext {
-  return {
-    token: "token",
-    requireToken: () => "token",
-    apis: {
-      userApi: { getMe: vi.fn() } as any,
-      onboardingApi: { getCurrentState: vi.fn() } as any,
-      examApi: {
-        searchAsAdmin: vi.fn(),
-        publishAsAdmin: vi.fn(),
-        archiveAsAdmin: vi.fn(),
-      } as any,
-    },
-    ...overrides,
-  };
-}
+import { makeContext } from "../test/makeContext.js";
 
 const ME: UserInformationResponse = {
   id: "u1",
   email: "learner@example.com",
+  role: "LEARNER",
   fullName: "Nguyen Van A",
   displayName: "vana",
   gender: null,
@@ -48,9 +31,8 @@ describe("me query - schema wiring and partial failure", () => {
     const getCurrentState = vi.fn();
     const ctx = makeContext({
       apis: {
-        userApi: { getMe } as any,
-        onboardingApi: { getCurrentState } as any,
-        examApi: {} as any,
+        userApi: { getMe },
+        onboardingApi: { getCurrentState },
       },
     });
 
@@ -75,9 +57,8 @@ describe("me query - schema wiring and partial failure", () => {
       .mockRejectedValue(new BackendError("boom", 500));
     const ctx = makeContext({
       apis: {
-        userApi: { getMe } as any,
-        onboardingApi: { getCurrentState } as any,
-        examApi: {} as any,
+        userApi: { getMe },
+        onboardingApi: { getCurrentState },
       },
     });
 
@@ -110,15 +91,10 @@ describe("me query - schema wiring and partial failure", () => {
   it("fails the whole query without calling the backend when unauthenticated", async () => {
     const getMe = vi.fn();
     const ctx = makeContext({
-      requireToken: () => {
-        throw new GraphQLError("Missing or invalid access token", {
-          extensions: { code: "UNAUTHENTICATED" },
-        });
-      },
+      token: null,
       apis: {
-        userApi: { getMe } as any,
-        onboardingApi: { getCurrentState: vi.fn() } as any,
-        examApi: {} as any,
+        userApi: { getMe },
+        onboardingApi: { getCurrentState: vi.fn() },
       },
     });
 
@@ -162,9 +138,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
     });
     const ctx = makeContext({
       apis: {
-        userApi: {} as any,
-        onboardingApi: {} as any,
-        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
+        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() },
       },
     });
 
@@ -202,9 +176,7 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
       );
     const ctx = makeContext({
       apis: {
-        userApi: {} as any,
-        onboardingApi: {} as any,
-        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() } as any,
+        examApi: { publishAsAdmin, archiveAsAdmin: vi.fn() },
       },
     });
 
@@ -219,5 +191,52 @@ describe("publishExam mutation - schema wiring and error mapping", () => {
     expect(error?.extensions?.code).toBe("CONFLICT");
     expect(error?.extensions?.backendCode).toBe("EXAM_SCORE_MISMATCH");
     expect(error?.message).not.toContain("195");
+  });
+});
+
+describe("updateProfile mutation - schema wiring", () => {
+  const server = new ApolloServer({ typeDefs, resolvers, formatError });
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  it("calls UserApi.updateProfile and returns updated Me", async () => {
+    const updateProfile = vi.fn().mockResolvedValue(ME);
+    const ctx = makeContext({
+      apis: {
+        userApi: { updateProfile },
+      },
+    });
+
+    const response = await server.executeOperation(
+      {
+        query: `
+          mutation {
+            updateProfile(input: { fullName: "Nguyen Van A", displayName: "vana" }) {
+              id
+              fullName
+              displayName
+            }
+          }
+        `,
+      },
+      { contextValue: ctx },
+    );
+
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
+      updateProfile: {
+        id: "u1",
+        fullName: "Nguyen Van A",
+        displayName: "vana",
+      },
+    });
+    expect(updateProfile).toHaveBeenCalledWith({
+      fullName: "Nguyen Van A",
+      displayName: "vana",
+    });
   });
 });

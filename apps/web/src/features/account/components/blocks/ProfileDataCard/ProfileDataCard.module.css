@@ -1,0 +1,8 @@
+.paper {
+  background-color: var(--mantine-color-body);
+}
+
+.link {
+  color: var(--mantine-color-navy-8);
+  font-weight: 600;
+}

@@ -1,27 +1,119 @@
-import type { GraphQLContext } from "../../graphql/context.js";
-import type { SearchExamsParams } from "./exam.types.js";
-
-/** The backend trusts the requested size; the cap belongs here so a client cannot ask for the whole table. */
-const MAX_PAGE_SIZE = 100;
+import type { Resolvers } from "../../generated/graphql.js";
+import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 export const examResolvers = {
   Query: {
-    adminExams: (_: unknown, args: SearchExamsParams, ctx: GraphQLContext) => {
+    activeExamAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.activeAttempt(args.examId, args.mode);
+    },
+    examDraft: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.draft(args.attemptId);
+    },
+    exams: async (_, args, ctx) => {
+      ctx.requireToken();
+      // The two per-learner figures used to be filled in here with null and
+      // NOT_STARTED because the backend did not supply them. It does now, so
+      // the page passes through untouched.
+      return ctx.apis.examApi.searchAsLearner({
+        ...args,
+        size: clampPageSize(args.size),
+      });
+    },
+    adminExams: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.searchAsAdmin({
         ...args,
-        size: Math.min(args.size ?? 20, MAX_PAGE_SIZE),
+        size: clampPageSize(args.size),
       });
+    },
+    exam: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getByIdAsLearner(args.id);
+    },
+    placementExam: (_, __, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getPlacementExam();
+    },
+    examOutline: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getOutline(args.examId);
+    },
+    attemptPaper: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getAttemptPaper(args.attemptId);
+    },
+    examAttempts: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.listAttempts(
+        args.page ?? 0,
+        clampPageSize(args.size),
+      );
+    },
+    examAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.getAttemptResult(args.id);
     },
   },
   Mutation: {
-    publishExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+    saveExamDraft: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.saveDraft(
+        args.attemptId,
+        args.version,
+        args.answers,
+      );
+    },
+    heartbeatExamAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.heartbeat(args.attemptId);
+    },
+    startExamAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      const input = args.input;
+      return ctx.apis.examApi.startAttempt(
+        args.examId,
+        input
+          ? {
+              mode: input.mode ?? undefined,
+              partIds: input.partIds ?? undefined,
+              timeLimitMinutes: input.timeLimitMinutes ?? undefined,
+              onOpen: input.onOpen ?? undefined,
+            }
+          : undefined,
+      );
+    },
+    submitExamAttempt: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.submitAttempt(args.attemptId, args.answers);
+    },
+    publishExam: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.publishAsAdmin(args.id);
     },
-    archiveExam: (_: unknown, args: { id: string }, ctx: GraphQLContext) => {
+    archiveExam: (_, args, ctx) => {
       ctx.requireToken();
       return ctx.apis.examApi.archiveAsAdmin(args.id);
     },
+    restoreExam: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.restoreAsAdmin(args.id);
+    },
+    submitExamForReview: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.submitForReviewAsAdmin(args.id);
+    },
+    approveExam: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.approveAsAdmin(args.id);
+    },
+    // The note is forwarded as it stands. Trimming or defaulting it here would
+    // hide a blank one from the backend's own check, which is where the rule
+    // that a rejection must say why actually lives.
+    rejectExam: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.examApi.rejectAsAdmin(args.id, args.note);
+    },
   },
-};
+} satisfies Resolvers;

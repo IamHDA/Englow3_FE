@@ -1,0 +1,21 @@
+mutation UpdateProfile($input: UpdateProfileInput!) {
+  updateProfile(input: $input) {
+    id
+    email
+    fullName
+    displayName
+    gender
+    birthDate
+    avatarUrl
+    bannerUrl
+    onboardingStep
+    onboardingState {
+      certificateLearner
+      currentLevel
+      targetCertificateType
+      targetScore
+      targetDate
+      targetSkills
+    }
+  }
+}

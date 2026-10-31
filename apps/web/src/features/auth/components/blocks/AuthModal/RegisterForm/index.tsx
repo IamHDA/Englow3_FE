@@ -15,17 +15,22 @@ import {
 import { notifications } from "@mantine/notifications";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import {
   BIRTH_DAY_OPTIONS,
-  BIRTH_MONTH_OPTIONS,
   BIRTH_YEAR_OPTIONS,
-  GENDER_OPTIONS,
+  getBirthMonthOptions,
+  getGenderOptions,
 } from "@/features/auth/constants/authOptions";
 import { Gender } from "@/lib/graphql/generated";
-import { supabase } from "@/lib/supabase/client";
+import { authErrorMessage } from "@/features/auth/authErrorMessage";
+import { signUp } from "@/features/auth/api/authClient";
+import { announceSessionChange } from "@/features/auth/api/sessionSync";
+import { homeForRole } from "@/features/auth/types";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
 
@@ -41,37 +46,87 @@ function isValidCalendarDate(day: string, month: string, year: string) {
   );
 }
 
-const registerSchema = z
-  .object({
-    fullName: z.string().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
-    nickname: z
-      .string()
-      .regex(
-        /^[a-zA-Z0-9_]{3,20}$/,
-        "Nickname chỉ gồm chữ cái, số, dấu gạch dưới, 3–20 ký tự",
-      ),
-    email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
-    password: z
-      .string()
-      .min(8, "Mật khẩu tối thiểu 8 ký tự")
-      .regex(/[A-Z]/, "Mật khẩu cần ít nhất 1 chữ hoa")
-      .regex(/[a-z]/, "Mật khẩu cần ít nhất 1 chữ thường")
-      .regex(/[^A-Za-z0-9]/, "Mật khẩu cần ít nhất 1 ký tự đặc biệt"),
-    birthDay: z.string().min(1, "Vui lòng chọn ngày sinh"),
-    birthMonth: z.string().min(1, "Vui lòng chọn tháng sinh"),
-    birthYear: z.string().min(1, "Vui lòng chọn năm sinh"),
-    gender: z.enum(Gender),
-    acceptedTerms: z
-      .boolean()
-      .refine((v) => v, "Bạn cần đồng ý với điều khoản để tiếp tục"),
-  })
-  .refine(
-    ({ birthDay, birthMonth, birthYear }) =>
-      isValidCalendarDate(birthDay, birthMonth, birthYear),
-    { message: "Ngày sinh không hợp lệ", path: ["birthDay"] },
-  );
+function registerSchema(isVi: boolean) {
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
+  return z
+    .object({
+      fullName: z
+        .string()
+        .trim()
+        .min(
+          2,
+          tr(
+            "Họ và tên phải có ít nhất 2 ký tự",
+            "Full name needs at least 2 characters",
+          ),
+        ),
+      nickname: z
+        .string()
+        .regex(
+          /^[a-zA-Z0-9_]{3,20}$/,
+          tr(
+            "Nickname chỉ gồm chữ cái, số, dấu gạch dưới, 3–20 ký tự",
+            "Nickname: letters, digits and underscores, 3–20 characters",
+          ),
+        ),
+      email: z
+        .string()
+        .trim()
+        .min(1, tr("Vui lòng nhập email", "Enter your email"))
+        .email(tr("Email không hợp lệ", "That email is not valid")),
+      password: z
+        .string()
+        .min(8, tr("Mật khẩu tối thiểu 8 ký tự", "At least 8 characters"))
+        .regex(
+          /[A-Z]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 chữ hoa",
+            "Needs at least 1 uppercase letter",
+          ),
+        )
+        .regex(
+          /[a-z]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 chữ thường",
+            "Needs at least 1 lowercase letter",
+          ),
+        )
+        .regex(
+          /[^A-Za-z0-9]/,
+          tr(
+            "Mật khẩu cần ít nhất 1 ký tự đặc biệt",
+            "Needs at least 1 special character",
+          ),
+        ),
+      birthDay: z.string().min(1, tr("Vui lòng chọn ngày sinh", "Pick a day")),
+      birthMonth: z
+        .string()
+        .min(1, tr("Vui lòng chọn tháng sinh", "Pick a month")),
+      birthYear: z.string().min(1, tr("Vui lòng chọn năm sinh", "Pick a year")),
+      gender: z.enum(Gender),
+      acceptedTerms: z
+        .boolean()
+        .refine(
+          (v) => v,
+          tr(
+            "Bạn cần đồng ý với điều khoản để tiếp tục",
+            "Accept the terms to continue",
+          ),
+        ),
+    })
+    .refine(
+      ({ birthDay, birthMonth, birthYear }) =>
+        isValidCalendarDate(birthDay, birthMonth, birthYear) &&
+        new Date(Number(birthYear), Number(birthMonth) - 1, Number(birthDay)) <=
+          new Date(),
+      {
+        message: tr("Ngày sinh không hợp lệ", "That date does not exist"),
+        path: ["birthDay"],
+      },
+    );
+}
 
-type RegisterValues = z.infer<typeof registerSchema>;
+type RegisterValues = z.infer<ReturnType<typeof registerSchema>>;
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -79,12 +134,17 @@ type RegisterFormProps = {
 
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const router = useRouter();
+  const { t, isVi } = useLanguage();
+  const schema = useMemo(() => registerSchema(isVi), [isVi]);
+  const birthMonthOptions = getBirthMonthOptions(t);
+  const genderOptions = getGenderOptions(t);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
       nickname: "",
@@ -94,39 +154,53 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       birthMonth: "",
       birthYear: "",
       gender: Gender.MALE,
-      acceptedTerms: true,
+      acceptedTerms: false,
     },
   });
 
   async function onSubmit(values: RegisterValues) {
-    const { error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          full_name: values.fullName,
-          display_name: values.nickname,
-          birth_date: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
-          gender: values.gender,
-        },
-      },
-    });
-    if (error) {
+    try {
+      const result = await signUp({
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+        displayName: values.nickname,
+        birthDate: `${values.birthYear}-${values.birthMonth.padStart(2, "0")}-${values.birthDay.padStart(2, "0")}`,
+        gender: values.gender,
+        acceptedTerms: values.acceptedTerms,
+      });
+      if (result.error) {
+        notifications.show({
+          color: "warn",
+          title: isVi
+            ? "Không thể tạo tài khoản"
+            : "Could not create the account",
+          message: authErrorMessage(result.error, isVi),
+        });
+        return;
+      }
+      if (result.session) {
+        announceSessionChange();
+        router.replace(homeForRole(result.session.role) ?? "/");
+        router.refresh();
+        onSuccess();
+        return;
+      }
+      notifications.show({
+        color: "green",
+        title: isVi ? "Kiểm tra email" : "Check your email",
+        message: isVi
+          ? "Nếu email này chưa được xác nhận, hãy mở thư Englow3 để hoàn tất đăng ký. Nếu đã có tài khoản, hãy đăng nhập hoặc dùng Quên mật khẩu."
+          : "If this email needs confirmation, open the Englow3 email to finish signing up. If you already have an account, sign in or use Forgot password.",
+      });
+      router.refresh();
+      onSuccess();
+    } catch {
       notifications.show({
         color: "warn",
-        title: "Không thể tạo tài khoản",
-        message: error.message,
+        message: authErrorMessage(null, isVi),
       });
-      return;
     }
-    notifications.show({
-      color: "green",
-      title: "Kiểm tra email",
-      message: "Chúng tôi đã gửi email xác nhận tới hộp thư của bạn.",
-    });
-    router.refresh();
-    onSuccess();
   }
 
   return (
@@ -140,8 +214,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       <SimpleGrid cols={2} spacing={14}>
         <TextInput
           {...register("fullName")}
-          label="Họ và tên"
-          placeholder="Nguyễn Văn A"
+          label={t.auth.fullNameLabel}
+          placeholder={t.auth.fullNamePlaceholder}
           error={errors.fullName?.message}
           classNames={{ label: classes.label, input: classes.input }}
         />
@@ -149,11 +223,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
           {...register("nickname")}
           label={
             <>
-              Nickname
-              <span className={classes.labelHint}>hiển thị công khai</span>
+              {t.auth.nicknameLabel}
+              <span className={classes.labelHint}>{t.auth.nicknameHint}</span>
             </>
           }
-          placeholder="vana"
+          placeholder={t.auth.nicknamePlaceholder}
           error={errors.nickname?.message}
           classNames={{ label: classes.label, input: classes.input }}
         />
@@ -161,24 +235,32 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <TextInput
         {...register("email")}
-        label="Email"
-        placeholder="example@example.com"
+        type="email"
+        autoComplete="email"
+        label={t.auth.emailLabel}
+        placeholder={t.auth.emailPlaceholder}
         error={errors.email?.message}
         classNames={{ label: classes.label, input: classes.input }}
       />
 
       <PasswordInput
         {...register("password")}
+        autoComplete="new-password"
         label={
           <>
-            Mật khẩu
+            {t.auth.passwordLabel}
             <span className={classes.labelHint}>
-              8+ ký tự, hoa, thường, ký tự đặc biệt
+              {t.auth.passwordRegisterHint}
             </span>
           </>
         }
-        placeholder="Tạo mật khẩu"
+        placeholder={t.auth.createPasswordPlaceholder}
         error={errors.password?.message}
+        visibilityToggleButtonProps={{
+          "aria-label": isVi
+            ? "Hiện hoặc ẩn mật khẩu"
+            : "Show or hide password",
+        }}
         visibilityToggleIcon={({ reveal }) =>
           reveal ? (
             <EyeOff aria-hidden="true" size={20} />
@@ -191,27 +273,33 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <Stack gap={8}>
         <Text className={classes.label} component="span">
-          Ngày sinh
+          {t.auth.birthDateLabel}
         </Text>
         <SimpleGrid cols={3} spacing={10}>
           <NativeSelect
             {...register("birthDay")}
-            aria-label="Ngày sinh - ngày"
-            data={[{ value: "", label: "Ngày" }, ...BIRTH_DAY_OPTIONS]}
+            aria-label={`${t.auth.birthDateLabel} - ${t.auth.dayLabel}`}
+            data={[{ value: "", label: t.auth.dayLabel }, ...BIRTH_DAY_OPTIONS]}
             error={!!errors.birthDay}
             classNames={{ input: classes.input }}
           />
           <NativeSelect
             {...register("birthMonth")}
-            aria-label="Ngày sinh - tháng"
-            data={[{ value: "", label: "Tháng" }, ...BIRTH_MONTH_OPTIONS]}
+            aria-label={`${t.auth.birthDateLabel} - ${t.auth.monthLabel}`}
+            data={[
+              { value: "", label: t.auth.monthLabel },
+              ...birthMonthOptions,
+            ]}
             error={!!errors.birthMonth}
             classNames={{ input: classes.input }}
           />
           <NativeSelect
             {...register("birthYear")}
-            aria-label="Ngày sinh - năm"
-            data={[{ value: "", label: "Năm" }, ...BIRTH_YEAR_OPTIONS]}
+            aria-label={`${t.auth.birthDateLabel} - ${t.auth.yearLabel}`}
+            data={[
+              { value: "", label: t.auth.yearLabel },
+              ...BIRTH_YEAR_OPTIONS,
+            ]}
             error={!!errors.birthYear}
             classNames={{ input: classes.input }}
           />
@@ -225,8 +313,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
       <NativeSelect
         {...register("gender")}
-        label="Giới tính"
-        data={GENDER_OPTIONS}
+        label={t.auth.genderLabel}
+        data={genderOptions}
         classNames={{ label: classes.label, input: classes.input }}
       />
 
@@ -236,15 +324,31 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         error={errors.acceptedTerms?.message}
         label={
           <Text size="sm" c="ink.7" component="span">
-            Tôi đồng ý với{" "}
-            <Text component="span" fw={600} c="navy.9">
-              Điều khoản sử dụng
+            {t.auth.termsAgreementPre}{" "}
+            <Text
+              component="a"
+              href="/terms"
+              target="_blank"
+              rel="noopener"
+              fw={600}
+              c="navy.9"
+              td="underline"
+            >
+              {t.auth.termsOfService}
             </Text>{" "}
-            và{" "}
-            <Text component="span" fw={600} c="navy.9">
-              Chính sách bảo mật
-            </Text>{" "}
-            của Englow3.
+            {t.auth.andWord}{" "}
+            <Text
+              component="a"
+              href="/privacy"
+              target="_blank"
+              rel="noopener"
+              fw={600}
+              c="navy.9"
+              td="underline"
+            >
+              {t.auth.privacyPolicy}
+            </Text>
+            {t.auth.termsAgreementPost ? ` ${t.auth.termsAgreementPost}` : "."}
           </Text>
         }
       />
@@ -258,7 +362,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         fz={16}
         fw={700}
       >
-        Tạo tài khoản
+        {t.auth.createAccountSubmit}
       </Button>
     </Flex>
   );

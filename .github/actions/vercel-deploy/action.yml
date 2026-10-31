@@ -25,6 +25,13 @@ inputs:
     description: Vercel team slug. `alias set` needs it on team accounts.
     required: false
     default: ""
+  runtime-env:
+    description: >-
+      Optional KEY=VALUE lines set on this deployment only, overriding the
+      project's value. For branch-specific settings: projects deployed from CI
+      have no Git connection, so Vercel cannot scope a variable to a branch.
+    required: false
+    default: ""
 
 outputs:
   url:
@@ -49,6 +56,7 @@ runs:
         TARGET: ${{ inputs.target }}
         ALIAS: ${{ inputs.alias }}
         SCOPE: ${{ inputs.scope }}
+        RUNTIME_ENV: ${{ inputs.runtime-env }}
       run: |
         set -euo pipefail
 
@@ -81,7 +89,12 @@ runs:
 
         # The CLI writes progress to stderr and the URL to stdout, but pnpm dlx
         # can add a line of its own on a cold store, so take the last one only.
-        url=$("${cli[@]}" deploy --prebuilt ${prod[@]+"${prod[@]}"} | tail -n1)
+        runtime=()
+        while IFS= read -r line; do
+          if [ -n "$line" ]; then runtime+=(--env "$line"); fi
+        done <<< "$RUNTIME_ENV"
+
+        url=$("${cli[@]}" deploy --prebuilt ${prod[@]+"${prod[@]}"} ${runtime[@]+"${runtime[@]}"} | tail -n1)
 
         if [ -z "$url" ]; then
           echo "::error::Deploy produced no URL"

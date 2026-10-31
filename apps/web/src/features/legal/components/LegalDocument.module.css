@@ -1,0 +1,38 @@
+.intro {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--mantine-color-ink-7);
+}
+
+.article {
+  max-width: 72ch;
+}
+
+.heading {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--mantine-color-ink-9);
+  margin-bottom: 8px;
+}
+
+.paragraph {
+  margin: 0 0 10px;
+  line-height: 1.7;
+  color: var(--mantine-color-ink-7);
+}
+
+.list {
+  margin: 0 0 10px;
+  padding-left: 22px;
+  line-height: 1.7;
+  color: var(--mantine-color-ink-7);
+}
+
+.list li + li {
+  margin-top: 4px;
+}
+
+.link {
+  color: var(--mantine-color-navy-8);
+  font-weight: 600;
+}

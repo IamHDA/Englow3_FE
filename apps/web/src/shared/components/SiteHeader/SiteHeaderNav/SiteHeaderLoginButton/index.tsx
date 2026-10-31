@@ -1,42 +1,39 @@
 "use client";
 
 import { Button } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 
-import { AuthModal } from "@/features/auth";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./SiteHeaderLoginButton.module.css";
 
 type SiteHeaderLoginButtonProps = {
-  /** Called after the modal opens, so the mobile drawer can close itself. */
-  onNavigate?: () => void;
+  /**
+   * Opens the login form. The header owns the one modal: a modal rendered in
+   * here would live inside the mobile drawer and close along with it, which
+   * made signing in on a phone impossible.
+   */
+  onClick: () => void;
   fullWidth?: boolean;
 };
 
 export function SiteHeaderLoginButton({
-  onNavigate,
+  onClick,
   fullWidth,
 }: SiteHeaderLoginButtonProps) {
-  const [opened, { open, close }] = useDisclosure(false);
+  const { t } = useLanguage();
 
   return (
-    <>
-      <Button
-        onClick={() => {
-          open();
-          onNavigate?.();
-        }}
-        fullWidth={fullWidth}
-        variant="outline"
-        color="navy.9"
-        size="md"
-        radius="md"
-        fw={700}
-        className={classes.root}
-      >
-        Đăng nhập
-      </Button>
-      <AuthModal opened={opened} onClose={close} />
-    </>
+    <Button
+      onClick={onClick}
+      fullWidth={fullWidth}
+      variant="outline"
+      color="navy.9"
+      size="md"
+      radius="md"
+      fw={700}
+      className={classes.root}
+    >
+      {t.nav.login}
+    </Button>
   );
 }

@@ -8,17 +8,14 @@ import { theme } from "@/lib/mantine/theme";
 import { RegisterForm } from "./index";
 
 const refresh = vi.fn();
+const replace = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ refresh }),
+  useRouter: () => ({ refresh, replace }),
 }));
 
 const signUp = vi.fn();
-vi.mock("@/lib/supabase/client", () => ({
-  supabase: {
-    auth: {
-      signUp: (...args: unknown[]) => signUp(...args),
-    },
-  },
+vi.mock("@/features/auth/api/authClient", () => ({
+  signUp: (...args: unknown[]) => signUp(...args),
 }));
 
 const notificationsShow = vi.fn();
@@ -46,9 +43,10 @@ async function fillValidForm(
   await user.type(screen.getByLabelText(/Nickname/), "vana");
   await user.type(screen.getByLabelText("Email"), "vana@example.com");
   await user.type(screen.getByLabelText(/Mật khẩu/), password);
-  await user.selectOptions(screen.getByLabelText("Ngày sinh - ngày"), "15");
-  await user.selectOptions(screen.getByLabelText("Ngày sinh - tháng"), "6");
-  await user.selectOptions(screen.getByLabelText("Ngày sinh - năm"), "2000");
+  await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Nn]gày/), "15");
+  await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Tt]háng/), "6");
+  await user.selectOptions(screen.getByLabelText(/Ngày sinh - [Nn]ăm/), "2000");
+  await user.click(screen.getByRole("checkbox"));
 }
 
 beforeEach(() => {
@@ -58,7 +56,28 @@ beforeEach(() => {
 });
 
 describe("RegisterForm", () => {
-  it("shows validation errors on empty submit and does not call Supabase", async () => {
+  it("requires the learner to explicitly agree to the terms", () => {
+    renderForm();
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+  });
+
+  it("handles a provider that creates a session immediately", async () => {
+    signUp.mockResolvedValue({
+      error: null,
+      session: { userId: "new", role: "LEARNER", email: "vana@example.com" },
+    });
+    const user = userEvent.setup();
+    const { onSuccess } = renderForm();
+    await fillValidForm(user);
+    await user.click(screen.getByRole("button", { name: "Tạo tài khoản" }));
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+    expect(replace).toHaveBeenCalledWith("/");
+    expect(notificationsShow).not.toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Kiểm tra email" }),
+    );
+  });
+
+  it("shows validation errors on empty submit and sends nothing", async () => {
     const user = userEvent.setup();
     renderForm();
 
@@ -101,9 +120,18 @@ describe("RegisterForm", () => {
     await user.type(screen.getByLabelText(/Nickname/), "vana");
     await user.type(screen.getByLabelText("Email"), "vana@example.com");
     await user.type(screen.getByLabelText(/Mật khẩu/), VALID_PASSWORD);
-    await user.selectOptions(screen.getByLabelText("Ngày sinh - ngày"), "31");
-    await user.selectOptions(screen.getByLabelText("Ngày sinh - tháng"), "2");
-    await user.selectOptions(screen.getByLabelText("Ngày sinh - năm"), "2000");
+    await user.selectOptions(
+      screen.getByLabelText(/Ngày sinh - [Nn]gày/),
+      "31",
+    );
+    await user.selectOptions(
+      screen.getByLabelText(/Ngày sinh - [Tt]háng/),
+      "2",
+    );
+    await user.selectOptions(
+      screen.getByLabelText(/Ngày sinh - [Nn]ăm/),
+      "2000",
+    );
     await user.click(screen.getByRole("button", { name: "Tạo tài khoản" }));
 
     expect(
@@ -117,7 +145,7 @@ describe("RegisterForm", () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.click(screen.getByRole("checkbox")); // uncheck the pre-ticked terms box
+    await user.click(screen.getByRole("checkbox")); // withdraw the explicit consent
     await user.click(screen.getByRole("button", { name: "Tạo tài khoản" }));
 
     expect(
@@ -138,14 +166,11 @@ describe("RegisterForm", () => {
       expect(signUp).toHaveBeenCalledWith({
         email: "vana@example.com",
         password: VALID_PASSWORD,
-        options: expect.objectContaining({
-          data: {
-            full_name: "Nguyễn Văn A",
-            display_name: "vana",
-            birth_date: "2000-06-15",
-            gender: "MALE",
-          },
-        }),
+        fullName: "Nguyễn Văn A",
+        displayName: "vana",
+        birthDate: "2000-06-15",
+        gender: "MALE",
+        acceptedTerms: true,
       }),
     );
     expect(notificationsShow).toHaveBeenCalledWith(
@@ -156,7 +181,9 @@ describe("RegisterForm", () => {
   });
 
   it("shows a toast when Supabase rejects the sign up", async () => {
-    signUp.mockResolvedValue({ error: { message: "Email already in use" } });
+    signUp.mockResolvedValue({
+      error: { code: "user_already_exists", status: 422 },
+    });
     const user = userEvent.setup();
     renderForm();
 
@@ -167,7 +194,8 @@ describe("RegisterForm", () => {
       expect(notificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "warn",
-          message: "Email already in use",
+          message:
+            "Email này đã có tài khoản. Hãy đăng nhập, hoặc dùng Quên mật khẩu.",
         }),
       ),
     );

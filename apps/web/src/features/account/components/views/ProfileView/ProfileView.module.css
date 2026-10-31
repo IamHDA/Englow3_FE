@@ -1,0 +1,82 @@
+.viewContainer {
+  width: 100%;
+}
+
+.breadcrumb {
+  padding-bottom: 4px;
+}
+
+.breadcrumbLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mantine-color-ink-5);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbLink:hover {
+  color: var(--mantine-color-navy-8);
+}
+
+.breadcrumbSeparator {
+  color: var(--mantine-color-ink-3);
+}
+
+.tabsList {
+  background-color: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-md);
+  padding: 4px;
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.tabItem {
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: var(--mantine-radius-md);
+  transition: all 0.15s ease;
+}
+
+.tabItem[data-active] {
+  background-color: var(--mantine-color-navy-9);
+  color: white;
+}
+
+/*
+ * Điện thoại: ba tab chia đều một hàng, biểu tượng nằm trên chữ. Trước đây chúng
+ * tự xuống dòng nên tab thứ ba rớt xuống hàng riêng và thanh tab trông vỡ.
+ */
+@media (max-width: 36em) {
+  .tabsList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .tabItem {
+    flex-direction: column;
+    justify-content: flex-start;
+    height: auto;
+    padding: 8px 4px;
+    gap: 4px;
+    font-size: 12.5px;
+    line-height: 1.25;
+    text-align: center;
+  }
+  .tabItem :global(.mantine-Tabs-tabSection) {
+    margin: 0;
+  }
+  .tabItem :global(.mantine-Tabs-tabLabel) {
+    white-space: normal;
+  }
+}
+
+.errorPaper,
+.unauthPaper {
+  background-color: var(--mantine-color-body);
+}
+
+.unauthIcon {
+  color: var(--mantine-color-ink-4);
+}

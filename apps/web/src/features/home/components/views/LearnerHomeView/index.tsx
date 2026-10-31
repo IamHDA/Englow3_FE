@@ -1,0 +1,418 @@
+"use client";
+
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Grid,
+  Group,
+  Progress,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
+import {
+  ArrowRight,
+  Bot,
+  ClipboardCheck,
+  Flame,
+  Headphones,
+  Layers,
+  Mic,
+  PenLine,
+  Sparkles,
+  Route,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
+import Link from "next/link";
+
+import { useAccountProfile } from "@/features/account";
+import { LearnerStartCard } from "@/features/home/components/blocks/LearnerStartCard";
+import {
+  DailyQuestsCard,
+  levelTitle,
+  TASK_KIND_HREFS,
+  TASK_KIND_LABELS,
+  TASK_UNIT_LABELS,
+} from "@/features/quiz";
+// Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
+// hooks để Server Component không kéo theo "@apollo/client/react".
+import { useDailyPathQuery } from "@/lib/graphql/generated/hooks";
+import { DailyTaskKind, DailyTaskStatus } from "@/lib/graphql/generated";
+import { Page } from "@/shared/components/Page";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
+import classes from "./LearnerHome.module.css";
+import {
+  AssessmentNotifications,
+  AssessmentResumeCard,
+} from "@/features/assessment/components/AssessmentHistory";
+
+const TASK_ICONS: Record<DailyTaskKind, LucideIcon> = {
+  [DailyTaskKind.FLASHCARD_REVIEW]: Layers,
+  [DailyTaskKind.DICTATION]: Headphones,
+  [DailyTaskKind.QUIZ]: Sparkles,
+  [DailyTaskKind.WRITING]: PenLine,
+  [DailyTaskKind.SPEAKING]: Mic,
+};
+
+type Shortcut = {
+  href: string;
+  icon: LucideIcon;
+  vi: string;
+  en: string;
+  tone: string;
+  tourTarget: string;
+};
+
+const SHORTCUTS: Shortcut[] = [
+  {
+    href: "/study/daily-path",
+    icon: Route,
+    vi: "Lộ trình",
+    en: "Daily path",
+    tone: "teal",
+    tourTarget: "learner-daily-path",
+  },
+  {
+    href: "/study/writing",
+    tourTarget: "learner-writing",
+    icon: PenLine,
+    vi: "Luyện viết",
+    en: "Writing",
+    tone: "navy",
+  },
+  {
+    href: "/study/speaking",
+    tourTarget: "learner-speaking",
+    icon: Mic,
+    vi: "Luyện nói",
+    en: "Speaking",
+    tone: "orange",
+  },
+  {
+    href: "/study/flashcards",
+    tourTarget: "learner-flashcards",
+    icon: Layers,
+    vi: "Thẻ từ",
+    en: "Flashcards",
+    tone: "navy",
+  },
+  {
+    href: "/study/dictation",
+    tourTarget: "learner-dictation",
+    icon: Headphones,
+    vi: "Nghe chép",
+    en: "Dictation",
+    tone: "teal",
+  },
+  {
+    href: "/study/pronunciation",
+    tourTarget: "learner-pronunciation",
+    icon: Mic,
+    vi: "Phát âm",
+    en: "Pronunciation",
+    tone: "orange",
+  },
+  {
+    href: "/exams",
+    tourTarget: "learner-exams",
+    icon: ClipboardCheck,
+    vi: "Thi thử",
+    en: "Mock exams",
+    tone: "grape",
+  },
+  {
+    href: "/ai-tutor",
+    tourTarget: "learner-ai-tutor",
+    icon: Bot,
+    vi: "Gia sư AI",
+    en: "AI tutor",
+    tone: "cyan",
+  },
+  {
+    href: "/profile",
+    icon: UserRound,
+    vi: "Hồ sơ",
+    en: "Profile",
+    tone: "navy",
+    tourTarget: "learner-profile",
+  },
+];
+
+/**
+ * Where a signed-in learner starts: who they are and how far they have come,
+ * the one thing to do next, what else is on today, and a way into every kind
+ * of practice. The marketing page is for people deciding whether to sign up;
+ * someone who already has was being shown it again.
+ */
+export function LearnerHomeView() {
+  const { isVi, t } = useLanguage();
+  const { profile } = useAccountProfile();
+  const { data, loading, error, refetch } = useDailyPathQuery({
+    fetchPolicy: "cache-and-network",
+  });
+  const path = data?.dailyPath;
+
+  const tasks = [...(path?.tasks ?? [])]
+    .filter((task) => task.status !== DailyTaskStatus.COMPLETED)
+    .sort((a, b) => a.order - b.order);
+  const next = tasks[0];
+  const rest = tasks.slice(1, 5);
+  const name = profile?.displayName;
+
+  return (
+    <Page>
+      {/* Greeting */}
+      <Group justify="space-between" align="center" gap="md">
+        <Stack gap={2}>
+          <Title order={1} c="navy.9" className={classes.greeting}>
+            {name
+              ? t.home.greetingWithName.replace("{name}", name)
+              : t.home.greetingGeneric}
+          </Title>
+          {path && (
+            <Text size="sm" c="ink.6">
+              {levelTitle(path.level, isVi)} ·{" "}
+              {t.home.levelLabel.replace("{level}", String(path.level))}
+            </Text>
+          )}
+        </Stack>
+        {path && (
+          <Badge
+            size="xl"
+            color="orange"
+            variant="light"
+            leftSection={<Flame size={18} aria-hidden="true" />}
+            className={classes.streak}
+          >
+            {t.home.streakDaysLabel.replace("{count}", String(path.streakDays))}
+          </Badge>
+        )}
+      </Group>
+
+      <LearnerStartCard />
+
+      {error && !path && (
+        <Alert color="warn" radius="lg">
+          {t.home.pathLoadErrorMessage}
+          <Button
+            variant="light"
+            ml="sm"
+            onClick={() => void refetch().catch(() => {})}
+          >
+            {isVi ? "Thử lại" : "Retry"}
+          </Button>
+        </Alert>
+      )}
+
+      <Grid gap="lg">
+        <Grid.Col span={{ base: 12, md: 8 }}>
+          <Stack gap="lg">
+            {/* Continue - the one thing to do next */}
+            {loading && !path ? (
+              <Skeleton height={190} radius="lg" />
+            ) : (
+              <Card className={classes.continueCard} withBorder={false}>
+                {next ? (
+                  <Stack gap="md">
+                    <Group gap="xs">
+                      <Badge color="orange" variant="filled">
+                        {t.home.upNextBadge}
+                      </Badge>
+                      <Text size="sm" c="navy.1">
+                        {isVi
+                          ? TASK_KIND_LABELS[next.kind].vi
+                          : TASK_KIND_LABELS[next.kind].en}
+                      </Text>
+                    </Group>
+                    <Title order={2} c="white" lineClamp={2}>
+                      {next.title}
+                    </Title>
+                    <Text size="sm" c="navy.0">
+                      {next.unitsRemaining}{" "}
+                      {isVi
+                        ? TASK_UNIT_LABELS[next.kind].vi
+                        : next.unitsRemaining === 1
+                          ? TASK_UNIT_LABELS[next.kind].en
+                          : TASK_UNIT_LABELS[next.kind].enPlural}
+                      {" · "}+{next.xpReward} XP
+                    </Text>
+                    <Button
+                      component={Link}
+                      href={TASK_KIND_HREFS[next.kind](next.targetId)}
+                      color="orange.5"
+                      size="md"
+                      rightSection={<ArrowRight size={18} aria-hidden="true" />}
+                      className={classes.continueButton}
+                    >
+                      {t.common.start}
+                    </Button>
+                  </Stack>
+                ) : (
+                  <Stack gap="md">
+                    <Title order={2} c="white">
+                      {t.home.nothingWaitingTitle}
+                    </Title>
+                    <Text size="sm" c="navy.0">
+                      {t.home.nothingWaitingDescription}
+                    </Text>
+                    <Button
+                      component={Link}
+                      href="/study/daily-path?tab=quizzes"
+                      color="orange.5"
+                      size="md"
+                      rightSection={<ArrowRight size={18} aria-hidden="true" />}
+                      className={classes.continueButton}
+                    >
+                      {t.home.chooseLessonButton}
+                    </Button>
+                  </Stack>
+                )}
+              </Card>
+            )}
+
+            <AssessmentResumeCard />
+            <AssessmentNotifications />
+            {/* The rest of today */}
+            {rest.length > 0 && (
+              <Card>
+                <Stack gap="sm">
+                  <Group justify="space-between">
+                    <Title order={3} c="navy.9">
+                      {t.home.todaySectionTitle}
+                    </Title>
+                    <Button
+                      component={Link}
+                      href="/study/daily-path"
+                      variant="subtle"
+                      size="compact-sm"
+                    >
+                      {t.home.fullPathButton}
+                    </Button>
+                  </Group>
+                  {rest.map((task) => {
+                    const Icon = TASK_ICONS[task.kind];
+                    return (
+                      <UnstyledButton
+                        key={`${task.kind}-${task.targetId}`}
+                        component={Link}
+                        href={TASK_KIND_HREFS[task.kind](task.targetId)}
+                        className={classes.taskRow}
+                      >
+                        <Group wrap="nowrap" gap="sm">
+                          <ThemeIcon variant="light" color="navy" size={36}>
+                            <Icon size={18} aria-hidden="true" />
+                          </ThemeIcon>
+                          <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
+                            <Text fw={600} size="sm" truncate>
+                              {task.title}
+                            </Text>
+                            <Text size="xs" c="ink.5">
+                              {task.unitsRemaining}{" "}
+                              {isVi
+                                ? TASK_UNIT_LABELS[task.kind].vi
+                                : TASK_UNIT_LABELS[task.kind].enPlural}
+                            </Text>
+                          </Stack>
+                          <ArrowRight
+                            size={16}
+                            aria-hidden="true"
+                            color="var(--mantine-color-ink-4)"
+                          />
+                        </Group>
+                      </UnstyledButton>
+                    );
+                  })}
+                </Stack>
+              </Card>
+            )}
+
+            {/* Every kind of practice */}
+            <Stack gap="sm">
+              <Title order={3} c="navy.9">
+                {t.home.practiceSectionTitle}
+              </Title>
+              <SimpleGrid cols={{ base: 3, sm: 5 }} spacing="sm">
+                {SHORTCUTS.map(
+                  ({ href, icon: Icon, vi, en, tone, tourTarget }) => (
+                    <UnstyledButton
+                      key={href}
+                      component={Link}
+                      href={href}
+                      data-tour={tourTarget}
+                      className={classes.shortcut}
+                    >
+                      <ThemeIcon
+                        variant="light"
+                        color={tone}
+                        size={44}
+                        radius="md"
+                      >
+                        <Icon size={22} aria-hidden="true" />
+                      </ThemeIcon>
+                      <Text fw={600} size="sm" mt={8}>
+                        {isVi ? vi : en}
+                      </Text>
+                    </UnstyledButton>
+                  ),
+                )}
+              </SimpleGrid>
+            </Stack>
+          </Stack>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <Stack gap="lg">
+            {path ? (
+              <Card>
+                <Stack gap={8}>
+                  <Group justify="space-between">
+                    <Text fw={700}>
+                      {t.home.levelLabel.replace("{level}", String(path.level))}
+                    </Text>
+                    <Text size="sm" c="ink.6">
+                      {path.totalXp} XP
+                    </Text>
+                  </Group>
+                  <Progress
+                    aria-label={isVi ? "Tiến độ lên cấp" : "Level progress"}
+                    value={
+                      path.levelCostXp > 0
+                        ? (path.xpIntoLevel / path.levelCostXp) * 100
+                        : 0
+                    }
+                    color="orange"
+                    size="lg"
+                    radius="xl"
+                  />
+                  <Text size="xs" c="ink.5">
+                    {t.home.xpToNextLevel
+                      .replace(
+                        "{remaining}",
+                        String(path.levelCostXp - path.xpIntoLevel),
+                      )
+                      .replace("{next}", String(path.level + 1))}
+                  </Text>
+                </Stack>
+              </Card>
+            ) : (
+              <Skeleton height={110} radius="lg" />
+            )}
+            {path ? (
+              <DailyQuestsCard quests={path.quests} />
+            ) : (
+              <Skeleton height={260} radius="lg" />
+            )}
+          </Stack>
+        </Grid.Col>
+      </Grid>
+    </Page>
+  );
+}

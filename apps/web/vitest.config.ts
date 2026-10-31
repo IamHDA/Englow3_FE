@@ -1,9 +1,18 @@
+import { fileURLToPath } from "node:url";
+
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
+  resolve: {
+    alias: {
+      "server-only": fileURLToPath(
+        new URL("./vitest.server-only.ts", import.meta.url),
+      ),
+    },
+  },
   test: {
     // Lets @testing-library/react register its auto-cleanup afterEach hook;
     // without a global `afterEach` it never unmounts between tests, so a
@@ -11,5 +20,9 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
+    // The default 5s is a hard ceiling that a page rendering a hundred cards
+    // in jsdom (about a second alone) reached when every worker shared a busy
+    // machine - a timing failure, not a broken page. A hang still fails.
+    testTimeout: 15_000,
   },
 });

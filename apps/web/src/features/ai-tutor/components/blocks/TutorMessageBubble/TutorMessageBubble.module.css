@@ -1,0 +1,58 @@
+.message {
+  max-width: min(90%, 760px);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.markdown {
+  min-width: 0;
+  max-width: 100%;
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.7;
+}
+.markdown > :first-child {
+  margin-top: 0;
+}
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  font-size: var(--mantine-font-size-md);
+  margin-block: 12px 6px;
+}
+.markdown p {
+  margin-block: 8px;
+}
+.markdown pre {
+  overflow-x: auto;
+  padding: 12px;
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-gray-0);
+}
+.markdown code {
+  white-space: pre-wrap;
+}
+.markdown table {
+  border-collapse: collapse;
+  font-size: inherit;
+  min-width: 360px;
+  overflow-wrap: normal;
+}
+.markdown th,
+.markdown td {
+  text-align: left;
+  border: 1px solid var(--mantine-color-gray-3);
+  padding: 8px;
+}
+.markdown blockquote {
+  margin-inline: 0;
+  padding-inline: 12px;
+  border-inline-start: 3px solid var(--mantine-color-brand-4);
+  color: var(--mantine-color-dimmed);
+}
+@media (max-width: 48em) {
+  .message {
+    max-width: 100%;
+  }
+}

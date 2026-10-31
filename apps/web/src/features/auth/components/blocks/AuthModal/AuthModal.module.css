@@ -1,6 +1,6 @@
 .content {
   position: relative;
-  box-shadow: 0 30px 80px rgba(15, 27, 58, 0.35);
+  box-shadow: none;
 }
 
 .closeButton {
@@ -16,7 +16,7 @@
 }
 
 .title {
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-body), sans-serif;
   font-size: 27px;
   font-weight: 700;
   letter-spacing: -0.01em;

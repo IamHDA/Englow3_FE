@@ -51,6 +51,15 @@ Englow3_FE/
 > `--if-present` nên các bước đó được bỏ qua chứ không fail — xem mục "Quality gate"
 > trong Job Summary của mỗi lần chạy để biết bước nào thực sự đã chạy.
 
+### 3. GraphQL types của BFF
+
+Type của resolver được sinh từ SDL (`apps/bff/src/graphql/schema.ts`, `apps/bff/src/modules/**/*.typeDefs.ts`)
+vào `apps/bff/src/generated/graphql.ts`. Sau khi sửa SDL, chạy lại rồi **commit file sinh ra** — không sửa tay:
+
+```bash
+pnpm --filter bff codegen
+```
+
 ---
 
 ## 🚀 CI/CD

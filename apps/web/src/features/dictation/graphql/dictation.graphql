@@ -1,0 +1,113 @@
+fragment DictationLessonFields on DictationLesson {
+  id
+  slug
+  title
+  topic
+  targetLevel
+  sentenceCount
+  completedSentenceCount
+  totalDurationSeconds
+  lastPractisedAt
+  publishedAt
+}
+
+fragment DictationSentenceFields on DictationSentence {
+  id
+  orderNo
+  text
+  translationVi
+  audioUrl
+  audioDurationSeconds
+  audioStartMs
+  audioEndMs
+  bestAccuracyPercent
+}
+
+query DictationLessons($topic: String, $title: String, $page: Int, $size: Int) {
+  dictationLessons(topic: $topic, title: $title, page: $page, size: $size) {
+    items {
+      ...DictationLessonFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query DictationLessonDetail($id: ID!) {
+  dictationLesson(id: $id) {
+    lesson {
+      ...DictationLessonFields
+    }
+    sentences {
+      ...DictationSentenceFields
+    }
+  }
+}
+
+mutation SubmitDictation($sentenceId: ID!, $response: String!) {
+  submitDictation(sentenceId: $sentenceId, response: $response) {
+    sentenceId
+    correctText
+    translationVi
+    response
+    accuracyPercent
+    correctWordCount
+    totalWordCount
+    cleared
+  }
+}
+
+query DictationStats($periodDays: Int) {
+  dictationStats(periodDays: $periodDays) {
+    periodDays
+    lessonsCompleted
+    averageAccuracyPercent
+    listeningSeconds
+    sentencesPractised
+    streakDays
+    activity {
+      day
+      accuracyPercent
+      attemptCount
+    }
+    missedWords {
+      word
+      missedCount
+      correctCount
+      accuracyPercent
+    }
+    difficultSentences {
+      sentenceId
+      lessonId
+      text
+      topic
+      accuracyPercent
+      attemptCount
+    }
+    history {
+      day
+      lessonId
+      lessonTitle
+      sentenceCount
+      accuracyPercent
+      listeningSeconds
+    }
+  }
+}
+
+query DictationMistakes {
+  dictationMistakes {
+    sentenceId
+    audioUrl
+    audioDurationSeconds
+    audioStartMs
+    audioEndMs
+    lessonId
+    lessonTitle
+    bestAccuracyPercent
+    attemptCount
+    lastResponse
+  }
+}

@@ -13,15 +13,18 @@ import { toAuthSession, type AuthSession } from "@/features/auth/types";
  *     const session = await getServerSession();
  *     if (!session) redirect("/");
  *
- * Dùng `getSession()` (đọc cookie, không gọi mạng) chứ không phải `getUser()`:
- * middleware.ts đã gọi `getUser()` trên gần như mọi request nên cookie tới đây
- * đã được xác thực rồi, gọi lại là thừa một vòng mạng mỗi lần render.
+ * Verify signed claims before using an identity in HTML. A public page can
+ * proceed through proxy.ts even when a stale or tampered cookie was rejected.
+ * getSession().user alone is not a verified identity. JWKS are cached by the SDK.
  */
 export async function getServerSession(): Promise<AuthSession | null> {
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  return toAuthSession(session?.user);
+  const { data, error } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (error || !claims || typeof claims.sub !== "string") return null;
+  return toAuthSession({
+    id: claims.sub,
+    email: typeof claims.email === "string" ? claims.email : undefined,
+    app_metadata: claims.app_metadata ?? {},
+  });
 }

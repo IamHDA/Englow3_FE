@@ -1,0 +1,112 @@
+"use client";
+
+import { Button, Group, Stack, Text, ThemeIcon } from "@mantine/core";
+import { ArrowLeft, RotateCw, SearchX, WifiOff } from "lucide-react";
+import Link from "next/link";
+
+import { useLanguage } from "@/shared/hooks/useLanguage";
+import {
+  errorCodeOf,
+  loadErrorKind,
+  type LoadErrorKind,
+} from "@/shared/network/loadError";
+
+type LoadErrorStateProps = {
+  error?: unknown;
+  /** Set when the page already knows, without an error to read it from. */
+  kind?: LoadErrorKind;
+  /** What was being opened, as the sentence needs it: "bộ thẻ", "bài nghe"... */
+  thing: { vi: string; en: string };
+  back: { href: string; label: string };
+  /** Offered only when the server failed - retrying a missing thing is pointless. */
+  onRetry?: () => void;
+};
+
+/**
+ * What a detail page shows when it cannot show its subject. Every such page
+ * used to say something different - one blamed the connection for an id that
+ * does not exist, one went blank, one offered to start a quiz that was not
+ * there - and some left no way back. This tells the two cases apart: a thing that does not
+ * exist (say so, and point back to the library) and a server that did not
+ * answer (say so, and offer to try again).
+ */
+export function LoadErrorState({
+  error,
+  kind,
+  thing,
+  back,
+  onRetry,
+}: LoadErrorStateProps) {
+  const { isVi, t } = useLanguage();
+  const notFound = (kind ?? loadErrorKind(error)) === "not-found";
+  const name = isVi ? thing.vi : thing.en;
+  const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+
+  const code = errorCodeOf(error);
+  const unauthorized = code === "UNAUTHENTICATED";
+  const forbidden = code === "FORBIDDEN";
+  const title = unauthorized
+    ? isVi
+      ? "Phiên đăng nhập đã hết hạn"
+      : "Your session has expired"
+    : forbidden
+      ? isVi
+        ? "Bạn không có quyền truy cập"
+        : "Access denied"
+      : (notFound ? t.common.notFoundTitle : t.common.loadErrorTitle).replace(
+          "{thing}",
+          name,
+        );
+  const description = unauthorized
+    ? isVi
+      ? "Về trang chủ và đăng nhập lại để tiếp tục."
+      : "Return home and sign in again to continue."
+    : forbidden
+      ? isVi
+        ? "Tài khoản hiện tại không được phép mở nội dung này."
+        : "Your account cannot access this content."
+      : notFound
+        ? t.common.notFoundDescription.replace("{Thing}", capitalizedName)
+        : t.common.loadErrorDescription;
+
+  return (
+    <Stack align="center" gap="md" py={60} role="alert">
+      <ThemeIcon
+        size={56}
+        radius="xl"
+        variant="light"
+        color={notFound ? "ink" : "warn"}
+      >
+        {notFound ? <SearchX size={28} /> : <WifiOff size={28} />}
+      </ThemeIcon>
+      <Text size="lg" fw={700} c="navy.9" ta="center">
+        {title}
+      </Text>
+      <Text size="sm" c="ink.6" ta="center" maw={420}>
+        {description}
+      </Text>
+      <Group gap="sm" justify="center">
+        <Button
+          component={Link}
+          href={unauthorized ? "/" : back.href}
+          variant="default"
+          leftSection={<ArrowLeft size={16} aria-hidden="true" />}
+        >
+          {unauthorized
+            ? isVi
+              ? "Về trang chủ để đăng nhập"
+              : "Go home to sign in"
+            : back.label}
+        </Button>
+        {!notFound && !unauthorized && !forbidden && onRetry && (
+          <Button
+            onClick={onRetry}
+            leftSection={<RotateCw size={16} aria-hidden="true" />}
+          >
+            {t.common.retry}
+          </Button>
+        )}
+      </Group>
+    </Stack>
+  );
+}

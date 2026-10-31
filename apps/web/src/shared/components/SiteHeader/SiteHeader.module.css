@@ -6,10 +6,50 @@
   border-bottom: 1px solid var(--mantine-color-ink-2);
 }
 
+.header:has([data-landing-nav]) {
+  position: fixed;
+  inset: 0 0 auto;
+  background: transparent;
+  border-bottom: 0;
+  transition: background-color 180ms ease;
+}
+
+.header:has([data-landing-nav][data-scrolled]) {
+  background: var(--mantine-color-brand-9);
+}
+
+.header:has([data-landing-nav]) .logo {
+  height: 44px;
+  filter: none;
+}
+
+@media (max-width: 48em) {
+  .header:has([data-landing-nav]) .logo {
+    height: 36px;
+  }
+}
+
+.header:has([data-landing-nav]) .logoLink {
+  background: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.header:has([data-landing-nav]) .logoLink:focus-visible {
+  outline-color: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header:has([data-landing-nav]) {
+    transition: none;
+  }
+}
+
 .logoLink {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  min-height: 44px;
 }
 
 .logo {

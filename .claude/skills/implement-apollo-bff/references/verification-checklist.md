@@ -4,10 +4,10 @@ Walk this before reporting work as finished. Anything unchecked is either fixed 
 
 ## Contract
 
-- Every backend call is based on a real contract the user supplied, not an inferred one.
-- The contract is recorded in the module's REST types, including nullability.
+- Every backend call is based on a real contract - `generated/backend-openapi.ts` (regenerated if stale) first, the user asked only for what the generated types couldn't settle.
+- The module's `*.types.ts` derives from `paths[...]` rather than hand-declaring a literal; any override of an under-typed field is documented next to the override.
 - No GraphQL field exists that does not trace to a backend field or to an explicit presentation transformation.
-- If any part of the contract was missing, it was asked for rather than assumed.
+- If any part of the contract was missing even after regenerating, it was asked for rather than assumed.
 
 ## Boundaries
 
@@ -26,19 +26,19 @@ Walk this before reporting work as finished. Anything unchecked is either fixed 
 ## Schema
 
 - Nullability is deliberate on every new field, and matches what the backend can return.
-- Timestamps use the date scalar, not `String`.
-- Page size is capped rather than trusting the requested value.
-- Enum values match the backend's actual values.
+- Timestamps use the `Date`/`DateTime` scalar, not `String` - both reject malformed values at runtime, so a field typed this way is a real guarantee, not just documentation.
+- Page size is capped (`clampPageSize`) rather than trusting the requested value.
+- Enum values match the backend's actual values - and where the backend types a field as plain `string` for a computed or `@JsonRawValue` value, the module's `*.types.ts` reasserts the real union with a documented `Omit<...> & {...}` override rather than trusting the loose type.
 
 ## Per-request state
 
-- Context, API clients, and loaders are created per request.
+- Context and API clients are created per request; so is any DataLoader, if one is added.
 - No loader, client, or token is held in module scope.
-- Token verification keys are cached; verification does not fetch per request.
+- No JWT verification was added to the BFF in passing - it still only checks token presence (`requireToken`) and forwards the token unchanged. If this task genuinely needed BFF-side verification, that was raised as a real addition, not slipped into `requireToken`.
 
 ## Resilience
 
-- Aggregate queries use settled results, and fields that may degrade are nullable.
+- Fields that may degrade independently are their own nullable field with its own resolver (letting graphql-js null it on rejection), or, only for a true single-object aggregate, built from settled results - either way, nullable in the schema.
 - A field the screen cannot render without fails the query rather than returning null.
 - Async backend work returns a pending record with a status, a terminal failure state, and a way to poll.
 - The shared HTTP timeout was not raised to accommodate one slow call.
@@ -49,7 +49,7 @@ Walk this before reporting work as finished. Anything unchecked is either fixed 
 - Unmapped backend errors become a generic internal error, not a passthrough.
 - Tokens are never logged.
 - Path segments built from user input are encoded.
-- Query depth and complexity limits are in place; introspection is off outside development.
+- Query depth/complexity limits and an introspection toggle are **not implemented** in this codebase today (only a body-size cap and an IP-keyed rate limiter exist). Don't report this as covered - if the change meaningfully grows the schema's reach, raise the gap with the user instead of assuming it's handled elsewhere.
 
 ## Build and tests
 

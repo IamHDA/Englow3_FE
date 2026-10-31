@@ -1,0 +1,26 @@
+query DailyPath {
+  dailyPath {
+    streakDays
+    totalXp
+    level
+    xpIntoLevel
+    levelCostXp
+    tasks {
+      kind
+      status
+      targetId
+      title
+      order
+      unitsRemaining
+      unitsDoneToday
+      completionPercent
+      xpReward
+    }
+    quests {
+      kind
+      progress
+      target
+      completed
+    }
+  }
+}

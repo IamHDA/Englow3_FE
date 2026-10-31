@@ -1,68 +1,82 @@
 "use client";
 
-import { Button, Flex, Text, Title } from "@mantine/core";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Badge, Button, Group, Text, Title } from "@mantine/core";
+import { Sparkles } from "lucide-react";
+
+import { HomeCtaButton } from "@/features/home/components/blocks/HomeCtaButton";
+import {
+  FlashcardMock,
+  ScoreChip,
+  StreakChip,
+} from "@/features/home/components/blocks/HomeMocks";
+import { HOME_FEATURES_ID } from "@/features/home/constants/homeSections";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./HomeHero.module.css";
 
 export function HomeHero() {
+  const { t } = useLanguage();
+
   return (
-    <Flex
-      component="section"
-      direction={{ base: "column", md: "row" }}
-      align="center"
-      justify={{ base: "flex-start", md: "space-between" }}
-      gap={{ base: "xl", md: 64 }}
-      pt={{ base: 48, md: 92 }}
-      pb={{ base: 32, md: 40 }}
-    >
-      <Flex
-        direction="column"
-        gap={{ base: 40, md: 72 }}
-        flex="1 1 auto"
-        miw={0}
-        maw={750}
-      >
-        <Flex direction="column" gap={{ base: 28, md: 42 }}>
-          <Title order={1} className={classes.title}>
-            Chinh phục tiếng Anh cùng Englow3
-          </Title>
-
-          <Text className={classes.quote}>
-            &ldquo;<em>Con đường của riêng bạn, tương lai trong tay bạn</em>
-            &rdquo;
-          </Text>
-
-          <Text className={classes.description}>
-            Nâng tầm khả năng nói lưu loát với chấm điểm phát âm AI theo thời
-            gian thực, chat bot cá nhân hóa, thẻ ghi nhớ 3D, thử thách chính tả
-            và các bài thi thử IELTS/TOEIC đầy đủ.
-          </Text>
-        </Flex>
-
-        <Button
-          component={Link}
-          href="/onboarding"
-          color="orange.5"
-          rightSection={
-            <ArrowRight aria-hidden="true" size={26} strokeWidth={2.5} />
-          }
-          classNames={{ root: classes.cta, label: classes.ctaLabel }}
+    <section className={classes.hero}>
+      <div className={classes.copy}>
+        <Badge
+          size="lg"
+          radius="xl"
+          variant="light"
+          color="orange"
+          leftSection={<Sparkles size={14} aria-hidden="true" />}
+          classNames={{ root: classes.badge, label: classes.badgeLabel }}
         >
-          Bắt đầu học ngay
-        </Button>
-      </Flex>
+          {t.home.heroBadge}
+        </Badge>
 
-      <Image
-        src="/englow3_hero.png"
-        alt="Không gian học tập Englow3 với phân tích phát âm, bộ thẻ ghi nhớ và trình theo dõi tiến độ hàng ngày"
-        width={533}
-        height={490}
-        className={classes.illustration}
-        priority
-      />
-    </Flex>
+        <Title order={1} className={classes.title}>
+          {t.home.heroTitle}{" "}
+          <span className={classes.titleAccent}>{t.home.heroTitleAccent}</span>
+        </Title>
+
+        <Text className={classes.quote}>
+          &ldquo;<em>{t.home.heroQuote}</em>&rdquo;
+        </Text>
+
+        <Text className={classes.description}>{t.home.heroDescription}</Text>
+
+        <Group gap="md" mt={8}>
+          <HomeCtaButton
+            label={t.home.heroCta}
+            color="orange.5"
+            size="lg"
+            radius="xl"
+            className={classes.cta}
+          />
+          <Button
+            component="a"
+            href={`#${HOME_FEATURES_ID}`}
+            variant="default"
+            size="lg"
+            radius="xl"
+            className={classes.secondary}
+          >
+            {t.home.heroSecondaryCta}
+          </Button>
+        </Group>
+      </div>
+
+      {/* The product itself rather than a picture of it: a card being
+          studied, with the streak it builds. */}
+      <div className={classes.visual}>
+        <div className={classes.glow} aria-hidden="true" />
+        <div className={classes.previewCard}>
+          <FlashcardMock />
+        </div>
+        <div className={classes.previewChip}>
+          <StreakChip />
+        </div>
+        <div className={classes.previewScore}>
+          <ScoreChip />
+        </div>
+      </div>
+    </section>
   );
 }

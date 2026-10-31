@@ -1,10 +1,24 @@
-import type { GraphQLContext } from "../../graphql/context.js";
+import type { Resolvers } from "../../generated/graphql.js";
 
 export const userResolvers = {
   Query: {
-    me: (_: unknown, __: unknown, ctx: GraphQLContext) => {
+    me: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.userApi.getMe();
     },
+    myTourStatus: (_, __, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.userApi.getTourStatus();
+    },
   },
-};
+  Mutation: {
+    updateProfile: (_, { input }, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.userApi.updateProfile(input);
+    },
+    completeMyTour: (_, __, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.userApi.completeTour();
+    },
+  },
+} satisfies Resolvers;

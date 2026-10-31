@@ -1,0 +1,90 @@
+query ExamLibrary(
+  $examType: ExamType
+  $certificateType: CertificateType
+  $certificateVariant: CertificateVariant
+  $targetLevel: TargetLevel
+  $title: String
+  $sortBy: ExamSortBy
+  $page: Int
+  $size: Int
+) {
+  exams(
+    examType: $examType
+    certificateType: $certificateType
+    certificateVariant: $certificateVariant
+    targetLevel: $targetLevel
+    title: $title
+    sortBy: $sortBy
+    page: $page
+    size: $size
+  ) {
+    items {
+      id
+      title
+      description
+      examType
+      certificateType
+      certificateVariant
+      targetLevel
+      durationSeconds
+      maxRawScore
+      passScore
+      questionCount
+      status
+      publishedAt
+      bestScorePercentage
+      attemptStatus
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query ExamDetail($id: ID!) {
+  exam(id: $id) {
+    id
+    title
+    description
+    examType
+    certificateType
+    certificateVariant
+    targetLevel
+    durationSeconds
+    maxRawScore
+    passScore
+    questionCount
+    status
+    publishedAt
+    bestScorePercentage
+    attemptStatus
+  }
+}
+
+query PlacementExam {
+  placementExam {
+    id
+    title
+    description
+    durationSeconds
+    questionCount
+  }
+}
+
+query ExamOutline($examId: ID!) {
+  examOutline(examId: $examId) {
+    examId
+    sections {
+      id
+      sectionType
+      orderNo
+      parts {
+        id
+        orderNo
+        title
+        questionCount
+      }
+    }
+  }
+}

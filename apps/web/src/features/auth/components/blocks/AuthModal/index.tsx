@@ -15,9 +15,10 @@ import Image from "next/image";
 import { useState } from "react";
 
 import {
-  AUTH_MODE_COPY,
+  getAuthModeCopy,
   AuthMode,
 } from "@/features/auth/constants/authOptions";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "./AuthModal.module.css";
 import { AuthSocialButtons } from "./AuthSocialButtons";
@@ -35,9 +36,10 @@ export function AuthModal({
   onClose,
   initialMode = AuthMode.LOGIN,
 }: AuthModalProps) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const isLogin = mode === AuthMode.LOGIN;
-  const copy = AUTH_MODE_COPY[mode];
+  const copy = getAuthModeCopy(mode, t);
 
   function handleClose() {
     onClose();
@@ -57,12 +59,12 @@ export function AuthModal({
       centered
       padding={0}
       withCloseButton={false}
-      overlayProps={{ color: "#0F1B3A", backgroundOpacity: 0.5 }}
+      overlayProps={{ color: "#0F172A", backgroundOpacity: 0.5 }}
       classNames={{ content: classes.content }}
     >
       <CloseButton
         onClick={handleClose}
-        aria-label="Đóng"
+        aria-label={t.auth.closeAria}
         radius={10}
         size={36}
         className={classes.closeButton}
@@ -78,7 +80,7 @@ export function AuthModal({
 
       <Box pt={26} px={40}>
         {isLogin ? (
-          <LoginForm onSuccess={handleClose} />
+          <LoginForm onSuccess={handleClose} onLeave={handleClose} />
         ) : (
           <RegisterForm onSuccess={handleClose} />
         )}

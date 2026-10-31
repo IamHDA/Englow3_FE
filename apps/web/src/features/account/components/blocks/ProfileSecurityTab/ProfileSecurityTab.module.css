@@ -1,0 +1,22 @@
+.tabContainer {
+  width: 100%;
+}
+
+.paper {
+  background-color: var(--mantine-color-body);
+}
+
+.securityAdvice {
+  background-color: var(--mantine-color-orange-0);
+  border-color: var(--mantine-color-orange-2);
+}
+
+.warningIcon {
+  color: var(--mantine-color-orange-7);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.deviceIcon {
+  color: var(--mantine-color-navy-7);
+}
