@@ -116,7 +116,7 @@ export function LearnerStartCard() {
                 "Finish setting your goals and level to personalize your learning path.",
               )}
             </Text>
-            <Button color="orange" onClick={open}>
+            <Button color="navy" onClick={open}>
               {tr("Tiếp tục thiết lập", "Continue setup")}
             </Button>
           </Group>

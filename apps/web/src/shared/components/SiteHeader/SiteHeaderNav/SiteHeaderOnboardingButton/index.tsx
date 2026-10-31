@@ -27,7 +27,9 @@ export function SiteHeaderOnboardingButton({
         onNavigate?.();
       }}
       fullWidth={fullWidth}
-      color="orange"
+      // Navy, not orange: the header sits on every page, and the page's own
+      // main action is the one orange button in view.
+      color="navy"
       size="md"
       radius="md"
       fw={700}

@@ -36,7 +36,11 @@ type LibraryCardProps = {
   meta?: LibraryCardMeta[];
   progress?: { value: number; label: string; color?: MantineColor };
   action: LibraryCardAction & {
-    /** "continue" is the orange call to move on; the default is navy. */
+    /**
+     * "continue" (something the learner already started) is a filled navy
+     * button; the default is a light one. Never orange: a library shows many
+     * cards, and orange is kept for the page's one main action, in its banner.
+     */
     emphasis?: "continue" | "default";
   };
   secondaryAction?: LibraryCardAction;
@@ -132,7 +136,8 @@ export function LibraryCard({
           <Button
             component={Link}
             href={action.href}
-            color={action.emphasis === "continue" ? "orange.5" : "navy"}
+            color="navy"
+            variant={action.emphasis === "continue" ? "filled" : "light"}
             rightSection={<ArrowRight size={16} aria-hidden="true" />}
             className={classes.primary}
           >

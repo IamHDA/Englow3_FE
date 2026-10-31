@@ -30,6 +30,14 @@ something the theme cannot express.
 `red` to `warn`; `yellow` to `orange`. Older modules that reached for a Mantine default therefore land on the
 system. In new code, name the role (`brand`, `ink`, `orange`, `green`, `warn`), never a hex.
 
+Orange marks the one action that moves the learner on, so a view has at most one orange button:
+
+- A page with a banner (flashcards, dictation, the learner home) puts it there: "Start review", "Continue".
+- Library cards (`LibraryCard`) never use orange, since a library shows many of them. A card the learner already
+  started gets a filled navy button; the others a light navy one (`variant="light"`).
+- The "Complete setup" nudges (header, learner home) are navy: they sit beside a page's own orange action.
+- The landing page repeats its one call to action at the foot of the page; the two never share a screen.
+
 ## Type
 
 - Headings: **Lexend**, weight 600 (700 at most). Body: **Source Sans 3**. Both include the Vietnamese subset.

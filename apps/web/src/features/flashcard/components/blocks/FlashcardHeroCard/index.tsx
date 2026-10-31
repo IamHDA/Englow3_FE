@@ -81,8 +81,7 @@ export function FlashcardHeroCard({
                   component={Link}
                   href={`/study/flashcards/${primarySetId}/study`}
                   size="md"
-                  variant="white"
-                  color="indigo"
+                  color="orange"
                   radius="md"
                   fw={700}
                   leftSection={<IconPlayerPlay size={18} />}
