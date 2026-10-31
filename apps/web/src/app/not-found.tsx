@@ -25,7 +25,7 @@ export default function NotFound() {
         <Text c="ink.6">
           Trang bạn tìm không tồn tại hoặc đã được chuyển đi.
         </Text>
-        <Button component="a" href="/" color="orange.5" radius="xl" size="md">
+        <Button component="a" href="/" color="orange" radius="xl" size="md">
           Về trang chủ
         </Button>
       </Stack>

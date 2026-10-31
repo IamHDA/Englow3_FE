@@ -92,13 +92,13 @@
   margin-top: 30px;
 }
 .page :is(button, a).primary {
-  --button-bg: var(--landing-accent);
-  --button-hover: var(--mantine-color-orange-4);
-  --button-color: var(--mantine-color-ink-9);
-  --button-bd: 1px solid var(--landing-accent);
-  background: var(--landing-accent);
-  color: var(--mantine-color-ink-9);
-  border-color: var(--landing-accent);
+  --button-bg: var(--mantine-color-orange-7);
+  --button-hover: var(--mantine-color-orange-8);
+  --button-color: var(--mantine-color-white);
+  --button-bd: 1px solid var(--mantine-color-orange-7);
+  background: var(--mantine-color-orange-7);
+  color: var(--mantine-color-white);
+  border-color: var(--mantine-color-orange-7);
   min-height: 44px;
   font-size: 14px;
   font-weight: 700;
@@ -106,8 +106,8 @@
   padding-inline: 22px;
 }
 .page :is(button, a).primary:hover {
-  background: var(--mantine-color-orange-4);
-  border-color: var(--mantine-color-orange-4);
+  background: var(--mantine-color-orange-8);
+  border-color: var(--mantine-color-orange-8);
 }
 .page a.secondary {
   --button-bg: white;

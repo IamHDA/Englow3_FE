@@ -61,10 +61,10 @@
   font-weight: 700;
 }
 
-/* The accent action: dark text on orange (7:1), as every orange button. */
+/* The accent action: white text on orange-7 (4.8:1), as every orange button. */
 .startBtn {
-  background-color: var(--mantine-color-orange-5);
-  color: var(--mantine-color-ink-9);
+  background-color: var(--mantine-color-orange-7);
+  color: var(--mantine-color-white);
   font-weight: 700;
   box-shadow: none;
   transition:
@@ -73,5 +73,5 @@
 }
 
 .startBtn:hover {
-  background-color: var(--mantine-color-orange-6);
+  background-color: var(--mantine-color-orange-8);
 }

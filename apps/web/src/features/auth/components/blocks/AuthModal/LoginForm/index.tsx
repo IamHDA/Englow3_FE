@@ -205,7 +205,7 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
       <Button
         type="submit"
         loading={signingIn}
-        color="orange.5"
+        color="orange"
         radius={12}
         h={48}
         fz={16}

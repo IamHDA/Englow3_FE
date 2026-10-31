@@ -33,7 +33,7 @@ export function OnboardingStepFooter({
       )}
       <Button
         type="button"
-        color="orange.4"
+        color="orange"
         radius={20}
         h={60}
         px={28}

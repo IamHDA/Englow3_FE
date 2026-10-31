@@ -1,48 +1,54 @@
 import { createTheme, type MantineColorsTuple } from "@mantine/core";
 
 /*
- * Design system - "Progress teal + achievement orange", Minimalism & Swiss.
- * Source: the ui-ux-pro-max skill's Online Course / E-learning profile, with
- * contrast adjusted to WCAG AA. The written rules are in apps/web/docs/design-system.md.
+ * Design system - "Logo navy + flame orange", Minimalism & Swiss. Hues are
+ * sampled from the Englow3 logo; roles and contrast rules come from the
+ * ui-ux-pro-max skill, adjusted to WCAG AA. The written rules are in apps/web/docs/design-system.md.
  *
  * Palette names are kept stable on purpose. `navy` was the old primary and is
- * referenced across ~70 files; it now carries the brand teal, so every screen
+ * referenced across ~70 files; it now carries the brand blue, so every screen
  * moves to the new system without each one being edited. The Mantine defaults
  * a few modules reached for directly (indigo, blue, violet, grape, cyan, gray,
  * dark) are folded into the same scales, so the app has one primary hue and one
  * neutral instead of five of each.
  */
 
-/** Brand / primary. 7 is the action shade (white text 5.5:1), 9 headings (9.4:1). */
+/**
+ * Brand / primary - the logo's ring, ocean blue (5, #2F7BAD) to deep navy
+ * (9, #1F2A60). 7 is the action shade (white text 7.2:1), 9 headings (13.5:1).
+ */
 const brand: MantineColorsTuple = [
-  "#F0FDFA",
-  "#CCFBF1",
-  "#99F6E4",
-  "#5EEAD4",
-  "#2DD4BF",
-  "#14B8A6",
-  "#0D9488",
-  "#0F766E",
-  "#115E59",
-  "#134E4A",
+  "#EEF5FA",
+  "#D6E7F2",
+  "#ADCFE5",
+  "#7FB3D4",
+  "#5596C2",
+  "#2F7BAD",
+  "#296A9F",
+  "#255A8E",
+  "#22427A",
+  "#1F2A60",
 ];
 
 /**
- * Accent, for the one action that moves the learner on and for achievements.
- * Filled orange buttons get dark text from `autoContrast` (7:1) - white on this
- * orange is 2.8:1 and was the last contrast failure the audit reported.
+ * Accent - the logo's flame: gold tip (3, #F6BB1F), body (5, #EF800C), base
+ * (6, #D65909). For the one action that moves the learner on and for
+ * achievements. 7 is the action shade: filled orange buttons resolve to it
+ * through `primaryShade` and take white text from `autoContrast` (4.8:1) -
+ * white on 5 is only 2.7:1, so 5 and 6 are for fills without text. 7 is also
+ * orange used as text (4.9:1 on white).
  */
 const orange: MantineColorsTuple = [
-  "#FFF7ED",
-  "#FFEDD5",
-  "#FED7AA",
-  "#FDBA74",
-  "#FB923C",
-  "#F97316",
-  "#EA580C",
-  "#C2410C",
-  "#9A3412",
-  "#7C2D12",
+  "#FFF6EA",
+  "#FFEBCF",
+  "#FCD58F",
+  "#F6BB1F",
+  "#F39A15",
+  "#EF800C",
+  "#D65909",
+  "#C24C0A",
+  "#9C3D0A",
+  "#6E2C0D",
 ];
 
 /** Errors and destructive actions. */
@@ -60,23 +66,24 @@ const warn: MantineColorsTuple = [
 ];
 
 /**
- * Neutral (slate). 0 is the page, 2 the hairline border, 5 secondary text
- * (5.5:1 on white, 5:1 on ink-1), 7 body text, 9 the darkest ink.
+ * Neutral, tinted toward the brand navy so greys sit with it. 0 is the page,
+ * 2 the hairline border, 5 secondary text (5.8:1 on white, 5.1:1 on ink-1),
+ * 7 body text, 9 the darkest ink.
  */
 const ink: MantineColorsTuple = [
-  "#F8FAFC",
-  "#F1F5F9",
-  "#E2E8F0",
-  "#CBD5E1",
-  "#94A3B8",
-  "#5B6A80",
-  "#475569",
-  "#334155",
-  "#1E293B",
-  "#0F172A",
+  "#F6F8FB",
+  "#EEF1F6",
+  "#E1E6EF",
+  "#C8D0DE",
+  "#97A2B8",
+  "#5A6680",
+  "#46526C",
+  "#343F58",
+  "#222C45",
+  "#121A33",
 ];
 
-/** Success / correct answers - a green distinct from the brand teal. */
+/** Success / correct answers - a green distinct from the brand blue. */
 const green: MantineColorsTuple = [
   "#F0FDF4",
   "#DCFCE7",
@@ -111,13 +118,14 @@ export const theme = createTheme({
   },
   primaryColor: "brand",
   primaryShade: 7,
-  // Text on a filled control follows the fill: dark on orange, white on teal.
+  // Text on a filled control follows the fill: white on the action shades of
+  // blue and orange, dark on the light tints.
   autoContrast: true,
   luminanceThreshold: 0.3,
   respectReducedMotion: true,
   focusRing: "auto",
   cursorType: "pointer",
-  black: "#0F172A",
+  black: "#121A33",
   white: "#FFFFFF",
   fontFamily: "var(--font-body), system-ui, sans-serif",
   fontFamilyMonospace: "ui-monospace, SFMono-Regular, Menlo, monospace",
@@ -149,10 +157,10 @@ export const theme = createTheme({
   // genuinely floats (menus, modals, toasts).
   shadows: {
     xs: "none",
-    sm: "0 1px 2px rgba(15, 23, 42, 0.06)",
-    md: "0 4px 12px rgba(15, 23, 42, 0.08)",
-    lg: "0 12px 28px rgba(15, 23, 42, 0.12)",
-    xl: "0 20px 44px rgba(15, 23, 42, 0.16)",
+    sm: "0 1px 2px rgba(18, 26, 51, 0.06)",
+    md: "0 4px 12px rgba(18, 26, 51, 0.08)",
+    lg: "0 12px 28px rgba(18, 26, 51, 0.12)",
+    xl: "0 20px 44px rgba(18, 26, 51, 0.16)",
   },
   components: {
     Card: {

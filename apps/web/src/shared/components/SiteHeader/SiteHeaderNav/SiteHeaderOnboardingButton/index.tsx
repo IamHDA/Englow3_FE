@@ -27,7 +27,7 @@ export function SiteHeaderOnboardingButton({
         onNavigate?.();
       }}
       fullWidth={fullWidth}
-      color="orange.4"
+      color="orange"
       size="md"
       radius="md"
       fw={700}

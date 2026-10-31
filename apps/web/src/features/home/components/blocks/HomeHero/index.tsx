@@ -45,7 +45,7 @@ export function HomeHero() {
         <Group gap="md" mt={8}>
           <HomeCtaButton
             label={t.home.heroCta}
-            color="orange.5"
+            color="orange"
             size="lg"
             radius="xl"
             className={classes.cta}

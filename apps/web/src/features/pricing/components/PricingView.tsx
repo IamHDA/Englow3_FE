@@ -194,13 +194,13 @@ export function PricingView({ plans, live }: { plans: Plan[]; live: boolean }) {
                 <Button
                   component="a"
                   href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Englow3 Pro")}`}
-                  color="orange.5"
+                  color="orange"
                   radius="md"
                 >
                   {c.upgrade}
                 </Button>
               ) : (
-                <Button color="orange.5" radius="md" disabled>
+                <Button color="orange" radius="md" disabled>
                   {c.soon}
                 </Button>
               )}

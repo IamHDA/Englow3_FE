@@ -59,7 +59,7 @@ export function HomeView() {
           <div className={classes.actions}>
             <HomeCtaButton
               label={actionLabel}
-              color="orange.5"
+              color="orange"
               className={classes.primary}
             />
             <Button
@@ -366,7 +366,7 @@ export function HomeView() {
           <p>{session ? c.signedInNote : c.ctaDescription}</p>
           <HomeCtaButton
             label={session ? actionLabel : c.loginCta}
-            color="orange.5"
+            color="orange"
             className={classes.primary}
           />
         </div>

@@ -153,7 +153,7 @@ export function ResetPasswordForm() {
       <Button
         type="submit"
         loading={isSubmitting}
-        color="orange.5"
+        color="orange"
         radius={12}
         h={48}
         fz={16}

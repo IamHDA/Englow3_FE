@@ -165,7 +165,7 @@ export function ProfileForm({
 
           <Button
             type="submit"
-            color="orange.5"
+            color="orange"
             radius="md"
             h={42}
             px="xl"

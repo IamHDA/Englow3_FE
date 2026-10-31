@@ -247,7 +247,7 @@ export function LearnerHomeView() {
                     <Button
                       component={Link}
                       href={TASK_KIND_HREFS[next.kind](next.targetId)}
-                      color="orange.5"
+                      color="orange"
                       size="md"
                       rightSection={<ArrowRight size={18} aria-hidden="true" />}
                       className={classes.continueButton}
@@ -266,7 +266,7 @@ export function LearnerHomeView() {
                     <Button
                       component={Link}
                       href="/study/daily-path?tab=quizzes"
-                      color="orange.5"
+                      color="orange"
                       size="md"
                       rightSection={<ArrowRight size={18} aria-hidden="true" />}
                       className={classes.continueButton}

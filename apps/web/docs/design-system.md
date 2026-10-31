@@ -1,8 +1,9 @@
 # Englow3 design system
 
-Direction: **Minimalism & Swiss** with the **"Progress teal + achievement orange"** palette, from the
-[ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design-system search for an adult
-online-learning / exam-prep product, adjusted so every text pairing meets WCAG 2.1 AA.
+Direction: **Minimalism & Swiss** with the **"Logo navy + flame orange"** palette. The hues are sampled from the
+Englow3 logo (the ring runs ocean blue to deep navy, the flame gold to burnt orange); the roles and contrast
+rules come from the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design-system
+search for an adult online-learning / exam-prep product, adjusted so every text pairing meets WCAG 2.1 AA.
 
 The implementation is `src/lib/mantine/theme.ts` and `src/app/globals.css`. Components take their look from the
 theme defaults, so a plain `<Card>` or `<Button>` is already on-style; restyle a screen only when it needs
@@ -10,19 +11,20 @@ something the theme cannot express.
 
 ## Colour
 
-| Role                  | Token                     | Value                | Notes                                                                                |
-| --------------------- | ------------------------- | -------------------- | ------------------------------------------------------------------------------------ |
-| Primary / brand       | `brand.7` (also `navy.7`) | `#0F766E`            | Filled buttons, links, focus ring. White text 5.5:1                                  |
-| Headings, dark panels | `brand.9` (also `navy.9`) | `#134E4A`            | White text on it 9.4:1                                                               |
-| Brand tint            | `brand.0`–`brand.1`       | `#F0FDFA`, `#CCFBF1` | Selected rows, icon tiles                                                            |
-| Accent                | `orange.5`                | `#F97316`            | The one action that moves the learner on. **Dark text** (7:1), set by `autoContrast` |
-| Accent text           | `orange.7`                | `#C2410C`            | Orange used as text (eyebrows, figures): 5.2:1 on white                              |
-| Success               | `green.6`                 | `#16A34A`            | Correct answers, completion                                                          |
-| Error                 | `warn.6`                  | `#DC2626`            | Validation, destructive actions                                                      |
-| Page                  | `ink.0`                   | `#F8FAFC`            |                                                                                      |
-| Hairline              | `ink.2`                   | `#E2E8F0`            | Card and table borders                                                               |
-| Secondary text        | `ink.5` / `dimmed`        | `#5B6A80`            | 5.5:1 on white, 5:1 on `ink.1`                                                       |
-| Body text             | `ink.8`                   | `#1E293B`            |                                                                                      |
+| Role                  | Token                     | Value                | Notes                                                                   |
+| --------------------- | ------------------------- | -------------------- | ----------------------------------------------------------------------- |
+| Primary / brand       | `brand.7` (also `navy.7`) | `#255A8E`            | Filled buttons, links, focus ring. White text 7.2:1                     |
+| Headings, dark panels | `brand.9` (also `navy.9`) | `#1F2A60`            | The logo's navy. White text on it 13.5:1                                |
+| Brand tint            | `brand.0`–`brand.1`       | `#EEF5FA`, `#D6E7F2` | Selected rows, icon tiles                                               |
+| Accent                | `orange.7`                | `#C24C0A`            | The one action that moves the learner on. **White text** (4.8:1)        |
+| Accent fill           | `orange.5`                | `#EF800C`            | The logo's flame. Fills without text only: progress, markers, underline |
+| Accent text           | `orange.7`                | `#C24C0A`            | Orange used as text (eyebrows, figures): 4.9:1 on white                 |
+| Success               | `green.6`                 | `#16A34A`            | Correct answers, completion                                             |
+| Error                 | `warn.6`                  | `#DC2626`            | Validation, destructive actions                                         |
+| Page                  | `ink.0`                   | `#F6F8FB`            |                                                                         |
+| Hairline              | `ink.2`                   | `#E1E6EF`            | Card and table borders                                                  |
+| Secondary text        | `ink.5` / `dimmed`        | `#5A6680`            | 5.8:1 on white, 5.1:1 on `ink.1`                                        |
+| Body text             | `ink.8`                   | `#222C45`            |                                                                         |
 
 `indigo`, `blue`, `violet`, `grape` and `cyan` resolve to `brand`; `gray` and `dark` to `ink`; `teal` to `green`;
 `red` to `warn`; `yellow` to `orange`. Older modules that reached for a Mantine default therefore land on the

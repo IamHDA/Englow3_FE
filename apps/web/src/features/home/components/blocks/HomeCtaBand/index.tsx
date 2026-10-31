@@ -20,7 +20,7 @@ export function HomeCtaBand() {
       </div>
       <HomeCtaButton
         label={t.home.heroCta}
-        color="orange.5"
+        color="orange"
         size="lg"
         radius="xl"
         className={classes.cta}
