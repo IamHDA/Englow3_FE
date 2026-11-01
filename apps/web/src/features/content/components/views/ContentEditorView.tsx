@@ -561,6 +561,23 @@ function Editor({
                     disabled={disabled}
                     onChange={(v) => meta("targetLevel", v)}
                   />
+                  {(kind === "QUIZ" || kind === "DICTATION_LESSON") && (
+                    <Select
+                      label={t(
+                        "Chứng chỉ (tùy chọn)",
+                        "Certificate (optional)",
+                      )}
+                      description={t(
+                        "Để trống nếu là bài luyện chung. Lộ trình chỉ đưa bài IELTS cho người luyện IELTS, bài TOEIC cho người luyện TOEIC.",
+                        "Leave empty for general practice. Roadmaps give IELTS items only to IELTS learners, TOEIC items only to TOEIC learners.",
+                      )}
+                      data={["IELTS", "TOEIC"]}
+                      clearable
+                      value={doc.metadata.certificateType ?? null}
+                      disabled={disabled}
+                      onChange={(v) => meta("certificateType", v)}
+                    />
+                  )}
                   {kind === "QUIZ" && (
                     <Group grow>
                       <NumberInput
