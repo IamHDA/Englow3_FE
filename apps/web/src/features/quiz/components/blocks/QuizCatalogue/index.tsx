@@ -13,13 +13,14 @@ import React, { useMemo, useState } from "react";
 import type { QuizSummary } from "../../../types";
 import { LibraryCard } from "@/shared/components/LibraryCard";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { categoryLabel } from "@/shared/constants/contentCategories";
 
 interface QuizCatalogueProps {
   quizzes: QuizSummary[];
 }
 
 export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const categories = useMemo(() => {
@@ -48,7 +49,10 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
             onChange={setSelectedCategory}
             data={categories.map((c) => ({
               value: c,
-              label: c === "ALL" ? t.quiz.allCategoriesSegment : c,
+              label:
+                c === "ALL"
+                  ? t.quiz.allCategoriesSegment
+                  : categoryLabel(c, isVi),
             }))}
           />
         )}
@@ -66,7 +70,7 @@ export function QuizCatalogue({ quizzes }: QuizCatalogueProps) {
         {filteredQuizzes.map((quiz) => (
           <LibraryCard
             key={quiz.id}
-            eyebrow={quiz.category}
+            eyebrow={categoryLabel(quiz.category, isVi)}
             level={quiz.targetLevel}
             title={quiz.title}
             meta={[

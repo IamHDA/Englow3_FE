@@ -6,6 +6,7 @@ import React, { useMemo, useState } from "react";
 import type { SpeakingPrompt } from "../../../types";
 import { LibraryCard } from "@/shared/components/LibraryCard";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { categoryLabel } from "@/shared/constants/contentCategories";
 
 interface PronunciationLessonGridProps {
   prompts: SpeakingPrompt[];
@@ -14,7 +15,7 @@ interface PronunciationLessonGridProps {
 export function PronunciationLessonGrid({
   prompts,
 }: PronunciationLessonGridProps) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const categories = useMemo(() => {
@@ -39,7 +40,10 @@ export function PronunciationLessonGrid({
           onChange={setSelectedCategory}
           data={categories.map((c) => ({
             value: c,
-            label: c === "ALL" ? t.pronunciation.allLessonsSegment : c,
+            label:
+              c === "ALL"
+                ? t.pronunciation.allLessonsSegment
+                : categoryLabel(c, isVi),
           }))}
         />
       )}
@@ -57,7 +61,7 @@ export function PronunciationLessonGrid({
         {filteredPrompts.map((prompt) => (
           <LibraryCard
             key={prompt.id}
-            eyebrow={prompt.category}
+            eyebrow={categoryLabel(prompt.category, isVi)}
             level={prompt.targetLevel}
             title={prompt.title}
             meta={

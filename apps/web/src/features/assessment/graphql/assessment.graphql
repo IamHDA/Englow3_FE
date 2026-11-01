@@ -11,6 +11,9 @@ fragment AssessmentTaskFields on AssessmentTask {
   status
   reviewNote
   version
+  targetLevel
+  purpose
+  certificateType
 }
 fragment AssessmentAttemptFields on AssessmentAttempt {
   id

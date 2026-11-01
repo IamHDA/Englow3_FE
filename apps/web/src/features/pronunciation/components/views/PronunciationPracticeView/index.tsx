@@ -17,6 +17,7 @@ import { PronunciationScoreCard } from "../../blocks/PronunciationScoreCard";
 import { PronunciationVoiceRecorder } from "../../blocks/PronunciationVoiceRecorder";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
+import { categoryLabel } from "@/shared/constants/contentCategories";
 
 interface PronunciationPracticeViewProps {
   promptId: string;
@@ -68,7 +69,7 @@ function Practice({
     ReturnType<typeof useSpeakingPromptQuery>["data"]
   >["speakingPrompt"];
 }) {
-  const { t } = useLanguage();
+  const { t, isVi } = useLanguage();
   const {
     phase,
     recordingSeconds,
@@ -105,7 +106,7 @@ function Practice({
               {prompt.title}
             </Text>
             <Badge variant="light" color="indigo" size="xs">
-              {prompt.category}
+              {categoryLabel(prompt.category, isVi)}
             </Badge>
           </Stack>
 

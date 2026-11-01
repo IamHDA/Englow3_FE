@@ -15,6 +15,9 @@ import {
 import { useRef, useState } from "react";
 import {
   AssessmentSkill,
+  AssessmentTaskPurpose,
+  CefrLevel,
+  CertificateType,
   type AssessmentTaskInput,
 } from "@/lib/graphql/generated";
 import {
@@ -50,6 +53,9 @@ export function AssessmentTaskEditor({
       sampleAnswer: task?.sampleAnswer ?? "",
       minimumWords: task?.minimumWords ?? 250,
       timeLimitSeconds: task?.timeLimitSeconds ?? 2400,
+      targetLevel: task?.targetLevel ?? null,
+      purpose: task?.purpose ?? AssessmentTaskPurpose.PRACTICE,
+      certificateType: task?.certificateType ?? null,
     },
   );
   const { value, setValue } = draft;
@@ -171,6 +177,8 @@ export function AssessmentTaskEditor({
                 taskType: v === "WRITING" ? "TASK_2" : "PART_2",
                 minimumWords: v === "WRITING" ? 250 : 0,
                 timeLimitSeconds: v === "WRITING" ? 2400 : 120,
+                // Only a spoken task can be the level check's spoken part.
+                purpose: AssessmentTaskPurpose.PRACTICE,
               }));
           }}
         />
@@ -222,6 +230,71 @@ export function AssessmentTaskEditor({
             value={value.timeLimitSeconds}
             disabled={busy}
             onChange={(v) => field("timeLimitSeconds", Number(v) || 0)}
+          />
+        </Group>
+        <Group grow align="flex-start">
+          <Select
+            label={isVi ? "Trình độ CEFR" : "CEFR level"}
+            description={
+              isVi
+                ? "Lộ trình chọn đề theo trình độ."
+                : "Roadmaps pick tasks by level."
+            }
+            data={Object.values(CefrLevel)}
+            clearable
+            value={value.targetLevel ?? null}
+            disabled={busy}
+            onChange={(v) =>
+              setValue((current) => ({
+                ...current,
+                targetLevel: (v as CefrLevel | null) ?? null,
+              }))
+            }
+          />
+          <Select
+            label={isVi ? "Mục đích" : "Purpose"}
+            description={
+              isVi
+                ? "Đề đo trình độ không hiện trong thư viện luyện tập."
+                : "Level-check tasks stay out of the practice library."
+            }
+            allowDeselect={false}
+            data={[
+              {
+                value: AssessmentTaskPurpose.PRACTICE,
+                label: isVi ? "Luyện tập" : "Practice",
+              },
+              {
+                value: AssessmentTaskPurpose.LEVEL_CHECK,
+                label: isVi
+                  ? "Phần nói của bài đo trình độ"
+                  : "Spoken part of the level check",
+                disabled: value.skill !== AssessmentSkill.SPEAKING,
+              },
+            ]}
+            value={value.purpose ?? AssessmentTaskPurpose.PRACTICE}
+            disabled={busy}
+            onChange={(v) =>
+              setValue((current) => ({
+                ...current,
+                purpose:
+                  (v as AssessmentTaskPurpose | null) ??
+                  AssessmentTaskPurpose.PRACTICE,
+              }))
+            }
+          />
+          <Select
+            label={isVi ? "Chứng chỉ (tùy chọn)" : "Certificate (optional)"}
+            data={Object.values(CertificateType)}
+            clearable
+            value={value.certificateType ?? null}
+            disabled={busy}
+            onChange={(v) =>
+              setValue((current) => ({
+                ...current,
+                certificateType: (v as CertificateType | null) ?? null,
+              }))
+            }
           />
         </Group>
         <Textarea

@@ -28,6 +28,7 @@ export const EXAM_STATUS_COLORS: Record<ExamStatus, string> = {
 export const EXAM_TYPE_LABELS: Record<ExamType, Words> = {
   [ExamType.MOCK]: { vi: "Thi thử", en: "Mock test" },
   [ExamType.PLACEMENT]: { vi: "Xếp trình độ", en: "Placement" },
+  [ExamType.LEVEL_CHECK]: { vi: "Đo trình độ", en: "Level check" },
 };
 
 export const ADMIN_EXAMS_PAGE_SIZE = 20;

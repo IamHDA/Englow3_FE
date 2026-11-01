@@ -44,6 +44,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
 import { isWellFormedId } from "@/shared/network/loadError";
+import { categoryLabel } from "@/shared/constants/contentCategories";
 
 interface QuizSittingViewProps {
   quizId: string;
@@ -428,7 +429,7 @@ export function QuizSittingView({ quizId }: QuizSittingViewProps) {
               {quiz.title}
             </Text>
             <Badge variant="light" color="indigo" size="xs">
-              {quiz.category}
+              {categoryLabel(quiz.category, isVi)}
             </Badge>
           </Stack>
 

@@ -40,6 +40,10 @@ import {
 import { AuthoringMedia } from "../blocks/AuthoringMedia";
 import { AuthoringReviewActions } from "../blocks/AuthoringReviewActions";
 import { ExamTreeEditor } from "../blocks/ExamTreeEditor";
+import {
+  PROMPT_CATEGORY_OPTIONS,
+  QUIZ_CATEGORY_OPTIONS,
+} from "@/shared/constants/contentCategories";
 
 const names: Record<AuthoringKind, [string, string]> = {
   FLASHCARD_SET: ["Bộ từ vựng", "Vocabulary set"],
@@ -137,6 +141,7 @@ function editableDocument(
           : data.content,
   };
 }
+
 export function ContentEditorView({
   kind,
   id,
@@ -503,24 +508,48 @@ function Editor({
             <Stack gap="lg">
               <Card withBorder>
                 <Stack>
-                  {metadataFields.map((f) => (
-                    <TextInput
-                      key={f.key}
-                      label={isVi ? f.vi : f.en}
-                      required={f.required}
-                      maxLength={
-                        kind === "EXAM" && f.key === "title"
-                          ? 100
-                          : f.key === "description"
-                            ? 2000
-                            : 200
+                  {metadataFields
+                    .filter((f) => f.key !== "category")
+                    .map((f) => (
+                      <TextInput
+                        key={f.key}
+                        label={isVi ? f.vi : f.en}
+                        required={f.required}
+                        maxLength={
+                          kind === "EXAM" && f.key === "title"
+                            ? 100
+                            : f.key === "description"
+                              ? 2000
+                              : 200
+                        }
+                        value={String(doc.metadata[f.key] ?? "")}
+                        disabled={disabled}
+                        error={errors[`metadata.${f.key}`]}
+                        onChange={(e) => meta(f.key, e.currentTarget.value)}
+                      />
+                    ))}
+                  {(kind === "QUIZ" || kind === "SPEAKING_PROMPT") && (
+                    <Select
+                      label={t("Chủ đề", "Category")}
+                      required
+                      allowDeselect={false}
+                      data={
+                        kind === "QUIZ"
+                          ? QUIZ_CATEGORY_OPTIONS.map((o) => ({
+                              value: o.value,
+                              label: isVi ? o.vi : o.en,
+                            }))
+                          : PROMPT_CATEGORY_OPTIONS.map((o) => ({
+                              value: o.value,
+                              label: isVi ? o.vi : o.en,
+                            }))
                       }
-                      value={String(doc.metadata[f.key] ?? "")}
+                      value={String(doc.metadata.category ?? "") || null}
                       disabled={disabled}
-                      error={errors[`metadata.${f.key}`]}
-                      onChange={(e) => meta(f.key, e.currentTarget.value)}
+                      error={errors["metadata.category"]}
+                      onChange={(v) => meta("category", v ?? "")}
                     />
-                  ))}
+                  )}
                   <Select
                     label={t(
                       "Trình độ CEFR (tùy chọn)",
@@ -566,6 +595,13 @@ function Editor({
                             {
                               value: "PLACEMENT",
                               label: t("Kiểm tra đầu vào", "Placement test"),
+                            },
+                            {
+                              value: "LEVEL_CHECK",
+                              label: t(
+                                "Đo trình độ (từ vựng, ngữ pháp, nghe)",
+                                "Level check (vocabulary, grammar, listening)",
+                              ),
                             },
                           ]}
                           value={doc.metadata.examType}
