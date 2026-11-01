@@ -2,8 +2,8 @@ name: Deploy
 
 # Deploys, but only after `ci.yml` has passed on the same commit (`verify`
 # below). Before that the two ran side by side, so a push whose checks failed
-# still went out. A manual run (workflow_dispatch) skips the check on purpose:
-# it is a person deciding to deploy, for example to roll a hotfix forward.
+# still went out. A manual run (workflow_dispatch) is checked too: it can send
+# any branch to production, and a hotfix is worth the few minutes CI takes.
 #
 # `ci.yml` deliberately has no paths-ignore — a skipped workflow reports no
 # check, which would hang a required check. The list below is this workflow's
@@ -55,8 +55,9 @@ env:
   TEST_BACKEND_URL: https://englow3-backend-testing.onrender.com
 
 jobs:
+  # Every deploy is checked first, a manual one included: a manual run can
+  # target production from any branch, so it needs the gate most.
   verify:
-    if: ${{ github.event_name == 'push' }}
     uses: ./.github/workflows/ci.yml
     permissions:
       contents: read
@@ -66,8 +67,7 @@ jobs:
   # here, once, and the rest of the workflow gates on these outputs.
   setup:
     needs: verify
-    # `verify` is skipped for a manual run; it must not have failed on a push.
-    if: ${{ !cancelled() && (needs.verify.result == 'success' || needs.verify.result == 'skipped') }}
+    if: ${{ !cancelled() && needs.verify.result == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       target: ${{ steps.resolve.outputs.target }}
