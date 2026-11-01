@@ -35,12 +35,15 @@ export function createRateLimiter({
  * platform and cannot be supplied by the caller; elsewhere the first hop of
  * `x-forwarded-for` is the best that is available.
  */
-export function clientKey(request: Request): string {
+export function clientAddress(headers: Headers): string | undefined {
   return (
-    request.headers.get("x-vercel-forwarded-for") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-    "local"
+    headers.get("x-vercel-forwarded-for") ??
+    headers.get("x-forwarded-for")?.split(",")[0].trim()
   );
+}
+
+export function clientKey(request: Request): string {
+  return clientAddress(request.headers) ?? "local";
 }
 
 export function tooManyRequests(): Response {

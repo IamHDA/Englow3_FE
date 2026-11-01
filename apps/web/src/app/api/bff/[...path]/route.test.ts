@@ -68,7 +68,10 @@ beforeEach(() => {
   rememberSessionPreference.mockReset();
 });
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
 
 describe("/api/bff/[...path]", () => {
   it("passes GraphQL on to the BFF with the signed-in user's token", async () => {
@@ -84,6 +87,33 @@ describe("/api/bff/[...path]", () => {
     expect(url).toBe("http://localhost:4000/graphql");
     expect(init.headers.authorization).toBe("Bearer the-token");
     expect(await new Response(init.body).text()).toBe('{"query":"{ health }"}');
+  });
+
+  /**
+   * The BFF sees every request coming from this server. Without the person's
+   * own address its per-address ceiling is one allowance for all users.
+   */
+  it("names the caller's address to the BFF with the shared secret", async () => {
+    vi.stubEnv("BFF_PROXY_SECRET", "the-secret");
+
+    await call("POST", "graphql", {
+      body: "{}",
+      headers: { "x-forwarded-for": "203.0.113.7, 10.0.0.1" },
+    });
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.headers["x-englow-proxy-secret"]).toBe("the-secret");
+    expect(init.headers["x-englow-client-ip"]).toBe("203.0.113.7");
+  });
+
+  it("sends no caller headers when no secret is configured", async () => {
+    vi.stubEnv("BFF_PROXY_SECRET", "");
+
+    await call("POST", "graphql", { body: "{}" });
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.headers).not.toHaveProperty("x-englow-proxy-secret");
+    expect(init.headers).not.toHaveProperty("x-englow-client-ip");
   });
 
   it.each([

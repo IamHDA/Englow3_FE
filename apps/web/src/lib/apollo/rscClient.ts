@@ -6,7 +6,10 @@ import {
   registerApolloClient,
 } from "@apollo/client-integration-nextjs";
 
-import { bffGraphqlUrl } from "@/server/bff";
+import { headers as requestHeaders } from "next/headers";
+
+import { bffGraphqlUrl, callerHeaders } from "@/server/bff";
+import { clientAddress } from "@/server/rateLimit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
@@ -32,6 +35,7 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
     return {
       headers: {
         ...headers,
+        ...callerHeaders(clientAddress(await requestHeaders())),
         ...(session ? { authorization: `Bearer ${session.access_token}` } : {}),
       },
     };

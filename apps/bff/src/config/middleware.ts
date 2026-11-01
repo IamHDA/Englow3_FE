@@ -1,7 +1,42 @@
+import { timingSafeEqual } from "node:crypto";
+import { isIP } from "node:net";
+
 import cors, { type CorsOptions } from "cors";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 
 import { env } from "./env.js";
+
+/** Sent by the web app's server; the names are repeated in apps/web/src/server/bff.ts. */
+export const PROXY_SECRET_HEADER = "x-englow-proxy-secret";
+export const CLIENT_IP_HEADER = "x-englow-client-ip";
+
+function sameSecret(presented: string | undefined, configured: string) {
+  if (presented === undefined) return false;
+  const a = Buffer.from(presented);
+  const b = Buffer.from(configured);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/**
+ * Whose allowance a request is counted against. The browser reaches this app
+ * through the web app's server, so the address a request connects from is
+ * that server's, shared by everyone it serves at once. The web server names
+ * the person's own address instead, and that is believed only alongside the
+ * shared secret - anyone else could write the header too.
+ */
+export function callerAddress(
+  configuredSecret: string | undefined,
+  presentedSecret: string | undefined,
+  forwardedIp: string | undefined,
+  connectionIp: string | undefined,
+): string {
+  const trusted =
+    configuredSecret !== undefined &&
+    forwardedIp !== undefined &&
+    isIP(forwardedIp) !== 0 &&
+    sameSecret(presentedSecret, configuredSecret);
+  return (trusted ? forwardedIp : connectionIp) ?? "unknown";
+}
 
 /**
  * Shared between the long-running server and the serverless entry point, so the
@@ -61,6 +96,15 @@ export function rateLimitMiddleware() {
     limit: env.rateLimitMax,
     standardHeaders: "draft-7",
     legacyHeaders: false,
+    keyGenerator: (req) =>
+      ipKeyGenerator(
+        callerAddress(
+          env.proxySecret,
+          req.get(PROXY_SECRET_HEADER),
+          req.get(CLIENT_IP_HEADER),
+          req.ip,
+        ),
+      ),
     message: {
       errors: [
         {

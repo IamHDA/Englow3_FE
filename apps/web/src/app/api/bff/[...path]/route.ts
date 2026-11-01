@@ -5,6 +5,7 @@ import {
 import { bffBaseUrl, forwardToBff } from "@/server/bff";
 import { refuseCrossSite } from "@/server/csrf";
 import {
+  clientAddress,
   clientKey,
   createRateLimiter,
   tooManyRequests,
@@ -113,6 +114,7 @@ async function handle(request: Request, { params }: Context) {
       // write does not, so an accepted upload or erasure is not abandoned
       // halfway because a tab closed.
       signal: hasBody ? undefined : request.signal,
+      clientIp: clientAddress(request.headers),
       unreachable: mount.unreachable,
     },
   );

@@ -95,6 +95,14 @@ export const env = {
       : 0,
 
   /**
+   * Shared with the web app's server, which calls here on behalf of the person
+   * in the browser and names their address in a header. Only a request that
+   * carries this secret has that header believed; unset, every caller is
+   * counted by the address it connects from, as before.
+   */
+  proxySecret: process.env.BFF_PROXY_SECRET || undefined,
+
+  /**
    * Requests one IP may make per window.
    *
    * Generous on purpose: this is a ceiling on scripted abuse, not a quality of

@@ -20,6 +20,22 @@ export const bffRestUrl = `${bffBaseUrl}/rest`;
 const TIMEOUT_MS = 60_000;
 
 /**
+ * Names the person a request is made for. The BFF counts its per-address
+ * ceiling by the address a request connects from, which for everything sent
+ * from here is this server's - one allowance shared by every user it serves.
+ * With the shared secret the BFF counts the person's own address instead.
+ * Header names match apps/bff/src/config/middleware.ts.
+ */
+export function callerHeaders(
+  clientIp: string | undefined,
+): Record<string, string> {
+  const secret = process.env.BFF_PROXY_SECRET;
+  return secret && clientIp
+    ? { "x-englow-proxy-secret": secret, "x-englow-client-ip": clientIp }
+    : {};
+}
+
+/**
  * The signed-in user's token as an `Authorization` header, or nothing for a
  * guest. Reading the session refreshes an expired access token and writes the
  * renewed cookies, so a tab left open for hours keeps working.
@@ -38,6 +54,8 @@ type Forward = {
   contentType?: string | null;
   timeoutMs?: number;
   signal?: AbortSignal;
+  /** The browser's address, so the BFF's ceiling is per person. */
+  clientIp?: string;
   /** What to answer when the BFF cannot be reached at all. */
   unreachable: () => Response;
 };
@@ -55,6 +73,7 @@ export async function forwardToBff(
     contentType,
     timeoutMs = TIMEOUT_MS,
     signal,
+    clientIp,
     unreachable,
   }: Forward,
 ): Promise<Response> {
@@ -67,6 +86,7 @@ export async function forwardToBff(
       headers: {
         "x-request-id": requestId,
         ...(contentType ? { "content-type": contentType } : {}),
+        ...callerHeaders(clientIp),
         ...(await authorization()),
       },
       body: body ?? undefined,
