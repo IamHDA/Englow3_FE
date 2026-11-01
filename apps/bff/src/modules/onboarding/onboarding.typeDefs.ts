@@ -41,6 +41,11 @@ export const onboardingTypeDefs = /* GraphQL */ `
     currentLevel: CefrLevel
     targetScore: Float
     targetDate: Date
+    """
+    The CEFR level a learner without a certificate goal is aiming for.
+    """
+    targetLevel: CefrLevel
+    dailyStudyMinutes: Int
     targetSkills: [LearningSkill!]!
   }
 
@@ -57,6 +62,16 @@ export const onboardingTypeDefs = /* GraphQL */ `
     """
     targetScore: Float
     targetDate: Date
+    """
+    Only a learner without a certificate goal may send this, and it must be
+    above their current level (TARGET_LEVEL_NOT_ABOVE_CURRENT otherwise).
+    """
+    targetLevel: CefrLevel
+    """
+    Minutes a day the learner means to study, 10-240. The roadmap plans each
+    week within it.
+    """
+    dailyStudyMinutes: Int
   }
 
   extend type Me {

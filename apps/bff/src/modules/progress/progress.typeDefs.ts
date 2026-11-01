@@ -8,6 +8,15 @@ export const progressTypeDefs = /* GraphQL */ `
     QUIZ
     WRITING
     SPEAKING
+    """
+    A pronunciation prompt scheduled by the learner's roadmap.
+    """
+    PRONUNCIATION
+    """
+    The test closing the current roadmap stage. targetId is the milestone; the
+    roadmap page shows how to take it.
+    """
+    MILESTONE
   }
 
   """
@@ -72,6 +81,11 @@ export const progressTypeDefs = /* GraphQL */ `
     levelCostXp: Int!
     tasks: [DailyTask!]!
     quests: [DailyQuest!]!
+    """
+    The roadmap stage today's work comes from, or null when the learner has no
+    active roadmap and the general rules chose the work.
+    """
+    roadmapStageTitle: String
   }
 
   extend type Query {

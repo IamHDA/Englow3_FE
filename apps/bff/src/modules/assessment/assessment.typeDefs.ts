@@ -22,6 +22,14 @@ export const assessmentTypeDefs = /* GraphQL */ `
     automaticSpeaking: Boolean!
     humanReview: Boolean!
   }
+  enum AssessmentTaskPurpose {
+    PRACTICE
+    """
+    The spoken part of the roadmap's level check (Speaking only). Kept out of
+    the learner catalogue.
+    """
+    LEVEL_CHECK
+  }
   type AssessmentTask {
     id: ID!
     skill: AssessmentSkill!
@@ -35,6 +43,9 @@ export const assessmentTypeDefs = /* GraphQL */ `
     status: AssessmentTaskStatus!
     reviewNote: String
     version: Int!
+    targetLevel: CefrLevel
+    purpose: AssessmentTaskPurpose!
+    certificateType: CertificateType
   }
   type AssessmentTaskPage {
     items: [AssessmentTask!]!
@@ -132,6 +143,16 @@ export const assessmentTypeDefs = /* GraphQL */ `
     sampleAnswer: String
     minimumWords: Int!
     timeLimitSeconds: Int!
+    targetLevel: CefrLevel
+    """
+    Defaults to PRACTICE. LEVEL_CHECK is refused for a Writing task
+    (TASK_PURPOSE_SKILL).
+    """
+    purpose: AssessmentTaskPurpose
+    """
+    Set for IELTS/TOEIC preparation; leave empty for general practice.
+    """
+    certificateType: CertificateType
   }
   extend type Query {
     assessmentCapabilities: AssessmentCapabilities!

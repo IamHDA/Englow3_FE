@@ -42,6 +42,17 @@ describe("BackendClient", () => {
     );
   });
 
+  it("answers null for a 204, which has no body to read", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(null, { status: 204 })),
+    );
+
+    const client = new BackendClient("http://backend.internal", 5000, "t");
+
+    await expect(client.get("/api/roadmap")).resolves.toBeNull();
+  });
+
   it("omits the authorization header when there is no token", async () => {
     const fetchMock = vi
       .fn()

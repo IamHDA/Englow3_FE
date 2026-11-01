@@ -11,6 +11,8 @@ import { flashcardResolvers } from "../modules/flashcard/flashcard.resolvers.js"
 import { flashcardTypeDefs } from "../modules/flashcard/flashcard.typeDefs.js";
 import { progressResolvers } from "../modules/progress/progress.resolvers.js";
 import { progressTypeDefs } from "../modules/progress/progress.typeDefs.js";
+import { roadmapResolvers } from "../modules/roadmap/roadmap.resolvers.js";
+import { roadmapTypeDefs } from "../modules/roadmap/roadmap.typeDefs.js";
 import { quizResolvers } from "../modules/quiz/quiz.resolvers.js";
 import { quizTypeDefs } from "../modules/quiz/quiz.typeDefs.js";
 import { speakingResolvers } from "../modules/speaking/speaking.resolvers.js";
@@ -45,6 +47,7 @@ export const typeDefs = [
   quizTypeDefs,
   dictationTypeDefs,
   progressTypeDefs,
+  roadmapTypeDefs,
   contentManagementTypeDefs,
   speakingTypeDefs,
   tutorTypeDefs,
@@ -63,6 +66,7 @@ export const resolvers = {
     ...quizResolvers.Query,
     ...dictationResolvers.Query,
     ...progressResolvers.Query,
+    ...roadmapResolvers.Query,
     ...contentManagementResolvers.Query,
     ...speakingResolvers.Query,
     ...tutorResolvers.Query,
@@ -76,6 +80,7 @@ export const resolvers = {
     ...quizResolvers.Mutation,
     ...dictationResolvers.Mutation,
     ...contentManagementResolvers.Mutation,
+    ...roadmapResolvers.Mutation,
     ...speakingResolvers.Mutation,
     ...tutorResolvers.Mutation,
   },

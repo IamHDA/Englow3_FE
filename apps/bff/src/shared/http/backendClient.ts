@@ -101,7 +101,11 @@ export class BackendClient {
         Date.now() - start,
       );
     }
-    const result = (await response.json()) as T;
+    // 204 is how the backend says "there is none" (no roadmap yet, say); there
+    // is no body to parse, and the caller's type includes null for it.
+    const result = (
+      response.status === 204 ? null : await response.json()
+    ) as T;
     console.info(
       JSON.stringify({
         event: "backend_request",

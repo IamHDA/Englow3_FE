@@ -8,6 +8,7 @@ import { ExamApi } from "../modules/exam/exam.api.js";
 import { FlashcardApi } from "../modules/flashcard/flashcard.api.js";
 import { ProgressApi } from "../modules/progress/progress.api.js";
 import { QuizApi } from "../modules/quiz/quiz.api.js";
+import { RoadmapApi } from "../modules/roadmap/roadmap.api.js";
 import { SpeakingApi } from "../modules/speaking/speaking.api.js";
 import { TutorApi } from "../modules/tutor/tutor.api.js";
 import { OnboardingApi } from "../modules/onboarding/onboarding.api.js";
@@ -29,6 +30,7 @@ export type GraphQLContext = {
     quizApi: QuizApi;
     dictationApi: DictationApi;
     progressApi: ProgressApi;
+    roadmapApi: RoadmapApi;
     contentManagementApi: ContentManagementApi;
     speakingApi: SpeakingApi;
     tutorApi: TutorApi;
@@ -64,6 +66,7 @@ export async function createContext({
       quizApi: new QuizApi(client),
       dictationApi: new DictationApi(client),
       progressApi: new ProgressApi(client),
+      roadmapApi: new RoadmapApi(client),
       contentManagementApi: new ContentManagementApi(client),
       speakingApi: new SpeakingApi(client),
       tutorApi: new TutorApi(client),

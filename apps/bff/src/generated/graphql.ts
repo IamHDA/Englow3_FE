@@ -14,6 +14,14 @@ export type Scalars = {
   DateTime: { input: string; output: string; }
 };
 
+export type AdjustmentReason =
+  | 'AHEAD_OF_SCHEDULE'
+  | 'BEHIND_SCHEDULE'
+  | 'GOAL_CHANGED'
+  | 'LEVEL_REASSESSED'
+  | 'MILESTONE_FAILED'
+  | 'MILESTONE_PASSED';
+
 /**
  * The administrator's landing page: what is waiting on a decision, how much is
  * live, and whether anyone is using it.
@@ -140,14 +148,17 @@ export type AssessmentSubmissionTask = {
 
 export type AssessmentTask = {
   __typename?: 'AssessmentTask';
+  certificateType?: Maybe<CertificateType>;
   id: Scalars['ID']['output'];
   instructions: Scalars['String']['output'];
   minimumWords: Scalars['Int']['output'];
+  purpose: AssessmentTaskPurpose;
   reviewNote?: Maybe<Scalars['String']['output']>;
   rubricNotes?: Maybe<Scalars['String']['output']>;
   sampleAnswer?: Maybe<Scalars['String']['output']>;
   skill: AssessmentSkill;
   status: AssessmentTaskStatus;
+  targetLevel?: Maybe<CefrLevel>;
   taskType: Scalars['String']['output'];
   timeLimitSeconds: Scalars['Int']['output'];
   title: Scalars['String']['output'];
@@ -155,11 +166,19 @@ export type AssessmentTask = {
 };
 
 export type AssessmentTaskInput = {
+  /** Set for IELTS/TOEIC preparation; leave empty for general practice. */
+  certificateType?: InputMaybe<CertificateType>;
   instructions: Scalars['String']['input'];
   minimumWords: Scalars['Int']['input'];
+  /**
+   * Defaults to PRACTICE. LEVEL_CHECK is refused for a Writing task
+   * (TASK_PURPOSE_SKILL).
+   */
+  purpose?: InputMaybe<AssessmentTaskPurpose>;
   rubricNotes?: InputMaybe<Scalars['String']['input']>;
   sampleAnswer?: InputMaybe<Scalars['String']['input']>;
   skill: AssessmentSkill;
+  targetLevel?: InputMaybe<CefrLevel>;
   taskType: Scalars['String']['input'];
   timeLimitSeconds: Scalars['Int']['input'];
   title: Scalars['String']['input'];
@@ -172,6 +191,14 @@ export type AssessmentTaskPage = {
   totalItems: Scalars['Int']['output'];
   totalPages: Scalars['Int']['output'];
 };
+
+export type AssessmentTaskPurpose =
+  /**
+   * The spoken part of the roadmap's level check (Speaking only). Kept out of
+   * the learner catalogue.
+   */
+  | 'LEVEL_CHECK'
+  | 'PRACTICE';
 
 export type AssessmentTaskStatus =
   | 'ARCHIVED'
@@ -304,6 +331,11 @@ export type DailyPath = {
   level: Scalars['Int']['output'];
   levelCostXp: Scalars['Int']['output'];
   quests: Array<DailyQuest>;
+  /**
+   * The roadmap stage today's work comes from, or null when the learner has no
+   * active roadmap and the general rules chose the work.
+   */
+  roadmapStageTitle?: Maybe<Scalars['String']['output']>;
   /** Consecutive days with any practice, counted across every feature. */
   streakDays: Scalars['Int']['output'];
   tasks: Array<DailyTask>;
@@ -347,6 +379,13 @@ export type DailyTaskKind =
   | 'DICTATION'
   /** Cards the spaced-repetition schedule says are due. */
   | 'FLASHCARD_REVIEW'
+  /**
+   * The test closing the current roadmap stage. targetId is the milestone; the
+   * roadmap page shows how to take it.
+   */
+  | 'MILESTONE'
+  /** A pronunciation prompt scheduled by the learner's roadmap. */
+  | 'PRONUNCIATION'
   | 'QUIZ'
   | 'SPEAKING'
   | 'WRITING';
@@ -735,6 +774,12 @@ export type ExamStatus =
   | 'REJECTED';
 
 export type ExamType =
+  /**
+   * The written part of the roadmap's level check: vocabulary and grammar in
+   * its READING section, plus LISTENING. Taken in full only, and kept out of
+   * the learner catalogue.
+   */
+  | 'LEVEL_CHECK'
   | 'MOCK'
   | 'PLACEMENT';
 
@@ -907,7 +952,17 @@ export type LearnerExamPage = {
 
 export type LearningGoalInput = {
   certificateType: TargetCertificate;
+  /**
+   * Minutes a day the learner means to study, 10-240. The roadmap plans each
+   * week within it.
+   */
+  dailyStudyMinutes?: InputMaybe<Scalars['Int']['input']>;
   targetDate?: InputMaybe<Scalars['Date']['input']>;
+  /**
+   * Only a learner without a certificate goal may send this, and it must be
+   * above their current level (TARGET_LEVEL_NOT_ABOVE_CURRENT otherwise).
+   */
+  targetLevel?: InputMaybe<CefrLevel>;
   /** Only a certificate learner may send this - the backend refuses it otherwise. */
   targetScore?: InputMaybe<Scalars['Float']['input']>;
 };
@@ -928,6 +983,44 @@ export type LearningSkill =
   | 'VOCABULARY'
   | 'WRITING';
 
+export type LevelCheck = {
+  __typename?: 'LevelCheck';
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  examAttemptId?: Maybe<Scalars['ID']['output']>;
+  /** The paper to sit (vocabulary/grammar and listening), through the exam screens. */
+  examId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  listeningLevel?: Maybe<CefrLevel>;
+  milestoneId?: Maybe<Scalars['ID']['output']>;
+  /** The band from the written parts alone while the spoken part is outstanding. */
+  provisionalLevel?: Maybe<CefrLevel>;
+  purpose: LevelCheckPurpose;
+  resultLevel?: Maybe<CefrLevel>;
+  speakingAttemptId?: Maybe<Scalars['ID']['output']>;
+  /** The spoken answer could not be graded; answer again or skip it. */
+  speakingFailed: Scalars['Boolean']['output'];
+  speakingLevel?: Maybe<CefrLevel>;
+  speakingSkipped: Scalars['Boolean']['output'];
+  /** The spoken task to answer; null when none is published. */
+  speakingTaskId?: Maybe<Scalars['ID']['output']>;
+  status: LevelCheckStatus;
+  vocabLevel?: Maybe<CefrLevel>;
+};
+
+export type LevelCheckPurpose =
+  /** The test closing a stage of a level roadmap. */
+  | 'MILESTONE'
+  /** The starting level of a learner without a certificate goal. */
+  | 'ONBOARDING';
+
+export type LevelCheckStatus =
+  /** The paper is scored; the spoken answer is not graded yet, or not given. */
+  | 'AWAITING_SPEAKING'
+  | 'COMPLETED'
+  /** The paper is not scored yet. */
+  | 'IN_PROGRESS';
+
 export type Me = {
   __typename?: 'Me';
   avatarUrl?: Maybe<Scalars['String']['output']>;
@@ -942,6 +1035,18 @@ export type Me = {
   onboardingStep: OnboardingStep;
   role: Role;
 };
+
+export type MilestoneKind =
+  /** Sit examId and reach requiredScore on the certificate scale. */
+  | 'CERTIFICATE_MOCK'
+  /** Take a level check and reach requiredLevel. */
+  | 'LEVEL_CHECK';
+
+export type MilestoneStatus =
+  /** The last attempt fell short; it can be taken again. */
+  | 'FAILED'
+  | 'PASSED'
+  | 'PENDING';
 
 /**
  * One line to practise again.
@@ -973,6 +1078,7 @@ export type MistakeSentence = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['Boolean']['output']>;
+  abandonRoadmap: Scalars['Boolean']['output'];
   /**
    * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
    * same step - there is no approved-but-unpublished state.
@@ -992,6 +1098,8 @@ export type Mutation = {
    */
   archiveExam: Exam;
   archiveTutorConversation: TutorConversationSummary;
+  attachLevelCheckExamAttempt: LevelCheck;
+  attachLevelCheckSpeakingAttempt: LevelCheck;
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
   clearTutorMemory: Scalars['Boolean']['output'];
@@ -1003,6 +1111,14 @@ export type Mutation = {
    */
   completeOnboarding: OnboardingState;
   createAssessmentTask: AssessmentTask;
+  /**
+   * A plan for the learner's current goal. The same goal returns the same plan;
+   * a changed score, level or date adjusts it; a different goal replaces it.
+   * Refuses with ROADMAP_LEVEL_UNKNOWN or ROADMAP_GOAL_INCOMPLETE before
+   * onboarding has a level and a goal, ROADMAP_NO_CONTENT when nothing is
+   * published to plan with, and ROADMAP_DAILY_LIMIT after five a day.
+   */
+  createRoadmap: Roadmap;
   createTutorResource: TutorResource;
   editAssessmentTask: AssessmentTask;
   gradeAssessment: AssessmentAttempt;
@@ -1027,6 +1143,8 @@ export type Mutation = {
    */
   rateFlashcard: FlashcardReview;
   readAssessmentResult: Scalars['Boolean']['output'];
+  /** A finished sitting of the current stage's mock paper. */
+  recordMilestoneSitting: Roadmap;
   regenerateTutorReply: TutorConversation;
   /**
    * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
@@ -1097,6 +1215,7 @@ export type Mutation = {
   setCurrentLevel: OnboardingState;
   /** Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done. */
   setLearningGoal: OnboardingState;
+  skipLevelCheckSpeaking: LevelCheck;
   startAssessment: AssessmentUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
@@ -1104,6 +1223,8 @@ export type Mutation = {
    * twice does not create two.
    */
   startExamAttempt: ExamAttempt;
+  /** Starts a check, or returns the one already open for the same purpose. */
+  startLevelCheck: LevelCheck;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
    * backend enforces one live attempt per learner and quiz.
@@ -1185,6 +1306,18 @@ export type MutationArchiveTutorConversationArgs = {
 };
 
 
+export type MutationAttachLevelCheckExamAttemptArgs = {
+  attemptId: Scalars['ID']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAttachLevelCheckSpeakingAttemptArgs = {
+  attemptId: Scalars['ID']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationBranchTutorConversationArgs = {
   clientMessageId: Scalars['ID']['input'];
   conversationId: Scalars['ID']['input'];
@@ -1257,6 +1390,12 @@ export type MutationRateFlashcardArgs = {
 export type MutationReadAssessmentResultArgs = {
   id: Scalars['ID']['input'];
   version: Scalars['Int']['input'];
+};
+
+
+export type MutationRecordMilestoneSittingArgs = {
+  examAttemptId: Scalars['ID']['input'];
+  milestoneId: Scalars['ID']['input'];
 };
 
 
@@ -1400,6 +1539,11 @@ export type MutationSetLearningGoalArgs = {
 };
 
 
+export type MutationSkipLevelCheckSpeakingArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationStartAssessmentArgs = {
   clientKey: Scalars['ID']['input'];
   contentLength?: InputMaybe<Scalars['Int']['input']>;
@@ -1411,6 +1555,12 @@ export type MutationStartAssessmentArgs = {
 export type MutationStartExamAttemptArgs = {
   examId: Scalars['ID']['input'];
   input?: InputMaybe<StartExamAttemptInput>;
+};
+
+
+export type MutationStartLevelCheckArgs = {
+  milestoneId?: InputMaybe<Scalars['ID']['input']>;
+  purpose: LevelCheckPurpose;
 };
 
 
@@ -1497,6 +1647,7 @@ export type OnboardingState = {
   __typename?: 'OnboardingState';
   certificateLearner: Scalars['Boolean']['output'];
   currentLevel?: Maybe<CefrLevel>;
+  dailyStudyMinutes?: Maybe<Scalars['Int']['output']>;
   learningPurposeIds: Array<Scalars['Int']['output']>;
   /**
    * The step after this write. Every onboarding write answers with it, so the
@@ -1505,6 +1656,8 @@ export type OnboardingState = {
   step: OnboardingStep;
   targetCertificateType?: Maybe<Scalars['String']['output']>;
   targetDate?: Maybe<Scalars['Date']['output']>;
+  /** The CEFR level a learner without a certificate goal is aiming for. */
+  targetLevel?: Maybe<CefrLevel>;
   targetScore?: Maybe<Scalars['Float']['output']>;
   targetSkills: Array<LearningSkill>;
 };
@@ -1628,7 +1781,11 @@ export type Query = {
    */
   flashcardStudyQueue: Array<Flashcard>;
   health: Scalars['String']['output'];
+  /** The learner's most recent level check, or null. */
+  latestLevelCheck?: Maybe<LevelCheck>;
   learningPurposes: Array<LearningPurpose>;
+  /** Reading a check picks up any grade that arrived since the last look. */
+  levelCheck: LevelCheck;
   me: Me;
   myTourStatus: UserTourStatus;
   /**
@@ -1642,6 +1799,11 @@ export type Query = {
   /** The paper to sit, reachable only through an open attempt. */
   quizPaper: QuizPaper;
   quizzes: QuizPage;
+  /**
+   * The plan in play, else the newest one (failed or finished), else null.
+   * Reading it can start an automatic replan when the learner is a week behind.
+   */
+  roadmap?: Maybe<Roadmap>;
   /** What the screen polls while it waits for a score. */
   speakingAttempt: SpeakingAttempt;
   /** This learner's own attempts at one prompt, newest first. No word breakdown. */
@@ -1842,6 +2004,11 @@ export type QueryFlashcardStatsArgs = {
 export type QueryFlashcardStudyQueueArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   setId: Scalars['ID']['input'];
+};
+
+
+export type QueryLevelCheckArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -2100,6 +2267,124 @@ export type ReviewRating =
   | 'EASY'
   | 'GOOD'
   | 'HARD';
+
+export type Roadmap = {
+  __typename?: 'Roadmap';
+  /** An adjustment is being worked out; the stages shown stay in force meanwhile. */
+  adjusting: Scalars['Boolean']['output'];
+  adjustments: Array<RoadmapAdjustment>;
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  dailyMinutes?: Maybe<Scalars['Int']['output']>;
+  failureCode?: Maybe<Scalars['String']['output']>;
+  goalType: RoadmapGoalType;
+  id: Scalars['ID']['output'];
+  pendingReason?: Maybe<AdjustmentReason>;
+  schedule: RoadmapSchedule;
+  stages: Array<RoadmapStage>;
+  startLevel: CefrLevel;
+  startScore?: Maybe<Scalars['Float']['output']>;
+  status: RoadmapStatus;
+  targetCertificate?: Maybe<Scalars['String']['output']>;
+  targetDate?: Maybe<Scalars['Date']['output']>;
+  targetLevel?: Maybe<CefrLevel>;
+  targetScore?: Maybe<Scalars['Float']['output']>;
+};
+
+export type RoadmapAdjustment = {
+  __typename?: 'RoadmapAdjustment';
+  createdAt: Scalars['DateTime']['output'];
+  reason: AdjustmentReason;
+};
+
+export type RoadmapContentKind =
+  | 'ASSESSMENT_TASK'
+  | 'DICTATION_LESSON'
+  | 'FLASHCARD_SET'
+  | 'QUIZ'
+  | 'SPEAKING_PROMPT';
+
+export type RoadmapGoalType =
+  | 'CERTIFICATE'
+  | 'LEVEL';
+
+export type RoadmapItem = {
+  __typename?: 'RoadmapItem';
+  /**
+   * The set, lesson, quiz, prompt or task to open; the link is built from this
+   * and the kind (and skill, for a writing or speaking task).
+   */
+  contentId: Scalars['ID']['output'];
+  done: Scalars['Boolean']['output'];
+  estimatedMinutes: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  kind: RoadmapContentKind;
+  /** Derived from the learner's activity on every read. */
+  percentDone: Scalars['Int']['output'];
+  plannedWeek: Scalars['Int']['output'];
+  required: Scalars['Boolean']['output'];
+  skill?: Maybe<Scalars['String']['output']>;
+  targetPercent: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type RoadmapMilestone = {
+  __typename?: 'RoadmapMilestone';
+  achievedAt?: Maybe<Scalars['DateTime']['output']>;
+  attemptCount: Scalars['Int']['output'];
+  examId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  kind: MilestoneKind;
+  /** Every required item of the stage is done. */
+  ready: Scalars['Boolean']['output'];
+  requiredLevel?: Maybe<CefrLevel>;
+  requiredScore?: Maybe<Scalars['Float']['output']>;
+  resultLevel?: Maybe<CefrLevel>;
+  resultScore?: Maybe<Scalars['Float']['output']>;
+  status: MilestoneStatus;
+};
+
+export type RoadmapSchedule =
+  /** The current stage ran past its planned end. */
+  | 'BEHIND'
+  | 'ON_TRACK';
+
+export type RoadmapStage = {
+  __typename?: 'RoadmapStage';
+  focusSkills: Array<Scalars['String']['output']>;
+  fromLevel: CefrLevel;
+  id: Scalars['ID']['output'];
+  items: Array<RoadmapItem>;
+  milestone?: Maybe<RoadmapMilestone>;
+  orderNo: Scalars['Int']['output'];
+  /** Mean progress across the stage's required items. */
+  percentDone: Scalars['Int']['output'];
+  plannedEnd: Scalars['Date']['output'];
+  plannedStart: Scalars['Date']['output'];
+  status: RoadmapStageStatus;
+  summary: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  toLevel: CefrLevel;
+};
+
+export type RoadmapStageStatus =
+  | 'CURRENT'
+  | 'LOCKED'
+  | 'PASSED'
+  /** Taken out by an adjustment. Never returned in a roadmap's stages. */
+  | 'REPLACED';
+
+export type RoadmapStatus =
+  /** The learner turned the roadmap off. */
+  | 'ABANDONED'
+  | 'ACTIVE'
+  | 'COMPLETED'
+  /** The first plan could not be made; createRoadmap asks again. */
+  | 'FAILED'
+  /** Waiting for the first plan from the AI. */
+  | 'GENERATING'
+  /** Replaced by a plan for a different goal. */
+  | 'SUPERSEDED';
 
 /**
  * What the account may do. For drawing the interface only - every gate is
@@ -2585,6 +2870,7 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  AdjustmentReason: AdjustmentReason;
   AdminOverview: ResolverTypeWrapper<AdminOverview>;
   AssessmentAttempt: ResolverTypeWrapper<AssessmentAttempt>;
   AssessmentAttemptPage: ResolverTypeWrapper<AssessmentAttemptPage>;
@@ -2600,6 +2886,7 @@ export type ResolversTypes = ResolversObject<{
   AssessmentTask: ResolverTypeWrapper<AssessmentTask>;
   AssessmentTaskInput: AssessmentTaskInput;
   AssessmentTaskPage: ResolverTypeWrapper<AssessmentTaskPage>;
+  AssessmentTaskPurpose: AssessmentTaskPurpose;
   AssessmentTaskStatus: AssessmentTaskStatus;
   AssessmentUpload: ResolverTypeWrapper<AssessmentUpload>;
   AssessmentWorkload: ResolverTypeWrapper<AssessmentWorkload>;
@@ -2673,7 +2960,12 @@ export type ResolversTypes = ResolversObject<{
   LearningGoalInput: LearningGoalInput;
   LearningPurpose: ResolverTypeWrapper<LearningPurpose>;
   LearningSkill: LearningSkill;
+  LevelCheck: ResolverTypeWrapper<LevelCheck>;
+  LevelCheckPurpose: LevelCheckPurpose;
+  LevelCheckStatus: LevelCheckStatus;
   Me: ResolverTypeWrapper<Me>;
+  MilestoneKind: MilestoneKind;
+  MilestoneStatus: MilestoneStatus;
   MistakeSentence: ResolverTypeWrapper<MistakeSentence>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   OnboardingState: ResolverTypeWrapper<OnboardingState>;
@@ -2694,6 +2986,16 @@ export type ResolversTypes = ResolversObject<{
   QuizQuestionReview: ResolverTypeWrapper<QuizQuestionReview>;
   QuizQuestionType: QuizQuestionType;
   ReviewRating: ReviewRating;
+  Roadmap: ResolverTypeWrapper<Roadmap>;
+  RoadmapAdjustment: ResolverTypeWrapper<RoadmapAdjustment>;
+  RoadmapContentKind: RoadmapContentKind;
+  RoadmapGoalType: RoadmapGoalType;
+  RoadmapItem: ResolverTypeWrapper<RoadmapItem>;
+  RoadmapMilestone: ResolverTypeWrapper<RoadmapMilestone>;
+  RoadmapSchedule: RoadmapSchedule;
+  RoadmapStage: ResolverTypeWrapper<RoadmapStage>;
+  RoadmapStageStatus: RoadmapStageStatus;
+  RoadmapStatus: RoadmapStatus;
   Role: Role;
   SpeakingAttempt: ResolverTypeWrapper<SpeakingAttempt>;
   SpeakingAttemptStatus: SpeakingAttemptStatus;
@@ -2805,6 +3107,7 @@ export type ResolversParentTypes = ResolversObject<{
   LearnerExamPage: LearnerExamPage;
   LearningGoalInput: LearningGoalInput;
   LearningPurpose: LearningPurpose;
+  LevelCheck: LevelCheck;
   Me: Me;
   MistakeSentence: MistakeSentence;
   Mutation: Record<PropertyKey, never>;
@@ -2820,6 +3123,11 @@ export type ResolversParentTypes = ResolversObject<{
   QuizPaper: QuizPaper;
   QuizPaperQuestion: QuizPaperQuestion;
   QuizQuestionReview: QuizQuestionReview;
+  Roadmap: Roadmap;
+  RoadmapAdjustment: RoadmapAdjustment;
+  RoadmapItem: RoadmapItem;
+  RoadmapMilestone: RoadmapMilestone;
+  RoadmapStage: RoadmapStage;
   SpeakingAttempt: SpeakingAttempt;
   SpeakingPhonemeScore: SpeakingPhonemeScore;
   SpeakingPrompt: SpeakingPrompt;
@@ -2951,14 +3259,17 @@ export type AssessmentSubmissionTaskResolvers<ContextType = GraphQLContext, Pare
 }>;
 
 export type AssessmentTaskResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentTask'] = ResolversParentTypes['AssessmentTask']> = ResolversObject<{
+  certificateType?: Resolver<Maybe<ResolversTypes['CertificateType']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   instructions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   minimumWords?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  purpose?: Resolver<ResolversTypes['AssessmentTaskPurpose'], ParentType, ContextType>;
   reviewNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rubricNotes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sampleAnswer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   skill?: Resolver<ResolversTypes['AssessmentSkill'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['AssessmentTaskStatus'], ParentType, ContextType>;
+  targetLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
   taskType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   timeLimitSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3035,6 +3346,7 @@ export type DailyPathResolvers<ContextType = GraphQLContext, ParentType extends 
   level?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   levelCostXp?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   quests?: Resolver<Array<ResolversTypes['DailyQuest']>, ParentType, ContextType>;
+  roadmapStageTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   streakDays?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   tasks?: Resolver<Array<ResolversTypes['DailyTask']>, ParentType, ContextType>;
   totalXp?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3458,6 +3770,26 @@ export type LearningPurposeResolvers<ContextType = GraphQLContext, ParentType ex
   purposeCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
+export type LevelCheckResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LevelCheck'] = ResolversParentTypes['LevelCheck']> = ResolversObject<{
+  completedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  examAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  examId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  listeningLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  milestoneId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  provisionalLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  purpose?: Resolver<ResolversTypes['LevelCheckPurpose'], ParentType, ContextType>;
+  resultLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  speakingAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  speakingFailed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  speakingLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  speakingSkipped?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  speakingTaskId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['LevelCheckStatus'], ParentType, ContextType>;
+  vocabLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+}>;
+
 export type MeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = ResolversObject<{
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bannerUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3487,17 +3819,21 @@ export type MistakeSentenceResolvers<ContextType = GraphQLContext, ParentType ex
 
 export type MutationResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  abandonRoadmap?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   approveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationApproveContentArgs, 'id' | 'kind'>>;
   approveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationApproveExamArgs, 'id'>>;
   archiveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationArchiveContentArgs, 'id' | 'kind'>>;
   archiveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationArchiveExamArgs, 'id'>>;
   archiveTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationArchiveTutorConversationArgs, 'id'>>;
+  attachLevelCheckExamAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckExamAttemptArgs, 'attemptId' | 'id'>>;
+  attachLevelCheckSpeakingAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckSpeakingAttemptArgs, 'attemptId' | 'id'>>;
   branchTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationBranchTutorConversationArgs, 'clientMessageId' | 'conversationId' | 'message' | 'messageId'>>;
   cancelTutorReply?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationCancelTutorReplyArgs, 'conversationId' | 'messageId'>>;
   clearTutorMemory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationClearTutorMemoryArgs, 'conversationId'>>;
   completeMyTour?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   completeOnboarding?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType>;
   createAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationCreateAssessmentTaskArgs, 'input'>>;
+  createRoadmap?: Resolver<ResolversTypes['Roadmap'], ParentType, ContextType>;
   createTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationCreateTutorResourceArgs, 'input'>>;
   editAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationEditAssessmentTaskArgs, 'id' | 'input' | 'version'>>;
   gradeAssessment?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationGradeAssessmentArgs, 'id' | 'note' | 'report' | 'version'>>;
@@ -3506,6 +3842,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   publishExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationPublishExamArgs, 'id'>>;
   rateFlashcard?: Resolver<ResolversTypes['FlashcardReview'], ParentType, ContextType, RequireFields<MutationRateFlashcardArgs, 'flashcardId' | 'rating' | 'timeSpentSeconds'>>;
   readAssessmentResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationReadAssessmentResultArgs, 'id' | 'version'>>;
+  recordMilestoneSitting?: Resolver<ResolversTypes['Roadmap'], ParentType, ContextType, RequireFields<MutationRecordMilestoneSittingArgs, 'examAttemptId' | 'milestoneId'>>;
   regenerateTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationRegenerateTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId'>>;
   rejectContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationRejectContentArgs, 'id' | 'kind' | 'note'>>;
   rejectExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationRejectExamArgs, 'id' | 'note'>>;
@@ -3528,8 +3865,10 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   setCertificateTarget?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCertificateTargetArgs, 'certificateType'>>;
   setCurrentLevel?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCurrentLevelArgs, 'level'>>;
   setLearningGoal?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetLearningGoalArgs, 'input'>>;
+  skipLevelCheckSpeaking?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationSkipLevelCheckSpeakingArgs, 'id'>>;
   startAssessment?: Resolver<ResolversTypes['AssessmentUpload'], ParentType, ContextType, RequireFields<MutationStartAssessmentArgs, 'clientKey' | 'taskId'>>;
   startExamAttempt?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<MutationStartExamAttemptArgs, 'examId'>>;
+  startLevelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationStartLevelCheckArgs, 'purpose'>>;
   startQuizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<MutationStartQuizAttemptArgs, 'quizId'>>;
   startSpeakingAttempt?: Resolver<ResolversTypes['SpeakingUploadTicket'], ParentType, ContextType, RequireFields<MutationStartSpeakingAttemptArgs, 'contentLength' | 'contentType' | 'promptId'>>;
   submitAssessment?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationSubmitAssessmentArgs, 'id'>>;
@@ -3549,10 +3888,12 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
 export type OnboardingStateResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['OnboardingState'] = ResolversParentTypes['OnboardingState']> = ResolversObject<{
   certificateLearner?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   currentLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  dailyStudyMinutes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   learningPurposeIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   step?: Resolver<ResolversTypes['OnboardingStep'], ParentType, ContextType>;
   targetCertificateType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   targetDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  targetLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
   targetScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   targetSkills?: Resolver<Array<ResolversTypes['LearningSkill']>, ParentType, ContextType>;
 }>;
@@ -3600,13 +3941,16 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   flashcardStats?: Resolver<ResolversTypes['FlashcardStats'], ParentType, ContextType, RequireFields<QueryFlashcardStatsArgs, 'periodDays'>>;
   flashcardStudyQueue?: Resolver<Array<ResolversTypes['Flashcard']>, ParentType, ContextType, RequireFields<QueryFlashcardStudyQueueArgs, 'limit' | 'setId'>>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  latestLevelCheck?: Resolver<Maybe<ResolversTypes['LevelCheck']>, ParentType, ContextType>;
   learningPurposes?: Resolver<Array<ResolversTypes['LearningPurpose']>, ParentType, ContextType>;
+  levelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<QueryLevelCheckArgs, 'id'>>;
   me?: Resolver<ResolversTypes['Me'], ParentType, ContextType>;
   myTourStatus?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   placementExam?: Resolver<ResolversTypes['LearnerExamItem'], ParentType, ContextType>;
   quizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<QueryQuizAttemptArgs, 'id'>>;
   quizPaper?: Resolver<ResolversTypes['QuizPaper'], ParentType, ContextType, RequireFields<QueryQuizPaperArgs, 'attemptId'>>;
   quizzes?: Resolver<ResolversTypes['QuizPage'], ParentType, ContextType, RequireFields<QueryQuizzesArgs, 'page' | 'size'>>;
+  roadmap?: Resolver<Maybe<ResolversTypes['Roadmap']>, ParentType, ContextType>;
   speakingAttempt?: Resolver<ResolversTypes['SpeakingAttempt'], ParentType, ContextType, RequireFields<QuerySpeakingAttemptArgs, 'id'>>;
   speakingAttempts?: Resolver<Array<ResolversTypes['SpeakingAttempt']>, ParentType, ContextType, RequireFields<QuerySpeakingAttemptsArgs, 'promptId'>>;
   speakingPrompt?: Resolver<ResolversTypes['SpeakingPrompt'], ParentType, ContextType, RequireFields<QuerySpeakingPromptArgs, 'id'>>;
@@ -3720,6 +4064,76 @@ export type QuizQuestionReviewResolvers<ContextType = GraphQLContext, ParentType
   questionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   questionType?: Resolver<ResolversTypes['QuizQuestionType'], ParentType, ContextType>;
   userAnswerText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type RoadmapResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Roadmap'] = ResolversParentTypes['Roadmap']> = ResolversObject<{
+  adjusting?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  adjustments?: Resolver<Array<ResolversTypes['RoadmapAdjustment']>, ParentType, ContextType>;
+  completedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  dailyMinutes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  failureCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  goalType?: Resolver<ResolversTypes['RoadmapGoalType'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  pendingReason?: Resolver<Maybe<ResolversTypes['AdjustmentReason']>, ParentType, ContextType>;
+  schedule?: Resolver<ResolversTypes['RoadmapSchedule'], ParentType, ContextType>;
+  stages?: Resolver<Array<ResolversTypes['RoadmapStage']>, ParentType, ContextType>;
+  startLevel?: Resolver<ResolversTypes['CefrLevel'], ParentType, ContextType>;
+  startScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['RoadmapStatus'], ParentType, ContextType>;
+  targetCertificate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  targetDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  targetLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  targetScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+}>;
+
+export type RoadmapAdjustmentResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['RoadmapAdjustment'] = ResolversParentTypes['RoadmapAdjustment']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  reason?: Resolver<ResolversTypes['AdjustmentReason'], ParentType, ContextType>;
+}>;
+
+export type RoadmapItemResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['RoadmapItem'] = ResolversParentTypes['RoadmapItem']> = ResolversObject<{
+  contentId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  done?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  estimatedMinutes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  kind?: Resolver<ResolversTypes['RoadmapContentKind'], ParentType, ContextType>;
+  percentDone?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  plannedWeek?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  skill?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  targetPercent?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type RoadmapMilestoneResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['RoadmapMilestone'] = ResolversParentTypes['RoadmapMilestone']> = ResolversObject<{
+  achievedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  attemptCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  examId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  kind?: Resolver<ResolversTypes['MilestoneKind'], ParentType, ContextType>;
+  ready?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  requiredLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  requiredScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  resultLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
+  resultScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['MilestoneStatus'], ParentType, ContextType>;
+}>;
+
+export type RoadmapStageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['RoadmapStage'] = ResolversParentTypes['RoadmapStage']> = ResolversObject<{
+  focusSkills?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  fromLevel?: Resolver<ResolversTypes['CefrLevel'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['RoadmapItem']>, ParentType, ContextType>;
+  milestone?: Resolver<Maybe<ResolversTypes['RoadmapMilestone']>, ParentType, ContextType>;
+  orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  percentDone?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  plannedEnd?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  plannedStart?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['RoadmapStageStatus'], ParentType, ContextType>;
+  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  toLevel?: Resolver<ResolversTypes['CefrLevel'], ParentType, ContextType>;
 }>;
 
 export type SpeakingAttemptResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['SpeakingAttempt'] = ResolversParentTypes['SpeakingAttempt']> = ResolversObject<{
@@ -4037,6 +4451,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   LearnerExamItem?: LearnerExamItemResolvers<ContextType>;
   LearnerExamPage?: LearnerExamPageResolvers<ContextType>;
   LearningPurpose?: LearningPurposeResolvers<ContextType>;
+  LevelCheck?: LevelCheckResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   MistakeSentence?: MistakeSentenceResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -4051,6 +4466,11 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   QuizPaper?: QuizPaperResolvers<ContextType>;
   QuizPaperQuestion?: QuizPaperQuestionResolvers<ContextType>;
   QuizQuestionReview?: QuizQuestionReviewResolvers<ContextType>;
+  Roadmap?: RoadmapResolvers<ContextType>;
+  RoadmapAdjustment?: RoadmapAdjustmentResolvers<ContextType>;
+  RoadmapItem?: RoadmapItemResolvers<ContextType>;
+  RoadmapMilestone?: RoadmapMilestoneResolvers<ContextType>;
+  RoadmapStage?: RoadmapStageResolvers<ContextType>;
   SpeakingAttempt?: SpeakingAttemptResolvers<ContextType>;
   SpeakingPhonemeScore?: SpeakingPhonemeScoreResolvers<ContextType>;
   SpeakingPrompt?: SpeakingPromptResolvers<ContextType>;

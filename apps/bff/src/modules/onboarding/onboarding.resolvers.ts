@@ -29,6 +29,8 @@ export const onboardingResolvers = {
         ...input,
         targetScore: input.targetScore ?? undefined,
         targetDate: input.targetDate ?? undefined,
+        targetLevel: input.targetLevel ?? undefined,
+        dailyStudyMinutes: input.dailyStudyMinutes ?? undefined,
       });
     },
     selectTargetSkills: (_, { skills }, ctx) => {

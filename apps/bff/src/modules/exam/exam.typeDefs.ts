@@ -15,6 +15,12 @@ export const examTypeDefs = /* GraphQL */ `
   enum ExamType {
     PLACEMENT
     MOCK
+    """
+    The written part of the roadmap's level check: vocabulary and grammar in
+    its READING section, plus LISTENING. Taken in full only, and kept out of
+    the learner catalogue.
+    """
+    LEVEL_CHECK
   }
 
   enum CertificateType {
