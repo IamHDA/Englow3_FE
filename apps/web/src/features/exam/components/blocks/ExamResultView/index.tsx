@@ -31,9 +31,10 @@ import type {
   ExamAttemptResult,
   ExamPaper,
 } from "../../../types";
-import { ExamAttemptMode } from "@/lib/graphql/generated";
+import { ExamAttemptMode, ExamType } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { FlatQuestionItem } from "../QuestionPalette";
+import { PlacementLevelCard, type PartScore } from "../PlacementLevelCard";
 import classes from "./ExamResultView.module.css";
 
 export interface ExamResultViewProps {
@@ -127,6 +128,20 @@ export function ExamResultView({
   const seconds = timeSpentSeconds % 60;
   const timeFormatted = `${minutes} ${t.exam.minutesText} ${seconds.toString().padStart(2, "0")} ${t.exam.secondsText}`;
 
+  const isPlacement = paper.examType === ExamType.PLACEMENT && !isPractice;
+  // Right answers per part, in paper order, for the placement summary.
+  const partScores = evaluatedQuestions.reduce<PartScore[]>((parts, eq) => {
+    const title = eq.partTitle || eq.sectionType;
+    let part = parts.find((p) => p.title === title);
+    if (!part) {
+      part = { title, correct: 0, total: 0 };
+      parts.push(part);
+    }
+    part.total += 1;
+    if (eq.isCorrect) part.correct += 1;
+    return parts;
+  }, []);
+
   const filteredQuestions = evaluatedQuestions.filter((eq) => {
     if (filterTab === "correct") return eq.isCorrect;
     if (filterTab === "incorrect") return eq.isAnswered && !eq.isCorrect;
@@ -154,6 +169,14 @@ export function ExamResultView({
             {t.exam.resultTitlePrefix} {paper.title}
           </Text>
         </Flex>
+
+        {isPlacement && (
+          <PlacementLevelCard
+            attemptId={attempt.id}
+            scorePercentage={attempt.scorePercentage ?? 0}
+            parts={partScores}
+          />
+        )}
 
         {/* Hero Score Banner */}
         <Card

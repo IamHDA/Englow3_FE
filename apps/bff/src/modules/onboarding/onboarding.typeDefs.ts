@@ -47,6 +47,11 @@ export const onboardingTypeDefs = /* GraphQL */ `
     targetLevel: CefrLevel
     dailyStudyMinutes: Int
     targetSkills: [LearningSkill!]!
+    """
+    The placement attempt the current level was measured by. Null when the
+    learner chose their level themselves or has not taken the test.
+    """
+    placementAttemptId: ID
   }
 
   type LearningPurpose {

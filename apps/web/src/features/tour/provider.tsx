@@ -79,7 +79,13 @@ export function UserTourProvider({ children }: { children: ReactNode }) {
   const [replayIdentity, setReplayIdentity] = useState<string | null>(null);
   const [replayNumber, setReplayNumber] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
-  const steps = role ? stepsFor(role) : [];
+  // The placement step points at the start card, which is hidden once a
+  // placement result is on record - a step with nothing to point at would only
+  // say the control cannot be found.
+  const placementTaken = Boolean(profile?.onboardingState?.placementAttemptId);
+  const steps = (role ? stepsFor(role) : []).filter(
+    (step) => !(placementTaken && step.target === "learner-placement"),
+  );
   const index = Math.min(stepIndex, Math.max(0, steps.length - 1));
   const completed = data?.myTourStatus.completed === true;
   const opened =

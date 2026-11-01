@@ -19,6 +19,7 @@ query CurrentUser {
       targetLevel
       dailyStudyMinutes
       targetSkills
+      placementAttemptId
     }
   }
 }

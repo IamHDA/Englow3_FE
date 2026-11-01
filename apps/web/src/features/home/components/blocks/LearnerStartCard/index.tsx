@@ -102,6 +102,11 @@ export function LearnerStartCard() {
       </Alert>
     );
   if (profile?.role !== Role.LEARNER) return null;
+  // Once the placement test has measured a level and setup is done, nothing
+  // here is still to do: the guide stays in the account menu, and the level is
+  // on the profile.
+  if (profile.onboardingState?.placementAttemptId && !requiresOnboarding)
+    return null;
   return (
     <Card withBorder radius="lg" p="lg">
       <Stack gap="md">

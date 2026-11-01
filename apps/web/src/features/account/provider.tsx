@@ -147,6 +147,7 @@ export function AccountProvider({
                   targetLevel: state.targetLevel,
                   dailyStudyMinutes: state.dailyStudyMinutes,
                   targetSkills: state.targetSkills,
+                  placementAttemptId: state.placementAttemptId,
                 },
               },
             },

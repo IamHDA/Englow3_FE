@@ -9,6 +9,7 @@ fragment OnboardingStateFields on OnboardingState {
   targetLevel
   dailyStudyMinutes
   targetSkills
+  placementAttemptId
 }
 
 mutation SelectLearningPurposes($purposeIds: [Int!]!) {
