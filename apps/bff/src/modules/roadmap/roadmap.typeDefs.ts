@@ -179,7 +179,50 @@ export const roadmapTypeDefs = /* GraphQL */ `
     completedAt: DateTime
   }
 
+  type LevelCheckWeightChange {
+    id: ID!
+    purposeCode: String!
+    vocabulary: Int!
+    listening: Int!
+    speaking: Int!
+    priority: Int!
+    effectiveFrom: DateTime!
+    "Who set it; null for the seeded defaults."
+    changedBy: String
+  }
+
+  type LevelCheckWeightPurpose {
+    "DEFAULT, or a learning purpose code."
+    purposeCode: String!
+    "The purpose's name as learners see it; null for DEFAULT."
+    displayName: String
+    "The purpose's own weights in force now; null when it falls back to DEFAULT."
+    inForce: LevelCheckWeightChange
+  }
+
+  type LevelCheckWeights {
+    purposes: [LevelCheckWeightPurpose!]!
+    "The latest changes, newest first."
+    history: [LevelCheckWeightChange!]!
+  }
+
+  input LevelCheckWeightInput {
+    purposeCode: String!
+    vocabulary: Int!
+    listening: Int!
+    speaking: Int!
+    """
+    Among a learner's purposes, the highest priority decides. 0-100.
+    """
+    priority: Int!
+  }
+
   extend type Query {
+    """
+    How the level check's parts are weighted, by learning purpose.
+    Administrator only (FORBIDDEN otherwise).
+    """
+    levelCheckWeights: LevelCheckWeights!
     """
     The plan in play, else the newest one (failed or finished), else null.
     Reading it can start an automatic replan when the learner is a week behind.
@@ -192,6 +235,13 @@ export const roadmapTypeDefs = /* GraphQL */ `
   }
 
   extend type Mutation {
+    """
+    New weights for one purpose, in force from now; checks already completed
+    keep theirs. Refuses with LEVEL_CHECK_WEIGHTS_INVALID unless the three add
+    up to 100 with something on the written side, and LEVEL_CHECK_PURPOSE_UNKNOWN
+    for a purpose that does not exist. Administrator only.
+    """
+    setLevelCheckWeight(input: LevelCheckWeightInput!): LevelCheckWeights!
     """
     A plan for the learner's current goal. The same goal returns the same plan;
     a changed score, level or date adjusts it; a different goal replaces it.

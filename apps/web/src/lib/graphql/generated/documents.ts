@@ -59,6 +59,110 @@ export type AdminOverviewQuery = {
   };
 };
 
+export type LevelCheckWeightChangeFieldsFragment = {
+  id: string;
+  purposeCode: string;
+  vocabulary: number;
+  listening: number;
+  speaking: number;
+  priority: number;
+  effectiveFrom: string;
+  changedBy: string | null;
+};
+
+export type LevelCheckWeightsFieldsFragment = {
+  purposes: Array<{
+    purposeCode: string;
+    displayName: string | null;
+    inForce: {
+      id: string;
+      purposeCode: string;
+      vocabulary: number;
+      listening: number;
+      speaking: number;
+      priority: number;
+      effectiveFrom: string;
+      changedBy: string | null;
+    } | null;
+  }>;
+  history: Array<{
+    id: string;
+    purposeCode: string;
+    vocabulary: number;
+    listening: number;
+    speaking: number;
+    priority: number;
+    effectiveFrom: string;
+    changedBy: string | null;
+  }>;
+};
+
+export type AdminLevelCheckWeightsQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type AdminLevelCheckWeightsQuery = {
+  levelCheckWeights: {
+    purposes: Array<{
+      purposeCode: string;
+      displayName: string | null;
+      inForce: {
+        id: string;
+        purposeCode: string;
+        vocabulary: number;
+        listening: number;
+        speaking: number;
+        priority: number;
+        effectiveFrom: string;
+        changedBy: string | null;
+      } | null;
+    }>;
+    history: Array<{
+      id: string;
+      purposeCode: string;
+      vocabulary: number;
+      listening: number;
+      speaking: number;
+      priority: number;
+      effectiveFrom: string;
+      changedBy: string | null;
+    }>;
+  };
+};
+
+export type SetLevelCheckWeightMutationVariables = Exact<{
+  input: Types.LevelCheckWeightInput;
+}>;
+
+export type SetLevelCheckWeightMutation = {
+  setLevelCheckWeight: {
+    purposes: Array<{
+      purposeCode: string;
+      displayName: string | null;
+      inForce: {
+        id: string;
+        purposeCode: string;
+        vocabulary: number;
+        listening: number;
+        speaking: number;
+        priority: number;
+        effectiveFrom: string;
+        changedBy: string | null;
+      } | null;
+    }>;
+    history: Array<{
+      id: string;
+      purposeCode: string;
+      vocabulary: number;
+      listening: number;
+      speaking: number;
+      priority: number;
+      effectiveFrom: string;
+      changedBy: string | null;
+    }>;
+  };
+};
+
 export type TutorMessageFieldsFragment = {
   id: string;
   orderNo: number;
@@ -3853,6 +3957,111 @@ export type CurrentUserQuery = {
   };
 };
 
+export const LevelCheckWeightChangeFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeightChange" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabulary" } },
+          { kind: "Field", name: { kind: "Name", value: "listening" } },
+          { kind: "Field", name: { kind: "Name", value: "speaking" } },
+          { kind: "Field", name: { kind: "Name", value: "priority" } },
+          { kind: "Field", name: { kind: "Name", value: "effectiveFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "changedBy" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LevelCheckWeightChangeFieldsFragment, unknown>;
+export const LevelCheckWeightsFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightsFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeights" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "purposes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "inForce" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "LevelCheckWeightChangeFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "history" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeightChange" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabulary" } },
+          { kind: "Field", name: { kind: "Name", value: "listening" } },
+          { kind: "Field", name: { kind: "Name", value: "speaking" } },
+          { kind: "Field", name: { kind: "Name", value: "priority" } },
+          { kind: "Field", name: { kind: "Name", value: "effectiveFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "changedBy" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LevelCheckWeightsFieldsFragment, unknown>;
 export const TutorMessageFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -5017,6 +5226,242 @@ export const AdminOverviewDocument = {
     },
   ],
 } as unknown as DocumentNode<AdminOverviewQuery, AdminOverviewQueryVariables>;
+export const AdminLevelCheckWeightsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AdminLevelCheckWeights" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "levelCheckWeights" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckWeightsFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeightChange" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabulary" } },
+          { kind: "Field", name: { kind: "Name", value: "listening" } },
+          { kind: "Field", name: { kind: "Name", value: "speaking" } },
+          { kind: "Field", name: { kind: "Name", value: "priority" } },
+          { kind: "Field", name: { kind: "Name", value: "effectiveFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "changedBy" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightsFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeights" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "purposes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "inForce" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "LevelCheckWeightChangeFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "history" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AdminLevelCheckWeightsQuery,
+  AdminLevelCheckWeightsQueryVariables
+>;
+export const SetLevelCheckWeightDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SetLevelCheckWeight" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "LevelCheckWeightInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "setLevelCheckWeight" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckWeightsFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeightChange" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabulary" } },
+          { kind: "Field", name: { kind: "Name", value: "listening" } },
+          { kind: "Field", name: { kind: "Name", value: "speaking" } },
+          { kind: "Field", name: { kind: "Name", value: "priority" } },
+          { kind: "Field", name: { kind: "Name", value: "effectiveFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "changedBy" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckWeightsFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheckWeights" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "purposes" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "purposeCode" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "inForce" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "LevelCheckWeightChangeFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "history" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckWeightChangeFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SetLevelCheckWeightMutation,
+  SetLevelCheckWeightMutationVariables
+>;
 export const TutorConversationsDocument = {
   kind: "Document",
   definitions: [

@@ -1021,6 +1021,45 @@ export type LevelCheckStatus =
   /** The paper is not scored yet. */
   | 'IN_PROGRESS';
 
+export type LevelCheckWeightChange = {
+  __typename?: 'LevelCheckWeightChange';
+  /** Who set it; null for the seeded defaults. */
+  changedBy?: Maybe<Scalars['String']['output']>;
+  effectiveFrom: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  listening: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  purposeCode: Scalars['String']['output'];
+  speaking: Scalars['Int']['output'];
+  vocabulary: Scalars['Int']['output'];
+};
+
+export type LevelCheckWeightInput = {
+  listening: Scalars['Int']['input'];
+  /** Among a learner's purposes, the highest priority decides. 0-100. */
+  priority: Scalars['Int']['input'];
+  purposeCode: Scalars['String']['input'];
+  speaking: Scalars['Int']['input'];
+  vocabulary: Scalars['Int']['input'];
+};
+
+export type LevelCheckWeightPurpose = {
+  __typename?: 'LevelCheckWeightPurpose';
+  /** The purpose's name as learners see it; null for DEFAULT. */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** The purpose's own weights in force now; null when it falls back to DEFAULT. */
+  inForce?: Maybe<LevelCheckWeightChange>;
+  /** DEFAULT, or a learning purpose code. */
+  purposeCode: Scalars['String']['output'];
+};
+
+export type LevelCheckWeights = {
+  __typename?: 'LevelCheckWeights';
+  /** The latest changes, newest first. */
+  history: Array<LevelCheckWeightChange>;
+  purposes: Array<LevelCheckWeightPurpose>;
+};
+
 export type Me = {
   __typename?: 'Me';
   avatarUrl?: Maybe<Scalars['String']['output']>;
@@ -1215,6 +1254,13 @@ export type Mutation = {
   setCurrentLevel: OnboardingState;
   /** Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done. */
   setLearningGoal: OnboardingState;
+  /**
+   * New weights for one purpose, in force from now; checks already completed
+   * keep theirs. Refuses with LEVEL_CHECK_WEIGHTS_INVALID unless the three add
+   * up to 100 with something on the written side, and LEVEL_CHECK_PURPOSE_UNKNOWN
+   * for a purpose that does not exist. Administrator only.
+   */
+  setLevelCheckWeight: LevelCheckWeights;
   skipLevelCheckSpeaking: LevelCheck;
   startAssessment: AssessmentUpload;
   /**
@@ -1539,6 +1585,11 @@ export type MutationSetLearningGoalArgs = {
 };
 
 
+export type MutationSetLevelCheckWeightArgs = {
+  input: LevelCheckWeightInput;
+};
+
+
 export type MutationSkipLevelCheckSpeakingArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1786,6 +1837,11 @@ export type Query = {
   learningPurposes: Array<LearningPurpose>;
   /** Reading a check picks up any grade that arrived since the last look. */
   levelCheck: LevelCheck;
+  /**
+   * How the level check's parts are weighted, by learning purpose.
+   * Administrator only (FORBIDDEN otherwise).
+   */
+  levelCheckWeights: LevelCheckWeights;
   me: Me;
   myTourStatus: UserTourStatus;
   /**
@@ -2963,6 +3019,10 @@ export type ResolversTypes = ResolversObject<{
   LevelCheck: ResolverTypeWrapper<LevelCheck>;
   LevelCheckPurpose: LevelCheckPurpose;
   LevelCheckStatus: LevelCheckStatus;
+  LevelCheckWeightChange: ResolverTypeWrapper<LevelCheckWeightChange>;
+  LevelCheckWeightInput: LevelCheckWeightInput;
+  LevelCheckWeightPurpose: ResolverTypeWrapper<LevelCheckWeightPurpose>;
+  LevelCheckWeights: ResolverTypeWrapper<LevelCheckWeights>;
   Me: ResolverTypeWrapper<Me>;
   MilestoneKind: MilestoneKind;
   MilestoneStatus: MilestoneStatus;
@@ -3108,6 +3168,10 @@ export type ResolversParentTypes = ResolversObject<{
   LearningGoalInput: LearningGoalInput;
   LearningPurpose: LearningPurpose;
   LevelCheck: LevelCheck;
+  LevelCheckWeightChange: LevelCheckWeightChange;
+  LevelCheckWeightInput: LevelCheckWeightInput;
+  LevelCheckWeightPurpose: LevelCheckWeightPurpose;
+  LevelCheckWeights: LevelCheckWeights;
   Me: Me;
   MistakeSentence: MistakeSentence;
   Mutation: Record<PropertyKey, never>;
@@ -3790,6 +3854,28 @@ export type LevelCheckResolvers<ContextType = GraphQLContext, ParentType extends
   vocabLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
 }>;
 
+export type LevelCheckWeightChangeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LevelCheckWeightChange'] = ResolversParentTypes['LevelCheckWeightChange']> = ResolversObject<{
+  changedBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  effectiveFrom?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  listening?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  priority?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  purposeCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  speaking?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  vocabulary?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type LevelCheckWeightPurposeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LevelCheckWeightPurpose'] = ResolversParentTypes['LevelCheckWeightPurpose']> = ResolversObject<{
+  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  inForce?: Resolver<Maybe<ResolversTypes['LevelCheckWeightChange']>, ParentType, ContextType>;
+  purposeCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type LevelCheckWeightsResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LevelCheckWeights'] = ResolversParentTypes['LevelCheckWeights']> = ResolversObject<{
+  history?: Resolver<Array<ResolversTypes['LevelCheckWeightChange']>, ParentType, ContextType>;
+  purposes?: Resolver<Array<ResolversTypes['LevelCheckWeightPurpose']>, ParentType, ContextType>;
+}>;
+
 export type MeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = ResolversObject<{
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bannerUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3865,6 +3951,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   setCertificateTarget?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCertificateTargetArgs, 'certificateType'>>;
   setCurrentLevel?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCurrentLevelArgs, 'level'>>;
   setLearningGoal?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetLearningGoalArgs, 'input'>>;
+  setLevelCheckWeight?: Resolver<ResolversTypes['LevelCheckWeights'], ParentType, ContextType, RequireFields<MutationSetLevelCheckWeightArgs, 'input'>>;
   skipLevelCheckSpeaking?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationSkipLevelCheckSpeakingArgs, 'id'>>;
   startAssessment?: Resolver<ResolversTypes['AssessmentUpload'], ParentType, ContextType, RequireFields<MutationStartAssessmentArgs, 'clientKey' | 'taskId'>>;
   startExamAttempt?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<MutationStartExamAttemptArgs, 'examId'>>;
@@ -3944,6 +4031,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   latestLevelCheck?: Resolver<Maybe<ResolversTypes['LevelCheck']>, ParentType, ContextType>;
   learningPurposes?: Resolver<Array<ResolversTypes['LearningPurpose']>, ParentType, ContextType>;
   levelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<QueryLevelCheckArgs, 'id'>>;
+  levelCheckWeights?: Resolver<ResolversTypes['LevelCheckWeights'], ParentType, ContextType>;
   me?: Resolver<ResolversTypes['Me'], ParentType, ContextType>;
   myTourStatus?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   placementExam?: Resolver<ResolversTypes['LearnerExamItem'], ParentType, ContextType>;
@@ -4452,6 +4540,9 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   LearnerExamPage?: LearnerExamPageResolvers<ContextType>;
   LearningPurpose?: LearningPurposeResolvers<ContextType>;
   LevelCheck?: LevelCheckResolvers<ContextType>;
+  LevelCheckWeightChange?: LevelCheckWeightChangeResolvers<ContextType>;
+  LevelCheckWeightPurpose?: LevelCheckWeightPurposeResolvers<ContextType>;
+  LevelCheckWeights?: LevelCheckWeightsResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   MistakeSentence?: MistakeSentenceResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

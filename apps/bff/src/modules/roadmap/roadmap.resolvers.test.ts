@@ -57,4 +57,23 @@ describe("roadmap resolvers", () => {
 
     expect(recordMilestoneSitting).toHaveBeenCalledWith("m-1", "a-1");
   });
+
+  it("passes new weights on as they were entered", async () => {
+    const setLevelCheckWeight = vi.fn().mockResolvedValue({
+      purposes: [],
+      history: [],
+    });
+    const ctx = makeContext({ apis: { roadmapApi: { setLevelCheckWeight } } });
+    const input = {
+      purposeCode: "WORK",
+      vocabulary: 40,
+      listening: 30,
+      speaking: 30,
+      priority: 5,
+    };
+
+    await roadmapResolvers.Mutation.setLevelCheckWeight({}, { input }, ctx);
+
+    expect(setLevelCheckWeight).toHaveBeenCalledWith(input);
+  });
 });

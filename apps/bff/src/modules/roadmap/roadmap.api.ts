@@ -1,5 +1,7 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import type {
+  LevelCheckWeightsResponse,
+  SetLevelCheckWeightRequest,
   LevelCheckResponse,
   RoadmapResponse,
   StartLevelCheckRequest,
@@ -7,6 +9,7 @@ import type {
 
 const ROADMAP_PATH = "/api/roadmap";
 const LEVEL_CHECKS_PATH = "/api/roadmap/level-checks";
+const WEIGHTS_PATH = "/api/admin/roadmap/level-check-weights";
 
 /** The caller's own roadmap. No user id anywhere: the backend takes it from the token. */
 export class RoadmapApi {
@@ -73,5 +76,16 @@ export class RoadmapApi {
     return this.client.post(
       `${LEVEL_CHECKS_PATH}/${encodeURIComponent(id)}/skip-speaking`,
     );
+  }
+
+  /** Administrator only; the backend refuses anyone else. */
+  getLevelCheckWeights(): Promise<LevelCheckWeightsResponse> {
+    return this.client.get(WEIGHTS_PATH);
+  }
+
+  setLevelCheckWeight(
+    body: SetLevelCheckWeightRequest,
+  ): Promise<LevelCheckWeightsResponse> {
+    return this.client.put(WEIGHTS_PATH, body);
   }
 }

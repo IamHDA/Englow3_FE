@@ -19,6 +19,7 @@ import {
   Layers,
   LayoutDashboard,
   LogOut,
+  Scale,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -91,6 +92,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
             href: "/admin/subscriptions",
             label: isVi ? "Gói dịch vụ" : "Plans",
             icon: CreditCard,
+          },
+          {
+            href: "/admin/level-check-weights",
+            label: isVi ? "Trọng số đo trình độ" : "Level-check weights",
+            icon: Scale,
           },
         ]
       : []),

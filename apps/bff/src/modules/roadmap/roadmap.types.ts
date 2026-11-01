@@ -7,5 +7,11 @@ export type RoadmapResponse =
 export type LevelCheckResponse =
   paths["/api/roadmap/level-checks"]["post"]["responses"][200]["content"]["application/json"];
 
+export type LevelCheckWeightsResponse =
+  paths["/api/admin/roadmap/level-check-weights"]["get"]["responses"][200]["content"]["application/json"];
+
+export type SetLevelCheckWeightRequest =
+  paths["/api/admin/roadmap/level-check-weights"]["put"]["requestBody"]["content"]["application/json"];
+
 export type StartLevelCheckRequest =
   paths["/api/roadmap/level-checks"]["post"]["requestBody"]["content"]["application/json"];

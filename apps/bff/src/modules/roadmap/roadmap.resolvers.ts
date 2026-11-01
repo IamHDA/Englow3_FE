@@ -10,12 +10,20 @@ export const roadmapResolvers = {
       ctx.requireToken();
       return ctx.apis.roadmapApi.getLatestLevelCheck();
     },
+    levelCheckWeights: (_, __, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.roadmapApi.getLevelCheckWeights();
+    },
     levelCheck: (_, { id }, ctx) => {
       ctx.requireToken();
       return ctx.apis.roadmapApi.getLevelCheck(id);
     },
   },
   Mutation: {
+    setLevelCheckWeight: (_, { input }, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.roadmapApi.setLevelCheckWeight(input);
+    },
     createRoadmap: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.roadmapApi.createRoadmap();

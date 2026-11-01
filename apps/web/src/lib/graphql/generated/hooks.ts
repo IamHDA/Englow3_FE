@@ -62,6 +62,110 @@ export type AdminOverviewQuery = {
   };
 };
 
+export type LevelCheckWeightChangeFieldsFragment = {
+  id: string;
+  purposeCode: string;
+  vocabulary: number;
+  listening: number;
+  speaking: number;
+  priority: number;
+  effectiveFrom: string;
+  changedBy: string | null;
+};
+
+export type LevelCheckWeightsFieldsFragment = {
+  purposes: Array<{
+    purposeCode: string;
+    displayName: string | null;
+    inForce: {
+      id: string;
+      purposeCode: string;
+      vocabulary: number;
+      listening: number;
+      speaking: number;
+      priority: number;
+      effectiveFrom: string;
+      changedBy: string | null;
+    } | null;
+  }>;
+  history: Array<{
+    id: string;
+    purposeCode: string;
+    vocabulary: number;
+    listening: number;
+    speaking: number;
+    priority: number;
+    effectiveFrom: string;
+    changedBy: string | null;
+  }>;
+};
+
+export type AdminLevelCheckWeightsQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type AdminLevelCheckWeightsQuery = {
+  levelCheckWeights: {
+    purposes: Array<{
+      purposeCode: string;
+      displayName: string | null;
+      inForce: {
+        id: string;
+        purposeCode: string;
+        vocabulary: number;
+        listening: number;
+        speaking: number;
+        priority: number;
+        effectiveFrom: string;
+        changedBy: string | null;
+      } | null;
+    }>;
+    history: Array<{
+      id: string;
+      purposeCode: string;
+      vocabulary: number;
+      listening: number;
+      speaking: number;
+      priority: number;
+      effectiveFrom: string;
+      changedBy: string | null;
+    }>;
+  };
+};
+
+export type SetLevelCheckWeightMutationVariables = Exact<{
+  input: Types.LevelCheckWeightInput;
+}>;
+
+export type SetLevelCheckWeightMutation = {
+  setLevelCheckWeight: {
+    purposes: Array<{
+      purposeCode: string;
+      displayName: string | null;
+      inForce: {
+        id: string;
+        purposeCode: string;
+        vocabulary: number;
+        listening: number;
+        speaking: number;
+        priority: number;
+        effectiveFrom: string;
+        changedBy: string | null;
+      } | null;
+    }>;
+    history: Array<{
+      id: string;
+      purposeCode: string;
+      vocabulary: number;
+      listening: number;
+      speaking: number;
+      priority: number;
+      effectiveFrom: string;
+      changedBy: string | null;
+    }>;
+  };
+};
+
 export type TutorMessageFieldsFragment = {
   id: string;
   orderNo: number;
@@ -3856,6 +3960,33 @@ export type CurrentUserQuery = {
   };
 };
 
+export const LevelCheckWeightChangeFieldsFragmentDoc = gql`
+  fragment LevelCheckWeightChangeFields on LevelCheckWeightChange {
+    id
+    purposeCode
+    vocabulary
+    listening
+    speaking
+    priority
+    effectiveFrom
+    changedBy
+  }
+`;
+export const LevelCheckWeightsFieldsFragmentDoc = gql`
+  fragment LevelCheckWeightsFields on LevelCheckWeights {
+    purposes {
+      purposeCode
+      displayName
+      inForce {
+        ...LevelCheckWeightChangeFields
+      }
+    }
+    history {
+      ...LevelCheckWeightChangeFields
+    }
+  }
+  ${LevelCheckWeightChangeFieldsFragmentDoc}
+`;
 export const TutorMessageFieldsFragmentDoc = gql`
   fragment TutorMessageFields on TutorMessage {
     id
@@ -4491,6 +4622,159 @@ export type AdminOverviewQueryResult = ApolloReactCommon.QueryResult<
   AdminOverviewQuery,
   AdminOverviewQueryVariables
 >;
+export const AdminLevelCheckWeightsDocument = gql`
+  query AdminLevelCheckWeights {
+    levelCheckWeights {
+      ...LevelCheckWeightsFields
+    }
+  }
+  ${LevelCheckWeightsFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminLevelCheckWeightsQuery__
+ *
+ * To run a query within a React component, call `useAdminLevelCheckWeightsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminLevelCheckWeightsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminLevelCheckWeightsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAdminLevelCheckWeightsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminLevelCheckWeightsQuery,
+    AdminLevelCheckWeightsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminLevelCheckWeightsQuery,
+    AdminLevelCheckWeightsQueryVariables
+  >(AdminLevelCheckWeightsDocument, options);
+}
+export function useAdminLevelCheckWeightsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminLevelCheckWeightsQuery,
+    AdminLevelCheckWeightsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminLevelCheckWeightsQuery,
+    AdminLevelCheckWeightsQueryVariables
+  >(AdminLevelCheckWeightsDocument, options);
+}
+export function useAdminLevelCheckWeightsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminLevelCheckWeightsQuery,
+    AdminLevelCheckWeightsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminLevelCheckWeightsQuery,
+  AdminLevelCheckWeightsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminLevelCheckWeightsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminLevelCheckWeightsQuery,
+        AdminLevelCheckWeightsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminLevelCheckWeightsQuery | undefined,
+  AdminLevelCheckWeightsQueryVariables
+>;
+export function useAdminLevelCheckWeightsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminLevelCheckWeightsQuery,
+        AdminLevelCheckWeightsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminLevelCheckWeightsQuery,
+    AdminLevelCheckWeightsQueryVariables
+  >(AdminLevelCheckWeightsDocument, options as any);
+}
+export type AdminLevelCheckWeightsQueryHookResult = ReturnType<
+  typeof useAdminLevelCheckWeightsQuery
+>;
+export type AdminLevelCheckWeightsLazyQueryHookResult = ReturnType<
+  typeof useAdminLevelCheckWeightsLazyQuery
+>;
+export type AdminLevelCheckWeightsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminLevelCheckWeightsSuspenseQuery
+>;
+export type AdminLevelCheckWeightsQueryResult = ApolloReactCommon.QueryResult<
+  AdminLevelCheckWeightsQuery,
+  AdminLevelCheckWeightsQueryVariables
+>;
+export const SetLevelCheckWeightDocument = gql`
+  mutation SetLevelCheckWeight($input: LevelCheckWeightInput!) {
+    setLevelCheckWeight(input: $input) {
+      ...LevelCheckWeightsFields
+    }
+  }
+  ${LevelCheckWeightsFieldsFragmentDoc}
+`;
+export type SetLevelCheckWeightMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SetLevelCheckWeightMutation,
+    SetLevelCheckWeightMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSetLevelCheckWeightMutation__
+ *
+ * To run a mutation, you first call `useSetLevelCheckWeightMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetLevelCheckWeightMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setLevelCheckWeightMutation, { data, loading, error }] = useSetLevelCheckWeightMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetLevelCheckWeightMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SetLevelCheckWeightMutation,
+    SetLevelCheckWeightMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SetLevelCheckWeightMutation,
+    SetLevelCheckWeightMutationVariables
+  >(SetLevelCheckWeightDocument, options);
+}
+export type SetLevelCheckWeightMutationHookResult = ReturnType<
+  typeof useSetLevelCheckWeightMutation
+>;
+export type SetLevelCheckWeightMutationResult =
+  ApolloReactCommon.MutationResult<SetLevelCheckWeightMutation>;
+export type SetLevelCheckWeightMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SetLevelCheckWeightMutation,
+    SetLevelCheckWeightMutationVariables
+  >;
 export const TutorConversationsDocument = gql`
   query TutorConversations {
     tutorConversations {

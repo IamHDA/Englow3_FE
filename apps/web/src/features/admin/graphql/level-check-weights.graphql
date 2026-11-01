@@ -1,0 +1,35 @@
+fragment LevelCheckWeightChangeFields on LevelCheckWeightChange {
+  id
+  purposeCode
+  vocabulary
+  listening
+  speaking
+  priority
+  effectiveFrom
+  changedBy
+}
+
+fragment LevelCheckWeightsFields on LevelCheckWeights {
+  purposes {
+    purposeCode
+    displayName
+    inForce {
+      ...LevelCheckWeightChangeFields
+    }
+  }
+  history {
+    ...LevelCheckWeightChangeFields
+  }
+}
+
+query AdminLevelCheckWeights {
+  levelCheckWeights {
+    ...LevelCheckWeightsFields
+  }
+}
+
+mutation SetLevelCheckWeight($input: LevelCheckWeightInput!) {
+  setLevelCheckWeight(input: $input) {
+    ...LevelCheckWeightsFields
+  }
+}

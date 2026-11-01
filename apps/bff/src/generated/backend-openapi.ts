@@ -292,6 +292,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/roadmap/level-check-weights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["current"];
+        put: operations["set"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/quizzes/{id}/authoring": {
         parameters: {
             query?: never;
@@ -619,7 +635,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["current"];
+        get: operations["current_1"];
         put?: never;
         post: operations["create"];
         delete: operations["abandon"];
@@ -1899,7 +1915,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["current_1"];
+        get: operations["current_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3160,6 +3176,42 @@ export interface components {
             reviewNote: string;
             metadata: components["schemas"]["com.englow3.speaking.dto.command.CreateSpeakingPromptCommand"];
         };
+        "com.englow3.roadmap.dto.request.SetLevelCheckWeightRequest": {
+            purposeCode: string;
+            /** Format: int32 */
+            vocabulary?: number;
+            /** Format: int32 */
+            listening?: number;
+            /** Format: int32 */
+            speaking?: number;
+            /** Format: int32 */
+            priority?: number;
+        };
+        "com.englow3.roadmap.dto.response.LevelCheckWeightsResponse": {
+            purposes: components["schemas"]["com.englow3.roadmap.dto.response.LevelCheckWeightsResponse.PurposeResponse"][];
+            history: components["schemas"]["com.englow3.roadmap.dto.response.LevelCheckWeightsResponse.ChangeResponse"][];
+        };
+        "com.englow3.roadmap.dto.response.LevelCheckWeightsResponse.ChangeResponse": {
+            /** Format: uuid */
+            id: string;
+            purposeCode: string;
+            /** Format: int32 */
+            vocabulary: number;
+            /** Format: int32 */
+            listening: number;
+            /** Format: int32 */
+            speaking: number;
+            /** Format: int32 */
+            priority: number;
+            /** Format: date-time */
+            effectiveFrom: string;
+            changedBy: string;
+        };
+        "com.englow3.roadmap.dto.response.LevelCheckWeightsResponse.PurposeResponse": {
+            purposeCode: string;
+            displayName: string;
+            inForce: components["schemas"]["com.englow3.roadmap.dto.response.LevelCheckWeightsResponse.ChangeResponse"];
+        };
         "com.englow3.quiz.dto.request.AddQuizQuestionsRequest": {
             questions: components["schemas"]["com.englow3.quiz.dto.request.AddQuizQuestionsRequest.QuestionRequest"][];
         };
@@ -3202,6 +3254,7 @@ export interface components {
             timeLimitSeconds?: number;
             /** Format: int32 */
             passingScorePercent?: number;
+            certificateType?: string;
         };
         "com.englow3.quiz.dto.request.SaveAuthoringRequest": {
             /** Format: int64 */
@@ -3249,6 +3302,7 @@ export interface components {
             timeLimitSeconds: number;
             /** Format: int32 */
             passingScorePercent: number;
+            certificateType: string;
         };
         "com.englow3.quiz.dto.response.AuthoringResponse": {
             /** Format: uuid */
@@ -3649,6 +3703,7 @@ export interface components {
             title: string;
             topic: string;
             targetLevel?: string;
+            certificateType?: string;
         };
         "com.englow3.dictation.dto.request.SaveAuthoringRequest": {
             /** Format: int64 */
@@ -3675,6 +3730,7 @@ export interface components {
             title: string;
             topic: string;
             targetLevel: string;
+            certificateType: string;
         };
         "com.englow3.dictation.dto.command.SaveAuthoringCommand.Sentence": {
             text: string;
@@ -7232,6 +7288,158 @@ export interface operations {
             };
         };
     };
+    current: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.roadmap.dto.response.LevelCheckWeightsResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    set: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["com.englow3.roadmap.dto.request.SetLevelCheckWeightRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.roadmap.dto.response.LevelCheckWeightsResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
     authoring_1: {
         parameters: {
             query?: never;
@@ -9351,7 +9559,7 @@ export interface operations {
             };
         };
     };
-    current: {
+    current_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -16313,7 +16521,7 @@ export interface operations {
             };
         };
     };
-    current_1: {
+    current_2: {
         parameters: {
             query?: never;
             header?: never;
