@@ -22,6 +22,7 @@ const ADMIN_CONTENT_PATHS: Record<ContentKind, string> = {
   QUIZ: "/api/admin/quizzes",
   DICTATION_LESSON: "/api/admin/dictation/lessons",
   SPEAKING_PROMPT: "/api/admin/speaking/prompts",
+  TRANSLATION_SET: "/api/admin/translation/sets",
 };
 
 /**

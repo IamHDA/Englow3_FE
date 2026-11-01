@@ -50,6 +50,7 @@ const names: Record<AuthoringKind, [string, string]> = {
   QUIZ: ["Quiz", "Quiz"],
   DICTATION_LESSON: ["Bài nghe chép chính tả", "Dictation lesson"],
   SPEAKING_PROMPT: ["Bài phát âm — đọc theo mẫu", "Pronunciation — read aloud"],
+  TRANSLATION_SET: ["Bộ câu luyện dịch", "Translation set"],
   EXAM: ["Đề thi", "Exam"],
 };
 const makeEntry = (kind: AuthoringKind): Entry =>

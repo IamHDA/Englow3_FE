@@ -252,6 +252,16 @@ export type AttemptQuestionReview = {
   selectedOptionIds: Array<Scalars["ID"]["output"]>;
 };
 
+/**
+ * A profile picture to choose from. There is no upload: a profile wears one of
+ * these, served by the web app.
+ */
+export type AvatarPreset = {
+  __typename?: "AvatarPreset";
+  id: Scalars["ID"]["output"];
+  url: Scalars["String"]["output"];
+};
+
 export enum CefrLevel {
   A1 = "A1",
   A2 = "A2",
@@ -283,6 +293,7 @@ export enum ContentKind {
   FLASHCARD_SET = "FLASHCARD_SET",
   QUIZ = "QUIZ",
   SPEAKING_PROMPT = "SPEAKING_PROMPT",
+  TRANSLATION_SET = "TRANSLATION_SET",
 }
 
 /**
@@ -1164,6 +1175,11 @@ export type Mutation = {
   attachLevelCheckSpeakingAttempt: LevelCheck;
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
+  /**
+   * Wears one of the preset pictures. Refused with extensions.backendCode
+   * AVATAR_PRESET_UNKNOWN for an id that names none.
+   */
+  chooseAvatar: Me;
   clearTutorMemory: Scalars["Boolean"]["output"];
   completeMyTour: UserTourStatus;
   /**
@@ -1340,6 +1356,12 @@ export type Mutation = {
    * actually in storage.
    */
   submitSpeakingAttempt: SpeakingAttempt;
+  /**
+   * Records the translation and queues its grading. Refused with
+   * extensions.backendCode TRANSLATION_DAILY_LIMIT_REACHED once today's AI
+   * allowance is spent.
+   */
+  submitTranslation: TranslationAttempt;
   summarizeTutorConversation: TutorConversation;
   transitionAssessmentTask: AssessmentTask;
   updateProfile: Me;
@@ -1390,6 +1412,10 @@ export type MutationBranchTutorConversationArgs = {
 export type MutationCancelTutorReplyArgs = {
   conversationId: Scalars["ID"]["input"];
   messageId: Scalars["ID"]["input"];
+};
+
+export type MutationChooseAvatarArgs = {
+  preset: Scalars["ID"]["input"];
 };
 
 export type MutationClearTutorMemoryArgs = {
@@ -1632,6 +1658,11 @@ export type MutationSubmitSpeakingAttemptArgs = {
   attemptId: Scalars["ID"]["input"];
 };
 
+export type MutationSubmitTranslationArgs = {
+  itemId: Scalars["ID"]["input"];
+  response: Scalars["String"]["input"];
+};
+
 export type MutationSummarizeTutorConversationArgs = {
   clientMessageId: Scalars["ID"]["input"];
   conversationId: Scalars["ID"]["input"];
@@ -1662,6 +1693,11 @@ export type OnboardingState = {
   currentLevel?: Maybe<CefrLevel>;
   dailyStudyMinutes?: Maybe<Scalars["Int"]["output"]>;
   learningPurposeIds: Array<Scalars["Int"]["output"]>;
+  /**
+   * The placement attempt the current level was measured by. Null when the
+   * learner chose their level themselves or has not taken the test.
+   */
+  placementAttemptId?: Maybe<Scalars["ID"]["output"]>;
   /**
    * The step after this write. Every onboarding write answers with it, so the
    * client can move to the next screen without reading Me again.
@@ -1746,6 +1782,7 @@ export type Query = {
   attemptPaper: ExamPaper;
   authoringAssessmentTask: AssessmentTask;
   authoringAssessmentTasks: AssessmentTaskPage;
+  avatarPresets: Array<AvatarPreset>;
   /**
    * The learner's own plan for today: streak, points, roadmap and goals. Takes
    * no argument because the only path anyone can read is their own.
@@ -1831,6 +1868,12 @@ export type Query = {
   speakingAttempts: Array<SpeakingAttempt>;
   speakingPrompt: SpeakingPrompt;
   speakingPrompts: SpeakingPromptPage;
+  /** What the practice screen polls while it waits for a grade. */
+  translationAttempt: TranslationAttempt;
+  /** This learner's own attempts, newest first. */
+  translationAttempts: TranslationAttemptPage;
+  translationSet: TranslationSetDetail;
+  translationSets: TranslationSetPage;
   tutorConversation: TutorConversation;
   tutorConversations: Array<TutorConversationSummary>;
   tutorHistory: TutorHistoryPage;
@@ -2035,6 +2078,26 @@ export type QuerySpeakingPromptsArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
   title?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryTranslationAttemptArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryTranslationAttemptsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryTranslationSetArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryTranslationSetsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  title?: InputMaybe<Scalars["String"]["input"]>;
+  topic?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryTutorConversationArgs = {
@@ -2523,6 +2586,137 @@ export enum TargetLevel {
   B2 = "B2",
   C1 = "C1",
   C2 = "C2",
+}
+
+export type TranslationAttempt = {
+  __typename?: "TranslationAttempt";
+  createdAt: Scalars["DateTime"]["output"];
+  errorCode?: Maybe<Scalars["String"]["output"]>;
+  feedback?: Maybe<TranslationFeedback>;
+  gradedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  id: Scalars["ID"]["output"];
+  itemId: Scalars["ID"]["output"];
+  notes?: Maybe<Scalars["String"]["output"]>;
+  /** Null while the attempt is still waiting. */
+  referenceEn?: Maybe<Scalars["String"]["output"]>;
+  response: Scalars["String"]["output"];
+  /** 0 to 100. Null until graded. */
+  score?: Maybe<Scalars["Int"]["output"]>;
+  setId: Scalars["ID"]["output"];
+  sourceVi: Scalars["String"]["output"];
+  status: TranslationAttemptStatus;
+};
+
+export type TranslationAttemptPage = {
+  __typename?: "TranslationAttemptPage";
+  items: Array<TranslationAttempt>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/**
+ * Where one translation stands. There is no RUNNING: QUEUED - "we have it and
+ * there is no grade yet" - is all a learner waiting needs to know.
+ */
+export enum TranslationAttemptStatus {
+  FAILED = "FAILED",
+  GRADED = "GRADED",
+  QUEUED = "QUEUED",
+}
+
+export type TranslationFeedback = {
+  __typename?: "TranslationFeedback";
+  errors: Array<TranslationMistake>;
+  /** The learner's sentence corrected and made natural. */
+  improved: Scalars["String"]["output"];
+  parts: TranslationParts;
+  summary: Scalars["String"]["output"];
+  verdict: TranslationVerdict;
+};
+
+/**
+ * One Vietnamese sentence to translate. The reference translation is not here:
+ * it comes with a graded attempt, after the learner has answered.
+ */
+export type TranslationItem = {
+  __typename?: "TranslationItem";
+  id: Scalars["ID"]["output"];
+  latestAttempt?: Maybe<TranslationLatestAttempt>;
+  orderNo: Scalars["Int"]["output"];
+  sourceVi: Scalars["String"]["output"];
+};
+
+export type TranslationLatestAttempt = {
+  __typename?: "TranslationLatestAttempt";
+  id: Scalars["ID"]["output"];
+  score?: Maybe<Scalars["Int"]["output"]>;
+  status: TranslationAttemptStatus;
+};
+
+export type TranslationMistake = {
+  __typename?: "TranslationMistake";
+  correction: Scalars["String"]["output"];
+  /** In Vietnamese. */
+  explanation: Scalars["String"]["output"];
+  /** The learner's own words. */
+  original: Scalars["String"]["output"];
+  type: TranslationMistakeType;
+};
+
+export enum TranslationMistakeType {
+  GRAMMAR = "GRAMMAR",
+  MEANING = "MEANING",
+  OTHER = "OTHER",
+  SPELLING = "SPELLING",
+  VOCABULARY = "VOCABULARY",
+  WORD_ORDER = "WORD_ORDER",
+}
+
+/** Points per part: meaning out of 40, grammar 30, vocabulary 20, naturalness 10. */
+export type TranslationParts = {
+  __typename?: "TranslationParts";
+  grammar: Scalars["Int"]["output"];
+  meaning: Scalars["Int"]["output"];
+  naturalness: Scalars["Int"]["output"];
+  vocabulary: Scalars["Int"]["output"];
+};
+
+export type TranslationSet = {
+  __typename?: "TranslationSet";
+  description?: Maybe<Scalars["String"]["output"]>;
+  /** Sentences this learner has a graded attempt at. */
+  gradedCount: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  itemCount: Scalars["Int"]["output"];
+  slug: Scalars["String"]["output"];
+  targetLevel?: Maybe<Scalars["String"]["output"]>;
+  title: Scalars["String"]["output"];
+  topic: Scalars["String"]["output"];
+};
+
+export type TranslationSetDetail = {
+  __typename?: "TranslationSetDetail";
+  items: Array<TranslationItem>;
+  set: TranslationSet;
+};
+
+export type TranslationSetPage = {
+  __typename?: "TranslationSetPage";
+  items: Array<TranslationSet>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/** A band derived on the server from the total, never asked of the model. */
+export enum TranslationVerdict {
+  EXCELLENT = "EXCELLENT",
+  GOOD = "GOOD",
+  NEEDS_WORK = "NEEDS_WORK",
+  PARTIAL = "PARTIAL",
 }
 
 export type TutorConversation = {

@@ -12,6 +12,20 @@ import { gql } from "@apollo/client";
 import * as ApolloReactCommon from "@apollo/client/react";
 import * as ApolloReactHooks from "@apollo/client/react";
 const defaultOptions = {} as const;
+export type AvatarPresetsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AvatarPresetsQuery = {
+  avatarPresets: Array<{ id: string; url: string }>;
+};
+
+export type ChooseAvatarMutationVariables = Exact<{
+  preset: string | number;
+}>;
+
+export type ChooseAvatarMutation = {
+  chooseAvatar: { id: string; avatarUrl: string | null };
+};
+
 export type UpdateProfileMutationVariables = Exact<{
   input: Types.UpdateProfileInput;
 }>;
@@ -3056,6 +3070,7 @@ export type OnboardingStateFieldsFragment = {
   targetLevel: Types.CefrLevel | null;
   dailyStudyMinutes: number | null;
   targetSkills: Array<Types.LearningSkill>;
+  placementAttemptId: string | null;
 };
 
 export type SelectLearningPurposesMutationVariables = Exact<{
@@ -3074,6 +3089,7 @@ export type SelectLearningPurposesMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3093,6 +3109,7 @@ export type SetCertificateTargetMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3112,6 +3129,7 @@ export type SetCurrentLevelMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3131,6 +3149,7 @@ export type SetLearningGoalMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3150,6 +3169,7 @@ export type SelectTargetSkillsMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3169,6 +3189,7 @@ export type CompleteOnboardingMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3933,6 +3954,181 @@ export type CompleteMyTourMutationVariables = Exact<{ [key: string]: never }>;
 
 export type CompleteMyTourMutation = { completeMyTour: { completed: boolean } };
 
+export type TranslationSetFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  topic: string;
+  targetLevel: string | null;
+  description: string | null;
+  itemCount: number;
+  gradedCount: number;
+};
+
+export type TranslationAttemptFieldsFragment = {
+  id: string;
+  setId: string;
+  itemId: string;
+  sourceVi: string;
+  response: string;
+  status: Types.TranslationAttemptStatus;
+  score: number | null;
+  errorCode: string | null;
+  referenceEn: string | null;
+  notes: string | null;
+  createdAt: string;
+  gradedAt: string | null;
+  feedback: {
+    verdict: Types.TranslationVerdict;
+    summary: string;
+    improved: string;
+    parts: {
+      meaning: number;
+      grammar: number;
+      vocabulary: number;
+      naturalness: number;
+    };
+    errors: Array<{
+      type: Types.TranslationMistakeType;
+      original: string;
+      correction: string;
+      explanation: string;
+    }>;
+  } | null;
+};
+
+export type TranslationSetsQueryVariables = Exact<{
+  topic?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type TranslationSetsQuery = {
+  translationSets: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      description: string | null;
+      itemCount: number;
+      gradedCount: number;
+    }>;
+  };
+};
+
+export type TranslationSetQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TranslationSetQuery = {
+  translationSet: {
+    set: {
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      description: string | null;
+      itemCount: number;
+      gradedCount: number;
+    };
+    items: Array<{
+      id: string;
+      orderNo: number;
+      sourceVi: string;
+      latestAttempt: {
+        id: string;
+        status: Types.TranslationAttemptStatus;
+        score: number | null;
+      } | null;
+    }>;
+  };
+};
+
+export type TranslationAttemptQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TranslationAttemptQuery = {
+  translationAttempt: {
+    id: string;
+    setId: string;
+    itemId: string;
+    sourceVi: string;
+    response: string;
+    status: Types.TranslationAttemptStatus;
+    score: number | null;
+    errorCode: string | null;
+    referenceEn: string | null;
+    notes: string | null;
+    createdAt: string;
+    gradedAt: string | null;
+    feedback: {
+      verdict: Types.TranslationVerdict;
+      summary: string;
+      improved: string;
+      parts: {
+        meaning: number;
+        grammar: number;
+        vocabulary: number;
+        naturalness: number;
+      };
+      errors: Array<{
+        type: Types.TranslationMistakeType;
+        original: string;
+        correction: string;
+        explanation: string;
+      }>;
+    } | null;
+  };
+};
+
+export type SubmitTranslationMutationVariables = Exact<{
+  itemId: string | number;
+  response: string;
+}>;
+
+export type SubmitTranslationMutation = {
+  submitTranslation: {
+    id: string;
+    setId: string;
+    itemId: string;
+    sourceVi: string;
+    response: string;
+    status: Types.TranslationAttemptStatus;
+    score: number | null;
+    errorCode: string | null;
+    referenceEn: string | null;
+    notes: string | null;
+    createdAt: string;
+    gradedAt: string | null;
+    feedback: {
+      verdict: Types.TranslationVerdict;
+      summary: string;
+      improved: string;
+      parts: {
+        meaning: number;
+        grammar: number;
+        vocabulary: number;
+        naturalness: number;
+      };
+      errors: Array<{
+        type: Types.TranslationMistakeType;
+        original: string;
+        correction: string;
+        explanation: string;
+      }>;
+    } | null;
+  };
+};
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -3956,6 +4152,7 @@ export type CurrentUserQuery = {
       targetLevel: Types.CefrLevel | null;
       dailyStudyMinutes: number | null;
       targetSkills: Array<Types.LearningSkill>;
+      placementAttemptId: string | null;
     } | null;
   };
 };
@@ -4261,6 +4458,7 @@ export const OnboardingStateFieldsFragmentDoc = gql`
     targetLevel
     dailyStudyMinutes
     targetSkills
+    placementAttemptId
   }
 `;
 export const SpeakingPromptFieldsFragmentDoc = gql`
@@ -4439,6 +4637,203 @@ export const LevelCheckFieldsFragmentDoc = gql`
     completedAt
   }
 `;
+export const TranslationSetFieldsFragmentDoc = gql`
+  fragment TranslationSetFields on TranslationSet {
+    id
+    slug
+    title
+    topic
+    targetLevel
+    description
+    itemCount
+    gradedCount
+  }
+`;
+export const TranslationAttemptFieldsFragmentDoc = gql`
+  fragment TranslationAttemptFields on TranslationAttempt {
+    id
+    setId
+    itemId
+    sourceVi
+    response
+    status
+    score
+    errorCode
+    referenceEn
+    notes
+    createdAt
+    gradedAt
+    feedback {
+      verdict
+      summary
+      improved
+      parts {
+        meaning
+        grammar
+        vocabulary
+        naturalness
+      }
+      errors {
+        type
+        original
+        correction
+        explanation
+      }
+    }
+  }
+`;
+export const AvatarPresetsDocument = gql`
+  query AvatarPresets {
+    avatarPresets {
+      id
+      url
+    }
+  }
+`;
+
+/**
+ * __useAvatarPresetsQuery__
+ *
+ * To run a query within a React component, call `useAvatarPresetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAvatarPresetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAvatarPresetsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAvatarPresetsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AvatarPresetsQuery,
+    AvatarPresetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AvatarPresetsQuery,
+    AvatarPresetsQueryVariables
+  >(AvatarPresetsDocument, options);
+}
+export function useAvatarPresetsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AvatarPresetsQuery,
+    AvatarPresetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AvatarPresetsQuery,
+    AvatarPresetsQueryVariables
+  >(AvatarPresetsDocument, options);
+}
+export function useAvatarPresetsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AvatarPresetsQuery,
+    AvatarPresetsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AvatarPresetsQuery,
+  AvatarPresetsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAvatarPresetsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AvatarPresetsQuery,
+        AvatarPresetsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AvatarPresetsQuery | undefined,
+  AvatarPresetsQueryVariables
+>;
+export function useAvatarPresetsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AvatarPresetsQuery,
+        AvatarPresetsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AvatarPresetsQuery,
+    AvatarPresetsQueryVariables
+  >(AvatarPresetsDocument, options as any);
+}
+export type AvatarPresetsQueryHookResult = ReturnType<
+  typeof useAvatarPresetsQuery
+>;
+export type AvatarPresetsLazyQueryHookResult = ReturnType<
+  typeof useAvatarPresetsLazyQuery
+>;
+export type AvatarPresetsSuspenseQueryHookResult = ReturnType<
+  typeof useAvatarPresetsSuspenseQuery
+>;
+export type AvatarPresetsQueryResult = ApolloReactCommon.QueryResult<
+  AvatarPresetsQuery,
+  AvatarPresetsQueryVariables
+>;
+export const ChooseAvatarDocument = gql`
+  mutation ChooseAvatar($preset: ID!) {
+    chooseAvatar(preset: $preset) {
+      id
+      avatarUrl
+    }
+  }
+`;
+export type ChooseAvatarMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ChooseAvatarMutation,
+    ChooseAvatarMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useChooseAvatarMutation__
+ *
+ * To run a mutation, you first call `useChooseAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChooseAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [chooseAvatarMutation, { data, loading, error }] = useChooseAvatarMutation({
+ *   variables: {
+ *      preset: // value for 'preset'
+ *   },
+ * });
+ */
+export function useChooseAvatarMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ChooseAvatarMutation,
+    ChooseAvatarMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ChooseAvatarMutation,
+    ChooseAvatarMutationVariables
+  >(ChooseAvatarDocument, options);
+}
+export type ChooseAvatarMutationHookResult = ReturnType<
+  typeof useChooseAvatarMutation
+>;
+export type ChooseAvatarMutationResult =
+  ApolloReactCommon.MutationResult<ChooseAvatarMutation>;
+export type ChooseAvatarMutationOptions = ApolloReactCommon.MutationHookOptions<
+  ChooseAvatarMutation,
+  ChooseAvatarMutationVariables
+>;
 export const UpdateProfileDocument = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
     updateProfile(input: $input) {
@@ -14746,6 +15141,395 @@ export type CompleteMyTourMutationOptions =
     CompleteMyTourMutation,
     CompleteMyTourMutationVariables
   >;
+export const TranslationSetsDocument = gql`
+  query TranslationSets(
+    $topic: String
+    $title: String
+    $page: Int
+    $size: Int
+  ) {
+    translationSets(topic: $topic, title: $title, page: $page, size: $size) {
+      items {
+        ...TranslationSetFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${TranslationSetFieldsFragmentDoc}
+`;
+
+/**
+ * __useTranslationSetsQuery__
+ *
+ * To run a query within a React component, call `useTranslationSetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTranslationSetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTranslationSetsQuery({
+ *   variables: {
+ *      topic: // value for 'topic'
+ *      title: // value for 'title'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useTranslationSetsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TranslationSetsQuery,
+    TranslationSetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TranslationSetsQuery,
+    TranslationSetsQueryVariables
+  >(TranslationSetsDocument, options);
+}
+export function useTranslationSetsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TranslationSetsQuery,
+    TranslationSetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TranslationSetsQuery,
+    TranslationSetsQueryVariables
+  >(TranslationSetsDocument, options);
+}
+export function useTranslationSetsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TranslationSetsQuery,
+    TranslationSetsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TranslationSetsQuery,
+  TranslationSetsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTranslationSetsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TranslationSetsQuery,
+        TranslationSetsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TranslationSetsQuery | undefined,
+  TranslationSetsQueryVariables
+>;
+export function useTranslationSetsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TranslationSetsQuery,
+        TranslationSetsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TranslationSetsQuery,
+    TranslationSetsQueryVariables
+  >(TranslationSetsDocument, options as any);
+}
+export type TranslationSetsQueryHookResult = ReturnType<
+  typeof useTranslationSetsQuery
+>;
+export type TranslationSetsLazyQueryHookResult = ReturnType<
+  typeof useTranslationSetsLazyQuery
+>;
+export type TranslationSetsSuspenseQueryHookResult = ReturnType<
+  typeof useTranslationSetsSuspenseQuery
+>;
+export type TranslationSetsQueryResult = ApolloReactCommon.QueryResult<
+  TranslationSetsQuery,
+  TranslationSetsQueryVariables
+>;
+export const TranslationSetDocument = gql`
+  query TranslationSet($id: ID!) {
+    translationSet(id: $id) {
+      set {
+        ...TranslationSetFields
+      }
+      items {
+        id
+        orderNo
+        sourceVi
+        latestAttempt {
+          id
+          status
+          score
+        }
+      }
+    }
+  }
+  ${TranslationSetFieldsFragmentDoc}
+`;
+
+/**
+ * __useTranslationSetQuery__
+ *
+ * To run a query within a React component, call `useTranslationSetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTranslationSetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTranslationSetQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTranslationSetQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TranslationSetQuery,
+    TranslationSetQueryVariables
+  > &
+    (
+      | { variables: TranslationSetQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TranslationSetQuery,
+    TranslationSetQueryVariables
+  >(TranslationSetDocument, options);
+}
+export function useTranslationSetLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TranslationSetQuery,
+    TranslationSetQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TranslationSetQuery,
+    TranslationSetQueryVariables
+  >(TranslationSetDocument, options);
+}
+export function useTranslationSetSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TranslationSetQuery,
+    TranslationSetQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TranslationSetQuery,
+  TranslationSetQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTranslationSetSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TranslationSetQuery,
+        TranslationSetQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TranslationSetQuery | undefined,
+  TranslationSetQueryVariables
+>;
+export function useTranslationSetSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TranslationSetQuery,
+        TranslationSetQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TranslationSetQuery,
+    TranslationSetQueryVariables
+  >(TranslationSetDocument, options as any);
+}
+export type TranslationSetQueryHookResult = ReturnType<
+  typeof useTranslationSetQuery
+>;
+export type TranslationSetLazyQueryHookResult = ReturnType<
+  typeof useTranslationSetLazyQuery
+>;
+export type TranslationSetSuspenseQueryHookResult = ReturnType<
+  typeof useTranslationSetSuspenseQuery
+>;
+export type TranslationSetQueryResult = ApolloReactCommon.QueryResult<
+  TranslationSetQuery,
+  TranslationSetQueryVariables
+>;
+export const TranslationAttemptDocument = gql`
+  query TranslationAttempt($id: ID!) {
+    translationAttempt(id: $id) {
+      ...TranslationAttemptFields
+    }
+  }
+  ${TranslationAttemptFieldsFragmentDoc}
+`;
+
+/**
+ * __useTranslationAttemptQuery__
+ *
+ * To run a query within a React component, call `useTranslationAttemptQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTranslationAttemptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTranslationAttemptQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTranslationAttemptQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    TranslationAttemptQuery,
+    TranslationAttemptQueryVariables
+  > &
+    (
+      | { variables: TranslationAttemptQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    TranslationAttemptQuery,
+    TranslationAttemptQueryVariables
+  >(TranslationAttemptDocument, options);
+}
+export function useTranslationAttemptLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TranslationAttemptQuery,
+    TranslationAttemptQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    TranslationAttemptQuery,
+    TranslationAttemptQueryVariables
+  >(TranslationAttemptDocument, options);
+}
+export function useTranslationAttemptSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    TranslationAttemptQuery,
+    TranslationAttemptQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TranslationAttemptQuery,
+  TranslationAttemptQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useTranslationAttemptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TranslationAttemptQuery,
+        TranslationAttemptQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  TranslationAttemptQuery | undefined,
+  TranslationAttemptQueryVariables
+>;
+export function useTranslationAttemptSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        TranslationAttemptQuery,
+        TranslationAttemptQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    TranslationAttemptQuery,
+    TranslationAttemptQueryVariables
+  >(TranslationAttemptDocument, options as any);
+}
+export type TranslationAttemptQueryHookResult = ReturnType<
+  typeof useTranslationAttemptQuery
+>;
+export type TranslationAttemptLazyQueryHookResult = ReturnType<
+  typeof useTranslationAttemptLazyQuery
+>;
+export type TranslationAttemptSuspenseQueryHookResult = ReturnType<
+  typeof useTranslationAttemptSuspenseQuery
+>;
+export type TranslationAttemptQueryResult = ApolloReactCommon.QueryResult<
+  TranslationAttemptQuery,
+  TranslationAttemptQueryVariables
+>;
+export const SubmitTranslationDocument = gql`
+  mutation SubmitTranslation($itemId: ID!, $response: String!) {
+    submitTranslation(itemId: $itemId, response: $response) {
+      ...TranslationAttemptFields
+    }
+  }
+  ${TranslationAttemptFieldsFragmentDoc}
+`;
+export type SubmitTranslationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitTranslationMutation,
+    SubmitTranslationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitTranslationMutation__
+ *
+ * To run a mutation, you first call `useSubmitTranslationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitTranslationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitTranslationMutation, { data, loading, error }] = useSubmitTranslationMutation({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *      response: // value for 'response'
+ *   },
+ * });
+ */
+export function useSubmitTranslationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitTranslationMutation,
+    SubmitTranslationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitTranslationMutation,
+    SubmitTranslationMutationVariables
+  >(SubmitTranslationDocument, options);
+}
+export type SubmitTranslationMutationHookResult = ReturnType<
+  typeof useSubmitTranslationMutation
+>;
+export type SubmitTranslationMutationResult =
+  ApolloReactCommon.MutationResult<SubmitTranslationMutation>;
+export type SubmitTranslationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitTranslationMutation,
+    SubmitTranslationMutationVariables
+  >;
 export const CurrentUserDocument = gql`
   query CurrentUser {
     me {
@@ -14768,6 +15552,7 @@ export const CurrentUserDocument = gql`
         targetLevel
         dailyStudyMinutes
         targetSkills
+        placementAttemptId
       }
     }
   }

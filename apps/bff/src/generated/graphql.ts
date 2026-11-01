@@ -250,6 +250,16 @@ export type AttemptQuestionReview = {
   selectedOptionIds: Array<Scalars['ID']['output']>;
 };
 
+/**
+ * A profile picture to choose from. There is no upload: a profile wears one of
+ * these, served by the web app.
+ */
+export type AvatarPreset = {
+  __typename?: 'AvatarPreset';
+  id: Scalars['ID']['output'];
+  url: Scalars['String']['output'];
+};
+
 export type CefrLevel =
   | 'A1'
   | 'A2'
@@ -277,7 +287,8 @@ export type ContentKind =
   | 'DICTATION_LESSON'
   | 'FLASHCARD_SET'
   | 'QUIZ'
-  | 'SPEAKING_PROMPT';
+  | 'SPEAKING_PROMPT'
+  | 'TRANSLATION_SET';
 
 /**
  * A piece of content as its author and reviewer see it. Never sent to a learner:
@@ -1141,6 +1152,11 @@ export type Mutation = {
   attachLevelCheckSpeakingAttempt: LevelCheck;
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
+  /**
+   * Wears one of the preset pictures. Refused with extensions.backendCode
+   * AVATAR_PRESET_UNKNOWN for an id that names none.
+   */
+  chooseAvatar: Me;
   clearTutorMemory: Scalars['Boolean']['output'];
   completeMyTour: UserTourStatus;
   /**
@@ -1317,6 +1333,12 @@ export type Mutation = {
    * actually in storage.
    */
   submitSpeakingAttempt: SpeakingAttempt;
+  /**
+   * Records the translation and queues its grading. Refused with
+   * extensions.backendCode TRANSLATION_DAILY_LIMIT_REACHED once today's AI
+   * allowance is spent.
+   */
+  submitTranslation: TranslationAttempt;
   summarizeTutorConversation: TutorConversation;
   transitionAssessmentTask: AssessmentTask;
   updateProfile: Me;
@@ -1376,6 +1398,11 @@ export type MutationBranchTutorConversationArgs = {
 export type MutationCancelTutorReplyArgs = {
   conversationId: Scalars['ID']['input'];
   messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationChooseAvatarArgs = {
+  preset: Scalars['ID']['input'];
 };
 
 
@@ -1666,6 +1693,12 @@ export type MutationSubmitSpeakingAttemptArgs = {
 };
 
 
+export type MutationSubmitTranslationArgs = {
+  itemId: Scalars['ID']['input'];
+  response: Scalars['String']['input'];
+};
+
+
 export type MutationSummarizeTutorConversationArgs = {
   clientMessageId: Scalars['ID']['input'];
   conversationId: Scalars['ID']['input'];
@@ -1700,6 +1733,11 @@ export type OnboardingState = {
   currentLevel?: Maybe<CefrLevel>;
   dailyStudyMinutes?: Maybe<Scalars['Int']['output']>;
   learningPurposeIds: Array<Scalars['Int']['output']>;
+  /**
+   * The placement attempt the current level was measured by. Null when the
+   * learner chose their level themselves or has not taken the test.
+   */
+  placementAttemptId?: Maybe<Scalars['ID']['output']>;
   /**
    * The step after this write. Every onboarding write answers with it, so the
    * client can move to the next screen without reading Me again.
@@ -1781,6 +1819,7 @@ export type Query = {
   attemptPaper: ExamPaper;
   authoringAssessmentTask: AssessmentTask;
   authoringAssessmentTasks: AssessmentTaskPage;
+  avatarPresets: Array<AvatarPreset>;
   /**
    * The learner's own plan for today: streak, points, roadmap and goals. Takes
    * no argument because the only path anyone can read is their own.
@@ -1866,6 +1905,12 @@ export type Query = {
   speakingAttempts: Array<SpeakingAttempt>;
   speakingPrompt: SpeakingPrompt;
   speakingPrompts: SpeakingPromptPage;
+  /** What the practice screen polls while it waits for a grade. */
+  translationAttempt: TranslationAttempt;
+  /** This learner's own attempts, newest first. */
+  translationAttempts: TranslationAttemptPage;
+  translationSet: TranslationSetDetail;
+  translationSets: TranslationSetPage;
   tutorConversation: TutorConversation;
   tutorConversations: Array<TutorConversationSummary>;
   tutorHistory: TutorHistoryPage;
@@ -2106,6 +2151,30 @@ export type QuerySpeakingPromptsArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   size?: InputMaybe<Scalars['Int']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryTranslationAttemptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTranslationAttemptsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTranslationSetArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTranslationSetsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2595,6 +2664,134 @@ export type TargetLevel =
   | 'C1'
   | 'C2';
 
+export type TranslationAttempt = {
+  __typename?: 'TranslationAttempt';
+  createdAt: Scalars['DateTime']['output'];
+  errorCode?: Maybe<Scalars['String']['output']>;
+  feedback?: Maybe<TranslationFeedback>;
+  gradedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  itemId: Scalars['ID']['output'];
+  notes?: Maybe<Scalars['String']['output']>;
+  /** Null while the attempt is still waiting. */
+  referenceEn?: Maybe<Scalars['String']['output']>;
+  response: Scalars['String']['output'];
+  /** 0 to 100. Null until graded. */
+  score?: Maybe<Scalars['Int']['output']>;
+  setId: Scalars['ID']['output'];
+  sourceVi: Scalars['String']['output'];
+  status: TranslationAttemptStatus;
+};
+
+export type TranslationAttemptPage = {
+  __typename?: 'TranslationAttemptPage';
+  items: Array<TranslationAttempt>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/**
+ * Where one translation stands. There is no RUNNING: QUEUED - "we have it and
+ * there is no grade yet" - is all a learner waiting needs to know.
+ */
+export type TranslationAttemptStatus =
+  | 'FAILED'
+  | 'GRADED'
+  | 'QUEUED';
+
+export type TranslationFeedback = {
+  __typename?: 'TranslationFeedback';
+  errors: Array<TranslationMistake>;
+  /** The learner's sentence corrected and made natural. */
+  improved: Scalars['String']['output'];
+  parts: TranslationParts;
+  summary: Scalars['String']['output'];
+  verdict: TranslationVerdict;
+};
+
+/**
+ * One Vietnamese sentence to translate. The reference translation is not here:
+ * it comes with a graded attempt, after the learner has answered.
+ */
+export type TranslationItem = {
+  __typename?: 'TranslationItem';
+  id: Scalars['ID']['output'];
+  latestAttempt?: Maybe<TranslationLatestAttempt>;
+  orderNo: Scalars['Int']['output'];
+  sourceVi: Scalars['String']['output'];
+};
+
+export type TranslationLatestAttempt = {
+  __typename?: 'TranslationLatestAttempt';
+  id: Scalars['ID']['output'];
+  score?: Maybe<Scalars['Int']['output']>;
+  status: TranslationAttemptStatus;
+};
+
+export type TranslationMistake = {
+  __typename?: 'TranslationMistake';
+  correction: Scalars['String']['output'];
+  /** In Vietnamese. */
+  explanation: Scalars['String']['output'];
+  /** The learner's own words. */
+  original: Scalars['String']['output'];
+  type: TranslationMistakeType;
+};
+
+export type TranslationMistakeType =
+  | 'GRAMMAR'
+  | 'MEANING'
+  | 'OTHER'
+  | 'SPELLING'
+  | 'VOCABULARY'
+  | 'WORD_ORDER';
+
+/** Points per part: meaning out of 40, grammar 30, vocabulary 20, naturalness 10. */
+export type TranslationParts = {
+  __typename?: 'TranslationParts';
+  grammar: Scalars['Int']['output'];
+  meaning: Scalars['Int']['output'];
+  naturalness: Scalars['Int']['output'];
+  vocabulary: Scalars['Int']['output'];
+};
+
+export type TranslationSet = {
+  __typename?: 'TranslationSet';
+  description?: Maybe<Scalars['String']['output']>;
+  /** Sentences this learner has a graded attempt at. */
+  gradedCount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  itemCount: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  targetLevel?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  topic: Scalars['String']['output'];
+};
+
+export type TranslationSetDetail = {
+  __typename?: 'TranslationSetDetail';
+  items: Array<TranslationItem>;
+  set: TranslationSet;
+};
+
+export type TranslationSetPage = {
+  __typename?: 'TranslationSetPage';
+  items: Array<TranslationSet>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/** A band derived on the server from the total, never asked of the model. */
+export type TranslationVerdict =
+  | 'EXCELLENT'
+  | 'GOOD'
+  | 'NEEDS_WORK'
+  | 'PARTIAL';
+
 export type TutorConversation = {
   __typename?: 'TutorConversation';
   conversation: TutorConversationSummary;
@@ -2949,6 +3146,7 @@ export type ResolversTypes = ResolversObject<{
   AttemptOptionReview: ResolverTypeWrapper<AttemptOptionReview>;
   AttemptPart: ResolverTypeWrapper<AttemptPart>;
   AttemptQuestionReview: ResolverTypeWrapper<AttemptQuestionReview>;
+  AvatarPreset: ResolverTypeWrapper<AvatarPreset>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CefrLevel: CefrLevel;
   CertificateType: CertificateType;
@@ -3069,6 +3267,19 @@ export type ResolversTypes = ResolversObject<{
   SubmitAnswerInput: SubmitAnswerInput;
   TargetCertificate: TargetCertificate;
   TargetLevel: TargetLevel;
+  TranslationAttempt: ResolverTypeWrapper<TranslationAttempt>;
+  TranslationAttemptPage: ResolverTypeWrapper<TranslationAttemptPage>;
+  TranslationAttemptStatus: TranslationAttemptStatus;
+  TranslationFeedback: ResolverTypeWrapper<TranslationFeedback>;
+  TranslationItem: ResolverTypeWrapper<TranslationItem>;
+  TranslationLatestAttempt: ResolverTypeWrapper<TranslationLatestAttempt>;
+  TranslationMistake: ResolverTypeWrapper<TranslationMistake>;
+  TranslationMistakeType: TranslationMistakeType;
+  TranslationParts: ResolverTypeWrapper<TranslationParts>;
+  TranslationSet: ResolverTypeWrapper<TranslationSet>;
+  TranslationSetDetail: ResolverTypeWrapper<TranslationSetDetail>;
+  TranslationSetPage: ResolverTypeWrapper<TranslationSetPage>;
+  TranslationVerdict: TranslationVerdict;
   TutorConversation: ResolverTypeWrapper<TutorConversation>;
   TutorConversationSummary: ResolverTypeWrapper<TutorConversationSummary>;
   TutorFailureCount: ResolverTypeWrapper<TutorFailureCount>;
@@ -3117,6 +3328,7 @@ export type ResolversParentTypes = ResolversObject<{
   AttemptOptionReview: AttemptOptionReview;
   AttemptPart: AttemptPart;
   AttemptQuestionReview: AttemptQuestionReview;
+  AvatarPreset: AvatarPreset;
   Boolean: Scalars['Boolean']['output'];
   ContentReview: ContentReview;
   ContentReviewPage: ContentReviewPage;
@@ -3201,6 +3413,16 @@ export type ResolversParentTypes = ResolversObject<{
   StartExamAttemptInput: StartExamAttemptInput;
   String: Scalars['String']['output'];
   SubmitAnswerInput: SubmitAnswerInput;
+  TranslationAttempt: TranslationAttempt;
+  TranslationAttemptPage: TranslationAttemptPage;
+  TranslationFeedback: TranslationFeedback;
+  TranslationItem: TranslationItem;
+  TranslationLatestAttempt: TranslationLatestAttempt;
+  TranslationMistake: TranslationMistake;
+  TranslationParts: TranslationParts;
+  TranslationSet: TranslationSet;
+  TranslationSetDetail: TranslationSetDetail;
+  TranslationSetPage: TranslationSetPage;
   TutorConversation: TutorConversation;
   TutorConversationSummary: TutorConversationSummary;
   TutorFailureCount: TutorFailureCount;
@@ -3382,6 +3604,11 @@ export type AttemptQuestionReviewResolvers<ContextType = GraphQLContext, ParentT
   options?: Resolver<Array<ResolversTypes['AttemptOptionReview']>, ParentType, ContextType>;
   questionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   selectedOptionIds?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+}>;
+
+export type AvatarPresetResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AvatarPreset'] = ResolversParentTypes['AvatarPreset']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type ContentReviewResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ContentReview'] = ResolversParentTypes['ContentReview']> = ResolversObject<{
@@ -3915,6 +4142,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   attachLevelCheckSpeakingAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckSpeakingAttemptArgs, 'attemptId' | 'id'>>;
   branchTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationBranchTutorConversationArgs, 'clientMessageId' | 'conversationId' | 'message' | 'messageId'>>;
   cancelTutorReply?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationCancelTutorReplyArgs, 'conversationId' | 'messageId'>>;
+  chooseAvatar?: Resolver<ResolversTypes['Me'], ParentType, ContextType, RequireFields<MutationChooseAvatarArgs, 'preset'>>;
   clearTutorMemory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationClearTutorMemoryArgs, 'conversationId'>>;
   completeMyTour?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   completeOnboarding?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType>;
@@ -3965,6 +4193,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   submitExamForReview?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationSubmitExamForReviewArgs, 'id'>>;
   submitQuizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<MutationSubmitQuizAttemptArgs, 'answers' | 'attemptId'>>;
   submitSpeakingAttempt?: Resolver<ResolversTypes['SpeakingAttempt'], ParentType, ContextType, RequireFields<MutationSubmitSpeakingAttemptArgs, 'attemptId'>>;
+  submitTranslation?: Resolver<ResolversTypes['TranslationAttempt'], ParentType, ContextType, RequireFields<MutationSubmitTranslationArgs, 'itemId' | 'response'>>;
   summarizeTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSummarizeTutorConversationArgs, 'clientMessageId' | 'conversationId'>>;
   transitionAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationTransitionAssessmentTaskArgs, 'action' | 'id'>>;
   updateProfile?: Resolver<ResolversTypes['Me'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
@@ -3977,6 +4206,7 @@ export type OnboardingStateResolvers<ContextType = GraphQLContext, ParentType ex
   currentLevel?: Resolver<Maybe<ResolversTypes['CefrLevel']>, ParentType, ContextType>;
   dailyStudyMinutes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   learningPurposeIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  placementAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   step?: Resolver<ResolversTypes['OnboardingStep'], ParentType, ContextType>;
   targetCertificateType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   targetDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
@@ -4010,6 +4240,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   attemptPaper?: Resolver<ResolversTypes['ExamPaper'], ParentType, ContextType, RequireFields<QueryAttemptPaperArgs, 'attemptId'>>;
   authoringAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<QueryAuthoringAssessmentTaskArgs, 'id'>>;
   authoringAssessmentTasks?: Resolver<ResolversTypes['AssessmentTaskPage'], ParentType, ContextType, Partial<QueryAuthoringAssessmentTasksArgs>>;
+  avatarPresets?: Resolver<Array<ResolversTypes['AvatarPreset']>, ParentType, ContextType>;
   dailyPath?: Resolver<ResolversTypes['DailyPath'], ParentType, ContextType>;
   dictationLesson?: Resolver<ResolversTypes['DictationLessonDetail'], ParentType, ContextType, RequireFields<QueryDictationLessonArgs, 'id'>>;
   dictationLessons?: Resolver<ResolversTypes['DictationLessonPage'], ParentType, ContextType, RequireFields<QueryDictationLessonsArgs, 'page' | 'size'>>;
@@ -4043,6 +4274,10 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   speakingAttempts?: Resolver<Array<ResolversTypes['SpeakingAttempt']>, ParentType, ContextType, RequireFields<QuerySpeakingAttemptsArgs, 'promptId'>>;
   speakingPrompt?: Resolver<ResolversTypes['SpeakingPrompt'], ParentType, ContextType, RequireFields<QuerySpeakingPromptArgs, 'id'>>;
   speakingPrompts?: Resolver<ResolversTypes['SpeakingPromptPage'], ParentType, ContextType, RequireFields<QuerySpeakingPromptsArgs, 'page' | 'size'>>;
+  translationAttempt?: Resolver<ResolversTypes['TranslationAttempt'], ParentType, ContextType, RequireFields<QueryTranslationAttemptArgs, 'id'>>;
+  translationAttempts?: Resolver<ResolversTypes['TranslationAttemptPage'], ParentType, ContextType, RequireFields<QueryTranslationAttemptsArgs, 'page' | 'size'>>;
+  translationSet?: Resolver<ResolversTypes['TranslationSetDetail'], ParentType, ContextType, RequireFields<QueryTranslationSetArgs, 'id'>>;
+  translationSets?: Resolver<ResolversTypes['TranslationSetPage'], ParentType, ContextType, RequireFields<QueryTranslationSetsArgs, 'page' | 'size'>>;
   tutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<QueryTutorConversationArgs, 'id'>>;
   tutorConversations?: Resolver<Array<ResolversTypes['TutorConversationSummary']>, ParentType, ContextType>;
   tutorHistory?: Resolver<ResolversTypes['TutorHistoryPage'], ParentType, ContextType, RequireFields<QueryTutorHistoryArgs, 'archived' | 'page' | 'search' | 'size'>>;
@@ -4287,6 +4522,89 @@ export type SpeakingWordResolvers<ContextType = GraphQLContext, ParentType exten
   word?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
+export type TranslationAttemptResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationAttempt'] = ResolversParentTypes['TranslationAttempt']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  errorCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  feedback?: Resolver<Maybe<ResolversTypes['TranslationFeedback']>, ParentType, ContextType>;
+  gradedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  itemId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  referenceEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  response?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  score?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  setId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  sourceVi?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['TranslationAttemptStatus'], ParentType, ContextType>;
+}>;
+
+export type TranslationAttemptPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationAttemptPage'] = ResolversParentTypes['TranslationAttemptPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['TranslationAttempt']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TranslationFeedbackResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationFeedback'] = ResolversParentTypes['TranslationFeedback']> = ResolversObject<{
+  errors?: Resolver<Array<ResolversTypes['TranslationMistake']>, ParentType, ContextType>;
+  improved?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parts?: Resolver<ResolversTypes['TranslationParts'], ParentType, ContextType>;
+  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  verdict?: Resolver<ResolversTypes['TranslationVerdict'], ParentType, ContextType>;
+}>;
+
+export type TranslationItemResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationItem'] = ResolversParentTypes['TranslationItem']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  latestAttempt?: Resolver<Maybe<ResolversTypes['TranslationLatestAttempt']>, ParentType, ContextType>;
+  orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  sourceVi?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type TranslationLatestAttemptResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationLatestAttempt'] = ResolversParentTypes['TranslationLatestAttempt']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  score?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['TranslationAttemptStatus'], ParentType, ContextType>;
+}>;
+
+export type TranslationMistakeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationMistake'] = ResolversParentTypes['TranslationMistake']> = ResolversObject<{
+  correction?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  explanation?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  original?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['TranslationMistakeType'], ParentType, ContextType>;
+}>;
+
+export type TranslationPartsResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationParts'] = ResolversParentTypes['TranslationParts']> = ResolversObject<{
+  grammar?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  meaning?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  naturalness?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  vocabulary?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type TranslationSetResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationSet'] = ResolversParentTypes['TranslationSet']> = ResolversObject<{
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  gradedCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  itemCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  targetLevel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  topic?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type TranslationSetDetailResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationSetDetail'] = ResolversParentTypes['TranslationSetDetail']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['TranslationItem']>, ParentType, ContextType>;
+  set?: Resolver<ResolversTypes['TranslationSet'], ParentType, ContextType>;
+}>;
+
+export type TranslationSetPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TranslationSetPage'] = ResolversParentTypes['TranslationSetPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['TranslationSet']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
 export type TutorConversationResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TutorConversation'] = ResolversParentTypes['TutorConversation']> = ResolversObject<{
   conversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType>;
   messages?: Resolver<Array<ResolversTypes['TutorMessage']>, ParentType, ContextType>;
@@ -4494,6 +4812,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AttemptOptionReview?: AttemptOptionReviewResolvers<ContextType>;
   AttemptPart?: AttemptPartResolvers<ContextType>;
   AttemptQuestionReview?: AttemptQuestionReviewResolvers<ContextType>;
+  AvatarPreset?: AvatarPresetResolvers<ContextType>;
   ContentReview?: ContentReviewResolvers<ContextType>;
   ContentReviewPage?: ContentReviewPageResolvers<ContextType>;
   DailyPath?: DailyPathResolvers<ContextType>;
@@ -4568,6 +4887,16 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   SpeakingPromptPage?: SpeakingPromptPageResolvers<ContextType>;
   SpeakingUploadTicket?: SpeakingUploadTicketResolvers<ContextType>;
   SpeakingWord?: SpeakingWordResolvers<ContextType>;
+  TranslationAttempt?: TranslationAttemptResolvers<ContextType>;
+  TranslationAttemptPage?: TranslationAttemptPageResolvers<ContextType>;
+  TranslationFeedback?: TranslationFeedbackResolvers<ContextType>;
+  TranslationItem?: TranslationItemResolvers<ContextType>;
+  TranslationLatestAttempt?: TranslationLatestAttemptResolvers<ContextType>;
+  TranslationMistake?: TranslationMistakeResolvers<ContextType>;
+  TranslationParts?: TranslationPartsResolvers<ContextType>;
+  TranslationSet?: TranslationSetResolvers<ContextType>;
+  TranslationSetDetail?: TranslationSetDetailResolvers<ContextType>;
+  TranslationSetPage?: TranslationSetPageResolvers<ContextType>;
   TutorConversation?: TutorConversationResolvers<ContextType>;
   TutorConversationSummary?: TutorConversationSummaryResolvers<ContextType>;
   TutorFailureCount?: TutorFailureCountResolvers<ContextType>;

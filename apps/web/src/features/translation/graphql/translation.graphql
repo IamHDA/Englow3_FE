@@ -1,0 +1,84 @@
+fragment TranslationSetFields on TranslationSet {
+  id
+  slug
+  title
+  topic
+  targetLevel
+  description
+  itemCount
+  gradedCount
+}
+
+fragment TranslationAttemptFields on TranslationAttempt {
+  id
+  setId
+  itemId
+  sourceVi
+  response
+  status
+  score
+  errorCode
+  referenceEn
+  notes
+  createdAt
+  gradedAt
+  feedback {
+    verdict
+    summary
+    improved
+    parts {
+      meaning
+      grammar
+      vocabulary
+      naturalness
+    }
+    errors {
+      type
+      original
+      correction
+      explanation
+    }
+  }
+}
+
+query TranslationSets($topic: String, $title: String, $page: Int, $size: Int) {
+  translationSets(topic: $topic, title: $title, page: $page, size: $size) {
+    items {
+      ...TranslationSetFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query TranslationSet($id: ID!) {
+  translationSet(id: $id) {
+    set {
+      ...TranslationSetFields
+    }
+    items {
+      id
+      orderNo
+      sourceVi
+      latestAttempt {
+        id
+        status
+        score
+      }
+    }
+  }
+}
+
+query TranslationAttempt($id: ID!) {
+  translationAttempt(id: $id) {
+    ...TranslationAttemptFields
+  }
+}
+
+mutation SubmitTranslation($itemId: ID!, $response: String!) {
+  submitTranslation(itemId: $itemId, response: $response) {
+    ...TranslationAttemptFields
+  }
+}

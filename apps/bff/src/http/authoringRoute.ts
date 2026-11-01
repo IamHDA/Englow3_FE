@@ -14,6 +14,7 @@ const paths: Record<string, string> = {
   QUIZ: "/api/admin/quizzes",
   DICTATION_LESSON: "/api/admin/dictation/lessons",
   SPEAKING_PROMPT: "/api/admin/speaking/prompts",
+  TRANSLATION_SET: "/api/admin/translation/sets",
   EXAM: "/api/admin/exams",
 };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

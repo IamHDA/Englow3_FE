@@ -58,6 +58,7 @@ export const contentManagementTypeDefs = /* GraphQL */ `
     QUIZ
     DICTATION_LESSON
     SPEAKING_PROMPT
+    TRANSLATION_SET
   }
 
   """

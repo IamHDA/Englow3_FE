@@ -14,6 +14,8 @@ export interface NavTranslations {
   flashcardsDesc: string;
   dictation: string;
   dictationDesc: string;
+  translation: string;
+  translationDesc: string;
   dailyPath: string;
   dailyPathDesc: string;
   roadmap: string;
@@ -111,6 +113,7 @@ export interface AccountTranslations {
   activeSessionsDesc: string;
   currentBrowser: string;
   activeNow: string;
+  changeAvatar: string;
   supabaseAuthNotice: string;
   secureSession: string;
   onboardingReady: string;
@@ -835,6 +838,8 @@ export const translations: Record<Language, AppTranslations> = {
       flashcardsDesc: "Bộ thẻ 3D tối ưu theo khả năng ghi nhớ của bạn",
       dictation: "Nghe chính tả",
       dictationDesc: "Thử thách nghe và gõ lại từng câu",
+      translation: "Luyện dịch",
+      translationDesc: "Dịch câu Việt sang Anh, AI chấm và sửa lỗi",
       dailyPath: "Việc cần làm hôm nay",
       dailyPathDesc: "Những bài nên làm hôm nay, lấy từ lộ trình của bạn",
       roadmap: "Lộ trình học",
@@ -935,6 +940,7 @@ export const translations: Record<Language, AppTranslations> = {
         "Các phiên đăng nhập hiện đang hoạt động trên hệ thống",
       currentBrowser: "Trình duyệt Web hiện tại",
       activeNow: "Đang hoạt động",
+      changeAvatar: "Đổi ảnh đại diện",
       supabaseAuthNotice: "Đăng nhập an toàn qua hệ thống Englow3",
       secureSession: "Phiên bảo mật",
       onboardingReady: "Đã sẵn sàng học",
@@ -1725,6 +1731,8 @@ export const translations: Record<Language, AppTranslations> = {
       flashcardsDesc: "3D cards tailored to your memory retention",
       dictation: "Dictation",
       dictationDesc: "Listen and transcribe challenge",
+      translation: "Translation",
+      translationDesc: "Translate Vietnamese into English with AI feedback",
       dailyPath: "Today's tasks",
       dailyPathDesc: "What to do today, taken from your roadmap",
       roadmap: "Learning roadmap",
@@ -1826,6 +1834,7 @@ export const translations: Record<Language, AppTranslations> = {
         "Devices and sessions currently authenticated with your account",
       currentBrowser: "Current Web Browser",
       activeNow: "Active Now",
+      changeAvatar: "Change profile picture",
       supabaseAuthNotice:
         "Authenticated securely via Englow3 security services",
       secureSession: "Secure Session",

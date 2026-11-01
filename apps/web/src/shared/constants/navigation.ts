@@ -3,6 +3,7 @@ import {
   ClipboardCheck,
   GraduationCap,
   Headphones,
+  Languages,
   Layers,
   Mic,
   Flag,
@@ -57,6 +58,12 @@ export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
       description: nav.dictationDesc,
       href: "/study/dictation",
       icon: Headphones,
+    },
+    {
+      label: nav.translation,
+      description: nav.translationDesc,
+      href: "/study/translation",
+      icon: Languages,
     },
     {
       label: nav.roadmap,

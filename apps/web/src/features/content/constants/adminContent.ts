@@ -30,6 +30,10 @@ export const CONTENT_KIND_LABELS: Record<ContentKind, Words> = {
   [ContentKind.QUIZ]: { vi: "Bài trắc nghiệm", en: "Quizzes" },
   [ContentKind.DICTATION_LESSON]: { vi: "Bài nghe chép", en: "Dictation" },
   [ContentKind.SPEAKING_PROMPT]: { vi: "Câu luyện nói", en: "Pronunciation" },
+  [ContentKind.TRANSLATION_SET]: {
+    vi: "Bộ câu luyện dịch",
+    en: "Translation sets",
+  },
 };
 
 /**
@@ -43,6 +47,7 @@ export const CONTENT_ITEM_LABELS: Record<ContentKind, Words | null> = {
   [ContentKind.QUIZ]: { vi: "câu hỏi", en: "questions" },
   [ContentKind.DICTATION_LESSON]: { vi: "câu", en: "sentences" },
   [ContentKind.SPEAKING_PROMPT]: null,
+  [ContentKind.TRANSLATION_SET]: { vi: "câu", en: "sentences" },
 };
 
 /**
@@ -234,6 +239,31 @@ export const CONTENT_ERROR_MESSAGES: Record<string, Words> = {
   SPEAKING_PROMPT_NOT_ARCHIVED: {
     vi: "Chỉ khôi phục được câu đã lưu trữ.",
     en: "Only an archived prompt can be restored.",
+  },
+
+  TRANSLATION_SET_EMPTY: {
+    vi: "Bộ câu luyện dịch chưa có câu nào.",
+    en: "The translation set has no sentences yet.",
+  },
+  TRANSLATION_SET_NOT_DRAFT: {
+    vi: "Chỉ phát hành được bộ câu đang là bản nháp.",
+    en: "Only a draft can be published.",
+  },
+  TRANSLATION_SET_NOT_SUBMITTABLE: {
+    vi: "Chỉ gửi duyệt được bộ câu đang là bản nháp hoặc bị trả lại.",
+    en: "Only a draft or returned set can be submitted.",
+  },
+  TRANSLATION_SET_NOT_PENDING_REVIEW: {
+    vi: "Bộ câu này không còn chờ duyệt - có thể ai đó vừa xử lý.",
+    en: "This set is no longer awaiting review - someone may have just handled it.",
+  },
+  TRANSLATION_SET_ALREADY_ARCHIVED: {
+    vi: "Bộ câu này đã được lưu trữ từ trước.",
+    en: "This set was already archived.",
+  },
+  TRANSLATION_SET_NOT_ARCHIVED: {
+    vi: "Chỉ khôi phục được bộ câu đã lưu trữ.",
+    en: "Only an archived set can be restored.",
   },
 };
 

@@ -1,5 +1,10 @@
 export type AuthoringKind =
-  "FLASHCARD_SET" | "QUIZ" | "DICTATION_LESSON" | "SPEAKING_PROMPT" | "EXAM";
+  | "FLASHCARD_SET"
+  | "QUIZ"
+  | "DICTATION_LESSON"
+  | "SPEAKING_PROMPT"
+  | "TRANSLATION_SET"
+  | "EXAM";
 export type Metadata = {
   slug?: string;
   name?: string;

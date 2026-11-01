@@ -63,6 +63,7 @@ const KIND_TABS = [
   ContentKind.QUIZ,
   ContentKind.DICTATION_LESSON,
   ContentKind.SPEAKING_PROMPT,
+  ContentKind.TRANSLATION_SET,
 ];
 
 function statusOptions(isVi: boolean) {

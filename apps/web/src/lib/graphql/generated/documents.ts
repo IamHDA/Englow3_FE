@@ -9,6 +9,20 @@ export type Incremental<T> =
 import type * as Types from "./schemaTypes";
 
 import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+export type AvatarPresetsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AvatarPresetsQuery = {
+  avatarPresets: Array<{ id: string; url: string }>;
+};
+
+export type ChooseAvatarMutationVariables = Exact<{
+  preset: string | number;
+}>;
+
+export type ChooseAvatarMutation = {
+  chooseAvatar: { id: string; avatarUrl: string | null };
+};
+
 export type UpdateProfileMutationVariables = Exact<{
   input: Types.UpdateProfileInput;
 }>;
@@ -3053,6 +3067,7 @@ export type OnboardingStateFieldsFragment = {
   targetLevel: Types.CefrLevel | null;
   dailyStudyMinutes: number | null;
   targetSkills: Array<Types.LearningSkill>;
+  placementAttemptId: string | null;
 };
 
 export type SelectLearningPurposesMutationVariables = Exact<{
@@ -3071,6 +3086,7 @@ export type SelectLearningPurposesMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3090,6 +3106,7 @@ export type SetCertificateTargetMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3109,6 +3126,7 @@ export type SetCurrentLevelMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3128,6 +3146,7 @@ export type SetLearningGoalMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3147,6 +3166,7 @@ export type SelectTargetSkillsMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3166,6 +3186,7 @@ export type CompleteOnboardingMutation = {
     targetLevel: Types.CefrLevel | null;
     dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
+    placementAttemptId: string | null;
   };
 };
 
@@ -3930,6 +3951,181 @@ export type CompleteMyTourMutationVariables = Exact<{ [key: string]: never }>;
 
 export type CompleteMyTourMutation = { completeMyTour: { completed: boolean } };
 
+export type TranslationSetFieldsFragment = {
+  id: string;
+  slug: string;
+  title: string;
+  topic: string;
+  targetLevel: string | null;
+  description: string | null;
+  itemCount: number;
+  gradedCount: number;
+};
+
+export type TranslationAttemptFieldsFragment = {
+  id: string;
+  setId: string;
+  itemId: string;
+  sourceVi: string;
+  response: string;
+  status: Types.TranslationAttemptStatus;
+  score: number | null;
+  errorCode: string | null;
+  referenceEn: string | null;
+  notes: string | null;
+  createdAt: string;
+  gradedAt: string | null;
+  feedback: {
+    verdict: Types.TranslationVerdict;
+    summary: string;
+    improved: string;
+    parts: {
+      meaning: number;
+      grammar: number;
+      vocabulary: number;
+      naturalness: number;
+    };
+    errors: Array<{
+      type: Types.TranslationMistakeType;
+      original: string;
+      correction: string;
+      explanation: string;
+    }>;
+  } | null;
+};
+
+export type TranslationSetsQueryVariables = Exact<{
+  topic?: string | null | undefined;
+  title?: string | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type TranslationSetsQuery = {
+  translationSets: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      description: string | null;
+      itemCount: number;
+      gradedCount: number;
+    }>;
+  };
+};
+
+export type TranslationSetQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TranslationSetQuery = {
+  translationSet: {
+    set: {
+      id: string;
+      slug: string;
+      title: string;
+      topic: string;
+      targetLevel: string | null;
+      description: string | null;
+      itemCount: number;
+      gradedCount: number;
+    };
+    items: Array<{
+      id: string;
+      orderNo: number;
+      sourceVi: string;
+      latestAttempt: {
+        id: string;
+        status: Types.TranslationAttemptStatus;
+        score: number | null;
+      } | null;
+    }>;
+  };
+};
+
+export type TranslationAttemptQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type TranslationAttemptQuery = {
+  translationAttempt: {
+    id: string;
+    setId: string;
+    itemId: string;
+    sourceVi: string;
+    response: string;
+    status: Types.TranslationAttemptStatus;
+    score: number | null;
+    errorCode: string | null;
+    referenceEn: string | null;
+    notes: string | null;
+    createdAt: string;
+    gradedAt: string | null;
+    feedback: {
+      verdict: Types.TranslationVerdict;
+      summary: string;
+      improved: string;
+      parts: {
+        meaning: number;
+        grammar: number;
+        vocabulary: number;
+        naturalness: number;
+      };
+      errors: Array<{
+        type: Types.TranslationMistakeType;
+        original: string;
+        correction: string;
+        explanation: string;
+      }>;
+    } | null;
+  };
+};
+
+export type SubmitTranslationMutationVariables = Exact<{
+  itemId: string | number;
+  response: string;
+}>;
+
+export type SubmitTranslationMutation = {
+  submitTranslation: {
+    id: string;
+    setId: string;
+    itemId: string;
+    sourceVi: string;
+    response: string;
+    status: Types.TranslationAttemptStatus;
+    score: number | null;
+    errorCode: string | null;
+    referenceEn: string | null;
+    notes: string | null;
+    createdAt: string;
+    gradedAt: string | null;
+    feedback: {
+      verdict: Types.TranslationVerdict;
+      summary: string;
+      improved: string;
+      parts: {
+        meaning: number;
+        grammar: number;
+        vocabulary: number;
+        naturalness: number;
+      };
+      errors: Array<{
+        type: Types.TranslationMistakeType;
+        original: string;
+        correction: string;
+        explanation: string;
+      }>;
+    } | null;
+  };
+};
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CurrentUserQuery = {
@@ -3953,6 +4149,7 @@ export type CurrentUserQuery = {
       targetLevel: Types.CefrLevel | null;
       dailyStudyMinutes: number | null;
       targetSkills: Array<Types.LearningSkill>;
+      placementAttemptId: string | null;
     } | null;
   };
 };
@@ -4663,6 +4860,10 @@ export const OnboardingStateFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -5050,6 +5251,199 @@ export const LevelCheckFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<LevelCheckFieldsFragment, unknown>;
+export const TranslationSetFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TranslationSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TranslationSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "itemCount" } },
+          { kind: "Field", name: { kind: "Name", value: "gradedCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TranslationSetFieldsFragment, unknown>;
+export const TranslationAttemptFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TranslationAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TranslationAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "setId" } },
+          { kind: "Field", name: { kind: "Name", value: "itemId" } },
+          { kind: "Field", name: { kind: "Name", value: "sourceVi" } },
+          { kind: "Field", name: { kind: "Name", value: "response" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "score" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceEn" } },
+          { kind: "Field", name: { kind: "Name", value: "notes" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "feedback" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "verdict" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "improved" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "parts" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "meaning" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "grammar" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "vocabulary" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "naturalness" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "errors" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "type" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "original" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "correction" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "explanation" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TranslationAttemptFieldsFragment, unknown>;
+export const AvatarPresetsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AvatarPresets" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "avatarPresets" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "url" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AvatarPresetsQuery, AvatarPresetsQueryVariables>;
+export const ChooseAvatarDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ChooseAvatar" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "preset" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "chooseAvatar" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "preset" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "preset" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ChooseAvatarMutation,
+  ChooseAvatarMutationVariables
+>;
 export const UpdateProfileDocument = {
   kind: "Document",
   definitions: [
@@ -16175,6 +16569,10 @@ export const SelectLearningPurposesDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -16264,6 +16662,10 @@ export const SetCertificateTargetDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -16353,6 +16755,10 @@ export const SetCurrentLevelDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -16442,6 +16848,10 @@ export const SetLearningGoalDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -16537,6 +16947,10 @@ export const SelectTargetSkillsDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -16600,6 +17014,10 @@ export const CompleteOnboardingDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "placementAttemptId" },
+          },
         ],
       },
     },
@@ -18750,6 +19168,545 @@ export const CompleteMyTourDocument = {
   CompleteMyTourMutation,
   CompleteMyTourMutationVariables
 >;
+export const TranslationSetsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TranslationSets" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "topic" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "title" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "translationSets" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "topic" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "topic" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "title" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "title" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TranslationSetFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TranslationSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TranslationSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "itemCount" } },
+          { kind: "Field", name: { kind: "Name", value: "gradedCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TranslationSetsQuery,
+  TranslationSetsQueryVariables
+>;
+export const TranslationSetDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TranslationSet" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "translationSet" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "set" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "TranslationSetFields" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "orderNo" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "sourceVi" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "latestAttempt" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "status" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "score" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TranslationSetFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TranslationSet" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "slug" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "topic" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          { kind: "Field", name: { kind: "Name", value: "itemCount" } },
+          { kind: "Field", name: { kind: "Name", value: "gradedCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TranslationSetQuery, TranslationSetQueryVariables>;
+export const TranslationAttemptDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "TranslationAttempt" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "translationAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TranslationAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TranslationAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TranslationAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "setId" } },
+          { kind: "Field", name: { kind: "Name", value: "itemId" } },
+          { kind: "Field", name: { kind: "Name", value: "sourceVi" } },
+          { kind: "Field", name: { kind: "Name", value: "response" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "score" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceEn" } },
+          { kind: "Field", name: { kind: "Name", value: "notes" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "feedback" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "verdict" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "improved" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "parts" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "meaning" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "grammar" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "vocabulary" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "naturalness" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "errors" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "type" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "original" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "correction" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "explanation" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TranslationAttemptQuery,
+  TranslationAttemptQueryVariables
+>;
+export const SubmitTranslationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SubmitTranslation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "itemId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "response" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submitTranslation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "itemId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "itemId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "response" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "response" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "TranslationAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "TranslationAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "TranslationAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "setId" } },
+          { kind: "Field", name: { kind: "Name", value: "itemId" } },
+          { kind: "Field", name: { kind: "Name", value: "sourceVi" } },
+          { kind: "Field", name: { kind: "Name", value: "response" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "score" } },
+          { kind: "Field", name: { kind: "Name", value: "errorCode" } },
+          { kind: "Field", name: { kind: "Name", value: "referenceEn" } },
+          { kind: "Field", name: { kind: "Name", value: "notes" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "feedback" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "verdict" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "improved" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "parts" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "meaning" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "grammar" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "vocabulary" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "naturalness" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "errors" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "type" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "original" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "correction" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "explanation" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SubmitTranslationMutation,
+  SubmitTranslationMutationVariables
+>;
 export const CurrentUserDocument = {
   kind: "Document",
   definitions: [
@@ -18816,6 +19773,10 @@ export const CurrentUserDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "targetSkills" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "placementAttemptId" },
                       },
                     ],
                   },

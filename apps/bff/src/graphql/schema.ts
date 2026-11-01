@@ -17,6 +17,8 @@ import { quizResolvers } from "../modules/quiz/quiz.resolvers.js";
 import { quizTypeDefs } from "../modules/quiz/quiz.typeDefs.js";
 import { speakingResolvers } from "../modules/speaking/speaking.resolvers.js";
 import { speakingTypeDefs } from "../modules/speaking/speaking.typeDefs.js";
+import { translationResolvers } from "../modules/translation/translation.resolvers.js";
+import { translationTypeDefs } from "../modules/translation/translation.typeDefs.js";
 import { tutorResolvers } from "../modules/tutor/tutor.resolvers.js";
 import { tutorTypeDefs } from "../modules/tutor/tutor.typeDefs.js";
 import { onboardingResolvers } from "../modules/onboarding/onboarding.resolvers.js";
@@ -50,6 +52,7 @@ export const typeDefs = [
   roadmapTypeDefs,
   contentManagementTypeDefs,
   speakingTypeDefs,
+  translationTypeDefs,
   tutorTypeDefs,
 ];
 
@@ -69,6 +72,7 @@ export const resolvers = {
     ...roadmapResolvers.Query,
     ...contentManagementResolvers.Query,
     ...speakingResolvers.Query,
+    ...translationResolvers.Query,
     ...tutorResolvers.Query,
   },
   Mutation: {
@@ -82,6 +86,7 @@ export const resolvers = {
     ...contentManagementResolvers.Mutation,
     ...roadmapResolvers.Mutation,
     ...speakingResolvers.Mutation,
+    ...translationResolvers.Mutation,
     ...tutorResolvers.Mutation,
   },
   Me: {

@@ -10,6 +10,7 @@ import { ProgressApi } from "../modules/progress/progress.api.js";
 import { QuizApi } from "../modules/quiz/quiz.api.js";
 import { RoadmapApi } from "../modules/roadmap/roadmap.api.js";
 import { SpeakingApi } from "../modules/speaking/speaking.api.js";
+import { TranslationApi } from "../modules/translation/translation.api.js";
 import { TutorApi } from "../modules/tutor/tutor.api.js";
 import { OnboardingApi } from "../modules/onboarding/onboarding.api.js";
 import { UserApi } from "../modules/user/user.api.js";
@@ -33,6 +34,7 @@ export type GraphQLContext = {
     roadmapApi: RoadmapApi;
     contentManagementApi: ContentManagementApi;
     speakingApi: SpeakingApi;
+    translationApi: TranslationApi;
     tutorApi: TutorApi;
   };
 };
@@ -69,6 +71,7 @@ export async function createContext({
       roadmapApi: new RoadmapApi(client),
       contentManagementApi: new ContentManagementApi(client),
       speakingApi: new SpeakingApi(client),
+      translationApi: new TranslationApi(client),
       tutorApi: new TutorApi(client),
     },
   };
