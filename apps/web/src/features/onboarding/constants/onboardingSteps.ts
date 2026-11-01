@@ -195,6 +195,18 @@ export const CERTIFICATE_SCORE_RANGE: Record<
  * dịch sang lời người đọc được ở đây thay vì hiện thẳng thông báo của server.
  */
 export const ONBOARDING_ERROR_MESSAGES: Record<string, Words> = {
+  LEVEL_CHECK_PAPER_NOT_FOUND: {
+    vi: "Bài đo trình độ chưa sẵn sàng. Bạn hãy tự chọn trình độ bên dưới.",
+    en: "The level test is not ready yet. Choose your level below instead.",
+  },
+  TARGET_LEVEL_NOT_ABOVE_CURRENT: {
+    vi: "Trình độ muốn đạt phải cao hơn trình độ hiện tại.",
+    en: "The target level must be above your current level.",
+  },
+  DAILY_MINUTES_OUT_OF_RANGE: {
+    vi: "Thời gian học mỗi ngày nằm trong khoảng 10 - 240 phút.",
+    en: "Daily study time is between 10 and 240 minutes.",
+  },
   LEARNING_PURPOSE_NOT_FOUND: {
     vi: "Mục đích học vừa chọn không còn tồn tại. Tải lại trang rồi thử lại.",
     en: "That learning goal no longer exists. Reload the page and try again.",

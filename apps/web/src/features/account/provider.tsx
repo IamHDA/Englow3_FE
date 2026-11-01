@@ -144,6 +144,8 @@ export function AccountProvider({
                   targetCertificateType: state.targetCertificateType,
                   targetScore: state.targetScore,
                   targetDate: state.targetDate,
+                  targetLevel: state.targetLevel,
+                  dailyStudyMinutes: state.dailyStudyMinutes,
                   targetSkills: state.targetSkills,
                 },
               },

@@ -16,6 +16,7 @@ import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
 import {
+  CEFR_LEVEL_CHOICES,
   CERTIFICATE_SCORE_RANGE,
   LEARNING_GOAL_COPY,
   TARGET_CERTIFICATE_CHOICES,
@@ -27,7 +28,17 @@ import { OnboardingStepShell } from "../../parts/OnboardingStepShell";
 import { learningGoalSchema, type LearningGoalFormValues } from "./schema";
 
 import { OnboardingStep, TargetCertificate } from "@/lib/graphql/generated";
+import { CefrLevel } from "@/lib/graphql/generated";
 import type { LearningGoalInput } from "@/lib/graphql/generated";
+
+const CEFR_ORDER: CefrLevel[] = [
+  CefrLevel.A1,
+  CefrLevel.A2,
+  CefrLevel.B1,
+  CefrLevel.B2,
+  CefrLevel.C1,
+  CefrLevel.C2,
+];
 
 type LearningGoalStepProps = {
   /**
@@ -38,6 +49,10 @@ type LearningGoalStepProps = {
   initialCertificate: TargetCertificate | null;
   initialTargetScore: number | null;
   initialTargetDate: string | null;
+  /** Trình độ hiện tại; trình độ đích chỉ được chọn trong các mức cao hơn. */
+  currentLevel?: CefrLevel | null;
+  initialTargetLevel?: CefrLevel | null;
+  initialDailyMinutes?: number | null;
   pending: boolean;
   errorMessage: string | null;
   onContinue: (input: LearningGoalInput) => void;
@@ -52,14 +67,26 @@ export function LearningGoalStep({
   initialCertificate,
   initialTargetScore,
   initialTargetDate,
+  currentLevel = null,
+  initialTargetLevel = null,
+  initialDailyMinutes = null,
   pending,
   errorMessage,
   onContinue,
 }: LearningGoalStepProps) {
+  const levelChoices = CEFR_LEVEL_CHOICES.filter(
+    (choice) =>
+      currentLevel == null ||
+      CEFR_ORDER.indexOf(choice.level) > CEFR_ORDER.indexOf(currentLevel),
+  );
+  const requireTargetLevel = !certificateLearner && levelChoices.length > 0;
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const copy = isVi ? LEARNING_GOAL_COPY.vi : LEARNING_GOAL_COPY.en;
-  const schema = useMemo(() => learningGoalSchema(isVi), [isVi]);
+  const schema = useMemo(
+    () => learningGoalSchema(isVi, requireTargetLevel),
+    [isVi, requireTargetLevel],
+  );
   const {
     control,
     handleSubmit,
@@ -70,6 +97,9 @@ export function LearningGoalStep({
       certificateType: initialCertificate ?? TargetCertificate.IELTS,
       targetScore: initialTargetScore == null ? "" : String(initialTargetScore),
       targetDate: initialTargetDate ?? "",
+      targetLevel: initialTargetLevel ?? "",
+      dailyStudyMinutes:
+        initialDailyMinutes == null ? "30" : String(initialDailyMinutes),
     },
   });
 
@@ -88,6 +118,14 @@ export function LearningGoalStep({
           ? Number(values.targetScore)
           : null,
       targetDate: values.targetDate === "" ? null : values.targetDate,
+      targetLevel:
+        certificateLearner || values.targetLevel === ""
+          ? null
+          : (values.targetLevel as CefrLevel),
+      dailyStudyMinutes:
+        values.dailyStudyMinutes === ""
+          ? null
+          : Number(values.dailyStudyMinutes),
     });
   }
 
@@ -105,41 +143,84 @@ export function LearningGoalStep({
       }
     >
       <Flex component="form" direction="column" gap={24} noValidate>
-        <Controller
-          name="certificateType"
-          control={control}
-          render={({ field }) => (
-            <Stack gap={10}>
-              <Text size="sm" fw={700} c="ink.9">
-                {tr("Định dạng chứng chỉ", "Certificate format")}
-              </Text>
-              <Box
-                role="group"
-                aria-label={tr("Định dạng chứng chỉ", "Certificate format")}
-              >
-                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={16}>
-                  {TARGET_CERTIFICATE_CHOICES.map((choice) => (
-                    <OnboardingChoiceTile
-                      key={choice.certificate}
-                      label={choice.label}
-                      description={
-                        isVi ? choice.description.vi : choice.description.en
-                      }
-                      selected={field.value === choice.certificate}
-                      disabled={pending}
-                      onSelect={() => field.onChange(choice.certificate)}
-                    />
-                  ))}
-                </SimpleGrid>
-              </Box>
-              {errors.certificateType && (
-                <Text size="xs" c="warn.6">
-                  {errors.certificateType.message}
+        {!certificateLearner && levelChoices.length > 0 && (
+          <Controller
+            name="targetLevel"
+            control={control}
+            render={({ field }) => (
+              <Stack gap={10}>
+                <Text size="sm" fw={700} c="ink.9">
+                  {tr("Trình độ muốn đạt", "Level you want to reach")}
                 </Text>
-              )}
-            </Stack>
-          )}
-        />
+                <Box
+                  role="group"
+                  aria-label={tr(
+                    "Trình độ muốn đạt",
+                    "Level you want to reach",
+                  )}
+                >
+                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={16}>
+                    {levelChoices.map((choice) => (
+                      <OnboardingChoiceTile
+                        key={choice.level}
+                        label={isVi ? choice.label.vi : choice.label.en}
+                        description={
+                          isVi ? choice.description.vi : choice.description.en
+                        }
+                        selected={field.value === choice.level}
+                        disabled={pending}
+                        onSelect={() => field.onChange(choice.level)}
+                      />
+                    ))}
+                  </SimpleGrid>
+                </Box>
+                {errors.targetLevel && (
+                  <Text size="xs" c="warn.6">
+                    {errors.targetLevel.message}
+                  </Text>
+                )}
+              </Stack>
+            )}
+          />
+        )}
+
+        {certificateLearner && (
+          <Controller
+            name="certificateType"
+            control={control}
+            render={({ field }) => (
+              <Stack gap={10}>
+                <Text size="sm" fw={700} c="ink.9">
+                  {tr("Định dạng chứng chỉ", "Certificate format")}
+                </Text>
+                <Box
+                  role="group"
+                  aria-label={tr("Định dạng chứng chỉ", "Certificate format")}
+                >
+                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={16}>
+                    {TARGET_CERTIFICATE_CHOICES.map((choice) => (
+                      <OnboardingChoiceTile
+                        key={choice.certificate}
+                        label={choice.label}
+                        description={
+                          isVi ? choice.description.vi : choice.description.en
+                        }
+                        selected={field.value === choice.certificate}
+                        disabled={pending}
+                        onSelect={() => field.onChange(choice.certificate)}
+                      />
+                    ))}
+                  </SimpleGrid>
+                </Box>
+                {errors.certificateType && (
+                  <Text size="xs" c="warn.6">
+                    {errors.certificateType.message}
+                  </Text>
+                )}
+              </Stack>
+            )}
+          />
+        )}
 
         {certificateLearner && (
           <Controller
@@ -170,6 +251,33 @@ export function LearningGoalStep({
             )}
           />
         )}
+
+        <Controller
+          name="dailyStudyMinutes"
+          control={control}
+          render={({ field }) => (
+            <NumberInput
+              label={tr(
+                "Thời gian học mỗi ngày (phút)",
+                "Daily study time (minutes)",
+              )}
+              description={tr(
+                "Lộ trình chia bài mỗi tuần vừa với thời gian này.",
+                "Your roadmap fits each week's work into this time.",
+              )}
+              min={10}
+              max={240}
+              step={5}
+              radius="md"
+              size="md"
+              disabled={pending}
+              error={errors.dailyStudyMinutes?.message}
+              value={field.value}
+              onChange={(value) => field.onChange(String(value))}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
 
         <Controller
           name="targetDate"

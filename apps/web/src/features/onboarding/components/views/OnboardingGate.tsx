@@ -85,6 +85,8 @@ function renderOnboardingStep(
           errorMessage={errorMessage}
           onContinue={actions.submitCurrentLevel}
           onTakePlacementTest={actions.startPlacementTest}
+          certificateLearner={state?.certificateLearner ?? false}
+          onTakeLevelCheck={actions.startLevelCheck}
         />
       );
     case OnboardingStep.LEARNING_GOAL:
@@ -96,6 +98,9 @@ function renderOnboardingStep(
           )}
           initialTargetScore={state?.targetScore ?? null}
           initialTargetDate={state?.targetDate ?? null}
+          currentLevel={state?.currentLevel ?? null}
+          initialTargetLevel={state?.targetLevel ?? null}
+          initialDailyMinutes={state?.dailyStudyMinutes ?? null}
           pending={pending}
           errorMessage={errorMessage}
           onContinue={actions.submitLearningGoal}

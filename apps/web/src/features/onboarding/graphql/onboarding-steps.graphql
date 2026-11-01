@@ -6,6 +6,8 @@ fragment OnboardingStateFields on OnboardingState {
   currentLevel
   targetScore
   targetDate
+  targetLevel
+  dailyStudyMinutes
   targetSkills
 }
 

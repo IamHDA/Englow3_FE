@@ -14,6 +14,7 @@ import {
 import {
   IconBook,
   IconCheck,
+  IconFlag,
   IconHeadphones,
   IconPlayerPlay,
   IconRotateClockwise,
@@ -45,6 +46,8 @@ const KIND_ICONS = {
   [DailyTaskKind.QUIZ]: IconSparkles,
   [DailyTaskKind.WRITING]: IconBook,
   [DailyTaskKind.SPEAKING]: IconHeadphones,
+  [DailyTaskKind.PRONUNCIATION]: IconHeadphones,
+  [DailyTaskKind.MILESTONE]: IconFlag,
 };
 
 /**

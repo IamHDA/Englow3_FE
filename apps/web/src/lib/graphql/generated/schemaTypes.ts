@@ -11,6 +11,15 @@ export type Scalars = {
   DateTime: { input: string; output: string };
 };
 
+export enum AdjustmentReason {
+  AHEAD_OF_SCHEDULE = "AHEAD_OF_SCHEDULE",
+  BEHIND_SCHEDULE = "BEHIND_SCHEDULE",
+  GOAL_CHANGED = "GOAL_CHANGED",
+  LEVEL_REASSESSED = "LEVEL_REASSESSED",
+  MILESTONE_FAILED = "MILESTONE_FAILED",
+  MILESTONE_PASSED = "MILESTONE_PASSED",
+}
+
 /**
  * The administrator's landing page: what is waiting on a decision, how much is
  * live, and whether anyone is using it.
@@ -139,14 +148,17 @@ export type AssessmentSubmissionTask = {
 
 export type AssessmentTask = {
   __typename?: "AssessmentTask";
+  certificateType?: Maybe<CertificateType>;
   id: Scalars["ID"]["output"];
   instructions: Scalars["String"]["output"];
   minimumWords: Scalars["Int"]["output"];
+  purpose: AssessmentTaskPurpose;
   reviewNote?: Maybe<Scalars["String"]["output"]>;
   rubricNotes?: Maybe<Scalars["String"]["output"]>;
   sampleAnswer?: Maybe<Scalars["String"]["output"]>;
   skill: AssessmentSkill;
   status: AssessmentTaskStatus;
+  targetLevel?: Maybe<CefrLevel>;
   taskType: Scalars["String"]["output"];
   timeLimitSeconds: Scalars["Int"]["output"];
   title: Scalars["String"]["output"];
@@ -154,11 +166,19 @@ export type AssessmentTask = {
 };
 
 export type AssessmentTaskInput = {
+  /** Set for IELTS/TOEIC preparation; leave empty for general practice. */
+  certificateType?: InputMaybe<CertificateType>;
   instructions: Scalars["String"]["input"];
   minimumWords: Scalars["Int"]["input"];
+  /**
+   * Defaults to PRACTICE. LEVEL_CHECK is refused for a Writing task
+   * (TASK_PURPOSE_SKILL).
+   */
+  purpose?: InputMaybe<AssessmentTaskPurpose>;
   rubricNotes?: InputMaybe<Scalars["String"]["input"]>;
   sampleAnswer?: InputMaybe<Scalars["String"]["input"]>;
   skill: AssessmentSkill;
+  targetLevel?: InputMaybe<CefrLevel>;
   taskType: Scalars["String"]["input"];
   timeLimitSeconds: Scalars["Int"]["input"];
   title: Scalars["String"]["input"];
@@ -171,6 +191,15 @@ export type AssessmentTaskPage = {
   totalItems: Scalars["Int"]["output"];
   totalPages: Scalars["Int"]["output"];
 };
+
+export enum AssessmentTaskPurpose {
+  /**
+   * The spoken part of the roadmap's level check (Speaking only). Kept out of
+   * the learner catalogue.
+   */
+  LEVEL_CHECK = "LEVEL_CHECK",
+  PRACTICE = "PRACTICE",
+}
 
 export enum AssessmentTaskStatus {
   ARCHIVED = "ARCHIVED",
@@ -309,6 +338,11 @@ export type DailyPath = {
   level: Scalars["Int"]["output"];
   levelCostXp: Scalars["Int"]["output"];
   quests: Array<DailyQuest>;
+  /**
+   * The roadmap stage today's work comes from, or null when the learner has no
+   * active roadmap and the general rules chose the work.
+   */
+  roadmapStageTitle?: Maybe<Scalars["String"]["output"]>;
   /** Consecutive days with any practice, counted across every feature. */
   streakDays: Scalars["Int"]["output"];
   tasks: Array<DailyTask>;
@@ -353,6 +387,13 @@ export enum DailyTaskKind {
   DICTATION = "DICTATION",
   /** Cards the spaced-repetition schedule says are due. */
   FLASHCARD_REVIEW = "FLASHCARD_REVIEW",
+  /**
+   * The test closing the current roadmap stage. targetId is the milestone; the
+   * roadmap page shows how to take it.
+   */
+  MILESTONE = "MILESTONE",
+  /** A pronunciation prompt scheduled by the learner's roadmap. */
+  PRONUNCIATION = "PRONUNCIATION",
   QUIZ = "QUIZ",
   SPEAKING = "SPEAKING",
   WRITING = "WRITING",
@@ -747,6 +788,12 @@ export enum ExamStatus {
 }
 
 export enum ExamType {
+  /**
+   * The written part of the roadmap's level check: vocabulary and grammar in
+   * its READING section, plus LISTENING. Taken in full only, and kept out of
+   * the learner catalogue.
+   */
+  LEVEL_CHECK = "LEVEL_CHECK",
   MOCK = "MOCK",
   PLACEMENT = "PLACEMENT",
 }
@@ -923,7 +970,17 @@ export type LearnerExamPage = {
 
 export type LearningGoalInput = {
   certificateType: TargetCertificate;
+  /**
+   * Minutes a day the learner means to study, 10-240. The roadmap plans each
+   * week within it.
+   */
+  dailyStudyMinutes?: InputMaybe<Scalars["Int"]["input"]>;
   targetDate?: InputMaybe<Scalars["Date"]["input"]>;
+  /**
+   * Only a learner without a certificate goal may send this, and it must be
+   * above their current level (TARGET_LEVEL_NOT_ABOVE_CURRENT otherwise).
+   */
+  targetLevel?: InputMaybe<CefrLevel>;
   /** Only a certificate learner may send this - the backend refuses it otherwise. */
   targetScore?: InputMaybe<Scalars["Float"]["input"]>;
 };
@@ -945,6 +1002,46 @@ export enum LearningSkill {
   WRITING = "WRITING",
 }
 
+export type LevelCheck = {
+  __typename?: "LevelCheck";
+  completedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  createdAt: Scalars["DateTime"]["output"];
+  examAttemptId?: Maybe<Scalars["ID"]["output"]>;
+  /** The paper to sit (vocabulary/grammar and listening), through the exam screens. */
+  examId: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  listeningLevel?: Maybe<CefrLevel>;
+  milestoneId?: Maybe<Scalars["ID"]["output"]>;
+  /** The band from the written parts alone while the spoken part is outstanding. */
+  provisionalLevel?: Maybe<CefrLevel>;
+  purpose: LevelCheckPurpose;
+  resultLevel?: Maybe<CefrLevel>;
+  speakingAttemptId?: Maybe<Scalars["ID"]["output"]>;
+  /** The spoken answer could not be graded; answer again or skip it. */
+  speakingFailed: Scalars["Boolean"]["output"];
+  speakingLevel?: Maybe<CefrLevel>;
+  speakingSkipped: Scalars["Boolean"]["output"];
+  /** The spoken task to answer; null when none is published. */
+  speakingTaskId?: Maybe<Scalars["ID"]["output"]>;
+  status: LevelCheckStatus;
+  vocabLevel?: Maybe<CefrLevel>;
+};
+
+export enum LevelCheckPurpose {
+  /** The test closing a stage of a level roadmap. */
+  MILESTONE = "MILESTONE",
+  /** The starting level of a learner without a certificate goal. */
+  ONBOARDING = "ONBOARDING",
+}
+
+export enum LevelCheckStatus {
+  /** The paper is scored; the spoken answer is not graded yet, or not given. */
+  AWAITING_SPEAKING = "AWAITING_SPEAKING",
+  COMPLETED = "COMPLETED",
+  /** The paper is not scored yet. */
+  IN_PROGRESS = "IN_PROGRESS",
+}
+
 export type Me = {
   __typename?: "Me";
   avatarUrl?: Maybe<Scalars["String"]["output"]>;
@@ -959,6 +1056,20 @@ export type Me = {
   onboardingStep: OnboardingStep;
   role: Role;
 };
+
+export enum MilestoneKind {
+  /** Sit examId and reach requiredScore on the certificate scale. */
+  CERTIFICATE_MOCK = "CERTIFICATE_MOCK",
+  /** Take a level check and reach requiredLevel. */
+  LEVEL_CHECK = "LEVEL_CHECK",
+}
+
+export enum MilestoneStatus {
+  /** The last attempt fell short; it can be taken again. */
+  FAILED = "FAILED",
+  PASSED = "PASSED",
+  PENDING = "PENDING",
+}
 
 /**
  * One line to practise again.
@@ -990,6 +1101,7 @@ export type MistakeSentence = {
 export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["Boolean"]["output"]>;
+  abandonRoadmap: Scalars["Boolean"]["output"];
   /**
    * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
    * same step - there is no approved-but-unpublished state.
@@ -1009,6 +1121,8 @@ export type Mutation = {
    */
   archiveExam: Exam;
   archiveTutorConversation: TutorConversationSummary;
+  attachLevelCheckExamAttempt: LevelCheck;
+  attachLevelCheckSpeakingAttempt: LevelCheck;
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
   clearTutorMemory: Scalars["Boolean"]["output"];
@@ -1020,6 +1134,14 @@ export type Mutation = {
    */
   completeOnboarding: OnboardingState;
   createAssessmentTask: AssessmentTask;
+  /**
+   * A plan for the learner's current goal. The same goal returns the same plan;
+   * a changed score, level or date adjusts it; a different goal replaces it.
+   * Refuses with ROADMAP_LEVEL_UNKNOWN or ROADMAP_GOAL_INCOMPLETE before
+   * onboarding has a level and a goal, ROADMAP_NO_CONTENT when nothing is
+   * published to plan with, and ROADMAP_DAILY_LIMIT after five a day.
+   */
+  createRoadmap: Roadmap;
   createTutorResource: TutorResource;
   editAssessmentTask: AssessmentTask;
   gradeAssessment: AssessmentAttempt;
@@ -1044,6 +1166,8 @@ export type Mutation = {
    */
   rateFlashcard: FlashcardReview;
   readAssessmentResult: Scalars["Boolean"]["output"];
+  /** A finished sitting of the current stage's mock paper. */
+  recordMilestoneSitting: Roadmap;
   regenerateTutorReply: TutorConversation;
   /**
    * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
@@ -1114,6 +1238,7 @@ export type Mutation = {
   setCurrentLevel: OnboardingState;
   /** Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done. */
   setLearningGoal: OnboardingState;
+  skipLevelCheckSpeaking: LevelCheck;
   startAssessment: AssessmentUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
@@ -1121,6 +1246,8 @@ export type Mutation = {
    * twice does not create two.
    */
   startExamAttempt: ExamAttempt;
+  /** Starts a check, or returns the one already open for the same purpose. */
+  startLevelCheck: LevelCheck;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
    * backend enforces one live attempt per learner and quiz.
@@ -1196,6 +1323,16 @@ export type MutationArchiveTutorConversationArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationAttachLevelCheckExamAttemptArgs = {
+  attemptId: Scalars["ID"]["input"];
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationAttachLevelCheckSpeakingAttemptArgs = {
+  attemptId: Scalars["ID"]["input"];
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationBranchTutorConversationArgs = {
   clientMessageId: Scalars["ID"]["input"];
   conversationId: Scalars["ID"]["input"];
@@ -1257,6 +1394,11 @@ export type MutationRateFlashcardArgs = {
 export type MutationReadAssessmentResultArgs = {
   id: Scalars["ID"]["input"];
   version: Scalars["Int"]["input"];
+};
+
+export type MutationRecordMilestoneSittingArgs = {
+  examAttemptId: Scalars["ID"]["input"];
+  milestoneId: Scalars["ID"]["input"];
 };
 
 export type MutationRegenerateTutorReplyArgs = {
@@ -1377,6 +1519,10 @@ export type MutationSetLearningGoalArgs = {
   input: LearningGoalInput;
 };
 
+export type MutationSkipLevelCheckSpeakingArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationStartAssessmentArgs = {
   clientKey: Scalars["ID"]["input"];
   contentLength?: InputMaybe<Scalars["Int"]["input"]>;
@@ -1387,6 +1533,11 @@ export type MutationStartAssessmentArgs = {
 export type MutationStartExamAttemptArgs = {
   examId: Scalars["ID"]["input"];
   input?: InputMaybe<StartExamAttemptInput>;
+};
+
+export type MutationStartLevelCheckArgs = {
+  milestoneId?: InputMaybe<Scalars["ID"]["input"]>;
+  purpose: LevelCheckPurpose;
 };
 
 export type MutationStartQuizAttemptArgs = {
@@ -1459,6 +1610,7 @@ export type OnboardingState = {
   __typename?: "OnboardingState";
   certificateLearner: Scalars["Boolean"]["output"];
   currentLevel?: Maybe<CefrLevel>;
+  dailyStudyMinutes?: Maybe<Scalars["Int"]["output"]>;
   learningPurposeIds: Array<Scalars["Int"]["output"]>;
   /**
    * The step after this write. Every onboarding write answers with it, so the
@@ -1467,6 +1619,8 @@ export type OnboardingState = {
   step: OnboardingStep;
   targetCertificateType?: Maybe<Scalars["String"]["output"]>;
   targetDate?: Maybe<Scalars["Date"]["output"]>;
+  /** The CEFR level a learner without a certificate goal is aiming for. */
+  targetLevel?: Maybe<CefrLevel>;
   targetScore?: Maybe<Scalars["Float"]["output"]>;
   targetSkills: Array<LearningSkill>;
 };
@@ -1593,7 +1747,11 @@ export type Query = {
    */
   flashcardStudyQueue: Array<Flashcard>;
   health: Scalars["String"]["output"];
+  /** The learner's most recent level check, or null. */
+  latestLevelCheck?: Maybe<LevelCheck>;
   learningPurposes: Array<LearningPurpose>;
+  /** Reading a check picks up any grade that arrived since the last look. */
+  levelCheck: LevelCheck;
   me: Me;
   myTourStatus: UserTourStatus;
   /**
@@ -1607,6 +1765,11 @@ export type Query = {
   /** The paper to sit, reachable only through an open attempt. */
   quizPaper: QuizPaper;
   quizzes: QuizPage;
+  /**
+   * The plan in play, else the newest one (failed or finished), else null.
+   * Reading it can start an automatic replan when the learner is a week behind.
+   */
+  roadmap?: Maybe<Roadmap>;
   /** What the screen polls while it waits for a score. */
   speakingAttempt: SpeakingAttempt;
   /** This learner's own attempts at one prompt, newest first. No word breakdown. */
@@ -1779,6 +1942,10 @@ export type QueryFlashcardStatsArgs = {
 export type QueryFlashcardStudyQueueArgs = {
   limit?: InputMaybe<Scalars["Int"]["input"]>;
   setId: Scalars["ID"]["input"];
+};
+
+export type QueryLevelCheckArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type QueryQuizAttemptArgs = {
@@ -2021,6 +2188,129 @@ export enum ReviewRating {
   EASY = "EASY",
   GOOD = "GOOD",
   HARD = "HARD",
+}
+
+export type Roadmap = {
+  __typename?: "Roadmap";
+  /** An adjustment is being worked out; the stages shown stay in force meanwhile. */
+  adjusting: Scalars["Boolean"]["output"];
+  adjustments: Array<RoadmapAdjustment>;
+  completedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  createdAt: Scalars["DateTime"]["output"];
+  dailyMinutes?: Maybe<Scalars["Int"]["output"]>;
+  failureCode?: Maybe<Scalars["String"]["output"]>;
+  goalType: RoadmapGoalType;
+  id: Scalars["ID"]["output"];
+  pendingReason?: Maybe<AdjustmentReason>;
+  schedule: RoadmapSchedule;
+  stages: Array<RoadmapStage>;
+  startLevel: CefrLevel;
+  startScore?: Maybe<Scalars["Float"]["output"]>;
+  status: RoadmapStatus;
+  targetCertificate?: Maybe<Scalars["String"]["output"]>;
+  targetDate?: Maybe<Scalars["Date"]["output"]>;
+  targetLevel?: Maybe<CefrLevel>;
+  targetScore?: Maybe<Scalars["Float"]["output"]>;
+};
+
+export type RoadmapAdjustment = {
+  __typename?: "RoadmapAdjustment";
+  createdAt: Scalars["DateTime"]["output"];
+  reason: AdjustmentReason;
+};
+
+export enum RoadmapContentKind {
+  ASSESSMENT_TASK = "ASSESSMENT_TASK",
+  DICTATION_LESSON = "DICTATION_LESSON",
+  FLASHCARD_SET = "FLASHCARD_SET",
+  QUIZ = "QUIZ",
+  SPEAKING_PROMPT = "SPEAKING_PROMPT",
+}
+
+export enum RoadmapGoalType {
+  CERTIFICATE = "CERTIFICATE",
+  LEVEL = "LEVEL",
+}
+
+export type RoadmapItem = {
+  __typename?: "RoadmapItem";
+  /**
+   * The set, lesson, quiz, prompt or task to open; the link is built from this
+   * and the kind (and skill, for a writing or speaking task).
+   */
+  contentId: Scalars["ID"]["output"];
+  done: Scalars["Boolean"]["output"];
+  estimatedMinutes: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  kind: RoadmapContentKind;
+  /** Derived from the learner's activity on every read. */
+  percentDone: Scalars["Int"]["output"];
+  plannedWeek: Scalars["Int"]["output"];
+  required: Scalars["Boolean"]["output"];
+  skill?: Maybe<Scalars["String"]["output"]>;
+  targetPercent: Scalars["Int"]["output"];
+  title: Scalars["String"]["output"];
+};
+
+export type RoadmapMilestone = {
+  __typename?: "RoadmapMilestone";
+  achievedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  attemptCount: Scalars["Int"]["output"];
+  examId?: Maybe<Scalars["ID"]["output"]>;
+  id: Scalars["ID"]["output"];
+  kind: MilestoneKind;
+  /** Every required item of the stage is done. */
+  ready: Scalars["Boolean"]["output"];
+  requiredLevel?: Maybe<CefrLevel>;
+  requiredScore?: Maybe<Scalars["Float"]["output"]>;
+  resultLevel?: Maybe<CefrLevel>;
+  resultScore?: Maybe<Scalars["Float"]["output"]>;
+  status: MilestoneStatus;
+};
+
+export enum RoadmapSchedule {
+  /** The current stage ran past its planned end. */
+  BEHIND = "BEHIND",
+  ON_TRACK = "ON_TRACK",
+}
+
+export type RoadmapStage = {
+  __typename?: "RoadmapStage";
+  focusSkills: Array<Scalars["String"]["output"]>;
+  fromLevel: CefrLevel;
+  id: Scalars["ID"]["output"];
+  items: Array<RoadmapItem>;
+  milestone?: Maybe<RoadmapMilestone>;
+  orderNo: Scalars["Int"]["output"];
+  /** Mean progress across the stage's required items. */
+  percentDone: Scalars["Int"]["output"];
+  plannedEnd: Scalars["Date"]["output"];
+  plannedStart: Scalars["Date"]["output"];
+  status: RoadmapStageStatus;
+  summary: Scalars["String"]["output"];
+  title: Scalars["String"]["output"];
+  toLevel: CefrLevel;
+};
+
+export enum RoadmapStageStatus {
+  CURRENT = "CURRENT",
+  LOCKED = "LOCKED",
+  PASSED = "PASSED",
+  /** Taken out by an adjustment. Never returned in a roadmap's stages. */
+  REPLACED = "REPLACED",
+}
+
+export enum RoadmapStatus {
+  /** The learner turned the roadmap off. */
+  ABANDONED = "ABANDONED",
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  /** The first plan could not be made; createRoadmap asks again. */
+  FAILED = "FAILED",
+  /** Waiting for the first plan from the AI. */
+  GENERATING = "GENERATING",
+  /** Replaced by a plan for a different goal. */
+  SUPERSEDED = "SUPERSEDED",
 }
 
 /**

@@ -5,6 +5,7 @@ import {
   Headphones,
   Layers,
   Mic,
+  Flag,
   Route,
   type LucideIcon,
 } from "lucide-react";
@@ -56,6 +57,12 @@ export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
       description: nav.dictationDesc,
       href: "/study/dictation",
       icon: Headphones,
+    },
+    {
+      label: nav.roadmap,
+      description: nav.roadmapDesc,
+      href: "/study/roadmap",
+      icon: Flag,
     },
     {
       label: nav.dailyPath,

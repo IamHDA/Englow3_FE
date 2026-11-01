@@ -22,5 +22,6 @@ query DailyPath {
       target
       completed
     }
+    roadmapStageTitle
   }
 }

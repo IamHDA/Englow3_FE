@@ -1,0 +1,124 @@
+fragment RoadmapFields on Roadmap {
+  id
+  status
+  goalType
+  targetCertificate
+  targetScore
+  targetLevel
+  targetDate
+  startLevel
+  startScore
+  dailyMinutes
+  adjusting
+  pendingReason
+  failureCode
+  schedule
+  createdAt
+  completedAt
+  stages {
+    id
+    orderNo
+    title
+    summary
+    fromLevel
+    toLevel
+    focusSkills
+    plannedStart
+    plannedEnd
+    status
+    percentDone
+    items {
+      id
+      kind
+      contentId
+      title
+      skill
+      required
+      targetPercent
+      plannedWeek
+      estimatedMinutes
+      percentDone
+      done
+    }
+    milestone {
+      id
+      kind
+      examId
+      requiredScore
+      requiredLevel
+      status
+      resultScore
+      resultLevel
+      attemptCount
+      achievedAt
+      ready
+    }
+  }
+  adjustments {
+    reason
+    createdAt
+  }
+}
+
+fragment LevelCheckFields on LevelCheck {
+  id
+  purpose
+  status
+  milestoneId
+  examId
+  speakingTaskId
+  examAttemptId
+  speakingAttemptId
+  speakingSkipped
+  speakingFailed
+  vocabLevel
+  listeningLevel
+  speakingLevel
+  resultLevel
+  provisionalLevel
+  createdAt
+  completedAt
+}
+
+query LearnerRoadmap {
+  roadmap {
+    ...RoadmapFields
+  }
+}
+
+mutation CreateRoadmap {
+  createRoadmap {
+    ...RoadmapFields
+  }
+}
+
+mutation AbandonRoadmap {
+  abandonRoadmap
+}
+
+mutation RecordMilestoneSitting($milestoneId: ID!, $examAttemptId: ID!) {
+  recordMilestoneSitting(
+    milestoneId: $milestoneId
+    examAttemptId: $examAttemptId
+  ) {
+    ...RoadmapFields
+  }
+}
+
+query LatestLevelCheck {
+  latestLevelCheck {
+    ...LevelCheckFields
+  }
+}
+
+mutation StartLevelCheck($purpose: LevelCheckPurpose!, $milestoneId: ID) {
+  startLevelCheck(purpose: $purpose, milestoneId: $milestoneId) {
+    ...LevelCheckFields
+  }
+}
+
+mutation SkipLevelCheckSpeaking($id: ID!) {
+  skipLevelCheckSpeaking(id: $id) {
+    ...LevelCheckFields
+  }
+}

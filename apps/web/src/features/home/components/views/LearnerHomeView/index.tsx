@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Bot,
   ClipboardCheck,
+  Flag,
   Flame,
   Headphones,
   Layers,
@@ -60,6 +61,8 @@ const TASK_ICONS: Record<DailyTaskKind, LucideIcon> = {
   [DailyTaskKind.QUIZ]: Sparkles,
   [DailyTaskKind.WRITING]: PenLine,
   [DailyTaskKind.SPEAKING]: Mic,
+  [DailyTaskKind.PRONUNCIATION]: Mic,
+  [DailyTaskKind.MILESTONE]: Flag,
 };
 
 type Shortcut = {

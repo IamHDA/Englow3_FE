@@ -24,6 +24,12 @@ type CurrentLevelStepProps = {
   onContinue: (level: CefrLevel) => void;
   /** Mở bài kiểm tra xếp trình độ thay vì tự khai. */
   onTakePlacementTest: () => void;
+  /**
+   * Người không thi chứng chỉ đo bằng bài đo trình độ ba phần (từ vựng và ngữ
+   * pháp, nghe, nói) thay cho bài xếp lớp của chứng chỉ.
+   */
+  certificateLearner?: boolean;
+  onTakeLevelCheck?: () => void;
 };
 
 /**
@@ -37,7 +43,10 @@ export function CurrentLevelStep({
   errorMessage,
   onContinue,
   onTakePlacementTest,
+  certificateLearner = true,
+  onTakeLevelCheck,
 }: CurrentLevelStepProps) {
+  const levelCheck = !certificateLearner && onTakeLevelCheck != null;
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const copy = isVi ? CURRENT_LEVEL_COPY.vi : CURRENT_LEVEL_COPY.en;
@@ -64,13 +73,24 @@ export function CurrentLevelStep({
         title={tr("Chưa rõ trình độ của mình?", "Not sure of your level?")}
       >
         <Text size="sm" mb="sm">
-          {tr(
-            "Làm bài kiểm tra đầu vào để hệ thống ghi nhận trình độ từ kết quả. Bạn cũng có thể tự chọn mức bên dưới.",
-            "Take the placement test to set your level from the result, or choose a level below yourself.",
-          )}
+          {levelCheck
+            ? tr(
+                "Làm bài đo trình độ gồm từ vựng và ngữ pháp, nghe, và một câu trả lời nói ngắn. Hệ thống ghép ba phần thành trình độ của bạn. Bạn cũng có thể tự chọn mức bên dưới.",
+                "Take the level test: vocabulary and grammar, listening, and a short spoken answer, combined into your level. Or choose a level below yourself.",
+              )
+            : tr(
+                "Làm bài kiểm tra đầu vào để hệ thống ghi nhận trình độ từ kết quả. Bạn cũng có thể tự chọn mức bên dưới.",
+                "Take the placement test to set your level from the result, or choose a level below yourself.",
+              )}
         </Text>
-        <Button color="teal" onClick={onTakePlacementTest} disabled={pending}>
-          {tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
+        <Button
+          color="teal"
+          onClick={levelCheck ? onTakeLevelCheck : onTakePlacementTest}
+          disabled={pending}
+        >
+          {levelCheck
+            ? tr("Làm bài đo trình độ", "Take the level test")
+            : tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
         </Button>
       </Alert>
       <Box

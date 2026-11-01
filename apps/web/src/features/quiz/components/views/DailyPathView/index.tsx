@@ -4,6 +4,7 @@ import { paginationControlProps } from "@/shared/a11y/paginationControls";
 
 import {
   Alert,
+  Anchor,
   Button,
   Grid,
   Pagination,
@@ -11,6 +12,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { IconCompass, IconSparkles } from "@tabler/icons-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 import { DailyPathRoadmap } from "../../blocks/DailyPathRoadmap";
@@ -113,6 +115,31 @@ export function DailyPathView({ initialTab = "roadmap" }: DailyPathViewProps) {
         ) : !pathError ? (
           <Skeleton height={180} radius="lg" />
         ) : null}
+
+        {activeTab === "roadmap" && path && (
+          <Alert color="blue" variant="light" radius="md">
+            {path.roadmapStageTitle ? (
+              <>
+                {isVi ? "Theo lộ trình của bạn: " : "From your roadmap: "}
+                <b>{path.roadmapStageTitle}</b>.{" "}
+                <Anchor component={Link} href="/study/roadmap" size="sm">
+                  {isVi ? "Xem lộ trình" : "See the roadmap"}
+                </Anchor>
+              </>
+            ) : (
+              <>
+                {isVi
+                  ? "Bạn chưa có lộ trình đang chạy, nên đây là gợi ý chung. "
+                  : "You have no active roadmap, so these are general suggestions. "}
+                <Anchor component={Link} href="/study/roadmap" size="sm">
+                  {isVi
+                    ? "Tạo lộ trình theo mục tiêu"
+                    : "Make a roadmap to your goal"}
+                </Anchor>
+              </>
+            )}
+          </Alert>
+        )}
 
         {activeTab === "roadmap" ? (
           <Grid gap="md">

@@ -33,6 +33,8 @@ export type UpdateProfileMutation = {
       targetCertificateType: string | null;
       targetScore: number | null;
       targetDate: string | null;
+      targetLevel: Types.CefrLevel | null;
+      dailyStudyMinutes: number | null;
       targetSkills: Array<Types.LearningSkill>;
     } | null;
   };
@@ -1103,6 +1105,9 @@ export type AssessmentTaskFieldsFragment = {
   status: Types.AssessmentTaskStatus;
   reviewNote: string | null;
   version: number;
+  targetLevel: Types.CefrLevel | null;
+  purpose: Types.AssessmentTaskPurpose;
+  certificateType: Types.CertificateType | null;
 };
 
 export type AssessmentAttemptFieldsFragment = {
@@ -1136,6 +1141,9 @@ export type AssessmentAttemptFieldsFragment = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1171,6 +1179,9 @@ export type AssessmentAuthoringTaskDetailQuery = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1218,6 +1229,9 @@ export type AssessmentCatalogQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     }>;
   };
 };
@@ -1240,6 +1254,9 @@ export type AssessmentTaskDetailQuery = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
   assessmentCapabilities: {
     automaticWriting: boolean;
@@ -1284,6 +1301,9 @@ export type AssessmentAttemptDetailQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1332,6 +1352,9 @@ export type AssessmentHistoryQuery = {
         status: Types.AssessmentTaskStatus;
         reviewNote: string | null;
         version: number;
+        targetLevel: Types.CefrLevel | null;
+        purpose: Types.AssessmentTaskPurpose;
+        certificateType: Types.CertificateType | null;
       };
     }>;
   };
@@ -1361,6 +1384,9 @@ export type AssessmentAuthoringQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     }>;
   };
 };
@@ -1427,6 +1453,9 @@ export type AssessmentSubmissionDetailQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1472,6 +1501,9 @@ export type AssessmentStartMutation = {
         status: Types.AssessmentTaskStatus;
         reviewNote: string | null;
         version: number;
+        targetLevel: Types.CefrLevel | null;
+        purpose: Types.AssessmentTaskPurpose;
+        certificateType: Types.CertificateType | null;
       };
     };
   };
@@ -1515,6 +1547,9 @@ export type AssessmentSaveDraftMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1555,6 +1590,9 @@ export type AssessmentSubmitMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1595,6 +1633,9 @@ export type AssessmentRetryMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1635,6 +1676,9 @@ export type AssessmentRequestReviewMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1657,6 +1701,9 @@ export type AssessmentCreateTaskMutation = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1680,6 +1727,9 @@ export type AssessmentEditTaskMutation = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1703,6 +1753,9 @@ export type AssessmentTransitionTaskMutation = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1746,6 +1799,9 @@ export type AssessmentGradeMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -2893,6 +2949,8 @@ export type OnboardingStateFieldsFragment = {
   currentLevel: Types.CefrLevel | null;
   targetScore: number | null;
   targetDate: string | null;
+  targetLevel: Types.CefrLevel | null;
+  dailyStudyMinutes: number | null;
   targetSkills: Array<Types.LearningSkill>;
 };
 
@@ -2909,6 +2967,8 @@ export type SelectLearningPurposesMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2926,6 +2986,8 @@ export type SetCertificateTargetMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2943,6 +3005,8 @@ export type SetCurrentLevelMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2960,6 +3024,8 @@ export type SetLearningGoalMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2977,6 +3043,8 @@ export type SelectTargetSkillsMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2994,6 +3062,8 @@ export type CompleteOnboardingMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -3211,6 +3281,7 @@ export type DailyPathQuery = {
     level: number;
     xpIntoLevel: number;
     levelCostXp: number;
+    roadmapStageTitle: string | null;
     tasks: Array<{
       kind: Types.DailyTaskKind;
       status: Types.DailyTaskStatus;
@@ -3398,6 +3469,358 @@ export type SubmitQuizAttemptMutation = {
   };
 };
 
+export type RoadmapFieldsFragment = {
+  id: string;
+  status: Types.RoadmapStatus;
+  goalType: Types.RoadmapGoalType;
+  targetCertificate: string | null;
+  targetScore: number | null;
+  targetLevel: Types.CefrLevel | null;
+  targetDate: string | null;
+  startLevel: Types.CefrLevel;
+  startScore: number | null;
+  dailyMinutes: number | null;
+  adjusting: boolean;
+  pendingReason: Types.AdjustmentReason | null;
+  failureCode: string | null;
+  schedule: Types.RoadmapSchedule;
+  createdAt: string;
+  completedAt: string | null;
+  stages: Array<{
+    id: string;
+    orderNo: number;
+    title: string;
+    summary: string;
+    fromLevel: Types.CefrLevel;
+    toLevel: Types.CefrLevel;
+    focusSkills: Array<string>;
+    plannedStart: string;
+    plannedEnd: string;
+    status: Types.RoadmapStageStatus;
+    percentDone: number;
+    items: Array<{
+      id: string;
+      kind: Types.RoadmapContentKind;
+      contentId: string;
+      title: string;
+      skill: string | null;
+      required: boolean;
+      targetPercent: number;
+      plannedWeek: number;
+      estimatedMinutes: number;
+      percentDone: number;
+      done: boolean;
+    }>;
+    milestone: {
+      id: string;
+      kind: Types.MilestoneKind;
+      examId: string | null;
+      requiredScore: number | null;
+      requiredLevel: Types.CefrLevel | null;
+      status: Types.MilestoneStatus;
+      resultScore: number | null;
+      resultLevel: Types.CefrLevel | null;
+      attemptCount: number;
+      achievedAt: string | null;
+      ready: boolean;
+    } | null;
+  }>;
+  adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+};
+
+export type LevelCheckFieldsFragment = {
+  id: string;
+  purpose: Types.LevelCheckPurpose;
+  status: Types.LevelCheckStatus;
+  milestoneId: string | null;
+  examId: string;
+  speakingTaskId: string | null;
+  examAttemptId: string | null;
+  speakingAttemptId: string | null;
+  speakingSkipped: boolean;
+  speakingFailed: boolean;
+  vocabLevel: Types.CefrLevel | null;
+  listeningLevel: Types.CefrLevel | null;
+  speakingLevel: Types.CefrLevel | null;
+  resultLevel: Types.CefrLevel | null;
+  provisionalLevel: Types.CefrLevel | null;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export type LearnerRoadmapQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LearnerRoadmapQuery = {
+  roadmap: {
+    id: string;
+    status: Types.RoadmapStatus;
+    goalType: Types.RoadmapGoalType;
+    targetCertificate: string | null;
+    targetScore: number | null;
+    targetLevel: Types.CefrLevel | null;
+    targetDate: string | null;
+    startLevel: Types.CefrLevel;
+    startScore: number | null;
+    dailyMinutes: number | null;
+    adjusting: boolean;
+    pendingReason: Types.AdjustmentReason | null;
+    failureCode: string | null;
+    schedule: Types.RoadmapSchedule;
+    createdAt: string;
+    completedAt: string | null;
+    stages: Array<{
+      id: string;
+      orderNo: number;
+      title: string;
+      summary: string;
+      fromLevel: Types.CefrLevel;
+      toLevel: Types.CefrLevel;
+      focusSkills: Array<string>;
+      plannedStart: string;
+      plannedEnd: string;
+      status: Types.RoadmapStageStatus;
+      percentDone: number;
+      items: Array<{
+        id: string;
+        kind: Types.RoadmapContentKind;
+        contentId: string;
+        title: string;
+        skill: string | null;
+        required: boolean;
+        targetPercent: number;
+        plannedWeek: number;
+        estimatedMinutes: number;
+        percentDone: number;
+        done: boolean;
+      }>;
+      milestone: {
+        id: string;
+        kind: Types.MilestoneKind;
+        examId: string | null;
+        requiredScore: number | null;
+        requiredLevel: Types.CefrLevel | null;
+        status: Types.MilestoneStatus;
+        resultScore: number | null;
+        resultLevel: Types.CefrLevel | null;
+        attemptCount: number;
+        achievedAt: string | null;
+        ready: boolean;
+      } | null;
+    }>;
+    adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+  } | null;
+};
+
+export type CreateRoadmapMutationVariables = Exact<{ [key: string]: never }>;
+
+export type CreateRoadmapMutation = {
+  createRoadmap: {
+    id: string;
+    status: Types.RoadmapStatus;
+    goalType: Types.RoadmapGoalType;
+    targetCertificate: string | null;
+    targetScore: number | null;
+    targetLevel: Types.CefrLevel | null;
+    targetDate: string | null;
+    startLevel: Types.CefrLevel;
+    startScore: number | null;
+    dailyMinutes: number | null;
+    adjusting: boolean;
+    pendingReason: Types.AdjustmentReason | null;
+    failureCode: string | null;
+    schedule: Types.RoadmapSchedule;
+    createdAt: string;
+    completedAt: string | null;
+    stages: Array<{
+      id: string;
+      orderNo: number;
+      title: string;
+      summary: string;
+      fromLevel: Types.CefrLevel;
+      toLevel: Types.CefrLevel;
+      focusSkills: Array<string>;
+      plannedStart: string;
+      plannedEnd: string;
+      status: Types.RoadmapStageStatus;
+      percentDone: number;
+      items: Array<{
+        id: string;
+        kind: Types.RoadmapContentKind;
+        contentId: string;
+        title: string;
+        skill: string | null;
+        required: boolean;
+        targetPercent: number;
+        plannedWeek: number;
+        estimatedMinutes: number;
+        percentDone: number;
+        done: boolean;
+      }>;
+      milestone: {
+        id: string;
+        kind: Types.MilestoneKind;
+        examId: string | null;
+        requiredScore: number | null;
+        requiredLevel: Types.CefrLevel | null;
+        status: Types.MilestoneStatus;
+        resultScore: number | null;
+        resultLevel: Types.CefrLevel | null;
+        attemptCount: number;
+        achievedAt: string | null;
+        ready: boolean;
+      } | null;
+    }>;
+    adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+  };
+};
+
+export type AbandonRoadmapMutationVariables = Exact<{ [key: string]: never }>;
+
+export type AbandonRoadmapMutation = { abandonRoadmap: boolean };
+
+export type RecordMilestoneSittingMutationVariables = Exact<{
+  milestoneId: string | number;
+  examAttemptId: string | number;
+}>;
+
+export type RecordMilestoneSittingMutation = {
+  recordMilestoneSitting: {
+    id: string;
+    status: Types.RoadmapStatus;
+    goalType: Types.RoadmapGoalType;
+    targetCertificate: string | null;
+    targetScore: number | null;
+    targetLevel: Types.CefrLevel | null;
+    targetDate: string | null;
+    startLevel: Types.CefrLevel;
+    startScore: number | null;
+    dailyMinutes: number | null;
+    adjusting: boolean;
+    pendingReason: Types.AdjustmentReason | null;
+    failureCode: string | null;
+    schedule: Types.RoadmapSchedule;
+    createdAt: string;
+    completedAt: string | null;
+    stages: Array<{
+      id: string;
+      orderNo: number;
+      title: string;
+      summary: string;
+      fromLevel: Types.CefrLevel;
+      toLevel: Types.CefrLevel;
+      focusSkills: Array<string>;
+      plannedStart: string;
+      plannedEnd: string;
+      status: Types.RoadmapStageStatus;
+      percentDone: number;
+      items: Array<{
+        id: string;
+        kind: Types.RoadmapContentKind;
+        contentId: string;
+        title: string;
+        skill: string | null;
+        required: boolean;
+        targetPercent: number;
+        plannedWeek: number;
+        estimatedMinutes: number;
+        percentDone: number;
+        done: boolean;
+      }>;
+      milestone: {
+        id: string;
+        kind: Types.MilestoneKind;
+        examId: string | null;
+        requiredScore: number | null;
+        requiredLevel: Types.CefrLevel | null;
+        status: Types.MilestoneStatus;
+        resultScore: number | null;
+        resultLevel: Types.CefrLevel | null;
+        attemptCount: number;
+        achievedAt: string | null;
+        ready: boolean;
+      } | null;
+    }>;
+    adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+  };
+};
+
+export type LatestLevelCheckQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LatestLevelCheckQuery = {
+  latestLevelCheck: {
+    id: string;
+    purpose: Types.LevelCheckPurpose;
+    status: Types.LevelCheckStatus;
+    milestoneId: string | null;
+    examId: string;
+    speakingTaskId: string | null;
+    examAttemptId: string | null;
+    speakingAttemptId: string | null;
+    speakingSkipped: boolean;
+    speakingFailed: boolean;
+    vocabLevel: Types.CefrLevel | null;
+    listeningLevel: Types.CefrLevel | null;
+    speakingLevel: Types.CefrLevel | null;
+    resultLevel: Types.CefrLevel | null;
+    provisionalLevel: Types.CefrLevel | null;
+    createdAt: string;
+    completedAt: string | null;
+  } | null;
+};
+
+export type StartLevelCheckMutationVariables = Exact<{
+  purpose: Types.LevelCheckPurpose;
+  milestoneId?: string | number | null | undefined;
+}>;
+
+export type StartLevelCheckMutation = {
+  startLevelCheck: {
+    id: string;
+    purpose: Types.LevelCheckPurpose;
+    status: Types.LevelCheckStatus;
+    milestoneId: string | null;
+    examId: string;
+    speakingTaskId: string | null;
+    examAttemptId: string | null;
+    speakingAttemptId: string | null;
+    speakingSkipped: boolean;
+    speakingFailed: boolean;
+    vocabLevel: Types.CefrLevel | null;
+    listeningLevel: Types.CefrLevel | null;
+    speakingLevel: Types.CefrLevel | null;
+    resultLevel: Types.CefrLevel | null;
+    provisionalLevel: Types.CefrLevel | null;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
+export type SkipLevelCheckSpeakingMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SkipLevelCheckSpeakingMutation = {
+  skipLevelCheckSpeaking: {
+    id: string;
+    purpose: Types.LevelCheckPurpose;
+    status: Types.LevelCheckStatus;
+    milestoneId: string | null;
+    examId: string;
+    speakingTaskId: string | null;
+    examAttemptId: string | null;
+    speakingAttemptId: string | null;
+    speakingSkipped: boolean;
+    speakingFailed: boolean;
+    vocabLevel: Types.CefrLevel | null;
+    listeningLevel: Types.CefrLevel | null;
+    speakingLevel: Types.CefrLevel | null;
+    resultLevel: Types.CefrLevel | null;
+    provisionalLevel: Types.CefrLevel | null;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
 export type MyTourStatusQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MyTourStatusQuery = { myTourStatus: { completed: boolean } };
@@ -3426,6 +3849,8 @@ export type CurrentUserQuery = {
       targetCertificateType: string | null;
       targetScore: number | null;
       targetDate: string | null;
+      targetLevel: Types.CefrLevel | null;
+      dailyStudyMinutes: number | null;
       targetSkills: Array<Types.LearningSkill>;
     } | null;
   };
@@ -3517,6 +3942,9 @@ export const AssessmentTaskFieldsFragmentDoc = gql`
     status
     reviewNote
     version
+    targetLevel
+    purpose
+    certificateType
   }
 `;
 export const AssessmentAttemptFieldsFragmentDoc = gql`
@@ -3699,6 +4127,8 @@ export const OnboardingStateFieldsFragmentDoc = gql`
     currentLevel
     targetScore
     targetDate
+    targetLevel
+    dailyStudyMinutes
     targetSkills
   }
 `;
@@ -3794,6 +4224,90 @@ export const QuizReviewFieldsFragmentDoc = gql`
     explanation
   }
 `;
+export const RoadmapFieldsFragmentDoc = gql`
+  fragment RoadmapFields on Roadmap {
+    id
+    status
+    goalType
+    targetCertificate
+    targetScore
+    targetLevel
+    targetDate
+    startLevel
+    startScore
+    dailyMinutes
+    adjusting
+    pendingReason
+    failureCode
+    schedule
+    createdAt
+    completedAt
+    stages {
+      id
+      orderNo
+      title
+      summary
+      fromLevel
+      toLevel
+      focusSkills
+      plannedStart
+      plannedEnd
+      status
+      percentDone
+      items {
+        id
+        kind
+        contentId
+        title
+        skill
+        required
+        targetPercent
+        plannedWeek
+        estimatedMinutes
+        percentDone
+        done
+      }
+      milestone {
+        id
+        kind
+        examId
+        requiredScore
+        requiredLevel
+        status
+        resultScore
+        resultLevel
+        attemptCount
+        achievedAt
+        ready
+      }
+    }
+    adjustments {
+      reason
+      createdAt
+    }
+  }
+`;
+export const LevelCheckFieldsFragmentDoc = gql`
+  fragment LevelCheckFields on LevelCheck {
+    id
+    purpose
+    status
+    milestoneId
+    examId
+    speakingTaskId
+    examAttemptId
+    speakingAttemptId
+    speakingSkipped
+    speakingFailed
+    vocabLevel
+    listeningLevel
+    speakingLevel
+    resultLevel
+    provisionalLevel
+    createdAt
+    completedAt
+  }
+`;
 export const UpdateProfileDocument = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
     updateProfile(input: $input) {
@@ -3812,6 +4326,8 @@ export const UpdateProfileDocument = gql`
         targetCertificateType
         targetScore
         targetDate
+        targetLevel
+        dailyStudyMinutes
         targetSkills
       }
     }
@@ -12893,6 +13409,7 @@ export const DailyPathDocument = gql`
         target
         completed
       }
+      roadmapStageTitle
     }
   }
 `;
@@ -13327,6 +13844,474 @@ export type SubmitQuizAttemptMutationOptions =
     SubmitQuizAttemptMutation,
     SubmitQuizAttemptMutationVariables
   >;
+export const LearnerRoadmapDocument = gql`
+  query LearnerRoadmap {
+    roadmap {
+      ...RoadmapFields
+    }
+  }
+  ${RoadmapFieldsFragmentDoc}
+`;
+
+/**
+ * __useLearnerRoadmapQuery__
+ *
+ * To run a query within a React component, call `useLearnerRoadmapQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLearnerRoadmapQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLearnerRoadmapQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLearnerRoadmapQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    LearnerRoadmapQuery,
+    LearnerRoadmapQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    LearnerRoadmapQuery,
+    LearnerRoadmapQueryVariables
+  >(LearnerRoadmapDocument, options);
+}
+export function useLearnerRoadmapLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LearnerRoadmapQuery,
+    LearnerRoadmapQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    LearnerRoadmapQuery,
+    LearnerRoadmapQueryVariables
+  >(LearnerRoadmapDocument, options);
+}
+export function useLearnerRoadmapSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    LearnerRoadmapQuery,
+    LearnerRoadmapQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LearnerRoadmapQuery,
+  LearnerRoadmapQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useLearnerRoadmapSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LearnerRoadmapQuery,
+        LearnerRoadmapQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LearnerRoadmapQuery | undefined,
+  LearnerRoadmapQueryVariables
+>;
+export function useLearnerRoadmapSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LearnerRoadmapQuery,
+        LearnerRoadmapQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    LearnerRoadmapQuery,
+    LearnerRoadmapQueryVariables
+  >(LearnerRoadmapDocument, options as any);
+}
+export type LearnerRoadmapQueryHookResult = ReturnType<
+  typeof useLearnerRoadmapQuery
+>;
+export type LearnerRoadmapLazyQueryHookResult = ReturnType<
+  typeof useLearnerRoadmapLazyQuery
+>;
+export type LearnerRoadmapSuspenseQueryHookResult = ReturnType<
+  typeof useLearnerRoadmapSuspenseQuery
+>;
+export type LearnerRoadmapQueryResult = ApolloReactCommon.QueryResult<
+  LearnerRoadmapQuery,
+  LearnerRoadmapQueryVariables
+>;
+export const CreateRoadmapDocument = gql`
+  mutation CreateRoadmap {
+    createRoadmap {
+      ...RoadmapFields
+    }
+  }
+  ${RoadmapFieldsFragmentDoc}
+`;
+export type CreateRoadmapMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CreateRoadmapMutation,
+    CreateRoadmapMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useCreateRoadmapMutation__
+ *
+ * To run a mutation, you first call `useCreateRoadmapMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRoadmapMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRoadmapMutation, { data, loading, error }] = useCreateRoadmapMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCreateRoadmapMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateRoadmapMutation,
+    CreateRoadmapMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CreateRoadmapMutation,
+    CreateRoadmapMutationVariables
+  >(CreateRoadmapDocument, options);
+}
+export type CreateRoadmapMutationHookResult = ReturnType<
+  typeof useCreateRoadmapMutation
+>;
+export type CreateRoadmapMutationResult =
+  ApolloReactCommon.MutationResult<CreateRoadmapMutation>;
+export type CreateRoadmapMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CreateRoadmapMutation,
+    CreateRoadmapMutationVariables
+  >;
+export const AbandonRoadmapDocument = gql`
+  mutation AbandonRoadmap {
+    abandonRoadmap
+  }
+`;
+export type AbandonRoadmapMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AbandonRoadmapMutation,
+    AbandonRoadmapMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAbandonRoadmapMutation__
+ *
+ * To run a mutation, you first call `useAbandonRoadmapMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAbandonRoadmapMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [abandonRoadmapMutation, { data, loading, error }] = useAbandonRoadmapMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAbandonRoadmapMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AbandonRoadmapMutation,
+    AbandonRoadmapMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AbandonRoadmapMutation,
+    AbandonRoadmapMutationVariables
+  >(AbandonRoadmapDocument, options);
+}
+export type AbandonRoadmapMutationHookResult = ReturnType<
+  typeof useAbandonRoadmapMutation
+>;
+export type AbandonRoadmapMutationResult =
+  ApolloReactCommon.MutationResult<AbandonRoadmapMutation>;
+export type AbandonRoadmapMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AbandonRoadmapMutation,
+    AbandonRoadmapMutationVariables
+  >;
+export const RecordMilestoneSittingDocument = gql`
+  mutation RecordMilestoneSitting($milestoneId: ID!, $examAttemptId: ID!) {
+    recordMilestoneSitting(
+      milestoneId: $milestoneId
+      examAttemptId: $examAttemptId
+    ) {
+      ...RoadmapFields
+    }
+  }
+  ${RoadmapFieldsFragmentDoc}
+`;
+export type RecordMilestoneSittingMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RecordMilestoneSittingMutation,
+    RecordMilestoneSittingMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRecordMilestoneSittingMutation__
+ *
+ * To run a mutation, you first call `useRecordMilestoneSittingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRecordMilestoneSittingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [recordMilestoneSittingMutation, { data, loading, error }] = useRecordMilestoneSittingMutation({
+ *   variables: {
+ *      milestoneId: // value for 'milestoneId'
+ *      examAttemptId: // value for 'examAttemptId'
+ *   },
+ * });
+ */
+export function useRecordMilestoneSittingMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RecordMilestoneSittingMutation,
+    RecordMilestoneSittingMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RecordMilestoneSittingMutation,
+    RecordMilestoneSittingMutationVariables
+  >(RecordMilestoneSittingDocument, options);
+}
+export type RecordMilestoneSittingMutationHookResult = ReturnType<
+  typeof useRecordMilestoneSittingMutation
+>;
+export type RecordMilestoneSittingMutationResult =
+  ApolloReactCommon.MutationResult<RecordMilestoneSittingMutation>;
+export type RecordMilestoneSittingMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RecordMilestoneSittingMutation,
+    RecordMilestoneSittingMutationVariables
+  >;
+export const LatestLevelCheckDocument = gql`
+  query LatestLevelCheck {
+    latestLevelCheck {
+      ...LevelCheckFields
+    }
+  }
+  ${LevelCheckFieldsFragmentDoc}
+`;
+
+/**
+ * __useLatestLevelCheckQuery__
+ *
+ * To run a query within a React component, call `useLatestLevelCheckQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLatestLevelCheckQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLatestLevelCheckQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLatestLevelCheckQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    LatestLevelCheckQuery,
+    LatestLevelCheckQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    LatestLevelCheckQuery,
+    LatestLevelCheckQueryVariables
+  >(LatestLevelCheckDocument, options);
+}
+export function useLatestLevelCheckLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LatestLevelCheckQuery,
+    LatestLevelCheckQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    LatestLevelCheckQuery,
+    LatestLevelCheckQueryVariables
+  >(LatestLevelCheckDocument, options);
+}
+export function useLatestLevelCheckSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    LatestLevelCheckQuery,
+    LatestLevelCheckQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LatestLevelCheckQuery,
+  LatestLevelCheckQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useLatestLevelCheckSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LatestLevelCheckQuery,
+        LatestLevelCheckQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  LatestLevelCheckQuery | undefined,
+  LatestLevelCheckQueryVariables
+>;
+export function useLatestLevelCheckSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        LatestLevelCheckQuery,
+        LatestLevelCheckQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    LatestLevelCheckQuery,
+    LatestLevelCheckQueryVariables
+  >(LatestLevelCheckDocument, options as any);
+}
+export type LatestLevelCheckQueryHookResult = ReturnType<
+  typeof useLatestLevelCheckQuery
+>;
+export type LatestLevelCheckLazyQueryHookResult = ReturnType<
+  typeof useLatestLevelCheckLazyQuery
+>;
+export type LatestLevelCheckSuspenseQueryHookResult = ReturnType<
+  typeof useLatestLevelCheckSuspenseQuery
+>;
+export type LatestLevelCheckQueryResult = ApolloReactCommon.QueryResult<
+  LatestLevelCheckQuery,
+  LatestLevelCheckQueryVariables
+>;
+export const StartLevelCheckDocument = gql`
+  mutation StartLevelCheck($purpose: LevelCheckPurpose!, $milestoneId: ID) {
+    startLevelCheck(purpose: $purpose, milestoneId: $milestoneId) {
+      ...LevelCheckFields
+    }
+  }
+  ${LevelCheckFieldsFragmentDoc}
+`;
+export type StartLevelCheckMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartLevelCheckMutation,
+    StartLevelCheckMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartLevelCheckMutation__
+ *
+ * To run a mutation, you first call `useStartLevelCheckMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartLevelCheckMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startLevelCheckMutation, { data, loading, error }] = useStartLevelCheckMutation({
+ *   variables: {
+ *      purpose: // value for 'purpose'
+ *      milestoneId: // value for 'milestoneId'
+ *   },
+ * });
+ */
+export function useStartLevelCheckMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartLevelCheckMutation,
+    StartLevelCheckMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartLevelCheckMutation,
+    StartLevelCheckMutationVariables
+  >(StartLevelCheckDocument, options);
+}
+export type StartLevelCheckMutationHookResult = ReturnType<
+  typeof useStartLevelCheckMutation
+>;
+export type StartLevelCheckMutationResult =
+  ApolloReactCommon.MutationResult<StartLevelCheckMutation>;
+export type StartLevelCheckMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartLevelCheckMutation,
+    StartLevelCheckMutationVariables
+  >;
+export const SkipLevelCheckSpeakingDocument = gql`
+  mutation SkipLevelCheckSpeaking($id: ID!) {
+    skipLevelCheckSpeaking(id: $id) {
+      ...LevelCheckFields
+    }
+  }
+  ${LevelCheckFieldsFragmentDoc}
+`;
+export type SkipLevelCheckSpeakingMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SkipLevelCheckSpeakingMutation,
+    SkipLevelCheckSpeakingMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSkipLevelCheckSpeakingMutation__
+ *
+ * To run a mutation, you first call `useSkipLevelCheckSpeakingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSkipLevelCheckSpeakingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [skipLevelCheckSpeakingMutation, { data, loading, error }] = useSkipLevelCheckSpeakingMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSkipLevelCheckSpeakingMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SkipLevelCheckSpeakingMutation,
+    SkipLevelCheckSpeakingMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SkipLevelCheckSpeakingMutation,
+    SkipLevelCheckSpeakingMutationVariables
+  >(SkipLevelCheckSpeakingDocument, options);
+}
+export type SkipLevelCheckSpeakingMutationHookResult = ReturnType<
+  typeof useSkipLevelCheckSpeakingMutation
+>;
+export type SkipLevelCheckSpeakingMutationResult =
+  ApolloReactCommon.MutationResult<SkipLevelCheckSpeakingMutation>;
+export type SkipLevelCheckSpeakingMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SkipLevelCheckSpeakingMutation,
+    SkipLevelCheckSpeakingMutationVariables
+  >;
 export const MyTourStatusDocument = gql`
   query MyTourStatus {
     myTourStatus {
@@ -13496,6 +14481,8 @@ export const CurrentUserDocument = gql`
         targetCertificateType
         targetScore
         targetDate
+        targetLevel
+        dailyStudyMinutes
         targetSkills
       }
     }

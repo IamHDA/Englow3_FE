@@ -9,10 +9,36 @@ import { TargetCertificate } from "@/lib/graphql/generated";
  * (@Positive và @Future). Mốc điểm được kiểm theo thang của đúng chứng chỉ
  * đang chọn - 9.5 hợp lệ với TOEIC nhưng vô nghĩa với IELTS.
  */
-export function learningGoalSchema(isVi: boolean) {
+export function learningGoalSchema(isVi: boolean, requireTargetLevel = false) {
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   return z
     .object({
+      // Người không thi chứng chỉ cần một trình độ đích thì lộ trình mới có
+      // đích để chia giai đoạn.
+      targetLevel: z
+        .string()
+        .refine((value) => !requireTargetLevel || value !== "", {
+          message: tr(
+            "Chọn trình độ bạn muốn đạt",
+            "Pick the level you want to reach",
+          ),
+        }),
+      dailyStudyMinutes: z
+        .string()
+        .trim()
+        .refine(
+          (value) =>
+            value === "" ||
+            (Number.isInteger(Number(value)) &&
+              Number(value) >= 10 &&
+              Number(value) <= 240),
+          {
+            message: tr(
+              "Thời gian học mỗi ngày từ 10 đến 240 phút",
+              "Daily study time is 10 to 240 minutes",
+            ),
+          },
+        ),
       certificateType: z.nativeEnum(TargetCertificate, {
         message: tr("Vui lòng chọn chứng chỉ", "Pick a certificate"),
       }),

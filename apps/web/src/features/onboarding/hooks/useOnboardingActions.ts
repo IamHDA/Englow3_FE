@@ -19,10 +19,13 @@ import {
   useSetCurrentLevelMutation,
   useSetLearningGoalMutation,
   usePlacementExamLazyQuery,
+  useCreateRoadmapMutation,
+  useStartLevelCheckMutation,
 } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { backendCodeOf } from "@/shared/network/loadError";
 
+import { LevelCheckPurpose } from "@/lib/graphql/generated";
 import type {
   CefrLevel,
   LearningGoalInput,
@@ -70,6 +73,8 @@ export function useOnboardingActions() {
   const [selectSkills, skillsState] = useSelectTargetSkillsMutation();
   const [complete, completeState] = useCompleteOnboardingMutation();
   const [loadPlacementExam, placementState] = usePlacementExamLazyQuery();
+  const [startLevelCheck, levelCheckState] = useStartLevelCheckMutation();
+  const [createRoadmap] = useCreateRoadmapMutation();
 
   const pending =
     purposesState.loading ||
@@ -78,7 +83,8 @@ export function useOnboardingActions() {
     goalState.loading ||
     skillsState.loading ||
     completeState.loading ||
-    placementState.loading;
+    placementState.loading ||
+    levelCheckState.loading;
 
   /**
    * Chạy mutation rồi ghi trạng thái mới vào hồ sơ. Lỗi được giữ lại thành lời
@@ -168,9 +174,32 @@ export function useOnboardingActions() {
         run(async () => {
           await selectSkills({ variables: { skills } });
           const { data } = await complete();
+          // The roadmap is made by the system as soon as the goal is known. A
+          // refusal here (no content yet, say) is not the learner's problem to
+          // solve in onboarding; the roadmap page offers to try again.
+          if (data?.completeOnboarding) {
+            createRoadmap().catch(() => undefined);
+          }
           return data?.completeOnboarding;
         }),
-      [run, selectSkills, complete],
+      [run, selectSkills, complete, createRoadmap],
     ),
+    /**
+     * Người học không thi chứng chỉ đo trình độ bằng bài ba phần (từ vựng và
+     * ngữ pháp, nghe, nói). Trang bài đo dẫn họ qua từng phần; khi chấm xong,
+     * backend ghi trình độ và đẩy onboarding sang bước mục tiêu.
+     */
+    startLevelCheck: useCallback(async () => {
+      setErrorMessage(null);
+      try {
+        await startLevelCheck({
+          variables: { purpose: LevelCheckPurpose.ONBOARDING },
+        });
+        close();
+        router.push("/study/level-check");
+      } catch (error) {
+        setErrorMessage(messageForError(error, isVi));
+      }
+    }, [startLevelCheck, close, router, isVi]),
   };
 }

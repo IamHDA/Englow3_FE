@@ -16,6 +16,8 @@ export interface NavTranslations {
   dictationDesc: string;
   dailyPath: string;
   dailyPathDesc: string;
+  roadmap: string;
+  roadmapDesc: string;
   profile: string;
   settings: string;
   logout: string;
@@ -833,8 +835,11 @@ export const translations: Record<Language, AppTranslations> = {
       flashcardsDesc: "Bộ thẻ 3D tối ưu theo khả năng ghi nhớ của bạn",
       dictation: "Nghe chính tả",
       dictationDesc: "Thử thách nghe và gõ lại từng câu",
-      dailyPath: "Lộ trình hàng ngày",
-      dailyPathDesc: "Bài học thích ứng dành riêng cho bạn",
+      dailyPath: "Việc cần làm hôm nay",
+      dailyPathDesc: "Những bài nên làm hôm nay, lấy từ lộ trình của bạn",
+      roadmap: "Lộ trình học",
+      roadmapDesc:
+        "Các giai đoạn tới mục tiêu và bài kiểm tra cuối mỗi giai đoạn",
       profile: "Hồ sơ cá nhân",
       settings: "Cài đặt tài khoản",
       logout: "Đăng xuất",
@@ -1172,10 +1177,10 @@ export const translations: Record<Language, AppTranslations> = {
       checkResultAgainButton: "Kiểm tra kết quả lại",
     },
     dailyPath: {
-      title: "Lộ trình học tập mỗi ngày",
+      title: "Việc cần làm hôm nay",
       subtitle:
         "Hệ thống tự động điều chỉnh độ khó và bài học hàng ngày dựa trên tiến độ và khả năng hấp thu của bạn.",
-      roadmapTab: "Lộ trình hôm nay",
+      roadmapTab: "Việc hôm nay",
       quizCatalogueTab: "Thử thách trắc nghiệm",
       streakTitle: "Chuỗi ngày liên tiếp",
       streakSubtitle: "Học đều đặn mỗi ngày để duy trì ngọn lửa đam mê!",
@@ -1720,8 +1725,10 @@ export const translations: Record<Language, AppTranslations> = {
       flashcardsDesc: "3D cards tailored to your memory retention",
       dictation: "Dictation",
       dictationDesc: "Listen and transcribe challenge",
-      dailyPath: "Daily Path",
-      dailyPathDesc: "Adaptive learning journey customized for you",
+      dailyPath: "Today's tasks",
+      dailyPathDesc: "What to do today, taken from your roadmap",
+      roadmap: "Learning roadmap",
+      roadmapDesc: "The stages to your goal and the test that closes each one",
       profile: "My Profile",
       settings: "Account Settings",
       logout: "Log out",
@@ -2064,10 +2071,10 @@ export const translations: Record<Language, AppTranslations> = {
       checkResultAgainButton: "Check result again",
     },
     dailyPath: {
-      title: "Adaptive Daily Learning Path",
+      title: "Today's tasks",
       subtitle:
         "Intelligent daily lesson progression that dynamically scales in difficulty based on your mastery.",
-      roadmapTab: "Today's Roadmap",
+      roadmapTab: "Today",
       quizCatalogueTab: "Quiz Challenges",
       streakTitle: "Day Streak",
       streakSubtitle: "Practice daily to keep your learning momentum active!",

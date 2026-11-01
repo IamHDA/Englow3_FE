@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { DailyPathView } from "@/features/quiz";
 
 export const metadata: Metadata = {
-  title: "Lộ trình học tập mỗi ngày | Englow3",
+  title: "Việc cần làm hôm nay | Englow3",
   description:
-    "Lộ trình học thích ứng thông minh theo chu kỳ kiến thức, vượt qua các cột mốc thử thách và tích lũy điểm kinh nghiệm mỗi ngày.",
+    "Những bài nên làm hôm nay, lấy từ giai đoạn hiện tại trong lộ trình của bạn, cùng chuỗi ngày học và nhiệm vụ trong ngày.",
 };
 
 interface DailyPathPageProps {

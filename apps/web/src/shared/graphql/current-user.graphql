@@ -16,6 +16,8 @@ query CurrentUser {
       targetCertificateType
       targetScore
       targetDate
+      targetLevel
+      dailyStudyMinutes
       targetSkills
     }
   }

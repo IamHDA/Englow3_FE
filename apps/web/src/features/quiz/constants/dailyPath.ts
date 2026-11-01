@@ -20,6 +20,8 @@ export const TASK_KIND_LABELS: Record<
   [DailyTaskKind.QUIZ]: { vi: "Trắc nghiệm", en: "Quiz" },
   [DailyTaskKind.WRITING]: { vi: "Luyện viết", en: "Writing" },
   [DailyTaskKind.SPEAKING]: { vi: "Luyện nói", en: "Speaking" },
+  [DailyTaskKind.PRONUNCIATION]: { vi: "Phát âm", en: "Pronunciation" },
+  [DailyTaskKind.MILESTONE]: { vi: "Kiểm tra giai đoạn", en: "Stage test" },
 };
 
 /** Trang luyện tập tương ứng với từng kiểu việc. */
@@ -32,6 +34,10 @@ export const TASK_KIND_HREFS: Record<
   [DailyTaskKind.QUIZ]: (id) => `/study/quiz/${id}`,
   [DailyTaskKind.WRITING]: (id) => `/study/writing/${id}`,
   [DailyTaskKind.SPEAKING]: (id) => `/study/speaking/${id}`,
+  [DailyTaskKind.PRONUNCIATION]: (id) => `/study/pronunciation/${id}`,
+  // The milestone's target is the milestone itself; the roadmap page says
+  // which paper to sit or starts the level check.
+  [DailyTaskKind.MILESTONE]: () => "/study/roadmap",
 };
 
 /**
@@ -66,6 +72,16 @@ export const TASK_UNIT_LABELS: Record<
     vi: "câu hỏi",
     en: "question",
     enPlural: "questions",
+  },
+  [DailyTaskKind.PRONUNCIATION]: {
+    vi: "bài phát âm",
+    en: "prompt",
+    enPlural: "prompts",
+  },
+  [DailyTaskKind.MILESTONE]: {
+    vi: "bài kiểm tra",
+    en: "test",
+    enPlural: "tests",
   },
 };
 

@@ -30,6 +30,8 @@ export type UpdateProfileMutation = {
       targetCertificateType: string | null;
       targetScore: number | null;
       targetDate: string | null;
+      targetLevel: Types.CefrLevel | null;
+      dailyStudyMinutes: number | null;
       targetSkills: Array<Types.LearningSkill>;
     } | null;
   };
@@ -1100,6 +1102,9 @@ export type AssessmentTaskFieldsFragment = {
   status: Types.AssessmentTaskStatus;
   reviewNote: string | null;
   version: number;
+  targetLevel: Types.CefrLevel | null;
+  purpose: Types.AssessmentTaskPurpose;
+  certificateType: Types.CertificateType | null;
 };
 
 export type AssessmentAttemptFieldsFragment = {
@@ -1133,6 +1138,9 @@ export type AssessmentAttemptFieldsFragment = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1168,6 +1176,9 @@ export type AssessmentAuthoringTaskDetailQuery = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1215,6 +1226,9 @@ export type AssessmentCatalogQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     }>;
   };
 };
@@ -1237,6 +1251,9 @@ export type AssessmentTaskDetailQuery = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
   assessmentCapabilities: {
     automaticWriting: boolean;
@@ -1281,6 +1298,9 @@ export type AssessmentAttemptDetailQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1329,6 +1349,9 @@ export type AssessmentHistoryQuery = {
         status: Types.AssessmentTaskStatus;
         reviewNote: string | null;
         version: number;
+        targetLevel: Types.CefrLevel | null;
+        purpose: Types.AssessmentTaskPurpose;
+        certificateType: Types.CertificateType | null;
       };
     }>;
   };
@@ -1358,6 +1381,9 @@ export type AssessmentAuthoringQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     }>;
   };
 };
@@ -1424,6 +1450,9 @@ export type AssessmentSubmissionDetailQuery = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1469,6 +1498,9 @@ export type AssessmentStartMutation = {
         status: Types.AssessmentTaskStatus;
         reviewNote: string | null;
         version: number;
+        targetLevel: Types.CefrLevel | null;
+        purpose: Types.AssessmentTaskPurpose;
+        certificateType: Types.CertificateType | null;
       };
     };
   };
@@ -1512,6 +1544,9 @@ export type AssessmentSaveDraftMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1552,6 +1587,9 @@ export type AssessmentSubmitMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1592,6 +1630,9 @@ export type AssessmentRetryMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1632,6 +1673,9 @@ export type AssessmentRequestReviewMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -1654,6 +1698,9 @@ export type AssessmentCreateTaskMutation = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1677,6 +1724,9 @@ export type AssessmentEditTaskMutation = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1700,6 +1750,9 @@ export type AssessmentTransitionTaskMutation = {
     status: Types.AssessmentTaskStatus;
     reviewNote: string | null;
     version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
   };
 };
 
@@ -1743,6 +1796,9 @@ export type AssessmentGradeMutation = {
       status: Types.AssessmentTaskStatus;
       reviewNote: string | null;
       version: number;
+      targetLevel: Types.CefrLevel | null;
+      purpose: Types.AssessmentTaskPurpose;
+      certificateType: Types.CertificateType | null;
     };
   };
 };
@@ -2890,6 +2946,8 @@ export type OnboardingStateFieldsFragment = {
   currentLevel: Types.CefrLevel | null;
   targetScore: number | null;
   targetDate: string | null;
+  targetLevel: Types.CefrLevel | null;
+  dailyStudyMinutes: number | null;
   targetSkills: Array<Types.LearningSkill>;
 };
 
@@ -2906,6 +2964,8 @@ export type SelectLearningPurposesMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2923,6 +2983,8 @@ export type SetCertificateTargetMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2940,6 +3002,8 @@ export type SetCurrentLevelMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2957,6 +3021,8 @@ export type SetLearningGoalMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2974,6 +3040,8 @@ export type SelectTargetSkillsMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -2991,6 +3059,8 @@ export type CompleteOnboardingMutation = {
     currentLevel: Types.CefrLevel | null;
     targetScore: number | null;
     targetDate: string | null;
+    targetLevel: Types.CefrLevel | null;
+    dailyStudyMinutes: number | null;
     targetSkills: Array<Types.LearningSkill>;
   };
 };
@@ -3208,6 +3278,7 @@ export type DailyPathQuery = {
     level: number;
     xpIntoLevel: number;
     levelCostXp: number;
+    roadmapStageTitle: string | null;
     tasks: Array<{
       kind: Types.DailyTaskKind;
       status: Types.DailyTaskStatus;
@@ -3395,6 +3466,358 @@ export type SubmitQuizAttemptMutation = {
   };
 };
 
+export type RoadmapFieldsFragment = {
+  id: string;
+  status: Types.RoadmapStatus;
+  goalType: Types.RoadmapGoalType;
+  targetCertificate: string | null;
+  targetScore: number | null;
+  targetLevel: Types.CefrLevel | null;
+  targetDate: string | null;
+  startLevel: Types.CefrLevel;
+  startScore: number | null;
+  dailyMinutes: number | null;
+  adjusting: boolean;
+  pendingReason: Types.AdjustmentReason | null;
+  failureCode: string | null;
+  schedule: Types.RoadmapSchedule;
+  createdAt: string;
+  completedAt: string | null;
+  stages: Array<{
+    id: string;
+    orderNo: number;
+    title: string;
+    summary: string;
+    fromLevel: Types.CefrLevel;
+    toLevel: Types.CefrLevel;
+    focusSkills: Array<string>;
+    plannedStart: string;
+    plannedEnd: string;
+    status: Types.RoadmapStageStatus;
+    percentDone: number;
+    items: Array<{
+      id: string;
+      kind: Types.RoadmapContentKind;
+      contentId: string;
+      title: string;
+      skill: string | null;
+      required: boolean;
+      targetPercent: number;
+      plannedWeek: number;
+      estimatedMinutes: number;
+      percentDone: number;
+      done: boolean;
+    }>;
+    milestone: {
+      id: string;
+      kind: Types.MilestoneKind;
+      examId: string | null;
+      requiredScore: number | null;
+      requiredLevel: Types.CefrLevel | null;
+      status: Types.MilestoneStatus;
+      resultScore: number | null;
+      resultLevel: Types.CefrLevel | null;
+      attemptCount: number;
+      achievedAt: string | null;
+      ready: boolean;
+    } | null;
+  }>;
+  adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+};
+
+export type LevelCheckFieldsFragment = {
+  id: string;
+  purpose: Types.LevelCheckPurpose;
+  status: Types.LevelCheckStatus;
+  milestoneId: string | null;
+  examId: string;
+  speakingTaskId: string | null;
+  examAttemptId: string | null;
+  speakingAttemptId: string | null;
+  speakingSkipped: boolean;
+  speakingFailed: boolean;
+  vocabLevel: Types.CefrLevel | null;
+  listeningLevel: Types.CefrLevel | null;
+  speakingLevel: Types.CefrLevel | null;
+  resultLevel: Types.CefrLevel | null;
+  provisionalLevel: Types.CefrLevel | null;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export type LearnerRoadmapQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LearnerRoadmapQuery = {
+  roadmap: {
+    id: string;
+    status: Types.RoadmapStatus;
+    goalType: Types.RoadmapGoalType;
+    targetCertificate: string | null;
+    targetScore: number | null;
+    targetLevel: Types.CefrLevel | null;
+    targetDate: string | null;
+    startLevel: Types.CefrLevel;
+    startScore: number | null;
+    dailyMinutes: number | null;
+    adjusting: boolean;
+    pendingReason: Types.AdjustmentReason | null;
+    failureCode: string | null;
+    schedule: Types.RoadmapSchedule;
+    createdAt: string;
+    completedAt: string | null;
+    stages: Array<{
+      id: string;
+      orderNo: number;
+      title: string;
+      summary: string;
+      fromLevel: Types.CefrLevel;
+      toLevel: Types.CefrLevel;
+      focusSkills: Array<string>;
+      plannedStart: string;
+      plannedEnd: string;
+      status: Types.RoadmapStageStatus;
+      percentDone: number;
+      items: Array<{
+        id: string;
+        kind: Types.RoadmapContentKind;
+        contentId: string;
+        title: string;
+        skill: string | null;
+        required: boolean;
+        targetPercent: number;
+        plannedWeek: number;
+        estimatedMinutes: number;
+        percentDone: number;
+        done: boolean;
+      }>;
+      milestone: {
+        id: string;
+        kind: Types.MilestoneKind;
+        examId: string | null;
+        requiredScore: number | null;
+        requiredLevel: Types.CefrLevel | null;
+        status: Types.MilestoneStatus;
+        resultScore: number | null;
+        resultLevel: Types.CefrLevel | null;
+        attemptCount: number;
+        achievedAt: string | null;
+        ready: boolean;
+      } | null;
+    }>;
+    adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+  } | null;
+};
+
+export type CreateRoadmapMutationVariables = Exact<{ [key: string]: never }>;
+
+export type CreateRoadmapMutation = {
+  createRoadmap: {
+    id: string;
+    status: Types.RoadmapStatus;
+    goalType: Types.RoadmapGoalType;
+    targetCertificate: string | null;
+    targetScore: number | null;
+    targetLevel: Types.CefrLevel | null;
+    targetDate: string | null;
+    startLevel: Types.CefrLevel;
+    startScore: number | null;
+    dailyMinutes: number | null;
+    adjusting: boolean;
+    pendingReason: Types.AdjustmentReason | null;
+    failureCode: string | null;
+    schedule: Types.RoadmapSchedule;
+    createdAt: string;
+    completedAt: string | null;
+    stages: Array<{
+      id: string;
+      orderNo: number;
+      title: string;
+      summary: string;
+      fromLevel: Types.CefrLevel;
+      toLevel: Types.CefrLevel;
+      focusSkills: Array<string>;
+      plannedStart: string;
+      plannedEnd: string;
+      status: Types.RoadmapStageStatus;
+      percentDone: number;
+      items: Array<{
+        id: string;
+        kind: Types.RoadmapContentKind;
+        contentId: string;
+        title: string;
+        skill: string | null;
+        required: boolean;
+        targetPercent: number;
+        plannedWeek: number;
+        estimatedMinutes: number;
+        percentDone: number;
+        done: boolean;
+      }>;
+      milestone: {
+        id: string;
+        kind: Types.MilestoneKind;
+        examId: string | null;
+        requiredScore: number | null;
+        requiredLevel: Types.CefrLevel | null;
+        status: Types.MilestoneStatus;
+        resultScore: number | null;
+        resultLevel: Types.CefrLevel | null;
+        attemptCount: number;
+        achievedAt: string | null;
+        ready: boolean;
+      } | null;
+    }>;
+    adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+  };
+};
+
+export type AbandonRoadmapMutationVariables = Exact<{ [key: string]: never }>;
+
+export type AbandonRoadmapMutation = { abandonRoadmap: boolean };
+
+export type RecordMilestoneSittingMutationVariables = Exact<{
+  milestoneId: string | number;
+  examAttemptId: string | number;
+}>;
+
+export type RecordMilestoneSittingMutation = {
+  recordMilestoneSitting: {
+    id: string;
+    status: Types.RoadmapStatus;
+    goalType: Types.RoadmapGoalType;
+    targetCertificate: string | null;
+    targetScore: number | null;
+    targetLevel: Types.CefrLevel | null;
+    targetDate: string | null;
+    startLevel: Types.CefrLevel;
+    startScore: number | null;
+    dailyMinutes: number | null;
+    adjusting: boolean;
+    pendingReason: Types.AdjustmentReason | null;
+    failureCode: string | null;
+    schedule: Types.RoadmapSchedule;
+    createdAt: string;
+    completedAt: string | null;
+    stages: Array<{
+      id: string;
+      orderNo: number;
+      title: string;
+      summary: string;
+      fromLevel: Types.CefrLevel;
+      toLevel: Types.CefrLevel;
+      focusSkills: Array<string>;
+      plannedStart: string;
+      plannedEnd: string;
+      status: Types.RoadmapStageStatus;
+      percentDone: number;
+      items: Array<{
+        id: string;
+        kind: Types.RoadmapContentKind;
+        contentId: string;
+        title: string;
+        skill: string | null;
+        required: boolean;
+        targetPercent: number;
+        plannedWeek: number;
+        estimatedMinutes: number;
+        percentDone: number;
+        done: boolean;
+      }>;
+      milestone: {
+        id: string;
+        kind: Types.MilestoneKind;
+        examId: string | null;
+        requiredScore: number | null;
+        requiredLevel: Types.CefrLevel | null;
+        status: Types.MilestoneStatus;
+        resultScore: number | null;
+        resultLevel: Types.CefrLevel | null;
+        attemptCount: number;
+        achievedAt: string | null;
+        ready: boolean;
+      } | null;
+    }>;
+    adjustments: Array<{ reason: Types.AdjustmentReason; createdAt: string }>;
+  };
+};
+
+export type LatestLevelCheckQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LatestLevelCheckQuery = {
+  latestLevelCheck: {
+    id: string;
+    purpose: Types.LevelCheckPurpose;
+    status: Types.LevelCheckStatus;
+    milestoneId: string | null;
+    examId: string;
+    speakingTaskId: string | null;
+    examAttemptId: string | null;
+    speakingAttemptId: string | null;
+    speakingSkipped: boolean;
+    speakingFailed: boolean;
+    vocabLevel: Types.CefrLevel | null;
+    listeningLevel: Types.CefrLevel | null;
+    speakingLevel: Types.CefrLevel | null;
+    resultLevel: Types.CefrLevel | null;
+    provisionalLevel: Types.CefrLevel | null;
+    createdAt: string;
+    completedAt: string | null;
+  } | null;
+};
+
+export type StartLevelCheckMutationVariables = Exact<{
+  purpose: Types.LevelCheckPurpose;
+  milestoneId?: string | number | null | undefined;
+}>;
+
+export type StartLevelCheckMutation = {
+  startLevelCheck: {
+    id: string;
+    purpose: Types.LevelCheckPurpose;
+    status: Types.LevelCheckStatus;
+    milestoneId: string | null;
+    examId: string;
+    speakingTaskId: string | null;
+    examAttemptId: string | null;
+    speakingAttemptId: string | null;
+    speakingSkipped: boolean;
+    speakingFailed: boolean;
+    vocabLevel: Types.CefrLevel | null;
+    listeningLevel: Types.CefrLevel | null;
+    speakingLevel: Types.CefrLevel | null;
+    resultLevel: Types.CefrLevel | null;
+    provisionalLevel: Types.CefrLevel | null;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
+export type SkipLevelCheckSpeakingMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SkipLevelCheckSpeakingMutation = {
+  skipLevelCheckSpeaking: {
+    id: string;
+    purpose: Types.LevelCheckPurpose;
+    status: Types.LevelCheckStatus;
+    milestoneId: string | null;
+    examId: string;
+    speakingTaskId: string | null;
+    examAttemptId: string | null;
+    speakingAttemptId: string | null;
+    speakingSkipped: boolean;
+    speakingFailed: boolean;
+    vocabLevel: Types.CefrLevel | null;
+    listeningLevel: Types.CefrLevel | null;
+    speakingLevel: Types.CefrLevel | null;
+    resultLevel: Types.CefrLevel | null;
+    provisionalLevel: Types.CefrLevel | null;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
 export type MyTourStatusQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MyTourStatusQuery = { myTourStatus: { completed: boolean } };
@@ -3423,6 +3846,8 @@ export type CurrentUserQuery = {
       targetCertificateType: string | null;
       targetScore: number | null;
       targetDate: string | null;
+      targetLevel: Types.CefrLevel | null;
+      dailyStudyMinutes: number | null;
       targetSkills: Array<Types.LearningSkill>;
     } | null;
   };
@@ -3597,6 +4022,9 @@ export const AssessmentTaskFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -3670,6 +4098,9 @@ export const AssessmentAttemptFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -4020,6 +4451,8 @@ export const OnboardingStateFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -4223,6 +4656,191 @@ export const QuizReviewFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<QuizReviewFieldsFragment, unknown>;
+export const RoadmapFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "RoadmapFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Roadmap" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "goalType" } },
+          { kind: "Field", name: { kind: "Name", value: "targetCertificate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetScore" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "startLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "startScore" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyMinutes" } },
+          { kind: "Field", name: { kind: "Name", value: "adjusting" } },
+          { kind: "Field", name: { kind: "Name", value: "pendingReason" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "schedule" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "stages" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "fromLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "toLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "focusSkills" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "plannedStart" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "plannedEnd" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "percentDone" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "contentId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "skill" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "required" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "plannedWeek" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "estimatedMinutes" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "percentDone" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "done" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "milestone" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "achievedAt" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "ready" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adjustments" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "reason" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RoadmapFieldsFragment, unknown>;
+export const LevelCheckFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheck" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "milestoneId" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingTaskId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingSkipped" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingFailed" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "listeningLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "resultLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LevelCheckFieldsFragment, unknown>;
 export const UpdateProfileDocument = {
   kind: "Document",
   definitions: [
@@ -4302,6 +4920,14 @@ export const UpdateProfileDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "targetDate" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "dailyStudyMinutes" },
                       },
                       {
                         kind: "Field",
@@ -8350,6 +8976,9 @@ export const AssessmentAuthoringTaskDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -8532,6 +9161,9 @@ export const AssessmentCatalogDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -8626,6 +9258,9 @@ export const AssessmentTaskDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -8702,6 +9337,9 @@ export const AssessmentAttemptDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -8903,6 +9541,9 @@ export const AssessmentHistoryDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -9069,6 +9710,9 @@ export const AssessmentAuthoringDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -9307,6 +9951,9 @@ export const AssessmentSubmissionDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -9493,6 +10140,9 @@ export const AssessmentStartDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -9653,6 +10303,9 @@ export const AssessmentSaveDraftDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -9772,6 +10425,9 @@ export const AssessmentSubmitDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -9891,6 +10547,9 @@ export const AssessmentRetryDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -10010,6 +10669,9 @@ export const AssessmentRequestReviewDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -10135,6 +10797,9 @@ export const AssessmentCreateTaskDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -10252,6 +10917,9 @@ export const AssessmentEditTaskDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -10363,6 +11031,9 @@ export const AssessmentTransitionTaskDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -10515,6 +11186,9 @@ export const AssessmentGradeDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
           { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
         ],
       },
     },
@@ -15053,6 +15727,8 @@ export const SelectLearningPurposesDocument = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -15140,6 +15816,8 @@ export const SetCertificateTargetDocument = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -15227,6 +15905,8 @@ export const SetCurrentLevelDocument = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -15314,6 +15994,8 @@ export const SetLearningGoalDocument = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -15407,6 +16089,8 @@ export const SelectTargetSkillsDocument = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -15468,6 +16152,8 @@ export const CompleteOnboardingDocument = {
           { kind: "Field", name: { kind: "Name", value: "currentLevel" } },
           { kind: "Field", name: { kind: "Name", value: "targetScore" } },
           { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyStudyMinutes" } },
           { kind: "Field", name: { kind: "Name", value: "targetSkills" } },
         ],
       },
@@ -16222,6 +16908,10 @@ export const DailyPathDocument = {
                     ],
                   },
                 },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "roadmapStageTitle" },
+                },
               ],
             },
           },
@@ -16731,6 +17421,837 @@ export const SubmitQuizAttemptDocument = {
   SubmitQuizAttemptMutation,
   SubmitQuizAttemptMutationVariables
 >;
+export const LearnerRoadmapDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "LearnerRoadmap" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "roadmap" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "RoadmapFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "RoadmapFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Roadmap" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "goalType" } },
+          { kind: "Field", name: { kind: "Name", value: "targetCertificate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetScore" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "startLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "startScore" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyMinutes" } },
+          { kind: "Field", name: { kind: "Name", value: "adjusting" } },
+          { kind: "Field", name: { kind: "Name", value: "pendingReason" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "schedule" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "stages" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "fromLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "toLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "focusSkills" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "plannedStart" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "plannedEnd" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "percentDone" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "contentId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "skill" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "required" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "plannedWeek" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "estimatedMinutes" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "percentDone" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "done" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "milestone" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "achievedAt" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "ready" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adjustments" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "reason" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LearnerRoadmapQuery, LearnerRoadmapQueryVariables>;
+export const CreateRoadmapDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateRoadmap" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createRoadmap" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "RoadmapFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "RoadmapFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Roadmap" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "goalType" } },
+          { kind: "Field", name: { kind: "Name", value: "targetCertificate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetScore" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "startLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "startScore" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyMinutes" } },
+          { kind: "Field", name: { kind: "Name", value: "adjusting" } },
+          { kind: "Field", name: { kind: "Name", value: "pendingReason" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "schedule" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "stages" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "fromLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "toLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "focusSkills" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "plannedStart" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "plannedEnd" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "percentDone" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "contentId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "skill" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "required" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "plannedWeek" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "estimatedMinutes" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "percentDone" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "done" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "milestone" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "achievedAt" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "ready" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adjustments" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "reason" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateRoadmapMutation,
+  CreateRoadmapMutationVariables
+>;
+export const AbandonRoadmapDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AbandonRoadmap" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "abandonRoadmap" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AbandonRoadmapMutation,
+  AbandonRoadmapMutationVariables
+>;
+export const RecordMilestoneSittingDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RecordMilestoneSitting" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "milestoneId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "examAttemptId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "recordMilestoneSitting" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "milestoneId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "milestoneId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "examAttemptId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "examAttemptId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "RoadmapFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "RoadmapFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "Roadmap" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "goalType" } },
+          { kind: "Field", name: { kind: "Name", value: "targetCertificate" } },
+          { kind: "Field", name: { kind: "Name", value: "targetScore" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "targetDate" } },
+          { kind: "Field", name: { kind: "Name", value: "startLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "startScore" } },
+          { kind: "Field", name: { kind: "Name", value: "dailyMinutes" } },
+          { kind: "Field", name: { kind: "Name", value: "adjusting" } },
+          { kind: "Field", name: { kind: "Name", value: "pendingReason" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "schedule" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "stages" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "orderNo" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "summary" } },
+                { kind: "Field", name: { kind: "Name", value: "fromLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "toLevel" } },
+                { kind: "Field", name: { kind: "Name", value: "focusSkills" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "plannedStart" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "plannedEnd" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "percentDone" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "contentId" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "skill" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "required" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetPercent" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "plannedWeek" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "estimatedMinutes" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "percentDone" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "done" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "milestone" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "kind" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "requiredLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "status" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultScore" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "resultLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attemptCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "achievedAt" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "ready" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adjustments" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "reason" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RecordMilestoneSittingMutation,
+  RecordMilestoneSittingMutationVariables
+>;
+export const LatestLevelCheckDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "LatestLevelCheck" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "latestLevelCheck" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheck" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "milestoneId" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingTaskId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingSkipped" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingFailed" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "listeningLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "resultLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  LatestLevelCheckQuery,
+  LatestLevelCheckQueryVariables
+>;
+export const StartLevelCheckDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "StartLevelCheck" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "purpose" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "LevelCheckPurpose" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "milestoneId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startLevelCheck" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "purpose" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "purpose" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "milestoneId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "milestoneId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheck" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "milestoneId" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingTaskId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingSkipped" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingFailed" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "listeningLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "resultLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  StartLevelCheckMutation,
+  StartLevelCheckMutationVariables
+>;
+export const SkipLevelCheckSpeakingDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SkipLevelCheckSpeaking" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "skipLevelCheckSpeaking" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "LevelCheckFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "LevelCheckFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "LevelCheck" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "milestoneId" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingTaskId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingAttemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingSkipped" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingFailed" } },
+          { kind: "Field", name: { kind: "Name", value: "vocabLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "listeningLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "resultLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SkipLevelCheckSpeakingMutation,
+  SkipLevelCheckSpeakingMutationVariables
+>;
 export const MyTourStatusDocument = {
   kind: "Document",
   definitions: [
@@ -16838,6 +18359,14 @@ export const CurrentUserDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "targetDate" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "targetLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "dailyStudyMinutes" },
                       },
                       {
                         kind: "Field",
