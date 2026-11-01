@@ -2,6 +2,7 @@ import type { UpdateProfileInput } from "../../generated/graphql.js";
 import type { BackendClient } from "../../shared/http/backendClient.js";
 import { BackendError } from "../../shared/http/backendError.js";
 import type {
+  AvatarPresetResponse,
   UserInformationResponse,
   UserTourStatusResponse,
   UserBootstrapResponse,
@@ -37,6 +38,14 @@ export class UserApi {
 
   updateProfile(input: UpdateProfileInput): Promise<UserInformationResponse> {
     return this.client.put(`${USER_BASE_PATH}/me/profile`, input);
+  }
+
+  getAvatarPresets(): Promise<AvatarPresetResponse[]> {
+    return this.client.get(`${USER_BASE_PATH}/avatar-presets`);
+  }
+
+  chooseAvatar(preset: string): Promise<UserInformationResponse> {
+    return this.client.put(`${USER_BASE_PATH}/me/profile/avatar`, { preset });
   }
 
   getTourStatus(): Promise<UserTourStatusResponse> {

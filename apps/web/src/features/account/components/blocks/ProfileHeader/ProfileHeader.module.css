@@ -33,17 +33,6 @@
   color: var(--mantine-color-navy-9);
 }
 
-.onlineDot {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: var(--mantine-color-teal-6);
-  border: 2px solid var(--mantine-color-body);
-}
-
 .verifiedIcon {
   color: var(--mantine-color-navy-7);
 }
@@ -61,4 +50,11 @@
 
 .clickableId:hover {
   background-color: var(--mantine-color-ink-1);
+}
+
+.editAvatar {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid var(--mantine-color-body);
 }

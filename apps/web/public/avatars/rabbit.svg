@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Rabbit">
+  <circle cx="64" cy="64" r="64" fill="#ADCFE5"/>
+  <ellipse cx="48" cy="34" rx="10" ry="26" fill="#FFFFFF"/>
+  <ellipse cx="80" cy="34" rx="10" ry="26" fill="#FFFFFF"/>
+  <ellipse cx="48" cy="36" rx="5" ry="18" fill="#F9C9D4"/>
+  <ellipse cx="80" cy="36" rx="5" ry="18" fill="#F9C9D4"/>
+  <ellipse cx="64" cy="80" rx="34" ry="30" fill="#FFFFFF"/>
+  <circle cx="51" cy="76" r="5" fill="#1F2A60"/>
+  <circle cx="77" cy="76" r="5" fill="#1F2A60"/>
+  <circle cx="52.5" cy="74.5" r="1.6" fill="#FFFFFF"/>
+  <circle cx="78.5" cy="74.5" r="1.6" fill="#FFFFFF"/>
+  <circle cx="42" cy="88" r="6" fill="#F9C9D4" opacity="0.8"/>
+  <circle cx="86" cy="88" r="6" fill="#F9C9D4" opacity="0.8"/>
+  <ellipse cx="64" cy="86" rx="4" ry="3" fill="#E96B8A"/>
+  <path d="M64 89 q-4 5 -8 2 M64 89 q4 5 8 2" stroke="#1F2A60" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

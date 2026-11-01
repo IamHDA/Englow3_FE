@@ -48,13 +48,28 @@ export const userTypeDefs = /* GraphQL */ `
     completed: Boolean!
   }
 
+  """
+  A profile picture to choose from. There is no upload: a profile wears one of
+  these, served by the web app.
+  """
+  type AvatarPreset {
+    id: ID!
+    url: String!
+  }
+
   extend type Query {
     me: Me!
     myTourStatus: UserTourStatus!
+    avatarPresets: [AvatarPreset!]!
   }
 
   extend type Mutation {
     updateProfile(input: UpdateProfileInput!): Me!
     completeMyTour: UserTourStatus!
+    """
+    Wears one of the preset pictures. Refused with extensions.backendCode
+    AVATAR_PRESET_UNKNOWN for an id that names none.
+    """
+    chooseAvatar(preset: ID!): Me!
   }
 `;

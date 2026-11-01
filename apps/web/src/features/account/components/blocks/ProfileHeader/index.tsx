@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ActionIcon,
   Avatar,
   Badge,
   Box,
@@ -16,6 +17,7 @@ import {
   Copy,
   Hash,
   Mail,
+  Pencil,
   Sparkles,
   UserCheck,
 } from "lucide-react";
@@ -25,6 +27,7 @@ import { OnboardingStep, Role } from "@/lib/graphql/generated";
 import type { AppTranslations } from "@/shared/constants/translations";
 
 import type { AccountProfile } from "../../../types";
+import { AvatarPicker } from "../AvatarPicker";
 
 import classes from "./ProfileHeader.module.css";
 
@@ -56,6 +59,7 @@ function onboardingStepLabel(step: OnboardingStep, t: AppTranslations): string {
 
 export function ProfileHeader({ profile }: ProfileHeaderProps) {
   const [copied, setCopied] = useState(false);
+  const [pickingAvatar, setPickingAvatar] = useState(false);
   const { t } = useLanguage();
 
   const genderLabel =
@@ -101,8 +105,23 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
               radius="xl"
               className={classes.avatar}
             />
-            <Box className={classes.onlineDot} title={t.account.activeNow} />
+            <ActionIcon
+              radius="xl"
+              size="md"
+              color="navy"
+              className={classes.editAvatar}
+              onClick={() => setPickingAvatar(true)}
+              aria-label={t.account.changeAvatar}
+              title={t.account.changeAvatar}
+            >
+              <Pencil size={14} />
+            </ActionIcon>
           </Box>
+          <AvatarPicker
+            opened={pickingAvatar}
+            onClose={() => setPickingAvatar(false)}
+            currentUrl={profile.avatarUrl}
+          />
 
           {/* Chỉ LEARNER mới có onboarding - badge này báo đúng một việc đó,
               nên STAFF/ADMIN không có gì để báo. */}

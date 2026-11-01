@@ -126,3 +126,28 @@ describe("website tour", () => {
     expect(completeTour).toHaveBeenCalledOnce();
   });
 });
+
+describe("Mutation.chooseAvatar", () => {
+  it("fails before calling the backend when there is no token", () => {
+    const chooseAvatar = vi.fn();
+    const ctx = makeContext({
+      token: null,
+      apis: { userApi: { chooseAvatar } },
+    });
+
+    expect(() =>
+      userResolvers.Mutation.chooseAvatar({}, { preset: "fox" }, ctx),
+    ).toThrow("Missing or invalid access token");
+    expect(chooseAvatar).not.toHaveBeenCalled();
+  });
+
+  /** The id goes as given: which ids exist is the backend's list to check. */
+  it("forwards the chosen preset id", async () => {
+    const chooseAvatar = vi.fn().mockResolvedValue({ id: "u1" });
+    const ctx = makeContext({ apis: { userApi: { chooseAvatar } } });
+
+    await userResolvers.Mutation.chooseAvatar({}, { preset: "owl" }, ctx);
+
+    expect(chooseAvatar).toHaveBeenCalledWith("owl");
+  });
+});

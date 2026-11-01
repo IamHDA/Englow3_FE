@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Penguin">
+  <circle cx="64" cy="64" r="64" fill="#7FB3D4"/>
+  <ellipse cx="64" cy="74" rx="38" ry="44" fill="#1F2A60"/>
+  <path d="M64 46 C44 46 36 62 40 80 C44 100 56 108 64 108 C72 108 84 100 88 80 C92 62 84 46 64 46 Z" fill="#FFFFFF"/>
+  <circle cx="52" cy="66" r="5" fill="#1F2A60"/>
+  <circle cx="76" cy="66" r="5" fill="#1F2A60"/>
+  <circle cx="53.5" cy="64.5" r="1.6" fill="#FFFFFF"/>
+  <circle cx="77.5" cy="64.5" r="1.6" fill="#FFFFFF"/>
+  <path d="M56 76 L72 76 L64 86 Z" fill="#F39A15"/>
+  <circle cx="44" cy="80" r="5" fill="#FCD58F" opacity="0.7"/>
+  <circle cx="84" cy="80" r="5" fill="#FCD58F" opacity="0.7"/>
+</svg>

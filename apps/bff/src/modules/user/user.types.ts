@@ -15,3 +15,6 @@ export type UserBootstrapResponse =
 
 export type UserTourStatusResponse =
   paths["/api/user/me/tour"]["get"]["responses"][200]["content"]["application/json"];
+
+export type AvatarPresetResponse =
+  paths["/api/user/avatar-presets"]["get"]["responses"][200]["content"]["application/json"][number];

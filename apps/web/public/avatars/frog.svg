@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Frog">
+  <circle cx="64" cy="64" r="64" fill="#FFF6EA"/>
+  <circle cx="42" cy="46" r="16" fill="#3FA56B"/>
+  <circle cx="86" cy="46" r="16" fill="#3FA56B"/>
+  <ellipse cx="64" cy="76" rx="42" ry="32" fill="#3FA56B"/>
+  <circle cx="42" cy="46" r="10" fill="#FFFFFF"/>
+  <circle cx="86" cy="46" r="10" fill="#FFFFFF"/>
+  <circle cx="43" cy="47" r="5" fill="#1F2A60"/>
+  <circle cx="85" cy="47" r="5" fill="#1F2A60"/>
+  <circle cx="44.5" cy="45.5" r="1.6" fill="#FFFFFF"/>
+  <circle cx="86.5" cy="45.5" r="1.6" fill="#FFFFFF"/>
+  <ellipse cx="64" cy="90" rx="26" ry="12" fill="#BFE6CD"/>
+  <path d="M40 78 Q64 98 88 78" stroke="#1F2A60" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="38" cy="82" r="5" fill="#F9C9D4" opacity="0.8"/>
+  <circle cx="90" cy="82" r="5" fill="#F9C9D4" opacity="0.8"/>
+  <circle cx="58" cy="68" r="1.8" fill="#1F2A60"/>
+  <circle cx="70" cy="68" r="1.8" fill="#1F2A60"/>
+</svg>

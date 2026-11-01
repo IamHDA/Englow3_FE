@@ -1,0 +1,13 @@
+query AvatarPresets {
+  avatarPresets {
+    id
+    url
+  }
+}
+
+mutation ChooseAvatar($preset: ID!) {
+  chooseAvatar(preset: $preset) {
+    id
+    avatarUrl
+  }
+}
