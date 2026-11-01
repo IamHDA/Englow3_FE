@@ -22,6 +22,9 @@ import {
   useCreateRoadmapMutation,
   useStartLevelCheckMutation,
 } from "@/lib/graphql/generated/hooks";
+import { notifications } from "@mantine/notifications";
+
+import { OnboardingStep } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { backendCodeOf } from "@/shared/network/loadError";
 
@@ -61,7 +64,7 @@ function messageForError(error: unknown, isVi: boolean): string {
  */
 export function useOnboardingActions() {
   const { applyOnboardingState } = useAccountProfile();
-  const { close } = useOnboarding();
+  const { close, editing, advanceEdit } = useOnboarding();
   const router = useRouter();
   const { isVi } = useLanguage();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -93,6 +96,10 @@ export function useOnboardingActions() {
   const run = useCallback(
     async (
       mutate: () => Promise<OnboardingStateFieldsFragment | null | undefined>,
+      /** Where an edit of finished goals goes next; null when this was the last step. */
+      nextWhenEditing: (
+        state: OnboardingStateFieldsFragment,
+      ) => OnboardingStep | null,
     ) => {
       setErrorMessage(null);
       let state: OnboardingStateFieldsFragment | null | undefined;
@@ -102,9 +109,21 @@ export function useOnboardingActions() {
         setErrorMessage(messageForError(error, isVi));
         return;
       }
-      if (state) applyOnboardingState(state);
+      if (!state) return;
+      applyOnboardingState(state);
+      if (editing) {
+        const next = nextWhenEditing(state);
+        advanceEdit(next);
+        if (next === null)
+          notifications.show({
+            color: "teal",
+            message: isVi
+              ? "Đã cập nhật mục tiêu học."
+              : "Your learning goals are updated.",
+          });
+      }
     },
-    [applyOnboardingState, isVi],
+    [applyOnboardingState, isVi, editing, advanceEdit],
   );
 
   return {
@@ -112,36 +131,54 @@ export function useOnboardingActions() {
     errorMessage,
     submitLearningPurposes: useCallback(
       (purposeIds: number[]) =>
-        run(async () => {
-          const { data } = await selectPurposes({ variables: { purposeIds } });
-          return data?.selectLearningPurposes;
-        }),
+        run(
+          async () => {
+            const { data } = await selectPurposes({
+              variables: { purposeIds },
+            });
+            return data?.selectLearningPurposes;
+          },
+          (state) =>
+            // The same branch the backend takes for a learner still onboarding.
+            state.certificateLearner
+              ? OnboardingStep.CERTIFICATE_TARGET
+              : OnboardingStep.CURRENT_LEVEL,
+        ),
       [run, selectPurposes],
     ),
     submitCertificateTarget: useCallback(
       (certificateType: TargetCertificate) =>
-        run(async () => {
-          const { data } = await setCertificate({
-            variables: { certificateType },
-          });
-          return data?.setCertificateTarget;
-        }),
+        run(
+          async () => {
+            const { data } = await setCertificate({
+              variables: { certificateType },
+            });
+            return data?.setCertificateTarget;
+          },
+          () => OnboardingStep.CURRENT_LEVEL,
+        ),
       [run, setCertificate],
     ),
     submitCurrentLevel: useCallback(
       (level: CefrLevel) =>
-        run(async () => {
-          const { data } = await setLevel({ variables: { level } });
-          return data?.setCurrentLevel;
-        }),
+        run(
+          async () => {
+            const { data } = await setLevel({ variables: { level } });
+            return data?.setCurrentLevel;
+          },
+          () => OnboardingStep.LEARNING_GOAL,
+        ),
       [run, setLevel],
     ),
     submitLearningGoal: useCallback(
       (input: LearningGoalInput) =>
-        run(async () => {
-          const { data } = await setGoal({ variables: { input } });
-          return data?.setLearningGoal;
-        }),
+        run(
+          async () => {
+            const { data } = await setGoal({ variables: { input } });
+            return data?.setLearningGoal;
+          },
+          () => OnboardingStep.TARGET_SKILLS,
+        ),
       [run, setGoal],
     ),
     /**
@@ -171,17 +208,20 @@ export function useOnboardingActions() {
     }, [loadPlacementExam, close, router, isVi]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>
-        run(async () => {
-          await selectSkills({ variables: { skills } });
-          const { data } = await complete();
-          // The roadmap is made by the system as soon as the goal is known. A
-          // refusal here (no content yet, say) is not the learner's problem to
-          // solve in onboarding; the roadmap page offers to try again.
-          if (data?.completeOnboarding) {
-            createRoadmap().catch(() => undefined);
-          }
-          return data?.completeOnboarding;
-        }),
+        run(
+          async () => {
+            await selectSkills({ variables: { skills } });
+            const { data } = await complete();
+            // The roadmap is made by the system as soon as the goal is known. A
+            // refusal here (no content yet, say) is not the learner's problem to
+            // solve in onboarding; the roadmap page offers to try again.
+            if (data?.completeOnboarding) {
+              createRoadmap().catch(() => undefined);
+            }
+            return data?.completeOnboarding;
+          },
+          () => null,
+        ),
       [run, selectSkills, complete, createRoadmap],
     ),
     /**

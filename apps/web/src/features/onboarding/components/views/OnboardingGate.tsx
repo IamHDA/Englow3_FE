@@ -202,16 +202,12 @@ export function OnboardingGate() {
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const { profile } = useAccountProfile();
-  const { opened, close } = useOnboarding();
+  const { opened, close, step } = useOnboarding();
   const actions = useOnboardingActions();
 
   const stepContent =
-    opened && profile != null
-      ? renderOnboardingStep(
-          profile.onboardingStep,
-          profile.onboardingState,
-          actions,
-        )
+    opened && profile != null && step != null
+      ? renderOnboardingStep(step, profile.onboardingState, actions)
       : undefined;
 
   return (
