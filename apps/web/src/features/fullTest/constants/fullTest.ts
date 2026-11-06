@@ -1,4 +1,5 @@
 import {
+  FullTestPartGrading,
   FullTestSittingStatus,
   FullTestSlot,
 } from "@/lib/graphql/generated/schemaTypes";
@@ -126,3 +127,34 @@ export const FULL_TEST_ERROR_COPY: Record<string, Copy> = {
     en: "Only a draft or returned full test can be edited.",
   },
 };
+
+/** How grading of a handed-in part stands, as the sitting page says it. */
+export const GRADING_COPY: Record<
+  FullTestPartGrading,
+  Copy & { color: string }
+> = {
+  [FullTestPartGrading.GRADING]: {
+    vi: "Đã nộp · đang chấm",
+    en: "Handed in · being graded",
+    color: "blue",
+  },
+  [FullTestPartGrading.AWAITING_REVIEW]: {
+    vi: "Đã nộp · chờ giáo viên chấm",
+    en: "Handed in · waiting for a teacher",
+    color: "yellow",
+  },
+  [FullTestPartGrading.FAILED]: {
+    vi: "Chấm tự động bị lỗi · cần chấm lại",
+    en: "Automatic grading failed · resend it",
+    color: "red",
+  },
+  [FullTestPartGrading.GRADED]: {
+    vi: "Đã có điểm",
+    en: "Graded",
+    color: "teal",
+  },
+};
+
+/** Where a Writing or Speaking answer is read, resent or sent to a teacher. */
+export const attemptPath = (attemptId: string) =>
+  `/study/assessments/attempts/${attemptId}`;

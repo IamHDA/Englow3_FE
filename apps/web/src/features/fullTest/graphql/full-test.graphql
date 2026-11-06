@@ -5,6 +5,7 @@ fragment FullTestSittingFields on FullTestSitting {
   status
   startedAt
   deadlineAt
+  gradesDueAt
   completedAt
   examId
   examAttemptId
@@ -12,6 +13,7 @@ fragment FullTestSittingFields on FullTestSitting {
     slot
     taskId
     attemptId
+    grading
   }
   listeningBand
   readingBand

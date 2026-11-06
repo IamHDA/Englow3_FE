@@ -3335,6 +3335,7 @@ export type FullTestSittingFieldsFragment = {
   status: Types.FullTestSittingStatus;
   startedAt: string;
   deadlineAt: string;
+  gradesDueAt: string;
   completedAt: string | null;
   examId: string;
   examAttemptId: string | null;
@@ -3348,6 +3349,7 @@ export type FullTestSittingFieldsFragment = {
     slot: Types.FullTestSlot;
     taskId: string;
     attemptId: string | null;
+    grading: Types.FullTestPartGrading | null;
   }>;
 };
 
@@ -3367,6 +3369,7 @@ export type FullTestLibraryQuery = {
     status: Types.FullTestSittingStatus;
     startedAt: string;
     deadlineAt: string;
+    gradesDueAt: string;
     completedAt: string | null;
     examId: string;
     examAttemptId: string | null;
@@ -3380,6 +3383,7 @@ export type FullTestLibraryQuery = {
       slot: Types.FullTestSlot;
       taskId: string;
       attemptId: string | null;
+      grading: Types.FullTestPartGrading | null;
     }>;
   }>;
 };
@@ -3396,6 +3400,7 @@ export type FullTestSittingQuery = {
     status: Types.FullTestSittingStatus;
     startedAt: string;
     deadlineAt: string;
+    gradesDueAt: string;
     completedAt: string | null;
     examId: string;
     examAttemptId: string | null;
@@ -3409,6 +3414,7 @@ export type FullTestSittingQuery = {
       slot: Types.FullTestSlot;
       taskId: string;
       attemptId: string | null;
+      grading: Types.FullTestPartGrading | null;
     }>;
   };
 };
@@ -3425,6 +3431,7 @@ export type StartFullTestMutation = {
     status: Types.FullTestSittingStatus;
     startedAt: string;
     deadlineAt: string;
+    gradesDueAt: string;
     completedAt: string | null;
     examId: string;
     examAttemptId: string | null;
@@ -3438,6 +3445,7 @@ export type StartFullTestMutation = {
       slot: Types.FullTestSlot;
       taskId: string;
       attemptId: string | null;
+      grading: Types.FullTestPartGrading | null;
     }>;
   };
 };
@@ -5315,6 +5323,7 @@ export const FullTestSittingFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "startedAt" } },
           { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradesDueAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
           { kind: "Field", name: { kind: "Name", value: "examId" } },
           { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
@@ -5327,6 +5336,7 @@ export const FullTestSittingFieldsFragmentDoc = {
                 { kind: "Field", name: { kind: "Name", value: "slot" } },
                 { kind: "Field", name: { kind: "Name", value: "taskId" } },
                 { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+                { kind: "Field", name: { kind: "Name", value: "grading" } },
               ],
             },
           },
@@ -17946,6 +17956,7 @@ export const FullTestLibraryDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "startedAt" } },
           { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradesDueAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
           { kind: "Field", name: { kind: "Name", value: "examId" } },
           { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
@@ -17958,6 +17969,7 @@ export const FullTestLibraryDocument = {
                 { kind: "Field", name: { kind: "Name", value: "slot" } },
                 { kind: "Field", name: { kind: "Name", value: "taskId" } },
                 { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+                { kind: "Field", name: { kind: "Name", value: "grading" } },
               ],
             },
           },
@@ -18037,6 +18049,7 @@ export const FullTestSittingDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "startedAt" } },
           { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradesDueAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
           { kind: "Field", name: { kind: "Name", value: "examId" } },
           { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
@@ -18049,6 +18062,7 @@ export const FullTestSittingDocument = {
                 { kind: "Field", name: { kind: "Name", value: "slot" } },
                 { kind: "Field", name: { kind: "Name", value: "taskId" } },
                 { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+                { kind: "Field", name: { kind: "Name", value: "grading" } },
               ],
             },
           },
@@ -18131,6 +18145,7 @@ export const StartFullTestDocument = {
           { kind: "Field", name: { kind: "Name", value: "status" } },
           { kind: "Field", name: { kind: "Name", value: "startedAt" } },
           { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "gradesDueAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
           { kind: "Field", name: { kind: "Name", value: "examId" } },
           { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
@@ -18143,6 +18158,7 @@ export const StartFullTestDocument = {
                 { kind: "Field", name: { kind: "Name", value: "slot" } },
                 { kind: "Field", name: { kind: "Name", value: "taskId" } },
                 { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+                { kind: "Field", name: { kind: "Name", value: "grading" } },
               ],
             },
           },

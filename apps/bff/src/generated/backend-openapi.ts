@@ -4701,6 +4701,11 @@ export interface components {
              * @description Every part must be submitted by then; grading may finish later
              */
             deadlineAt: string;
+            /**
+             * Format: date-time
+             * @description A sitting still missing a grade then expires and keeps its provisional band
+             */
+            gradesDueAt: string;
             /** Format: date-time */
             completedAt: string | null;
             /**
@@ -4726,6 +4731,11 @@ export interface components {
             taskId: string;
             /** Format: uuid */
             attemptId: string | null;
+            /**
+             * @description How grading of the attached answer stands; null with no answer, and in lists
+             * @enum {string|null}
+             */
+            grading: "GRADING" | "AWAITING_REVIEW" | "FAILED" | "GRADED" | null;
         };
         "com.englow3.flashcard.dto.request.RateFlashcardRequest": {
             /** @enum {string} */

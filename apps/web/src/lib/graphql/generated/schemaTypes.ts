@@ -1030,9 +1030,22 @@ export type FullTestPart = {
   __typename?: "FullTestPart";
   /** Null until an answer submitted since the sitting began is picked up. */
   attemptId?: Maybe<Scalars["ID"]["output"]>;
+  /** Null with no answer attached, and in myFullTestSittings. */
+  grading?: Maybe<FullTestPartGrading>;
   slot: FullTestSlot;
   taskId: Scalars["ID"]["output"];
 };
+
+/** How grading of a part's attached answer stands. */
+export enum FullTestPartGrading {
+  /** Waiting for a person to grade it. */
+  AWAITING_REVIEW = "AWAITING_REVIEW",
+  /** The automatic grader gave up; resend it or ask for a person. */
+  FAILED = "FAILED",
+  GRADED = "GRADED",
+  /** Queued for the automatic grader. */
+  GRADING = "GRADING",
+}
 
 export type FullTestSitting = {
   __typename?: "FullTestSitting";
@@ -1043,6 +1056,11 @@ export type FullTestSitting = {
   /** The paper to sit in full. */
   examId: Scalars["ID"]["output"];
   fullTestId: Scalars["ID"]["output"];
+  /**
+   * A sitting still missing a grade then expires and keeps its provisional
+   * band (a week after deadlineAt).
+   */
+  gradesDueAt: Scalars["DateTime"]["output"];
   id: Scalars["ID"]["output"];
   listeningBand?: Maybe<Scalars["Float"]["output"]>;
   overallBand?: Maybe<Scalars["Float"]["output"]>;
@@ -1065,7 +1083,10 @@ export enum FullTestSittingStatus {
   AWAITING_GRADES = "AWAITING_GRADES",
   /** Every part graded; overallBand is set. */
   COMPLETED = "COMPLETED",
-  /** The seven days ran out with parts missing; provisionalBand stays. */
+  /**
+   * The seven days ran out with parts missing, or grading was still missing at
+   * gradesDueAt; provisionalBand stays.
+   */
   EXPIRED = "EXPIRED",
   /** Parts may still be taken, until deadlineAt. */
   IN_PROGRESS = "IN_PROGRESS",

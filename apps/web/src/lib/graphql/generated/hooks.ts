@@ -3338,6 +3338,7 @@ export type FullTestSittingFieldsFragment = {
   status: Types.FullTestSittingStatus;
   startedAt: string;
   deadlineAt: string;
+  gradesDueAt: string;
   completedAt: string | null;
   examId: string;
   examAttemptId: string | null;
@@ -3351,6 +3352,7 @@ export type FullTestSittingFieldsFragment = {
     slot: Types.FullTestSlot;
     taskId: string;
     attemptId: string | null;
+    grading: Types.FullTestPartGrading | null;
   }>;
 };
 
@@ -3370,6 +3372,7 @@ export type FullTestLibraryQuery = {
     status: Types.FullTestSittingStatus;
     startedAt: string;
     deadlineAt: string;
+    gradesDueAt: string;
     completedAt: string | null;
     examId: string;
     examAttemptId: string | null;
@@ -3383,6 +3386,7 @@ export type FullTestLibraryQuery = {
       slot: Types.FullTestSlot;
       taskId: string;
       attemptId: string | null;
+      grading: Types.FullTestPartGrading | null;
     }>;
   }>;
 };
@@ -3399,6 +3403,7 @@ export type FullTestSittingQuery = {
     status: Types.FullTestSittingStatus;
     startedAt: string;
     deadlineAt: string;
+    gradesDueAt: string;
     completedAt: string | null;
     examId: string;
     examAttemptId: string | null;
@@ -3412,6 +3417,7 @@ export type FullTestSittingQuery = {
       slot: Types.FullTestSlot;
       taskId: string;
       attemptId: string | null;
+      grading: Types.FullTestPartGrading | null;
     }>;
   };
 };
@@ -3428,6 +3434,7 @@ export type StartFullTestMutation = {
     status: Types.FullTestSittingStatus;
     startedAt: string;
     deadlineAt: string;
+    gradesDueAt: string;
     completedAt: string | null;
     examId: string;
     examAttemptId: string | null;
@@ -3441,6 +3448,7 @@ export type StartFullTestMutation = {
       slot: Types.FullTestSlot;
       taskId: string;
       attemptId: string | null;
+      grading: Types.FullTestPartGrading | null;
     }>;
   };
 };
@@ -4887,6 +4895,7 @@ export const FullTestSittingFieldsFragmentDoc = gql`
     status
     startedAt
     deadlineAt
+    gradesDueAt
     completedAt
     examId
     examAttemptId
@@ -4894,6 +4903,7 @@ export const FullTestSittingFieldsFragmentDoc = gql`
       slot
       taskId
       attemptId
+      grading
     }
     listeningBand
     readingBand

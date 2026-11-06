@@ -29,7 +29,10 @@ export const fullTestTypeDefs = /* GraphQL */ `
     AWAITING_GRADES
     "Every part graded; overallBand is set."
     COMPLETED
-    "The seven days ran out with parts missing; provisionalBand stays."
+    """
+    The seven days ran out with parts missing, or grading was still missing at
+    gradesDueAt; provisionalBand stays.
+    """
     EXPIRED
   }
 
@@ -41,12 +44,25 @@ export const fullTestTypeDefs = /* GraphQL */ `
     SPEAKING_PART_3
   }
 
+  "How grading of a part's attached answer stands."
+  enum FullTestPartGrading {
+    "Queued for the automatic grader."
+    GRADING
+    "Waiting for a person to grade it."
+    AWAITING_REVIEW
+    "The automatic grader gave up; resend it or ask for a person."
+    FAILED
+    GRADED
+  }
+
   "One Writing or Speaking part: the task to answer, and the answer attached."
   type FullTestPart {
     slot: FullTestSlot!
     taskId: ID!
     "Null until an answer submitted since the sitting began is picked up."
     attemptId: ID
+    "Null with no answer attached, and in myFullTestSittings."
+    grading: FullTestPartGrading
   }
 
   type FullTestSitting {
@@ -57,6 +73,11 @@ export const fullTestTypeDefs = /* GraphQL */ `
     startedAt: DateTime!
     "Every part must be submitted by then; grading may finish later."
     deadlineAt: DateTime!
+    """
+    A sitting still missing a grade then expires and keeps its provisional
+    band (a week after deadlineAt).
+    """
+    gradesDueAt: DateTime!
     completedAt: DateTime
     "The paper to sit in full."
     examId: ID!

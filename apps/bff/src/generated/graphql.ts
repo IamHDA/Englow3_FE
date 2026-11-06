@@ -1013,9 +1013,21 @@ export type FullTestPart = {
   __typename?: 'FullTestPart';
   /** Null until an answer submitted since the sitting began is picked up. */
   attemptId?: Maybe<Scalars['ID']['output']>;
+  /** Null with no answer attached, and in myFullTestSittings. */
+  grading?: Maybe<FullTestPartGrading>;
   slot: FullTestSlot;
   taskId: Scalars['ID']['output'];
 };
+
+/** How grading of a part's attached answer stands. */
+export type FullTestPartGrading =
+  /** Waiting for a person to grade it. */
+  | 'AWAITING_REVIEW'
+  /** The automatic grader gave up; resend it or ask for a person. */
+  | 'FAILED'
+  | 'GRADED'
+  /** Queued for the automatic grader. */
+  | 'GRADING';
 
 export type FullTestSitting = {
   __typename?: 'FullTestSitting';
@@ -1026,6 +1038,11 @@ export type FullTestSitting = {
   /** The paper to sit in full. */
   examId: Scalars['ID']['output'];
   fullTestId: Scalars['ID']['output'];
+  /**
+   * A sitting still missing a grade then expires and keeps its provisional
+   * band (a week after deadlineAt).
+   */
+  gradesDueAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   listeningBand?: Maybe<Scalars['Float']['output']>;
   overallBand?: Maybe<Scalars['Float']['output']>;
@@ -1048,7 +1065,10 @@ export type FullTestSittingStatus =
   | 'AWAITING_GRADES'
   /** Every part graded; overallBand is set. */
   | 'COMPLETED'
-  /** The seven days ran out with parts missing; provisionalBand stays. */
+  /**
+   * The seven days ran out with parts missing, or grading was still missing at
+   * gradesDueAt; provisionalBand stays.
+   */
   | 'EXPIRED'
   /** Parts may still be taken, until deadlineAt. */
   | 'IN_PROGRESS';
@@ -3457,6 +3477,7 @@ export type ResolversTypes = ResolversObject<{
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   FullTest: ResolverTypeWrapper<FullTest>;
   FullTestPart: ResolverTypeWrapper<FullTestPart>;
+  FullTestPartGrading: FullTestPartGrading;
   FullTestSitting: ResolverTypeWrapper<FullTestSitting>;
   FullTestSittingStatus: FullTestSittingStatus;
   FullTestSlot: FullTestSlot;
@@ -4331,6 +4352,7 @@ export type FullTestResolvers<ContextType = GraphQLContext, ParentType extends R
 
 export type FullTestPartResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTestPart'] = ResolversParentTypes['FullTestPart']> = ResolversObject<{
   attemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  grading?: Resolver<Maybe<ResolversTypes['FullTestPartGrading']>, ParentType, ContextType>;
   slot?: Resolver<ResolversTypes['FullTestSlot'], ParentType, ContextType>;
   taskId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
@@ -4341,6 +4363,7 @@ export type FullTestSittingResolvers<ContextType = GraphQLContext, ParentType ex
   examAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   examId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   fullTestId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  gradesDueAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   listeningBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   overallBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;

@@ -4,12 +4,17 @@ import { Alert, Badge, Button, Card, Group, Stack, Text } from "@mantine/core";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
-import { FullTestSittingStatus } from "@/lib/graphql/generated/schemaTypes";
+import {
+  FullTestPartGrading,
+  FullTestSittingStatus,
+} from "@/lib/graphql/generated/schemaTypes";
 import { useFullTestSittingQuery } from "@/lib/graphql/generated/hooks";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import {
+  attemptPath,
+  GRADING_COPY,
   SITTING_POLL_MS,
   SLOT_COPY,
   STATUS_COPY,
@@ -55,24 +60,34 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
 
   const status = STATUS_COPY[sitting.status];
   const open = sitting.status === FullTestSittingStatus.IN_PROGRESS;
-  const deadline = new Date(sitting.deadlineAt).toLocaleString(
-    isVi ? "vi-VN" : "en-GB",
-    { dateStyle: "medium", timeStyle: "short" },
-  );
+  const when = (at: string) =>
+    new Date(at).toLocaleString(isVi ? "vi-VN" : "en-GB", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
   const parts = [
     {
       key: "paper",
       title: "Listening + Reading",
       done: Boolean(sitting.examAttemptId),
       href: `/exams/${sitting.examId}`,
+      grading: sitting.examAttemptId ? FullTestPartGrading.GRADED : null,
+      attemptId: null,
     },
     ...sitting.parts.map((part) => ({
       key: part.slot,
       title: isVi ? SLOT_COPY[part.slot].vi : SLOT_COPY[part.slot].en,
       done: Boolean(part.attemptId),
       href: `${SLOT_COPY[part.slot].path}/${part.taskId}`,
+      grading: part.grading ?? null,
+      attemptId: part.attemptId ?? null,
     })),
   ];
+  const failed = parts.some(
+    (part) => part.grading === FullTestPartGrading.FAILED,
+  );
+  // Everything handed in: an expiry then means grading ran out, not the parts.
+  const allHandedIn = parts.every((part) => part.done);
 
   return (
     <Page width="focus">
@@ -96,16 +111,36 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
           </Badge>
           {open && (
             <Text size="sm" c="dimmed">
-              {tr("Nộp đủ trước", "Hand everything in by")} {deadline}
+              {tr("Nộp đủ trước", "Hand everything in by")}{" "}
+              {when(sitting.deadlineAt)}
+            </Text>
+          )}
+          {sitting.status === FullTestSittingStatus.AWAITING_GRADES && (
+            <Text size="sm" c="dimmed">
+              {tr("Hạn chấm xong", "Grading closes")}{" "}
+              {when(sitting.gradesDueAt)}
             </Text>
           )}
         </Group>
 
         {sitting.status === FullTestSittingStatus.EXPIRED && (
           <Alert color="gray" variant="light">
+            {allHandedIn
+              ? tr(
+                  "Đã hết hạn chấm mà vẫn còn phần chưa có điểm. Band tạm vẫn được giữ; muốn có band tổng, hãy làm một lượt mới.",
+                  "Grading closed with a part still ungraded. The provisional band stays; start a new sitting for an overall band.",
+                )
+              : tr(
+                  "Đã quá 7 ngày mà chưa nộp đủ các phần. Band tạm vẫn được giữ; muốn có band tổng, hãy làm một lượt mới.",
+                  "Seven days passed with parts missing. The provisional band stays; start a new sitting for an overall band.",
+                )}
+          </Alert>
+        )}
+        {failed && !sitting.overallBand && unsettled && (
+          <Alert color="red" variant="light">
             {tr(
-              "Đã quá 7 ngày mà chưa nộp đủ các phần. Band tạm vẫn được giữ; muốn có band tổng, hãy làm một lượt mới.",
-              "Seven days passed with parts missing. The provisional band stays; start a new sitting for an overall band.",
+              `Có phần chấm tự động bị lỗi. Mở phần đó để chấm lại hoặc gửi giáo viên chấm trước ${when(sitting.gradesDueAt)}, nếu không lượt thi sẽ hết hạn mà không có band tổng.`,
+              `A part could not be graded automatically. Open it to resend it or ask a teacher before ${when(sitting.gradesDueAt)}, or the sitting closes without an overall band.`,
             )}
           </Alert>
         )}
@@ -126,10 +161,21 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
                   )}
                   <Stack gap={0}>
                     <Text fw={600}>{part.title}</Text>
-                    <Text size="xs" c="dimmed">
-                      {part.done
-                        ? tr("Đã nộp", "Handed in")
-                        : tr("Chưa làm", "Not done yet")}
+                    <Text
+                      size="xs"
+                      c={
+                        part.grading
+                          ? GRADING_COPY[part.grading].color
+                          : "dimmed"
+                      }
+                    >
+                      {part.grading
+                        ? isVi
+                          ? GRADING_COPY[part.grading].vi
+                          : GRADING_COPY[part.grading].en
+                        : part.done
+                          ? tr("Đã nộp", "Handed in")
+                          : tr("Chưa làm", "Not done yet")}
                     </Text>
                   </Stack>
                 </Group>
@@ -138,6 +184,18 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
                     {tr("Làm phần này", "Take this part")}
                   </Button>
                 )}
+                {unsettled &&
+                  part.attemptId &&
+                  part.grading === FullTestPartGrading.FAILED && (
+                    <Button
+                      component={Link}
+                      href={attemptPath(part.attemptId)}
+                      variant="light"
+                      color="red"
+                    >
+                      {tr("Chấm lại", "Resend")}
+                    </Button>
+                  )}
               </Group>
             </Card>
           ))}
