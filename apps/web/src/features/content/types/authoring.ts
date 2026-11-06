@@ -88,6 +88,21 @@ export type ExamQuestion = {
   questionCategory?: string | null;
   sourceQuestionId?: string | null;
   options: Option[];
+  /** TEXT_ENTRY: every spelling the gap accepts. */
+  acceptedAnswers?: ExamAcceptedAnswer[];
+  /** MATCHING: label(s) of the set's list entries that answer it. */
+  matchingLabels?: string[];
+};
+export type ExamAcceptedAnswer = {
+  text: string;
+  caseSensitive: boolean;
+  orderNo: number;
+};
+/** One entry of the list a set's MATCHING questions share: "iv", "B", "F". */
+export type ExamSetOption = {
+  label: string;
+  content?: string | null;
+  orderNo: number;
 };
 export type ExamSet = {
   title?: string | null;
@@ -100,6 +115,7 @@ export type ExamSet = {
   imageUrl?: string;
   sourceQuestionSetId?: string | null;
   questions: ExamQuestion[];
+  setOptions?: ExamSetOption[];
 };
 export type ExamPart = {
   title: string;

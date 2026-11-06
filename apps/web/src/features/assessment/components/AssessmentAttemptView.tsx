@@ -175,7 +175,10 @@ function AttemptContent({
         </Stack>
         {!completed && (
           <Card withBorder>
-            <TaskInstructions text={attempt.task.instructions} />
+            <TaskInstructions
+              text={attempt.task.instructions}
+              imageUrl={attempt.task.imageUrl}
+            />
           </Card>
         )}
         {attempt.status === "DRAFT" && attempt.skill === "WRITING" ? (

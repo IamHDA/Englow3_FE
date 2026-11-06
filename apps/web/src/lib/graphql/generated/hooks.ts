@@ -1226,6 +1226,7 @@ export type AssessmentTaskFieldsFragment = {
   targetLevel: Types.CefrLevel | null;
   purpose: Types.AssessmentTaskPurpose;
   certificateType: Types.CertificateType | null;
+  imageUrl: string | null;
 };
 
 export type AssessmentAttemptFieldsFragment = {
@@ -1262,6 +1263,7 @@ export type AssessmentAttemptFieldsFragment = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1300,6 +1302,7 @@ export type AssessmentAuthoringTaskDetailQuery = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1350,6 +1353,7 @@ export type AssessmentCatalogQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     }>;
   };
 };
@@ -1375,6 +1379,7 @@ export type AssessmentTaskDetailQuery = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
   assessmentCapabilities: {
     automaticWriting: boolean;
@@ -1422,6 +1427,7 @@ export type AssessmentAttemptDetailQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1473,6 +1479,7 @@ export type AssessmentHistoryQuery = {
         targetLevel: Types.CefrLevel | null;
         purpose: Types.AssessmentTaskPurpose;
         certificateType: Types.CertificateType | null;
+        imageUrl: string | null;
       };
     }>;
   };
@@ -1505,6 +1512,7 @@ export type AssessmentAuthoringQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     }>;
   };
 };
@@ -1574,6 +1582,7 @@ export type AssessmentSubmissionDetailQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1622,6 +1631,7 @@ export type AssessmentStartMutation = {
         targetLevel: Types.CefrLevel | null;
         purpose: Types.AssessmentTaskPurpose;
         certificateType: Types.CertificateType | null;
+        imageUrl: string | null;
       };
     };
   };
@@ -1668,6 +1678,7 @@ export type AssessmentSaveDraftMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1711,6 +1722,7 @@ export type AssessmentSubmitMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1754,6 +1766,7 @@ export type AssessmentRetryMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1797,6 +1810,7 @@ export type AssessmentRequestReviewMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1822,6 +1836,7 @@ export type AssessmentCreateTaskMutation = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1848,6 +1863,7 @@ export type AssessmentEditTaskMutation = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1874,6 +1890,7 @@ export type AssessmentTransitionTaskMutation = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1920,6 +1937,7 @@ export type AssessmentGradeMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1949,6 +1967,31 @@ export type AssessmentReadResultMutationVariables = Exact<{
 }>;
 
 export type AssessmentReadResultMutation = { readAssessmentResult: boolean };
+
+export type AssessmentRemoveTaskImageMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentRemoveTaskImageMutation = {
+  removeAssessmentTaskImage: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
+  };
+};
 
 export type ContentReviewFieldsFragment = {
   id: string;
@@ -4445,6 +4488,7 @@ export const AssessmentTaskFieldsFragmentDoc = gql`
     targetLevel
     purpose
     certificateType
+    imageUrl
   }
 `;
 export const AssessmentAttemptFieldsFragmentDoc = gql`
@@ -9959,6 +10003,60 @@ export type AssessmentReadResultMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     AssessmentReadResultMutation,
     AssessmentReadResultMutationVariables
+  >;
+export const AssessmentRemoveTaskImageDocument = gql`
+  mutation AssessmentRemoveTaskImage($id: ID!) {
+    removeAssessmentTaskImage(id: $id) {
+      ...AssessmentTaskFields
+    }
+  }
+  ${AssessmentTaskFieldsFragmentDoc}
+`;
+export type AssessmentRemoveTaskImageMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AssessmentRemoveTaskImageMutation,
+    AssessmentRemoveTaskImageMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAssessmentRemoveTaskImageMutation__
+ *
+ * To run a mutation, you first call `useAssessmentRemoveTaskImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssessmentRemoveTaskImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assessmentRemoveTaskImageMutation, { data, loading, error }] = useAssessmentRemoveTaskImageMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAssessmentRemoveTaskImageMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AssessmentRemoveTaskImageMutation,
+    AssessmentRemoveTaskImageMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AssessmentRemoveTaskImageMutation,
+    AssessmentRemoveTaskImageMutationVariables
+  >(AssessmentRemoveTaskImageDocument, options);
+}
+export type AssessmentRemoveTaskImageMutationHookResult = ReturnType<
+  typeof useAssessmentRemoveTaskImageMutation
+>;
+export type AssessmentRemoveTaskImageMutationResult =
+  ApolloReactCommon.MutationResult<AssessmentRemoveTaskImageMutation>;
+export type AssessmentRemoveTaskImageMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AssessmentRemoveTaskImageMutation,
+    AssessmentRemoveTaskImageMutationVariables
   >;
 export const AdminContentDocument = gql`
   query AdminContent(

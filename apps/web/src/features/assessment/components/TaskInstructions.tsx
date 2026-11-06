@@ -1,6 +1,7 @@
 "use client";
 
-import { Stack, Table, Text } from "@mantine/core";
+import { Image, Stack, Table, Text } from "@mantine/core";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 /**
  * A run of two or more lines that each split on `|` into the same number of
@@ -63,9 +64,26 @@ export function instructionsPreview(text: string): string {
     .join(" ");
 }
 
-export function TaskInstructions({ text }: { text: string }) {
+export function TaskInstructions({
+  text,
+  imageUrl,
+}: {
+  text: string;
+  /** A Writing Task 1's chart, signed by the backend. */
+  imageUrl?: string | null;
+}) {
+  const { isVi } = useLanguage();
   return (
     <Stack gap="md">
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt={isVi ? "Biểu đồ của đề" : "Task chart"}
+          fit="contain"
+          mah={420}
+          radius="sm"
+        />
+      )}
       {splitInstructions(text).map((block, i) =>
         block.kind === "text" ? (
           <Text key={i} style={{ whiteSpace: "pre-wrap" }}>

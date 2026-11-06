@@ -200,7 +200,7 @@ function TaskWorkbench({
           )}
         </Group>
         <Card withBorder radius="lg" p="xl">
-          <TaskInstructions text={task.instructions} />
+          <TaskInstructions text={task.instructions} imageUrl={task.imageUrl} />
         </Card>
         <Alert color="blue">
           {automatic

@@ -7,6 +7,7 @@ import {
   cardFields,
   sentenceFields,
 } from "../components/blocks/AuthoringFields";
+import { ExamQuestionKind } from "../constants/examQuestionTypes";
 
 export function validateAuthoring(
   kind: AuthoringKind,
@@ -214,26 +215,56 @@ export function validateAuthoring(
       section.parts.forEach((part, pi) => {
         const prefix = `content.sections[${si}].parts[${pi}]`;
         if (!part.title.trim()) errors[`${prefix}.title`] = required;
-        part.questionSets.forEach((set, qi) =>
+        part.questionSets.forEach((set, qi) => {
+          const setPath = `${prefix}.questionSets[${qi}]`;
+          const labels = (set.setOptions ?? []).map((entry) =>
+            entry.label.trim(),
+          );
+          if (
+            labels.some((label) => !label) ||
+            new Set(labels).size !== labels.length
+          )
+            errors[`${setPath}.setOptions`] = isVi
+              ? "Mỗi mục trong danh sách cần một nhãn riêng, không trùng."
+              : "Every list entry needs its own label.";
           set.questions.forEach((q, ji) => {
-            const p = `${prefix}.questionSets[${qi}].questions[${ji}]`;
+            const p = `${setPath}.questions[${ji}]`;
             if (!q.content.trim()) errors[`${p}.content`] = required;
             if (!Number.isFinite(q.maxRawScore) || q.maxRawScore <= 0)
               errors[`${p}.maxRawScore`] = isVi
                 ? "Điểm phải lớn hơn 0."
                 : "Points must be greater than zero.";
+            if (q.questionType === ExamQuestionKind.TEXT_ENTRY) {
+              if (!(q.acceptedAnswers ?? []).some((a) => a.text.trim()))
+                errors[`${p}.acceptedAnswers`] = isVi
+                  ? "Nhập ít nhất một đáp án được chấp nhận."
+                  : "Enter at least one accepted answer.";
+              else if ((q.acceptedAnswers ?? []).some((a) => !a.text.trim()))
+                errors[`${p}.acceptedAnswers`] = isVi
+                  ? "Xóa các dòng đáp án để trống."
+                  : "Remove the empty answer rows.";
+              return;
+            }
+            if (q.questionType === ExamQuestionKind.MATCHING) {
+              const chosen = q.matchingLabels ?? [];
+              if (!chosen.length || chosen.some((l) => !labels.includes(l)))
+                errors[`${p}.matchingLabels`] = isVi
+                  ? "Chọn đáp án từ danh sách của nhóm câu."
+                  : "Pick the answer from the group's list.";
+              return;
+            }
             const count = q.options.filter((o) => o.correct).length;
             if (
               q.options.length < 2 ||
               q.options.some((o) => !o.content.trim()) ||
               count === 0 ||
-              (q.questionType === "SINGLE_CHOICE" && count !== 1)
+              (q.questionType === ExamQuestionKind.SINGLE_CHOICE && count !== 1)
             )
               errors[`${p}.options`] = isVi
                 ? "Nhập đáp án và chọn đúng số đáp án đúng."
                 : "Enter options and mark the correct answer(s).";
-          }),
-        );
+          });
+        });
       }),
     );
   return errors;

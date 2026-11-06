@@ -29,6 +29,10 @@ import { assessmentTemplates } from "../templates";
 import { useRecoverableForm } from "@/shared/hooks/useRecoverableForm";
 import { EditorFrame } from "@/shared/components/EditorFrame";
 import { notifications } from "@mantine/notifications";
+import { AssessmentTaskImage } from "./AssessmentTaskImage";
+/** Writing Task 1 - the task type that comes with a chart. */
+const TASK_1 = "TASK_1";
+
 export function AssessmentTaskEditor({
   task,
   close,
@@ -65,6 +69,11 @@ export function AssessmentTaskEditor({
   const [create] = useAssessmentCreateTaskMutation();
   const [edit] = useAssessmentEditTaskMutation();
   const [busy, setBusy] = useState(false);
+  // Changing the chart saves the task on its own and moves its version on.
+  const [saved, setSaved] = useState({
+    version: task?.version ?? 0,
+    imageUrl: task?.imageUrl ?? null,
+  });
   const [error, setError] = useState<string | null>(null);
   const lock = useRef(false);
   function field<K extends keyof AssessmentTaskInput>(
@@ -81,7 +90,7 @@ export function AssessmentTaskEditor({
     try {
       const r = task
         ? await edit({
-            variables: { id: task.id, version: task.version, input: value },
+            variables: { id: task.id, version: saved.version, input: value },
           })
         : await create({ variables: { input: value } });
       if (!r.data) throw new Error("No result");
@@ -214,6 +223,27 @@ export function AssessmentTaskEditor({
           disabled={busy}
           onChange={(e) => field("instructions", e.currentTarget.value)}
         />
+        {value.skill === AssessmentSkill.WRITING &&
+          value.taskType === TASK_1 &&
+          (task ? (
+            <AssessmentTaskImage
+              taskId={task.id}
+              imageUrl={saved.imageUrl}
+              disabled={busy}
+              onChange={(change) =>
+                setSaved({
+                  version: change.version,
+                  imageUrl: change.imageUrl ?? null,
+                })
+              }
+            />
+          ) : (
+            <Text size="xs" c="dimmed">
+              {isVi
+                ? "Lưu đề trước, sau đó mở lại để tải ảnh biểu đồ."
+                : "Save the task first, then reopen it to upload the chart."}
+            </Text>
+          ))}
         <Group grow>
           <NumberInput
             label={tx("Số từ khuyến nghị")}

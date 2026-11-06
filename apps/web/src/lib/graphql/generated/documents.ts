@@ -1223,6 +1223,7 @@ export type AssessmentTaskFieldsFragment = {
   targetLevel: Types.CefrLevel | null;
   purpose: Types.AssessmentTaskPurpose;
   certificateType: Types.CertificateType | null;
+  imageUrl: string | null;
 };
 
 export type AssessmentAttemptFieldsFragment = {
@@ -1259,6 +1260,7 @@ export type AssessmentAttemptFieldsFragment = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1297,6 +1299,7 @@ export type AssessmentAuthoringTaskDetailQuery = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1347,6 +1350,7 @@ export type AssessmentCatalogQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     }>;
   };
 };
@@ -1372,6 +1376,7 @@ export type AssessmentTaskDetailQuery = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
   assessmentCapabilities: {
     automaticWriting: boolean;
@@ -1419,6 +1424,7 @@ export type AssessmentAttemptDetailQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1470,6 +1476,7 @@ export type AssessmentHistoryQuery = {
         targetLevel: Types.CefrLevel | null;
         purpose: Types.AssessmentTaskPurpose;
         certificateType: Types.CertificateType | null;
+        imageUrl: string | null;
       };
     }>;
   };
@@ -1502,6 +1509,7 @@ export type AssessmentAuthoringQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     }>;
   };
 };
@@ -1571,6 +1579,7 @@ export type AssessmentSubmissionDetailQuery = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1619,6 +1628,7 @@ export type AssessmentStartMutation = {
         targetLevel: Types.CefrLevel | null;
         purpose: Types.AssessmentTaskPurpose;
         certificateType: Types.CertificateType | null;
+        imageUrl: string | null;
       };
     };
   };
@@ -1665,6 +1675,7 @@ export type AssessmentSaveDraftMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1708,6 +1719,7 @@ export type AssessmentSubmitMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1751,6 +1763,7 @@ export type AssessmentRetryMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1794,6 +1807,7 @@ export type AssessmentRequestReviewMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1819,6 +1833,7 @@ export type AssessmentCreateTaskMutation = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1845,6 +1860,7 @@ export type AssessmentEditTaskMutation = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1871,6 +1887,7 @@ export type AssessmentTransitionTaskMutation = {
     targetLevel: Types.CefrLevel | null;
     purpose: Types.AssessmentTaskPurpose;
     certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
   };
 };
 
@@ -1917,6 +1934,7 @@ export type AssessmentGradeMutation = {
       targetLevel: Types.CefrLevel | null;
       purpose: Types.AssessmentTaskPurpose;
       certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
     };
   };
 };
@@ -1946,6 +1964,31 @@ export type AssessmentReadResultMutationVariables = Exact<{
 }>;
 
 export type AssessmentReadResultMutation = { readAssessmentResult: boolean };
+
+export type AssessmentRemoveTaskImageMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentRemoveTaskImageMutation = {
+  removeAssessmentTaskImage: {
+    id: string;
+    skill: Types.AssessmentSkill;
+    title: string;
+    taskType: string;
+    instructions: string;
+    rubricNotes: string | null;
+    sampleAnswer: string | null;
+    minimumWords: number;
+    timeLimitSeconds: number;
+    status: Types.AssessmentTaskStatus;
+    reviewNote: string | null;
+    version: number;
+    targetLevel: Types.CefrLevel | null;
+    purpose: Types.AssessmentTaskPurpose;
+    certificateType: Types.CertificateType | null;
+    imageUrl: string | null;
+  };
+};
 
 export type ContentReviewFieldsFragment = {
   id: string;
@@ -4603,6 +4646,7 @@ export const AssessmentTaskFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -4679,6 +4723,7 @@ export const AssessmentAttemptFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -10070,6 +10115,7 @@ export const AssessmentAuthoringTaskDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -10255,6 +10301,7 @@ export const AssessmentCatalogDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -10352,6 +10399,7 @@ export const AssessmentTaskDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -10431,6 +10479,7 @@ export const AssessmentAttemptDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -10635,6 +10684,7 @@ export const AssessmentHistoryDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -10804,6 +10854,7 @@ export const AssessmentAuthoringDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11045,6 +11096,7 @@ export const AssessmentSubmissionDetailDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11234,6 +11286,7 @@ export const AssessmentStartDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11397,6 +11450,7 @@ export const AssessmentSaveDraftDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11519,6 +11573,7 @@ export const AssessmentSubmitDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11641,6 +11696,7 @@ export const AssessmentRetryDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11763,6 +11819,7 @@ export const AssessmentRequestReviewDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -11891,6 +11948,7 @@ export const AssessmentCreateTaskDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -12011,6 +12069,7 @@ export const AssessmentEditTaskDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -12125,6 +12184,7 @@ export const AssessmentTransitionTaskDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -12280,6 +12340,7 @@ export const AssessmentGradeDocument = {
           { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
           { kind: "Field", name: { kind: "Name", value: "purpose" } },
           { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
         ],
       },
     },
@@ -12461,6 +12522,86 @@ export const AssessmentReadResultDocument = {
 } as unknown as DocumentNode<
   AssessmentReadResultMutation,
   AssessmentReadResultMutationVariables
+>;
+export const AssessmentRemoveTaskImageDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssessmentRemoveTaskImage" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "removeAssessmentTaskImage" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentTaskFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentTaskFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentTask" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "skill" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "taskType" } },
+          { kind: "Field", name: { kind: "Name", value: "instructions" } },
+          { kind: "Field", name: { kind: "Name", value: "rubricNotes" } },
+          { kind: "Field", name: { kind: "Name", value: "sampleAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "minimumWords" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          { kind: "Field", name: { kind: "Name", value: "targetLevel" } },
+          { kind: "Field", name: { kind: "Name", value: "purpose" } },
+          { kind: "Field", name: { kind: "Name", value: "certificateType" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentRemoveTaskImageMutation,
+  AssessmentRemoveTaskImageMutationVariables
 >;
 export const AdminContentDocument = {
   kind: "Document",

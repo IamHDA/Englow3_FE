@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Group,
+  MultiSelect,
   NumberInput,
   Select,
   Stack,
@@ -20,6 +21,12 @@ import type {
 } from "../../types/authoring";
 import { OptionsEditor } from "./AuthoringFields";
 import { AuthoringMedia } from "./AuthoringMedia";
+import { AcceptedAnswersEditor } from "./AcceptedAnswersEditor";
+import { SetOptionsEditor } from "./SetOptionsEditor";
+import {
+  ExamQuestionKind,
+  hasOwnOptions,
+} from "../../constants/examQuestionTypes";
 const blankSet = (): ExamSet => ({
   title: "",
   content: "",
@@ -47,6 +54,38 @@ const blankQuestion = (skill: string): ExamQuestion => ({
     { label: "B", content: "", correct: false, orderNo: 2 },
   ],
 });
+const blankOptions = () => blankQuestion("").options;
+
+/**
+ * Switch how a question is answered, dropping what the new type cannot hold -
+ * the backend refuses options on a gap or a matching question, and accepted
+ * spellings or list labels on anything else.
+ */
+export function changeQuestionType(
+  question: ExamQuestion,
+  questionType: string,
+): ExamQuestion {
+  const own = hasOwnOptions(questionType);
+  return {
+    ...question,
+    questionType,
+    options: own
+      ? question.options.length
+        ? question.options
+        : blankOptions()
+      : [],
+    acceptedAnswers:
+      questionType === ExamQuestionKind.TEXT_ENTRY
+        ? question.acceptedAnswers?.length
+          ? question.acceptedAnswers
+          : [{ text: "", caseSensitive: false, orderNo: 1 }]
+        : [],
+    matchingLabels:
+      questionType === ExamQuestionKind.MATCHING
+        ? (question.matchingLabels ?? [])
+        : [],
+  };
+}
 /** Sections a mock exam cannot score - see the skill selector below. */
 function isProductive(sectionType: string): boolean {
   return sectionType === "WRITING" || sectionType === "SPEAKING";
@@ -319,6 +358,10 @@ export function ExamTreeEditor({
                             />
                             <Textarea
                               label={t("Nội dung nhóm", "Group passage")}
+                              description={t(
+                                "Câu điền từ: đặt ô trống bằng {{n}}, n là số thứ tự của câu trong nhóm (vd. {{1}}, {{2}}).",
+                                "Gap-fill: mark each gap as {{n}}, n being the question's position in this group (e.g. {{1}}, {{2}}).",
+                              )}
                               value={set.content ?? ""}
                               disabled={disabled}
                               onChange={(e) => {
@@ -369,6 +412,21 @@ export function ExamTreeEditor({
                                 }
                               />
                             </Group>
+                            <SetOptionsEditor
+                              entries={set.setOptions ?? []}
+                              disabled={disabled}
+                              error={
+                                errors[
+                                  `content.sections[${si}].parts[${pi}].questionSets[${qi}].setOptions`
+                                ]
+                              }
+                              change={(entries) =>
+                                mutate((a) => {
+                                  a[si].parts[pi].questionSets[qi].setOptions =
+                                    entries;
+                                })
+                              }
+                            />
                             {set.questions.map((q, ji) => {
                               const prefix = `content.sections[${si}].parts[${pi}].questionSets[${qi}].questions[${ji}]`;
                               const update = (v: ExamQuestion) =>
@@ -417,17 +475,33 @@ export function ExamTreeEditor({
                                         label={t("Dạng đáp án", "Answer type")}
                                         data={[
                                           {
-                                            value: "SINGLE_CHOICE",
+                                            value:
+                                              ExamQuestionKind.SINGLE_CHOICE,
                                             label: t(
                                               "Một đáp án đúng",
                                               "One correct answer",
                                             ),
                                           },
                                           {
-                                            value: "MULTIPLE_CHOICE",
+                                            value:
+                                              ExamQuestionKind.MULTIPLE_CHOICE,
                                             label: t(
                                               "Nhiều đáp án đúng",
                                               "Multiple correct answers",
+                                            ),
+                                          },
+                                          {
+                                            value: ExamQuestionKind.TEXT_ENTRY,
+                                            label: t(
+                                              "Điền từ",
+                                              "Gap fill (typed)",
+                                            ),
+                                          },
+                                          {
+                                            value: ExamQuestionKind.MATCHING,
+                                            label: t(
+                                              "Ghép với danh sách của nhóm",
+                                              "Match from the group's list",
                                             ),
                                           },
                                         ]}
@@ -435,10 +509,13 @@ export function ExamTreeEditor({
                                         value={q.questionType}
                                         disabled={disabled}
                                         onChange={(v) =>
-                                          update({
-                                            ...q,
-                                            questionType: v ?? "SINGLE_CHOICE",
-                                          })
+                                          update(
+                                            changeQuestionType(
+                                              q,
+                                              v ??
+                                                ExamQuestionKind.SINGLE_CHOICE,
+                                            ),
+                                          )
                                         }
                                       />
                                       <Select
@@ -507,61 +584,110 @@ export function ExamTreeEditor({
                                         }
                                       />
                                     </Group>
-                                    <OptionsEditor
-                                      options={q.options}
-                                      disabled={disabled}
-                                      change={(options) =>
-                                        update({ ...q, options })
-                                      }
-                                      error={errors[`${prefix}.options`]}
-                                      single={
-                                        q.questionType === "SINGLE_CHOICE"
-                                      }
-                                    />
-                                    <Group>
-                                      <Button
-                                        variant="light"
-                                        disabled={
-                                          disabled || q.options.length >= 10
+                                    {q.questionType ===
+                                      ExamQuestionKind.TEXT_ENTRY && (
+                                      <AcceptedAnswersEditor
+                                        answers={q.acceptedAnswers ?? []}
+                                        disabled={disabled}
+                                        error={
+                                          errors[`${prefix}.acceptedAnswers`]
                                         }
-                                        onClick={() =>
-                                          update({
-                                            ...q,
-                                            options: [
-                                              ...q.options,
-                                              {
-                                                label: String.fromCharCode(
-                                                  65 + q.options.length,
-                                                ),
-                                                content: "",
-                                                correct: false,
-                                                orderNo: q.options.length + 1,
-                                              },
-                                            ],
-                                          })
+                                        change={(acceptedAnswers) =>
+                                          update({ ...q, acceptedAnswers })
                                         }
-                                      >
-                                        {t("Thêm đáp án", "Add option")}
-                                      </Button>
-                                      {q.options.length > 2 && (
-                                        <Button
-                                          variant="subtle"
-                                          color="red"
+                                      />
+                                    )}
+                                    {q.questionType ===
+                                      ExamQuestionKind.MATCHING && (
+                                      <MultiSelect
+                                        label={t(
+                                          "Đáp án (nhãn trong danh sách của nhóm)",
+                                          "Answer (label from the group's list)",
+                                        )}
+                                        required
+                                        data={[
+                                          ...new Set(
+                                            (set.setOptions ?? [])
+                                              .map((entry) =>
+                                                entry.label.trim(),
+                                              )
+                                              .filter(Boolean),
+                                          ),
+                                        ]}
+                                        value={q.matchingLabels ?? []}
+                                        disabled={disabled}
+                                        error={
+                                          errors[`${prefix}.matchingLabels`]
+                                        }
+                                        onChange={(matchingLabels) =>
+                                          update({ ...q, matchingLabels })
+                                        }
+                                      />
+                                    )}
+                                    {hasOwnOptions(q.questionType) && (
+                                      <>
+                                        <OptionsEditor
+                                          options={q.options}
                                           disabled={disabled}
-                                          onClick={() =>
-                                            update({
-                                              ...q,
-                                              options: q.options.slice(0, -1),
-                                            })
+                                          change={(options) =>
+                                            update({ ...q, options })
                                           }
-                                        >
-                                          {t(
-                                            "Bớt đáp án cuối",
-                                            "Remove last option",
+                                          error={errors[`${prefix}.options`]}
+                                          single={
+                                            q.questionType ===
+                                            ExamQuestionKind.SINGLE_CHOICE
+                                          }
+                                        />
+                                        <Group>
+                                          <Button
+                                            variant="light"
+                                            disabled={
+                                              disabled || q.options.length >= 10
+                                            }
+                                            onClick={() =>
+                                              update({
+                                                ...q,
+                                                options: [
+                                                  ...q.options,
+                                                  {
+                                                    label: String.fromCharCode(
+                                                      65 + q.options.length,
+                                                    ),
+                                                    content: "",
+                                                    correct: false,
+                                                    orderNo:
+                                                      q.options.length + 1,
+                                                  },
+                                                ],
+                                              })
+                                            }
+                                          >
+                                            {t("Thêm đáp án", "Add option")}
+                                          </Button>
+                                          {q.options.length > 2 && (
+                                            <Button
+                                              variant="subtle"
+                                              color="red"
+                                              disabled={disabled}
+                                              onClick={() =>
+                                                update({
+                                                  ...q,
+                                                  options: q.options.slice(
+                                                    0,
+                                                    -1,
+                                                  ),
+                                                })
+                                              }
+                                            >
+                                              {t(
+                                                "Bớt đáp án cuối",
+                                                "Remove last option",
+                                              )}
+                                            </Button>
                                           )}
-                                        </Button>
-                                      )}
-                                    </Group>
+                                        </Group>
+                                      </>
+                                    )}
                                     <Textarea
                                       label={t(
                                         "Giải thích đáp án",
