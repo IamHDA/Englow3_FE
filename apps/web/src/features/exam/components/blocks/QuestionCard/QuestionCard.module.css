@@ -95,3 +95,18 @@
 .nextBtn:hover {
   background-color: var(--mantine-color-navy-8);
 }
+
+/* A gap in a passage or form: its number and what was typed so far. */
+.gap {
+  display: inline-block;
+  padding: 0 8px;
+  border-bottom: 2px solid var(--mantine-color-ink-4);
+  border-radius: 4px;
+  background-color: var(--mantine-color-white);
+}
+
+.gapCurrent {
+  composes: gap;
+  border-bottom-color: var(--mantine-color-navy-9);
+  background-color: var(--mantine-color-navy-0);
+}

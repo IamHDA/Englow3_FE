@@ -32,6 +32,7 @@ query ExamDraft($attemptId: ID!) {
     answers {
       questionId
       selectedOptionIds
+      textAnswer
     }
     version
     savedAt
@@ -46,6 +47,7 @@ mutation SaveExamDraft(
     answers {
       questionId
       selectedOptionIds
+      textAnswer
     }
     version
     savedAt
@@ -64,6 +66,19 @@ fragment AttemptReviewFields on AttemptQuestionReview {
     correct
     explanation
   }
+  textAnswer
+  acceptedAnswers
+  numberFrom
+  numberTo
+}
+
+fragment AttemptSectionScoreFields on AttemptSectionScore {
+  sectionType
+  rawScore
+  maxRawScore
+  band
+  correctAnswerCount
+  questionCount
 }
 
 mutation StartExamAttempt($examId: ID!, $input: StartExamAttemptInput) {
@@ -117,11 +132,20 @@ query AttemptPaper($attemptId: ID!) {
             questionCategory
             orderNo
             maxRawScore
+            numberFrom
+            numberTo
+            choiceLimit
             options {
               id
               content
               orderNo
             }
+          }
+          setOptions {
+            id
+            label
+            content
+            orderNo
           }
         }
       }
@@ -135,6 +159,9 @@ mutation SubmitExamAttempt($attemptId: ID!, $answers: [SubmitAnswerInput!]!) {
     questions {
       ...AttemptReviewFields
     }
+    sections {
+      ...AttemptSectionScoreFields
+    }
   }
 }
 
@@ -143,6 +170,9 @@ query ExamAttemptResult($id: ID!) {
     ...ExamAttemptFields
     questions {
       ...AttemptReviewFields
+    }
+    sections {
+      ...AttemptSectionScoreFields
     }
   }
 }

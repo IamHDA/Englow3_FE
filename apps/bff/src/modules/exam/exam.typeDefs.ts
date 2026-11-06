@@ -227,9 +227,21 @@ export const examTypeDefs = /* GraphQL */ `
     orderNo: Int!
   }
 
+  """
+  How a question is answered. SINGLE_CHOICE and MULTIPLE_CHOICE choose from the
+  question's own options (MULTIPLE_CHOICE is "choose N", N being choiceLimit);
+  TEXT_ENTRY is typed; MATCHING chooses one entry of its set's setOptions.
+  """
+  enum ExamQuestionType {
+    SINGLE_CHOICE
+    MULTIPLE_CHOICE
+    TEXT_ENTRY
+    MATCHING
+  }
+
   type ExamQuestion {
     id: ID!
-    questionType: String!
+    questionType: ExamQuestionType!
     content: String!
     difficultyLevel: String!
     skillType: String!

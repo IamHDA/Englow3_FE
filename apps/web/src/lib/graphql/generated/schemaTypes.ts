@@ -150,6 +150,11 @@ export type AssessmentTask = {
   __typename?: "AssessmentTask";
   certificateType?: Maybe<CertificateType>;
   id: Scalars["ID"]["output"];
+  /**
+   * Writing Task 1's chart to describe, signed for a few hours. Uploaded through
+   * the REST authoring route (ASSESSMENT_TASK media), not GraphQL.
+   */
+  imageUrl?: Maybe<Scalars["String"]["output"]>;
   instructions: Scalars["String"]["output"];
   minimumWords: Scalars["Int"]["output"];
   purpose: AssessmentTaskPurpose;
@@ -243,13 +248,34 @@ export type AttemptPart = {
 
 export type AttemptQuestionReview = {
   __typename?: "AttemptQuestionReview";
+  /** The spellings a TEXT_ENTRY question accepts; empty on a choice question. */
+  acceptedAnswers: Array<Scalars["String"]["output"]>;
   awardedRawScore: Scalars["Float"]["output"];
   correct: Scalars["Boolean"]["output"];
   correctOptionIds: Array<Scalars["ID"]["output"]>;
   explanation?: Maybe<Scalars["String"]["output"]>;
+  numberFrom: Scalars["Int"]["output"];
+  numberTo: Scalars["Int"]["output"];
   options: Array<AttemptOptionReview>;
   questionId: Scalars["ID"]["output"];
   selectedOptionIds: Array<Scalars["ID"]["output"]>;
+  /** What was typed on a TEXT_ENTRY question; null otherwise or when left blank. */
+  textAnswer?: Maybe<Scalars["String"]["output"]>;
+};
+
+/**
+ * One section of a scored attempt. band is the estimated certificate band for a
+ * full section the certificate converts (IELTS Listening and Reading out of 40);
+ * null for a practice, a TOEIC section, or anything the table does not cover.
+ */
+export type AttemptSectionScore = {
+  __typename?: "AttemptSectionScore";
+  band?: Maybe<Scalars["Float"]["output"]>;
+  correctAnswerCount?: Maybe<Scalars["Int"]["output"]>;
+  maxRawScore: Scalars["Float"]["output"];
+  questionCount: Scalars["Int"]["output"];
+  rawScore?: Maybe<Scalars["Float"]["output"]>;
+  sectionType: Scalars["String"]["output"];
 };
 
 /**
@@ -604,6 +630,8 @@ export type ExamAttempt = {
   resumed: Scalars["Boolean"]["output"];
   scorePercentage?: Maybe<Scalars["Float"]["output"]>;
   scoredAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /** Each section's points and band; empty until the attempt is scored. */
+  sections: Array<AttemptSectionScore>;
   startedAt: Scalars["DateTime"]["output"];
   status: ExamAttemptStatus;
   submittedAt?: Maybe<Scalars["DateTime"]["output"]>;
@@ -650,6 +678,7 @@ export type ExamDraftAnswer = {
   __typename?: "ExamDraftAnswer";
   questionId: Scalars["ID"]["output"];
   selectedOptionIds: Array<Scalars["ID"]["output"]>;
+  textAnswer?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type ExamListItem = {
@@ -726,14 +755,31 @@ export type ExamPaper = {
 
 export type ExamQuestion = {
   __typename?: "ExamQuestion";
+  /**
+   * How many options may be chosen: N on a choose-N question, 1 on a single
+   * choice or matching question, 0 on a TEXT_ENTRY question.
+   */
+  choiceLimit: Scalars["Int"]["output"];
   content: Scalars["String"]["output"];
   difficultyLevel: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   maxRawScore: Scalars["Float"]["output"];
+  /**
+   * The number shown to the learner. The backend numbers the whole paper, so a
+   * practice keeps the numbers its parts have in the full test, and IELTS starts
+   * each section at 1. Never count questions on the client.
+   */
+  numberFrom: Scalars["Int"]["output"];
+  /** Equals numberFrom except on a "choose N letters" question, which takes N. */
+  numberTo: Scalars["Int"]["output"];
+  /**
+   * Empty on a TEXT_ENTRY question, which is typed, and on a MATCHING question,
+   * which chooses from its set's setOptions.
+   */
   options: Array<QuestionOption>;
   orderNo: Scalars["Int"]["output"];
   questionCategory?: Maybe<Scalars["String"]["output"]>;
-  questionType: Scalars["String"]["output"];
+  questionType: ExamQuestionType;
   skillType: Scalars["String"]["output"];
 };
 
@@ -747,8 +793,25 @@ export type ExamQuestionSet = {
   instruction?: Maybe<Scalars["String"]["output"]>;
   orderNo: Scalars["Int"]["output"];
   questions: Array<ExamQuestion>;
+  /**
+   * The list this set's MATCHING questions choose from; empty when it has none.
+   * A gap in content is written {{n}}, n being a question's orderNo in this set.
+   */
+  setOptions: Array<QuestionSetOption>;
   title?: Maybe<Scalars["String"]["output"]>;
 };
+
+/**
+ * How a question is answered. SINGLE_CHOICE and MULTIPLE_CHOICE choose from the
+ * question's own options (MULTIPLE_CHOICE is "choose N", N being choiceLimit);
+ * TEXT_ENTRY is typed; MATCHING chooses one entry of its set's setOptions.
+ */
+export enum ExamQuestionType {
+  MATCHING = "MATCHING",
+  MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
+  SINGLE_CHOICE = "SINGLE_CHOICE",
+  TEXT_ENTRY = "TEXT_ENTRY",
+}
 
 export type ExamSectionDetail = {
   __typename?: "ExamSectionDetail";
@@ -938,6 +1001,84 @@ export type FlashcardStats = {
   studySeconds: Scalars["Int"]["output"];
 };
 
+/**
+ * An IELTS full test: one Listening + Reading paper and five Writing and
+ * Speaking tasks, sat as one test with one overall band. It is the IELTS
+ * learner's placement test and is also in the catalogue. Reviewed like a paper.
+ */
+export type FullTest = {
+  __typename?: "FullTest";
+  certificateVariant: CertificateVariant;
+  description: Scalars["String"]["output"];
+  /** The Listening + Reading mock paper, sat through startExamAttempt. */
+  examId: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  publishedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  reviewNote?: Maybe<Scalars["String"]["output"]>;
+  speakingPart1Id: Scalars["ID"]["output"];
+  speakingPart2Id: Scalars["ID"]["output"];
+  speakingPart3Id: Scalars["ID"]["output"];
+  status: ExamStatus;
+  title: Scalars["String"]["output"];
+  version: Scalars["Int"]["output"];
+  writingTask1Id: Scalars["ID"]["output"];
+  writingTask2Id: Scalars["ID"]["output"];
+};
+
+/** One Writing or Speaking part: the task to answer, and the answer attached. */
+export type FullTestPart = {
+  __typename?: "FullTestPart";
+  /** Null until an answer submitted since the sitting began is picked up. */
+  attemptId?: Maybe<Scalars["ID"]["output"]>;
+  slot: FullTestSlot;
+  taskId: Scalars["ID"]["output"];
+};
+
+export type FullTestSitting = {
+  __typename?: "FullTestSitting";
+  completedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  /** Every part must be submitted by then; grading may finish later. */
+  deadlineAt: Scalars["DateTime"]["output"];
+  examAttemptId?: Maybe<Scalars["ID"]["output"]>;
+  /** The paper to sit in full. */
+  examId: Scalars["ID"]["output"];
+  fullTestId: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  listeningBand?: Maybe<Scalars["Float"]["output"]>;
+  overallBand?: Maybe<Scalars["Float"]["output"]>;
+  parts: Array<FullTestPart>;
+  /**
+   * The lower of Listening and Reading, shown as an estimate until overallBand
+   * exists. It is also recorded as the learner's level.
+   */
+  provisionalBand?: Maybe<Scalars["Float"]["output"]>;
+  readingBand?: Maybe<Scalars["Float"]["output"]>;
+  speakingBand?: Maybe<Scalars["Float"]["output"]>;
+  startedAt: Scalars["DateTime"]["output"];
+  status: FullTestSittingStatus;
+  title: Scalars["String"]["output"];
+  writingBand?: Maybe<Scalars["Float"]["output"]>;
+};
+
+export enum FullTestSittingStatus {
+  /** Every part is in; at least one is not graded yet. */
+  AWAITING_GRADES = "AWAITING_GRADES",
+  /** Every part graded; overallBand is set. */
+  COMPLETED = "COMPLETED",
+  /** The seven days ran out with parts missing; provisionalBand stays. */
+  EXPIRED = "EXPIRED",
+  /** Parts may still be taken, until deadlineAt. */
+  IN_PROGRESS = "IN_PROGRESS",
+}
+
+export enum FullTestSlot {
+  SPEAKING_PART_1 = "SPEAKING_PART_1",
+  SPEAKING_PART_2 = "SPEAKING_PART_2",
+  SPEAKING_PART_3 = "SPEAKING_PART_3",
+  WRITING_TASK_1 = "WRITING_TASK_1",
+  WRITING_TASK_2 = "WRITING_TASK_2",
+}
+
 export enum Gender {
   FEMALE = "FEMALE",
   MALE = "MALE",
@@ -1108,7 +1249,7 @@ export type Me = {
 };
 
 export enum MilestoneKind {
-  /** Sit examId and reach requiredScore on the certificate scale. */
+  /** Sit examId (or, for IELTS, the full test fullTestId) and reach requiredScore on the certificate scale. */
   CERTIFICATE_MOCK = "CERTIFICATE_MOCK",
   /** Take a level check and reach requiredLevel. */
   LEVEL_CHECK = "LEVEL_CHECK",
@@ -1162,6 +1303,8 @@ export type Mutation = {
    * the same step - there is no approved-but-unpublished state.
    */
   approveExam: Exam;
+  /** PENDING_REVIEW -> PUBLISHED, administrators only. */
+  approveFullTest: FullTest;
   /** Anything -> ARCHIVED. Administrators only. There is no delete. */
   archiveContent: ContentReview;
   /**
@@ -1170,6 +1313,7 @@ export type Mutation = {
    * extensions.backendCode: EXAM_ALREADY_ARCHIVED.
    */
   archiveExam: Exam;
+  archiveFullTest: FullTest;
   archiveTutorConversation: TutorConversationSummary;
   attachLevelCheckExamAttempt: LevelCheck;
   attachLevelCheckSpeakingAttempt: LevelCheck;
@@ -1236,6 +1380,10 @@ export type Mutation = {
    * "rejected" alone leaves the author nothing to change.
    */
   rejectExam: Exam;
+  /** PENDING_REVIEW -> REJECTED, administrators only; the note is required. */
+  rejectFullTest: FullTest;
+  /** Drops a Writing Task 1's chart while the task is still a draft or rejected. */
+  removeAssessmentTaskImage: AssessmentTask;
   renameTutorConversation: TutorConversationSummary;
   /** Reports an answer as wrong or inappropriate. The note is optional. */
   reportTutorMessage: TutorMessage;
@@ -1260,6 +1408,8 @@ export type Mutation = {
   reviewTutorResource: TutorResource;
   saveAssessmentDraft: AssessmentAttempt;
   saveExamDraft: ExamDraft;
+  /** Creates a draft when id is omitted. Components are checked at review. */
+  saveFullTest: FullTest;
   /**
    * Records the purposes and advances the step. Which step comes next is the
    * backend's decision: a learner who picked the certificate purpose goes to
@@ -1308,6 +1458,12 @@ export type Mutation = {
    * twice does not create two.
    */
   startExamAttempt: ExamAttempt;
+  /**
+   * Starts a sitting, or returns the one still open. Refused with
+   * extensions.backendCode FULL_TEST_IELTS_ONLY for a learner not preparing
+   * for IELTS.
+   */
+  startFullTest: FullTestSitting;
   /** Starts a check, or returns the one already open for the same purpose. */
   startLevelCheck: LevelCheck;
   /**
@@ -1346,6 +1502,12 @@ export type Mutation = {
    */
   submitExamForReview: Exam;
   /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Refused with FULL_TEST_PAPER_INVALID,
+   * FULL_TEST_TASK_INVALID or FULL_TEST_TASK1_NEEDS_CHART when a component is
+   * not a published IELTS one of the right kind.
+   */
+  submitFullTestForReview: FullTest;
+  /**
    * Submits and scores in one step. A question left out is marked wrong rather
    * than skipped, so the percentage means what it says.
    */
@@ -1378,12 +1540,20 @@ export type MutationApproveExamArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationApproveFullTestArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationArchiveContentArgs = {
   id: Scalars["ID"]["input"];
   kind: ContentKind;
 };
 
 export type MutationArchiveExamArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationArchiveFullTestArgs = {
   id: Scalars["ID"]["input"];
 };
 
@@ -1490,6 +1660,15 @@ export type MutationRejectExamArgs = {
   note: Scalars["String"]["input"];
 };
 
+export type MutationRejectFullTestArgs = {
+  id: Scalars["ID"]["input"];
+  note: Scalars["String"]["input"];
+};
+
+export type MutationRemoveAssessmentTaskImageArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationRenameTutorConversationArgs = {
   id: Scalars["ID"]["input"];
   title: Scalars["String"]["input"];
@@ -1548,6 +1727,11 @@ export type MutationSaveExamDraftArgs = {
   answers: Array<SubmitAnswerInput>;
   attemptId: Scalars["ID"]["input"];
   version: Scalars["Int"]["input"];
+};
+
+export type MutationSaveFullTestArgs = {
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  input: SaveFullTestInput;
 };
 
 export type MutationSelectLearningPurposesArgs = {
@@ -1611,6 +1795,10 @@ export type MutationStartExamAttemptArgs = {
   input?: InputMaybe<StartExamAttemptInput>;
 };
 
+export type MutationStartFullTestArgs = {
+  fullTestId: Scalars["ID"]["input"];
+};
+
 export type MutationStartLevelCheckArgs = {
   milestoneId?: InputMaybe<Scalars["ID"]["input"]>;
   purpose: LevelCheckPurpose;
@@ -1646,6 +1834,10 @@ export type MutationSubmitExamAttemptArgs = {
 };
 
 export type MutationSubmitExamForReviewArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationSubmitFullTestForReviewArgs = {
   id: Scalars["ID"]["input"];
 };
 
@@ -1762,6 +1954,8 @@ export type Query = {
    * backend restricts it to ADMIN. Sorted newest first by the backend.
    */
   adminExams: ExamPage;
+  adminFullTest: FullTest;
+  adminFullTests: Array<FullTest>;
   /** Staff and administrators only. */
   adminOverview: AdminOverview;
   assessmentAttempt: AssessmentAttempt;
@@ -1833,6 +2027,10 @@ export type Query = {
    * worth more than a new one, and reordering here would undo the schedule.
    */
   flashcardStudyQueue: Array<Flashcard>;
+  /** Brought up to date with every part graded so far. */
+  fullTestSitting: FullTestSitting;
+  /** Published full tests, newest first. */
+  fullTests: Array<FullTest>;
   health: Scalars["String"]["output"];
   /** The learner's most recent level check, or null. */
   latestLevelCheck?: Maybe<LevelCheck>;
@@ -1845,6 +2043,7 @@ export type Query = {
    */
   levelCheckWeights: LevelCheckWeights;
   me: Me;
+  myFullTestSittings: Array<FullTestSitting>;
   myTourStatus: UserTourStatus;
   /**
    * The placement paper, for a learner who does not know their level. Errors
@@ -1911,6 +2110,10 @@ export type QueryAdminExamsArgs = {
   size?: InputMaybe<Scalars["Int"]["input"]>;
   status?: InputMaybe<ExamStatus>;
   title?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryAdminFullTestArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type QueryAssessmentAttemptArgs = {
@@ -2042,6 +2245,10 @@ export type QueryFlashcardStudyQueueArgs = {
   setId: Scalars["ID"]["input"];
 };
 
+export type QueryFullTestSittingArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type QueryLevelCheckArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -2161,6 +2368,18 @@ export type QuestionOption = {
   __typename?: "QuestionOption";
   content: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
+  orderNo: Scalars["Int"]["output"];
+};
+
+/**
+ * An entry of the list a question set's MATCHING questions share - a heading
+ * "iv", a person "B", a map label "F". Which question it answers is never sent.
+ */
+export type QuestionSetOption = {
+  __typename?: "QuestionSetOption";
+  content?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  label: Scalars["String"]["output"];
   orderNo: Scalars["Int"]["output"];
 };
 
@@ -2375,6 +2594,8 @@ export type RoadmapMilestone = {
   achievedAt?: Maybe<Scalars["DateTime"]["output"]>;
   attemptCount: Scalars["Int"]["output"];
   examId?: Maybe<Scalars["ID"]["output"]>;
+  /** Set instead of examId on an IELTS mock: the full test to sit, passed on its overall band. */
+  fullTestId?: Maybe<Scalars["ID"]["output"]>;
   id: Scalars["ID"]["output"];
   kind: MilestoneKind;
   /** Every required item of the stage is done. */
@@ -2440,6 +2661,18 @@ export enum Role {
   LEARNER = "LEARNER",
   STAFF = "STAFF",
 }
+
+export type SaveFullTestInput = {
+  certificateVariant: CertificateVariant;
+  description?: InputMaybe<Scalars["String"]["input"]>;
+  examId: Scalars["ID"]["input"];
+  speakingPart1Id: Scalars["ID"]["input"];
+  speakingPart2Id: Scalars["ID"]["input"];
+  speakingPart3Id: Scalars["ID"]["input"];
+  title: Scalars["String"]["input"];
+  writingTask1Id: Scalars["ID"]["input"];
+  writingTask2Id: Scalars["ID"]["input"];
+};
 
 /**
  * One recording and its score.
@@ -2560,8 +2793,16 @@ export type StartExamAttemptInput = {
 
 export type SubmitAnswerInput = {
   questionId: Scalars["ID"]["input"];
-  /** Empty for a question the learner skipped; several for a multi-select. */
+  /**
+   * Empty for a question the learner skipped; several for a multi-select. On a
+   * MATCHING question, the chosen entry of the set's setOptions.
+   */
   selectedOptionIds: Array<Scalars["ID"]["input"]>;
+  /**
+   * What was typed on a TEXT_ENTRY question, at most 200 characters; omit it on
+   * a choice question - the backend refuses it there.
+   */
+  textAnswer?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 /**

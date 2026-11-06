@@ -1,5 +1,6 @@
 "use client";
 
+import { ExamQuestionType } from "@/lib/graphql/generated/schemaTypes";
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -45,9 +46,14 @@ export interface ExamResultViewProps {
   onRetake: () => void;
 }
 
-/** Không chọn ô nào nghĩa là bỏ qua - backend vẫn ghi câu đó với mảng rỗng. */
+/**
+ * Không chọn ô nào và không gõ chữ nào nghĩa là bỏ qua - backend vẫn ghi câu đó
+ * với mảng rỗng.
+ */
 function isSkipped(review: AttemptQuestionReview | undefined): boolean {
-  return (review?.selectedOptionIds.length ?? 0) === 0;
+  return (
+    (review?.selectedOptionIds.length ?? 0) === 0 && !review?.textAnswer?.trim()
+  );
 }
 
 export function ExamResultView({
@@ -67,6 +73,8 @@ export function ExamResultView({
       question: ExamPaper["sections"][number]["parts"][number]["questionSets"][number]["questions"][number];
       partTitle: string;
       sectionType: string;
+      /** The list a MATCHING question chose from. */
+      setOptions: ExamPaper["sections"][number]["parts"][number]["questionSets"][number]["setOptions"];
     }
   >();
 
@@ -78,6 +86,7 @@ export function ExamResultView({
             question: q,
             partTitle: part.title,
             sectionType: sec.sectionType,
+            setOptions: qs.setOptions,
           });
         });
       });
@@ -100,6 +109,7 @@ export function ExamResultView({
       review,
       partTitle: qData?.partTitle || "",
       sectionType: qData?.sectionType || "",
+      setOptions: qData?.setOptions ?? [],
       isAnswered: !isSkipped(review),
       isCorrect: review?.correct === true,
     };
@@ -111,6 +121,9 @@ export function ExamResultView({
   const incorrectCount = totalQuestions - correctCount - skippedCount;
 
   const accuracyPercent = Math.round(attempt.scorePercentage ?? 0);
+  const bands = (attempt.sections ?? []).filter(
+    (section) => section.band !== null && section.band !== undefined,
+  );
   const scaledScore = attempt.rawScore ?? 0;
   const maxScore = attempt.maxRawScore ?? paper.maxRawScore;
 
@@ -306,6 +319,28 @@ export function ExamResultView({
                 </Text>
               </Card>
             </SimpleGrid>
+
+            {/* Estimated certificate band per section - IELTS Listening and
+                Reading on a full sitting. The backend converts; we only show. */}
+            {bands.length > 0 && (
+              <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
+                {bands.map((section) => (
+                  <Card key={section.sectionType} p="md" radius="md" withBorder>
+                    <Text size="xs" c="ink.5" fw={600}>
+                      {section.sectionType}
+                    </Text>
+                    <Text size="xl" fw={800} c="navy.9">
+                      {isVi ? "Band " : "Band "}
+                      {section.band?.toFixed(1)}
+                    </Text>
+                    <Text size="xs" c="ink.5">
+                      {section.rawScore ?? 0} / {section.maxRawScore}
+                      {isVi ? " · ước tính" : " · estimate"}
+                    </Text>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            )}
           </Stack>
         </Card>
 
@@ -359,8 +394,23 @@ export function ExamResultView({
                   partTitle,
                   isCorrect,
                   isAnswered,
+                  setOptions,
                 }) => {
                   if (!question) return null;
+                  const typedQuestion =
+                    question.questionType === ExamQuestionType.TEXT_ENTRY;
+                  const choices =
+                    question.questionType === ExamQuestionType.MATCHING
+                      ? setOptions.map((entry) => ({
+                          id: entry.id,
+                          letter: entry.label,
+                          content: entry.content ?? "",
+                        }))
+                      : question.options.map((option, index) => ({
+                          id: option.id,
+                          letter: String.fromCharCode(65 + index),
+                          content: option.content,
+                        }));
 
                   // Đáp án đúng và giải thích chỉ tồn tại trong kết quả chấm -
                   // đề người học nhận lúc làm bài đã bị gỡ hết.
@@ -398,7 +448,7 @@ export function ExamResultView({
                               }
                             >
                               <Text size="xs" fw={700}>
-                                {item.globalIndex + 1}
+                                {item.label}
                               </Text>
                             </ThemeIcon>
                             <Stack gap={1}>
@@ -430,15 +480,38 @@ export function ExamResultView({
 
                       <Accordion.Panel>
                         <Stack gap="sm" pt="xs">
+                          {typedQuestion && (
+                            <Stack gap={4}>
+                              <Text size="sm" c="ink.8">
+                                {isVi ? "Bạn đã gõ: " : "You typed: "}
+                                <Text
+                                  component="span"
+                                  fw={700}
+                                  c={isCorrect ? "teal.9" : "red.9"}
+                                >
+                                  {review?.textAnswer?.trim() ||
+                                    (isVi ? "(bỏ trống)" : "(blank)")}
+                                </Text>
+                              </Text>
+                              <Text size="sm" c="ink.8">
+                                {isVi
+                                  ? "Đáp án được chấp nhận: "
+                                  : "Accepted answers: "}
+                                <Text component="span" fw={700} c="teal.9">
+                                  {review?.acceptedAnswers.join(" / ")}
+                                </Text>
+                              </Text>
+                            </Stack>
+                          )}
                           {/* Options List */}
                           <Stack gap="xs">
-                            {question.options.map((opt, optIdx) => {
+                            {choices.map((opt) => {
                               const isUserChoice =
                                 review?.selectedOptionIds.includes(opt.id) ===
                                 true;
                               const isCorrectOpt =
                                 optionReview.get(opt.id)?.correct === true;
-                              const letter = String.fromCharCode(65 + optIdx);
+                              const letter = opt.letter;
 
                               let bg = "white";
                               let badgeLabel: string | null = null;

@@ -2497,7 +2497,11 @@ export type ExamDraftQuery = {
   examDraft: {
     version: number;
     savedAt: string;
-    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+    answers: Array<{
+      questionId: string;
+      selectedOptionIds: Array<string>;
+      textAnswer: string | null;
+    }>;
   };
 };
 
@@ -2511,7 +2515,11 @@ export type SaveExamDraftMutation = {
   saveExamDraft: {
     version: number;
     savedAt: string;
-    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+    answers: Array<{
+      questionId: string;
+      selectedOptionIds: Array<string>;
+      textAnswer: string | null;
+    }>;
   };
 };
 
@@ -2522,11 +2530,24 @@ export type AttemptReviewFieldsFragment = {
   correct: boolean;
   awardedRawScore: number;
   explanation: string | null;
+  textAnswer: string | null;
+  acceptedAnswers: Array<string>;
+  numberFrom: number;
+  numberTo: number;
   options: Array<{
     optionId: string;
     correct: boolean;
     explanation: string | null;
   }>;
+};
+
+export type AttemptSectionScoreFieldsFragment = {
+  sectionType: string;
+  rawScore: number | null;
+  maxRawScore: number;
+  band: number | null;
+  correctAnswerCount: number | null;
+  questionCount: number;
 };
 
 export type StartExamAttemptMutationVariables = Exact<{
@@ -2602,14 +2623,23 @@ export type AttemptPaperQuery = {
           imageUrl: string | null;
           questions: Array<{
             id: string;
-            questionType: string;
+            questionType: Types.ExamQuestionType;
             content: string;
             difficultyLevel: string;
             skillType: string;
             questionCategory: string | null;
             orderNo: number;
             maxRawScore: number;
+            numberFrom: number;
+            numberTo: number;
+            choiceLimit: number;
             options: Array<{ id: string; content: string; orderNo: number }>;
+          }>;
+          setOptions: Array<{
+            id: string;
+            label: string;
+            content: string | null;
+            orderNo: number;
           }>;
         }>;
       }>;
@@ -2647,11 +2677,23 @@ export type SubmitExamAttemptMutation = {
       correct: boolean;
       awardedRawScore: number;
       explanation: string | null;
+      textAnswer: string | null;
+      acceptedAnswers: Array<string>;
+      numberFrom: number;
+      numberTo: number;
       options: Array<{
         optionId: string;
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    sections: Array<{
+      sectionType: string;
+      rawScore: number | null;
+      maxRawScore: number;
+      band: number | null;
+      correctAnswerCount: number | null;
+      questionCount: number;
     }>;
     parts: Array<{
       id: string;
@@ -2690,11 +2732,23 @@ export type ExamAttemptResultQuery = {
       correct: boolean;
       awardedRawScore: number;
       explanation: string | null;
+      textAnswer: string | null;
+      acceptedAnswers: Array<string>;
+      numberFrom: number;
+      numberTo: number;
       options: Array<{
         optionId: string;
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    sections: Array<{
+      sectionType: string;
+      rawScore: number | null;
+      maxRawScore: number;
+      band: number | null;
+      correctAnswerCount: number | null;
+      questionCount: number;
     }>;
     parts: Array<{
       id: string;
@@ -4756,11 +4810,42 @@ export const AttemptReviewFieldsFragmentDoc = {
               ],
             },
           },
+          { kind: "Field", name: { kind: "Name", value: "textAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "acceptedAnswers" } },
+          { kind: "Field", name: { kind: "Name", value: "numberFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "numberTo" } },
         ],
       },
     },
   ],
 } as unknown as DocumentNode<AttemptReviewFieldsFragment, unknown>;
+export const AttemptSectionScoreFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AttemptSectionScoreFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AttemptSectionScore" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "band" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AttemptSectionScoreFieldsFragment, unknown>;
 export const FlashcardSetFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -14308,6 +14393,10 @@ export const ExamDraftDocument = {
                         kind: "Field",
                         name: { kind: "Name", value: "selectedOptionIds" },
                       },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "textAnswer" },
+                      },
                     ],
                   },
                 },
@@ -14420,6 +14509,10 @@ export const SaveExamDraftDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "selectedOptionIds" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "textAnswer" },
                       },
                     ],
                   },
@@ -14777,6 +14870,27 @@ export const AttemptPaperDocument = {
                                           kind: "Field",
                                           name: {
                                             kind: "Name",
+                                            value: "numberFrom",
+                                          },
+                                        },
+                                        {
+                                          kind: "Field",
+                                          name: {
+                                            kind: "Name",
+                                            value: "numberTo",
+                                          },
+                                        },
+                                        {
+                                          kind: "Field",
+                                          name: {
+                                            kind: "Name",
+                                            value: "choiceLimit",
+                                          },
+                                        },
+                                        {
+                                          kind: "Field",
+                                          name: {
+                                            kind: "Name",
                                             value: "options",
                                           },
                                           selectionSet: {
@@ -14804,6 +14918,40 @@ export const AttemptPaperDocument = {
                                                 },
                                               },
                                             ],
+                                          },
+                                        },
+                                      ],
+                                    },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "setOptions" },
+                                    selectionSet: {
+                                      kind: "SelectionSet",
+                                      selections: [
+                                        {
+                                          kind: "Field",
+                                          name: { kind: "Name", value: "id" },
+                                        },
+                                        {
+                                          kind: "Field",
+                                          name: {
+                                            kind: "Name",
+                                            value: "label",
+                                          },
+                                        },
+                                        {
+                                          kind: "Field",
+                                          name: {
+                                            kind: "Name",
+                                            value: "content",
+                                          },
+                                        },
+                                        {
+                                          kind: "Field",
+                                          name: {
+                                            kind: "Name",
+                                            value: "orderNo",
                                           },
                                         },
                                       ],
@@ -14910,141 +15058,18 @@ export const SubmitExamAttemptDocument = {
                     ],
                   },
                 },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "ExamAttemptFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "ExamAttempt" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "examId" } },
-          { kind: "Field", name: { kind: "Name", value: "status" } },
-          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
-          { kind: "Field", name: { kind: "Name", value: "expiresAt" } },
-          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
-          { kind: "Field", name: { kind: "Name", value: "scoredAt" } },
-          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
-          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
-          { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "correctAnswerCount" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
-          { kind: "Field", name: { kind: "Name", value: "resumed" } },
-          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
-          { kind: "Field", name: { kind: "Name", value: "mode" } },
-          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "parts" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
-                { kind: "Field", name: { kind: "Name", value: "title" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AttemptReviewFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "AttemptQuestionReview" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "questionId" } },
-          { kind: "Field", name: { kind: "Name", value: "selectedOptionIds" } },
-          { kind: "Field", name: { kind: "Name", value: "correctOptionIds" } },
-          { kind: "Field", name: { kind: "Name", value: "correct" } },
-          { kind: "Field", name: { kind: "Name", value: "awardedRawScore" } },
-          { kind: "Field", name: { kind: "Name", value: "explanation" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "options" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "optionId" } },
-                { kind: "Field", name: { kind: "Name", value: "correct" } },
-                { kind: "Field", name: { kind: "Name", value: "explanation" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  SubmitExamAttemptMutation,
-  SubmitExamAttemptMutationVariables
->;
-export const ExamAttemptResultDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "ExamAttemptResult" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "examAttempt" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: { kind: "Name", value: "ExamAttemptFields" },
-                },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "questions" },
+                  name: { kind: "Name", value: "sections" },
                   selectionSet: {
                     kind: "SelectionSet",
                     selections: [
                       {
                         kind: "FragmentSpread",
-                        name: { kind: "Name", value: "AttemptReviewFields" },
+                        name: {
+                          kind: "Name",
+                          value: "AttemptSectionScoreFields",
+                        },
                       },
                     ],
                   },
@@ -15127,6 +15152,213 @@ export const ExamAttemptResultDocument = {
               ],
             },
           },
+          { kind: "Field", name: { kind: "Name", value: "textAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "acceptedAnswers" } },
+          { kind: "Field", name: { kind: "Name", value: "numberFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "numberTo" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AttemptSectionScoreFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AttemptSectionScore" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "band" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SubmitExamAttemptMutation,
+  SubmitExamAttemptMutationVariables
+>;
+export const ExamAttemptResultDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ExamAttemptResult" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "examAttempt" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ExamAttemptFields" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "questions" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "AttemptReviewFields" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "sections" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "AttemptSectionScoreFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ExamAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ExamAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "expiresAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "scoredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AttemptReviewFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AttemptQuestionReview" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "questionId" } },
+          { kind: "Field", name: { kind: "Name", value: "selectedOptionIds" } },
+          { kind: "Field", name: { kind: "Name", value: "correctOptionIds" } },
+          { kind: "Field", name: { kind: "Name", value: "correct" } },
+          { kind: "Field", name: { kind: "Name", value: "awardedRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "explanation" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "options" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "optionId" } },
+                { kind: "Field", name: { kind: "Name", value: "correct" } },
+                { kind: "Field", name: { kind: "Name", value: "explanation" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "textAnswer" } },
+          { kind: "Field", name: { kind: "Name", value: "acceptedAnswers" } },
+          { kind: "Field", name: { kind: "Name", value: "numberFrom" } },
+          { kind: "Field", name: { kind: "Name", value: "numberTo" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AttemptSectionScoreFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AttemptSectionScore" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "band" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
         ],
       },
     },

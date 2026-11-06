@@ -2500,7 +2500,11 @@ export type ExamDraftQuery = {
   examDraft: {
     version: number;
     savedAt: string;
-    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+    answers: Array<{
+      questionId: string;
+      selectedOptionIds: Array<string>;
+      textAnswer: string | null;
+    }>;
   };
 };
 
@@ -2514,7 +2518,11 @@ export type SaveExamDraftMutation = {
   saveExamDraft: {
     version: number;
     savedAt: string;
-    answers: Array<{ questionId: string; selectedOptionIds: Array<string> }>;
+    answers: Array<{
+      questionId: string;
+      selectedOptionIds: Array<string>;
+      textAnswer: string | null;
+    }>;
   };
 };
 
@@ -2525,11 +2533,24 @@ export type AttemptReviewFieldsFragment = {
   correct: boolean;
   awardedRawScore: number;
   explanation: string | null;
+  textAnswer: string | null;
+  acceptedAnswers: Array<string>;
+  numberFrom: number;
+  numberTo: number;
   options: Array<{
     optionId: string;
     correct: boolean;
     explanation: string | null;
   }>;
+};
+
+export type AttemptSectionScoreFieldsFragment = {
+  sectionType: string;
+  rawScore: number | null;
+  maxRawScore: number;
+  band: number | null;
+  correctAnswerCount: number | null;
+  questionCount: number;
 };
 
 export type StartExamAttemptMutationVariables = Exact<{
@@ -2605,14 +2626,23 @@ export type AttemptPaperQuery = {
           imageUrl: string | null;
           questions: Array<{
             id: string;
-            questionType: string;
+            questionType: Types.ExamQuestionType;
             content: string;
             difficultyLevel: string;
             skillType: string;
             questionCategory: string | null;
             orderNo: number;
             maxRawScore: number;
+            numberFrom: number;
+            numberTo: number;
+            choiceLimit: number;
             options: Array<{ id: string; content: string; orderNo: number }>;
+          }>;
+          setOptions: Array<{
+            id: string;
+            label: string;
+            content: string | null;
+            orderNo: number;
           }>;
         }>;
       }>;
@@ -2650,11 +2680,23 @@ export type SubmitExamAttemptMutation = {
       correct: boolean;
       awardedRawScore: number;
       explanation: string | null;
+      textAnswer: string | null;
+      acceptedAnswers: Array<string>;
+      numberFrom: number;
+      numberTo: number;
       options: Array<{
         optionId: string;
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    sections: Array<{
+      sectionType: string;
+      rawScore: number | null;
+      maxRawScore: number;
+      band: number | null;
+      correctAnswerCount: number | null;
+      questionCount: number;
     }>;
     parts: Array<{
       id: string;
@@ -2693,11 +2735,23 @@ export type ExamAttemptResultQuery = {
       correct: boolean;
       awardedRawScore: number;
       explanation: string | null;
+      textAnswer: string | null;
+      acceptedAnswers: Array<string>;
+      numberFrom: number;
+      numberTo: number;
       options: Array<{
         optionId: string;
         correct: boolean;
         explanation: string | null;
       }>;
+    }>;
+    sections: Array<{
+      sectionType: string;
+      rawScore: number | null;
+      maxRawScore: number;
+      band: number | null;
+      correctAnswerCount: number | null;
+      questionCount: number;
     }>;
     parts: Array<{
       id: string;
@@ -4408,6 +4462,20 @@ export const AttemptReviewFieldsFragmentDoc = gql`
       correct
       explanation
     }
+    textAnswer
+    acceptedAnswers
+    numberFrom
+    numberTo
+  }
+`;
+export const AttemptSectionScoreFieldsFragmentDoc = gql`
+  fragment AttemptSectionScoreFields on AttemptSectionScore {
+    sectionType
+    rawScore
+    maxRawScore
+    band
+    correctAnswerCount
+    questionCount
   }
 `;
 export const FlashcardSetFieldsFragmentDoc = gql`
@@ -11280,6 +11348,7 @@ export const ExamDraftDocument = gql`
       answers {
         questionId
         selectedOptionIds
+        textAnswer
       }
       version
       savedAt
@@ -11389,6 +11458,7 @@ export const SaveExamDraftDocument = gql`
       answers {
         questionId
         selectedOptionIds
+        textAnswer
       }
       version
       savedAt
@@ -11544,11 +11614,20 @@ export const AttemptPaperDocument = gql`
               questionCategory
               orderNo
               maxRawScore
+              numberFrom
+              numberTo
+              choiceLimit
               options {
                 id
                 content
                 orderNo
               }
+            }
+            setOptions {
+              id
+              label
+              content
+              orderNo
             }
           }
         }
@@ -11659,10 +11738,14 @@ export const SubmitExamAttemptDocument = gql`
       questions {
         ...AttemptReviewFields
       }
+      sections {
+        ...AttemptSectionScoreFields
+      }
     }
   }
   ${ExamAttemptFieldsFragmentDoc}
   ${AttemptReviewFieldsFragmentDoc}
+  ${AttemptSectionScoreFieldsFragmentDoc}
 `;
 export type SubmitExamAttemptMutationFn = (
   options?: ApolloReactCommon.MutationFunctionOptions<
@@ -11718,10 +11801,14 @@ export const ExamAttemptResultDocument = gql`
       questions {
         ...AttemptReviewFields
       }
+      sections {
+        ...AttemptSectionScoreFields
+      }
     }
   }
   ${ExamAttemptFieldsFragmentDoc}
   ${AttemptReviewFieldsFragmentDoc}
+  ${AttemptSectionScoreFieldsFragmentDoc}
 `;
 
 /**

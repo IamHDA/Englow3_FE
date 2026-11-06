@@ -2,8 +2,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSaveExamDraftMutation } from "@/lib/graphql/generated/hooks";
 import { backendCodeOf } from "@/shared/network/loadError";
+import { toAnswerInputs, type ExamAnswers } from "../examAnswers";
 
-type Answers = Record<string, string | string[]>;
+type Answers = ExamAnswers;
 type Active = {
   id: string;
   version: number;
@@ -68,14 +69,7 @@ export function useExamAutosave(id: string | null, answers: Answers) {
               variables: {
                 attemptId: context.id,
                 version: context.version,
-                answers: Object.entries(context.latest).map(
-                  ([questionId, selectedOptionId]) => ({
-                    questionId,
-                    selectedOptionIds: Array.isArray(selectedOptionId)
-                      ? selectedOptionId
-                      : [selectedOptionId],
-                  }),
-                ),
+                answers: toAnswerInputs(context.latest),
               },
             });
             if (!response.data) throw new Error("Missing draft result");

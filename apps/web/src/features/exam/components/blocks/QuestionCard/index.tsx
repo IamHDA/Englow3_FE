@@ -11,6 +11,7 @@ import {
   Image,
   Stack,
   Text,
+  TextInput,
   ThemeIcon,
   UnstyledButton,
 } from "@mantine/core";
@@ -19,6 +20,12 @@ import type { ExamPaper } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionCard.module.css";
 import { OnceOnlyAudio } from "./OnceOnlyAudio";
+import { GapText } from "./GapText";
+import { ExamQuestionType } from "@/lib/graphql/generated/schemaTypes";
+import {
+  MAX_TEXT_ANSWER_LENGTH,
+  questionNumberLabel,
+} from "../../../examAnswers";
 
 type Section = ExamPaper["sections"][number];
 type Part = Section["parts"][number];
@@ -46,6 +53,11 @@ export interface QuestionCardProps {
    * nào đã nghe; bỏ trống (bài luyện tập) thì dùng trình phát thường.
    */
   audioOnceForAttempt?: string;
+  /** What was typed on a TEXT_ENTRY question. */
+  textAnswer?: string;
+  onChangeText?: (text: string) => void;
+  /** What has been typed into each gap of this question set, by question id. */
+  typedAnswers?: Record<string, string>;
 }
 
 export function QuestionCard({
@@ -65,9 +77,31 @@ export function QuestionCard({
   hasPrev,
   hasNext,
   audioOnceForAttempt,
+  textAnswer,
+  onChangeText,
+  typedAnswers,
 }: QuestionCardProps) {
   const { t, isVi } = useLanguage();
-  const multiple = question.questionType === "MULTIPLE_CHOICE";
+  const multiple = question.questionType === ExamQuestionType.MULTIPLE_CHOICE;
+  const typed = question.questionType === ExamQuestionType.TEXT_ENTRY;
+  // A matching question chooses one entry of the list its whole set shares,
+  // labelled as the paper labels it (i, ii, iii or A, B, C).
+  const choices =
+    question.questionType === ExamQuestionType.MATCHING
+      ? (questionSet.setOptions ?? []).map((entry) => ({
+          id: entry.id,
+          letter: entry.label,
+          content: entry.content ?? "",
+        }))
+      : question.options.map((option, index) => ({
+          id: option.id,
+          letter: String.fromCharCode(65 + index),
+          content: option.content,
+        }));
+  const numberLabel =
+    question.numberFrom === undefined
+      ? String(questionIndex + 1)
+      : questionNumberLabel(question);
   const selected =
     selectedOptionIds ?? (selectedOptionId ? [selectedOptionId] : []);
   const isListening = section.sectionType.toUpperCase().includes("LISTEN");
@@ -153,13 +187,12 @@ export function QuestionCard({
               </Text>
             )}
             {questionSet.content && (
-              <Text
-                size="sm"
-                c="ink.8"
-                style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}
-              >
-                {questionSet.content}
-              </Text>
+              <GapText
+                content={questionSet.content}
+                questions={questionSet.questions ?? []}
+                typedAnswers={typedAnswers ?? {}}
+                currentQuestionId={question.id}
+              />
             )}
             {questionSet.imageUrl && (
               <Image
@@ -201,11 +234,12 @@ export function QuestionCard({
           <Group gap="xs">
             <ThemeIcon size={26} radius="xl" color="navy.9">
               <Text size="xs" fw={700} c="white">
-                {questionIndex + 1}
+                {numberLabel}
               </Text>
             </ThemeIcon>
             <Text size="xs" c="ink.5" fw={600}>
-              {t.exam.questionPrefix} {questionIndex + 1} / {totalQuestions}
+              {t.exam.questionPrefix} {numberLabel} · {questionIndex + 1} /{" "}
+              {totalQuestions}
             </Text>
           </Group>
 
@@ -229,8 +263,24 @@ export function QuestionCard({
           </Text>
         </Box>
 
+        {typed && (
+          <TextInput
+            label={isVi ? "Câu trả lời của bạn" : "Your answer"}
+            description={
+              isVi
+                ? "Gõ đúng chính tả. Không phân biệt chữ hoa, chữ thường."
+                : "Spell it correctly. Capital letters do not matter."
+            }
+            value={textAnswer ?? ""}
+            maxLength={MAX_TEXT_ANSWER_LENGTH}
+            onChange={(event) => onChangeText?.(event.currentTarget.value)}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        )}
+
         {/* Answer Options */}
-        <Stack gap="xs">
+        <Stack gap="xs" display={typed ? "none" : undefined}>
           <Box
             role={multiple ? "group" : "radiogroup"}
             aria-label={question.content}
@@ -238,14 +288,14 @@ export function QuestionCard({
             {multiple && (
               <Text size="sm" c="dimmed" mb="sm">
                 {isVi
-                  ? "Chọn tất cả đáp án đúng."
-                  : "Select all correct answers."}
+                  ? `Chọn ${question.choiceLimit ?? ""} đáp án.`
+                  : `Choose ${question.choiceLimit ?? ""} answers.`}
               </Text>
             )}
             <Stack gap="xs">
-              {question.options.map((option, optIdx) => {
+              {choices.map((option, optIdx) => {
                 const isSelected = selected.includes(option.id);
-                const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+                const letter = option.letter;
 
                 return (
                   <UnstyledButton
@@ -268,9 +318,8 @@ export function QuestionCard({
                             ? -1
                             : 1;
                         const next =
-                          (optIdx + offset + question.options.length) %
-                          question.options.length;
-                        onSelectOption(question.options[next].id);
+                          (optIdx + offset + choices.length) % choices.length;
+                        onSelectOption(choices[next].id);
                         const buttons =
                           event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
                             '[role="radio"]',

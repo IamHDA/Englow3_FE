@@ -767,7 +767,7 @@ export type ExamQuestion = {
   options: Array<QuestionOption>;
   orderNo: Scalars['Int']['output'];
   questionCategory?: Maybe<Scalars['String']['output']>;
-  questionType: Scalars['String']['output'];
+  questionType: ExamQuestionType;
   skillType: Scalars['String']['output'];
 };
 
@@ -788,6 +788,17 @@ export type ExamQuestionSet = {
   setOptions: Array<QuestionSetOption>;
   title?: Maybe<Scalars['String']['output']>;
 };
+
+/**
+ * How a question is answered. SINGLE_CHOICE and MULTIPLE_CHOICE choose from the
+ * question's own options (MULTIPLE_CHOICE is "choose N", N being choiceLimit);
+ * TEXT_ENTRY is typed; MATCHING chooses one entry of its set's setOptions.
+ */
+export type ExamQuestionType =
+  | 'MATCHING'
+  | 'MULTIPLE_CHOICE'
+  | 'SINGLE_CHOICE'
+  | 'TEXT_ENTRY';
 
 export type ExamSectionDetail = {
   __typename?: 'ExamSectionDetail';
@@ -3425,6 +3436,7 @@ export type ResolversTypes = ResolversObject<{
   ExamPaper: ResolverTypeWrapper<ExamPaper>;
   ExamQuestion: ResolverTypeWrapper<ExamQuestion>;
   ExamQuestionSet: ResolverTypeWrapper<ExamQuestionSet>;
+  ExamQuestionType: ExamQuestionType;
   ExamSectionDetail: ResolverTypeWrapper<ExamSectionDetail>;
   ExamSectionPart: ResolverTypeWrapper<ExamSectionPart>;
   ExamSortBy: ExamSortBy;
@@ -4164,7 +4176,7 @@ export type ExamQuestionResolvers<ContextType = GraphQLContext, ParentType exten
   options?: Resolver<Array<ResolversTypes['QuestionOption']>, ParentType, ContextType>;
   orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   questionCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  questionType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  questionType?: Resolver<ResolversTypes['ExamQuestionType'], ParentType, ContextType>;
   skillType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 

@@ -65,7 +65,30 @@ import { ExamResultView } from "../../blocks/ExamResultView";
 import type { ExamAttemptResult, ExamStartChoice } from "../../../types";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
-import { sanitizeExamAnswers } from "../../../examAnswers";
+import {
+  answerSlots,
+  fromDraftAnswers,
+  isStoredExamAnswer,
+  questionNumberLabel,
+  sanitizeExamAnswers,
+  toAnswerInputs,
+  type ExamAnswer,
+  type ExamAnswers,
+} from "../../../examAnswers";
+import { ExamQuestionType } from "@/lib/graphql/generated/schemaTypes";
+
+/** The options chosen for a question, whatever shape its answer has. */
+function chosenIds(answer: ExamAnswer | undefined): string[] {
+  if (Array.isArray(answer)) return answer;
+  return typeof answer === "string" ? [answer] : [];
+}
+
+/** What was typed for a question; empty for a choice question. */
+function typedText(answer: ExamAnswer | undefined): string {
+  return typeof answer === "object" && !Array.isArray(answer)
+    ? answer.text
+    : "";
+}
 
 interface ExamSittingViewProps {
   examId: string;
@@ -73,7 +96,7 @@ interface ExamSittingViewProps {
 
 type StoredProgress = {
   updatedAt?: number;
-  answers: Record<string, string | string[]>;
+  answers: ExamAnswers;
   flaggedIds: string[];
   currentIndex: number;
 };
@@ -97,12 +120,7 @@ function readProgress(attemptId: string): StoredProgress | null {
       !value.answers ||
       typeof value.answers !== "object" ||
       Array.isArray(value.answers) ||
-      !Object.values(value.answers).every(
-        (answer) =>
-          typeof answer === "string" ||
-          (Array.isArray(answer) &&
-            answer.every((id) => typeof id === "string")),
-      ) ||
+      !Object.values(value.answers).every(isStoredExamAnswer) ||
       !Array.isArray(value.flaggedIds) ||
       !value.flaggedIds.every((id: unknown) => typeof id === "string") ||
       !Number.isInteger(value.currentIndex) ||
@@ -178,19 +196,11 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   });
 
   const paper = data?.attemptPaper;
-  const paperQuestions = useMemo(
-    () =>
-      paper?.sections.flatMap((section) =>
-        section.parts.flatMap((part) =>
-          part.questionSets.flatMap((set) => set.questions),
-        ),
-      ) ?? [],
-    [paper],
-  );
+  const paperQuestions = useMemo(() => answerSlots(paper), [paper]);
   const isPlacement = detailData?.exam?.examType === ExamType.PLACEMENT;
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const [answers, setAnswers] = useState<ExamAnswers>({});
   const validAnswers = useMemo(
     () => sanitizeExamAnswers(paperQuestions, answers),
     [paperQuestions, answers],
@@ -216,6 +226,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
               questionId: q.id,
               sectionType: sec.sectionType,
               partTitle: part.title,
+              label: questionNumberLabel(q),
             });
           });
         });
@@ -251,14 +262,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
           return;
         }
       }
-      const payload = Object.entries(validAnswers).map(
-        ([questionId, selectedOptionId]) => ({
-          questionId,
-          selectedOptionIds: Array.isArray(selectedOptionId)
-            ? selectedOptionId
-            : [selectedOptionId],
-        }),
-      );
+      const payload = toAnswerInputs(validAnswers);
 
       let failure: unknown = null;
       const response = await submitAttempt({
@@ -386,11 +390,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
       });
       if (!response.data) return;
       const draft = response.data.examDraft;
-      const restored = Object.fromEntries(
-        draft.answers
-          .filter((a) => a.selectedOptionIds.length)
-          .map((a) => [a.questionId, a.selectedOptionIds]),
-      );
+      const restored = fromDraftAnswers(draft.answers);
       autosave.initialize(attemptId, draft.version, restored, restored);
       setAnswers(restored);
     } catch {
@@ -459,18 +459,9 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         ]);
         if (!response.data || !paperResponse.data)
           throw new Error("Missing draft or paper");
-        const questions = paperResponse.data.attemptPaper.sections.flatMap(
-          (section) =>
-            section.parts.flatMap((part) =>
-              part.questionSets.flatMap((set) => set.questions),
-            ),
-        );
+        const questions = answerSlots(paperResponse.data.attemptPaper);
         const draft = response.data.examDraft;
-        const serverAnswers = Object.fromEntries(
-          draft.answers
-            .filter((a) => a.selectedOptionIds.length)
-            .map((a) => [a.questionId, a.selectedOptionIds]),
-        );
+        const serverAnswers = fromDraftAnswers(draft.answers);
         const restored = readProgress(attempt.id);
         const useLocal =
           restored && (restored.updatedAt ?? 0) > Date.parse(draft.savedAt);
@@ -557,15 +548,36 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
   const handleSelectOption = (optionId: string) => {
     if (!currentItem || pending.current || expired) return;
     setAnswers((prev) => {
-      if (currentQuestion?.questionType !== "MULTIPLE_CHOICE")
+      if (currentQuestion?.questionType !== ExamQuestionType.MULTIPLE_CHOICE)
         return { ...prev, [currentItem.questionId]: optionId };
       const old = prev[currentItem.questionId];
-      const chosen = Array.isArray(old) ? old : old ? [old] : [];
+      const chosen = Array.isArray(old)
+        ? old
+        : typeof old === "string"
+          ? [old]
+          : [];
+      // "Choose TWO": a third tick is refused rather than quietly swapping one,
+      // which the backend would also refuse (TOO_MANY_SELECTED_OPTIONS).
+      if (
+        !chosen.includes(optionId) &&
+        chosen.length >= currentQuestion.choiceLimit
+      )
+        return prev;
       const selected = chosen.includes(optionId)
         ? chosen.filter((id) => id !== optionId)
         : [...chosen, optionId];
       const next = { ...prev };
       if (selected.length) next[currentItem.questionId] = selected;
+      else delete next[currentItem.questionId];
+      return next;
+    });
+  };
+
+  const handleChangeText = (text: string) => {
+    if (!currentItem || pending.current || expired) return;
+    setAnswers((prev) => {
+      const next = { ...prev };
+      if (text.length) next[currentItem.questionId] = { text };
       else delete next[currentItem.questionId];
       return next;
     });
@@ -877,13 +889,15 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
                   question={currentQuestion}
                   questionIndex={currentIndex}
                   totalQuestions={flatQuestions.length}
-                  selectedOptionIds={
-                    Array.isArray(answers[currentQuestion.id])
-                      ? (answers[currentQuestion.id] as string[])
-                      : answers[currentQuestion.id]
-                        ? [answers[currentQuestion.id] as string]
-                        : []
-                  }
+                  selectedOptionIds={chosenIds(answers[currentQuestion.id])}
+                  textAnswer={typedText(answers[currentQuestion.id])}
+                  onChangeText={handleChangeText}
+                  typedAnswers={Object.fromEntries(
+                    currentQuestionSet.questions.map((question) => [
+                      question.id,
+                      typedText(answers[question.id]),
+                    ]),
+                  )}
                   isFlagged={flaggedIds.has(currentQuestion.id)}
                   onSelectOption={handleSelectOption}
                   onToggleFlag={handleToggleFlag}

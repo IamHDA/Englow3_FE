@@ -13,7 +13,7 @@ import {
 import { Flag } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionPalette.module.css";
-import { isExamAnswerPresent } from "../../../examAnswers";
+import { isExamAnswerPresent, type ExamAnswers } from "../../../examAnswers";
 
 export interface FlatQuestionItem {
   globalIndex: number;
@@ -23,12 +23,14 @@ export interface FlatQuestionItem {
   questionId: string;
   sectionType: string;
   partTitle: string;
+  /** The number the learner sees, from the backend: "14", or "21–22". */
+  label: string;
 }
 
 export interface QuestionPaletteProps {
   questions: FlatQuestionItem[];
   currentIndex: number;
-  answers: Record<string, string | string[]>; // questionId -> optionId
+  answers: ExamAnswers;
   flaggedQuestionIds: Set<string>;
   onSelectQuestion: (index: number) => void;
 }
@@ -102,12 +104,9 @@ export function QuestionPalette({
                 onClick={() => onSelectQuestion(q.globalIndex)}
                 className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ""}`}
                 data-status={status}
-                aria-label={t.exam.questionAria.replace(
-                  "{index}",
-                  String(q.globalIndex + 1),
-                )}
+                aria-label={t.exam.questionAria.replace("{index}", q.label)}
               >
-                {q.globalIndex + 1}
+                {q.label}
                 {isFlagged && (
                   <Box className={classes.flagIconPin}>
                     <Flag
