@@ -30,6 +30,7 @@ import type {
   TargetLevel,
 } from "@/lib/graphql/generated/schemaTypes";
 import { Page, PageHeader } from "@/shared/components/Page";
+import Link from "next/link";
 
 const PAGE_SIZE = 8;
 
@@ -117,7 +118,14 @@ export function ExamLibraryView() {
   return (
     <Page>
       <Stack gap="xl">
-        <PageHeader title={t.exam.title} />
+        <PageHeader
+          title={t.exam.title}
+          actions={
+            <Button component={Link} href="/exams/full-tests" variant="light">
+              IELTS Full Test
+            </Button>
+          }
+        />
 
         {/* Filter Toolbar */}
         <ExamFilters

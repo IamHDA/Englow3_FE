@@ -499,10 +499,15 @@ function StageCard({
               {isCurrent &&
                 milestone.status !== MilestoneStatus.PASSED &&
                 (milestone.kind === MilestoneKind.CERTIFICATE_MOCK &&
-                milestone.examId ? (
+                (milestone.fullTestId || milestone.examId) ? (
                   <Button
                     component={Link}
-                    href={`/exams/${milestone.examId}`}
+                    href={
+                      // An IELTS mock is a four-skill full test; TOEIC's is a paper.
+                      milestone.fullTestId
+                        ? `/exams/full-tests/${milestone.fullTestId}`
+                        : `/exams/${milestone.examId}`
+                    }
                     color={milestone.ready ? "orange" : undefined}
                     variant={milestone.ready ? "filled" : "light"}
                   >

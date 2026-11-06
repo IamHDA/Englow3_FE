@@ -3100,6 +3100,120 @@ export type FlashcardStatsQuery = {
   };
 };
 
+export type FullTestSittingFieldsFragment = {
+  id: string;
+  fullTestId: string;
+  title: string;
+  status: Types.FullTestSittingStatus;
+  startedAt: string;
+  deadlineAt: string;
+  completedAt: string | null;
+  examId: string;
+  examAttemptId: string | null;
+  listeningBand: number | null;
+  readingBand: number | null;
+  writingBand: number | null;
+  speakingBand: number | null;
+  provisionalBand: number | null;
+  overallBand: number | null;
+  parts: Array<{
+    slot: Types.FullTestSlot;
+    taskId: string;
+    attemptId: string | null;
+  }>;
+};
+
+export type FullTestLibraryQueryVariables = Exact<{ [key: string]: never }>;
+
+export type FullTestLibraryQuery = {
+  fullTests: Array<{
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+  }>;
+  myFullTestSittings: Array<{
+    id: string;
+    fullTestId: string;
+    title: string;
+    status: Types.FullTestSittingStatus;
+    startedAt: string;
+    deadlineAt: string;
+    completedAt: string | null;
+    examId: string;
+    examAttemptId: string | null;
+    listeningBand: number | null;
+    readingBand: number | null;
+    writingBand: number | null;
+    speakingBand: number | null;
+    provisionalBand: number | null;
+    overallBand: number | null;
+    parts: Array<{
+      slot: Types.FullTestSlot;
+      taskId: string;
+      attemptId: string | null;
+    }>;
+  }>;
+};
+
+export type FullTestSittingQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type FullTestSittingQuery = {
+  fullTestSitting: {
+    id: string;
+    fullTestId: string;
+    title: string;
+    status: Types.FullTestSittingStatus;
+    startedAt: string;
+    deadlineAt: string;
+    completedAt: string | null;
+    examId: string;
+    examAttemptId: string | null;
+    listeningBand: number | null;
+    readingBand: number | null;
+    writingBand: number | null;
+    speakingBand: number | null;
+    provisionalBand: number | null;
+    overallBand: number | null;
+    parts: Array<{
+      slot: Types.FullTestSlot;
+      taskId: string;
+      attemptId: string | null;
+    }>;
+  };
+};
+
+export type StartFullTestMutationVariables = Exact<{
+  fullTestId: string | number;
+}>;
+
+export type StartFullTestMutation = {
+  startFullTest: {
+    id: string;
+    fullTestId: string;
+    title: string;
+    status: Types.FullTestSittingStatus;
+    startedAt: string;
+    deadlineAt: string;
+    completedAt: string | null;
+    examId: string;
+    examAttemptId: string | null;
+    listeningBand: number | null;
+    readingBand: number | null;
+    writingBand: number | null;
+    speakingBand: number | null;
+    provisionalBand: number | null;
+    overallBand: number | null;
+    parts: Array<{
+      slot: Types.FullTestSlot;
+      taskId: string;
+      attemptId: string | null;
+    }>;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -3691,6 +3805,7 @@ export type RoadmapFieldsFragment = {
       id: string;
       kind: Types.MilestoneKind;
       examId: string | null;
+      fullTestId: string | null;
       requiredScore: number | null;
       requiredLevel: Types.CefrLevel | null;
       status: Types.MilestoneStatus;
@@ -3773,6 +3888,7 @@ export type LearnerRoadmapQuery = {
         id: string;
         kind: Types.MilestoneKind;
         examId: string | null;
+        fullTestId: string | null;
         requiredScore: number | null;
         requiredLevel: Types.CefrLevel | null;
         status: Types.MilestoneStatus;
@@ -3836,6 +3952,7 @@ export type CreateRoadmapMutation = {
         id: string;
         kind: Types.MilestoneKind;
         examId: string | null;
+        fullTestId: string | null;
         requiredScore: number | null;
         requiredLevel: Types.CefrLevel | null;
         status: Types.MilestoneStatus;
@@ -3906,6 +4023,7 @@ export type RecordMilestoneSittingMutation = {
         id: string;
         kind: Types.MilestoneKind;
         examId: string | null;
+        fullTestId: string | null;
         requiredScore: number | null;
         requiredLevel: Types.CefrLevel | null;
         status: Types.MilestoneStatus;
@@ -4913,6 +5031,51 @@ export const FlashcardFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<FlashcardFieldsFragment, unknown>;
+export const FullTestSittingFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FullTestSittingFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTestSitting" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "slot" } },
+                { kind: "Field", name: { kind: "Name", value: "taskId" } },
+                { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "listeningBand" } },
+          { kind: "Field", name: { kind: "Name", value: "readingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "writingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
+          { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<FullTestSittingFieldsFragment, unknown>;
 export const OnboardingStateFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -5249,6 +5412,10 @@ export const RoadmapFieldsFragmentDoc = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "fullTestId" },
                       },
                       {
                         kind: "Field",
@@ -16684,6 +16851,278 @@ export const FlashcardStatsDocument = {
     },
   ],
 } as unknown as DocumentNode<FlashcardStatsQuery, FlashcardStatsQueryVariables>;
+export const FullTestLibraryDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FullTestLibrary" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "fullTests" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "description" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "certificateVariant" },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "myFullTestSittings" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "FullTestSittingFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FullTestSittingFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTestSitting" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "slot" } },
+                { kind: "Field", name: { kind: "Name", value: "taskId" } },
+                { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "listeningBand" } },
+          { kind: "Field", name: { kind: "Name", value: "readingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "writingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
+          { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  FullTestLibraryQuery,
+  FullTestLibraryQueryVariables
+>;
+export const FullTestSittingDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FullTestSitting" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "fullTestSitting" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "FullTestSittingFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FullTestSittingFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTestSitting" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "slot" } },
+                { kind: "Field", name: { kind: "Name", value: "taskId" } },
+                { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "listeningBand" } },
+          { kind: "Field", name: { kind: "Name", value: "readingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "writingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
+          { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  FullTestSittingQuery,
+  FullTestSittingQueryVariables
+>;
+export const StartFullTestDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "StartFullTest" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "fullTestId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startFullTest" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "fullTestId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "fullTestId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "FullTestSittingFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "FullTestSittingFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTestSitting" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "deadlineAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "examAttemptId" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "slot" } },
+                { kind: "Field", name: { kind: "Name", value: "taskId" } },
+                { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "listeningBand" } },
+          { kind: "Field", name: { kind: "Name", value: "readingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "writingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
+          { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
+          { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  StartFullTestMutation,
+  StartFullTestMutationVariables
+>;
 export const LearningPurposesDocument = {
   kind: "Document",
   definitions: [
@@ -18640,6 +19079,10 @@ export const LearnerRoadmapDocument = {
                       },
                       {
                         kind: "Field",
+                        name: { kind: "Name", value: "fullTestId" },
+                      },
+                      {
+                        kind: "Field",
                         name: { kind: "Name", value: "requiredScore" },
                       },
                       {
@@ -18810,6 +19253,10 @@ export const CreateRoadmapDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "fullTestId" },
                       },
                       {
                         kind: "Field",
@@ -19047,6 +19494,10 @@ export const RecordMilestoneSittingDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "examId" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "fullTestId" },
                       },
                       {
                         kind: "Field",

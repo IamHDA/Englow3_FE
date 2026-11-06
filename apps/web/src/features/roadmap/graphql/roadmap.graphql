@@ -44,6 +44,7 @@ fragment RoadmapFields on Roadmap {
       id
       kind
       examId
+      fullTestId
       requiredScore
       requiredLevel
       status

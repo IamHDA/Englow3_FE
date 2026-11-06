@@ -1,0 +1,46 @@
+fragment FullTestSittingFields on FullTestSitting {
+  id
+  fullTestId
+  title
+  status
+  startedAt
+  deadlineAt
+  completedAt
+  examId
+  examAttemptId
+  parts {
+    slot
+    taskId
+    attemptId
+  }
+  listeningBand
+  readingBand
+  writingBand
+  speakingBand
+  provisionalBand
+  overallBand
+}
+
+query FullTestLibrary {
+  fullTests {
+    id
+    title
+    description
+    certificateVariant
+  }
+  myFullTestSittings {
+    ...FullTestSittingFields
+  }
+}
+
+query FullTestSitting($id: ID!) {
+  fullTestSitting(id: $id) {
+    ...FullTestSittingFields
+  }
+}
+
+mutation StartFullTest($fullTestId: ID!) {
+  startFullTest(fullTestId: $fullTestId) {
+    ...FullTestSittingFields
+  }
+}

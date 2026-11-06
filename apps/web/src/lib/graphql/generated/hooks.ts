@@ -3103,6 +3103,120 @@ export type FlashcardStatsQuery = {
   };
 };
 
+export type FullTestSittingFieldsFragment = {
+  id: string;
+  fullTestId: string;
+  title: string;
+  status: Types.FullTestSittingStatus;
+  startedAt: string;
+  deadlineAt: string;
+  completedAt: string | null;
+  examId: string;
+  examAttemptId: string | null;
+  listeningBand: number | null;
+  readingBand: number | null;
+  writingBand: number | null;
+  speakingBand: number | null;
+  provisionalBand: number | null;
+  overallBand: number | null;
+  parts: Array<{
+    slot: Types.FullTestSlot;
+    taskId: string;
+    attemptId: string | null;
+  }>;
+};
+
+export type FullTestLibraryQueryVariables = Exact<{ [key: string]: never }>;
+
+export type FullTestLibraryQuery = {
+  fullTests: Array<{
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+  }>;
+  myFullTestSittings: Array<{
+    id: string;
+    fullTestId: string;
+    title: string;
+    status: Types.FullTestSittingStatus;
+    startedAt: string;
+    deadlineAt: string;
+    completedAt: string | null;
+    examId: string;
+    examAttemptId: string | null;
+    listeningBand: number | null;
+    readingBand: number | null;
+    writingBand: number | null;
+    speakingBand: number | null;
+    provisionalBand: number | null;
+    overallBand: number | null;
+    parts: Array<{
+      slot: Types.FullTestSlot;
+      taskId: string;
+      attemptId: string | null;
+    }>;
+  }>;
+};
+
+export type FullTestSittingQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type FullTestSittingQuery = {
+  fullTestSitting: {
+    id: string;
+    fullTestId: string;
+    title: string;
+    status: Types.FullTestSittingStatus;
+    startedAt: string;
+    deadlineAt: string;
+    completedAt: string | null;
+    examId: string;
+    examAttemptId: string | null;
+    listeningBand: number | null;
+    readingBand: number | null;
+    writingBand: number | null;
+    speakingBand: number | null;
+    provisionalBand: number | null;
+    overallBand: number | null;
+    parts: Array<{
+      slot: Types.FullTestSlot;
+      taskId: string;
+      attemptId: string | null;
+    }>;
+  };
+};
+
+export type StartFullTestMutationVariables = Exact<{
+  fullTestId: string | number;
+}>;
+
+export type StartFullTestMutation = {
+  startFullTest: {
+    id: string;
+    fullTestId: string;
+    title: string;
+    status: Types.FullTestSittingStatus;
+    startedAt: string;
+    deadlineAt: string;
+    completedAt: string | null;
+    examId: string;
+    examAttemptId: string | null;
+    listeningBand: number | null;
+    readingBand: number | null;
+    writingBand: number | null;
+    speakingBand: number | null;
+    provisionalBand: number | null;
+    overallBand: number | null;
+    parts: Array<{
+      slot: Types.FullTestSlot;
+      taskId: string;
+      attemptId: string | null;
+    }>;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -3694,6 +3808,7 @@ export type RoadmapFieldsFragment = {
       id: string;
       kind: Types.MilestoneKind;
       examId: string | null;
+      fullTestId: string | null;
       requiredScore: number | null;
       requiredLevel: Types.CefrLevel | null;
       status: Types.MilestoneStatus;
@@ -3776,6 +3891,7 @@ export type LearnerRoadmapQuery = {
         id: string;
         kind: Types.MilestoneKind;
         examId: string | null;
+        fullTestId: string | null;
         requiredScore: number | null;
         requiredLevel: Types.CefrLevel | null;
         status: Types.MilestoneStatus;
@@ -3839,6 +3955,7 @@ export type CreateRoadmapMutation = {
         id: string;
         kind: Types.MilestoneKind;
         examId: string | null;
+        fullTestId: string | null;
         requiredScore: number | null;
         requiredLevel: Types.CefrLevel | null;
         status: Types.MilestoneStatus;
@@ -3909,6 +4026,7 @@ export type RecordMilestoneSittingMutation = {
         id: string;
         kind: Types.MilestoneKind;
         examId: string | null;
+        fullTestId: string | null;
         requiredScore: number | null;
         requiredLevel: Types.CefrLevel | null;
         status: Types.MilestoneStatus;
@@ -4514,6 +4632,30 @@ export const FlashcardFieldsFragmentDoc = gql`
     lapseCount
   }
 `;
+export const FullTestSittingFieldsFragmentDoc = gql`
+  fragment FullTestSittingFields on FullTestSitting {
+    id
+    fullTestId
+    title
+    status
+    startedAt
+    deadlineAt
+    completedAt
+    examId
+    examAttemptId
+    parts {
+      slot
+      taskId
+      attemptId
+    }
+    listeningBand
+    readingBand
+    writingBand
+    speakingBand
+    provisionalBand
+    overallBand
+  }
+`;
 export const OnboardingStateFieldsFragmentDoc = gql`
   fragment OnboardingStateFields on OnboardingState {
     step
@@ -4668,6 +4810,7 @@ export const RoadmapFieldsFragmentDoc = gql`
         id
         kind
         examId
+        fullTestId
         requiredScore
         requiredLevel
         status
@@ -13176,6 +13319,269 @@ export type FlashcardStatsQueryResult = ApolloReactCommon.QueryResult<
   FlashcardStatsQuery,
   FlashcardStatsQueryVariables
 >;
+export const FullTestLibraryDocument = gql`
+  query FullTestLibrary {
+    fullTests {
+      id
+      title
+      description
+      certificateVariant
+    }
+    myFullTestSittings {
+      ...FullTestSittingFields
+    }
+  }
+  ${FullTestSittingFieldsFragmentDoc}
+`;
+
+/**
+ * __useFullTestLibraryQuery__
+ *
+ * To run a query within a React component, call `useFullTestLibraryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFullTestLibraryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFullTestLibraryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFullTestLibraryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FullTestLibraryQuery,
+    FullTestLibraryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FullTestLibraryQuery,
+    FullTestLibraryQueryVariables
+  >(FullTestLibraryDocument, options);
+}
+export function useFullTestLibraryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FullTestLibraryQuery,
+    FullTestLibraryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FullTestLibraryQuery,
+    FullTestLibraryQueryVariables
+  >(FullTestLibraryDocument, options);
+}
+export function useFullTestLibrarySuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FullTestLibraryQuery,
+    FullTestLibraryQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FullTestLibraryQuery,
+  FullTestLibraryQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFullTestLibrarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FullTestLibraryQuery,
+        FullTestLibraryQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FullTestLibraryQuery | undefined,
+  FullTestLibraryQueryVariables
+>;
+export function useFullTestLibrarySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FullTestLibraryQuery,
+        FullTestLibraryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FullTestLibraryQuery,
+    FullTestLibraryQueryVariables
+  >(FullTestLibraryDocument, options as any);
+}
+export type FullTestLibraryQueryHookResult = ReturnType<
+  typeof useFullTestLibraryQuery
+>;
+export type FullTestLibraryLazyQueryHookResult = ReturnType<
+  typeof useFullTestLibraryLazyQuery
+>;
+export type FullTestLibrarySuspenseQueryHookResult = ReturnType<
+  typeof useFullTestLibrarySuspenseQuery
+>;
+export type FullTestLibraryQueryResult = ApolloReactCommon.QueryResult<
+  FullTestLibraryQuery,
+  FullTestLibraryQueryVariables
+>;
+export const FullTestSittingDocument = gql`
+  query FullTestSitting($id: ID!) {
+    fullTestSitting(id: $id) {
+      ...FullTestSittingFields
+    }
+  }
+  ${FullTestSittingFieldsFragmentDoc}
+`;
+
+/**
+ * __useFullTestSittingQuery__
+ *
+ * To run a query within a React component, call `useFullTestSittingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFullTestSittingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFullTestSittingQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFullTestSittingQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    FullTestSittingQuery,
+    FullTestSittingQueryVariables
+  > &
+    (
+      | { variables: FullTestSittingQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FullTestSittingQuery,
+    FullTestSittingQueryVariables
+  >(FullTestSittingDocument, options);
+}
+export function useFullTestSittingLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FullTestSittingQuery,
+    FullTestSittingQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FullTestSittingQuery,
+    FullTestSittingQueryVariables
+  >(FullTestSittingDocument, options);
+}
+export function useFullTestSittingSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FullTestSittingQuery,
+    FullTestSittingQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FullTestSittingQuery,
+  FullTestSittingQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFullTestSittingSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FullTestSittingQuery,
+        FullTestSittingQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FullTestSittingQuery | undefined,
+  FullTestSittingQueryVariables
+>;
+export function useFullTestSittingSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FullTestSittingQuery,
+        FullTestSittingQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FullTestSittingQuery,
+    FullTestSittingQueryVariables
+  >(FullTestSittingDocument, options as any);
+}
+export type FullTestSittingQueryHookResult = ReturnType<
+  typeof useFullTestSittingQuery
+>;
+export type FullTestSittingLazyQueryHookResult = ReturnType<
+  typeof useFullTestSittingLazyQuery
+>;
+export type FullTestSittingSuspenseQueryHookResult = ReturnType<
+  typeof useFullTestSittingSuspenseQuery
+>;
+export type FullTestSittingQueryResult = ApolloReactCommon.QueryResult<
+  FullTestSittingQuery,
+  FullTestSittingQueryVariables
+>;
+export const StartFullTestDocument = gql`
+  mutation StartFullTest($fullTestId: ID!) {
+    startFullTest(fullTestId: $fullTestId) {
+      ...FullTestSittingFields
+    }
+  }
+  ${FullTestSittingFieldsFragmentDoc}
+`;
+export type StartFullTestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartFullTestMutation,
+    StartFullTestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartFullTestMutation__
+ *
+ * To run a mutation, you first call `useStartFullTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartFullTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startFullTestMutation, { data, loading, error }] = useStartFullTestMutation({
+ *   variables: {
+ *      fullTestId: // value for 'fullTestId'
+ *   },
+ * });
+ */
+export function useStartFullTestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartFullTestMutation,
+    StartFullTestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartFullTestMutation,
+    StartFullTestMutationVariables
+  >(StartFullTestDocument, options);
+}
+export type StartFullTestMutationHookResult = ReturnType<
+  typeof useStartFullTestMutation
+>;
+export type StartFullTestMutationResult =
+  ApolloReactCommon.MutationResult<StartFullTestMutation>;
+export type StartFullTestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartFullTestMutation,
+    StartFullTestMutationVariables
+  >;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
     learningPurposes {
