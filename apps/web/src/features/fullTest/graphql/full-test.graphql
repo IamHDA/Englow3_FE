@@ -46,3 +46,11 @@ mutation StartFullTest($fullTestId: ID!) {
     ...FullTestSittingFields
   }
 }
+
+# The full test an IELTS learner's onboarding sends them to: newest first.
+query PlacementFullTests {
+  fullTests {
+    id
+    certificateVariant
+  }
+}

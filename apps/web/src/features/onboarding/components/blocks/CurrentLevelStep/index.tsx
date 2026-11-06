@@ -30,6 +30,12 @@ type CurrentLevelStepProps = {
    */
   certificateLearner?: boolean;
   onTakeLevelCheck?: () => void;
+  /**
+   * Người học IELTS xếp trình độ bằng IELTS full test: band tạm từ Listening
+   * và Reading đủ để đi tiếp onboarding, Writing và Speaking chấm sau.
+   */
+  ieltsLearner?: boolean;
+  onTakeFullTest?: () => void;
 };
 
 /**
@@ -45,7 +51,10 @@ export function CurrentLevelStep({
   onTakePlacementTest,
   certificateLearner = true,
   onTakeLevelCheck,
+  ieltsLearner = false,
+  onTakeFullTest,
 }: CurrentLevelStepProps) {
+  const fullTest = certificateLearner && ieltsLearner && onTakeFullTest != null;
   const levelCheck = !certificateLearner && onTakeLevelCheck != null;
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
@@ -73,24 +82,37 @@ export function CurrentLevelStep({
         title={tr("Chưa rõ trình độ của mình?", "Not sure of your level?")}
       >
         <Text size="sm" mb="sm">
-          {levelCheck
+          {fullTest
             ? tr(
-                "Làm bài đo trình độ gồm từ vựng và ngữ pháp, nghe, và một câu trả lời nói ngắn. Hệ thống ghép ba phần thành trình độ của bạn. Bạn cũng có thể tự chọn mức bên dưới.",
-                "Take the level test: vocabulary and grammar, listening, and a short spoken answer, combined into your level. Or choose a level below yourself.",
+                "Làm IELTS full test: Listening, Reading, Writing và Speaking. Xong Listening và Reading là có band tạm và bạn đi tiếp được; Writing và Speaking nộp trong 7 ngày, chấm xong sẽ có band tổng. Bạn cũng có thể tự chọn mức bên dưới.",
+                "Take the IELTS full test: Listening, Reading, Writing and Speaking. Listening and Reading give a provisional band and let you carry on; hand in Writing and Speaking within 7 days for your overall band. Or choose a level below yourself.",
               )
-            : tr(
-                "Làm bài kiểm tra đầu vào để hệ thống ghi nhận trình độ từ kết quả. Bạn cũng có thể tự chọn mức bên dưới.",
-                "Take the placement test to set your level from the result, or choose a level below yourself.",
-              )}
+            : levelCheck
+              ? tr(
+                  "Làm bài đo trình độ gồm từ vựng và ngữ pháp, nghe, và một câu trả lời nói ngắn. Hệ thống ghép ba phần thành trình độ của bạn. Bạn cũng có thể tự chọn mức bên dưới.",
+                  "Take the level test: vocabulary and grammar, listening, and a short spoken answer, combined into your level. Or choose a level below yourself.",
+                )
+              : tr(
+                  "Làm bài kiểm tra đầu vào để hệ thống ghi nhận trình độ từ kết quả. Bạn cũng có thể tự chọn mức bên dưới.",
+                  "Take the placement test to set your level from the result, or choose a level below yourself.",
+                )}
         </Text>
         <Button
           color="teal"
-          onClick={levelCheck ? onTakeLevelCheck : onTakePlacementTest}
+          onClick={
+            fullTest
+              ? onTakeFullTest
+              : levelCheck
+                ? onTakeLevelCheck
+                : onTakePlacementTest
+          }
           disabled={pending}
         >
-          {levelCheck
-            ? tr("Làm bài đo trình độ", "Take the level test")
-            : tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
+          {fullTest
+            ? tr("Làm IELTS full test", "Take the IELTS full test")
+            : levelCheck
+              ? tr("Làm bài đo trình độ", "Take the level test")
+              : tr("Làm bài kiểm tra đầu vào", "Take the placement test")}
         </Button>
       </Alert>
       <Box

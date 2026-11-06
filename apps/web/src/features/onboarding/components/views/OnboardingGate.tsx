@@ -87,6 +87,11 @@ function renderOnboardingStep(
           onTakePlacementTest={actions.startPlacementTest}
           certificateLearner={state?.certificateLearner ?? false}
           onTakeLevelCheck={actions.startLevelCheck}
+          ieltsLearner={
+            toTargetCertificate(state?.targetCertificateType ?? null) ===
+            TargetCertificate.IELTS
+          }
+          onTakeFullTest={actions.startFullTest}
         />
       );
     case OnboardingStep.LEARNING_GOAL:

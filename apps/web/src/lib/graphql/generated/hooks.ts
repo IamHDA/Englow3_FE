@@ -3453,6 +3453,15 @@ export type StartFullTestMutation = {
   };
 };
 
+export type PlacementFullTestsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type PlacementFullTestsQuery = {
+  fullTests: Array<{
+    id: string;
+    certificateVariant: Types.CertificateVariant;
+  }>;
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -14393,6 +14402,105 @@ export type StartFullTestMutationOptions =
     StartFullTestMutation,
     StartFullTestMutationVariables
   >;
+export const PlacementFullTestsDocument = gql`
+  query PlacementFullTests {
+    fullTests {
+      id
+      certificateVariant
+    }
+  }
+`;
+
+/**
+ * __usePlacementFullTestsQuery__
+ *
+ * To run a query within a React component, call `usePlacementFullTestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlacementFullTestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlacementFullTestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePlacementFullTestsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    PlacementFullTestsQuery,
+    PlacementFullTestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    PlacementFullTestsQuery,
+    PlacementFullTestsQueryVariables
+  >(PlacementFullTestsDocument, options);
+}
+export function usePlacementFullTestsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PlacementFullTestsQuery,
+    PlacementFullTestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    PlacementFullTestsQuery,
+    PlacementFullTestsQueryVariables
+  >(PlacementFullTestsDocument, options);
+}
+export function usePlacementFullTestsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    PlacementFullTestsQuery,
+    PlacementFullTestsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  PlacementFullTestsQuery,
+  PlacementFullTestsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function usePlacementFullTestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PlacementFullTestsQuery,
+        PlacementFullTestsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  PlacementFullTestsQuery | undefined,
+  PlacementFullTestsQueryVariables
+>;
+export function usePlacementFullTestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PlacementFullTestsQuery,
+        PlacementFullTestsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    PlacementFullTestsQuery,
+    PlacementFullTestsQueryVariables
+  >(PlacementFullTestsDocument, options as any);
+}
+export type PlacementFullTestsQueryHookResult = ReturnType<
+  typeof usePlacementFullTestsQuery
+>;
+export type PlacementFullTestsLazyQueryHookResult = ReturnType<
+  typeof usePlacementFullTestsLazyQuery
+>;
+export type PlacementFullTestsSuspenseQueryHookResult = ReturnType<
+  typeof usePlacementFullTestsSuspenseQuery
+>;
+export type PlacementFullTestsQueryResult = ApolloReactCommon.QueryResult<
+  PlacementFullTestsQuery,
+  PlacementFullTestsQueryVariables
+>;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
     learningPurposes {

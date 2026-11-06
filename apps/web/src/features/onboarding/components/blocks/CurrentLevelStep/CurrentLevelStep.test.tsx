@@ -26,3 +26,28 @@ it("offers a prominent placement action without declaring a level for the learne
   expect(placement).toHaveBeenCalledOnce();
   expect(save).not.toHaveBeenCalled();
 });
+
+it("sends an IELTS learner to the IELTS full test instead of the placement test", () => {
+  const placement = vi.fn();
+  const fullTest = vi.fn();
+  render(
+    <MantineProvider>
+      <CurrentLevelStep
+        initialLevel={null}
+        pending={false}
+        errorMessage={null}
+        onContinue={vi.fn()}
+        onTakePlacementTest={placement}
+        certificateLearner
+        ieltsLearner
+        onTakeFullTest={fullTest}
+      />
+    </MantineProvider>,
+  );
+  expect(
+    screen.queryByRole("button", { name: "Làm bài kiểm tra đầu vào" }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Làm IELTS full test" }));
+  expect(fullTest).toHaveBeenCalledOnce();
+  expect(placement).not.toHaveBeenCalled();
+});

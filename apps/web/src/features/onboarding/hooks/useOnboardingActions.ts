@@ -19,12 +19,13 @@ import {
   useSetCurrentLevelMutation,
   useSetLearningGoalMutation,
   usePlacementExamLazyQuery,
+  usePlacementFullTestsLazyQuery,
   useCreateRoadmapMutation,
   useStartLevelCheckMutation,
 } from "@/lib/graphql/generated/hooks";
 import { notifications } from "@mantine/notifications";
 
-import { OnboardingStep } from "@/lib/graphql/generated";
+import { CertificateVariant, OnboardingStep } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { backendCodeOf } from "@/shared/network/loadError";
 
@@ -76,6 +77,9 @@ export function useOnboardingActions() {
   const [selectSkills, skillsState] = useSelectTargetSkillsMutation();
   const [complete, completeState] = useCompleteOnboardingMutation();
   const [loadPlacementExam, placementState] = usePlacementExamLazyQuery();
+  const [loadFullTests, fullTestsState] = usePlacementFullTestsLazyQuery({
+    fetchPolicy: "network-only",
+  });
   const [startLevelCheck, levelCheckState] = useStartLevelCheckMutation();
   const [createRoadmap] = useCreateRoadmapMutation();
 
@@ -87,6 +91,7 @@ export function useOnboardingActions() {
     skillsState.loading ||
     completeState.loading ||
     placementState.loading ||
+    fullTestsState.loading ||
     levelCheckState.loading;
 
   /**
@@ -125,6 +130,23 @@ export function useOnboardingActions() {
     },
     [applyOnboardingState, isVi, editing, advanceEdit],
   );
+
+  const startPlacementTest = useCallback(async () => {
+    setErrorMessage(null);
+    try {
+      const { data, error } = await loadPlacementExam();
+
+      if (error || !data) {
+        setErrorMessage(messageForError(error, isVi));
+        return;
+      }
+
+      close();
+      router.push(`/exams/${data.placementExam.id}`);
+    } catch (error) {
+      setErrorMessage(messageForError(error, isVi));
+    }
+  }, [loadPlacementExam, close, router, isVi]);
 
   return {
     pending,
@@ -190,22 +212,37 @@ export function useOnboardingActions() {
      * đây chỉ cần hỏi backend đề nào rồi điều hướng tới đó. Điểm chấm xong sẽ tự
      * ghi trình độ và đẩy onboarding sang bước kế - không cần quay lại popup.
      */
-    startPlacementTest: useCallback(async () => {
+    startPlacementTest,
+    /**
+     * An IELTS learner's level comes from the IELTS full test (D-IELTS-10):
+     * once Listening and Reading are scored, the provisional band is recorded
+     * and the backend moves onboarding on. Academic first (D-IELTS-2). With no
+     * full test published yet, the general placement test stands in, so the
+     * step never leads nowhere.
+     */
+    startFullTest: useCallback(async () => {
       setErrorMessage(null);
       try {
-        const { data, error } = await loadPlacementExam();
-
-        if (error || !data) {
+        const { data, error } = await loadFullTests();
+        if (error) {
           setErrorMessage(messageForError(error, isVi));
           return;
         }
-
+        const tests = data?.fullTests ?? [];
+        const chosen =
+          tests.find(
+            (test) => test.certificateVariant === CertificateVariant.ACADEMIC,
+          ) ?? tests[0];
+        if (!chosen) {
+          await startPlacementTest();
+          return;
+        }
         close();
-        router.push(`/exams/${data.placementExam.id}`);
+        router.push(`/exams/full-tests/${chosen.id}`);
       } catch (error) {
         setErrorMessage(messageForError(error, isVi));
       }
-    }, [loadPlacementExam, close, router, isVi]),
+    }, [loadFullTests, startPlacementTest, close, router, isVi]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>
         run(

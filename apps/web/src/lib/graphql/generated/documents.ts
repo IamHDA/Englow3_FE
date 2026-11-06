@@ -3450,6 +3450,15 @@ export type StartFullTestMutation = {
   };
 };
 
+export type PlacementFullTestsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type PlacementFullTestsQuery = {
+  fullTests: Array<{
+    id: string;
+    certificateVariant: Types.CertificateVariant;
+  }>;
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -18175,6 +18184,38 @@ export const StartFullTestDocument = {
 } as unknown as DocumentNode<
   StartFullTestMutation,
   StartFullTestMutationVariables
+>;
+export const PlacementFullTestsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "PlacementFullTests" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "fullTests" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "certificateVariant" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  PlacementFullTestsQuery,
+  PlacementFullTestsQueryVariables
 >;
 export const LearningPurposesDocument = {
   kind: "Document",
