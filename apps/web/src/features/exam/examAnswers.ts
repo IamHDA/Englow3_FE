@@ -125,6 +125,22 @@ export function fromDraftAnswers(
   return restored;
 }
 
+/**
+ * Câu mà ô trống `{{n}}` trong nội dung nhóm câu trỏ tới: câu thứ n của nhóm,
+ * xếp theo `orderNo` (D-IELTS-5). Đếm theo vị trí chứ không dùng thẳng
+ * `orderNo`, vì editor đánh `orderNo` liên tục cả đề - nhóm thứ hai bắt đầu từ
+ * 11 - còn người soạn luôn viết `{{1}}` cho ô đầu tiên của nhóm.
+ */
+export function gapTargets<T extends { orderNo: number }>(
+  questions: readonly T[],
+): Map<number, T> {
+  return new Map(
+    [...questions]
+      .sort((a, b) => a.orderNo - b.orderNo)
+      .map((question, index) => [index + 1, question]),
+  );
+}
+
 /** Số câu như người học thấy: "14", hoặc "21–22" với câu chọn hai đáp án. */
 export function questionNumberLabel(question: {
   numberFrom: number;

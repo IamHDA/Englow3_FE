@@ -1,9 +1,9 @@
 import React from "react";
 import { Text } from "@mantine/core";
-import { questionNumberLabel } from "../../../../examAnswers";
+import { gapTargets, questionNumberLabel } from "../../../../examAnswers";
 import classes from "../QuestionCard.module.css";
 
-/** A gap is written {{n}}, n being a question's orderNo within its set. */
+/** A gap is written {{n}}: the set's n-th question, in orderNo order. */
 const GAP = /\{\{(\d+)\}\}/g;
 
 export interface GapTextProps {
@@ -30,9 +30,7 @@ export function GapText({
   typedAnswers,
   currentQuestionId,
 }: GapTextProps) {
-  const byOrder = new Map(
-    questions.map((question) => [question.orderNo, question]),
-  );
+  const byOrder = gapTargets(questions);
   const pieces: React.ReactNode[] = [];
   let last = 0;
   for (const match of content.matchAll(GAP)) {

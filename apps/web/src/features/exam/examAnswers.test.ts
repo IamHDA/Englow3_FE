@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   fromDraftAnswers,
+  gapTargets,
   isExamAnswerPresent,
   questionNumberLabel,
   sanitizeExamAnswers,
@@ -81,4 +82,15 @@ describe("typed answers", () => {
 it("labels a choose-two question with both of its numbers", () => {
   expect(questionNumberLabel({ numberFrom: 14, numberTo: 14 })).toBe("14");
   expect(questionNumberLabel({ numberFrom: 21, numberTo: 22 })).toBe("21–22");
+});
+
+it("points {{n}} at the n-th question of its set whatever orderNo the editor gave it", () => {
+  // The editor numbers orderNo across the whole paper: a second set starts at 11.
+  const targets = gapTargets([
+    { id: "q12", orderNo: 12 },
+    { id: "q11", orderNo: 11 },
+  ]);
+  expect(targets.get(1)?.id).toBe("q11");
+  expect(targets.get(2)?.id).toBe("q12");
+  expect(targets.get(11)).toBeUndefined();
 });
