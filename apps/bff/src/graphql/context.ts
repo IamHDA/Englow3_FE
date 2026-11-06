@@ -6,6 +6,7 @@ import { ContentManagementApi } from "../modules/contentManagement/contentManage
 import { DictationApi } from "../modules/dictation/dictation.api.js";
 import { ExamApi } from "../modules/exam/exam.api.js";
 import { FlashcardApi } from "../modules/flashcard/flashcard.api.js";
+import { FullTestApi } from "../modules/fullTest/fullTest.api.js";
 import { ProgressApi } from "../modules/progress/progress.api.js";
 import { QuizApi } from "../modules/quiz/quiz.api.js";
 import { RoadmapApi } from "../modules/roadmap/roadmap.api.js";
@@ -27,6 +28,7 @@ export type GraphQLContext = {
     userApi: UserApi;
     onboardingApi: OnboardingApi;
     examApi: ExamApi;
+    fullTestApi: FullTestApi;
     flashcardApi: FlashcardApi;
     quizApi: QuizApi;
     dictationApi: DictationApi;
@@ -64,6 +66,7 @@ export async function createContext({
       userApi: new UserApi(client),
       onboardingApi: new OnboardingApi(client),
       examApi: new ExamApi(client),
+      fullTestApi: new FullTestApi(client),
       flashcardApi: new FlashcardApi(client),
       quizApi: new QuizApi(client),
       dictationApi: new DictationApi(client),

@@ -70,6 +70,28 @@ describe("structured authoring REST boundary", () => {
     const form = fetch.mock.calls[0][1]?.body as FormData;
     expect(form.get("file")).toBeInstanceOf(Blob);
   });
+  it("forwards a Writing Task 1 chart to its task", async () => {
+    const fetch = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response('{"id":"t"}', { status: 200 }));
+    const result = await call(
+      "ASSESSMENT_TASK/00000000-0000-0000-0000-000000000000/media",
+      { token: "Bearer test", body: "PNGDATA", contentType: "image/png" },
+    );
+    expect(result.status).toBe(200);
+    expect(String(fetch.mock.calls[0][0])).toContain(
+      "/api/admin/assessments/tasks/00000000-0000-0000-0000-000000000000/image",
+    );
+  });
+  it("refuses audio as a task chart without reaching the backend", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch");
+    const result = await call(
+      "ASSESSMENT_TASK/00000000-0000-0000-0000-000000000000/media",
+      { token: "Bearer test", body: "RIFF1234WAVE", contentType: "audio/wav" },
+    );
+    expect(result.status).toBe(400);
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it("refuses an unauthenticated edit without reaching the backend", async () => {
     const fetch = vi.spyOn(globalThis, "fetch");
     expect((await call("QUIZ")).status).toBe(401);

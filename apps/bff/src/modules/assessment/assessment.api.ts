@@ -141,6 +141,11 @@ export class AssessmentApi {
       input,
     );
   }
+  removeImage(id: string): Promise<AssessmentTask> {
+    return this.client.delete(
+      "/api/admin/assessments/tasks/" + encodeURIComponent(id) + "/image",
+    );
+  }
   transition(
     id: string,
     action: string,

@@ -334,6 +334,31 @@ describe("Mutation.submitExamAttempt", () => {
   });
 });
 
+describe("typed answers", () => {
+  /** GraphQL gives an omitted textAnswer as null; the backend must not see one on a choice question. */
+  it("leaves textAnswer out of the body when it was not given", async () => {
+    const submitAttempt = vi.fn().mockResolvedValue({ id: "a" });
+    const ctx = makeContext({ apis: { examApi: { submitAttempt } } });
+
+    await examResolvers.Mutation.submitExamAttempt(
+      {},
+      {
+        attemptId: "a",
+        answers: [
+          { questionId: "q-1", selectedOptionIds: ["o-1"], textAnswer: null },
+          { questionId: "q-2", selectedOptionIds: [], textAnswer: "museum" },
+        ],
+      },
+      ctx,
+    );
+
+    const sent = submitAttempt.mock.calls[0][1];
+    expect(sent[0]).not.toHaveProperty("textAnswer", null);
+    expect(sent[0].textAnswer).toBeUndefined();
+    expect(sent[1].textAnswer).toBe("museum");
+  });
+});
+
 describe("Mutation.rejectExam", () => {
   it("fails before calling the backend when there is no token", () => {
     const rejectAsAdmin = vi.fn();

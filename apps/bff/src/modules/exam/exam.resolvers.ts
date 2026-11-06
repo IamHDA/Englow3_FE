@@ -1,5 +1,13 @@
-import type { Resolvers } from "../../generated/graphql.js";
+import type { Resolvers, SubmitAnswerInput } from "../../generated/graphql.js";
 import { clampPageSize } from "../../shared/graphql/pagination.js";
+
+// GraphQL hands an omitted textAnswer over as null; the REST body leaves it out.
+const toAnswers = (answers: SubmitAnswerInput[]) =>
+  answers.map((answer) => ({
+    questionId: answer.questionId,
+    selectedOptionIds: answer.selectedOptionIds,
+    textAnswer: answer.textAnswer ?? undefined,
+  }));
 
 export const examResolvers = {
   Query: {
@@ -62,7 +70,7 @@ export const examResolvers = {
       return ctx.apis.examApi.saveDraft(
         args.attemptId,
         args.version,
-        args.answers,
+        toAnswers(args.answers),
       );
     },
     heartbeatExamAttempt: (_, args, ctx) => {
@@ -86,7 +94,10 @@ export const examResolvers = {
     },
     submitExamAttempt: (_, args, ctx) => {
       ctx.requireToken();
-      return ctx.apis.examApi.submitAttempt(args.attemptId, args.answers);
+      return ctx.apis.examApi.submitAttempt(
+        args.attemptId,
+        toAnswers(args.answers),
+      );
     },
     publishExam: (_, args, ctx) => {
       ctx.requireToken();

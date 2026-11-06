@@ -150,6 +150,11 @@ export type AssessmentTask = {
   __typename?: 'AssessmentTask';
   certificateType?: Maybe<CertificateType>;
   id: Scalars['ID']['output'];
+  /**
+   * Writing Task 1's chart to describe, signed for a few hours. Uploaded through
+   * the REST authoring route (ASSESSMENT_TASK media), not GraphQL.
+   */
+  imageUrl?: Maybe<Scalars['String']['output']>;
   instructions: Scalars['String']['output'];
   minimumWords: Scalars['Int']['output'];
   purpose: AssessmentTaskPurpose;
@@ -241,13 +246,34 @@ export type AttemptPart = {
 
 export type AttemptQuestionReview = {
   __typename?: 'AttemptQuestionReview';
+  /** The spellings a TEXT_ENTRY question accepts; empty on a choice question. */
+  acceptedAnswers: Array<Scalars['String']['output']>;
   awardedRawScore: Scalars['Float']['output'];
   correct: Scalars['Boolean']['output'];
   correctOptionIds: Array<Scalars['ID']['output']>;
   explanation?: Maybe<Scalars['String']['output']>;
+  numberFrom: Scalars['Int']['output'];
+  numberTo: Scalars['Int']['output'];
   options: Array<AttemptOptionReview>;
   questionId: Scalars['ID']['output'];
   selectedOptionIds: Array<Scalars['ID']['output']>;
+  /** What was typed on a TEXT_ENTRY question; null otherwise or when left blank. */
+  textAnswer?: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * One section of a scored attempt. band is the estimated certificate band for a
+ * full section the certificate converts (IELTS Listening and Reading out of 40);
+ * null for a practice, a TOEIC section, or anything the table does not cover.
+ */
+export type AttemptSectionScore = {
+  __typename?: 'AttemptSectionScore';
+  band?: Maybe<Scalars['Float']['output']>;
+  correctAnswerCount?: Maybe<Scalars['Int']['output']>;
+  maxRawScore: Scalars['Float']['output'];
+  questionCount: Scalars['Int']['output'];
+  rawScore?: Maybe<Scalars['Float']['output']>;
+  sectionType: Scalars['String']['output'];
 };
 
 /**
@@ -594,6 +620,8 @@ export type ExamAttempt = {
   resumed: Scalars['Boolean']['output'];
   scorePercentage?: Maybe<Scalars['Float']['output']>;
   scoredAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Each section's points and band; empty until the attempt is scored. */
+  sections: Array<AttemptSectionScore>;
   startedAt: Scalars['DateTime']['output'];
   status: ExamAttemptStatus;
   submittedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -638,6 +666,7 @@ export type ExamDraftAnswer = {
   __typename?: 'ExamDraftAnswer';
   questionId: Scalars['ID']['output'];
   selectedOptionIds: Array<Scalars['ID']['output']>;
+  textAnswer?: Maybe<Scalars['String']['output']>;
 };
 
 export type ExamListItem = {
@@ -714,10 +743,27 @@ export type ExamPaper = {
 
 export type ExamQuestion = {
   __typename?: 'ExamQuestion';
+  /**
+   * How many options may be chosen: N on a choose-N question, 1 on a single
+   * choice or matching question, 0 on a TEXT_ENTRY question.
+   */
+  choiceLimit: Scalars['Int']['output'];
   content: Scalars['String']['output'];
   difficultyLevel: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   maxRawScore: Scalars['Float']['output'];
+  /**
+   * The number shown to the learner. The backend numbers the whole paper, so a
+   * practice keeps the numbers its parts have in the full test, and IELTS starts
+   * each section at 1. Never count questions on the client.
+   */
+  numberFrom: Scalars['Int']['output'];
+  /** Equals numberFrom except on a "choose N letters" question, which takes N. */
+  numberTo: Scalars['Int']['output'];
+  /**
+   * Empty on a TEXT_ENTRY question, which is typed, and on a MATCHING question,
+   * which chooses from its set's setOptions.
+   */
   options: Array<QuestionOption>;
   orderNo: Scalars['Int']['output'];
   questionCategory?: Maybe<Scalars['String']['output']>;
@@ -735,6 +781,11 @@ export type ExamQuestionSet = {
   instruction?: Maybe<Scalars['String']['output']>;
   orderNo: Scalars['Int']['output'];
   questions: Array<ExamQuestion>;
+  /**
+   * The list this set's MATCHING questions choose from; empty when it has none.
+   * A gap in content is written {{n}}, n being a question's orderNo in this set.
+   */
+  setOptions: Array<QuestionSetOption>;
   title?: Maybe<Scalars['String']['output']>;
 };
 
@@ -922,6 +973,82 @@ export type FlashcardStats = {
   studySeconds: Scalars['Int']['output'];
 };
 
+/**
+ * An IELTS full test: one Listening + Reading paper and five Writing and
+ * Speaking tasks, sat as one test with one overall band. It is the IELTS
+ * learner's placement test and is also in the catalogue. Reviewed like a paper.
+ */
+export type FullTest = {
+  __typename?: 'FullTest';
+  certificateVariant: CertificateVariant;
+  description: Scalars['String']['output'];
+  /** The Listening + Reading mock paper, sat through startExamAttempt. */
+  examId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  speakingPart1Id: Scalars['ID']['output'];
+  speakingPart2Id: Scalars['ID']['output'];
+  speakingPart3Id: Scalars['ID']['output'];
+  status: ExamStatus;
+  title: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+  writingTask1Id: Scalars['ID']['output'];
+  writingTask2Id: Scalars['ID']['output'];
+};
+
+/** One Writing or Speaking part: the task to answer, and the answer attached. */
+export type FullTestPart = {
+  __typename?: 'FullTestPart';
+  /** Null until an answer submitted since the sitting began is picked up. */
+  attemptId?: Maybe<Scalars['ID']['output']>;
+  slot: FullTestSlot;
+  taskId: Scalars['ID']['output'];
+};
+
+export type FullTestSitting = {
+  __typename?: 'FullTestSitting';
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Every part must be submitted by then; grading may finish later. */
+  deadlineAt: Scalars['DateTime']['output'];
+  examAttemptId?: Maybe<Scalars['ID']['output']>;
+  /** The paper to sit in full. */
+  examId: Scalars['ID']['output'];
+  fullTestId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  listeningBand?: Maybe<Scalars['Float']['output']>;
+  overallBand?: Maybe<Scalars['Float']['output']>;
+  parts: Array<FullTestPart>;
+  /**
+   * The lower of Listening and Reading, shown as an estimate until overallBand
+   * exists. It is also recorded as the learner's level.
+   */
+  provisionalBand?: Maybe<Scalars['Float']['output']>;
+  readingBand?: Maybe<Scalars['Float']['output']>;
+  speakingBand?: Maybe<Scalars['Float']['output']>;
+  startedAt: Scalars['DateTime']['output'];
+  status: FullTestSittingStatus;
+  title: Scalars['String']['output'];
+  writingBand?: Maybe<Scalars['Float']['output']>;
+};
+
+export type FullTestSittingStatus =
+  /** Every part is in; at least one is not graded yet. */
+  | 'AWAITING_GRADES'
+  /** Every part graded; overallBand is set. */
+  | 'COMPLETED'
+  /** The seven days ran out with parts missing; provisionalBand stays. */
+  | 'EXPIRED'
+  /** Parts may still be taken, until deadlineAt. */
+  | 'IN_PROGRESS';
+
+export type FullTestSlot =
+  | 'SPEAKING_PART_1'
+  | 'SPEAKING_PART_2'
+  | 'SPEAKING_PART_3'
+  | 'WRITING_TASK_1'
+  | 'WRITING_TASK_2';
+
 export type Gender =
   | 'FEMALE'
   | 'MALE'
@@ -1087,7 +1214,7 @@ export type Me = {
 };
 
 export type MilestoneKind =
-  /** Sit examId and reach requiredScore on the certificate scale. */
+  /** Sit examId (or, for IELTS, the full test fullTestId) and reach requiredScore on the certificate scale. */
   | 'CERTIFICATE_MOCK'
   /** Take a level check and reach requiredLevel. */
   | 'LEVEL_CHECK';
@@ -1139,6 +1266,8 @@ export type Mutation = {
    * the same step - there is no approved-but-unpublished state.
    */
   approveExam: Exam;
+  /** PENDING_REVIEW -> PUBLISHED, administrators only. */
+  approveFullTest: FullTest;
   /** Anything -> ARCHIVED. Administrators only. There is no delete. */
   archiveContent: ContentReview;
   /**
@@ -1147,6 +1276,7 @@ export type Mutation = {
    * extensions.backendCode: EXAM_ALREADY_ARCHIVED.
    */
   archiveExam: Exam;
+  archiveFullTest: FullTest;
   archiveTutorConversation: TutorConversationSummary;
   attachLevelCheckExamAttempt: LevelCheck;
   attachLevelCheckSpeakingAttempt: LevelCheck;
@@ -1213,6 +1343,10 @@ export type Mutation = {
    * "rejected" alone leaves the author nothing to change.
    */
   rejectExam: Exam;
+  /** PENDING_REVIEW -> REJECTED, administrators only; the note is required. */
+  rejectFullTest: FullTest;
+  /** Drops a Writing Task 1's chart while the task is still a draft or rejected. */
+  removeAssessmentTaskImage: AssessmentTask;
   renameTutorConversation: TutorConversationSummary;
   /** Reports an answer as wrong or inappropriate. The note is optional. */
   reportTutorMessage: TutorMessage;
@@ -1237,6 +1371,8 @@ export type Mutation = {
   reviewTutorResource: TutorResource;
   saveAssessmentDraft: AssessmentAttempt;
   saveExamDraft: ExamDraft;
+  /** Creates a draft when id is omitted. Components are checked at review. */
+  saveFullTest: FullTest;
   /**
    * Records the purposes and advances the step. Which step comes next is the
    * backend's decision: a learner who picked the certificate purpose goes to
@@ -1285,6 +1421,12 @@ export type Mutation = {
    * twice does not create two.
    */
   startExamAttempt: ExamAttempt;
+  /**
+   * Starts a sitting, or returns the one still open. Refused with
+   * extensions.backendCode FULL_TEST_IELTS_ONLY for a learner not preparing
+   * for IELTS.
+   */
+  startFullTest: FullTestSitting;
   /** Starts a check, or returns the one already open for the same purpose. */
   startLevelCheck: LevelCheck;
   /**
@@ -1323,6 +1465,12 @@ export type Mutation = {
    */
   submitExamForReview: Exam;
   /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Refused with FULL_TEST_PAPER_INVALID,
+   * FULL_TEST_TASK_INVALID or FULL_TEST_TASK1_NEEDS_CHART when a component is
+   * not a published IELTS one of the right kind.
+   */
+  submitFullTestForReview: FullTest;
+  /**
    * Submits and scores in one step. A question left out is marked wrong rather
    * than skipped, so the percentage means what it says.
    */
@@ -1358,6 +1506,11 @@ export type MutationApproveExamArgs = {
 };
 
 
+export type MutationApproveFullTestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationArchiveContentArgs = {
   id: Scalars['ID']['input'];
   kind: ContentKind;
@@ -1365,6 +1518,11 @@ export type MutationArchiveContentArgs = {
 
 
 export type MutationArchiveExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationArchiveFullTestArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1492,6 +1650,17 @@ export type MutationRejectExamArgs = {
 };
 
 
+export type MutationRejectFullTestArgs = {
+  id: Scalars['ID']['input'];
+  note: Scalars['String']['input'];
+};
+
+
+export type MutationRemoveAssessmentTaskImageArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRenameTutorConversationArgs = {
   id: Scalars['ID']['input'];
   title: Scalars['String']['input'];
@@ -1561,6 +1730,12 @@ export type MutationSaveExamDraftArgs = {
   answers: Array<SubmitAnswerInput>;
   attemptId: Scalars['ID']['input'];
   version: Scalars['Int']['input'];
+};
+
+
+export type MutationSaveFullTestArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  input: SaveFullTestInput;
 };
 
 
@@ -1636,6 +1811,11 @@ export type MutationStartExamAttemptArgs = {
 };
 
 
+export type MutationStartFullTestArgs = {
+  fullTestId: Scalars['ID']['input'];
+};
+
+
 export type MutationStartLevelCheckArgs = {
   milestoneId?: InputMaybe<Scalars['ID']['input']>;
   purpose: LevelCheckPurpose;
@@ -1678,6 +1858,11 @@ export type MutationSubmitExamAttemptArgs = {
 
 
 export type MutationSubmitExamForReviewArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitFullTestForReviewArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1799,6 +1984,8 @@ export type Query = {
    * backend restricts it to ADMIN. Sorted newest first by the backend.
    */
   adminExams: ExamPage;
+  adminFullTest: FullTest;
+  adminFullTests: Array<FullTest>;
   /** Staff and administrators only. */
   adminOverview: AdminOverview;
   assessmentAttempt: AssessmentAttempt;
@@ -1870,6 +2057,10 @@ export type Query = {
    * worth more than a new one, and reordering here would undo the schedule.
    */
   flashcardStudyQueue: Array<Flashcard>;
+  /** Brought up to date with every part graded so far. */
+  fullTestSitting: FullTestSitting;
+  /** Published full tests, newest first. */
+  fullTests: Array<FullTest>;
   health: Scalars['String']['output'];
   /** The learner's most recent level check, or null. */
   latestLevelCheck?: Maybe<LevelCheck>;
@@ -1882,6 +2073,7 @@ export type Query = {
    */
   levelCheckWeights: LevelCheckWeights;
   me: Me;
+  myFullTestSittings: Array<FullTestSitting>;
   myTourStatus: UserTourStatus;
   /**
    * The placement paper, for a learner who does not know their level. Errors
@@ -1951,6 +2143,11 @@ export type QueryAdminExamsArgs = {
   size?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<ExamStatus>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAdminFullTestArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -2108,6 +2305,11 @@ export type QueryFlashcardStudyQueueArgs = {
 };
 
 
+export type QueryFullTestSittingArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryLevelCheckArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2249,6 +2451,18 @@ export type QuestionOption = {
   __typename?: 'QuestionOption';
   content: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+};
+
+/**
+ * An entry of the list a question set's MATCHING questions share - a heading
+ * "iv", a person "B", a map label "F". Which question it answers is never sent.
+ */
+export type QuestionSetOption = {
+  __typename?: 'QuestionSetOption';
+  content?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  label: Scalars['String']['output'];
   orderNo: Scalars['Int']['output'];
 };
 
@@ -2458,6 +2672,8 @@ export type RoadmapMilestone = {
   achievedAt?: Maybe<Scalars['DateTime']['output']>;
   attemptCount: Scalars['Int']['output'];
   examId?: Maybe<Scalars['ID']['output']>;
+  /** Set instead of examId on an IELTS mock: the full test to sit, passed on its overall band. */
+  fullTestId?: Maybe<Scalars['ID']['output']>;
   id: Scalars['ID']['output'];
   kind: MilestoneKind;
   /** Every required item of the stage is done. */
@@ -2519,6 +2735,18 @@ export type Role =
   | 'ADMIN'
   | 'LEARNER'
   | 'STAFF';
+
+export type SaveFullTestInput = {
+  certificateVariant: CertificateVariant;
+  description?: InputMaybe<Scalars['String']['input']>;
+  examId: Scalars['ID']['input'];
+  speakingPart1Id: Scalars['ID']['input'];
+  speakingPart2Id: Scalars['ID']['input'];
+  speakingPart3Id: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
+  writingTask1Id: Scalars['ID']['input'];
+  writingTask2Id: Scalars['ID']['input'];
+};
 
 /**
  * One recording and its score.
@@ -2638,8 +2866,16 @@ export type StartExamAttemptInput = {
 
 export type SubmitAnswerInput = {
   questionId: Scalars['ID']['input'];
-  /** Empty for a question the learner skipped; several for a multi-select. */
+  /**
+   * Empty for a question the learner skipped; several for a multi-select. On a
+   * MATCHING question, the chosen entry of the set's setOptions.
+   */
   selectedOptionIds: Array<Scalars['ID']['input']>;
+  /**
+   * What was typed on a TEXT_ENTRY question, at most 200 characters; omit it on
+   * a choice question - the backend refuses it there.
+   */
+  textAnswer?: InputMaybe<Scalars['String']['input']>;
 };
 
 /**
@@ -3146,6 +3382,7 @@ export type ResolversTypes = ResolversObject<{
   AttemptOptionReview: ResolverTypeWrapper<AttemptOptionReview>;
   AttemptPart: ResolverTypeWrapper<AttemptPart>;
   AttemptQuestionReview: ResolverTypeWrapper<AttemptQuestionReview>;
+  AttemptSectionScore: ResolverTypeWrapper<AttemptSectionScore>;
   AvatarPreset: ResolverTypeWrapper<AvatarPreset>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CefrLevel: CefrLevel;
@@ -3205,6 +3442,11 @@ export type ResolversTypes = ResolversObject<{
   FlashcardSetPage: ResolverTypeWrapper<FlashcardSetPage>;
   FlashcardStats: ResolverTypeWrapper<FlashcardStats>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  FullTest: ResolverTypeWrapper<FullTest>;
+  FullTestPart: ResolverTypeWrapper<FullTestPart>;
+  FullTestSitting: ResolverTypeWrapper<FullTestSitting>;
+  FullTestSittingStatus: FullTestSittingStatus;
+  FullTestSlot: FullTestSlot;
   Gender: Gender;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -3233,6 +3475,7 @@ export type ResolversTypes = ResolversObject<{
   OverviewContentKind: OverviewContentKind;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   QuestionOption: ResolverTypeWrapper<QuestionOption>;
+  QuestionSetOption: ResolverTypeWrapper<QuestionSetOption>;
   Quiz: ResolverTypeWrapper<Quiz>;
   QuizAnswerInput: QuizAnswerInput;
   QuizAttempt: ResolverTypeWrapper<QuizAttempt>;
@@ -3255,6 +3498,7 @@ export type ResolversTypes = ResolversObject<{
   RoadmapStageStatus: RoadmapStageStatus;
   RoadmapStatus: RoadmapStatus;
   Role: Role;
+  SaveFullTestInput: SaveFullTestInput;
   SpeakingAttempt: ResolverTypeWrapper<SpeakingAttempt>;
   SpeakingAttemptStatus: SpeakingAttemptStatus;
   SpeakingPhonemeScore: ResolverTypeWrapper<SpeakingPhonemeScore>;
@@ -3328,6 +3572,7 @@ export type ResolversParentTypes = ResolversObject<{
   AttemptOptionReview: AttemptOptionReview;
   AttemptPart: AttemptPart;
   AttemptQuestionReview: AttemptQuestionReview;
+  AttemptSectionScore: AttemptSectionScore;
   AvatarPreset: AvatarPreset;
   Boolean: Scalars['Boolean']['output'];
   ContentReview: ContentReview;
@@ -3373,6 +3618,9 @@ export type ResolversParentTypes = ResolversObject<{
   FlashcardSetPage: FlashcardSetPage;
   FlashcardStats: FlashcardStats;
   Float: Scalars['Float']['output'];
+  FullTest: FullTest;
+  FullTestPart: FullTestPart;
+  FullTestSitting: FullTestSitting;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   LearnerExamItem: LearnerExamItem;
@@ -3391,6 +3639,7 @@ export type ResolversParentTypes = ResolversObject<{
   OverviewContentCounts: OverviewContentCounts;
   Query: Record<PropertyKey, never>;
   QuestionOption: QuestionOption;
+  QuestionSetOption: QuestionSetOption;
   Quiz: Quiz;
   QuizAnswerInput: QuizAnswerInput;
   QuizAttempt: QuizAttempt;
@@ -3404,6 +3653,7 @@ export type ResolversParentTypes = ResolversObject<{
   RoadmapItem: RoadmapItem;
   RoadmapMilestone: RoadmapMilestone;
   RoadmapStage: RoadmapStage;
+  SaveFullTestInput: SaveFullTestInput;
   SpeakingAttempt: SpeakingAttempt;
   SpeakingPhonemeScore: SpeakingPhonemeScore;
   SpeakingPrompt: SpeakingPrompt;
@@ -3547,6 +3797,7 @@ export type AssessmentSubmissionTaskResolvers<ContextType = GraphQLContext, Pare
 export type AssessmentTaskResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentTask'] = ResolversParentTypes['AssessmentTask']> = ResolversObject<{
   certificateType?: Resolver<Maybe<ResolversTypes['CertificateType']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instructions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   minimumWords?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   purpose?: Resolver<ResolversTypes['AssessmentTaskPurpose'], ParentType, ContextType>;
@@ -3597,13 +3848,26 @@ export type AttemptPartResolvers<ContextType = GraphQLContext, ParentType extend
 }>;
 
 export type AttemptQuestionReviewResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AttemptQuestionReview'] = ResolversParentTypes['AttemptQuestionReview']> = ResolversObject<{
+  acceptedAnswers?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   awardedRawScore?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   correct?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   correctOptionIds?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   explanation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  numberFrom?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  numberTo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['AttemptOptionReview']>, ParentType, ContextType>;
   questionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   selectedOptionIds?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  textAnswer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
+export type AttemptSectionScoreResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AttemptSectionScore'] = ResolversParentTypes['AttemptSectionScore']> = ResolversObject<{
+  band?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  correctAnswerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  maxRawScore?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  questionCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  rawScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  sectionType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type AvatarPresetResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AvatarPreset'] = ResolversParentTypes['AvatarPreset']> = ResolversObject<{
@@ -3804,6 +4068,7 @@ export type ExamAttemptResolvers<ContextType = GraphQLContext, ParentType extend
   resumed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   scorePercentage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   scoredAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  sections?: Resolver<Array<ResolversTypes['AttemptSectionScore']>, ParentType, ContextType>;
   startedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['ExamAttemptStatus'], ParentType, ContextType>;
   submittedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -3827,6 +4092,7 @@ export type ExamDraftResolvers<ContextType = GraphQLContext, ParentType extends 
 export type ExamDraftAnswerResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamDraftAnswer'] = ResolversParentTypes['ExamDraftAnswer']> = ResolversObject<{
   questionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   selectedOptionIds?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  textAnswer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
 export type ExamListItemResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamListItem'] = ResolversParentTypes['ExamListItem']> = ResolversObject<{
@@ -3888,10 +4154,13 @@ export type ExamPaperResolvers<ContextType = GraphQLContext, ParentType extends 
 }>;
 
 export type ExamQuestionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamQuestion'] = ResolversParentTypes['ExamQuestion']> = ResolversObject<{
+  choiceLimit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   difficultyLevel?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   maxRawScore?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  numberFrom?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  numberTo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['QuestionOption']>, ParentType, ContextType>;
   orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   questionCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3907,6 +4176,7 @@ export type ExamQuestionSetResolvers<ContextType = GraphQLContext, ParentType ex
   instruction?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   questions?: Resolver<Array<ResolversTypes['ExamQuestion']>, ParentType, ContextType>;
+  setOptions?: Resolver<Array<ResolversTypes['QuestionSetOption']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
@@ -4029,6 +4299,48 @@ export type FlashcardStatsResolvers<ContextType = GraphQLContext, ParentType ext
   studySeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
+export type FullTestResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTest'] = ResolversParentTypes['FullTest']> = ResolversObject<{
+  certificateVariant?: Resolver<ResolversTypes['CertificateVariant'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  examId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  reviewNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  speakingPart1Id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  speakingPart2Id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  speakingPart3Id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ExamStatus'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  writingTask1Id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  writingTask2Id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type FullTestPartResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTestPart'] = ResolversParentTypes['FullTestPart']> = ResolversObject<{
+  attemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  slot?: Resolver<ResolversTypes['FullTestSlot'], ParentType, ContextType>;
+  taskId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type FullTestSittingResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTestSitting'] = ResolversParentTypes['FullTestSitting']> = ResolversObject<{
+  completedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  deadlineAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  examAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  examId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  fullTestId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  listeningBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  overallBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  parts?: Resolver<Array<ResolversTypes['FullTestPart']>, ParentType, ContextType>;
+  provisionalBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  readingBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  speakingBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  startedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['FullTestSittingStatus'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  writingBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+}>;
+
 export type LearnerExamItemResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LearnerExamItem'] = ResolversParentTypes['LearnerExamItem']> = ResolversObject<{
   attemptStatus?: Resolver<ResolversTypes['LearnerAttemptStatus'], ParentType, ContextType>;
   bestScorePercentage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -4135,8 +4447,10 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   abandonRoadmap?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   approveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationApproveContentArgs, 'id' | 'kind'>>;
   approveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationApproveExamArgs, 'id'>>;
+  approveFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationApproveFullTestArgs, 'id'>>;
   archiveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationArchiveContentArgs, 'id' | 'kind'>>;
   archiveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationArchiveExamArgs, 'id'>>;
+  archiveFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationArchiveFullTestArgs, 'id'>>;
   archiveTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationArchiveTutorConversationArgs, 'id'>>;
   attachLevelCheckExamAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckExamAttemptArgs, 'attemptId' | 'id'>>;
   attachLevelCheckSpeakingAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckSpeakingAttemptArgs, 'attemptId' | 'id'>>;
@@ -4160,6 +4474,8 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   regenerateTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationRegenerateTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId'>>;
   rejectContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationRejectContentArgs, 'id' | 'kind' | 'note'>>;
   rejectExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationRejectExamArgs, 'id' | 'note'>>;
+  rejectFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationRejectFullTestArgs, 'id' | 'note'>>;
+  removeAssessmentTaskImage?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationRemoveAssessmentTaskImageArgs, 'id'>>;
   renameTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationRenameTutorConversationArgs, 'id' | 'title'>>;
   reportTutorMessage?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationReportTutorMessageArgs, 'conversationId' | 'messageId'>>;
   requestAssessmentReview?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationRequestAssessmentReviewArgs, 'id'>>;
@@ -4172,6 +4488,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   reviewTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationReviewTutorResourceArgs, 'id' | 'input'>>;
   saveAssessmentDraft?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationSaveAssessmentDraftArgs, 'answerText' | 'id' | 'version'>>;
   saveExamDraft?: Resolver<ResolversTypes['ExamDraft'], ParentType, ContextType, RequireFields<MutationSaveExamDraftArgs, 'answers' | 'attemptId' | 'version'>>;
+  saveFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationSaveFullTestArgs, 'input'>>;
   selectLearningPurposes?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectLearningPurposesArgs, 'purposeIds'>>;
   selectTargetSkills?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectTargetSkillsArgs, 'skills'>>;
   selectTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSelectTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId' | 'revision'>>;
@@ -4183,6 +4500,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   skipLevelCheckSpeaking?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationSkipLevelCheckSpeakingArgs, 'id'>>;
   startAssessment?: Resolver<ResolversTypes['AssessmentUpload'], ParentType, ContextType, RequireFields<MutationStartAssessmentArgs, 'clientKey' | 'taskId'>>;
   startExamAttempt?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<MutationStartExamAttemptArgs, 'examId'>>;
+  startFullTest?: Resolver<ResolversTypes['FullTestSitting'], ParentType, ContextType, RequireFields<MutationStartFullTestArgs, 'fullTestId'>>;
   startLevelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationStartLevelCheckArgs, 'purpose'>>;
   startQuizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<MutationStartQuizAttemptArgs, 'quizId'>>;
   startSpeakingAttempt?: Resolver<ResolversTypes['SpeakingUploadTicket'], ParentType, ContextType, RequireFields<MutationStartSpeakingAttemptArgs, 'contentLength' | 'contentType' | 'promptId'>>;
@@ -4191,6 +4509,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   submitDictation?: Resolver<ResolversTypes['DictationSubmission'], ParentType, ContextType, RequireFields<MutationSubmitDictationArgs, 'response' | 'sentenceId'>>;
   submitExamAttempt?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<MutationSubmitExamAttemptArgs, 'answers' | 'attemptId'>>;
   submitExamForReview?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationSubmitExamForReviewArgs, 'id'>>;
+  submitFullTestForReview?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationSubmitFullTestForReviewArgs, 'id'>>;
   submitQuizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<MutationSubmitQuizAttemptArgs, 'answers' | 'attemptId'>>;
   submitSpeakingAttempt?: Resolver<ResolversTypes['SpeakingAttempt'], ParentType, ContextType, RequireFields<MutationSubmitSpeakingAttemptArgs, 'attemptId'>>;
   submitTranslation?: Resolver<ResolversTypes['TranslationAttempt'], ParentType, ContextType, RequireFields<MutationSubmitTranslationArgs, 'itemId' | 'response'>>;
@@ -4226,6 +4545,8 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   activeExamAttempt?: Resolver<Maybe<ResolversTypes['ExamAttempt']>, ParentType, ContextType, RequireFields<QueryActiveExamAttemptArgs, 'examId' | 'mode'>>;
   adminContent?: Resolver<ResolversTypes['ContentReviewPage'], ParentType, ContextType, RequireFields<QueryAdminContentArgs, 'kind' | 'page' | 'size'>>;
   adminExams?: Resolver<ResolversTypes['ExamPage'], ParentType, ContextType, RequireFields<QueryAdminExamsArgs, 'page' | 'size'>>;
+  adminFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<QueryAdminFullTestArgs, 'id'>>;
+  adminFullTests?: Resolver<Array<ResolversTypes['FullTest']>, ParentType, ContextType>;
   adminOverview?: Resolver<ResolversTypes['AdminOverview'], ParentType, ContextType>;
   assessmentAttempt?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<QueryAssessmentAttemptArgs, 'id'>>;
   assessmentCapabilities?: Resolver<ResolversTypes['AssessmentCapabilities'], ParentType, ContextType>;
@@ -4258,12 +4579,15 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   flashcardSets?: Resolver<ResolversTypes['FlashcardSetPage'], ParentType, ContextType, RequireFields<QueryFlashcardSetsArgs, 'page' | 'size' | 'sortBy'>>;
   flashcardStats?: Resolver<ResolversTypes['FlashcardStats'], ParentType, ContextType, RequireFields<QueryFlashcardStatsArgs, 'periodDays'>>;
   flashcardStudyQueue?: Resolver<Array<ResolversTypes['Flashcard']>, ParentType, ContextType, RequireFields<QueryFlashcardStudyQueueArgs, 'limit' | 'setId'>>;
+  fullTestSitting?: Resolver<ResolversTypes['FullTestSitting'], ParentType, ContextType, RequireFields<QueryFullTestSittingArgs, 'id'>>;
+  fullTests?: Resolver<Array<ResolversTypes['FullTest']>, ParentType, ContextType>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   latestLevelCheck?: Resolver<Maybe<ResolversTypes['LevelCheck']>, ParentType, ContextType>;
   learningPurposes?: Resolver<Array<ResolversTypes['LearningPurpose']>, ParentType, ContextType>;
   levelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<QueryLevelCheckArgs, 'id'>>;
   levelCheckWeights?: Resolver<ResolversTypes['LevelCheckWeights'], ParentType, ContextType>;
   me?: Resolver<ResolversTypes['Me'], ParentType, ContextType>;
+  myFullTestSittings?: Resolver<Array<ResolversTypes['FullTestSitting']>, ParentType, ContextType>;
   myTourStatus?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   placementExam?: Resolver<ResolversTypes['LearnerExamItem'], ParentType, ContextType>;
   quizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<QueryQuizAttemptArgs, 'id'>>;
@@ -4299,6 +4623,13 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
 export type QuestionOptionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['QuestionOption'] = ResolversParentTypes['QuestionOption']> = ResolversObject<{
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type QuestionSetOptionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['QuestionSetOption'] = ResolversParentTypes['QuestionSetOption']> = ResolversObject<{
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   orderNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
@@ -4433,6 +4764,7 @@ export type RoadmapMilestoneResolvers<ContextType = GraphQLContext, ParentType e
   achievedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   attemptCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   examId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  fullTestId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['MilestoneKind'], ParentType, ContextType>;
   ready?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -4812,6 +5144,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AttemptOptionReview?: AttemptOptionReviewResolvers<ContextType>;
   AttemptPart?: AttemptPartResolvers<ContextType>;
   AttemptQuestionReview?: AttemptQuestionReviewResolvers<ContextType>;
+  AttemptSectionScore?: AttemptSectionScoreResolvers<ContextType>;
   AvatarPreset?: AvatarPresetResolvers<ContextType>;
   ContentReview?: ContentReviewResolvers<ContextType>;
   ContentReviewPage?: ContentReviewPageResolvers<ContextType>;
@@ -4855,6 +5188,9 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   FlashcardSetDetail?: FlashcardSetDetailResolvers<ContextType>;
   FlashcardSetPage?: FlashcardSetPageResolvers<ContextType>;
   FlashcardStats?: FlashcardStatsResolvers<ContextType>;
+  FullTest?: FullTestResolvers<ContextType>;
+  FullTestPart?: FullTestPartResolvers<ContextType>;
+  FullTestSitting?: FullTestSittingResolvers<ContextType>;
   LearnerExamItem?: LearnerExamItemResolvers<ContextType>;
   LearnerExamPage?: LearnerExamPageResolvers<ContextType>;
   LearningPurpose?: LearningPurposeResolvers<ContextType>;
@@ -4869,6 +5205,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   OverviewContentCounts?: OverviewContentCountsResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   QuestionOption?: QuestionOptionResolvers<ContextType>;
+  QuestionSetOption?: QuestionSetOptionResolvers<ContextType>;
   Quiz?: QuizResolvers<ContextType>;
   QuizAttempt?: QuizAttemptResolvers<ContextType>;
   QuizOption?: QuizOptionResolvers<ContextType>;

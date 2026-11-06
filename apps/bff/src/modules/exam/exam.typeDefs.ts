@@ -236,7 +236,37 @@ export const examTypeDefs = /* GraphQL */ `
     questionCategory: String
     orderNo: Int!
     maxRawScore: Float!
+    """
+    Empty on a TEXT_ENTRY question, which is typed, and on a MATCHING question,
+    which chooses from its set's setOptions.
+    """
     options: [QuestionOption!]!
+    """
+    The number shown to the learner. The backend numbers the whole paper, so a
+    practice keeps the numbers its parts have in the full test, and IELTS starts
+    each section at 1. Never count questions on the client.
+    """
+    numberFrom: Int!
+    """
+    Equals numberFrom except on a "choose N letters" question, which takes N.
+    """
+    numberTo: Int!
+    """
+    How many options may be chosen: N on a choose-N question, 1 on a single
+    choice or matching question, 0 on a TEXT_ENTRY question.
+    """
+    choiceLimit: Int!
+  }
+
+  """
+  An entry of the list a question set's MATCHING questions share - a heading
+  "iv", a person "B", a map label "F". Which question it answers is never sent.
+  """
+  type QuestionSetOption {
+    id: ID!
+    label: String!
+    content: String
+    orderNo: Int!
   }
 
   type ExamQuestionSet {
@@ -251,6 +281,11 @@ export const examTypeDefs = /* GraphQL */ `
     audioUrl: String
     imageUrl: String
     questions: [ExamQuestion!]!
+    """
+    The list this set's MATCHING questions choose from; empty when it has none.
+    A gap in content is written {{n}}, n being a question's orderNo in this set.
+    """
+    setOptions: [QuestionSetOption!]!
   }
 
   type ExamSectionPart {
@@ -309,6 +344,30 @@ export const examTypeDefs = /* GraphQL */ `
     awardedRawScore: Float!
     explanation: String
     options: [AttemptOptionReview!]!
+    """
+    What was typed on a TEXT_ENTRY question; null otherwise or when left blank.
+    """
+    textAnswer: String
+    """
+    The spellings a TEXT_ENTRY question accepts; empty on a choice question.
+    """
+    acceptedAnswers: [String!]!
+    numberFrom: Int!
+    numberTo: Int!
+  }
+
+  """
+  One section of a scored attempt. band is the estimated certificate band for a
+  full section the certificate converts (IELTS Listening and Reading out of 40);
+  null for a practice, a TOEIC section, or anything the table does not cover.
+  """
+  type AttemptSectionScore {
+    sectionType: String!
+    rawScore: Float
+    maxRawScore: Float!
+    band: Float
+    correctAnswerCount: Int
+    questionCount: Int!
   }
 
   """
@@ -422,6 +481,10 @@ export const examTypeDefs = /* GraphQL */ `
     Empty while the attempt is IN_PROGRESS - it carries the answer key.
     """
     questions: [AttemptQuestionReview!]!
+    """
+    Each section's points and band; empty until the attempt is scored.
+    """
+    sections: [AttemptSectionScore!]!
   }
 
   type ExamAttemptPage {
@@ -435,14 +498,21 @@ export const examTypeDefs = /* GraphQL */ `
   input SubmitAnswerInput {
     questionId: ID!
     """
-    Empty for a question the learner skipped; several for a multi-select.
+    Empty for a question the learner skipped; several for a multi-select. On a
+    MATCHING question, the chosen entry of the set's setOptions.
     """
     selectedOptionIds: [ID!]!
+    """
+    What was typed on a TEXT_ENTRY question, at most 200 characters; omit it on
+    a choice question - the backend refuses it there.
+    """
+    textAnswer: String
   }
 
   type ExamDraftAnswer {
     questionId: ID!
     selectedOptionIds: [ID!]!
+    textAnswer: String
   }
   type ExamDraft {
     answers: [ExamDraftAnswer!]!

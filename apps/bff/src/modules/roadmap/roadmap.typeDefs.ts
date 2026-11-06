@@ -34,7 +34,7 @@ export const roadmapTypeDefs = /* GraphQL */ `
   }
 
   enum MilestoneKind {
-    "Sit examId and reach requiredScore on the certificate scale."
+    "Sit examId (or, for IELTS, the full test fullTestId) and reach requiredScore on the certificate scale."
     CERTIFICATE_MOCK
     "Take a level check and reach requiredLevel."
     LEVEL_CHECK
@@ -100,6 +100,8 @@ export const roadmapTypeDefs = /* GraphQL */ `
     id: ID!
     kind: MilestoneKind!
     examId: ID
+    "Set instead of examId on an IELTS mock: the full test to sit, passed on its overall band."
+    fullTestId: ID
     requiredScore: Float
     requiredLevel: CefrLevel
     status: MilestoneStatus!

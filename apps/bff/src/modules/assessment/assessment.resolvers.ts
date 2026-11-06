@@ -100,6 +100,10 @@ export const assessmentResolvers = {
       ctx.requireToken();
       return ctx.apis.assessmentApi.edit(a.id, a.version, a.input);
     },
+    removeAssessmentTaskImage: (_, a, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.assessmentApi.removeImage(a.id);
+    },
     transitionAssessmentTask: (_, a, ctx) => {
       ctx.requireToken();
       return ctx.apis.assessmentApi.transition(a.id, a.action, a.note);

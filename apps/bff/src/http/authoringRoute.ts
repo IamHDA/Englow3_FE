@@ -29,7 +29,12 @@ export function authoringRoute() {
     (req, res) => {
       if (
         !uuid.test(req.params.id) ||
-        !["EXAM", "DICTATION_LESSON", "FLASHCARD_SET"].includes(req.params.kind)
+        ![
+          "EXAM",
+          "DICTATION_LESSON",
+          "FLASHCARD_SET",
+          "ASSESSMENT_TASK",
+        ].includes(req.params.kind)
       )
         return void res.sendStatus(404);
       if (!Buffer.isBuffer(req.body) || !req.body.length)
@@ -43,12 +48,23 @@ export function authoringRoute() {
         new Blob([new Uint8Array(req.body)], { type: req.get("content-type") }),
         "media",
       );
+      // A Writing Task 1's chart: images only, attached to the task directly.
+      if (
+        req.params.kind === "ASSESSMENT_TASK" &&
+        !req.is(["image/png", "image/jpeg"])
+      )
+        return void res.status(400).json({
+          code: "TASK_IMAGE_TYPE_NOT_SUPPORTED",
+          message: "Only PNG and JPEG charts are accepted",
+        });
       const path =
-        req.params.kind === "EXAM"
-          ? `${paths.EXAM}/${req.params.id}/media`
-          : req.params.kind === "FLASHCARD_SET"
-            ? "/api/admin/flashcards/media"
-            : "/api/admin/dictation/media";
+        req.params.kind === "ASSESSMENT_TASK"
+          ? `/api/admin/assessments/tasks/${req.params.id}/image`
+          : req.params.kind === "EXAM"
+            ? `${paths.EXAM}/${req.params.id}/media`
+            : req.params.kind === "FLASHCARD_SET"
+              ? "/api/admin/flashcards/media"
+              : "/api/admin/dictation/media";
       return forward(req, res, "POST", path, form);
     },
   );

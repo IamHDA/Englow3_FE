@@ -46,6 +46,11 @@ export const assessmentTypeDefs = /* GraphQL */ `
     targetLevel: CefrLevel
     purpose: AssessmentTaskPurpose!
     certificateType: CertificateType
+    """
+    Writing Task 1's chart to describe, signed for a few hours. Uploaded through
+    the REST authoring route (ASSESSMENT_TASK media), not GraphQL.
+    """
+    imageUrl: String
   }
   type AssessmentTaskPage {
     items: [AssessmentTask!]!
@@ -206,6 +211,8 @@ export const assessmentTypeDefs = /* GraphQL */ `
       version: Int!
       input: AssessmentTaskInput!
     ): AssessmentTask!
+    "Drops a Writing Task 1's chart while the task is still a draft or rejected."
+    removeAssessmentTaskImage(id: ID!): AssessmentTask!
     transitionAssessmentTask(
       id: ID!
       action: String!
