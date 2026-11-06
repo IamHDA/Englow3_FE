@@ -2223,6 +2223,7 @@ export type QueryAuthoringAssessmentTaskArgs = {
 
 export type QueryAuthoringAssessmentTasksArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
   skill?: InputMaybe<AssessmentSkill>;
   status?: InputMaybe<AssessmentTaskStatus>;
 };

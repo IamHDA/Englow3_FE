@@ -73,9 +73,10 @@ export class AssessmentApi {
     skill?: string | null,
     status?: string | null,
     page = 0,
+    size?: number | null,
   ): Promise<AssessmentTaskPage> {
     return this.client.get(
-      "/api/admin/assessments/tasks?" + params({ skill, status, page }),
+      "/api/admin/assessments/tasks?" + params({ skill, status, page, size }),
     );
   }
   submissions(

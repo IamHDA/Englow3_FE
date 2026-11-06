@@ -1,0 +1,91 @@
+fragment AdminFullTestFields on FullTest {
+  id
+  title
+  description
+  certificateVariant
+  examId
+  writingTask1Id
+  writingTask2Id
+  speakingPart1Id
+  speakingPart2Id
+  speakingPart3Id
+  status
+  reviewNote
+  publishedAt
+  version
+}
+
+query AdminFullTests {
+  adminFullTests {
+    ...AdminFullTestFields
+  }
+}
+
+# What a full test can be built from; the form narrows each list to its slot.
+query FullTestComponents {
+  papers: adminExams(status: PUBLISHED, examType: MOCK, page: 0, size: 100) {
+    items {
+      id
+      title
+      certificateType
+      certificateVariant
+    }
+  }
+  writingTasks: authoringAssessmentTasks(
+    skill: WRITING
+    status: PUBLISHED
+    page: 0
+    size: 100
+  ) {
+    items {
+      id
+      title
+      taskType
+      certificateType
+      imageUrl
+    }
+  }
+  speakingTasks: authoringAssessmentTasks(
+    skill: SPEAKING
+    status: PUBLISHED
+    page: 0
+    size: 100
+  ) {
+    items {
+      id
+      title
+      taskType
+      certificateType
+    }
+  }
+}
+
+mutation SaveFullTest($id: ID, $input: SaveFullTestInput!) {
+  saveFullTest(id: $id, input: $input) {
+    ...AdminFullTestFields
+  }
+}
+
+mutation SubmitFullTestForReview($id: ID!) {
+  submitFullTestForReview(id: $id) {
+    ...AdminFullTestFields
+  }
+}
+
+mutation ApproveFullTest($id: ID!) {
+  approveFullTest(id: $id) {
+    ...AdminFullTestFields
+  }
+}
+
+mutation RejectFullTest($id: ID!, $note: String!) {
+  rejectFullTest(id: $id, note: $note) {
+    ...AdminFullTestFields
+  }
+}
+
+mutation ArchiveFullTest($id: ID!) {
+  archiveFullTest(id: $id) {
+    ...AdminFullTestFields
+  }
+}

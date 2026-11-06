@@ -3143,6 +3143,191 @@ export type FlashcardStatsQuery = {
   };
 };
 
+export type AdminFullTestFieldsFragment = {
+  id: string;
+  title: string;
+  description: string;
+  certificateVariant: Types.CertificateVariant;
+  examId: string;
+  writingTask1Id: string;
+  writingTask2Id: string;
+  speakingPart1Id: string;
+  speakingPart2Id: string;
+  speakingPart3Id: string;
+  status: Types.ExamStatus;
+  reviewNote: string | null;
+  publishedAt: string | null;
+  version: number;
+};
+
+export type AdminFullTestsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AdminFullTestsQuery = {
+  adminFullTests: Array<{
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  }>;
+};
+
+export type FullTestComponentsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type FullTestComponentsQuery = {
+  papers: {
+    items: Array<{
+      id: string;
+      title: string;
+      certificateType: Types.CertificateType | null;
+      certificateVariant: Types.CertificateVariant | null;
+    }>;
+  };
+  writingTasks: {
+    items: Array<{
+      id: string;
+      title: string;
+      taskType: string;
+      certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
+    }>;
+  };
+  speakingTasks: {
+    items: Array<{
+      id: string;
+      title: string;
+      taskType: string;
+      certificateType: Types.CertificateType | null;
+    }>;
+  };
+};
+
+export type SaveFullTestMutationVariables = Exact<{
+  id?: string | number | null | undefined;
+  input: Types.SaveFullTestInput;
+}>;
+
+export type SaveFullTestMutation = {
+  saveFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type SubmitFullTestForReviewMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SubmitFullTestForReviewMutation = {
+  submitFullTestForReview: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type ApproveFullTestMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ApproveFullTestMutation = {
+  approveFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type RejectFullTestMutationVariables = Exact<{
+  id: string | number;
+  note: string;
+}>;
+
+export type RejectFullTestMutation = {
+  rejectFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type ArchiveFullTestMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ArchiveFullTestMutation = {
+  archiveFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
 export type FullTestSittingFieldsFragment = {
   id: string;
   fullTestId: string;
@@ -5076,6 +5261,41 @@ export const FlashcardFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<FlashcardFieldsFragment, unknown>;
+export const AdminFullTestFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminFullTestFieldsFragment, unknown>;
 export const FullTestSittingFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -16992,6 +17212,682 @@ export const FlashcardStatsDocument = {
     },
   ],
 } as unknown as DocumentNode<FlashcardStatsQuery, FlashcardStatsQueryVariables>;
+export const AdminFullTestsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AdminFullTests" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminFullTests" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminFullTestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminFullTestsQuery, AdminFullTestsQueryVariables>;
+export const FullTestComponentsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "FullTestComponents" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            alias: { kind: "Name", value: "papers" },
+            name: { kind: "Name", value: "adminExams" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: { kind: "EnumValue", value: "PUBLISHED" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "examType" },
+                value: { kind: "EnumValue", value: "MOCK" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: { kind: "IntValue", value: "0" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "100" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "certificateType" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "certificateVariant" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            alias: { kind: "Name", value: "writingTasks" },
+            name: { kind: "Name", value: "authoringAssessmentTasks" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "skill" },
+                value: { kind: "EnumValue", value: "WRITING" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: { kind: "EnumValue", value: "PUBLISHED" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: { kind: "IntValue", value: "0" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "100" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "taskType" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "certificateType" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "imageUrl" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            alias: { kind: "Name", value: "speakingTasks" },
+            name: { kind: "Name", value: "authoringAssessmentTasks" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "skill" },
+                value: { kind: "EnumValue", value: "SPEAKING" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
+                value: { kind: "EnumValue", value: "PUBLISHED" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: { kind: "IntValue", value: "0" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "100" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "taskType" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "certificateType" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  FullTestComponentsQuery,
+  FullTestComponentsQueryVariables
+>;
+export const SaveFullTestDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SaveFullTest" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "SaveFullTestInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "saveFullTest" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminFullTestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SaveFullTestMutation,
+  SaveFullTestMutationVariables
+>;
+export const SubmitFullTestForReviewDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SubmitFullTestForReview" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "submitFullTestForReview" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminFullTestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SubmitFullTestForReviewMutation,
+  SubmitFullTestForReviewMutationVariables
+>;
+export const ApproveFullTestDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ApproveFullTest" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "approveFullTest" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminFullTestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ApproveFullTestMutation,
+  ApproveFullTestMutationVariables
+>;
+export const RejectFullTestDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RejectFullTest" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "note" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "rejectFullTest" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "note" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "note" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminFullTestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RejectFullTestMutation,
+  RejectFullTestMutationVariables
+>;
+export const ArchiveFullTestDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ArchiveFullTest" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "archiveFullTest" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AdminFullTestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AdminFullTestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "FullTest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "description" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "certificateVariant" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "writingTask2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart1Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart2Id" } },
+          { kind: "Field", name: { kind: "Name", value: "speakingPart3Id" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewNote" } },
+          { kind: "Field", name: { kind: "Name", value: "publishedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ArchiveFullTestMutation,
+  ArchiveFullTestMutationVariables
+>;
 export const FullTestLibraryDocument = {
   kind: "Document",
   definitions: [

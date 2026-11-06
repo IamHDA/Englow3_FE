@@ -176,6 +176,8 @@ export const assessmentTypeDefs = /* GraphQL */ `
       skill: AssessmentSkill
       status: AssessmentTaskStatus
       page: Int
+      "Tasks per page: 12 unless given, at most 100."
+      size: Int
     ): AssessmentTaskPage!
     assessmentSubmissions(
       status: AssessmentAttemptStatus

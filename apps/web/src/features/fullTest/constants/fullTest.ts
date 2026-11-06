@@ -65,3 +65,64 @@ export const IELTS_ONLY_CODE = "FULL_TEST_IELTS_ONLY";
 
 /** How often an open sitting looks again for grades that have landed. */
 export const SITTING_POLL_MS = 30_000;
+
+/** Longest title and description the backend stores for a full test. */
+export const FULL_TEST_TITLE_MAX_LENGTH = 100;
+export const FULL_TEST_DESCRIPTION_MAX_LENGTH = 2000;
+
+/** The certificate a full test belongs to, as the catalogue names it. */
+export const IELTS_CERTIFICATE = "IELTS";
+
+/** Which task fills each Writing and Speaking slot of a full test. */
+export const SLOT_TASKS = [
+  {
+    slot: FullTestSlot.WRITING_TASK_1,
+    field: "writingTask1Id",
+    skill: "WRITING",
+    taskType: "TASK_1",
+  },
+  {
+    slot: FullTestSlot.WRITING_TASK_2,
+    field: "writingTask2Id",
+    skill: "WRITING",
+    taskType: "TASK_2",
+  },
+  {
+    slot: FullTestSlot.SPEAKING_PART_1,
+    field: "speakingPart1Id",
+    skill: "SPEAKING",
+    taskType: "PART_1",
+  },
+  {
+    slot: FullTestSlot.SPEAKING_PART_2,
+    field: "speakingPart2Id",
+    skill: "SPEAKING",
+    taskType: "PART_2",
+  },
+  {
+    slot: FullTestSlot.SPEAKING_PART_3,
+    field: "speakingPart3Id",
+    skill: "SPEAKING",
+    taskType: "PART_3",
+  },
+] as const;
+
+/** Why the backend refuses to send a full test for review, in the author's words. */
+export const FULL_TEST_ERROR_COPY: Record<string, Copy> = {
+  FULL_TEST_PAPER_INVALID: {
+    vi: "Đề Listening + Reading phải là đề thi thử IELTS đã phát hành, cùng loại Academic/General và có cả hai phần.",
+    en: "The Listening + Reading paper must be a published IELTS mock of the same variant, with both sections.",
+  },
+  FULL_TEST_TASK_INVALID: {
+    vi: "Mỗi phần Writing/Speaking phải là đề IELTS đã phát hành, đúng kỹ năng và dạng bài.",
+    en: "Each Writing and Speaking part must be a published IELTS task of the right skill and type.",
+  },
+  FULL_TEST_TASK1_NEEDS_CHART: {
+    vi: "Writing Task 1 của full test Academic phải có ảnh biểu đồ.",
+    en: "An Academic full test's Writing Task 1 needs its chart.",
+  },
+  FULL_TEST_NOT_EDITABLE: {
+    vi: "Chỉ sửa được full test ở trạng thái nháp hoặc bị trả lại.",
+    en: "Only a draft or returned full test can be edited.",
+  },
+};

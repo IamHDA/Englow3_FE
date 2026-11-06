@@ -45,7 +45,12 @@ export const assessmentResolvers = {
     },
     authoringAssessmentTasks: (_, a, ctx) => {
       ctx.requireToken();
-      return ctx.apis.assessmentApi.authoring(a.skill, a.status, a.page ?? 0);
+      return ctx.apis.assessmentApi.authoring(
+        a.skill,
+        a.status,
+        a.page ?? 0,
+        a.size,
+      );
     },
     assessmentSubmissions: (_, a, ctx) => {
       ctx.requireToken();

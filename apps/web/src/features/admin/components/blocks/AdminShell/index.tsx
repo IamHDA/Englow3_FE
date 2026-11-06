@@ -16,6 +16,7 @@ import {
   ClipboardList,
   CircleHelp,
   CreditCard,
+  FileStack,
   Layers,
   LayoutDashboard,
   LogOut,
@@ -74,6 +75,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
       href: "/admin/exams",
       label: isVi ? "Đề thi" : "Exams",
       icon: ClipboardList,
+    },
+    {
+      href: "/admin/full-tests",
+      label: isVi ? "Full test IELTS" : "IELTS full tests",
+      icon: FileStack,
     },
     {
       href: "/admin/ai-tutor",

@@ -3146,6 +3146,191 @@ export type FlashcardStatsQuery = {
   };
 };
 
+export type AdminFullTestFieldsFragment = {
+  id: string;
+  title: string;
+  description: string;
+  certificateVariant: Types.CertificateVariant;
+  examId: string;
+  writingTask1Id: string;
+  writingTask2Id: string;
+  speakingPart1Id: string;
+  speakingPart2Id: string;
+  speakingPart3Id: string;
+  status: Types.ExamStatus;
+  reviewNote: string | null;
+  publishedAt: string | null;
+  version: number;
+};
+
+export type AdminFullTestsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AdminFullTestsQuery = {
+  adminFullTests: Array<{
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  }>;
+};
+
+export type FullTestComponentsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type FullTestComponentsQuery = {
+  papers: {
+    items: Array<{
+      id: string;
+      title: string;
+      certificateType: Types.CertificateType | null;
+      certificateVariant: Types.CertificateVariant | null;
+    }>;
+  };
+  writingTasks: {
+    items: Array<{
+      id: string;
+      title: string;
+      taskType: string;
+      certificateType: Types.CertificateType | null;
+      imageUrl: string | null;
+    }>;
+  };
+  speakingTasks: {
+    items: Array<{
+      id: string;
+      title: string;
+      taskType: string;
+      certificateType: Types.CertificateType | null;
+    }>;
+  };
+};
+
+export type SaveFullTestMutationVariables = Exact<{
+  id?: string | number | null | undefined;
+  input: Types.SaveFullTestInput;
+}>;
+
+export type SaveFullTestMutation = {
+  saveFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type SubmitFullTestForReviewMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SubmitFullTestForReviewMutation = {
+  submitFullTestForReview: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type ApproveFullTestMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ApproveFullTestMutation = {
+  approveFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type RejectFullTestMutationVariables = Exact<{
+  id: string | number;
+  note: string;
+}>;
+
+export type RejectFullTestMutation = {
+  rejectFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
+export type ArchiveFullTestMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ArchiveFullTestMutation = {
+  archiveFullTest: {
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
+    status: Types.ExamStatus;
+    reviewNote: string | null;
+    publishedAt: string | null;
+    version: number;
+  };
+};
+
 export type FullTestSittingFieldsFragment = {
   id: string;
   fullTestId: string;
@@ -4674,6 +4859,24 @@ export const FlashcardFieldsFragmentDoc = gql`
     status
     dueAt
     lapseCount
+  }
+`;
+export const AdminFullTestFieldsFragmentDoc = gql`
+  fragment AdminFullTestFields on FullTest {
+    id
+    title
+    description
+    certificateVariant
+    examId
+    writingTask1Id
+    writingTask2Id
+    speakingPart1Id
+    speakingPart2Id
+    speakingPart3Id
+    status
+    reviewNote
+    publishedAt
+    version
   }
 `;
 export const FullTestSittingFieldsFragmentDoc = gql`
@@ -13417,6 +13620,506 @@ export type FlashcardStatsQueryResult = ApolloReactCommon.QueryResult<
   FlashcardStatsQuery,
   FlashcardStatsQueryVariables
 >;
+export const AdminFullTestsDocument = gql`
+  query AdminFullTests {
+    adminFullTests {
+      ...AdminFullTestFields
+    }
+  }
+  ${AdminFullTestFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminFullTestsQuery__
+ *
+ * To run a query within a React component, call `useAdminFullTestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminFullTestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminFullTestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAdminFullTestsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminFullTestsQuery,
+    AdminFullTestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminFullTestsQuery,
+    AdminFullTestsQueryVariables
+  >(AdminFullTestsDocument, options);
+}
+export function useAdminFullTestsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminFullTestsQuery,
+    AdminFullTestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminFullTestsQuery,
+    AdminFullTestsQueryVariables
+  >(AdminFullTestsDocument, options);
+}
+export function useAdminFullTestsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminFullTestsQuery,
+    AdminFullTestsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminFullTestsQuery,
+  AdminFullTestsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminFullTestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminFullTestsQuery,
+        AdminFullTestsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminFullTestsQuery | undefined,
+  AdminFullTestsQueryVariables
+>;
+export function useAdminFullTestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminFullTestsQuery,
+        AdminFullTestsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminFullTestsQuery,
+    AdminFullTestsQueryVariables
+  >(AdminFullTestsDocument, options as any);
+}
+export type AdminFullTestsQueryHookResult = ReturnType<
+  typeof useAdminFullTestsQuery
+>;
+export type AdminFullTestsLazyQueryHookResult = ReturnType<
+  typeof useAdminFullTestsLazyQuery
+>;
+export type AdminFullTestsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminFullTestsSuspenseQuery
+>;
+export type AdminFullTestsQueryResult = ApolloReactCommon.QueryResult<
+  AdminFullTestsQuery,
+  AdminFullTestsQueryVariables
+>;
+export const FullTestComponentsDocument = gql`
+  query FullTestComponents {
+    papers: adminExams(status: PUBLISHED, examType: MOCK, page: 0, size: 100) {
+      items {
+        id
+        title
+        certificateType
+        certificateVariant
+      }
+    }
+    writingTasks: authoringAssessmentTasks(
+      skill: WRITING
+      status: PUBLISHED
+      page: 0
+      size: 100
+    ) {
+      items {
+        id
+        title
+        taskType
+        certificateType
+        imageUrl
+      }
+    }
+    speakingTasks: authoringAssessmentTasks(
+      skill: SPEAKING
+      status: PUBLISHED
+      page: 0
+      size: 100
+    ) {
+      items {
+        id
+        title
+        taskType
+        certificateType
+      }
+    }
+  }
+`;
+
+/**
+ * __useFullTestComponentsQuery__
+ *
+ * To run a query within a React component, call `useFullTestComponentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFullTestComponentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFullTestComponentsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFullTestComponentsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FullTestComponentsQuery,
+    FullTestComponentsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    FullTestComponentsQuery,
+    FullTestComponentsQueryVariables
+  >(FullTestComponentsDocument, options);
+}
+export function useFullTestComponentsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FullTestComponentsQuery,
+    FullTestComponentsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    FullTestComponentsQuery,
+    FullTestComponentsQueryVariables
+  >(FullTestComponentsDocument, options);
+}
+export function useFullTestComponentsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FullTestComponentsQuery,
+    FullTestComponentsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FullTestComponentsQuery,
+  FullTestComponentsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFullTestComponentsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FullTestComponentsQuery,
+        FullTestComponentsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FullTestComponentsQuery | undefined,
+  FullTestComponentsQueryVariables
+>;
+export function useFullTestComponentsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FullTestComponentsQuery,
+        FullTestComponentsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    FullTestComponentsQuery,
+    FullTestComponentsQueryVariables
+  >(FullTestComponentsDocument, options as any);
+}
+export type FullTestComponentsQueryHookResult = ReturnType<
+  typeof useFullTestComponentsQuery
+>;
+export type FullTestComponentsLazyQueryHookResult = ReturnType<
+  typeof useFullTestComponentsLazyQuery
+>;
+export type FullTestComponentsSuspenseQueryHookResult = ReturnType<
+  typeof useFullTestComponentsSuspenseQuery
+>;
+export type FullTestComponentsQueryResult = ApolloReactCommon.QueryResult<
+  FullTestComponentsQuery,
+  FullTestComponentsQueryVariables
+>;
+export const SaveFullTestDocument = gql`
+  mutation SaveFullTest($id: ID, $input: SaveFullTestInput!) {
+    saveFullTest(id: $id, input: $input) {
+      ...AdminFullTestFields
+    }
+  }
+  ${AdminFullTestFieldsFragmentDoc}
+`;
+export type SaveFullTestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SaveFullTestMutation,
+    SaveFullTestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSaveFullTestMutation__
+ *
+ * To run a mutation, you first call `useSaveFullTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveFullTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveFullTestMutation, { data, loading, error }] = useSaveFullTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSaveFullTestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SaveFullTestMutation,
+    SaveFullTestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SaveFullTestMutation,
+    SaveFullTestMutationVariables
+  >(SaveFullTestDocument, options);
+}
+export type SaveFullTestMutationHookResult = ReturnType<
+  typeof useSaveFullTestMutation
+>;
+export type SaveFullTestMutationResult =
+  ApolloReactCommon.MutationResult<SaveFullTestMutation>;
+export type SaveFullTestMutationOptions = ApolloReactCommon.MutationHookOptions<
+  SaveFullTestMutation,
+  SaveFullTestMutationVariables
+>;
+export const SubmitFullTestForReviewDocument = gql`
+  mutation SubmitFullTestForReview($id: ID!) {
+    submitFullTestForReview(id: $id) {
+      ...AdminFullTestFields
+    }
+  }
+  ${AdminFullTestFieldsFragmentDoc}
+`;
+export type SubmitFullTestForReviewMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SubmitFullTestForReviewMutation,
+    SubmitFullTestForReviewMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSubmitFullTestForReviewMutation__
+ *
+ * To run a mutation, you first call `useSubmitFullTestForReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitFullTestForReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitFullTestForReviewMutation, { data, loading, error }] = useSubmitFullTestForReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSubmitFullTestForReviewMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitFullTestForReviewMutation,
+    SubmitFullTestForReviewMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SubmitFullTestForReviewMutation,
+    SubmitFullTestForReviewMutationVariables
+  >(SubmitFullTestForReviewDocument, options);
+}
+export type SubmitFullTestForReviewMutationHookResult = ReturnType<
+  typeof useSubmitFullTestForReviewMutation
+>;
+export type SubmitFullTestForReviewMutationResult =
+  ApolloReactCommon.MutationResult<SubmitFullTestForReviewMutation>;
+export type SubmitFullTestForReviewMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SubmitFullTestForReviewMutation,
+    SubmitFullTestForReviewMutationVariables
+  >;
+export const ApproveFullTestDocument = gql`
+  mutation ApproveFullTest($id: ID!) {
+    approveFullTest(id: $id) {
+      ...AdminFullTestFields
+    }
+  }
+  ${AdminFullTestFieldsFragmentDoc}
+`;
+export type ApproveFullTestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ApproveFullTestMutation,
+    ApproveFullTestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useApproveFullTestMutation__
+ *
+ * To run a mutation, you first call `useApproveFullTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveFullTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveFullTestMutation, { data, loading, error }] = useApproveFullTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApproveFullTestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ApproveFullTestMutation,
+    ApproveFullTestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ApproveFullTestMutation,
+    ApproveFullTestMutationVariables
+  >(ApproveFullTestDocument, options);
+}
+export type ApproveFullTestMutationHookResult = ReturnType<
+  typeof useApproveFullTestMutation
+>;
+export type ApproveFullTestMutationResult =
+  ApolloReactCommon.MutationResult<ApproveFullTestMutation>;
+export type ApproveFullTestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ApproveFullTestMutation,
+    ApproveFullTestMutationVariables
+  >;
+export const RejectFullTestDocument = gql`
+  mutation RejectFullTest($id: ID!, $note: String!) {
+    rejectFullTest(id: $id, note: $note) {
+      ...AdminFullTestFields
+    }
+  }
+  ${AdminFullTestFieldsFragmentDoc}
+`;
+export type RejectFullTestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RejectFullTestMutation,
+    RejectFullTestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRejectFullTestMutation__
+ *
+ * To run a mutation, you first call `useRejectFullTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRejectFullTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rejectFullTestMutation, { data, loading, error }] = useRejectFullTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      note: // value for 'note'
+ *   },
+ * });
+ */
+export function useRejectFullTestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RejectFullTestMutation,
+    RejectFullTestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RejectFullTestMutation,
+    RejectFullTestMutationVariables
+  >(RejectFullTestDocument, options);
+}
+export type RejectFullTestMutationHookResult = ReturnType<
+  typeof useRejectFullTestMutation
+>;
+export type RejectFullTestMutationResult =
+  ApolloReactCommon.MutationResult<RejectFullTestMutation>;
+export type RejectFullTestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RejectFullTestMutation,
+    RejectFullTestMutationVariables
+  >;
+export const ArchiveFullTestDocument = gql`
+  mutation ArchiveFullTest($id: ID!) {
+    archiveFullTest(id: $id) {
+      ...AdminFullTestFields
+    }
+  }
+  ${AdminFullTestFieldsFragmentDoc}
+`;
+export type ArchiveFullTestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ArchiveFullTestMutation,
+    ArchiveFullTestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useArchiveFullTestMutation__
+ *
+ * To run a mutation, you first call `useArchiveFullTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveFullTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveFullTestMutation, { data, loading, error }] = useArchiveFullTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveFullTestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ArchiveFullTestMutation,
+    ArchiveFullTestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ArchiveFullTestMutation,
+    ArchiveFullTestMutationVariables
+  >(ArchiveFullTestDocument, options);
+}
+export type ArchiveFullTestMutationHookResult = ReturnType<
+  typeof useArchiveFullTestMutation
+>;
+export type ArchiveFullTestMutationResult =
+  ApolloReactCommon.MutationResult<ArchiveFullTestMutation>;
+export type ArchiveFullTestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ArchiveFullTestMutation,
+    ArchiveFullTestMutationVariables
+  >;
 export const FullTestLibraryDocument = gql`
   query FullTestLibrary {
     fullTests {
