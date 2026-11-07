@@ -253,6 +253,16 @@ export const ONBOARDING_ERROR_MESSAGES: Record<string, Words> = {
   },
 };
 
+/**
+ * An IELTS learner chose the full test, none is published, and the general
+ * placement test that stands in is not published either. Said as it is,
+ * rather than reporting only the missing placement test they never chose.
+ */
+export const NO_IELTS_PLACEMENT: Words = {
+  vi: "Chưa có IELTS full test nào được phát hành (và cũng chưa có bài kiểm tra đầu vào chung). Hãy tự chọn một mức bên dưới, hoặc quay lại sau.",
+  en: "No IELTS full test has been published yet (nor a general placement test). Pick a level below yourself, or come back later.",
+};
+
 export const ONBOARDING_GENERIC_ERROR: Words = {
   vi: "Không lưu được lựa chọn. Kiểm tra kết nối rồi thử lại.",
   en: "Could not save your choice. Check the connection and try again.",

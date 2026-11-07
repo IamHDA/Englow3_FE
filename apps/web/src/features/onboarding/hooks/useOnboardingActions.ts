@@ -7,6 +7,7 @@ import { useAccountProfile } from "@/features/account";
 import { useOnboarding } from "@/features/onboarding/hooks/useOnboarding";
 import {
   ONBOARDING_ERROR_MESSAGES,
+  NO_IELTS_PLACEMENT,
   ONBOARDING_GENERIC_ERROR,
 } from "@/features/onboarding/constants/onboardingSteps";
 // Import thẳng từ "hooks" chứ không qua barrel: barrel cố ý không re-export
@@ -257,14 +258,26 @@ export function useOnboardingActions() {
             (test) => test.certificateVariant === CertificateVariant.ACADEMIC,
           ) ?? tests[0];
         if (!chosen) {
-          await startPlacementTest();
+          // No full test yet: the general placement test stands in, if there is one.
+          const placement = await loadPlacementExam();
+          if (placement.data) {
+            leaveFor(`/exams/${placement.data.placementExam.id}`);
+            return;
+          }
+          setErrorMessage(
+            backendCodeOf(placement.error) === "PLACEMENT_EXAM_NOT_FOUND"
+              ? isVi
+                ? NO_IELTS_PLACEMENT.vi
+                : NO_IELTS_PLACEMENT.en
+              : messageForError(placement.error, isVi),
+          );
           return;
         }
         leaveFor(`/exams/full-tests/${chosen.id}`);
       } catch (error) {
         setErrorMessage(messageForError(error, isVi));
       }
-    }, [loadFullTests, startPlacementTest, leaveFor, isVi]),
+    }, [loadFullTests, loadPlacementExam, leaveFor, isVi]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>
         run(
