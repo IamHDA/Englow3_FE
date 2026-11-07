@@ -44,6 +44,8 @@ export interface ExamResultViewProps {
   /** Lượt thi đã chấm. Điểm, đáp án đúng và giải thích đều lấy từ đây. */
   attempt: ExamAttemptResult;
   onRetake: () => void;
+  /** Sat for an IELTS full test: no retake, and the way back leads to the sitting. */
+  fullTestBack?: { href: string; label: string } | null;
 }
 
 /**
@@ -61,6 +63,7 @@ export function ExamResultView({
   questions,
   attempt,
   onRetake,
+  fullTestBack = null,
 }: ExamResultViewProps) {
   const { t, isVi } = useLanguage();
   const [filterTab, setFilterTab] = useState<string>("all");
@@ -233,23 +236,25 @@ export function ExamResultView({
 
               {/* Action buttons */}
               <Group gap="xs">
-                <Button
-                  variant="default"
-                  radius="xl"
-                  size="sm"
-                  leftSection={<RotateCcw size={16} />}
-                  onClick={onRetake}
-                >
-                  {t.exam.retakeCTA}
-                </Button>
+                {!fullTestBack && (
+                  <Button
+                    variant="default"
+                    radius="xl"
+                    size="sm"
+                    leftSection={<RotateCcw size={16} />}
+                    onClick={onRetake}
+                  >
+                    {t.exam.retakeCTA}
+                  </Button>
+                )}
                 <Button
                   component={Link}
-                  href="/exams"
+                  href={fullTestBack?.href ?? "/exams"}
                   radius="xl"
                   size="sm"
                   className={classes.libraryBtn}
                 >
-                  {t.exam.backToLibrary}
+                  {fullTestBack?.label ?? t.exam.backToLibrary}
                 </Button>
               </Group>
             </Group>

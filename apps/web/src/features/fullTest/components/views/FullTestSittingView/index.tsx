@@ -9,6 +9,7 @@ import {
   FullTestSittingStatus,
 } from "@/lib/graphql/generated/schemaTypes";
 import { useFullTestSittingQuery } from "@/lib/graphql/generated/hooks";
+import { paperForFullTestPath } from "@/features/exam";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -70,7 +71,7 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
       key: "paper",
       title: "Listening + Reading",
       done: Boolean(sitting.examAttemptId),
-      href: `/exams/${sitting.examId}`,
+      href: paperForFullTestPath(sitting.examId, sitting.id),
       grading: sitting.examAttemptId ? FullTestPartGrading.GRADED : null,
       attemptId: null,
     },

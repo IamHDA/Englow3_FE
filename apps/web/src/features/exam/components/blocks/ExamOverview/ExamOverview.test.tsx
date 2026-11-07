@@ -116,3 +116,36 @@ it("previews the saved time, parts and question sets without starting an attempt
     OpenAttemptChoice.RESUME,
   );
 });
+
+it("offers only the full test, and the way back to the sitting, for a full test's paper", () => {
+  const onStart = vi.fn();
+  render(
+    <MantineProvider>
+      <ExamOverview
+        exam={exam}
+        outline={[]}
+        outlineLoading={false}
+        outlineFailed={false}
+        onRetryOutline={vi.fn()}
+        starting={false}
+        onStart={onStart}
+        fullTestBack={{
+          href: "/exams/full-tests/sittings/s1",
+          label: "Về lượt full test",
+        }}
+      />
+    </MantineProvider>,
+  );
+  expect(
+    screen.queryByRole("tab", { name: "Luyện tập" }),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.getByRole("link", { name: "Về lượt full test" }),
+  ).toHaveAttribute("href", "/exams/full-tests/sittings/s1");
+  fireEvent.click(screen.getByRole("button", { name: /Bắt đầu thi/ }));
+  expect(onStart).toHaveBeenCalledWith({ mode: "FULL" });
+  // No practice is looked up when practice is not on offer.
+  expect(mocks.active).toHaveBeenLastCalledWith(
+    expect.objectContaining({ skip: true }),
+  );
+});

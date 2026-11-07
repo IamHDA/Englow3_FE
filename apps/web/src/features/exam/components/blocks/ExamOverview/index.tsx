@@ -56,6 +56,11 @@ export interface ExamOverviewProps {
   onRetryOutline: () => void;
   starting: boolean;
   onStart: (choice: ExamStartChoice, onOpen?: OpenAttemptChoice) => void;
+  /**
+   * Sat as part of an IELTS full test: in full only, and the way back leads to
+   * the sitting. Null for an ordinary visit from the library.
+   */
+  fullTestBack?: { href: string; label: string } | null;
 }
 
 export function ExamOverview({
@@ -66,11 +71,13 @@ export function ExamOverview({
   onRetryOutline,
   starting,
   onStart,
+  fullTestBack = null,
 }: ExamOverviewProps) {
   const { t, isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
-  // Bài kiểm tra đầu vào quyết định trình độ nên chỉ làm trọn đề.
-  const practiceAllowed = exam.examType !== "PLACEMENT";
+  // Bài kiểm tra đầu vào quyết định trình độ nên chỉ làm trọn đề; phần L+R của
+  // full test cũng vậy - full test chỉ tính lượt thi thật.
+  const practiceAllowed = exam.examType !== "PLACEMENT" && !fullTestBack;
   const [resumeOpened, setResumeOpened] = useState(false);
   const [previewAt, setPreviewAt] = useState(0);
   const activeQuery = useActiveExamAttemptQuery({
@@ -419,12 +426,12 @@ export function ExamOverview({
               <Group justify="flex-end" pt="sm">
                 <Button
                   component={Link}
-                  href="/exams"
+                  href={fullTestBack?.href ?? "/exams"}
                   variant="default"
                   radius="xl"
                   size="md"
                 >
-                  {t.exam.returnToLibrary}
+                  {fullTestBack?.label ?? t.exam.returnToLibrary}
                 </Button>
                 <Button
                   onClick={() => onStart({ mode: "FULL" })}

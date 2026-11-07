@@ -50,6 +50,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useExamTimer } from "../../../hooks/useExamTimer";
 import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
 
+import { fullTestSittingPath } from "../../../constants/fullTestLink";
 import { ExamOverview } from "../../blocks/ExamOverview";
 import { ExamOverviewSkeleton } from "../../blocks/ExamOverview/ExamOverviewSkeleton";
 import { ExamSittingHeader } from "../../blocks/ExamSittingHeader";
@@ -92,6 +93,8 @@ function typedText(answer: ExamAnswer | undefined): string {
 
 interface ExamSittingViewProps {
   examId: string;
+  /** Set when an IELTS full test sitting sent the learner here. */
+  fullTestSittingId?: string | null;
 }
 
 type StoredProgress = {
@@ -133,13 +136,22 @@ function readProgress(attemptId: string): StoredProgress | null {
   }
 }
 
-export function ExamSittingView({ examId }: ExamSittingViewProps) {
+export function ExamSittingView({
+  examId,
+  fullTestSittingId = null,
+}: ExamSittingViewProps) {
   const router = useRouter();
   const client = useApolloClient();
   const [openingDraft, setOpeningDraft] = useState(false);
   const [draftLoadFailed, setDraftLoadFailed] = useState(false);
   const { t, isVi } = useLanguage();
   const { refresh: refreshProfile } = useAccountProfile();
+  const fullTestBack = fullTestSittingId
+    ? {
+        href: fullTestSittingPath(fullTestSittingId),
+        label: isVi ? "Về lượt full test" : "Back to the full test",
+      }
+    : null;
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -699,6 +711,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
           onRetryOutline={() => void refetchOutline().catch(() => undefined)}
           starting={starting || openingDraft}
           onStart={(choice, onOpen) => void handleStart(choice, onOpen)}
+          fullTestBack={fullTestBack}
         />
         <Modal
           opened={blockedChoice !== null}
@@ -754,6 +767,7 @@ export function ExamSittingView({ examId }: ExamSittingViewProps) {
         questions={flatQuestions}
         attempt={result}
         onRetake={handleRetake}
+        fullTestBack={fullTestBack}
       />
     );
   }
