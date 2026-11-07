@@ -139,9 +139,15 @@ it("offers only the full test, and the way back to the sitting, for a full test'
   expect(
     screen.queryByRole("tab", { name: "Luyện tập" }),
   ).not.toBeInTheDocument();
+  // Both the breadcrumb and the button under the rules lead back to the sitting.
+  const back = screen.getAllByRole("link", { name: /Về lượt full test/ });
+  expect(back).toHaveLength(2);
+  back.forEach((link) =>
+    expect(link).toHaveAttribute("href", "/exams/full-tests/sittings/s1"),
+  );
   expect(
-    screen.getByRole("link", { name: "Về lượt full test" }),
-  ).toHaveAttribute("href", "/exams/full-tests/sittings/s1");
+    screen.queryByRole("link", { name: /thư viện/i }),
+  ).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: /Bắt đầu thi/ }));
   expect(onStart).toHaveBeenCalledWith({ mode: "FULL" });
   // No practice is looked up when practice is not on offer.

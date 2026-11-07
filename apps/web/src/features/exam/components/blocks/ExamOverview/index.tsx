@@ -98,9 +98,13 @@ export function ExamOverview({
     <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
       {/* Breadcrumb Navigation */}
       <Flex align="center" gap="xs" mb="lg">
-        <Text component={Link} href="/exams" className={classes.breadcrumbLink}>
+        <Text
+          component={Link}
+          href={fullTestBack?.href ?? "/exams"}
+          className={classes.breadcrumbLink}
+        >
           <ArrowLeft size={16} />
-          {t.exam.backToLibrary}
+          {fullTestBack?.label ?? t.exam.backToLibrary}
         </Text>
         <Text c="ink.3" size="sm">
           /
