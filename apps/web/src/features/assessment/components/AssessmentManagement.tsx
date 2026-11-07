@@ -528,7 +528,10 @@ export function AssessmentManagement({
                 {taskTypeLabel(preview.taskType)}
               </Badge>
               <Text fw={700}>{tx("Đề và hướng dẫn")}</Text>
-              <TaskInstructions text={preview.instructions} />
+              <TaskInstructions
+                text={preview.instructions}
+                imageUrl={preview.imageUrl}
+              />
               <Text fw={700}>{tx("Ghi chú chấm bài")}</Text>
               <Text style={{ whiteSpace: "pre-wrap" }}>
                 {preview.rubricNotes ||
