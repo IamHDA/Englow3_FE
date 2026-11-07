@@ -84,6 +84,7 @@ function renderOnboardingStep(
           pending={pending}
           errorMessage={errorMessage}
           onContinue={actions.submitCurrentLevel}
+          startingTest={actions.startingTest}
           onTakePlacementTest={actions.startPlacementTest}
           certificateLearner={state?.certificateLearner ?? false}
           onTakeLevelCheck={actions.startLevelCheck}

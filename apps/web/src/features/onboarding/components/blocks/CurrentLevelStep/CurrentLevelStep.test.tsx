@@ -51,3 +51,26 @@ it("sends an IELTS learner to the IELTS full test instead of the placement test"
   expect(fullTest).toHaveBeenCalledOnce();
   expect(placement).not.toHaveBeenCalled();
 });
+
+it("shows the full test button working while the test opens, and holds the continue button", () => {
+  render(
+    <MantineProvider>
+      <CurrentLevelStep
+        initialLevel={null}
+        pending
+        startingTest
+        errorMessage={null}
+        onContinue={vi.fn()}
+        onTakePlacementTest={vi.fn()}
+        certificateLearner
+        ieltsLearner
+        onTakeFullTest={vi.fn()}
+      />
+    </MantineProvider>,
+  );
+  const fullTest = screen.getByRole("button", { name: "Làm IELTS full test" });
+  expect(fullTest).toHaveAttribute("data-loading", "true");
+  const next = screen.getByRole("button", { name: "Tiếp tục" });
+  expect(next).toBeDisabled();
+  expect(next).not.toHaveAttribute("data-loading");
+});

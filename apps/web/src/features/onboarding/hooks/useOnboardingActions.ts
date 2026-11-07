@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { useOnboarding } from "@/features/onboarding/hooks/useOnboarding";
@@ -83,6 +83,22 @@ export function useOnboardingActions() {
   const [startLevelCheck, levelCheckState] = useStartLevelCheckMutation();
   const [createRoadmap] = useCreateRoadmapMutation();
 
+  /**
+   * Leaving onboarding for a test page. The popup stays open, its button
+   * spinning, until the next page is ready - closing it first left the learner
+   * looking at the old page with nothing happening while the route loaded.
+   * Closing inside the same transition commits it together with the new page.
+   */
+  const [navigating, startNavigation] = useTransition();
+  const leaveFor = useCallback(
+    (href: string) =>
+      startNavigation(() => {
+        router.push(href);
+        close();
+      }),
+    [router, close],
+  );
+
   const pending =
     purposesState.loading ||
     certificateState.loading ||
@@ -92,7 +108,14 @@ export function useOnboardingActions() {
     completeState.loading ||
     placementState.loading ||
     fullTestsState.loading ||
-    levelCheckState.loading;
+    levelCheckState.loading ||
+    navigating;
+  /** One of the "take a test instead" buttons is on its way. */
+  const startingTest =
+    placementState.loading ||
+    fullTestsState.loading ||
+    levelCheckState.loading ||
+    navigating;
 
   /**
    * Chạy mutation rồi ghi trạng thái mới vào hồ sơ. Lỗi được giữ lại thành lời
@@ -141,15 +164,15 @@ export function useOnboardingActions() {
         return;
       }
 
-      close();
-      router.push(`/exams/${data.placementExam.id}`);
+      leaveFor(`/exams/${data.placementExam.id}`);
     } catch (error) {
       setErrorMessage(messageForError(error, isVi));
     }
-  }, [loadPlacementExam, close, router, isVi]);
+  }, [loadPlacementExam, leaveFor, isVi]);
 
   return {
     pending,
+    startingTest,
     errorMessage,
     submitLearningPurposes: useCallback(
       (purposeIds: number[]) =>
@@ -237,12 +260,11 @@ export function useOnboardingActions() {
           await startPlacementTest();
           return;
         }
-        close();
-        router.push(`/exams/full-tests/${chosen.id}`);
+        leaveFor(`/exams/full-tests/${chosen.id}`);
       } catch (error) {
         setErrorMessage(messageForError(error, isVi));
       }
-    }, [loadFullTests, startPlacementTest, close, router, isVi]),
+    }, [loadFullTests, startPlacementTest, leaveFor, isVi]),
     submitTargetSkills: useCallback(
       (skills: LearningSkill[]) =>
         run(
@@ -272,11 +294,10 @@ export function useOnboardingActions() {
         await startLevelCheck({
           variables: { purpose: LevelCheckPurpose.ONBOARDING },
         });
-        close();
-        router.push("/study/level-check");
+        leaveFor("/study/level-check");
       } catch (error) {
         setErrorMessage(messageForError(error, isVi));
       }
-    }, [startLevelCheck, close, router, isVi]),
+    }, [startLevelCheck, leaveFor, isVi]),
   };
 }

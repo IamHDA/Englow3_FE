@@ -20,6 +20,8 @@ import type { CefrLevel } from "@/lib/graphql/generated";
 type CurrentLevelStepProps = {
   initialLevel: CefrLevel | null;
   pending: boolean;
+  /** A placement test, level check or full test is being opened. */
+  startingTest?: boolean;
   errorMessage: string | null;
   onContinue: (level: CefrLevel) => void;
   /** Mở bài kiểm tra xếp trình độ thay vì tự khai. */
@@ -46,6 +48,7 @@ type CurrentLevelStepProps = {
 export function CurrentLevelStep({
   initialLevel,
   pending,
+  startingTest = false,
   errorMessage,
   onContinue,
   onTakePlacementTest,
@@ -68,9 +71,9 @@ export function CurrentLevelStep({
       subtitle={copy.subtitle}
       footer={
         <OnboardingStepFooter
-          pending={pending}
+          pending={pending && !startingTest}
           errorMessage={errorMessage}
-          disabled={selected === null}
+          disabled={selected === null || startingTest}
           onContinue={() => selected && onContinue(selected)}
         />
       }
@@ -106,6 +109,7 @@ export function CurrentLevelStep({
                 ? onTakeLevelCheck
                 : onTakePlacementTest
           }
+          loading={startingTest}
           disabled={pending}
         >
           {fullTest
