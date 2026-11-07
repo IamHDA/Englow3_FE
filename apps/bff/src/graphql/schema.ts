@@ -9,6 +9,8 @@ import { examResolvers } from "../modules/exam/exam.resolvers.js";
 import { examTypeDefs } from "../modules/exam/exam.typeDefs.js";
 import { fullTestResolvers } from "../modules/fullTest/fullTest.resolvers.js";
 import { fullTestTypeDefs } from "../modules/fullTest/fullTest.typeDefs.js";
+import { generationResolvers } from "../modules/generation/generation.resolvers.js";
+import { generationTypeDefs } from "../modules/generation/generation.typeDefs.js";
 import { flashcardResolvers } from "../modules/flashcard/flashcard.resolvers.js";
 import { flashcardTypeDefs } from "../modules/flashcard/flashcard.typeDefs.js";
 import { progressResolvers } from "../modules/progress/progress.resolvers.js";
@@ -48,6 +50,7 @@ export const typeDefs = [
   onboardingTypeDefs,
   examTypeDefs,
   fullTestTypeDefs,
+  generationTypeDefs,
   flashcardTypeDefs,
   quizTypeDefs,
   dictationTypeDefs,
@@ -69,6 +72,7 @@ export const resolvers = {
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
     ...fullTestResolvers.Query,
+    ...generationResolvers.Query,
     ...flashcardResolvers.Query,
     ...quizResolvers.Query,
     ...dictationResolvers.Query,
@@ -85,6 +89,7 @@ export const resolvers = {
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
     ...fullTestResolvers.Mutation,
+    ...generationResolvers.Mutation,
     ...flashcardResolvers.Mutation,
     ...quizResolvers.Mutation,
     ...dictationResolvers.Mutation,

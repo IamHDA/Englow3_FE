@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   LogOut,
   Scale,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -75,6 +76,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
       href: "/admin/exams",
       label: isVi ? "Đề thi" : "Exams",
       icon: ClipboardList,
+    },
+    {
+      href: "/admin/generation",
+      label: isVi ? "Tạo đề bằng AI" : "Generate with AI",
+      icon: Sparkles,
     },
     {
       href: "/admin/full-tests",

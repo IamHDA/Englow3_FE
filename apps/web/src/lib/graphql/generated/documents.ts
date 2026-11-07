@@ -3459,6 +3459,92 @@ export type PlacementFullTestsQuery = {
   }>;
 };
 
+export type GenerationRequestFieldsFragment = {
+  id: string;
+  kind: Types.GenerationKind;
+  status: Types.GenerationStatus;
+  step: string | null;
+  stepIndex: number;
+  stepsTotal: number;
+  attempt: number;
+  brief: string | null;
+  requestedByName: string | null;
+  title: string | null;
+  examId: string | null;
+  taskIds: Array<string>;
+  fullTestId: string | null;
+  failureCode: string | null;
+  failureMessage: string | null;
+  lastProblems: Array<string>;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export type AdminGenerationQueryVariables = Exact<{
+  page?: number | null | undefined;
+}>;
+
+export type AdminGenerationQuery = {
+  generationRequests: {
+    page: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      kind: Types.GenerationKind;
+      status: Types.GenerationStatus;
+      step: string | null;
+      stepIndex: number;
+      stepsTotal: number;
+      attempt: number;
+      brief: string | null;
+      requestedByName: string | null;
+      title: string | null;
+      examId: string | null;
+      taskIds: Array<string>;
+      fullTestId: string | null;
+      failureCode: string | null;
+      failureMessage: string | null;
+      lastProblems: Array<string>;
+      createdAt: string;
+      completedAt: string | null;
+    }>;
+  };
+  generationAllowance: {
+    limit: number;
+    used: number;
+    remaining: number;
+    inProgress: boolean;
+  };
+};
+
+export type RequestGenerationMutationVariables = Exact<{
+  kind: Types.GenerationKind;
+  brief?: string | null | undefined;
+}>;
+
+export type RequestGenerationMutation = {
+  requestGeneration: {
+    id: string;
+    kind: Types.GenerationKind;
+    status: Types.GenerationStatus;
+    step: string | null;
+    stepIndex: number;
+    stepsTotal: number;
+    attempt: number;
+    brief: string | null;
+    requestedByName: string | null;
+    title: string | null;
+    examId: string | null;
+    taskIds: Array<string>;
+    fullTestId: string | null;
+    failureCode: string | null;
+    failureMessage: string | null;
+    lastProblems: Array<string>;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -5360,6 +5446,42 @@ export const FullTestSittingFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<FullTestSittingFieldsFragment, unknown>;
+export const GenerationRequestFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "GenerationRequestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "GenerationRequest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "step" } },
+          { kind: "Field", name: { kind: "Name", value: "stepIndex" } },
+          { kind: "Field", name: { kind: "Name", value: "stepsTotal" } },
+          { kind: "Field", name: { kind: "Name", value: "attempt" } },
+          { kind: "Field", name: { kind: "Name", value: "brief" } },
+          { kind: "Field", name: { kind: "Name", value: "requestedByName" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "taskIds" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
+          { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GenerationRequestFieldsFragment, unknown>;
 export const OnboardingStateFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -18216,6 +18338,218 @@ export const PlacementFullTestsDocument = {
 } as unknown as DocumentNode<
   PlacementFullTestsQuery,
   PlacementFullTestsQueryVariables
+>;
+export const AdminGenerationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AdminGeneration" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "generationRequests" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "20" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: {
+                          kind: "Name",
+                          value: "GenerationRequestFields",
+                        },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "generationAllowance" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "limit" } },
+                { kind: "Field", name: { kind: "Name", value: "used" } },
+                { kind: "Field", name: { kind: "Name", value: "remaining" } },
+                { kind: "Field", name: { kind: "Name", value: "inProgress" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "GenerationRequestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "GenerationRequest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "step" } },
+          { kind: "Field", name: { kind: "Name", value: "stepIndex" } },
+          { kind: "Field", name: { kind: "Name", value: "stepsTotal" } },
+          { kind: "Field", name: { kind: "Name", value: "attempt" } },
+          { kind: "Field", name: { kind: "Name", value: "brief" } },
+          { kind: "Field", name: { kind: "Name", value: "requestedByName" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "taskIds" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
+          { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AdminGenerationQuery,
+  AdminGenerationQueryVariables
+>;
+export const RequestGenerationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RequestGeneration" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "kind" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "GenerationKind" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "brief" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "requestGeneration" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "kind" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "kind" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "brief" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "brief" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "GenerationRequestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "GenerationRequestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "GenerationRequest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "step" } },
+          { kind: "Field", name: { kind: "Name", value: "stepIndex" } },
+          { kind: "Field", name: { kind: "Name", value: "stepsTotal" } },
+          { kind: "Field", name: { kind: "Name", value: "attempt" } },
+          { kind: "Field", name: { kind: "Name", value: "brief" } },
+          { kind: "Field", name: { kind: "Name", value: "requestedByName" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "taskIds" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
+          { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RequestGenerationMutation,
+  RequestGenerationMutationVariables
 >;
 export const LearningPurposesDocument = {
   kind: "Document",

@@ -1,0 +1,42 @@
+fragment GenerationRequestFields on GenerationRequest {
+  id
+  kind
+  status
+  step
+  stepIndex
+  stepsTotal
+  attempt
+  brief
+  requestedByName
+  title
+  examId
+  taskIds
+  fullTestId
+  failureCode
+  failureMessage
+  lastProblems
+  createdAt
+  completedAt
+}
+
+query AdminGeneration($page: Int) {
+  generationRequests(page: $page, size: 20) {
+    items {
+      ...GenerationRequestFields
+    }
+    page
+    totalPages
+  }
+  generationAllowance {
+    limit
+    used
+    remaining
+    inProgress
+  }
+}
+
+mutation RequestGeneration($kind: GenerationKind!, $brief: String) {
+  requestGeneration(kind: $kind, brief: $brief) {
+    ...GenerationRequestFields
+  }
+}

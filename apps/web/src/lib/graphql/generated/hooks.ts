@@ -3462,6 +3462,92 @@ export type PlacementFullTestsQuery = {
   }>;
 };
 
+export type GenerationRequestFieldsFragment = {
+  id: string;
+  kind: Types.GenerationKind;
+  status: Types.GenerationStatus;
+  step: string | null;
+  stepIndex: number;
+  stepsTotal: number;
+  attempt: number;
+  brief: string | null;
+  requestedByName: string | null;
+  title: string | null;
+  examId: string | null;
+  taskIds: Array<string>;
+  fullTestId: string | null;
+  failureCode: string | null;
+  failureMessage: string | null;
+  lastProblems: Array<string>;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export type AdminGenerationQueryVariables = Exact<{
+  page?: number | null | undefined;
+}>;
+
+export type AdminGenerationQuery = {
+  generationRequests: {
+    page: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      kind: Types.GenerationKind;
+      status: Types.GenerationStatus;
+      step: string | null;
+      stepIndex: number;
+      stepsTotal: number;
+      attempt: number;
+      brief: string | null;
+      requestedByName: string | null;
+      title: string | null;
+      examId: string | null;
+      taskIds: Array<string>;
+      fullTestId: string | null;
+      failureCode: string | null;
+      failureMessage: string | null;
+      lastProblems: Array<string>;
+      createdAt: string;
+      completedAt: string | null;
+    }>;
+  };
+  generationAllowance: {
+    limit: number;
+    used: number;
+    remaining: number;
+    inProgress: boolean;
+  };
+};
+
+export type RequestGenerationMutationVariables = Exact<{
+  kind: Types.GenerationKind;
+  brief?: string | null | undefined;
+}>;
+
+export type RequestGenerationMutation = {
+  requestGeneration: {
+    id: string;
+    kind: Types.GenerationKind;
+    status: Types.GenerationStatus;
+    step: string | null;
+    stepIndex: number;
+    stepsTotal: number;
+    attempt: number;
+    brief: string | null;
+    requestedByName: string | null;
+    title: string | null;
+    examId: string | null;
+    taskIds: Array<string>;
+    fullTestId: string | null;
+    failureCode: string | null;
+    failureMessage: string | null;
+    lastProblems: Array<string>;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
 export type LearningPurposesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type LearningPurposesQuery = {
@@ -4920,6 +5006,28 @@ export const FullTestSittingFieldsFragmentDoc = gql`
     speakingBand
     provisionalBand
     overallBand
+  }
+`;
+export const GenerationRequestFieldsFragmentDoc = gql`
+  fragment GenerationRequestFields on GenerationRequest {
+    id
+    kind
+    status
+    step
+    stepIndex
+    stepsTotal
+    attempt
+    brief
+    requestedByName
+    title
+    examId
+    taskIds
+    fullTestId
+    failureCode
+    failureMessage
+    lastProblems
+    createdAt
+    completedAt
   }
 `;
 export const OnboardingStateFieldsFragmentDoc = gql`
@@ -14501,6 +14609,171 @@ export type PlacementFullTestsQueryResult = ApolloReactCommon.QueryResult<
   PlacementFullTestsQuery,
   PlacementFullTestsQueryVariables
 >;
+export const AdminGenerationDocument = gql`
+  query AdminGeneration($page: Int) {
+    generationRequests(page: $page, size: 20) {
+      items {
+        ...GenerationRequestFields
+      }
+      page
+      totalPages
+    }
+    generationAllowance {
+      limit
+      used
+      remaining
+      inProgress
+    }
+  }
+  ${GenerationRequestFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminGenerationQuery__
+ *
+ * To run a query within a React component, call `useAdminGenerationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminGenerationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminGenerationQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useAdminGenerationQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminGenerationQuery,
+    AdminGenerationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminGenerationQuery,
+    AdminGenerationQueryVariables
+  >(AdminGenerationDocument, options);
+}
+export function useAdminGenerationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminGenerationQuery,
+    AdminGenerationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminGenerationQuery,
+    AdminGenerationQueryVariables
+  >(AdminGenerationDocument, options);
+}
+export function useAdminGenerationSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminGenerationQuery,
+    AdminGenerationQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminGenerationQuery,
+  AdminGenerationQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminGenerationSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminGenerationQuery,
+        AdminGenerationQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminGenerationQuery | undefined,
+  AdminGenerationQueryVariables
+>;
+export function useAdminGenerationSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminGenerationQuery,
+        AdminGenerationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminGenerationQuery,
+    AdminGenerationQueryVariables
+  >(AdminGenerationDocument, options as any);
+}
+export type AdminGenerationQueryHookResult = ReturnType<
+  typeof useAdminGenerationQuery
+>;
+export type AdminGenerationLazyQueryHookResult = ReturnType<
+  typeof useAdminGenerationLazyQuery
+>;
+export type AdminGenerationSuspenseQueryHookResult = ReturnType<
+  typeof useAdminGenerationSuspenseQuery
+>;
+export type AdminGenerationQueryResult = ApolloReactCommon.QueryResult<
+  AdminGenerationQuery,
+  AdminGenerationQueryVariables
+>;
+export const RequestGenerationDocument = gql`
+  mutation RequestGeneration($kind: GenerationKind!, $brief: String) {
+    requestGeneration(kind: $kind, brief: $brief) {
+      ...GenerationRequestFields
+    }
+  }
+  ${GenerationRequestFieldsFragmentDoc}
+`;
+export type RequestGenerationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RequestGenerationMutation,
+    RequestGenerationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRequestGenerationMutation__
+ *
+ * To run a mutation, you first call `useRequestGenerationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestGenerationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestGenerationMutation, { data, loading, error }] = useRequestGenerationMutation({
+ *   variables: {
+ *      kind: // value for 'kind'
+ *      brief: // value for 'brief'
+ *   },
+ * });
+ */
+export function useRequestGenerationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RequestGenerationMutation,
+    RequestGenerationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RequestGenerationMutation,
+    RequestGenerationMutationVariables
+  >(RequestGenerationDocument, options);
+}
+export type RequestGenerationMutationHookResult = ReturnType<
+  typeof useRequestGenerationMutation
+>;
+export type RequestGenerationMutationResult =
+  ApolloReactCommon.MutationResult<RequestGenerationMutation>;
+export type RequestGenerationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RequestGenerationMutation,
+    RequestGenerationMutationVariables
+  >;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
     learningPurposes {

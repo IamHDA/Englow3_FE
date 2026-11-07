@@ -1085,6 +1085,66 @@ export type Gender =
   | 'MALE'
   | 'OTHER';
 
+/** Today's requests for the signed-in user; a failed request does not count. */
+export type GenerationAllowance = {
+  __typename?: 'GenerationAllowance';
+  inProgress: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  remaining: Scalars['Int']['output'];
+  used: Scalars['Int']['output'];
+};
+
+export type GenerationKind =
+  /** A Listening + Reading paper, five Writing and Speaking tasks, a draft full test. */
+  | 'IELTS_FULL_TEST';
+
+/**
+ * One press of "generate". The backend runs it step by step - plan, Listening
+ * parts, Reading passages, Writing, Speaking, assemble, chart, recordings,
+ * finish - and a screen follows it by asking again.
+ */
+export type GenerationRequest = {
+  __typename?: 'GenerationRequest';
+  /** Attempts already spent on the current step (at most 3). */
+  attempt: Scalars['Int']['output'];
+  brief?: Maybe<Scalars['String']['output']>;
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  examId?: Maybe<Scalars['ID']['output']>;
+  failureCode?: Maybe<Scalars['String']['output']>;
+  failureMessage?: Maybe<Scalars['String']['output']>;
+  fullTestId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  kind: GenerationKind;
+  /** What the model got wrong on its last attempt at the current step. */
+  lastProblems: Array<Scalars['String']['output']>;
+  requestedByName?: Maybe<Scalars['String']['output']>;
+  status: GenerationStatus;
+  /** The step running, or where the request stopped. */
+  step?: Maybe<Scalars['String']['output']>;
+  stepIndex: Scalars['Int']['output'];
+  stepsTotal: Scalars['Int']['output'];
+  taskIds: Array<Scalars['ID']['output']>;
+  /** The set's title once the plan is written. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type GenerationRequestPage = {
+  __typename?: 'GenerationRequestPage';
+  items: Array<GenerationRequest>;
+  page: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type GenerationStatus =
+  /** The drafts are waiting for review. */
+  | 'COMPLETED'
+  /** Stopped at a step; failureCode and failureMessage say why. */
+  | 'FAILED'
+  | 'QUEUED'
+  | 'RUNNING';
+
 export type LearnerAttemptStatus =
   | 'COMPLETED'
   | 'IN_PROGRESS'
@@ -1382,6 +1442,12 @@ export type Mutation = {
   /** Reports an answer as wrong or inappropriate. The note is optional. */
   reportTutorMessage: TutorMessage;
   requestAssessmentReview: AssessmentAttempt;
+  /**
+   * Starts a request for the signed-in staff member or administrator. Refused
+   * with extensions.backendCode GENERATION_DAILY_LIMIT or
+   * GENERATION_IN_PROGRESS.
+   */
+  requestGeneration: GenerationRequest;
   /**
    * ARCHIVED -> back where it was: PUBLISHED if it had been published (it is
    * never edited, so it needs no second review), DRAFT otherwise.
@@ -1707,6 +1773,12 @@ export type MutationReportTutorMessageArgs = {
 
 export type MutationRequestAssessmentReviewArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationRequestGenerationArgs = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  kind: GenerationKind;
 };
 
 
@@ -2092,6 +2164,9 @@ export type Query = {
   fullTestSitting: FullTestSitting;
   /** Published full tests, newest first. */
   fullTests: Array<FullTest>;
+  generationAllowance: GenerationAllowance;
+  generationRequest: GenerationRequest;
+  generationRequests: GenerationRequestPage;
   health: Scalars['String']['output'];
   /** The learner's most recent level check, or null. */
   latestLevelCheck?: Maybe<LevelCheck>;
@@ -2339,6 +2414,17 @@ export type QueryFlashcardStudyQueueArgs = {
 
 export type QueryFullTestSittingArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryGenerationRequestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryGenerationRequestsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -3482,6 +3568,11 @@ export type ResolversTypes = ResolversObject<{
   FullTestSittingStatus: FullTestSittingStatus;
   FullTestSlot: FullTestSlot;
   Gender: Gender;
+  GenerationAllowance: ResolverTypeWrapper<GenerationAllowance>;
+  GenerationKind: GenerationKind;
+  GenerationRequest: ResolverTypeWrapper<GenerationRequest>;
+  GenerationRequestPage: ResolverTypeWrapper<GenerationRequestPage>;
+  GenerationStatus: GenerationStatus;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   LearnerAttemptStatus: LearnerAttemptStatus;
@@ -3655,6 +3746,9 @@ export type ResolversParentTypes = ResolversObject<{
   FullTest: FullTest;
   FullTestPart: FullTestPart;
   FullTestSitting: FullTestSitting;
+  GenerationAllowance: GenerationAllowance;
+  GenerationRequest: GenerationRequest;
+  GenerationRequestPage: GenerationRequestPage;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   LearnerExamItem: LearnerExamItem;
@@ -4377,6 +4471,41 @@ export type FullTestSittingResolvers<ContextType = GraphQLContext, ParentType ex
   writingBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
 }>;
 
+export type GenerationAllowanceResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['GenerationAllowance'] = ResolversParentTypes['GenerationAllowance']> = ResolversObject<{
+  inProgress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  limit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  remaining?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  used?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type GenerationRequestResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['GenerationRequest'] = ResolversParentTypes['GenerationRequest']> = ResolversObject<{
+  attempt?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  brief?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  completedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  examId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  failureCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  failureMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  fullTestId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  kind?: Resolver<ResolversTypes['GenerationKind'], ParentType, ContextType>;
+  lastProblems?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  requestedByName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['GenerationStatus'], ParentType, ContextType>;
+  step?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  stepsTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  taskIds?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
+export type GenerationRequestPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['GenerationRequestPage'] = ResolversParentTypes['GenerationRequestPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['GenerationRequest']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
 export type LearnerExamItemResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LearnerExamItem'] = ResolversParentTypes['LearnerExamItem']> = ResolversObject<{
   attemptStatus?: Resolver<ResolversTypes['LearnerAttemptStatus'], ParentType, ContextType>;
   bestScorePercentage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -4515,6 +4644,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   renameTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationRenameTutorConversationArgs, 'id' | 'title'>>;
   reportTutorMessage?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationReportTutorMessageArgs, 'conversationId' | 'messageId'>>;
   requestAssessmentReview?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationRequestAssessmentReviewArgs, 'id'>>;
+  requestGeneration?: Resolver<ResolversTypes['GenerationRequest'], ParentType, ContextType, RequireFields<MutationRequestGenerationArgs, 'kind'>>;
   restoreContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationRestoreContentArgs, 'id' | 'kind'>>;
   restoreExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationRestoreExamArgs, 'id'>>;
   restoreTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationRestoreTutorConversationArgs, 'id'>>;
@@ -4617,6 +4747,9 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   flashcardStudyQueue?: Resolver<Array<ResolversTypes['Flashcard']>, ParentType, ContextType, RequireFields<QueryFlashcardStudyQueueArgs, 'limit' | 'setId'>>;
   fullTestSitting?: Resolver<ResolversTypes['FullTestSitting'], ParentType, ContextType, RequireFields<QueryFullTestSittingArgs, 'id'>>;
   fullTests?: Resolver<Array<ResolversTypes['FullTest']>, ParentType, ContextType>;
+  generationAllowance?: Resolver<ResolversTypes['GenerationAllowance'], ParentType, ContextType>;
+  generationRequest?: Resolver<ResolversTypes['GenerationRequest'], ParentType, ContextType, RequireFields<QueryGenerationRequestArgs, 'id'>>;
+  generationRequests?: Resolver<ResolversTypes['GenerationRequestPage'], ParentType, ContextType, RequireFields<QueryGenerationRequestsArgs, 'page' | 'size'>>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   latestLevelCheck?: Resolver<Maybe<ResolversTypes['LevelCheck']>, ParentType, ContextType>;
   learningPurposes?: Resolver<Array<ResolversTypes['LearningPurpose']>, ParentType, ContextType>;
@@ -5227,6 +5360,9 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   FullTest?: FullTestResolvers<ContextType>;
   FullTestPart?: FullTestPartResolvers<ContextType>;
   FullTestSitting?: FullTestSittingResolvers<ContextType>;
+  GenerationAllowance?: GenerationAllowanceResolvers<ContextType>;
+  GenerationRequest?: GenerationRequestResolvers<ContextType>;
+  GenerationRequestPage?: GenerationRequestPageResolvers<ContextType>;
   LearnerExamItem?: LearnerExamItemResolvers<ContextType>;
   LearnerExamPage?: LearnerExamPageResolvers<ContextType>;
   LearningPurpose?: LearningPurposeResolvers<ContextType>;
