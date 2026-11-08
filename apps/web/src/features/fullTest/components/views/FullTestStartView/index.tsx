@@ -22,7 +22,10 @@ import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { backendCodeOf } from "@/shared/network/loadError";
-import { IELTS_ONLY_CODE } from "../../../constants/fullTest";
+import {
+  IELTS_ONLY_CODE,
+  FULL_TEST_ERROR_COPY,
+} from "../../../constants/fullTest";
 import { FullTestLibrarySkeleton } from "../../blocks/FullTestLibrarySkeleton";
 
 /**
@@ -65,16 +68,21 @@ export function FullTestStartView({ fullTestId }: { fullTestId: string }) {
       const sitting = response.data?.startFullTest;
       if (sitting) router.push(`/exams/full-tests/sittings/${sitting.id}`);
     } catch (failure) {
+      const copy = FULL_TEST_ERROR_COPY[backendCodeOf(failure) ?? ""];
       setRefusal(
         backendCodeOf(failure) === IELTS_ONLY_CODE
           ? tr(
               "Full test dành cho người đang luyện thi IELTS. Hãy chọn mục tiêu IELTS trong hồ sơ trước.",
               "The full test is for learners preparing for IELTS. Choose an IELTS goal in your profile first.",
             )
-          : tr(
-              "Chưa bắt đầu được. Kiểm tra kết nối rồi thử lại.",
-              "Could not start. Check your connection and try again.",
-            ),
+          : copy
+            ? isVi
+              ? copy.vi
+              : copy.en
+            : tr(
+                "Chưa bắt đầu được. Kiểm tra kết nối rồi thử lại.",
+                "Could not start. Check your connection and try again.",
+              ),
       );
     }
   };

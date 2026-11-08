@@ -26,7 +26,18 @@ import { useAssessmentRecorder } from "../hooks/useAssessmentRecorder";
 import { taskTypeLabel, type PracticeTask } from "../types";
 import { MicrophoneCheck } from "./MicrophoneCheck";
 import { TaskInstructions } from "./TaskInstructions";
-export function AssessmentTaskView({ id }: { id: string }) {
+import {
+  fullTestSittingPath,
+  withFullTestSitting,
+} from "@/shared/constants/fullTestNavigation";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+export function AssessmentTaskView({
+  id,
+  fullTestSittingId,
+}: {
+  id: string;
+  fullTestSittingId?: string | null;
+}) {
   const tx = useAssessmentText();
   const { session } = useAuth();
   const query = useAssessmentTaskDetailQuery({ variables: { id } });
@@ -51,6 +62,7 @@ export function AssessmentTaskView({ id }: { id: string }) {
     <TaskWorkbench
       key={`${id}:${session?.userId}`}
       task={query.data.assessmentTask}
+      fullTestSittingId={fullTestSittingId}
       automatic={
         query.data.assessmentTask.skill === "WRITING"
           ? query.data.assessmentCapabilities.automaticWriting
@@ -62,11 +74,14 @@ export function AssessmentTaskView({ id }: { id: string }) {
 function TaskWorkbench({
   task,
   automatic,
+  fullTestSittingId,
 }: {
   task: PracticeTask;
   automatic: boolean;
+  fullTestSittingId?: string | null;
 }) {
   const tx = useAssessmentText();
+  const { isVi } = useLanguage();
   const router = useRouter();
   const { session } = useAuth();
   const [start] = useAssessmentStartMutation();
@@ -162,7 +177,12 @@ function TaskWorkbench({
       }
       submitted.current = true;
       await audio.clear();
-      router.push(`/study/assessments/attempts/${ticket.attempt.id}`);
+      router.push(
+        withFullTestSitting(
+          `/study/assessments/attempts/${ticket.attempt.id}`,
+          fullTestSittingId,
+        ),
+      );
     } catch {
       setError(
         task.skill === "SPEAKING"
@@ -181,11 +201,19 @@ function TaskWorkbench({
       <Stack gap="lg">
         <Button
           component={Link}
-          href={`/study/${task.skill === "WRITING" ? "writing" : "speaking"}`}
+          href={
+            fullTestSittingId
+              ? fullTestSittingPath(fullTestSittingId)
+              : `/study/${task.skill === "WRITING" ? "writing" : "speaking"}`
+          }
           variant="subtle"
           w="fit-content"
         >
-          {tx("← Danh sách đề")}
+          {fullTestSittingId
+            ? isVi
+              ? "← Quay lại full test"
+              : "← Back to full test"
+            : tx("← Danh sách đề")}
         </Button>
         <Title order={1}>{task.title}</Title>
         <Group>

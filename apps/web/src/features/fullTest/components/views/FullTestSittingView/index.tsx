@@ -13,6 +13,7 @@ import { paperForFullTestPath } from "@/features/exam";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { withFullTestSitting } from "@/shared/constants/fullTestNavigation";
 import {
   attemptPath,
   GRADING_COPY,
@@ -79,7 +80,10 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
       key: part.slot,
       title: isVi ? SLOT_COPY[part.slot].vi : SLOT_COPY[part.slot].en,
       done: Boolean(part.attemptId),
-      href: `${SLOT_COPY[part.slot].path}/${part.taskId}`,
+      href: withFullTestSitting(
+        `${SLOT_COPY[part.slot].path}/${part.taskId}`,
+        sitting.id,
+      ),
       grading: part.grading ?? null,
       attemptId: part.attemptId ?? null,
     })),
@@ -128,8 +132,8 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
           <Alert color="gray" variant="light">
             {allHandedIn
               ? tr(
-                  "Đã hết hạn chấm mà vẫn còn phần chưa có điểm. Band tạm vẫn được giữ; muốn có band tổng, hãy làm một lượt mới.",
-                  "Grading closed with a part still ungraded. The provisional band stays; start a new sitting for an overall band.",
+                  "Có phần chưa được chấm đúng hạn. Band tạm vẫn được giữ; muốn có band tổng, hãy làm một lượt mới.",
+                  "At least one part was not graded before the deadline. The provisional band stays; start a new sitting for an overall band.",
                 )
               : tr(
                   "Đã quá 7 ngày mà chưa nộp đủ các phần. Band tạm vẫn được giữ; muốn có band tổng, hãy làm một lượt mới.",
@@ -190,7 +194,10 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
                   part.grading === FullTestPartGrading.FAILED && (
                     <Button
                       component={Link}
-                      href={attemptPath(part.attemptId)}
+                      href={withFullTestSitting(
+                        attemptPath(part.attemptId),
+                        sitting.id,
+                      )}
                       variant="light"
                       color="red"
                     >

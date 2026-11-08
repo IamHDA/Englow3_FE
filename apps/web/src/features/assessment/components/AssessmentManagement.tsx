@@ -37,6 +37,7 @@ import {
   useAssessmentTransitionTaskMutation,
 } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
+import { backendCodeOf } from "@/shared/network/loadError";
 import {
   skillLabel,
   statusLabels,
@@ -142,11 +143,15 @@ export function AssessmentManagement({
           ),
         );
       });
-    } catch {
+    } catch (failure) {
       setError(
-        tx(
-          "Thao tác chưa thành công. Kiểm tra trạng thái đề và quyền truy cập, rồi thử lại.",
-        ),
+        backendCodeOf(failure) === "FULL_TEST_COMPONENT_IN_USE"
+          ? isVi
+            ? "Đề đang thuộc full test chờ duyệt, đã phát hành hoặc còn người đang thi. Lưu trữ full test và chờ các lượt thi kết thúc trước."
+            : "This task belongs to a full test in review, published or still being taken. Archive the full test and wait for its open sittings to finish first."
+          : tx(
+              "Thao tác chưa thành công. Kiểm tra trạng thái đề và quyền truy cập, rồi thử lại.",
+            ),
       );
     } finally {
       lock.current = false;

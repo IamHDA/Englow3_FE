@@ -38,6 +38,10 @@ export const ADMIN_EXAMS_PAGE_SIZE = 20;
  * dịch sang lời đọc được thay vì hiện thông báo gốc của server.
  */
 export const ADMIN_EXAM_ERROR_MESSAGES: Record<string, Words> = {
+  FULL_TEST_COMPONENT_IN_USE: {
+    vi: "Đề đang thuộc full test chờ duyệt, đã phát hành hoặc còn người đang thi. Lưu trữ full test và chờ các lượt thi kết thúc trước.",
+    en: "This paper belongs to a full test in review, published or still being taken. Archive that full test and wait for its open sittings to finish first.",
+  },
   EXAM_NOT_DRAFT: {
     vi: "Chỉ phát hành được đề đang ở trạng thái bản nháp.",
     en: "Only a draft exam can be published.",

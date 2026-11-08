@@ -29,12 +29,22 @@ import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentResultRead } from "./AssessmentResultRead";
 import { statusLabels, wordCount, type PracticeAttempt } from "../types";
 import { TaskInstructions } from "./TaskInstructions";
+import {
+  fullTestSittingPath,
+  withFullTestSitting,
+} from "@/shared/constants/fullTestNavigation";
 /**
  * Chiều cao còn lại dưới thanh đầu trang (cao 77px, dính trên cùng) để kết quả
  * chấm vừa trọn một khung màn hình thay vì kéo dài trang.
  */
 const RESULT_FRAME_HEIGHT = "calc(100dvh - 77px)";
-export function AssessmentAttemptView({ id }: { id: string }) {
+export function AssessmentAttemptView({
+  id,
+  fullTestSittingId,
+}: {
+  id: string;
+  fullTestSittingId?: string | null;
+}) {
   const tx = useAssessmentText();
   const query = useAssessmentAttemptDetailQuery({
     variables: { id },
@@ -89,6 +99,7 @@ export function AssessmentAttemptView({ id }: { id: string }) {
     <AttemptContent
       key={id}
       attempt={query.data.assessmentAttempt}
+      fullTestSittingId={fullTestSittingId}
       refresh={() => refetch()}
     />
   );
@@ -96,9 +107,11 @@ export function AssessmentAttemptView({ id }: { id: string }) {
 function AttemptContent({
   attempt,
   refresh,
+  fullTestSittingId,
 }: {
   attempt: PracticeAttempt;
   refresh: () => Promise<unknown>;
+  fullTestSittingId?: string | null;
 }) {
   const tx = useAssessmentText();
   const { isVi } = useLanguage();
@@ -152,11 +165,19 @@ function AttemptContent({
         <Group justify="space-between">
           <Button
             component={Link}
-            href={`/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}`}
+            href={
+              fullTestSittingId
+                ? fullTestSittingPath(fullTestSittingId)
+                : `/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}`
+            }
             variant="subtle"
             size={completed ? "compact-md" : "sm"}
           >
-            {tx("← Lịch sử và đề luyện")}
+            {fullTestSittingId
+              ? isVi
+                ? "← Quay lại full test"
+                : "← Back to full test"
+              : tx("← Lịch sử và đề luyện")}
           </Button>
           <Badge>{tx(statusLabels[attempt.status])}</Badge>
         </Group>
@@ -263,7 +284,10 @@ function AttemptContent({
                     </Button>
                     <Button
                       component={Link}
-                      href={`/study/speaking/${attempt.taskId}`}
+                      href={withFullTestSitting(
+                        `/study/speaking/${attempt.taskId}`,
+                        fullTestSittingId,
+                      )}
                       variant="light"
                     >
                       {tx("Ghi một bài mới")}
@@ -291,10 +315,18 @@ function AttemptContent({
                   />
                   <Button
                     component={Link}
-                    href={`/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}/${attempt.taskId}`}
+                    href={
+                      fullTestSittingId
+                        ? fullTestSittingPath(fullTestSittingId)
+                        : `/study/${attempt.skill === "WRITING" ? "writing" : "speaking"}/${attempt.taskId}`
+                    }
                     variant="light"
                   >
-                    {tx("Luyện thêm một lần")}
+                    {fullTestSittingId
+                      ? isVi
+                        ? "Tiếp tục full test"
+                        : "Continue full test"
+                      : tx("Luyện thêm một lần")}
                   </Button>
                 </Group>
               </>

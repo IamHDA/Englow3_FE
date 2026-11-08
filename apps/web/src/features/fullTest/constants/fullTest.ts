@@ -110,6 +110,10 @@ export const SLOT_TASKS = [
 
 /** Why the backend refuses to send a full test for review, in the author's words. */
 export const FULL_TEST_ERROR_COPY: Record<string, Copy> = {
+  FULL_TEST_PAPER_NOT_BANDABLE: {
+    vi: "Đề cần đủ 40 điểm mỗi kỹ năng Listening/Reading và bảng quy đổi band tương ứng. Hãy kiểm tra lại đề trước khi gửi duyệt.",
+    en: "The paper needs 40 marks in each skill and a matching IELTS band conversion. Check it before submitting.",
+  },
   FULL_TEST_PAPER_INVALID: {
     vi: "Đề Listening + Reading phải là đề thi thử IELTS đã phát hành, cùng loại Academic/General và có cả hai phần.",
     en: "The Listening + Reading paper must be a published IELTS mock of the same variant, with both sections.",
