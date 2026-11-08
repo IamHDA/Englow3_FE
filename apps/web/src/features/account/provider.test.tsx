@@ -113,7 +113,9 @@ describe("AccountProvider", () => {
     mocks.load.mockRejectedValueOnce(new Error("Backend unavailable"));
     render(tree());
     await screen.findByText("failed");
-    expect(mocks.notify).toHaveBeenCalledTimes(1);
+    // Rendering the error and running the notification effect are separate
+    // React phases; a busy CI runner may expose the error before the effect.
+    await waitFor(() => expect(mocks.notify).toHaveBeenCalledTimes(1));
 
     mocks.load.mockResolvedValueOnce({ data: { me: { id: "profile-id" } } });
     await act(async () => screen.getByText("Retry").click());
