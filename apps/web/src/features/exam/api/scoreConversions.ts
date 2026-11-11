@@ -16,7 +16,12 @@ export class ScoreConfigurationError extends Error {
 const url = "/api/bff/rest/admin/exam-score-conversions/toeic";
 export async function scoreConversions(signal: AbortSignal) {
   return read(
-    await fetch(url, { signal, cache: "no-store", credentials: "same-origin" }),
+    await fetch(url, {
+      headers: { [CSRF_HEADER]: CSRF_VALUE },
+      signal,
+      cache: "no-store",
+      credentials: "same-origin",
+    }),
   );
 }
 export async function publishScoreConversions(

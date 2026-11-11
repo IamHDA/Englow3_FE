@@ -44,6 +44,7 @@ export async function searchUsers(
   if (role) query.set("role", role);
   return read<UserPage>(
     await fetch(`${base}?${query}`, {
+      headers: { [CSRF_HEADER]: CSRF_VALUE },
       signal,
       cache: "no-store",
       credentials: "same-origin",
@@ -71,6 +72,7 @@ export async function changeUserRole(
 export async function roleHistory(id: string, signal: AbortSignal) {
   return read<RoleChange[]>(
     await fetch(`${base}/${encodeURIComponent(id)}/role-history`, {
+      headers: { [CSRF_HEADER]: CSRF_VALUE },
       signal,
       cache: "no-store",
       credentials: "same-origin",
