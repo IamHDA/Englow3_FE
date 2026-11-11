@@ -2563,6 +2563,38 @@ export type ExamAttemptFieldsFragment = {
   }>;
 };
 
+export type StartFullTestPaperMutationVariables = Exact<{
+  sittingId: string | number;
+  onOpen?: Types.OpenAttemptChoice | null | undefined;
+}>;
+
+export type StartFullTestPaperMutation = {
+  startFullTestPaper: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number;
+    scorePercentage: number | null;
+    convertedScore: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+    examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
+    }>;
+  };
+};
+
 export type ActiveExamAttemptQueryVariables = Exact<{
   examId: string | number;
   mode: Types.ExamAttemptMode;
@@ -3412,6 +3444,8 @@ export type FullTestSittingFieldsFragment = {
   speakingBand: number | null;
   provisionalBand: number | null;
   overallBand: number | null;
+  bandRevision: number;
+  revisedAt: string | null;
   parts: Array<{
     slot: Types.FullTestSlot;
     taskId: string;
@@ -3420,7 +3454,9 @@ export type FullTestSittingFieldsFragment = {
   }>;
 };
 
-export type FullTestLibraryQueryVariables = Exact<{ [key: string]: never }>;
+export type FullTestLibraryQueryVariables = Exact<{
+  page?: number | null | undefined;
+}>;
 
 export type FullTestLibraryQuery = {
   fullTests: Array<{
@@ -3446,6 +3482,8 @@ export type FullTestLibraryQuery = {
     speakingBand: number | null;
     provisionalBand: number | null;
     overallBand: number | null;
+    bandRevision: number;
+    revisedAt: string | null;
     parts: Array<{
       slot: Types.FullTestSlot;
       taskId: string;
@@ -3453,6 +3491,18 @@ export type FullTestLibraryQuery = {
       grading: Types.FullTestPartGrading | null;
     }>;
   }>;
+};
+
+export type StartFullTestAssessmentMutationVariables = Exact<{
+  sittingId: string | number;
+  slot: Types.FullTestSlot;
+  taskId: string | number;
+  contentType?: string | null | undefined;
+  contentLength?: number | null | undefined;
+}>;
+
+export type StartFullTestAssessmentMutation = {
+  startFullTestAssessment: { attemptId: string; uploadUrl: string | null };
 };
 
 export type FullTestSittingQueryVariables = Exact<{
@@ -3477,6 +3527,8 @@ export type FullTestSittingQuery = {
     speakingBand: number | null;
     provisionalBand: number | null;
     overallBand: number | null;
+    bandRevision: number;
+    revisedAt: string | null;
     parts: Array<{
       slot: Types.FullTestSlot;
       taskId: string;
@@ -3508,6 +3560,8 @@ export type StartFullTestMutation = {
     speakingBand: number | null;
     provisionalBand: number | null;
     overallBand: number | null;
+    bandRevision: number;
+    revisedAt: string | null;
     parts: Array<{
       slot: Types.FullTestSlot;
       taskId: string;
@@ -5086,6 +5140,8 @@ export const FullTestSittingFieldsFragmentDoc = gql`
     speakingBand
     provisionalBand
     overallBand
+    bandRevision
+    revisedAt
   }
 `;
 export const GenerationRequestFieldsFragmentDoc = gql`
@@ -12063,6 +12119,61 @@ export type RejectExamMutationOptions = ApolloReactCommon.MutationHookOptions<
   RejectExamMutation,
   RejectExamMutationVariables
 >;
+export const StartFullTestPaperDocument = gql`
+  mutation StartFullTestPaper($sittingId: ID!, $onOpen: OpenAttemptChoice) {
+    startFullTestPaper(sittingId: $sittingId, onOpen: $onOpen) {
+      ...ExamAttemptFields
+    }
+  }
+  ${ExamAttemptFieldsFragmentDoc}
+`;
+export type StartFullTestPaperMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartFullTestPaperMutation,
+    StartFullTestPaperMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartFullTestPaperMutation__
+ *
+ * To run a mutation, you first call `useStartFullTestPaperMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartFullTestPaperMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startFullTestPaperMutation, { data, loading, error }] = useStartFullTestPaperMutation({
+ *   variables: {
+ *      sittingId: // value for 'sittingId'
+ *      onOpen: // value for 'onOpen'
+ *   },
+ * });
+ */
+export function useStartFullTestPaperMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartFullTestPaperMutation,
+    StartFullTestPaperMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartFullTestPaperMutation,
+    StartFullTestPaperMutationVariables
+  >(StartFullTestPaperDocument, options);
+}
+export type StartFullTestPaperMutationHookResult = ReturnType<
+  typeof useStartFullTestPaperMutation
+>;
+export type StartFullTestPaperMutationResult =
+  ApolloReactCommon.MutationResult<StartFullTestPaperMutation>;
+export type StartFullTestPaperMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartFullTestPaperMutation,
+    StartFullTestPaperMutationVariables
+  >;
 export const ActiveExamAttemptDocument = gql`
   query ActiveExamAttempt($examId: ID!, $mode: ExamAttemptMode!) {
     activeExamAttempt(examId: $examId, mode: $mode) {
@@ -14503,14 +14614,14 @@ export type ArchiveFullTestMutationOptions =
     ArchiveFullTestMutationVariables
   >;
 export const FullTestLibraryDocument = gql`
-  query FullTestLibrary {
+  query FullTestLibrary($page: Int = 0) {
     fullTests {
       id
       title
       description
       certificateVariant
     }
-    myFullTestSittings {
+    myFullTestSittings(page: $page, size: 20) {
       ...FullTestSittingFields
     }
   }
@@ -14529,6 +14640,7 @@ export const FullTestLibraryDocument = gql`
  * @example
  * const { data, loading, error } = useFullTestLibraryQuery({
  *   variables: {
+ *      page: // value for 'page'
  *   },
  * });
  */
@@ -14607,6 +14719,76 @@ export type FullTestLibraryQueryResult = ApolloReactCommon.QueryResult<
   FullTestLibraryQuery,
   FullTestLibraryQueryVariables
 >;
+export const StartFullTestAssessmentDocument = gql`
+  mutation StartFullTestAssessment(
+    $sittingId: ID!
+    $slot: FullTestSlot!
+    $taskId: ID!
+    $contentType: String
+    $contentLength: Int
+  ) {
+    startFullTestAssessment(
+      sittingId: $sittingId
+      slot: $slot
+      taskId: $taskId
+      contentType: $contentType
+      contentLength: $contentLength
+    ) {
+      attemptId
+      uploadUrl
+    }
+  }
+`;
+export type StartFullTestAssessmentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartFullTestAssessmentMutation,
+    StartFullTestAssessmentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartFullTestAssessmentMutation__
+ *
+ * To run a mutation, you first call `useStartFullTestAssessmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartFullTestAssessmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startFullTestAssessmentMutation, { data, loading, error }] = useStartFullTestAssessmentMutation({
+ *   variables: {
+ *      sittingId: // value for 'sittingId'
+ *      slot: // value for 'slot'
+ *      taskId: // value for 'taskId'
+ *      contentType: // value for 'contentType'
+ *      contentLength: // value for 'contentLength'
+ *   },
+ * });
+ */
+export function useStartFullTestAssessmentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartFullTestAssessmentMutation,
+    StartFullTestAssessmentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartFullTestAssessmentMutation,
+    StartFullTestAssessmentMutationVariables
+  >(StartFullTestAssessmentDocument, options);
+}
+export type StartFullTestAssessmentMutationHookResult = ReturnType<
+  typeof useStartFullTestAssessmentMutation
+>;
+export type StartFullTestAssessmentMutationResult =
+  ApolloReactCommon.MutationResult<StartFullTestAssessmentMutation>;
+export type StartFullTestAssessmentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartFullTestAssessmentMutation,
+    StartFullTestAssessmentMutationVariables
+  >;
 export const FullTestSittingDocument = gql`
   query FullTestSitting($id: ID!) {
     fullTestSitting(id: $id) {

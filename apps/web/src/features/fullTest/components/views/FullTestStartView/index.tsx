@@ -117,14 +117,14 @@ export function FullTestStartView({ fullTestId }: { fullTestId: string }) {
             </List.Item>
             <List.Item>
               {tr(
-                "Writing Task 1, Task 2 và Speaking Part 1–3 làm ở trang riêng, được chấm tự động.",
-                "Writing Tasks 1 and 2 and Speaking Parts 1-3 are answered on their own pages and graded automatically.",
+                "Writing Task 1, Task 2 và Speaking Part 1–3 làm ở trang riêng, được chấm tự động hoặc giáo viên chấm.",
+                "Writing Tasks 1 and 2 and Speaking Parts 1-3 are answered on their own pages, with automatic or teacher assessment.",
               )}
             </List.Item>
             <List.Item>
               {tr(
-                "Nộp đủ các phần trong 7 ngày kể từ lúc bắt đầu.",
-                "Hand in every part within seven days of starting.",
+                "Đây là bộ đánh giá luyện tập bốn kỹ năng, cho phép làm từng phần trong 7 ngày. Writing hiển thị thời lượng gợi ý.",
+                "This four-skill practice assessment lets you complete the parts within seven days. Writing displays suggested timings.",
               )}
             </List.Item>
           </List>

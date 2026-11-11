@@ -110,6 +110,14 @@ export const SLOT_TASKS = [
 
 /** Why the backend refuses to send a full test for review, in the author's words. */
 export const FULL_TEST_ERROR_COPY: Record<string, Copy> = {
+  EXAM_BLUEPRINT_INVALID: {
+    vi: "Kiểm tra số phần, số điểm, passage, audio và thời lượng của đề trước khi gửi duyệt.",
+    en: "Check part counts, marks, passages, audio and section times before submitting for review.",
+  },
+  FULL_TEST_VARIANT_UNSUPPORTED: {
+    vi: "Hiện chỉ hỗ trợ full test IELTS Academic.",
+    en: "Only IELTS Academic full tests are currently supported.",
+  },
   FULL_TEST_CHANGED: {
     vi: "Full test đã được thay đổi ở nơi khác. Tải lại danh sách trước khi lưu để tránh ghi đè.",
     en: "This full test changed elsewhere. Reload the list before saving to avoid overwriting changes.",

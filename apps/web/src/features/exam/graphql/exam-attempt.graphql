@@ -22,6 +22,11 @@ fragment ExamAttemptFields on ExamAttempt {
     title
   }
 }
+mutation StartFullTestPaper($sittingId: ID!, $onOpen: OpenAttemptChoice) {
+  startFullTestPaper(sittingId: $sittingId, onOpen: $onOpen) {
+    ...ExamAttemptFields
+  }
+}
 query ActiveExamAttempt($examId: ID!, $mode: ExamAttemptMode!) {
   activeExamAttempt(examId: $examId, mode: $mode) {
     ...ExamAttemptFields

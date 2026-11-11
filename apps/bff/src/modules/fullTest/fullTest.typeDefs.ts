@@ -93,7 +93,11 @@ export const fullTestTypeDefs = /* GraphQL */ `
     """
     provisionalBand: Float
     overallBand: Float
+    bandRevision: Int!
+    revisedAt: DateTime
   }
+
+  type FullTestPartStart { attemptId: ID!, uploadUrl: String }
 
   input SaveFullTestInput {
     version: Int
@@ -111,7 +115,7 @@ export const fullTestTypeDefs = /* GraphQL */ `
   extend type Query {
     "Published full tests, newest first."
     fullTests: [FullTest!]!
-    myFullTestSittings: [FullTestSitting!]!
+    myFullTestSittings(page: Int, size: Int): [FullTestSitting!]!
     "Brought up to date with every part graded so far."
     fullTestSitting(id: ID!): FullTestSitting!
     adminFullTests: [FullTest!]!
@@ -125,6 +129,8 @@ export const fullTestTypeDefs = /* GraphQL */ `
     for IELTS.
     """
     startFullTest(fullTestId: ID!): FullTestSitting!
+    startFullTestPaper(sittingId: ID!, onOpen: OpenAttemptChoice): ExamAttempt!
+    startFullTestAssessment(sittingId: ID!, slot: FullTestSlot!, taskId: ID!, contentType: String, contentLength: Int): FullTestPartStart!
     "Creates a draft when id is omitted. Components are checked at review."
     saveFullTest(id: ID, input: SaveFullTestInput!): FullTest!
     """

@@ -6,9 +6,9 @@ export const fullTestResolvers = {
       ctx.requireToken();
       return ctx.apis.fullTestApi.catalogue();
     },
-    myFullTestSittings: (_, __, ctx) => {
+    myFullTestSittings: (_, { page, size }, ctx) => {
       ctx.requireToken();
-      return ctx.apis.fullTestApi.mySittings();
+      return ctx.apis.fullTestApi.mySittings(page ?? 0, size ?? 20);
     },
     fullTestSitting: (_, { id }, ctx) => {
       ctx.requireToken();
@@ -24,6 +24,24 @@ export const fullTestResolvers = {
     },
   },
   Mutation: {
+    startFullTestPaper: (_, { sittingId, onOpen }, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.fullTestApi.startPaper(sittingId, onOpen);
+    },
+    startFullTestAssessment: (
+      _,
+      { sittingId, slot, taskId, contentType, contentLength },
+      ctx,
+    ) => {
+      ctx.requireToken();
+      return ctx.apis.fullTestApi.startAssessment(
+        sittingId,
+        slot,
+        taskId,
+        contentType,
+        contentLength,
+      );
+    },
     startFullTest: (_, { fullTestId }, ctx) => {
       ctx.requireToken();
       return ctx.apis.fullTestApi.start(fullTestId);

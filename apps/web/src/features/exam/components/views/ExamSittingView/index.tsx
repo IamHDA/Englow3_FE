@@ -36,6 +36,7 @@ import {
   useExamDetailQuery,
   useExamOutlineQuery,
   useStartExamAttemptMutation,
+  useStartFullTestPaperMutation,
   useSubmitExamAttemptMutation,
 } from "@/lib/graphql/generated/hooks";
 import { useAccountProfile } from "@/features/account";
@@ -183,8 +184,11 @@ export function ExamSittingView({
 
   const [
     startAttempt,
-    { loading: starting, error: startError, reset: resetStart },
+    { loading: startingNormal, error: startErrorNormal, reset: resetStart },
   ] = useStartExamAttemptMutation();
+  const [startFullTestPaper, fullStart] = useStartFullTestPaperMutation();
+  const starting = startingNormal || fullStart.loading;
+  const startError = startErrorNormal ?? fullStart.error;
   const {
     data: outlineData,
     loading: outlineLoading,
@@ -432,20 +436,31 @@ export function ExamSittingView({
               timeLimitMinutes: choice.timeLimitMinutes,
               onOpen,
             };
-      const response = await startAttempt({
-        variables: { examId, input },
-      }).catch((failure: unknown) => {
+      const attempt = await (
+        fullTestSittingId
+          ? startFullTestPaper({
+              variables: { sittingId: fullTestSittingId, onOpen },
+            }).then((r) => r.data?.startFullTestPaper)
+          : startAttempt({ variables: { examId, input } }).then(
+              (r) => r.data?.startExamAttempt,
+            )
+      ).catch((failure: unknown) => {
         // Đề đang có một lượt khác còn dở: hỏi người học thay vì báo lỗi cả trang.
         if (backendCodeOf(failure) === "ATTEMPT_IN_PROGRESS") {
           resetStart();
+          fullStart.reset();
           setBlockedChoice(choice);
         }
         return null;
       });
 
-      const attempt = response?.data?.startExamAttempt;
       if (!attempt) {
         pending.current = false;
+        return;
+      }
+      if (fullTestSittingId && attempt.status === "SCORED") {
+        pending.current = false;
+        router.push(fullTestSittingPath(fullTestSittingId));
         return;
       }
       setBlockedChoice(null);
@@ -513,7 +528,17 @@ export function ExamSittingView({
         setOpeningDraft(false);
       }
     },
-    [examId, startAttempt, resetStart, client, autosave],
+    [
+      examId,
+      startAttempt,
+      resetStart,
+      client,
+      autosave,
+      fullTestSittingId,
+      startFullTestPaper,
+      fullStart,
+      router,
+    ],
   );
 
   // Giữ bản nháp cục bộ để tải lại trang hay mất mạng không mất bài đang làm.
@@ -734,6 +759,7 @@ export function ExamSittingView({
               </Button>
               <Button
                 variant="light"
+                disabled={!!fullTestSittingId}
                 loading={starting || openingDraft}
                 onClick={() =>
                   blockedChoice &&

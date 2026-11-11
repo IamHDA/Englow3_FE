@@ -2560,6 +2560,38 @@ export type ExamAttemptFieldsFragment = {
   }>;
 };
 
+export type StartFullTestPaperMutationVariables = Exact<{
+  sittingId: string | number;
+  onOpen?: Types.OpenAttemptChoice | null | undefined;
+}>;
+
+export type StartFullTestPaperMutation = {
+  startFullTestPaper: {
+    id: string;
+    examId: string;
+    status: Types.ExamAttemptStatus;
+    startedAt: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    scoredAt: string | null;
+    rawScore: number | null;
+    maxRawScore: number;
+    scorePercentage: number | null;
+    convertedScore: number | null;
+    correctAnswerCount: number | null;
+    questionCount: number;
+    resumed: boolean;
+    examTitle: string | null;
+    mode: Types.ExamAttemptMode;
+    timeLimitSeconds: number | null;
+    parts: Array<{
+      id: string;
+      sectionType: string | null;
+      title: string | null;
+    }>;
+  };
+};
+
 export type ActiveExamAttemptQueryVariables = Exact<{
   examId: string | number;
   mode: Types.ExamAttemptMode;
@@ -3409,6 +3441,8 @@ export type FullTestSittingFieldsFragment = {
   speakingBand: number | null;
   provisionalBand: number | null;
   overallBand: number | null;
+  bandRevision: number;
+  revisedAt: string | null;
   parts: Array<{
     slot: Types.FullTestSlot;
     taskId: string;
@@ -3417,7 +3451,9 @@ export type FullTestSittingFieldsFragment = {
   }>;
 };
 
-export type FullTestLibraryQueryVariables = Exact<{ [key: string]: never }>;
+export type FullTestLibraryQueryVariables = Exact<{
+  page?: number | null | undefined;
+}>;
 
 export type FullTestLibraryQuery = {
   fullTests: Array<{
@@ -3443,6 +3479,8 @@ export type FullTestLibraryQuery = {
     speakingBand: number | null;
     provisionalBand: number | null;
     overallBand: number | null;
+    bandRevision: number;
+    revisedAt: string | null;
     parts: Array<{
       slot: Types.FullTestSlot;
       taskId: string;
@@ -3450,6 +3488,18 @@ export type FullTestLibraryQuery = {
       grading: Types.FullTestPartGrading | null;
     }>;
   }>;
+};
+
+export type StartFullTestAssessmentMutationVariables = Exact<{
+  sittingId: string | number;
+  slot: Types.FullTestSlot;
+  taskId: string | number;
+  contentType?: string | null | undefined;
+  contentLength?: number | null | undefined;
+}>;
+
+export type StartFullTestAssessmentMutation = {
+  startFullTestAssessment: { attemptId: string; uploadUrl: string | null };
 };
 
 export type FullTestSittingQueryVariables = Exact<{
@@ -3474,6 +3524,8 @@ export type FullTestSittingQuery = {
     speakingBand: number | null;
     provisionalBand: number | null;
     overallBand: number | null;
+    bandRevision: number;
+    revisedAt: string | null;
     parts: Array<{
       slot: Types.FullTestSlot;
       taskId: string;
@@ -3505,6 +3557,8 @@ export type StartFullTestMutation = {
     speakingBand: number | null;
     provisionalBand: number | null;
     overallBand: number | null;
+    bandRevision: number;
+    revisedAt: string | null;
     parts: Array<{
       slot: Types.FullTestSlot;
       taskId: string;
@@ -5545,6 +5599,8 @@ export const FullTestSittingFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
           { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
           { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+          { kind: "Field", name: { kind: "Name", value: "bandRevision" } },
+          { kind: "Field", name: { kind: "Name", value: "revisedAt" } },
         ],
       },
     },
@@ -15231,6 +15287,124 @@ export const RejectExamDocument = {
     },
   ],
 } as unknown as DocumentNode<RejectExamMutation, RejectExamMutationVariables>;
+export const StartFullTestPaperDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "StartFullTestPaper" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "sittingId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "onOpen" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "OpenAttemptChoice" },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startFullTestPaper" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "sittingId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "sittingId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "onOpen" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "onOpen" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ExamAttemptFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ExamAttemptFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ExamAttempt" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "startedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "expiresAt" } },
+          { kind: "Field", name: { kind: "Name", value: "submittedAt" } },
+          { kind: "Field", name: { kind: "Name", value: "scoredAt" } },
+          { kind: "Field", name: { kind: "Name", value: "rawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
+          { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "correctAnswerCount" },
+          },
+          { kind: "Field", name: { kind: "Name", value: "questionCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumed" } },
+          { kind: "Field", name: { kind: "Name", value: "examTitle" } },
+          { kind: "Field", name: { kind: "Name", value: "mode" } },
+          { kind: "Field", name: { kind: "Name", value: "timeLimitSeconds" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "parts" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "sectionType" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  StartFullTestPaperMutation,
+  StartFullTestPaperMutationVariables
+>;
 export const ActiveExamAttemptDocument = {
   kind: "Document",
   definitions: [
@@ -18380,6 +18554,14 @@ export const FullTestLibraryDocument = {
       kind: "OperationDefinition",
       operation: "query",
       name: { kind: "Name", value: "FullTestLibrary" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          defaultValue: { kind: "IntValue", value: "0" },
+        },
+      ],
       selectionSet: {
         kind: "SelectionSet",
         selections: [
@@ -18402,6 +18584,21 @@ export const FullTestLibraryDocument = {
           {
             kind: "Field",
             name: { kind: "Name", value: "myFullTestSittings" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "20" },
+              },
+            ],
             selectionSet: {
               kind: "SelectionSet",
               selections: [
@@ -18454,6 +18651,8 @@ export const FullTestLibraryDocument = {
           { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
           { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
           { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+          { kind: "Field", name: { kind: "Name", value: "bandRevision" } },
+          { kind: "Field", name: { kind: "Name", value: "revisedAt" } },
         ],
       },
     },
@@ -18461,6 +18660,128 @@ export const FullTestLibraryDocument = {
 } as unknown as DocumentNode<
   FullTestLibraryQuery,
   FullTestLibraryQueryVariables
+>;
+export const StartFullTestAssessmentDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "StartFullTestAssessment" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "sittingId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "slot" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "FullTestSlot" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "taskId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentType" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentLength" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startFullTestAssessment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "sittingId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "sittingId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "slot" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "slot" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "taskId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "taskId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentType" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentType" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentLength" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentLength" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+                { kind: "Field", name: { kind: "Name", value: "uploadUrl" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  StartFullTestAssessmentMutation,
+  StartFullTestAssessmentMutationVariables
 >;
 export const FullTestSittingDocument = {
   kind: "Document",
@@ -18547,6 +18868,8 @@ export const FullTestSittingDocument = {
           { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
           { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
           { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+          { kind: "Field", name: { kind: "Name", value: "bandRevision" } },
+          { kind: "Field", name: { kind: "Name", value: "revisedAt" } },
         ],
       },
     },
@@ -18643,6 +18966,8 @@ export const StartFullTestDocument = {
           { kind: "Field", name: { kind: "Name", value: "speakingBand" } },
           { kind: "Field", name: { kind: "Name", value: "provisionalBand" } },
           { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+          { kind: "Field", name: { kind: "Name", value: "bandRevision" } },
+          { kind: "Field", name: { kind: "Name", value: "revisedAt" } },
         ],
       },
     },

@@ -11,6 +11,7 @@ import {
   Title,
 } from "@mantine/core";
 import Link from "next/link";
+import { useState } from "react";
 import { useFullTestLibraryQuery } from "@/lib/graphql/generated/hooks";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
@@ -25,7 +26,9 @@ import { FullTestLibrarySkeleton } from "../../blocks/FullTestLibrarySkeleton";
 export function FullTestLibraryView() {
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
+  const [page, setPage] = useState(0);
   const { data, loading, error, refetch } = useFullTestLibraryQuery({
+    variables: { page },
     fetchPolicy: "cache-and-network",
   });
 
@@ -105,6 +108,25 @@ export function FullTestLibraryView() {
           </Stack>
         )}
 
+        <Group justify="space-between">
+          <Button
+            variant="default"
+            disabled={loading || page === 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            {tr("Lượt gần hơn", "Newer sittings")}
+          </Button>
+          <Text size="sm">
+            {tr("Trang", "Page")} {page + 1}
+          </Text>
+          <Button
+            variant="default"
+            disabled={loading || sittings.length < 20}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            {tr("Lượt cũ hơn", "Older sittings")}
+          </Button>
+        </Group>
         <Stack gap="sm">
           <Title order={2} size="h4">
             {tr("Full test hiện có", "Available full tests")}

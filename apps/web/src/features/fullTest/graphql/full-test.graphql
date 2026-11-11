@@ -21,17 +21,38 @@ fragment FullTestSittingFields on FullTestSitting {
   speakingBand
   provisionalBand
   overallBand
+  bandRevision
+  revisedAt
 }
 
-query FullTestLibrary {
+query FullTestLibrary($page: Int = 0) {
   fullTests {
     id
     title
     description
     certificateVariant
   }
-  myFullTestSittings {
+  myFullTestSittings(page: $page, size: 20) {
     ...FullTestSittingFields
+  }
+}
+
+mutation StartFullTestAssessment(
+  $sittingId: ID!
+  $slot: FullTestSlot!
+  $taskId: ID!
+  $contentType: String
+  $contentLength: Int
+) {
+  startFullTestAssessment(
+    sittingId: $sittingId
+    slot: $slot
+    taskId: $taskId
+    contentType: $contentType
+    contentLength: $contentLength
+  ) {
+    attemptId
+    uploadUrl
   }
 }
 

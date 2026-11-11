@@ -20,7 +20,9 @@ import {
   useAssessmentTaskDetailQuery,
   useAssessmentStartMutation,
   useAssessmentSubmitMutation,
+  useStartFullTestAssessmentMutation,
 } from "@/lib/graphql/generated/hooks";
+import { FullTestSlot } from "@/lib/graphql/generated/schemaTypes";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useAssessmentRecorder } from "../hooks/useAssessmentRecorder";
 import { taskTypeLabel, type PracticeTask } from "../types";
@@ -31,6 +33,7 @@ import {
   withFullTestSitting,
 } from "@/shared/constants/fullTestNavigation";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { backendCodeOf } from "@/shared/network/loadError";
 export function AssessmentTaskView({
   id,
   fullTestSittingId,
@@ -86,14 +89,40 @@ function TaskWorkbench({
   const { session } = useAuth();
   const [start] = useAssessmentStartMutation();
   const [submit] = useAssessmentSubmitMutation();
+  const [startFullTestPart] = useStartFullTestAssessmentMutation();
+  const fullSlot =
+    task.skill === "WRITING"
+      ? task.taskType === "TASK_1"
+        ? FullTestSlot.WRITING_TASK_1
+        : FullTestSlot.WRITING_TASK_2
+      : task.taskType === "PART_1"
+        ? FullTestSlot.SPEAKING_PART_1
+        : task.taskType === "PART_2"
+          ? FullTestSlot.SPEAKING_PART_2
+          : FullTestSlot.SPEAKING_PART_3;
+  const recordingLimit =
+    fullTestSittingId && task.taskType === "PART_2" ? 120 : 300;
+  const [prepareUntil, setPrepareUntil] = useState<number | null>(null);
+  const [prepareLeft, setPrepareLeft] = useState(0);
+  useEffect(() => {
+    if (prepareUntil === null) return;
+    const timer = setInterval(() => {
+      setPrepareLeft(
+        Math.max(0, Math.ceil((prepareUntil - Date.now()) / 1000)),
+      );
+      if (Date.now() >= prepareUntil) clearInterval(timer);
+    }, 250);
+    return () => clearInterval(timer);
+  }, [prepareUntil]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const locked = useRef(false);
   const request = useRef<{ blob: Blob | null; key: string } | null>(null);
   const audio = useAssessmentRecorder(
     task.skill === "SPEAKING" && session
-      ? `${session.userId}:${task.id}`
+      ? `${session.userId}:${task.id}:${fullTestSittingId ?? "practice"}`
       : undefined,
+    recordingLimit,
   );
   const [phase, setPhase] = useState("");
   const submitted = useRef(false);
@@ -150,18 +179,35 @@ function TaskWorkbench({
           blob: audio.blob,
           key: audio.clientKey.current ?? crypto.randomUUID(),
         };
-      const started = await start({
-        variables: {
-          taskId: task.id,
-          clientKey: request.current.key,
-          ...(task.skill === "SPEAKING"
-            ? { contentType: "audio/wav", contentLength: audio.blob!.size }
-            : {}),
-        },
-      });
-      if (!started.data) throw new Error("Missing result");
-      const ticket = started.data.startAssessment;
-      if (task.skill === "SPEAKING" && ticket.attempt.status === "DRAFT") {
+      const ticket = fullTestSittingId
+        ? await startFullTestPart({
+            variables: {
+              sittingId: fullTestSittingId,
+              slot: fullSlot,
+              taskId: task.id,
+              ...(task.skill === "SPEAKING"
+                ? { contentType: "audio/wav", contentLength: audio.blob!.size }
+                : {}),
+            },
+          }).then((r) =>
+            r.data?.startFullTestAssessment
+              ? {
+                  attempt: { id: r.data.startFullTestAssessment.attemptId },
+                  uploadUrl: r.data.startFullTestAssessment.uploadUrl,
+                }
+              : null,
+          )
+        : await start({
+            variables: {
+              taskId: task.id,
+              clientKey: request.current.key,
+              ...(task.skill === "SPEAKING"
+                ? { contentType: "audio/wav", contentLength: audio.blob!.size }
+                : {}),
+            },
+          }).then((r) => r.data?.startAssessment);
+      if (!ticket) throw new Error("Missing result");
+      if (task.skill === "SPEAKING" && ticket.uploadUrl) {
         setPhase(tx("Đang tải bản ghi lên…"));
         if (!ticket.uploadUrl) throw new Error("Missing upload URL");
         const response = await fetch(ticket.uploadUrl, {
@@ -183,7 +229,24 @@ function TaskWorkbench({
           fullTestSittingId,
         ),
       );
-    } catch {
+    } catch (failure) {
+      const code = backendCodeOf(failure);
+      if (code === "FULL_TEST_CLOSED" || code === "FULL_TEST_TASK_MISMATCH") {
+        setError(
+          isVi
+            ? "Lượt thi đã đóng hoặc đề này không thuộc lượt thi. Hãy mở lại phần làm bài từ bộ IELTS của bạn."
+            : "This sitting is closed or this task is not assigned to it. Reopen the part from your IELTS full test.",
+        );
+        return;
+      }
+      if (code === "RECORDING_CHANGED" || code === "RECORDING_INVALID") {
+        setError(
+          isVi
+            ? "Hãy dùng lại bản ghi gốc và kiểm tra giới hạn thời gian của phần thi."
+            : "Use the original recording and check this part's recording time limit.",
+        );
+        return;
+      }
       setError(
         task.skill === "SPEAKING"
           ? tx(
@@ -259,16 +322,50 @@ function TaskWorkbench({
                 disabled={busy || audio.recording || audio.preparing}
               />
               <Text size="sm" c="dimmed">
-                {tx(
-                  "Có thể nghe lại và ghi lại trước khi nộp. Tối đa 5 phút mỗi bản ghi.",
-                )}
+                {fullTestSittingId
+                  ? isVi
+                    ? `Phần này nộp một bản ghi, tối đa ${recordingLimit / 60} phút. Giữ bản ghi để thử tải lên lại nếu mất mạng.`
+                    : `Submit one recording for this part, up to ${recordingLimit / 60} minutes. Keep it to retry an interrupted upload.`
+                  : tx(
+                      "Có thể nghe lại và ghi lại trước khi nộp. Tối đa 5 phút mỗi bản ghi.",
+                    )}
               </Text>
+              {prepareUntil !== null && prepareLeft > 0 && (
+                <Text role="timer">
+                  {isVi ? "Chuẩn bị" : "Preparation"}: {prepareLeft}s
+                </Text>
+              )}
               <Group>
                 <Button
-                  onClick={() => void audio.start()}
-                  disabled={busy || audio.recording || audio.preparing}
+                  onClick={() => {
+                    if (
+                      fullTestSittingId &&
+                      task.taskType === "PART_2" &&
+                      prepareUntil === null
+                    ) {
+                      setPrepareLeft(60);
+                      setPrepareUntil(Date.now() + 60000);
+                      return;
+                    }
+                    void audio.start();
+                  }}
+                  disabled={
+                    busy ||
+                    audio.recording ||
+                    audio.preparing ||
+                    prepareLeft > 0 ||
+                    (!!fullTestSittingId && !!audio.blob)
+                  }
                 >
-                  {audio.blob ? tx("Ghi lại") : tx("Bắt đầu ghi âm")}
+                  {fullTestSittingId &&
+                  task.taskType === "PART_2" &&
+                  prepareUntil === null
+                    ? isVi
+                      ? "Chuẩn bị 1 phút"
+                      : "Prepare for 1 minute"
+                    : audio.blob
+                      ? tx("Ghi lại")
+                      : tx("Bắt đầu ghi âm")}
                 </Button>
                 <Button
                   color="red"

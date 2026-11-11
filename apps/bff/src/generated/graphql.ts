@@ -1054,8 +1054,15 @@ export type FullTestPartGrading =
   /** Queued for the automatic grader. */
   | 'GRADING';
 
+export type FullTestPartStart = {
+  __typename?: 'FullTestPartStart';
+  attemptId: Scalars['ID']['output'];
+  uploadUrl?: Maybe<Scalars['String']['output']>;
+};
+
 export type FullTestSitting = {
   __typename?: 'FullTestSitting';
+  bandRevision: Scalars['Int']['output'];
   completedAt?: Maybe<Scalars['DateTime']['output']>;
   /** Every part must be submitted by then; grading may finish later. */
   deadlineAt: Scalars['DateTime']['output'];
@@ -1078,6 +1085,7 @@ export type FullTestSitting = {
    */
   provisionalBand?: Maybe<Scalars['Float']['output']>;
   readingBand?: Maybe<Scalars['Float']['output']>;
+  revisedAt?: Maybe<Scalars['DateTime']['output']>;
   speakingBand?: Maybe<Scalars['Float']['output']>;
   startedAt: Scalars['DateTime']['output'];
   status: FullTestSittingStatus;
@@ -1550,6 +1558,8 @@ export type Mutation = {
    * for IELTS.
    */
   startFullTest: FullTestSitting;
+  startFullTestAssessment: FullTestPartStart;
+  startFullTestPaper: ExamAttempt;
   /** Starts a check, or returns the one already open for the same purpose. */
   startLevelCheck: LevelCheck;
   /**
@@ -1950,6 +1960,21 @@ export type MutationStartExamAttemptArgs = {
 
 export type MutationStartFullTestArgs = {
   fullTestId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartFullTestAssessmentArgs = {
+  contentLength?: InputMaybe<Scalars['Int']['input']>;
+  contentType?: InputMaybe<Scalars['String']['input']>;
+  sittingId: Scalars['ID']['input'];
+  slot: FullTestSlot;
+  taskId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartFullTestPaperArgs = {
+  onOpen?: InputMaybe<OpenAttemptChoice>;
+  sittingId: Scalars['ID']['input'];
 };
 
 
@@ -2471,6 +2496,12 @@ export type QueryGenerationRequestsArgs = {
 
 export type QueryLevelCheckArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryMyFullTestSittingsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -3609,6 +3640,7 @@ export type ResolversTypes = ResolversObject<{
   FullTest: ResolverTypeWrapper<FullTest>;
   FullTestPart: ResolverTypeWrapper<FullTestPart>;
   FullTestPartGrading: FullTestPartGrading;
+  FullTestPartStart: ResolverTypeWrapper<FullTestPartStart>;
   FullTestSitting: ResolverTypeWrapper<FullTestSitting>;
   FullTestSittingStatus: FullTestSittingStatus;
   FullTestSlot: FullTestSlot;
@@ -3793,6 +3825,7 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float']['output'];
   FullTest: FullTest;
   FullTestPart: FullTestPart;
+  FullTestPartStart: FullTestPartStart;
   FullTestSitting: FullTestSitting;
   GenerationAllowance: GenerationAllowance;
   GenerationRequest: GenerationRequest;
@@ -4521,7 +4554,13 @@ export type FullTestPartResolvers<ContextType = GraphQLContext, ParentType exten
   taskId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
+export type FullTestPartStartResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTestPartStart'] = ResolversParentTypes['FullTestPartStart']> = ResolversObject<{
+  attemptId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  uploadUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
 export type FullTestSittingResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTestSitting'] = ResolversParentTypes['FullTestSitting']> = ResolversObject<{
+  bandRevision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   completedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   deadlineAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   examAttemptId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
@@ -4534,6 +4573,7 @@ export type FullTestSittingResolvers<ContextType = GraphQLContext, ParentType ex
   parts?: Resolver<Array<ResolversTypes['FullTestPart']>, ParentType, ContextType>;
   provisionalBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   readingBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  revisedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   speakingBand?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   startedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['FullTestSittingStatus'], ParentType, ContextType>;
@@ -4738,6 +4778,8 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   startAssessment?: Resolver<ResolversTypes['AssessmentUpload'], ParentType, ContextType, RequireFields<MutationStartAssessmentArgs, 'clientKey' | 'taskId'>>;
   startExamAttempt?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<MutationStartExamAttemptArgs, 'examId'>>;
   startFullTest?: Resolver<ResolversTypes['FullTestSitting'], ParentType, ContextType, RequireFields<MutationStartFullTestArgs, 'fullTestId'>>;
+  startFullTestAssessment?: Resolver<ResolversTypes['FullTestPartStart'], ParentType, ContextType, RequireFields<MutationStartFullTestAssessmentArgs, 'sittingId' | 'slot' | 'taskId'>>;
+  startFullTestPaper?: Resolver<ResolversTypes['ExamAttempt'], ParentType, ContextType, RequireFields<MutationStartFullTestPaperArgs, 'sittingId'>>;
   startLevelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationStartLevelCheckArgs, 'purpose'>>;
   startQuizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<MutationStartQuizAttemptArgs, 'quizId'>>;
   startSpeakingAttempt?: Resolver<ResolversTypes['SpeakingUploadTicket'], ParentType, ContextType, RequireFields<MutationStartSpeakingAttemptArgs, 'contentLength' | 'contentType' | 'promptId'>>;
@@ -4829,7 +4871,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   levelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<QueryLevelCheckArgs, 'id'>>;
   levelCheckWeights?: Resolver<ResolversTypes['LevelCheckWeights'], ParentType, ContextType>;
   me?: Resolver<ResolversTypes['Me'], ParentType, ContextType>;
-  myFullTestSittings?: Resolver<Array<ResolversTypes['FullTestSitting']>, ParentType, ContextType>;
+  myFullTestSittings?: Resolver<Array<ResolversTypes['FullTestSitting']>, ParentType, ContextType, Partial<QueryMyFullTestSittingsArgs>>;
   myTourStatus?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
   placementExam?: Resolver<ResolversTypes['LearnerExamItem'], ParentType, ContextType>;
   quizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<QueryQuizAttemptArgs, 'id'>>;
@@ -5435,6 +5477,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   FlashcardStats?: FlashcardStatsResolvers<ContextType>;
   FullTest?: FullTestResolvers<ContextType>;
   FullTestPart?: FullTestPartResolvers<ContextType>;
+  FullTestPartStart?: FullTestPartStartResolvers<ContextType>;
   FullTestSitting?: FullTestSittingResolvers<ContextType>;
   GenerationAllowance?: GenerationAllowanceResolvers<ContextType>;
   GenerationRequest?: GenerationRequestResolvers<ContextType>;

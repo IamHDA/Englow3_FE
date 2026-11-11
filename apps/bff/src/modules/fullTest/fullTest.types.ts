@@ -11,6 +11,9 @@ export type FullTestResponse =
 export type FullTestSittingResponse =
   paths["/api/full-tests/{id}/sittings"]["post"]["responses"][200]["content"]["application/json"];
 
+export type FullTestPartStartResponse =
+  paths["/api/full-test-sittings/{id}/parts/{slot}"]["post"]["responses"][200]["content"]["application/json"];
+
 // POST /api/admin/full-tests (201) and PUT /api/admin/full-tests/{id}
 export type SaveFullTestRequest =
   paths["/api/admin/full-tests"]["post"]["requestBody"]["content"]["application/json"];

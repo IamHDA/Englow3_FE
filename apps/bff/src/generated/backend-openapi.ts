@@ -836,6 +836,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/full-test-sittings/{id}/parts/{slot}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["assessment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/full-test-sittings/{id}/paper": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["paper"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/flashcards/{id}/reviews": {
         parameters: {
             query?: never;
@@ -2651,7 +2683,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["paper"];
+        get: operations["paper_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4912,6 +4944,10 @@ export interface components {
             /** @description Estimate from Listening and Reading until the overall band exists */
             provisionalBand: number | null;
             overallBand: number | null;
+            /** Format: int32 */
+            bandRevision: number;
+            /** Format: date-time */
+            revisedAt: string | null;
         };
         "com.englow3.exam.dto.response.FullTestSittingResponse.PartResponse": {
             /** @enum {string} */
@@ -4926,34 +4962,21 @@ export interface components {
              */
             grading: "GRADING" | "AWAITING_REVIEW" | "FAILED" | "GRADED" | null;
         };
-        "com.englow3.flashcard.dto.request.RateFlashcardRequest": {
-            /** @enum {string} */
-            rating: "AGAIN" | "HARD" | "GOOD" | "EASY";
-            /** Format: int32 */
-            timeSpentSeconds?: number;
-        };
-        "com.englow3.flashcard.dto.response.FlashcardReviewResponse": {
+        "com.englow3.exam.dto.request.StartFullTestAssessmentRequest": {
             /** Format: uuid */
-            flashcardId: string;
-            /** @enum {string} */
-            status: "NEW" | "LEARNING" | "REVIEW" | "MASTERED";
-            /** Format: int32 */
-            repetitions: number;
-            /** Format: int32 */
-            intervalDays: number;
-            /** Format: date-time */
-            dueAt: string;
-            /** Format: int32 */
-            lapseCount: number;
+            taskId: string;
+            contentType?: string;
+            /** Format: int64 */
+            contentLength?: number;
         };
-        "com.englow3.exam.dto.request.StartExamAttemptRequest": {
-            /** @enum {string|null} */
-            mode?: "FULL" | "PRACTICE" | null;
-            partIds?: string[] | null;
-            /** Format: int32 */
-            timeLimitMinutes?: number | null;
-            /** @enum {string|null} */
-            onOpen?: "RESUME" | "REPLACE" | null;
+        "com.englow3.exam.dto.response.FullTestPartStartResponse": {
+            /** Format: uuid */
+            attemptId: string;
+            uploadUrl: string | null;
+        };
+        "com.englow3.exam.dto.request.StartFullTestPaperRequest": {
+            /** @enum {string} */
+            onOpen?: "RESUME" | "REPLACE";
         };
         "com.englow3.exam.dto.response.ExamAttemptResponse": {
             /** Format: uuid */
@@ -5034,6 +5057,35 @@ export interface components {
             correctAnswerCount: number | null;
             /** Format: int32 */
             questionCount: number;
+        };
+        "com.englow3.flashcard.dto.request.RateFlashcardRequest": {
+            /** @enum {string} */
+            rating: "AGAIN" | "HARD" | "GOOD" | "EASY";
+            /** Format: int32 */
+            timeSpentSeconds?: number;
+        };
+        "com.englow3.flashcard.dto.response.FlashcardReviewResponse": {
+            /** Format: uuid */
+            flashcardId: string;
+            /** @enum {string} */
+            status: "NEW" | "LEARNING" | "REVIEW" | "MASTERED";
+            /** Format: int32 */
+            repetitions: number;
+            /** Format: int32 */
+            intervalDays: number;
+            /** Format: date-time */
+            dueAt: string;
+            /** Format: int32 */
+            lapseCount: number;
+        };
+        "com.englow3.exam.dto.request.StartExamAttemptRequest": {
+            /** @enum {string|null} */
+            mode?: "FULL" | "PRACTICE" | null;
+            partIds?: string[] | null;
+            /** Format: int32 */
+            timeLimitMinutes?: number | null;
+            /** @enum {string|null} */
+            onOpen?: "RESUME" | "REPLACE" | null;
         };
         "com.englow3.exam.dto.request.SubmitExamAttemptRequest": {
             answers: components["schemas"]["com.englow3.exam.dto.request.SubmitExamAttemptRequest.AnswerRequest"][];
@@ -12035,6 +12087,167 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["com.englow3.exam.dto.response.FullTestSittingResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    assessment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                slot: "WRITING_TASK_1" | "WRITING_TASK_2" | "SPEAKING_PART_1" | "SPEAKING_PART_2" | "SPEAKING_PART_3";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["com.englow3.exam.dto.request.StartFullTestAssessmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.exam.dto.response.FullTestPartStartResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    paper: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["com.englow3.exam.dto.request.StartFullTestPaperRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.exam.dto.response.ExamAttemptResponse"];
                 };
             };
             /** @description Invalid request */
@@ -21916,7 +22129,7 @@ export interface operations {
             };
         };
     };
-    paper: {
+    paper_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -22216,7 +22429,10 @@ export interface operations {
     };
     mine_1: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                size?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;

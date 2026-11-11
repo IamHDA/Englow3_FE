@@ -44,9 +44,25 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
 
   // Grades land while the page is open; look again until the sitting settles.
   useEffect(() => {
-    if (!unsettled) return;
-    startPolling(SITTING_POLL_MS);
-    return () => stopPolling();
+    const update = () => {
+      if (
+        unsettled &&
+        document.visibilityState !== "hidden" &&
+        navigator.onLine
+      )
+        startPolling(SITTING_POLL_MS);
+      else stopPolling();
+    };
+    update();
+    document.addEventListener("visibilitychange", update);
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", update);
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
   }, [unsettled, startPolling, stopPolling]);
 
   if (loading && !sitting) return <FullTestSittingSkeleton />;
@@ -151,6 +167,14 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
         )}
 
         <FullTestBands sitting={sitting} />
+        {sitting.bandRevision > 0 && (
+          <Alert color="blue">
+            {tr(
+              "Kết quả đã được điều chỉnh sau khi chấm lại.",
+              "This result was updated following a grade review.",
+            )}
+          </Alert>
+        )}
 
         <Stack gap="sm">
           {parts.map((part) => (
@@ -202,6 +226,19 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
                       color="red"
                     >
                       {tr("Chấm lại", "Resend")}
+                    </Button>
+                  )}
+                {part.attemptId &&
+                  part.grading !== FullTestPartGrading.FAILED && (
+                    <Button
+                      component={Link}
+                      href={withFullTestSitting(
+                        attemptPath(part.attemptId),
+                        sitting.id,
+                      )}
+                      variant="subtle"
+                    >
+                      {tr("Xem bài làm", "View submission")}
                     </Button>
                   )}
               </Group>

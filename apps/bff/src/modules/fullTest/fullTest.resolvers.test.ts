@@ -16,6 +16,75 @@ const input = {
 };
 
 describe("full test resolvers", () => {
+  it("keeps full-test paper starts on the sitting-owned endpoint", async () => {
+    const startPaper = vi.fn().mockResolvedValue({ id: "paper-attempt" });
+    const ctx = makeContext({ apis: { fullTestApi: { startPaper } } });
+    await fullTestResolvers.Mutation.startFullTestPaper(
+      {},
+      { sittingId: "s", onOpen: "REPLACE" },
+      ctx,
+    );
+    expect(startPaper).toHaveBeenCalledWith("s", "REPLACE");
+  });
+  it("forwards the expected task and recording metadata for an assessment slot", async () => {
+    const startAssessment = vi.fn().mockResolvedValue({
+      attemptId: "a",
+      uploadUrl: "https://storage.test/upload",
+    });
+    const ctx = makeContext({ apis: { fullTestApi: { startAssessment } } });
+    await fullTestResolvers.Mutation.startFullTestAssessment(
+      {},
+      {
+        sittingId: "s",
+        slot: "SPEAKING_PART_2",
+        taskId: "task",
+        contentType: "audio/wav",
+        contentLength: 32044,
+      },
+      ctx,
+    );
+    expect(startAssessment).toHaveBeenCalledWith(
+      "s",
+      "SPEAKING_PART_2",
+      "task",
+      "audio/wav",
+      32044,
+    );
+  });
+  it("requires authentication before either component start", () => {
+    const startAssessment = vi.fn(),
+      startPaper = vi.fn();
+    const ctx = makeContext({
+      token: null,
+      apis: { fullTestApi: { startAssessment, startPaper } },
+    });
+    expect(() =>
+      fullTestResolvers.Mutation.startFullTestPaper(
+        {},
+        { sittingId: "s" },
+        ctx,
+      ),
+    ).toThrow("Missing or invalid access token");
+    expect(() =>
+      fullTestResolvers.Mutation.startFullTestAssessment(
+        {},
+        { sittingId: "s", slot: "WRITING_TASK_1", taskId: "task" },
+        ctx,
+      ),
+    ).toThrow("Missing or invalid access token");
+    expect(startAssessment).not.toHaveBeenCalled();
+    expect(startPaper).not.toHaveBeenCalled();
+  });
+  it("forwards bounded history paging to the backend", async () => {
+    const mySittings = vi.fn().mockResolvedValue([]);
+    const ctx = makeContext({ apis: { fullTestApi: { mySittings } } });
+    await fullTestResolvers.Query.myFullTestSittings(
+      {},
+      { page: 2, size: 20 },
+      ctx,
+    );
+    expect(mySittings).toHaveBeenCalledWith(2, 20);
+  });
   it("fails before calling the backend when there is no token", () => {
     const start = vi.fn();
     const ctx = makeContext({ token: null, apis: { fullTestApi: { start } } });

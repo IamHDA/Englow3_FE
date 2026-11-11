@@ -134,9 +134,16 @@ export function FullTestForm({
                 {
                   value: CertificateVariant.GENERAL,
                   label: "General Training",
+                  disabled: true,
                 },
               ]}
             />
+            <Text size="xs" c="dimmed">
+              {tr(
+                "Hiện hỗ trợ bộ IELTS Academic.",
+                "IELTS Academic sets are currently supported.",
+              )}
+            </Text>
           </Stack>
         )}
       />

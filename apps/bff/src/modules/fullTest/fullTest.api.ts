@@ -1,6 +1,8 @@
 import type { BackendClient } from "../../shared/http/backendClient.js";
+import type { ExamAttemptResponse } from "../exam/exam.types.js";
 import type {
   FullTestResponse,
+  FullTestPartStartResponse,
   FullTestSittingResponse,
   SaveFullTestRequest,
 } from "./fullTest.types.js";
@@ -28,8 +30,34 @@ export class FullTestApi {
     return this.client.post(`${LEARNER_PATH}/${id(fullTestId)}/sittings`);
   }
 
-  mySittings(): Promise<FullTestSittingResponse[]> {
-    return this.client.get(SITTINGS_PATH);
+  mySittings(page = 0, size = 20): Promise<FullTestSittingResponse[]> {
+    return this.client.get(`${SITTINGS_PATH}?page=${page}&size=${size}`);
+  }
+
+  startPaper(
+    sittingId: string,
+    onOpen?: string | null,
+  ): Promise<ExamAttemptResponse> {
+    return this.client.post(`${SITTINGS_PATH}/${id(sittingId)}/paper`, {
+      onOpen: onOpen ?? undefined,
+    });
+  }
+
+  startAssessment(
+    sittingId: string,
+    slot: string,
+    taskId: string,
+    contentType?: string | null,
+    contentLength?: number | null,
+  ): Promise<FullTestPartStartResponse> {
+    return this.client.post(
+      `${SITTINGS_PATH}/${id(sittingId)}/parts/${id(slot)}`,
+      {
+        taskId,
+        contentType: contentType ?? undefined,
+        contentLength: contentLength ?? undefined,
+      },
+    );
   }
 
   /** Settled on the backend before it answers, so bands are current. */

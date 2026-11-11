@@ -1072,8 +1072,15 @@ export enum FullTestPartGrading {
   GRADING = "GRADING",
 }
 
+export type FullTestPartStart = {
+  __typename?: "FullTestPartStart";
+  attemptId: Scalars["ID"]["output"];
+  uploadUrl?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type FullTestSitting = {
   __typename?: "FullTestSitting";
+  bandRevision: Scalars["Int"]["output"];
   completedAt?: Maybe<Scalars["DateTime"]["output"]>;
   /** Every part must be submitted by then; grading may finish later. */
   deadlineAt: Scalars["DateTime"]["output"];
@@ -1096,6 +1103,7 @@ export type FullTestSitting = {
    */
   provisionalBand?: Maybe<Scalars["Float"]["output"]>;
   readingBand?: Maybe<Scalars["Float"]["output"]>;
+  revisedAt?: Maybe<Scalars["DateTime"]["output"]>;
   speakingBand?: Maybe<Scalars["Float"]["output"]>;
   startedAt: Scalars["DateTime"]["output"];
   status: FullTestSittingStatus;
@@ -1579,6 +1587,8 @@ export type Mutation = {
    * for IELTS.
    */
   startFullTest: FullTestSitting;
+  startFullTestAssessment: FullTestPartStart;
+  startFullTestPaper: ExamAttempt;
   /** Starts a check, or returns the one already open for the same purpose. */
   startLevelCheck: LevelCheck;
   /**
@@ -1924,6 +1934,19 @@ export type MutationStartExamAttemptArgs = {
 
 export type MutationStartFullTestArgs = {
   fullTestId: Scalars["ID"]["input"];
+};
+
+export type MutationStartFullTestAssessmentArgs = {
+  contentLength?: InputMaybe<Scalars["Int"]["input"]>;
+  contentType?: InputMaybe<Scalars["String"]["input"]>;
+  sittingId: Scalars["ID"]["input"];
+  slot: FullTestSlot;
+  taskId: Scalars["ID"]["input"];
+};
+
+export type MutationStartFullTestPaperArgs = {
+  onOpen?: InputMaybe<OpenAttemptChoice>;
+  sittingId: Scalars["ID"]["input"];
 };
 
 export type MutationStartLevelCheckArgs = {
@@ -2397,6 +2420,11 @@ export type QueryGenerationRequestsArgs = {
 
 export type QueryLevelCheckArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type QueryMyFullTestSittingsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QueryQuizAttemptArgs = {
