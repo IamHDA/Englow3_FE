@@ -288,13 +288,29 @@ export function useOnboardingActions() {
             // refusal here (no content yet, say) is not the learner's problem to
             // solve in onboarding; the roadmap page offers to try again.
             if (data?.completeOnboarding) {
-              createRoadmap().catch(() => undefined);
+              const state = data.completeOnboarding;
+              const hasGoal = state.certificateLearner
+                ? state.targetScore != null
+                : state.targetLevel != null;
+              if (hasGoal)
+                void createRoadmap().catch(() => {
+                  notifications.show({
+                    color: "orange",
+                    autoClose: false,
+                    title: isVi
+                      ? "Đã lưu mục tiêu, chưa tạo được lộ trình"
+                      : "Goals saved; roadmap is not ready",
+                    message: isVi
+                      ? "Mở Học tập → Lộ trình để kiểm tra và thử lại. Bạn vẫn có thể tự luyện trong thư viện."
+                      : "Open Study → Roadmap to check and retry. You can keep practising in the library.",
+                  });
+                });
             }
             return data?.completeOnboarding;
           },
           () => null,
         ),
-      [run, selectSkills, complete, createRoadmap],
+      [run, selectSkills, complete, createRoadmap, isVi],
     ),
     /**
      * Người học không thi chứng chỉ đo trình độ bằng bài ba phần (từ vựng và

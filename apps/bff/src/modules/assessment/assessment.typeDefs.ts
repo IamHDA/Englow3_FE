@@ -22,6 +22,9 @@ export const assessmentTypeDefs = /* GraphQL */ `
     automaticSpeaking: Boolean!
     humanReview: Boolean!
   }
+  type AssessmentReviewer { id: ID!, displayName: String! }
+  type AssessmentAssignmentEntry { id: ID!, assignedByUserId: ID, reviewerId: ID, note: String!, createdAt: DateTime! }
+  type AssessmentAssignment { attemptId: ID!, reviewerId: ID, reviewerName: String, version: Int!, history: [AssessmentAssignmentEntry!]! }
   enum AssessmentTaskPurpose {
     PRACTICE
     """
@@ -160,6 +163,8 @@ export const assessmentTypeDefs = /* GraphQL */ `
     certificateType: CertificateType
   }
   extend type Query {
+    assessmentAssignment(id: ID!): AssessmentAssignment!
+    assessmentReviewers: [AssessmentReviewer!]!
     assessmentCapabilities: AssessmentCapabilities!
     assessmentTasks(skill: AssessmentSkill, page: Int): AssessmentTaskPage!
     assessmentTask(id: ID!): AssessmentTask!
@@ -192,6 +197,7 @@ export const assessmentTypeDefs = /* GraphQL */ `
     assessmentWorkload: AssessmentWorkload!
   }
   extend type Mutation {
+    assignAssessment(id: ID!, reviewerId: ID, version: Int!, note: String!): AssessmentAssignment!
     readAssessmentResult(id: ID!, version: Int!): Boolean!
     startAssessment(
       taskId: ID!

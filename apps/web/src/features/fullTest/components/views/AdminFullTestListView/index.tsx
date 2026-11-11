@@ -61,7 +61,11 @@ function formOf(fullTest: AdminFullTestFieldsFragment): FullTestFormValues {
 }
 
 /** The form is open for a new full test (null id) or for an existing one. */
-type Editing = { id: string | null; values: FullTestFormValues };
+type Editing = {
+  id: string | null;
+  version: number | null;
+  values: FullTestFormValues;
+};
 
 export function AdminFullTestListView() {
   const { isVi } = useLanguage();
@@ -133,7 +137,11 @@ export function AdminFullTestListView() {
     const variables = { id: fullTest.id };
     switch (action) {
       case "edit":
-        setEditing({ id: fullTest.id, values: formOf(fullTest) });
+        setEditing({
+          id: fullTest.id,
+          version: fullTest.version,
+          values: formOf(fullTest),
+        });
         return;
       case "submit":
         void run(
@@ -175,7 +183,12 @@ export function AdminFullTestListView() {
     pending.current = true;
     setSaving(true);
     try {
-      await save({ variables: { id: editing.id, input: values } });
+      await save({
+        variables: {
+          id: editing.id,
+          input: { ...values, version: editing.version },
+        },
+      });
       notifications.show({
         color: "green",
         message: tr("Đã lưu bản nháp.", "Draft saved."),
@@ -199,7 +212,9 @@ export function AdminFullTestListView() {
           actions={
             <Button
               leftSection={<Plus size={16} />}
-              onClick={() => setEditing({ id: null, values: EMPTY_FORM })}
+              onClick={() =>
+                setEditing({ id: null, version: null, values: EMPTY_FORM })
+              }
             >
               {tr("Tạo full test", "New full test")}
             </Button>

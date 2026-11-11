@@ -1990,6 +1990,64 @@ export type AssessmentRemoveTaskImageMutation = {
   };
 };
 
+export type AssessmentAssignmentFieldsFragment = {
+  attemptId: string;
+  reviewerId: string | null;
+  reviewerName: string | null;
+  version: number;
+  history: Array<{
+    id: string;
+    assignedByUserId: string | null;
+    reviewerId: string | null;
+    note: string;
+    createdAt: string;
+  }>;
+};
+
+export type AssessmentAssignmentQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type AssessmentAssignmentQuery = {
+  assessmentAssignment: {
+    attemptId: string;
+    reviewerId: string | null;
+    reviewerName: string | null;
+    version: number;
+    history: Array<{
+      id: string;
+      assignedByUserId: string | null;
+      reviewerId: string | null;
+      note: string;
+      createdAt: string;
+    }>;
+  };
+  assessmentReviewers: Array<{ id: string; displayName: string }>;
+};
+
+export type AssignAssessmentMutationVariables = Exact<{
+  id: string | number;
+  reviewerId?: string | number | null | undefined;
+  version: number;
+  note: string;
+}>;
+
+export type AssignAssessmentMutation = {
+  assignAssessment: {
+    attemptId: string;
+    reviewerId: string | null;
+    reviewerName: string | null;
+    version: number;
+    history: Array<{
+      id: string;
+      assignedByUserId: string | null;
+      reviewerId: string | null;
+      note: string;
+      createdAt: string;
+    }>;
+  };
+};
+
 export type ContentReviewFieldsFragment = {
   id: string;
   slug: string;
@@ -2488,6 +2546,7 @@ export type ExamAttemptFieldsFragment = {
   rawScore: number | null;
   maxRawScore: number;
   scorePercentage: number | null;
+  convertedScore: number | null;
   correctAnswerCount: number | null;
   questionCount: number;
   resumed: boolean;
@@ -2518,6 +2577,7 @@ export type ActiveExamAttemptQuery = {
     rawScore: number | null;
     maxRawScore: number;
     scorePercentage: number | null;
+    convertedScore: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
@@ -2610,6 +2670,7 @@ export type StartExamAttemptMutation = {
     rawScore: number | null;
     maxRawScore: number;
     scorePercentage: number | null;
+    convertedScore: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
@@ -2707,6 +2768,7 @@ export type SubmitExamAttemptMutation = {
     rawScore: number | null;
     maxRawScore: number;
     scorePercentage: number | null;
+    convertedScore: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
@@ -2762,6 +2824,7 @@ export type ExamAttemptResultQuery = {
     rawScore: number | null;
     maxRawScore: number;
     scorePercentage: number | null;
+    convertedScore: number | null;
     correctAnswerCount: number | null;
     questionCount: number;
     resumed: boolean;
@@ -2823,6 +2886,7 @@ export type ExamAttemptHistoryQuery = {
       rawScore: number | null;
       maxRawScore: number;
       scorePercentage: number | null;
+      convertedScore: number | null;
       correctAnswerCount: number | null;
       questionCount: number;
       resumed: boolean;
@@ -5017,6 +5081,45 @@ export const AssessmentAttemptFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<AssessmentAttemptFieldsFragment, unknown>;
+export const AssessmentAssignmentFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAssignmentFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAssignment" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerName" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "history" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "assignedByUserId" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+                { kind: "Field", name: { kind: "Name", value: "note" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AssessmentAssignmentFieldsFragment, unknown>;
 export const ContentReviewFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -5204,6 +5307,7 @@ export const ExamAttemptFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "rawScore" } },
           { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
           { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "correctAnswerCount" },
@@ -12964,6 +13068,241 @@ export const AssessmentRemoveTaskImageDocument = {
   AssessmentRemoveTaskImageMutation,
   AssessmentRemoveTaskImageMutationVariables
 >;
+export const AssessmentAssignmentDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "AssessmentAssignment" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentAssignment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAssignmentFields" },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assessmentReviewers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAssignmentFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAssignment" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerName" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "history" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "assignedByUserId" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+                { kind: "Field", name: { kind: "Name", value: "note" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssessmentAssignmentQuery,
+  AssessmentAssignmentQueryVariables
+>;
+export const AssignAssessmentDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AssignAssessment" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "reviewerId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "version" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "note" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "assignAssessment" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "reviewerId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "reviewerId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "version" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "version" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "note" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "note" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "AssessmentAssignmentFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "AssessmentAssignmentFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "AssessmentAssignment" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "attemptId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+          { kind: "Field", name: { kind: "Name", value: "reviewerName" } },
+          { kind: "Field", name: { kind: "Name", value: "version" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "history" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "assignedByUserId" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "reviewerId" } },
+                { kind: "Field", name: { kind: "Name", value: "note" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AssignAssessmentMutation,
+  AssignAssessmentMutationVariables
+>;
 export const AdminContentDocument = {
   kind: "Document",
   definitions: [
@@ -14980,6 +15319,7 @@ export const ActiveExamAttemptDocument = {
           { kind: "Field", name: { kind: "Name", value: "rawScore" } },
           { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
           { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "correctAnswerCount" },
@@ -15287,6 +15627,7 @@ export const StartExamAttemptDocument = {
           { kind: "Field", name: { kind: "Name", value: "rawScore" } },
           { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
           { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "correctAnswerCount" },
@@ -15769,6 +16110,7 @@ export const SubmitExamAttemptDocument = {
           { kind: "Field", name: { kind: "Name", value: "rawScore" } },
           { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
           { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "correctAnswerCount" },
@@ -15950,6 +16292,7 @@ export const ExamAttemptResultDocument = {
           { kind: "Field", name: { kind: "Name", value: "rawScore" } },
           { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
           { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "correctAnswerCount" },
@@ -16125,6 +16468,7 @@ export const ExamAttemptHistoryDocument = {
           { kind: "Field", name: { kind: "Name", value: "rawScore" } },
           { kind: "Field", name: { kind: "Name", value: "maxRawScore" } },
           { kind: "Field", name: { kind: "Name", value: "scorePercentage" } },
+          { kind: "Field", name: { kind: "Name", value: "convertedScore" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "correctAnswerCount" },

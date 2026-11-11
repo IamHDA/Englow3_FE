@@ -7,7 +7,8 @@ export function safeNext(next: string | null): string {
   return next &&
     next.startsWith("/") &&
     !next.startsWith("//") &&
-    !next.includes("\\")
+    !next.includes("\\") &&
+    !/[\u0000-\u0020\u007f]/.test(next)
     ? next
     : "/";
 }

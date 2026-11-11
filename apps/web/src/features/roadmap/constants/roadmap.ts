@@ -67,6 +67,14 @@ export const ADJUSTMENT_LABELS: Record<AdjustmentReason, Words> = {
 
 /** Backend refusals with a stable code, in words a learner can act on. */
 export const ROADMAP_ERROR_MESSAGES: Record<string, Words> = {
+  MILESTONE_SITTING_ALREADY_USED: {
+    vi: "Lượt thi này đã dùng để vượt mốc trước. Hãy làm lượt thi mới cho mốc hiện tại.",
+    en: "This sitting already passed an earlier milestone. Take a new test for the current milestone.",
+  },
+  ROADMAP_SCORE_CONFIGURATION_REQUIRED: {
+    vi: "Chưa có bảng quy đổi TOEIC đã kiểm duyệt để tạo mốc lộ trình. Bạn có thể tự luyện trong thư viện trong lúc chờ quản trị viên hoàn tất cấu hình.",
+    en: "A reviewed TOEIC conversion table is needed for roadmap milestones. You can keep practising while the administrator finishes configuration.",
+  },
   ROADMAP_LEVEL_UNKNOWN: {
     vi: "Hệ thống chưa biết trình độ hiện tại của bạn. Hãy hoàn tất bước trình độ trong phần thiết lập.",
     en: "Your current level is not known yet. Finish the level step of your setup first.",

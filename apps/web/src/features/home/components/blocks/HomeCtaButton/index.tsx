@@ -51,7 +51,11 @@ export function HomeCtaButton({ label, ...buttonProps }: HomeCtaButtonProps) {
       >
         {label}
       </Button>
-      <AuthModal opened={authOpened} onClose={auth.close} />
+      <AuthModal
+        opened={authOpened}
+        onClose={auth.close}
+        next={READY_LEARNER_HREF}
+      />
     </>
   );
 }

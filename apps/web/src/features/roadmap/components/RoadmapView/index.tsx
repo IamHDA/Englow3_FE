@@ -17,6 +17,8 @@ import { Check, Flag, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAccountProfile } from "@/features/account";
+import { useOnboarding } from "@/features/onboarding";
 
 import {
   LevelCheckPurpose,
@@ -67,13 +69,29 @@ function formatDate(value: string | null | undefined, isVi: boolean) {
  * từng bài tính từ hoạt động thật mỗi lần mở trang.
  */
 export function RoadmapView() {
+  const { profile } = useAccountProfile();
+  const onboarding = useOnboarding();
+  const setup = profile?.onboardingState;
+  const noHigherGoal =
+    setup?.certificateLearner === false &&
+    setup.currentLevel === "C2" &&
+    !setup.targetLevel;
+  const needsGoal =
+    setup != null &&
+    (setup.currentLevel == null ||
+      (setup.certificateLearner
+        ? setup.targetScore == null || setup.targetCertificateType == null
+        : !setup.targetLevel));
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { data, loading, error, refetch, startPolling, stopPolling } =
-    useLearnerRoadmapQuery({ fetchPolicy: "network-only" });
+    useLearnerRoadmapQuery({
+      fetchPolicy: "cache-and-network",
+      skipPollAttempt: () => document.hidden,
+    });
   const [createRoadmap, createState] = useCreateRoadmapMutation();
   const [abandonRoadmap, abandonState] = useAbandonRoadmapMutation();
   const [startLevelCheck, levelCheckState] = useStartLevelCheckMutation();
@@ -85,6 +103,7 @@ export function RoadmapView() {
   useEffect(() => {
     if (waiting) startPolling(POLL_MS);
     else stopPolling();
+    return () => stopPolling();
   }, [waiting, startPolling, stopPolling]);
 
   function explain(failure: unknown) {
@@ -221,14 +240,31 @@ export function RoadmapView() {
                   )}
             </Text>
             {errorAlert}
-            <Button
-              color="orange"
-              loading={createState.loading}
-              onClick={() => void handleCreate()}
-            >
-              {failed
-                ? tr("Thử tạo lại", "Try again")
-                : tr("Tạo lộ trình", "Make my roadmap")}
+            {!noHigherGoal && (
+              <Button
+                color="orange"
+                loading={createState.loading}
+                onClick={() =>
+                  needsGoal ? onboarding.open() : void handleCreate()
+                }
+              >
+                {needsGoal
+                  ? tr("Hoàn tất mục tiêu", "Complete your goal")
+                  : failed
+                    ? tr("Thử tạo lại", "Try again")
+                    : tr("Tạo lộ trình", "Make my roadmap")}
+              </Button>
+            )}
+            {noHigherGoal && (
+              <Text>
+                {tr(
+                  "Bạn đang ở mức C2. Hãy tiếp tục tự luyện hoặc chọn mục tiêu chứng chỉ trong hồ sơ.",
+                  "You are at C2. Keep practising or choose a certificate goal in your profile.",
+                )}
+              </Text>
+            )}
+            <Button component={Link} href="/study" variant="subtle">
+              {tr("Tự luyện trong thư viện", "Practise in the library")}
             </Button>
           </Stack>
         </Card>
@@ -245,11 +281,14 @@ export function RoadmapView() {
             <Loader size="sm" />
             <Text>
               {tr(
-                "Đang lập lộ trình cho bạn, thường mất dưới một phút...",
-                "Making your roadmap, usually under a minute...",
+                "Đang lập lộ trình. Bạn có thể tự luyện trong lúc chờ và quay lại sau.",
+                "Your roadmap is being prepared. You can keep practising and return later.",
               )}
             </Text>
           </Group>
+          <Button component={Link} href="/study" variant="subtle" mt="md">
+            {tr("Mở thư viện", "Open library")}
+          </Button>
         </Card>
       </Page>
     );

@@ -26,7 +26,7 @@ import { z } from "zod";
 import { signInWithPassword } from "@/features/auth/api/authClient";
 import { announceSessionChange } from "@/features/auth/api/sessionSync";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
-import { homeForRole } from "@/features/auth/types";
+import { postLoginPath } from "@/features/auth/postLoginPath";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { ResendConfirmation } from "../../ResendConfirmation";
 
@@ -50,12 +50,13 @@ function loginSchema(isVi: boolean) {
 type LoginValues = z.infer<ReturnType<typeof loginSchema>>;
 
 type LoginFormProps = {
+  next?: string | null;
   onSuccess: () => void;
   /** Leaving the modal for another page - the forgot-password one. */
   onLeave: () => void;
 };
 
-export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
+export function LoginForm({ onSuccess, onLeave, next }: LoginFormProps) {
   const router = useRouter();
   const [isNavigating, startTransition] = useTransition();
   const [authenticated, setAuthenticated] = useState(false);
@@ -97,9 +98,14 @@ export function LoginForm({ onSuccess, onLeave }: LoginFormProps) {
       setAuthenticated(true);
       // Each role lands where its work is: staff and administrators in the
       // administration area, a learner on the page they signed in from.
-      const home = homeForRole(result.session?.role);
+      const home = postLoginPath(
+        result.session?.role,
+        window.location.search,
+        next,
+      );
       startTransition(() => {
         if (home) router.push(home);
+        else if (window.location.pathname === "/auth/login") router.push("/");
         else router.refresh();
       });
     } catch {

@@ -195,6 +195,18 @@ export const CERTIFICATE_SCORE_RANGE: Record<
  * dịch sang lời người đọc được ở đây thay vì hiện thẳng thông báo của server.
  */
 export const ONBOARDING_ERROR_MESSAGES: Record<string, Words> = {
+  ONBOARDING_TARGET_SCORE_REQUIRED: {
+    vi: "Chọn điểm mục tiêu để hệ thống lập lộ trình học.",
+    en: "Choose a target score so we can plan your roadmap.",
+  },
+  ONBOARDING_TARGET_LEVEL_REQUIRED: {
+    vi: "Chọn trình độ muốn đạt để hệ thống lập lộ trình học.",
+    en: "Choose a target level so we can plan your roadmap.",
+  },
+  TARGET_SCORE_NOT_ABOVE_CURRENT: {
+    vi: "Điểm mục tiêu phải cao hơn điểm hiện tại. Bạn có thể tiếp tục tự luyện nếu đã đạt mục tiêu.",
+    en: "The target must be above your current score. You can keep practising if your goal is already reached.",
+  },
   LEVEL_CHECK_PAPER_NOT_FOUND: {
     vi: "Bài đo trình độ chưa sẵn sàng. Bạn hãy tự chọn trình độ bên dưới.",
     en: "The level test is not ready yet. Choose your level below instead.",

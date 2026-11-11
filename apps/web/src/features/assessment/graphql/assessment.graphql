@@ -266,3 +266,41 @@ mutation AssessmentRemoveTaskImage($id: ID!) {
     ...AssessmentTaskFields
   }
 }
+
+fragment AssessmentAssignmentFields on AssessmentAssignment {
+  attemptId
+  reviewerId
+  reviewerName
+  version
+  history {
+    id
+    assignedByUserId
+    reviewerId
+    note
+    createdAt
+  }
+}
+query AssessmentAssignment($id: ID!) {
+  assessmentAssignment(id: $id) {
+    ...AssessmentAssignmentFields
+  }
+  assessmentReviewers {
+    id
+    displayName
+  }
+}
+mutation AssignAssessment(
+  $id: ID!
+  $reviewerId: ID
+  $version: Int!
+  $note: String!
+) {
+  assignAssessment(
+    id: $id
+    reviewerId: $reviewerId
+    version: $version
+    note: $note
+  ) {
+    ...AssessmentAssignmentFields
+  }
+}

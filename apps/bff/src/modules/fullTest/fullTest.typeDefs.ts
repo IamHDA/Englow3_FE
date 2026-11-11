@@ -96,6 +96,7 @@ export const fullTestTypeDefs = /* GraphQL */ `
   }
 
   input SaveFullTestInput {
+    version: Int
     title: String!
     description: String
     certificateVariant: CertificateVariant!

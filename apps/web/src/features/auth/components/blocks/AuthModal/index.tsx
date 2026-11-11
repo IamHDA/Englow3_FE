@@ -26,6 +26,7 @@ import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
 type AuthModalProps = {
+  next?: string | null;
   opened: boolean;
   onClose: () => void;
   initialMode?: AuthMode;
@@ -35,6 +36,7 @@ export function AuthModal({
   opened,
   onClose,
   initialMode = AuthMode.LOGIN,
+  next,
 }: AuthModalProps) {
   const { t } = useLanguage();
   const [mode, setMode] = useState<AuthMode>(initialMode);
@@ -80,9 +82,13 @@ export function AuthModal({
 
       <Box pt={26} px={40}>
         {isLogin ? (
-          <LoginForm onSuccess={handleClose} onLeave={handleClose} />
+          <LoginForm
+            onSuccess={handleClose}
+            onLeave={handleClose}
+            next={next}
+          />
         ) : (
-          <RegisterForm onSuccess={handleClose} />
+          <RegisterForm onSuccess={handleClose} next={next} />
         )}
       </Box>
 
@@ -93,7 +99,7 @@ export function AuthModal({
       </Group>
 
       <Box pt={16} px={40}>
-        <AuthSocialButtons />
+        <AuthSocialButtons next={next} />
       </Box>
 
       <Group

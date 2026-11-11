@@ -11,6 +11,35 @@ import type {
 import { GraphQLError } from "graphql";
 export class AssessmentApi {
   constructor(private readonly client: BackendClient) {}
+  assignment(id: string) {
+    return this.client.get<
+      import("../../generated/graphql.js").AssessmentAssignment
+    >(
+      "/api/admin/assessments/submissions/" +
+        encodeURIComponent(id) +
+        "/assignment",
+    );
+  }
+  reviewers() {
+    return this.client.get<
+      import("../../generated/graphql.js").AssessmentReviewer[]
+    >("/api/admin/assessments/reviewers");
+  }
+  assign(
+    id: string,
+    reviewerId: string | null | undefined,
+    version: number,
+    note: string,
+  ) {
+    return this.client.put<
+      import("../../generated/graphql.js").AssessmentAssignment
+    >(
+      "/api/admin/assessments/submissions/" +
+        encodeURIComponent(id) +
+        "/assignment",
+      { reviewerId: reviewerId ?? null, version, note },
+    );
+  }
   workload() {
     return this.client.get<
       import("../../generated/graphql.js").AssessmentWorkload

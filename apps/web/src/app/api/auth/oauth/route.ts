@@ -3,10 +3,14 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { authFailure, authSuccess, readAuthRequest } from "@/server/authRoute";
 import { requestOrigin } from "@/server/csrf";
+import { safeNext } from "@/features/auth/safeNext";
 
 export const dynamic = "force-dynamic";
 
-const body = z.object({ provider: z.enum(["google", "facebook"]) });
+const body = z.object({
+  provider: z.enum(["google", "facebook"]),
+  next: z.string().max(4096).optional(),
+});
 
 /**
  * Starts a social sign-in. The PKCE verifier Supabase generates is kept in an
@@ -18,10 +22,13 @@ export async function POST(request: Request) {
   if (!read.ok) return read.response;
 
   const supabase = await createSupabaseServerClient();
+  const callback = new URL("/auth/callback", requestOrigin(request));
+  if (read.value.next)
+    callback.searchParams.set("next", safeNext(read.value.next));
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: read.value.provider,
     options: {
-      redirectTo: `${requestOrigin(request)}/auth/callback`,
+      redirectTo: callback.toString(),
       skipBrowserRedirect: true,
     },
   });

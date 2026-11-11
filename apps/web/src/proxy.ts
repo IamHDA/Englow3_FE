@@ -133,9 +133,14 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   if (!user && isMemberOnly(request.nextUrl.pathname)) {
     const landing = request.nextUrl.clone();
-    landing.pathname = "/";
+    landing.pathname = "/auth/login";
     landing.search = "";
+    landing.searchParams.set(
+      "next",
+      request.nextUrl.pathname + request.nextUrl.search,
+    );
     const redirect = NextResponse.redirect(landing);
+    redirect.headers.set("cache-control", "no-store");
     redirect.headers.set("content-security-policy", policy);
     // Carry over whatever getClaims() just wrote, e.g. a cleared stale token.
     for (const cookie of response.cookies.getAll()) {

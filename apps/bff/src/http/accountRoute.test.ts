@@ -33,7 +33,7 @@ function call(
       {
         hostname: url.hostname,
         port: url.port,
-        path: url.pathname,
+        path: url.pathname + url.search,
         method,
         headers: {
           "content-type": "application/json",
@@ -70,6 +70,78 @@ afterEach(() => {
 });
 
 describe("account route", () => {
+  it("forwards a bounded user search with the caller's token", async () => {
+    const fetcher = backendAnswering(
+      200,
+      '{"items":[],"page":0,"totalPages":0}',
+    );
+    const base = await start(fetcher);
+    const response = await call(
+      base,
+      "GET",
+      "/admin/users?term=editor%40example.com&role=STAFF&page=0&size=20",
+      { token: "Bearer admin" },
+    );
+    expect(response.status).toBe(200);
+    const [url, options] = fetcher.mock.calls[0];
+    expect(new URL(url).searchParams.get("term")).toBe("editor@example.com");
+    expect(options.headers.authorization).toBe("Bearer admin");
+  });
+  it("requires authentication before looking up users", async () => {
+    const fetcher = backendAnswering(200, "{}");
+    const base = await start(fetcher);
+    expect((await call(base, "GET", "/admin/users")).status).toBe(401);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("forwards expected role and a bounded audit reason", async () => {
+    const fetcher = backendAnswering(403, '{"code":"ROLE_CHANGED"}');
+    const base = await start(fetcher);
+    const response = await call(
+      base,
+      "PUT",
+      "/admin/users/00000000-0000-0000-0000-000000000001/role",
+      {
+        token: "Bearer admin",
+        body: {
+          expectedRole: "LEARNER",
+          role: "STAFF",
+          reason: "  Editorial assignment  ",
+        },
+      },
+    );
+    expect(response.status).toBe(403);
+    expect(response.body).toContain("ROLE_CHANGED");
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({
+      expectedRole: "LEARNER",
+      role: "STAFF",
+      reason: "Editorial assignment",
+    });
+  });
+  it("refuses unbounded user searches and unknown roles before contacting the backend", async () => {
+    const fetcher = backendAnswering(200, "{}");
+    const base = await start(fetcher);
+    expect(
+      (
+        await call(base, "GET", "/admin/users?size=99", {
+          token: "Bearer admin",
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await call(
+          base,
+          "PUT",
+          "/admin/users/00000000-0000-0000-0000-000000000001/role",
+          {
+            token: "Bearer admin",
+            body: { expectedRole: "LEARNER", role: "SUPERUSER", reason: "No" },
+          },
+        )
+      ).status,
+    ).toBe(400);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it("serves the price list to a visitor with no token", async () => {
     const fetcher = backendAnswering(200, '[{"code":"FREE"}]');
     const base = await start(fetcher);

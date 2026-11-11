@@ -12,7 +12,6 @@ import {
 import Link from "next/link";
 
 import { isBackOfficeRole, useAuth } from "@/features/auth";
-import { useOnboardingGuard } from "@/features/onboarding";
 import { useUserTour } from "@/features/tour";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -33,11 +32,6 @@ export function SiteHeaderUserMenu({
   const { session, signOut, isSigningOut } = useAuth();
   const { t, isVi } = useLanguage();
   const { canReplay, replay } = useUserTour();
-
-  // "Hồ sơ của tôi" và "Cài đặt" chặn khi chưa onboarding; "Đăng xuất" thì
-  // không - đó là lối thoát cuối cùng, chặn nốt thì người dùng kẹt hẳn trong
-  // tài khoản dở dang không cách nào ra.
-  const guardNavigation = useOnboardingGuard();
 
   return (
     <Menu position="bottom-end" width={220} withinPortal>
@@ -61,13 +55,13 @@ export function SiteHeaderUserMenu({
           component={Link}
           href="/profile"
           leftSection={<User aria-hidden="true" size={16} />}
-          onClick={guardNavigation}
         >
           {t.nav.profile}
         </Menu.Item>
         <Menu.Item
+          component={Link}
+          href="/profile"
           leftSection={<Settings aria-hidden="true" size={16} />}
-          onClick={guardNavigation}
         >
           {t.nav.settings}
         </Menu.Item>

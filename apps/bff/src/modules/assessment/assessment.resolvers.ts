@@ -1,6 +1,14 @@
 import type { Resolvers } from "../../generated/graphql.js";
 export const assessmentResolvers = {
   Query: {
+    assessmentAssignment: (_, a, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.assessmentApi.assignment(a.id);
+    },
+    assessmentReviewers: (_, __, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.assessmentApi.reviewers();
+    },
     assessmentNotifications: (_, a, ctx) => {
       ctx.requireToken();
       return ctx.apis.assessmentApi.notifications(a.page ?? 0);
@@ -68,6 +76,15 @@ export const assessmentResolvers = {
     },
   },
   Mutation: {
+    assignAssessment: (_, a, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.assessmentApi.assign(
+        a.id,
+        a.reviewerId,
+        a.version,
+        a.note,
+      );
+    },
     readAssessmentResult: (_, a, ctx) => {
       ctx.requireToken();
       return ctx.apis.assessmentApi.readResult(a.id, a.version);

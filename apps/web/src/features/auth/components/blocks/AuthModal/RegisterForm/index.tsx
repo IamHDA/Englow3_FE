@@ -29,7 +29,7 @@ import { Gender } from "@/lib/graphql/generated";
 import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { signUp } from "@/features/auth/api/authClient";
 import { announceSessionChange } from "@/features/auth/api/sessionSync";
-import { homeForRole } from "@/features/auth/types";
+import { postLoginPath } from "@/features/auth/postLoginPath";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import classes from "../AuthModal.module.css";
@@ -129,10 +129,11 @@ function registerSchema(isVi: boolean) {
 type RegisterValues = z.infer<ReturnType<typeof registerSchema>>;
 
 type RegisterFormProps = {
+  next?: string | null;
   onSuccess: () => void;
 };
 
-export function RegisterForm({ onSuccess }: RegisterFormProps) {
+export function RegisterForm({ onSuccess, next }: RegisterFormProps) {
   const router = useRouter();
   const { t, isVi } = useLanguage();
   const schema = useMemo(() => registerSchema(isVi), [isVi]);
@@ -160,7 +161,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   async function onSubmit(values: RegisterValues) {
     try {
+      const destination = postLoginPath(null, window.location.search, next);
       const result = await signUp({
+        ...(destination ? { next: destination } : {}),
         email: values.email,
         password: values.password,
         fullName: values.fullName,
@@ -181,7 +184,10 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       }
       if (result.session) {
         announceSessionChange();
-        router.replace(homeForRole(result.session.role) ?? "/");
+        router.replace(
+          postLoginPath(result.session.role, window.location.search, next) ??
+            "/",
+        );
         router.refresh();
         onSuccess();
         return;

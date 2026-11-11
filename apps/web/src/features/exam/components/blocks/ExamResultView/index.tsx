@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   Accordion,
+  Alert,
   Badge,
   Box,
   Button,
@@ -127,8 +128,15 @@ export function ExamResultView({
   const bands = (attempt.sections ?? []).filter(
     (section) => section.band !== null && section.band !== undefined,
   );
-  const scaledScore = attempt.rawScore ?? 0;
-  const maxScore = attempt.maxRawScore ?? paper.maxRawScore;
+  const scaledScore = attempt.convertedScore ?? attempt.rawScore ?? 0;
+  const maxScore =
+    attempt.convertedScore != null
+      ? 990
+      : (attempt.maxRawScore ?? paper.maxRawScore);
+  const unconvertedToeic =
+    paper.certificateType === "TOEIC" &&
+    !isPractice &&
+    attempt.convertedScore == null;
 
   // Thời gian làm bài đo bằng hai mốc của server, không bằng đồng hồ máy khách.
   const timeSpentSeconds = attempt.submittedAt
@@ -195,6 +203,13 @@ export function ExamResultView({
         )}
 
         {/* Hero Score Banner */}
+        {unconvertedToeic && (
+          <Alert color="orange">
+            {isVi
+              ? "Đây là điểm bài tập, chưa phải điểm TOEIC quy đổi. Chưa có bảng quy đổi phù hợp cho đề này; kết quả không dùng để xét mốc điểm lộ trình."
+              : "These are exercise points, not a converted TOEIC score. No matching conversion table is available; this result cannot settle a roadmap score milestone."}
+          </Alert>
+        )}
         <Card
           radius="lg"
           p={{ base: "lg", md: "xl" }}
@@ -265,7 +280,11 @@ export function ExamResultView({
                 <Group gap="xs" mb={4}>
                   <Award size={20} color="var(--mantine-color-navy-9)" />
                   <Text size="xs" fw={700} c="navy.9">
-                    {t.exam.estimatedScore}
+                    {unconvertedToeic
+                      ? isVi
+                        ? "Điểm bài tập"
+                        : "Exercise points"
+                      : t.exam.estimatedScore}
                   </Text>
                 </Group>
                 <Text size="xl" fw={700} c="navy.9">

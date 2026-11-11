@@ -70,6 +70,80 @@ export function accountRoute(
   }
 
   // Public: the pricing page reads this before anyone has an account.
+  const userIdPattern =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const roles = new Set(["LEARNER", "STAFF", "ADMIN"]);
+  router.get("/admin/users", async (req, res) => {
+    const authorization = signedIn(req, res);
+    if (!authorization) return;
+    const { term = "", role, page = "0", size = "20" } = req.query;
+    if (
+      typeof term !== "string" ||
+      term.length > 200 ||
+      (role !== undefined && (typeof role !== "string" || !roles.has(role))) ||
+      typeof page !== "string" ||
+      !/^\d{1,7}$/.test(page) ||
+      typeof size !== "string" ||
+      !/^\d{1,2}$/.test(size) ||
+      Number(size) < 1 ||
+      Number(size) > 50
+    ) {
+      res.status(400).json({ code: "INVALID_REQUEST" });
+      return;
+    }
+    const query = new URLSearchParams({ term, page, size });
+    if (role) query.set("role", String(role));
+    await relay(res, "/api/admin/users?" + query, {
+      method: "GET",
+      authorization,
+      timeoutMs: 10_000,
+    });
+  });
+  router.get("/admin/users/:id/role-history", async (req, res) => {
+    const authorization = signedIn(req, res);
+    if (!authorization) return;
+    if (!userIdPattern.test(req.params.id)) {
+      res.status(400).json({ code: "INVALID_REQUEST" });
+      return;
+    }
+    await relay(res, "/api/admin/users/" + req.params.id + "/role-history", {
+      method: "GET",
+      authorization,
+      timeoutMs: 10_000,
+    });
+  });
+  router.put(
+    "/admin/users/:id/role",
+    express.json({ limit: "12kb" }),
+    async (req, res) => {
+      const authorization = signedIn(req, res);
+      if (!authorization) return;
+      const { expectedRole, role, reason } = (req.body ?? {}) as Record<
+        string,
+        unknown
+      >;
+      if (
+        !userIdPattern.test(req.params.id) ||
+        typeof expectedRole !== "string" ||
+        !roles.has(expectedRole) ||
+        typeof role !== "string" ||
+        !roles.has(role) ||
+        typeof reason !== "string" ||
+        !reason.trim() ||
+        reason.length > 2000
+      ) {
+        res.status(400).json({ code: "INVALID_REQUEST" });
+        return;
+      }
+      await relay(res, "/api/admin/users/" + req.params.id + "/role", {
+        method: "PUT",
+        authorization,
+        body: JSON.stringify({ expectedRole, role, reason: reason.trim() }),
+        timeoutMs: 10_000,
+      });
+    },
+  );
+
   router.get("/plans", async (_req, res) => {
     await relay(res, "/api/plans", { method: "GET", timeoutMs: 10_000 });
   });

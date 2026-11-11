@@ -479,6 +479,7 @@ export const examTypeDefs = /* GraphQL */ `
     rawScore: Float
     maxRawScore: Float!
     scorePercentage: Float
+    convertedScore: Float
     correctAnswerCount: Int
     questionCount: Int!
     """

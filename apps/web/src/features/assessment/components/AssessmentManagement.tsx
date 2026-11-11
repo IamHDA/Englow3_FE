@@ -438,7 +438,9 @@ export function AssessmentManagement({
                 </Text>
                 {!admin && (
                   <Text size="sm" c="dimmed">
-                    {tx("Staff chỉ thấy và chấm các đề do mình tạo.")}
+                    {isVi
+                      ? "Bạn quản lý đề do mình tạo và chấm bài thuộc đề của mình hoặc được Admin giao."
+                      : "Manage your own tasks and review their submissions or those assigned by an administrator."}
                   </Text>
                 )}
                 <Button
@@ -482,7 +484,12 @@ export function AssessmentManagement({
                       variant="light"
                       onClick={() => setViewResult(attempt.id)}
                     >
-                      {tx("Xem bài")}
+                      {admin &&
+                      ["NEEDS_REVIEW", "FAILED"].includes(attempt.status)
+                        ? isVi
+                          ? "Xem / giao chấm"
+                          : "View / assign"
+                        : tx("Xem bài")}
                     </Button>
                     {(["NEEDS_REVIEW", "FAILED"].includes(attempt.status) ||
                       (admin && attempt.status === "COMPLETED")) && (

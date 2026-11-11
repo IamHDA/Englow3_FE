@@ -15,11 +15,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, type MouseEvent, type ReactNode } from "react";
+import { Fragment, useState, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { AuthModal, isBackOfficeRole, useAuth } from "@/features/auth";
-import { useOnboarding, useOnboardingGuard } from "@/features/onboarding";
+import { useOnboarding } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
 import {
@@ -67,24 +67,29 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
     session?.email ??
     (t.nav.account || ACCOUNT_FALLBACK_NAME);
 
-  // Chặn điều hướng tới các trang chức năng khi chưa onboarding xong; nút nhắc
-  // ở header dùng `requiresOnboarding` trực tiếp để quyết định có hiện không.
+  // Self-directed practice remains available while the learner finishes their goals.
   const { requiresOnboarding } = useOnboarding();
-  const guardOnboarding = useOnboardingGuard();
 
   // Khách chưa đăng nhập: mọi mục chức năng đều cần tài khoản, nên bấm vào thì
   // mở form đăng nhập tại chỗ thay vì đưa tới một trang không dùng được.
   // Một modal duy nhất, đặt ngoài Drawer, dùng chung cho cả nút "Đăng nhập".
   const [loginOpened, login] = useDisclosure(false);
+  const [loginNext, setLoginNext] = useState<string | null>(null);
+  const closeLogin = () => {
+    login.close();
+    setLoginNext(null);
+  };
 
   function guardNavigation(event: MouseEvent) {
     if (!session) {
       event.preventDefault();
       cancelNavigationProgress();
+      setLoginNext(
+        event.currentTarget.closest("a")?.getAttribute("href") ?? null,
+      );
       login.open();
       return;
     }
-    guardOnboarding(event);
   }
 
   if (pathname === "/welcome" || (!session && pathname === "/")) {
@@ -102,7 +107,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         >
           {children}
         </SiteHeaderGuestNav>
-        <AuthModal opened={loginOpened} onClose={login.close} />
+        <AuthModal opened={loginOpened} onClose={closeLogin} next={loginNext} />
       </>
     );
   }
@@ -286,7 +291,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         </Stack>
       </Drawer>
 
-      <AuthModal opened={loginOpened} onClose={login.close} />
+      <AuthModal opened={loginOpened} onClose={closeLogin} next={loginNext} />
     </Fragment>
   );
 }

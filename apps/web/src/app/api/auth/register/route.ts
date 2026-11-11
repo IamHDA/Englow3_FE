@@ -3,6 +3,7 @@ import { registrationRequest } from "@/features/auth/validation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { authFailure, authSuccess, readAuthRequest } from "@/server/authRoute";
 import { requestOrigin } from "@/server/csrf";
+import { safeNext } from "@/features/auth/safeNext";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,14 @@ export async function POST(request: Request) {
     read.value;
 
   const supabase = await createSupabaseServerClient();
+  const callback = new URL("/auth/callback", requestOrigin(request));
+  if (read.value.next)
+    callback.searchParams.set("next", safeNext(read.value.next));
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${requestOrigin(request)}/auth/callback`,
+      emailRedirectTo: callback.toString(),
       data: {
         full_name: fullName,
         display_name: displayName,

@@ -4,6 +4,7 @@ import { useAssessmentSubmissionDetailQuery } from "@/lib/graphql/generated/hook
 import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentAuditTrail } from "./AssessmentAuditTrail";
 import { TaskInstructions } from "./TaskInstructions";
+import { AssessmentAssignmentPanel } from "./AssessmentAssignmentPanel";
 
 export function AssessmentSubmissionViewer({ id }: { id: string }) {
   const query = useAssessmentSubmissionDetailQuery({
@@ -27,6 +28,7 @@ export function AssessmentSubmissionViewer({ id }: { id: string }) {
     );
   return (
     <Stack>
+      <AssessmentAssignmentPanel id={id} status={attempt.status} />
       <Text fw={700}>
         {attempt.learnerName ?? attempt.learnerId?.slice(0, 8)} ·{" "}
         {attempt.task.title}

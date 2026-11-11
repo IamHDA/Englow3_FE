@@ -22,6 +22,7 @@ import {
   LogOut,
   Scale,
   Sparkles,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -100,6 +101,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
     // Changing a plan is the administrator's alone.
     ...(admin
       ? [
+          {
+            href: "/admin/users",
+            label: isVi ? "Người dùng & phân quyền" : "Users & roles",
+            icon: Users,
+          },
+          {
+            href: "/admin/exam-score-conversions",
+            label: isVi ? "Quy đổi điểm" : "Score conversion",
+            icon: Scale,
+          },
           {
             href: "/admin/subscriptions",
             label: isVi ? "Gói dịch vụ" : "Plans",

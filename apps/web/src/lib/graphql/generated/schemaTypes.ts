@@ -42,6 +42,24 @@ export type AdminOverview = {
   quizzesSubmitted: Scalars["Int"]["output"];
 };
 
+export type AssessmentAssignment = {
+  __typename?: "AssessmentAssignment";
+  attemptId: Scalars["ID"]["output"];
+  history: Array<AssessmentAssignmentEntry>;
+  reviewerId?: Maybe<Scalars["ID"]["output"]>;
+  reviewerName?: Maybe<Scalars["String"]["output"]>;
+  version: Scalars["Int"]["output"];
+};
+
+export type AssessmentAssignmentEntry = {
+  __typename?: "AssessmentAssignmentEntry";
+  assignedByUserId?: Maybe<Scalars["ID"]["output"]>;
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  note: Scalars["String"]["output"];
+  reviewerId?: Maybe<Scalars["ID"]["output"]>;
+};
+
 export type AssessmentAttempt = {
   __typename?: "AssessmentAttempt";
   answerText: Scalars["String"]["output"];
@@ -113,6 +131,12 @@ export type AssessmentReview = {
   report: Scalars["String"]["output"];
   reviewerId: Scalars["ID"]["output"];
   reviewerName?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type AssessmentReviewer = {
+  __typename?: "AssessmentReviewer";
+  displayName: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
 };
 
 export enum AssessmentSkill {
@@ -607,6 +631,7 @@ export type Exam = {
 
 export type ExamAttempt = {
   __typename?: "ExamAttempt";
+  convertedScore?: Maybe<Scalars["Float"]["output"]>;
   correctAnswerCount?: Maybe<Scalars["Int"]["output"]>;
   examId: Scalars["ID"]["output"];
   /** Null except on a history row - a sitting knows its own paper's name. */
@@ -1398,6 +1423,7 @@ export type Mutation = {
   archiveExam: Exam;
   archiveFullTest: FullTest;
   archiveTutorConversation: TutorConversationSummary;
+  assignAssessment: AssessmentAssignment;
   attachLevelCheckExamAttempt: LevelCheck;
   attachLevelCheckSpeakingAttempt: LevelCheck;
   branchTutorConversation: TutorConversation;
@@ -1648,6 +1674,13 @@ export type MutationArchiveFullTestArgs = {
 
 export type MutationArchiveTutorConversationArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type MutationAssignAssessmentArgs = {
+  id: Scalars["ID"]["input"];
+  note: Scalars["String"]["input"];
+  reviewerId?: InputMaybe<Scalars["ID"]["input"]>;
+  version: Scalars["Int"]["input"];
 };
 
 export type MutationAttachLevelCheckExamAttemptArgs = {
@@ -2052,10 +2085,12 @@ export type Query = {
   adminFullTests: Array<FullTest>;
   /** Staff and administrators only. */
   adminOverview: AdminOverview;
+  assessmentAssignment: AssessmentAssignment;
   assessmentAttempt: AssessmentAttempt;
   assessmentCapabilities: AssessmentCapabilities;
   assessmentHistory: AssessmentAttemptPage;
   assessmentNotifications: AssessmentNotificationPage;
+  assessmentReviewers: Array<AssessmentReviewer>;
   assessmentReviews: Array<AssessmentReview>;
   assessmentSubmission: AssessmentAttempt;
   assessmentSubmissions: AssessmentSubmissionPage;
@@ -2210,6 +2245,10 @@ export type QueryAdminExamsArgs = {
 };
 
 export type QueryAdminFullTestArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryAssessmentAssignmentArgs = {
   id: Scalars["ID"]["input"];
 };
 
@@ -2777,6 +2816,7 @@ export type SaveFullTestInput = {
   speakingPart2Id: Scalars["ID"]["input"];
   speakingPart3Id: Scalars["ID"]["input"];
   title: Scalars["String"]["input"];
+  version?: InputMaybe<Scalars["Int"]["input"]>;
   writingTask1Id: Scalars["ID"]["input"];
   writingTask2Id: Scalars["ID"]["input"];
 };

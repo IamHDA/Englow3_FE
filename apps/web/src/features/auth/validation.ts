@@ -9,6 +9,7 @@ export const newAuthPassword = z
   .regex(/[a-z]/)
   .regex(/[^A-Za-z0-9]/);
 export const registrationRequest = z.object({
+  next: z.string().max(4096).optional(),
   email: authEmail,
   password: newAuthPassword,
   fullName: z.string().trim().min(2).max(200),

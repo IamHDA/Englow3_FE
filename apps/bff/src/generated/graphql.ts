@@ -44,6 +44,24 @@ export type AdminOverview = {
   quizzesSubmitted: Scalars['Int']['output'];
 };
 
+export type AssessmentAssignment = {
+  __typename?: 'AssessmentAssignment';
+  attemptId: Scalars['ID']['output'];
+  history: Array<AssessmentAssignmentEntry>;
+  reviewerId?: Maybe<Scalars['ID']['output']>;
+  reviewerName?: Maybe<Scalars['String']['output']>;
+  version: Scalars['Int']['output'];
+};
+
+export type AssessmentAssignmentEntry = {
+  __typename?: 'AssessmentAssignmentEntry';
+  assignedByUserId?: Maybe<Scalars['ID']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  note: Scalars['String']['output'];
+  reviewerId?: Maybe<Scalars['ID']['output']>;
+};
+
 export type AssessmentAttempt = {
   __typename?: 'AssessmentAttempt';
   answerText: Scalars['String']['output'];
@@ -114,6 +132,12 @@ export type AssessmentReview = {
   report: Scalars['String']['output'];
   reviewerId: Scalars['ID']['output'];
   reviewerName?: Maybe<Scalars['String']['output']>;
+};
+
+export type AssessmentReviewer = {
+  __typename?: 'AssessmentReviewer';
+  displayName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
 };
 
 export type AssessmentSkill =
@@ -597,6 +621,7 @@ export type Exam = {
 
 export type ExamAttempt = {
   __typename?: 'ExamAttempt';
+  convertedScore?: Maybe<Scalars['Float']['output']>;
   correctAnswerCount?: Maybe<Scalars['Int']['output']>;
   examId: Scalars['ID']['output'];
   /** Null except on a history row - a sitting knows its own paper's name. */
@@ -1369,6 +1394,7 @@ export type Mutation = {
   archiveExam: Exam;
   archiveFullTest: FullTest;
   archiveTutorConversation: TutorConversationSummary;
+  assignAssessment: AssessmentAssignment;
   attachLevelCheckExamAttempt: LevelCheck;
   attachLevelCheckSpeakingAttempt: LevelCheck;
   branchTutorConversation: TutorConversation;
@@ -1626,6 +1652,14 @@ export type MutationArchiveFullTestArgs = {
 
 export type MutationArchiveTutorConversationArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationAssignAssessmentArgs = {
+  id: Scalars['ID']['input'];
+  note: Scalars['String']['input'];
+  reviewerId?: InputMaybe<Scalars['ID']['input']>;
+  version: Scalars['Int']['input'];
 };
 
 
@@ -2091,10 +2125,12 @@ export type Query = {
   adminFullTests: Array<FullTest>;
   /** Staff and administrators only. */
   adminOverview: AdminOverview;
+  assessmentAssignment: AssessmentAssignment;
   assessmentAttempt: AssessmentAttempt;
   assessmentCapabilities: AssessmentCapabilities;
   assessmentHistory: AssessmentAttemptPage;
   assessmentNotifications: AssessmentNotificationPage;
+  assessmentReviewers: Array<AssessmentReviewer>;
   assessmentReviews: Array<AssessmentReview>;
   assessmentSubmission: AssessmentAttempt;
   assessmentSubmissions: AssessmentSubmissionPage;
@@ -2253,6 +2289,11 @@ export type QueryAdminExamsArgs = {
 
 
 export type QueryAdminFullTestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentAssignmentArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -2862,6 +2903,7 @@ export type SaveFullTestInput = {
   speakingPart2Id: Scalars['ID']['input'];
   speakingPart3Id: Scalars['ID']['input'];
   title: Scalars['String']['input'];
+  version?: InputMaybe<Scalars['Int']['input']>;
   writingTask1Id: Scalars['ID']['input'];
   writingTask2Id: Scalars['ID']['input'];
 };
@@ -3479,6 +3521,8 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 export type ResolversTypes = ResolversObject<{
   AdjustmentReason: AdjustmentReason;
   AdminOverview: ResolverTypeWrapper<AdminOverview>;
+  AssessmentAssignment: ResolverTypeWrapper<AssessmentAssignment>;
+  AssessmentAssignmentEntry: ResolverTypeWrapper<AssessmentAssignmentEntry>;
   AssessmentAttempt: ResolverTypeWrapper<AssessmentAttempt>;
   AssessmentAttemptPage: ResolverTypeWrapper<AssessmentAttemptPage>;
   AssessmentAttemptStatus: AssessmentAttemptStatus;
@@ -3486,6 +3530,7 @@ export type ResolversTypes = ResolversObject<{
   AssessmentNotification: ResolverTypeWrapper<AssessmentNotification>;
   AssessmentNotificationPage: ResolverTypeWrapper<AssessmentNotificationPage>;
   AssessmentReview: ResolverTypeWrapper<AssessmentReview>;
+  AssessmentReviewer: ResolverTypeWrapper<AssessmentReviewer>;
   AssessmentSkill: AssessmentSkill;
   AssessmentSubmissionPage: ResolverTypeWrapper<AssessmentSubmissionPage>;
   AssessmentSubmissionSummary: ResolverTypeWrapper<AssessmentSubmissionSummary>;
@@ -3680,12 +3725,15 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   AdminOverview: AdminOverview;
+  AssessmentAssignment: AssessmentAssignment;
+  AssessmentAssignmentEntry: AssessmentAssignmentEntry;
   AssessmentAttempt: AssessmentAttempt;
   AssessmentAttemptPage: AssessmentAttemptPage;
   AssessmentCapabilities: AssessmentCapabilities;
   AssessmentNotification: AssessmentNotification;
   AssessmentNotificationPage: AssessmentNotificationPage;
   AssessmentReview: AssessmentReview;
+  AssessmentReviewer: AssessmentReviewer;
   AssessmentSubmissionPage: AssessmentSubmissionPage;
   AssessmentSubmissionSummary: AssessmentSubmissionSummary;
   AssessmentSubmissionTask: AssessmentSubmissionTask;
@@ -3840,6 +3888,22 @@ export type AdminOverviewResolvers<ContextType = GraphQLContext, ParentType exte
   quizzesSubmitted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
+export type AssessmentAssignmentResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentAssignment'] = ResolversParentTypes['AssessmentAssignment']> = ResolversObject<{
+  attemptId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  history?: Resolver<Array<ResolversTypes['AssessmentAssignmentEntry']>, ParentType, ContextType>;
+  reviewerId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  reviewerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type AssessmentAssignmentEntryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentAssignmentEntry'] = ResolversParentTypes['AssessmentAssignmentEntry']> = ResolversObject<{
+  assignedByUserId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  note?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  reviewerId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+}>;
+
 export type AssessmentAttemptResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentAttempt'] = ResolversParentTypes['AssessmentAttempt']> = ResolversObject<{
   answerText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   assessedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -3897,6 +3961,11 @@ export type AssessmentReviewResolvers<ContextType = GraphQLContext, ParentType e
   report?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reviewerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   reviewerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
+export type AssessmentReviewerResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentReviewer'] = ResolversParentTypes['AssessmentReviewer']> = ResolversObject<{
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
 export type AssessmentSubmissionPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AssessmentSubmissionPage'] = ResolversParentTypes['AssessmentSubmissionPage']> = ResolversObject<{
@@ -4182,6 +4251,7 @@ export type ExamResolvers<ContextType = GraphQLContext, ParentType extends Resol
 }>;
 
 export type ExamAttemptResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ExamAttempt'] = ResolversParentTypes['ExamAttempt']> = ResolversObject<{
+  convertedScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   correctAnswerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   examId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   examTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4617,6 +4687,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   archiveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationArchiveExamArgs, 'id'>>;
   archiveFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationArchiveFullTestArgs, 'id'>>;
   archiveTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationArchiveTutorConversationArgs, 'id'>>;
+  assignAssessment?: Resolver<ResolversTypes['AssessmentAssignment'], ParentType, ContextType, RequireFields<MutationAssignAssessmentArgs, 'id' | 'note' | 'version'>>;
   attachLevelCheckExamAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckExamAttemptArgs, 'attemptId' | 'id'>>;
   attachLevelCheckSpeakingAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckSpeakingAttemptArgs, 'attemptId' | 'id'>>;
   branchTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationBranchTutorConversationArgs, 'clientMessageId' | 'conversationId' | 'message' | 'messageId'>>;
@@ -4714,10 +4785,12 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   adminFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<QueryAdminFullTestArgs, 'id'>>;
   adminFullTests?: Resolver<Array<ResolversTypes['FullTest']>, ParentType, ContextType>;
   adminOverview?: Resolver<ResolversTypes['AdminOverview'], ParentType, ContextType>;
+  assessmentAssignment?: Resolver<ResolversTypes['AssessmentAssignment'], ParentType, ContextType, RequireFields<QueryAssessmentAssignmentArgs, 'id'>>;
   assessmentAttempt?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<QueryAssessmentAttemptArgs, 'id'>>;
   assessmentCapabilities?: Resolver<ResolversTypes['AssessmentCapabilities'], ParentType, ContextType>;
   assessmentHistory?: Resolver<ResolversTypes['AssessmentAttemptPage'], ParentType, ContextType, Partial<QueryAssessmentHistoryArgs>>;
   assessmentNotifications?: Resolver<ResolversTypes['AssessmentNotificationPage'], ParentType, ContextType, Partial<QueryAssessmentNotificationsArgs>>;
+  assessmentReviewers?: Resolver<Array<ResolversTypes['AssessmentReviewer']>, ParentType, ContextType>;
   assessmentReviews?: Resolver<Array<ResolversTypes['AssessmentReview']>, ParentType, ContextType, RequireFields<QueryAssessmentReviewsArgs, 'id'>>;
   assessmentSubmission?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<QueryAssessmentSubmissionArgs, 'id'>>;
   assessmentSubmissions?: Resolver<ResolversTypes['AssessmentSubmissionPage'], ParentType, ContextType, Partial<QueryAssessmentSubmissionsArgs>>;
@@ -5297,12 +5370,15 @@ export type UserTourStatusResolvers<ContextType = GraphQLContext, ParentType ext
 
 export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AdminOverview?: AdminOverviewResolvers<ContextType>;
+  AssessmentAssignment?: AssessmentAssignmentResolvers<ContextType>;
+  AssessmentAssignmentEntry?: AssessmentAssignmentEntryResolvers<ContextType>;
   AssessmentAttempt?: AssessmentAttemptResolvers<ContextType>;
   AssessmentAttemptPage?: AssessmentAttemptPageResolvers<ContextType>;
   AssessmentCapabilities?: AssessmentCapabilitiesResolvers<ContextType>;
   AssessmentNotification?: AssessmentNotificationResolvers<ContextType>;
   AssessmentNotificationPage?: AssessmentNotificationPageResolvers<ContextType>;
   AssessmentReview?: AssessmentReviewResolvers<ContextType>;
+  AssessmentReviewer?: AssessmentReviewerResolvers<ContextType>;
   AssessmentSubmissionPage?: AssessmentSubmissionPageResolvers<ContextType>;
   AssessmentSubmissionSummary?: AssessmentSubmissionSummaryResolvers<ContextType>;
   AssessmentSubmissionTask?: AssessmentSubmissionTaskResolvers<ContextType>;

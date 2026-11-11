@@ -5,11 +5,14 @@ import { CERTIFICATE_SCORE_RANGE } from "@/features/onboarding/constants/onboard
 import { TargetCertificate } from "@/lib/graphql/generated";
 
 /**
- * Backend nhận `certificateType` bắt buộc, `targetScore` và `targetDate` tuỳ ý
- * (@Positive và @Future). Mốc điểm được kiểm theo thang của đúng chứng chỉ
- * đang chọn - 9.5 hợp lệ với TOEIC nhưng vô nghĩa với IELTS.
+ * Mirror the backend's conditional goal requirements; dates remain optional.
+ * Scores use the selected certificate's range and increment.
  */
-export function learningGoalSchema(isVi: boolean, requireTargetLevel = false) {
+export function learningGoalSchema(
+  isVi: boolean,
+  requireTargetLevel = false,
+  requireTargetScore = false,
+) {
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   return z
     .object({
@@ -72,17 +75,29 @@ export function learningGoalSchema(isVi: boolean, requireTargetLevel = false) {
         ),
     })
     .superRefine((values, ctx) => {
-      if (values.targetScore === "") return;
+      if (values.targetScore === "") {
+        if (requireTargetScore)
+          ctx.addIssue({
+            code: "custom",
+            path: ["targetScore"],
+            message: tr(
+              "Chọn mốc điểm để tạo lộ trình",
+              "Choose a target score for your roadmap",
+            ),
+          });
+        return;
+      }
 
       const score = Number(values.targetScore);
       const range = CERTIFICATE_SCORE_RANGE[values.certificateType];
-      if (score < range.min || score > range.max) {
+      const minimum = Math.max(range.min, range.step);
+      if (score < minimum || score > range.max) {
         ctx.addIssue({
           code: "custom",
           path: ["targetScore"],
           message: tr(
-            `Mốc điểm ${values.certificateType} nằm trong khoảng ${range.min} - ${range.max}`,
-            `A ${values.certificateType} score is between ${range.min} and ${range.max}`,
+            `Mốc điểm mục tiêu ${values.certificateType} nằm trong khoảng ${minimum} - ${range.max}`,
+            `A ${values.certificateType} target score is between ${minimum} and ${range.max}`,
           ),
         });
         return;

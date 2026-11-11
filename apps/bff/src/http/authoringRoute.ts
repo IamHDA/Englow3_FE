@@ -69,6 +69,18 @@ export function authoringRoute() {
     },
   );
   router.use(express.json({ limit: "2mb" }));
+  router.get("/admin/exam-score-conversions/toeic", (req, res) =>
+    forward(req, res, "GET", "/api/admin/exam-score-conversions/toeic"),
+  );
+  router.post("/admin/exam-score-conversions/toeic", (req, res) =>
+    forward(
+      req,
+      res,
+      "POST",
+      "/api/admin/exam-score-conversions/toeic",
+      req.body,
+    ),
+  );
   router.get("/admin/authoring/:kind/:id", (req, res) => {
     const base = paths[req.params.kind];
     if (!base || !uuid.test(req.params.id)) return void res.sendStatus(404);

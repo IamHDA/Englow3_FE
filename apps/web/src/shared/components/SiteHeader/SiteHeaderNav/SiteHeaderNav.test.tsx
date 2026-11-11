@@ -98,13 +98,13 @@ describe("SiteHeaderNav", () => {
     expect(guardOnboarding).not.toHaveBeenCalled();
   });
 
-  it("lets a signed-in learner through to the onboarding check", () => {
+  it("lets a signed-in learner practise without blocking on onboarding", () => {
     auth.session = { userId: "u1", email: "learner@example.com" };
     renderNav();
 
     fireEvent.click(linkTo("/ai-tutor"));
 
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(guardOnboarding).toHaveBeenCalledTimes(1);
+    expect(guardOnboarding).not.toHaveBeenCalled();
   });
 });

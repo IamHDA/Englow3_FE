@@ -9,6 +9,7 @@ fragment ExamAttemptFields on ExamAttempt {
   rawScore
   maxRawScore
   scorePercentage
+  convertedScore
   correctAnswerCount
   questionCount
   resumed

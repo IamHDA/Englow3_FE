@@ -65,6 +65,7 @@ export function signInWithPassword(values: {
 }
 
 export function signUp(values: {
+  next?: string;
   email: string;
   password: string;
   fullName: string;
@@ -93,6 +94,9 @@ export function setNewPassword(password: string) {
 }
 
 /** The provider's address to send the browser to; the server keeps the PKCE verifier. */
-export function startOAuth(provider: "google" | "facebook") {
-  return post<{ url: string }>("oauth", { provider });
+export function startOAuth(provider: "google" | "facebook", next?: string) {
+  return post<{ url: string }>("oauth", {
+    provider,
+    ...(next ? { next } : {}),
+  });
 }

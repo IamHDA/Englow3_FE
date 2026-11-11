@@ -64,6 +64,18 @@ it("registers normalized data without allowing role escalation in user metadata"
   expect(api.signUp.mock.calls[0][0].options.data).not.toHaveProperty("role");
   expect(api.signUp.mock.calls[0][0].email).toBe("test@example.com");
 });
+it("keeps a safe return path in the email confirmation callback", async () => {
+  await register(request({ ...body, next: "/exams?tab=mine" }));
+  const callback = new URL(api.signUp.mock.calls[0][0].options.emailRedirectTo);
+  expect(callback.origin).toBe("https://englow.example");
+  expect(callback.searchParams.get("next")).toBe("/exams?tab=mine");
+});
+it("refuses an external return destination in the confirmation link", async () => {
+  await register(request({ ...body, next: "https://evil.example" }));
+  const callback = new URL(api.signUp.mock.calls[0][0].options.emailRedirectTo);
+  expect(callback.origin).toBe("https://englow.example");
+  expect(callback.searchParams.get("next")).toBe("/");
+});
 it("supports registration with confirmation disabled without exposing tokens", async () => {
   api.signUp.mockResolvedValue({
     data: {

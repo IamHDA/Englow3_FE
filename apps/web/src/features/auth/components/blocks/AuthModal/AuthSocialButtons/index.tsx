@@ -10,8 +10,11 @@ import { authErrorMessage } from "@/features/auth/authErrorMessage";
 import { AuthProvider } from "@/features/auth/constants/authOptions";
 import { startOAuth } from "@/features/auth/api/authClient";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { postLoginPath } from "@/features/auth/postLoginPath";
 
-export function AuthSocialButtons() {
+export function AuthSocialButtons({
+  next: requestedNext,
+}: { next?: string | null } = {}) {
   const { isVi } = useLanguage();
   const [busy, setBusy] = useState(false);
   const pending = useRef(false);
@@ -20,7 +23,10 @@ export function AuthSocialButtons() {
     pending.current = true;
     setBusy(true);
     try {
-      const result = await startOAuth(provider);
+      const next = postLoginPath(null, window.location.search, requestedNext);
+      const result = next
+        ? await startOAuth(provider, next)
+        : await startOAuth(provider);
       if (result.error) {
         notifications.show({
           color: "warn",

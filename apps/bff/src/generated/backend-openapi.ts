@@ -228,6 +228,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{id}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["changeRole"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/tutor/resources/{id}": {
         parameters: {
             query?: never;
@@ -445,6 +461,22 @@ export interface paths {
         };
         get: operations["task"];
         put: operations["edit"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/assessments/submissions/{id}/assignment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["assignment"];
+        put: operations["assign"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1828,6 +1860,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/exam-score-conversions/toeic": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["read"];
+        put?: never;
+        post: operations["configure"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/dictation/media": {
         parameters: {
             query?: never;
@@ -3092,6 +3140,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["search_7"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}/role-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["history_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/tutor/staff": {
         parameters: {
             query?: never;
@@ -3163,7 +3243,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["search_7"];
+        get: operations["search_8"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3179,7 +3259,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["search_8"];
+        get: operations["search_9"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3292,6 +3372,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["reviews"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/assessments/reviewers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["reviewers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3461,7 +3557,7 @@ export interface components {
         };
         "com.englow3.user.dto.request.SetLearningGoalRequest": {
             /** @enum {string} */
-            certificateType: "IELTS" | "TOEIC";
+            certificateType?: "IELTS" | "TOEIC";
             currentScore?: number;
             targetScore?: number;
             /** Format: date */
@@ -3563,6 +3659,21 @@ export interface components {
             certificateType: string;
             /** @description Writing Task 1: the chart to describe, signed for a few hours */
             imageUrl: string | null;
+        };
+        "com.englow3.user.dto.request.ChangeUserRoleRequest": {
+            /** @enum {string} */
+            expectedRole: "LEARNER" | "ADMIN" | "STAFF";
+            /** @enum {string} */
+            role: "LEARNER" | "ADMIN" | "STAFF";
+            reason: string;
+        };
+        "com.englow3.user.dto.response.AdminUserResponse": {
+            /** Format: uuid */
+            id: string;
+            email: string;
+            displayName: string;
+            /** @enum {string} */
+            role: "LEARNER" | "ADMIN" | "STAFF";
         };
         "com.englow3.tutor.dto.command.TutorResourceCommand": {
             title: string;
@@ -3850,6 +3961,8 @@ export interface components {
             speakingPart2Id: string;
             /** Format: uuid */
             speakingPart3Id: string;
+            /** Format: int64 */
+            version?: number | null;
         };
         "com.englow3.exam.dto.response.FullTestResponse": {
             /** Format: uuid */
@@ -4393,6 +4506,34 @@ export interface components {
             purpose?: "PRACTICE" | "LEVEL_CHECK";
             certificateType?: string;
         };
+        "com.englow3.assessment.dto.request.AssignAssessmentRequest": {
+            /** Format: uuid */
+            reviewerId?: string | null;
+            /** Format: int64 */
+            version: number;
+            note: string;
+        };
+        "com.englow3.assessment.dto.response.AssessmentAssignmentResponse": {
+            /** Format: uuid */
+            attemptId: string;
+            /** Format: uuid */
+            reviewerId: string | null;
+            reviewerName: string | null;
+            /** Format: int64 */
+            version: number;
+            history: components["schemas"]["com.englow3.assessment.dto.response.AssessmentAssignmentResponse.Entry"][];
+        };
+        "com.englow3.assessment.dto.response.AssessmentAssignmentResponse.Entry": {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            assignedByUserId: string;
+            /** Format: uuid */
+            reviewerId: string;
+            note: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
         "com.englow3.user.controller.AccountController.EraseRequest": {
             confirmEmail: string;
         };
@@ -4850,6 +4991,8 @@ export interface components {
             parts: components["schemas"]["com.englow3.exam.dto.response.ExamAttemptResponse.AttemptPartResponse"][];
             /** @description Each section's points and band; empty until scored */
             sections: components["schemas"]["com.englow3.exam.dto.response.ExamAttemptResponse.SectionScoreResponse"][];
+            /** @description Configured TOEIC Listening + Reading total; absent when no valid conversion applies */
+            convertedScore: number | null;
         };
         "com.englow3.exam.dto.response.ExamAttemptResponse.AttemptPartResponse": {
             /** Format: uuid */
@@ -5150,6 +5293,35 @@ export interface components {
         };
         "com.englow3.exam.dto.response.ExamMediaResponse": {
             objectKey: string;
+        };
+        "com.englow3.exam.dto.request.ConfigureToeicScoresRequest": {
+            /** Format: date */
+            effectiveFrom: string;
+            sourceReference: string;
+            rows: components["schemas"]["com.englow3.exam.dto.request.ConfigureToeicScoresRequest.Row"][];
+        };
+        "com.englow3.exam.dto.request.ConfigureToeicScoresRequest.Row": {
+            /** @enum {string} */
+            sectionType: "LISTENING" | "READING" | "WRITING" | "SPEAKING";
+            /** Format: int32 */
+            rawScoreFrom?: number;
+            /** Format: int32 */
+            rawScoreTo?: number;
+            convertedScore: number;
+        };
+        "com.englow3.exam.dto.response.ScoreConversionResponse": {
+            /** Format: int32 */
+            id: number;
+            /** @enum {string} */
+            sectionType: "LISTENING" | "READING" | "WRITING" | "SPEAKING";
+            /** Format: int32 */
+            rawScoreFrom: number;
+            /** Format: int32 */
+            rawScoreTo: number;
+            convertedScore: number;
+            /** Format: date */
+            effectiveFrom: string;
+            sourceReference: string;
         };
         "com.englow3.dictation.dto.response.DictationMediaResponse": {
             objectKey: string;
@@ -5957,6 +6129,30 @@ export interface components {
             /** Format: int32 */
             totalPages: number;
         };
+        "com.englow3.shared.page.PageResponseCom.englow3.user.dto.response.AdminUserResponse": {
+            items: components["schemas"]["com.englow3.user.dto.response.AdminUserResponse"][];
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            size: number;
+            /** Format: int64 */
+            totalItems: number;
+            /** Format: int32 */
+            totalPages: number;
+        };
+        "com.englow3.user.dto.response.UserRoleChangeResponse": {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            actorId: string;
+            /** @enum {string} */
+            previousRole: "LEARNER" | "ADMIN" | "STAFF";
+            /** @enum {string} */
+            newRole: "LEARNER" | "ADMIN" | "STAFF";
+            reason: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
         "com.englow3.user.api.UserDirectory.StaffMember": {
             /** Format: uuid */
             id: string;
@@ -6265,6 +6461,11 @@ export interface components {
             note: string;
             /** Format: date-time */
             createdAt: string;
+        };
+        "com.englow3.assessment.dto.response.AssessmentReviewerResponse": {
+            /** Format: uuid */
+            id: string;
+            displayName: string;
         };
         "com.englow3.shared.error.ApiErrorResponse": {
             code?: string;
@@ -7552,6 +7753,86 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["com.englow3.assessment.dto.response.AssessmentAttemptResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    changeRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["com.englow3.user.dto.request.ChangeUserRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.user.dto.response.AdminUserResponse"];
                 };
             };
             /** @description Invalid request */
@@ -9648,6 +9929,162 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["com.englow3.assessment.dto.response.AssessmentTaskResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    assignment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.assessment.dto.response.AssessmentAssignmentResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    assign: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["com.englow3.assessment.dto.request.AssignAssessmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.assessment.dto.response.AssessmentAssignmentResponse"];
                 };
             };
             /** @description Invalid request */
@@ -17211,6 +17648,158 @@ export interface operations {
             };
         };
     };
+    read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.exam.dto.response.ScoreConversionResponse"][];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    configure: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["com.englow3.exam.dto.request.ConfigureToeicScoresRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.exam.dto.response.ScoreConversionResponse"][];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
     upload_2: {
         parameters: {
             query?: never;
@@ -23722,6 +24311,165 @@ export interface operations {
             };
         };
     };
+    search_7: {
+        parameters: {
+            query?: {
+                term?: string;
+                role?: "LEARNER" | "ADMIN" | "STAFF";
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.page.PageResponseCom.englow3.user.dto.response.AdminUserResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    history_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.user.dto.response.UserRoleChangeResponse"][];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
     staff: {
         parameters: {
             query?: never;
@@ -24028,7 +24776,7 @@ export interface operations {
             };
         };
     };
-    search_7: {
+    search_8: {
         parameters: {
             query?: {
                 status?: "DRAFT" | "PENDING_REVIEW" | "REJECTED" | "PUBLISHED" | "ARCHIVED";
@@ -24111,7 +24859,7 @@ export interface operations {
             };
         };
     };
-    search_8: {
+    search_9: {
         parameters: {
             query?: {
                 skillType?: "LISTENING" | "READING" | "WRITING" | "SPEAKING";
@@ -24672,6 +25420,80 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["com.englow3.assessment.dto.response.AssessmentReviewResponse"][];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Authenticated user is not allowed to perform this action */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Requested resource was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Operation conflicts with the current resource state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.shared.error.ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    reviewers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["com.englow3.assessment.dto.response.AssessmentReviewerResponse"][];
                 };
             };
             /** @description Invalid request */

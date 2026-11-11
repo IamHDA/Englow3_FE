@@ -58,10 +58,7 @@ type LearningGoalStepProps = {
   onContinue: (input: LearningGoalInput) => void;
 };
 
-/**
- * Vẫn hỏi chứng chỉ ở đây dù bước 2 đã hỏi: backend bắt buộc `certificateType`
- * cho mọi người học, kể cả người vừa bị bỏ qua bước 2 vì không luyện chứng chỉ.
- */
+/** Certificate goals require a score; general goals use the next CEFR level. */
 export function LearningGoalStep({
   certificateLearner,
   initialCertificate,
@@ -84,8 +81,8 @@ export function LearningGoalStep({
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const copy = isVi ? LEARNING_GOAL_COPY.vi : LEARNING_GOAL_COPY.en;
   const schema = useMemo(
-    () => learningGoalSchema(isVi, requireTargetLevel),
-    [isVi, requireTargetLevel],
+    () => learningGoalSchema(isVi, requireTargetLevel, certificateLearner),
+    [isVi, requireTargetLevel, certificateLearner],
   );
   const {
     control,
@@ -230,14 +227,14 @@ export function LearningGoalStep({
               <NumberInput
                 label={tr("Mốc điểm muốn đạt", "Target score")}
                 description={tr(
-                  `Để trống nếu chưa quyết định. Thang ${certificateType}: ${range.min} - ${range.max}.`,
-                  `Leave empty if undecided. ${certificateType} scale: ${range.min} - ${range.max}.`,
+                  `Lộ trình cần mốc điểm đích. Thang ${certificateType}: ${range.min} - ${range.max}.`,
+                  `Your roadmap needs a target score. ${certificateType} scale: ${range.min} - ${range.max}.`,
                 )}
                 placeholder={tr(
                   `Ví dụ ${range.max}`,
                   `For example ${range.max}`,
                 )}
-                min={range.min}
+                min={Math.max(range.min, range.step)}
                 max={range.max}
                 step={range.step}
                 radius="md"

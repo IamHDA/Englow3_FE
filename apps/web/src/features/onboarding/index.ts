@@ -3,4 +3,3 @@
 export { OnboardingGate } from "./components/views/OnboardingGate";
 export { OnboardingProvider } from "./provider";
 export { useOnboarding } from "./hooks/useOnboarding";
-export { useOnboardingGuard } from "./hooks/useOnboardingGuard";
