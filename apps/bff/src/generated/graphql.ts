@@ -310,6 +310,23 @@ export type AvatarPreset = {
   url: Scalars['String']['output'];
 };
 
+export type BlockedUser = {
+  __typename?: 'BlockedUser';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  blockedAt: Scalars['DateTime']['output'];
+  displayName: Scalars['String']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type BlockedUserPage = {
+  __typename?: 'BlockedUserPage';
+  items: Array<BlockedUser>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type CefrLevel =
   | 'A1'
   | 'A2'
@@ -1009,6 +1026,54 @@ export type FlashcardStats = {
   studySeconds: Scalars['Int']['output'];
 };
 
+export type Friend = {
+  __typename?: 'Friend';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  friendsSince: Scalars['DateTime']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type FriendPage = {
+  __typename?: 'FriendPage';
+  items: Array<Friend>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type FriendRequest = {
+  __typename?: 'FriendRequest';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  requestId: Scalars['ID']['output'];
+  requestedAt: Scalars['DateTime']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type FriendRequestOutcome = {
+  __typename?: 'FriendRequestOutcome';
+  acceptedAt?: Maybe<Scalars['DateTime']['output']>;
+  requestId: Scalars['ID']['output'];
+  requestedAt: Scalars['DateTime']['output'];
+  status: FriendRequestStatus;
+  userId: Scalars['ID']['output'];
+};
+
+export type FriendRequestPage = {
+  __typename?: 'FriendRequestPage';
+  items: Array<FriendRequest>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type FriendRequestStatus =
+  | 'ACCEPTED'
+  | 'PENDING';
+
 /**
  * An IELTS full test: one Listening + Reading paper and five Writing and
  * Speaking tasks, sat as one test with one overall band. It is the IELTS
@@ -1212,6 +1277,28 @@ export type LearnerExamPage = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type LearnerSearchPage = {
+  __typename?: 'LearnerSearchPage';
+  items: Array<LearnerSearchResult>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type LearnerSearchResult = {
+  __typename?: 'LearnerSearchResult';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  relationship: RelationshipStatus;
+  /**
+   * Set only when the learner has asked the viewer (REQUEST_RECEIVED): the
+   * id to accept or decline.
+   */
+  requestId?: Maybe<Scalars['ID']['output']>;
+  userId: Scalars['ID']['output'];
+};
+
 export type LearningGoalInput = {
   certificateType: TargetCertificate;
   /**
@@ -1380,6 +1467,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['Boolean']['output']>;
   abandonRoadmap: Scalars['Boolean']['output'];
+  acceptFriendRequest: FriendRequestOutcome;
   /**
    * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
    * same step - there is no approved-but-unpublished state.
@@ -1405,6 +1493,7 @@ export type Mutation = {
   assignAssessment: AssessmentAssignment;
   attachLevelCheckExamAttempt: LevelCheck;
   attachLevelCheckSpeakingAttempt: LevelCheck;
+  blockUser: Scalars['Boolean']['output'];
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
   /**
@@ -1518,6 +1607,7 @@ export type Mutation = {
    */
   selectTargetSkills: OnboardingState;
   selectTutorReply: TutorConversation;
+  sendFriendRequest: FriendRequestOutcome;
   /**
    * Sends a question. Omit conversationId to start a new thread - whether one
    * already exists is not the learner's concern.
@@ -1622,9 +1712,18 @@ export type Mutation = {
   submitTranslation: TranslationAttempt;
   summarizeTutorConversation: TutorConversation;
   transitionAssessmentTask: AssessmentTask;
+  unblockUser: Scalars['Boolean']['output'];
+  unfriend: Scalars['Boolean']['output'];
   updateProfile: Me;
   updateTutorPolicy: TutorPolicy;
   updateTutorResource: TutorResource;
+  /** Declines a request sent to the viewer, or cancels one the viewer sent. */
+  withdrawFriendRequest: Scalars['Boolean']['output'];
+};
+
+
+export type MutationAcceptFriendRequestArgs = {
+  requestId: Scalars['ID']['input'];
 };
 
 
@@ -1682,6 +1781,11 @@ export type MutationAttachLevelCheckExamAttemptArgs = {
 export type MutationAttachLevelCheckSpeakingAttemptArgs = {
   attemptId: Scalars['ID']['input'];
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationBlockUserArgs = {
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -1904,6 +2008,11 @@ export type MutationSelectTutorReplyArgs = {
 };
 
 
+export type MutationSendFriendRequestArgs = {
+  addresseeId: Scalars['ID']['input'];
+};
+
+
 export type MutationSendTutorMessageArgs = {
   assessmentAttemptId?: InputMaybe<Scalars['ID']['input']>;
   clientMessageId?: InputMaybe<Scalars['ID']['input']>;
@@ -2059,6 +2168,16 @@ export type MutationTransitionAssessmentTaskArgs = {
 };
 
 
+export type MutationUnblockUserArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationUnfriendArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
@@ -2072,6 +2191,11 @@ export type MutationUpdateTutorPolicyArgs = {
 export type MutationUpdateTutorResourceArgs = {
   id: Scalars['ID']['input'];
   input: TutorResourceInput;
+};
+
+
+export type MutationWithdrawFriendRequestArgs = {
+  requestId: Scalars['ID']['input'];
 };
 
 export type OnboardingState = {
@@ -2131,6 +2255,21 @@ export type OverviewContentKind =
   | 'SPEAKING_PROMPT'
   | 'WRITING_ASSESSMENT';
 
+/**
+ * What anyone may see of an account on its wall. Deliberately nothing about
+ * level, goals or scores.
+ */
+export type PublicProfile = {
+  __typename?: 'PublicProfile';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  bannerUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  joinedAt: Scalars['DateTime']['output'];
+  /** True for a staff or admin account: it has a wall but no friend actions. */
+  staff: Scalars['Boolean']['output'];
+  userId: Scalars['ID']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   activeExamAttempt?: Maybe<ExamAttempt>;
@@ -2171,6 +2310,7 @@ export type Query = {
   authoringAssessmentTask: AssessmentTask;
   authoringAssessmentTasks: AssessmentTaskPage;
   avatarPresets: Array<AvatarPreset>;
+  blockedUsers: BlockedUserPage;
   /**
    * The learner's own plan for today: streak, points, roadmap and goals. Takes
    * no argument because the only path anyone can read is their own.
@@ -2221,6 +2361,7 @@ export type Query = {
    * worth more than a new one, and reordering here would undo the schedule.
    */
   flashcardStudyQueue: Array<Flashcard>;
+  friends: FriendPage;
   /** Brought up to date with every part graded so far. */
   fullTestSitting: FullTestSitting;
   /** Published full tests, newest first. */
@@ -2229,6 +2370,8 @@ export type Query = {
   generationRequest: GenerationRequest;
   generationRequests: GenerationRequestPage;
   health: Scalars['String']['output'];
+  incomingFriendRequestCount: Scalars['Int']['output'];
+  incomingFriendRequests: FriendRequestPage;
   /** The learner's most recent level check, or null. */
   latestLevelCheck?: Maybe<LevelCheck>;
   learningPurposes: Array<LearningPurpose>;
@@ -2242,6 +2385,7 @@ export type Query = {
   me: Me;
   myFullTestSittings: Array<FullTestSitting>;
   myTourStatus: UserTourStatus;
+  outgoingFriendRequests: FriendRequestPage;
   /**
    * The placement paper, for a learner who does not know their level. Errors
    * with NOT_FOUND when the deployment has no published placement exam, which
@@ -2253,11 +2397,17 @@ export type Query = {
   /** The paper to sit, reachable only through an open attempt. */
   quizPaper: QuizPaper;
   quizzes: QuizPage;
+  relationship: Relationship;
   /**
    * The plan in play, else the newest one (failed or finished), else null.
    * Reading it can start an automatic replan when the learner is a week behind.
    */
   roadmap?: Maybe<Roadmap>;
+  /**
+   * Learners by display name. Refused with extensions.backendCode
+   * SEARCH_TERM_TOO_SHORT below the backend's minimum length.
+   */
+  searchLearners: LearnerSearchPage;
   /** What the screen polls while it waits for a score. */
   speakingAttempt: SpeakingAttempt;
   /** This learner's own attempts at one prompt, newest first. No word breakdown. */
@@ -2286,6 +2436,7 @@ export type Query = {
   tutorResources: TutorResourcePage;
   tutorStaffMembers: Array<TutorStaffMember>;
   tutorUsage: TutorUsage;
+  userWall: UserWall;
 };
 
 
@@ -2390,6 +2541,12 @@ export type QueryAuthoringAssessmentTasksArgs = {
 };
 
 
+export type QueryBlockedUsersArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryDictationLessonArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2478,6 +2635,12 @@ export type QueryFlashcardStudyQueueArgs = {
 };
 
 
+export type QueryFriendsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryFullTestSittingArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2494,12 +2657,24 @@ export type QueryGenerationRequestsArgs = {
 };
 
 
+export type QueryIncomingFriendRequestsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryLevelCheckArgs = {
   id: Scalars['ID']['input'];
 };
 
 
 export type QueryMyFullTestSittingsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryOutgoingFriendRequestsArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   size?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -2520,6 +2695,18 @@ export type QueryQuizzesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   size?: InputMaybe<Scalars['Int']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryRelationshipArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type QuerySearchLearnersArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  q: Scalars['String']['input'];
+  size?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -2631,6 +2818,11 @@ export type QueryTutorResourceArgs = {
 export type QueryTutorResourcesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryUserWallArgs = {
+  userId: Scalars['ID']['input'];
 };
 
 /**
@@ -2785,6 +2977,30 @@ export type QuizQuestionType =
   | 'MULTIPLE_CHOICE'
   | 'REORDER'
   | 'REWRITE';
+
+export type Relationship = {
+  __typename?: 'Relationship';
+  /** Set only for REQUEST_RECEIVED: the id to accept or decline. */
+  requestId?: Maybe<Scalars['ID']['output']>;
+  status: RelationshipStatus;
+  userId: Scalars['ID']['output'];
+};
+
+/**
+ * How the viewer stands with one account. Only NONE offers "add friend"; the
+ * last three offer nothing. UNAVAILABLE is the other side having blocked the
+ * viewer - it never says why, so a block is not revealed to the person it was
+ * placed on.
+ */
+export type RelationshipStatus =
+  | 'BLOCKED_BY_ME'
+  | 'FRIENDS'
+  | 'NONE'
+  | 'NOT_APPLICABLE'
+  | 'REQUEST_RECEIVED'
+  | 'REQUEST_SENT'
+  | 'SELF'
+  | 'UNAVAILABLE';
 
 /**
  * What the learner said about a card. SM-2 grades answers 0-5; these are the
@@ -3476,6 +3692,26 @@ export type UserTourStatus = {
   completed: Scalars['Boolean']['output'];
 };
 
+/** The wall of one account: composed from user, friendship and (later) blog. */
+export type UserWall = {
+  __typename?: 'UserWall';
+  /**
+   * False when either side blocked the other. Every other field is then null
+   * and nothing else is fetched.
+   */
+  available: Scalars['Boolean']['output'];
+  /** Null for staff and when unavailable. */
+  friendCount?: Maybe<Scalars['Int']['output']>;
+  /**
+   * Null when the wall is unavailable (blocked either way), or when the profile
+   * call failed. An id that names no account fails with extensions.backendCode
+   * USER_NOT_FOUND.
+   */
+  profile?: Maybe<PublicProfile>;
+  relationship: Relationship;
+  userId: Scalars['ID']['output'];
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -3578,6 +3814,8 @@ export type ResolversTypes = ResolversObject<{
   AttemptQuestionReview: ResolverTypeWrapper<AttemptQuestionReview>;
   AttemptSectionScore: ResolverTypeWrapper<AttemptSectionScore>;
   AvatarPreset: ResolverTypeWrapper<AvatarPreset>;
+  BlockedUser: ResolverTypeWrapper<BlockedUser>;
+  BlockedUserPage: ResolverTypeWrapper<BlockedUserPage>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CefrLevel: CefrLevel;
   CertificateType: CertificateType;
@@ -3637,6 +3875,12 @@ export type ResolversTypes = ResolversObject<{
   FlashcardSetPage: ResolverTypeWrapper<FlashcardSetPage>;
   FlashcardStats: ResolverTypeWrapper<FlashcardStats>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  Friend: ResolverTypeWrapper<Friend>;
+  FriendPage: ResolverTypeWrapper<FriendPage>;
+  FriendRequest: ResolverTypeWrapper<FriendRequest>;
+  FriendRequestOutcome: ResolverTypeWrapper<FriendRequestOutcome>;
+  FriendRequestPage: ResolverTypeWrapper<FriendRequestPage>;
+  FriendRequestStatus: FriendRequestStatus;
   FullTest: ResolverTypeWrapper<FullTest>;
   FullTestPart: ResolverTypeWrapper<FullTestPart>;
   FullTestPartGrading: FullTestPartGrading;
@@ -3655,6 +3899,8 @@ export type ResolversTypes = ResolversObject<{
   LearnerAttemptStatus: LearnerAttemptStatus;
   LearnerExamItem: ResolverTypeWrapper<LearnerExamItem>;
   LearnerExamPage: ResolverTypeWrapper<LearnerExamPage>;
+  LearnerSearchPage: ResolverTypeWrapper<LearnerSearchPage>;
+  LearnerSearchResult: ResolverTypeWrapper<LearnerSearchResult>;
   LearningGoalInput: LearningGoalInput;
   LearningPurpose: ResolverTypeWrapper<LearningPurpose>;
   LearningSkill: LearningSkill;
@@ -3675,6 +3921,7 @@ export type ResolversTypes = ResolversObject<{
   OpenAttemptChoice: OpenAttemptChoice;
   OverviewContentCounts: ResolverTypeWrapper<OverviewContentCounts>;
   OverviewContentKind: OverviewContentKind;
+  PublicProfile: ResolverTypeWrapper<PublicProfile>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   QuestionOption: ResolverTypeWrapper<QuestionOption>;
   QuestionSetOption: ResolverTypeWrapper<QuestionSetOption>;
@@ -3688,6 +3935,8 @@ export type ResolversTypes = ResolversObject<{
   QuizPaperQuestion: ResolverTypeWrapper<QuizPaperQuestion>;
   QuizQuestionReview: ResolverTypeWrapper<QuizQuestionReview>;
   QuizQuestionType: QuizQuestionType;
+  Relationship: ResolverTypeWrapper<Relationship>;
+  RelationshipStatus: RelationshipStatus;
   ReviewRating: ReviewRating;
   Roadmap: ResolverTypeWrapper<Roadmap>;
   RoadmapAdjustment: ResolverTypeWrapper<RoadmapAdjustment>;
@@ -3752,6 +4001,7 @@ export type ResolversTypes = ResolversObject<{
   TutorUsage: ResolverTypeWrapper<TutorUsage>;
   UpdateProfileInput: UpdateProfileInput;
   UserTourStatus: ResolverTypeWrapper<UserTourStatus>;
+  UserWall: ResolverTypeWrapper<UserWall>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -3779,6 +4029,8 @@ export type ResolversParentTypes = ResolversObject<{
   AttemptQuestionReview: AttemptQuestionReview;
   AttemptSectionScore: AttemptSectionScore;
   AvatarPreset: AvatarPreset;
+  BlockedUser: BlockedUser;
+  BlockedUserPage: BlockedUserPage;
   Boolean: Scalars['Boolean']['output'];
   ContentReview: ContentReview;
   ContentReviewPage: ContentReviewPage;
@@ -3823,6 +4075,11 @@ export type ResolversParentTypes = ResolversObject<{
   FlashcardSetPage: FlashcardSetPage;
   FlashcardStats: FlashcardStats;
   Float: Scalars['Float']['output'];
+  Friend: Friend;
+  FriendPage: FriendPage;
+  FriendRequest: FriendRequest;
+  FriendRequestOutcome: FriendRequestOutcome;
+  FriendRequestPage: FriendRequestPage;
   FullTest: FullTest;
   FullTestPart: FullTestPart;
   FullTestPartStart: FullTestPartStart;
@@ -3834,6 +4091,8 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int']['output'];
   LearnerExamItem: LearnerExamItem;
   LearnerExamPage: LearnerExamPage;
+  LearnerSearchPage: LearnerSearchPage;
+  LearnerSearchResult: LearnerSearchResult;
   LearningGoalInput: LearningGoalInput;
   LearningPurpose: LearningPurpose;
   LevelCheck: LevelCheck;
@@ -3846,6 +4105,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: Record<PropertyKey, never>;
   OnboardingState: OnboardingState;
   OverviewContentCounts: OverviewContentCounts;
+  PublicProfile: PublicProfile;
   Query: Record<PropertyKey, never>;
   QuestionOption: QuestionOption;
   QuestionSetOption: QuestionSetOption;
@@ -3857,6 +4117,7 @@ export type ResolversParentTypes = ResolversObject<{
   QuizPaper: QuizPaper;
   QuizPaperQuestion: QuizPaperQuestion;
   QuizQuestionReview: QuizQuestionReview;
+  Relationship: Relationship;
   Roadmap: Roadmap;
   RoadmapAdjustment: RoadmapAdjustment;
   RoadmapItem: RoadmapItem;
@@ -3906,6 +4167,7 @@ export type ResolversParentTypes = ResolversObject<{
   TutorUsage: TutorUsage;
   UpdateProfileInput: UpdateProfileInput;
   UserTourStatus: UserTourStatus;
+  UserWall: UserWall;
 }>;
 
 export type AdminOverviewResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AdminOverview'] = ResolversParentTypes['AdminOverview']> = ResolversObject<{
@@ -4103,6 +4365,21 @@ export type AttemptSectionScoreResolvers<ContextType = GraphQLContext, ParentTyp
 export type AvatarPresetResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AvatarPreset'] = ResolversParentTypes['AvatarPreset']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type BlockedUserResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['BlockedUser'] = ResolversParentTypes['BlockedUser']> = ResolversObject<{
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  blockedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type BlockedUserPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['BlockedUserPage'] = ResolversParentTypes['BlockedUserPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['BlockedUser']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
 export type ContentReviewResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ContentReview'] = ResolversParentTypes['ContentReview']> = ResolversObject<{
@@ -4530,6 +4807,45 @@ export type FlashcardStatsResolvers<ContextType = GraphQLContext, ParentType ext
   studySeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
+export type FriendResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Friend'] = ResolversParentTypes['Friend']> = ResolversObject<{
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  friendsSince?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type FriendPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FriendPage'] = ResolversParentTypes['FriendPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['Friend']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type FriendRequestResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FriendRequest'] = ResolversParentTypes['FriendRequest']> = ResolversObject<{
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  requestedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type FriendRequestOutcomeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FriendRequestOutcome'] = ResolversParentTypes['FriendRequestOutcome']> = ResolversObject<{
+  acceptedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  requestId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  requestedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['FriendRequestStatus'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type FriendRequestPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FriendRequestPage'] = ResolversParentTypes['FriendRequestPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['FriendRequest']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
 export type FullTestResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['FullTest'] = ResolversParentTypes['FullTest']> = ResolversObject<{
   certificateVariant?: Resolver<ResolversTypes['CertificateVariant'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4642,6 +4958,22 @@ export type LearnerExamPageResolvers<ContextType = GraphQLContext, ParentType ex
   totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
+export type LearnerSearchPageResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LearnerSearchPage'] = ResolversParentTypes['LearnerSearchPage']> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['LearnerSearchResult']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type LearnerSearchResultResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LearnerSearchResult'] = ResolversParentTypes['LearnerSearchResult']> = ResolversObject<{
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  relationship?: Resolver<ResolversTypes['RelationshipStatus'], ParentType, ContextType>;
+  requestId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
 export type LearningPurposeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['LearningPurpose'] = ResolversParentTypes['LearningPurpose']> = ResolversObject<{
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -4720,6 +5052,7 @@ export type MistakeSentenceResolvers<ContextType = GraphQLContext, ParentType ex
 export type MutationResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   abandonRoadmap?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  acceptFriendRequest?: Resolver<ResolversTypes['FriendRequestOutcome'], ParentType, ContextType, RequireFields<MutationAcceptFriendRequestArgs, 'requestId'>>;
   approveContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationApproveContentArgs, 'id' | 'kind'>>;
   approveExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationApproveExamArgs, 'id'>>;
   approveFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationApproveFullTestArgs, 'id'>>;
@@ -4730,6 +5063,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   assignAssessment?: Resolver<ResolversTypes['AssessmentAssignment'], ParentType, ContextType, RequireFields<MutationAssignAssessmentArgs, 'id' | 'note' | 'version'>>;
   attachLevelCheckExamAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckExamAttemptArgs, 'attemptId' | 'id'>>;
   attachLevelCheckSpeakingAttempt?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<MutationAttachLevelCheckSpeakingAttemptArgs, 'attemptId' | 'id'>>;
+  blockUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationBlockUserArgs, 'userId'>>;
   branchTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationBranchTutorConversationArgs, 'clientMessageId' | 'conversationId' | 'message' | 'messageId'>>;
   cancelTutorReply?: Resolver<ResolversTypes['TutorMessage'], ParentType, ContextType, RequireFields<MutationCancelTutorReplyArgs, 'conversationId' | 'messageId'>>;
   chooseAvatar?: Resolver<ResolversTypes['Me'], ParentType, ContextType, RequireFields<MutationChooseAvatarArgs, 'preset'>>;
@@ -4769,6 +5103,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   selectLearningPurposes?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectLearningPurposesArgs, 'purposeIds'>>;
   selectTargetSkills?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectTargetSkillsArgs, 'skills'>>;
   selectTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSelectTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId' | 'revision'>>;
+  sendFriendRequest?: Resolver<ResolversTypes['FriendRequestOutcome'], ParentType, ContextType, RequireFields<MutationSendFriendRequestArgs, 'addresseeId'>>;
   sendTutorMessage?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSendTutorMessageArgs, 'message'>>;
   setCertificateTarget?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCertificateTargetArgs, 'certificateType'>>;
   setCurrentLevel?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSetCurrentLevelArgs, 'level'>>;
@@ -4794,9 +5129,12 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   submitTranslation?: Resolver<ResolversTypes['TranslationAttempt'], ParentType, ContextType, RequireFields<MutationSubmitTranslationArgs, 'itemId' | 'response'>>;
   summarizeTutorConversation?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationSummarizeTutorConversationArgs, 'clientMessageId' | 'conversationId'>>;
   transitionAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<MutationTransitionAssessmentTaskArgs, 'action' | 'id'>>;
+  unblockUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnblockUserArgs, 'userId'>>;
+  unfriend?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfriendArgs, 'userId'>>;
   updateProfile?: Resolver<ResolversTypes['Me'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   updateTutorPolicy?: Resolver<ResolversTypes['TutorPolicy'], ParentType, ContextType, RequireFields<MutationUpdateTutorPolicyArgs, 'input'>>;
   updateTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationUpdateTutorResourceArgs, 'id' | 'input'>>;
+  withdrawFriendRequest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationWithdrawFriendRequestArgs, 'requestId'>>;
 }>;
 
 export type OnboardingStateResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['OnboardingState'] = ResolversParentTypes['OnboardingState']> = ResolversObject<{
@@ -4818,6 +5156,15 @@ export type OverviewContentCountsResolvers<ContextType = GraphQLContext, ParentT
   kind?: Resolver<ResolversTypes['OverviewContentKind'], ParentType, ContextType>;
   pendingReview?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   published?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+}>;
+
+export type PublicProfileResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['PublicProfile'] = ResolversParentTypes['PublicProfile']> = ResolversObject<{
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bannerUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  joinedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  staff?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -4843,6 +5190,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   authoringAssessmentTask?: Resolver<ResolversTypes['AssessmentTask'], ParentType, ContextType, RequireFields<QueryAuthoringAssessmentTaskArgs, 'id'>>;
   authoringAssessmentTasks?: Resolver<ResolversTypes['AssessmentTaskPage'], ParentType, ContextType, Partial<QueryAuthoringAssessmentTasksArgs>>;
   avatarPresets?: Resolver<Array<ResolversTypes['AvatarPreset']>, ParentType, ContextType>;
+  blockedUsers?: Resolver<ResolversTypes['BlockedUserPage'], ParentType, ContextType, Partial<QueryBlockedUsersArgs>>;
   dailyPath?: Resolver<ResolversTypes['DailyPath'], ParentType, ContextType>;
   dictationLesson?: Resolver<ResolversTypes['DictationLessonDetail'], ParentType, ContextType, RequireFields<QueryDictationLessonArgs, 'id'>>;
   dictationLessons?: Resolver<ResolversTypes['DictationLessonPage'], ParentType, ContextType, RequireFields<QueryDictationLessonsArgs, 'page' | 'size'>>;
@@ -4860,12 +5208,15 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   flashcardSets?: Resolver<ResolversTypes['FlashcardSetPage'], ParentType, ContextType, RequireFields<QueryFlashcardSetsArgs, 'page' | 'size' | 'sortBy'>>;
   flashcardStats?: Resolver<ResolversTypes['FlashcardStats'], ParentType, ContextType, RequireFields<QueryFlashcardStatsArgs, 'periodDays'>>;
   flashcardStudyQueue?: Resolver<Array<ResolversTypes['Flashcard']>, ParentType, ContextType, RequireFields<QueryFlashcardStudyQueueArgs, 'limit' | 'setId'>>;
+  friends?: Resolver<ResolversTypes['FriendPage'], ParentType, ContextType, Partial<QueryFriendsArgs>>;
   fullTestSitting?: Resolver<ResolversTypes['FullTestSitting'], ParentType, ContextType, RequireFields<QueryFullTestSittingArgs, 'id'>>;
   fullTests?: Resolver<Array<ResolversTypes['FullTest']>, ParentType, ContextType>;
   generationAllowance?: Resolver<ResolversTypes['GenerationAllowance'], ParentType, ContextType>;
   generationRequest?: Resolver<ResolversTypes['GenerationRequest'], ParentType, ContextType, RequireFields<QueryGenerationRequestArgs, 'id'>>;
   generationRequests?: Resolver<ResolversTypes['GenerationRequestPage'], ParentType, ContextType, RequireFields<QueryGenerationRequestsArgs, 'page' | 'size'>>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  incomingFriendRequestCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  incomingFriendRequests?: Resolver<ResolversTypes['FriendRequestPage'], ParentType, ContextType, Partial<QueryIncomingFriendRequestsArgs>>;
   latestLevelCheck?: Resolver<Maybe<ResolversTypes['LevelCheck']>, ParentType, ContextType>;
   learningPurposes?: Resolver<Array<ResolversTypes['LearningPurpose']>, ParentType, ContextType>;
   levelCheck?: Resolver<ResolversTypes['LevelCheck'], ParentType, ContextType, RequireFields<QueryLevelCheckArgs, 'id'>>;
@@ -4873,11 +5224,14 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   me?: Resolver<ResolversTypes['Me'], ParentType, ContextType>;
   myFullTestSittings?: Resolver<Array<ResolversTypes['FullTestSitting']>, ParentType, ContextType, Partial<QueryMyFullTestSittingsArgs>>;
   myTourStatus?: Resolver<ResolversTypes['UserTourStatus'], ParentType, ContextType>;
+  outgoingFriendRequests?: Resolver<ResolversTypes['FriendRequestPage'], ParentType, ContextType, Partial<QueryOutgoingFriendRequestsArgs>>;
   placementExam?: Resolver<ResolversTypes['LearnerExamItem'], ParentType, ContextType>;
   quizAttempt?: Resolver<ResolversTypes['QuizAttempt'], ParentType, ContextType, RequireFields<QueryQuizAttemptArgs, 'id'>>;
   quizPaper?: Resolver<ResolversTypes['QuizPaper'], ParentType, ContextType, RequireFields<QueryQuizPaperArgs, 'attemptId'>>;
   quizzes?: Resolver<ResolversTypes['QuizPage'], ParentType, ContextType, RequireFields<QueryQuizzesArgs, 'page' | 'size'>>;
+  relationship?: Resolver<ResolversTypes['Relationship'], ParentType, ContextType, RequireFields<QueryRelationshipArgs, 'userId'>>;
   roadmap?: Resolver<Maybe<ResolversTypes['Roadmap']>, ParentType, ContextType>;
+  searchLearners?: Resolver<ResolversTypes['LearnerSearchPage'], ParentType, ContextType, RequireFields<QuerySearchLearnersArgs, 'q'>>;
   speakingAttempt?: Resolver<ResolversTypes['SpeakingAttempt'], ParentType, ContextType, RequireFields<QuerySpeakingAttemptArgs, 'id'>>;
   speakingAttempts?: Resolver<Array<ResolversTypes['SpeakingAttempt']>, ParentType, ContextType, RequireFields<QuerySpeakingAttemptsArgs, 'promptId'>>;
   speakingPrompt?: Resolver<ResolversTypes['SpeakingPrompt'], ParentType, ContextType, RequireFields<QuerySpeakingPromptArgs, 'id'>>;
@@ -4902,6 +5256,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   tutorResources?: Resolver<ResolversTypes['TutorResourcePage'], ParentType, ContextType, RequireFields<QueryTutorResourcesArgs, 'page' | 'status'>>;
   tutorStaffMembers?: Resolver<Array<ResolversTypes['TutorStaffMember']>, ParentType, ContextType>;
   tutorUsage?: Resolver<ResolversTypes['TutorUsage'], ParentType, ContextType>;
+  userWall?: Resolver<ResolversTypes['UserWall'], ParentType, ContextType, RequireFields<QueryUserWallArgs, 'userId'>>;
 }>;
 
 export type QuestionOptionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['QuestionOption'] = ResolversParentTypes['QuestionOption']> = ResolversObject<{
@@ -5002,6 +5357,12 @@ export type QuizQuestionReviewResolvers<ContextType = GraphQLContext, ParentType
   questionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   questionType?: Resolver<ResolversTypes['QuizQuestionType'], ParentType, ContextType>;
   userAnswerText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type RelationshipResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Relationship'] = ResolversParentTypes['Relationship']> = ResolversObject<{
+  requestId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['RelationshipStatus'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
 export type RoadmapResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Roadmap'] = ResolversParentTypes['Roadmap']> = ResolversObject<{
@@ -5410,6 +5771,14 @@ export type UserTourStatusResolvers<ContextType = GraphQLContext, ParentType ext
   completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
+export type UserWallResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['UserWall'] = ResolversParentTypes['UserWall']> = ResolversObject<{
+  available?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  friendCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  profile?: Resolver<Maybe<ResolversTypes['PublicProfile']>, ParentType, ContextType>;
+  relationship?: Resolver<ResolversTypes['Relationship'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AdminOverview?: AdminOverviewResolvers<ContextType>;
   AssessmentAssignment?: AssessmentAssignmentResolvers<ContextType>;
@@ -5433,6 +5802,8 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AttemptQuestionReview?: AttemptQuestionReviewResolvers<ContextType>;
   AttemptSectionScore?: AttemptSectionScoreResolvers<ContextType>;
   AvatarPreset?: AvatarPresetResolvers<ContextType>;
+  BlockedUser?: BlockedUserResolvers<ContextType>;
+  BlockedUserPage?: BlockedUserPageResolvers<ContextType>;
   ContentReview?: ContentReviewResolvers<ContextType>;
   ContentReviewPage?: ContentReviewPageResolvers<ContextType>;
   DailyPath?: DailyPathResolvers<ContextType>;
@@ -5475,6 +5846,11 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   FlashcardSetDetail?: FlashcardSetDetailResolvers<ContextType>;
   FlashcardSetPage?: FlashcardSetPageResolvers<ContextType>;
   FlashcardStats?: FlashcardStatsResolvers<ContextType>;
+  Friend?: FriendResolvers<ContextType>;
+  FriendPage?: FriendPageResolvers<ContextType>;
+  FriendRequest?: FriendRequestResolvers<ContextType>;
+  FriendRequestOutcome?: FriendRequestOutcomeResolvers<ContextType>;
+  FriendRequestPage?: FriendRequestPageResolvers<ContextType>;
   FullTest?: FullTestResolvers<ContextType>;
   FullTestPart?: FullTestPartResolvers<ContextType>;
   FullTestPartStart?: FullTestPartStartResolvers<ContextType>;
@@ -5484,6 +5860,8 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   GenerationRequestPage?: GenerationRequestPageResolvers<ContextType>;
   LearnerExamItem?: LearnerExamItemResolvers<ContextType>;
   LearnerExamPage?: LearnerExamPageResolvers<ContextType>;
+  LearnerSearchPage?: LearnerSearchPageResolvers<ContextType>;
+  LearnerSearchResult?: LearnerSearchResultResolvers<ContextType>;
   LearningPurpose?: LearningPurposeResolvers<ContextType>;
   LevelCheck?: LevelCheckResolvers<ContextType>;
   LevelCheckWeightChange?: LevelCheckWeightChangeResolvers<ContextType>;
@@ -5494,6 +5872,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   OnboardingState?: OnboardingStateResolvers<ContextType>;
   OverviewContentCounts?: OverviewContentCountsResolvers<ContextType>;
+  PublicProfile?: PublicProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   QuestionOption?: QuestionOptionResolvers<ContextType>;
   QuestionSetOption?: QuestionSetOptionResolvers<ContextType>;
@@ -5504,6 +5883,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   QuizPaper?: QuizPaperResolvers<ContextType>;
   QuizPaperQuestion?: QuizPaperQuestionResolvers<ContextType>;
   QuizQuestionReview?: QuizQuestionReviewResolvers<ContextType>;
+  Relationship?: RelationshipResolvers<ContextType>;
   Roadmap?: RoadmapResolvers<ContextType>;
   RoadmapAdjustment?: RoadmapAdjustmentResolvers<ContextType>;
   RoadmapItem?: RoadmapItemResolvers<ContextType>;
@@ -5545,5 +5925,6 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   TutorStaffMember?: TutorStaffMemberResolvers<ContextType>;
   TutorUsage?: TutorUsageResolvers<ContextType>;
   UserTourStatus?: UserTourStatusResolvers<ContextType>;
+  UserWall?: UserWallResolvers<ContextType>;
 }>;
 

@@ -13,6 +13,8 @@ import { generationResolvers } from "../modules/generation/generation.resolvers.
 import { generationTypeDefs } from "../modules/generation/generation.typeDefs.js";
 import { flashcardResolvers } from "../modules/flashcard/flashcard.resolvers.js";
 import { flashcardTypeDefs } from "../modules/flashcard/flashcard.typeDefs.js";
+import { friendshipResolvers } from "../modules/friendship/friendship.resolvers.js";
+import { friendshipTypeDefs } from "../modules/friendship/friendship.typeDefs.js";
 import { progressResolvers } from "../modules/progress/progress.resolvers.js";
 import { progressTypeDefs } from "../modules/progress/progress.typeDefs.js";
 import { roadmapResolvers } from "../modules/roadmap/roadmap.resolvers.js";
@@ -46,6 +48,8 @@ const rootTypeDefs = /* GraphQL */ `
 export const typeDefs = [
   rootTypeDefs,
   assessmentTypeDefs,
+  // Declares UserWall, which userTypeDefs extends with the profile.
+  friendshipTypeDefs,
   userTypeDefs,
   onboardingTypeDefs,
   examTypeDefs,
@@ -69,6 +73,7 @@ export const resolvers = {
     health: () => "ok",
     ...assessmentResolvers.Query,
     ...userResolvers.Query,
+    ...friendshipResolvers.Query,
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
     ...fullTestResolvers.Query,
@@ -86,6 +91,7 @@ export const resolvers = {
   Mutation: {
     ...assessmentResolvers.Mutation,
     ...userResolvers.Mutation,
+    ...friendshipResolvers.Mutation,
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
     ...fullTestResolvers.Mutation,
@@ -101,5 +107,11 @@ export const resolvers = {
   },
   Me: {
     ...onboardingResolvers.Me,
+  },
+  // One type, fields from two modules: the wall's block rule and friend count
+  // come from friendship, its profile from user.
+  UserWall: {
+    ...friendshipResolvers.UserWall,
+    ...userResolvers.UserWall,
   },
 };

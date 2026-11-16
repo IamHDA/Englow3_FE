@@ -57,6 +57,31 @@ export const userTypeDefs = /* GraphQL */ `
     url: String!
   }
 
+  """
+  What anyone may see of an account on its wall. Deliberately nothing about
+  level, goals or scores.
+  """
+  type PublicProfile {
+    userId: ID!
+    displayName: String!
+    avatarUrl: String
+    bannerUrl: String
+    """
+    True for a staff or admin account: it has a wall but no friend actions.
+    """
+    staff: Boolean!
+    joinedAt: DateTime!
+  }
+
+  extend type UserWall {
+    """
+    Null when the wall is unavailable (blocked either way), or when the profile
+    call failed. An id that names no account fails with extensions.backendCode
+    USER_NOT_FOUND.
+    """
+    profile: PublicProfile
+  }
+
   extend type Query {
     me: Me!
     myTourStatus: UserTourStatus!

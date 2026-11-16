@@ -240,3 +240,191 @@ describe("updateProfile mutation - schema wiring", () => {
     });
   });
 });
+
+describe("userWall query - block rule across friendship and user", () => {
+  const server = new ApolloServer({ typeDefs, resolvers, formatError });
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  const WALL_QUERY = `
+    query {
+      userWall(userId: "u2") {
+        available
+        relationship { status requestId }
+        friendCount
+        profile { displayName staff }
+      }
+    }
+  `;
+
+  async function runWall(
+    friendshipApi: Record<string, unknown>,
+    userApi: Record<string, unknown>,
+  ) {
+    const response = await server.executeOperation(
+      { query: WALL_QUERY },
+      { contextValue: makeContext({ apis: { friendshipApi, userApi } }) },
+    );
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+    return response.body.singleResult;
+  }
+
+  it("composes relationship, friend count and profile for a friend", async () => {
+    const result = await runWall(
+      {
+        relationship: vi.fn().mockResolvedValue({
+          userId: "u2",
+          relationship: "FRIENDS",
+          requestId: null,
+        }),
+        friendCount: vi.fn().mockResolvedValue({ count: 12 }),
+      },
+      {
+        publicProfile: vi.fn().mockResolvedValue({
+          userId: "u2",
+          displayName: "An",
+          avatarUrl: null,
+          bannerUrl: null,
+          staff: false,
+          joinedAt: "2026-01-01T00:00:00Z",
+        }),
+      },
+    );
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      userWall: {
+        available: true,
+        relationship: { status: "FRIENDS", requestId: null },
+        friendCount: 12,
+        profile: { displayName: "An", staff: false },
+      },
+    });
+  });
+
+  it("hides the wall without reading the profile or the count when the REST body says UNAVAILABLE", async () => {
+    const friendCount = vi.fn();
+    const publicProfile = vi.fn();
+    const result = await runWall(
+      {
+        relationship: vi.fn().mockResolvedValue({
+          userId: "u2",
+          relationship: "UNAVAILABLE",
+          requestId: null,
+        }),
+        friendCount,
+      },
+      { publicProfile },
+    );
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      userWall: {
+        available: false,
+        relationship: { status: "UNAVAILABLE", requestId: null },
+        friendCount: null,
+        profile: null,
+      },
+    });
+    expect(friendCount).not.toHaveBeenCalled();
+    expect(publicProfile).not.toHaveBeenCalled();
+  });
+
+  it("shows a missing account as a null profile with the backend's USER_NOT_FOUND code", async () => {
+    const result = await runWall(
+      {
+        relationship: vi.fn().mockResolvedValue({
+          userId: "u2",
+          relationship: "NOT_APPLICABLE",
+          requestId: null,
+        }),
+        friendCount: vi.fn(),
+      },
+      {
+        publicProfile: vi
+          .fn()
+          .mockRejectedValue(
+            new BackendError("No such user", 404, "USER_NOT_FOUND", "trace-1"),
+          ),
+      },
+    );
+
+    expect(result.data).toEqual({
+      userWall: {
+        available: true,
+        relationship: { status: "NOT_APPLICABLE", requestId: null },
+        friendCount: null,
+        profile: null,
+      },
+    });
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors?.[0]?.extensions).toMatchObject({
+      code: "NOT_FOUND",
+      backendCode: "USER_NOT_FOUND",
+    });
+  });
+
+  it("keeps the rest of the wall when only the friend count fails", async () => {
+    const result = await runWall(
+      {
+        relationship: vi.fn().mockResolvedValue({
+          userId: "u2",
+          relationship: "NONE",
+          requestId: null,
+        }),
+        friendCount: vi.fn().mockRejectedValue(new BackendError("boom", 500)),
+      },
+      {
+        publicProfile: vi.fn().mockResolvedValue({
+          userId: "u2",
+          displayName: "An",
+          avatarUrl: null,
+          bannerUrl: null,
+          staff: false,
+          joinedAt: "2026-01-01T00:00:00Z",
+        }),
+      },
+    );
+
+    expect(result.data).toMatchObject({
+      userWall: {
+        available: true,
+        friendCount: null,
+        profile: { displayName: "An" },
+      },
+    });
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("maps a backend refusal of a friend mutation to its backendCode", async () => {
+    const sendFriendRequest = vi
+      .fn()
+      .mockRejectedValue(
+        new BackendError(
+          "This learner cannot be invited",
+          403,
+          "FRIEND_REQUEST_NOT_ALLOWED",
+        ),
+      );
+    const response = await server.executeOperation(
+      {
+        query:
+          'mutation { sendFriendRequest(addresseeId: "u2") { requestId status } }',
+      },
+      {
+        contextValue: makeContext({
+          apis: { friendshipApi: { send: sendFriendRequest } },
+        }),
+      },
+    );
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+
+    expect(response.body.singleResult.errors?.[0]?.extensions).toMatchObject({
+      code: "FORBIDDEN",
+      backendCode: "FRIEND_REQUEST_NOT_ALLOWED",
+    });
+  });
+});

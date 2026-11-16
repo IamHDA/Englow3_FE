@@ -18,3 +18,6 @@ export type UserTourStatusResponse =
 
 export type AvatarPresetResponse =
   paths["/api/user/avatar-presets"]["get"]["responses"][200]["content"]["application/json"][number];
+
+export type PublicProfileResponse =
+  paths["/api/user/{userId}/public-profile"]["get"]["responses"][200]["content"]["application/json"];

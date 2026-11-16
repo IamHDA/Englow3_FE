@@ -47,3 +47,14 @@ describe("account bootstrap", () => {
     },
   );
 });
+
+describe("public profile", () => {
+  it("reads the public profile of the id given, encoded", async () => {
+    const client = new BackendClient("http://backend.test", 1000);
+    const get = vi.spyOn(client, "get").mockResolvedValue({ userId: "a/b" });
+    await new UserApi(client).publicProfile("a/b");
+    expect(get).toHaveBeenCalledExactlyOnceWith(
+      "/api/user/a%2Fb/public-profile",
+    );
+  });
+});

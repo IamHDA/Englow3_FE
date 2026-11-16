@@ -6,6 +6,7 @@ import type {
   UserInformationResponse,
   UserTourStatusResponse,
   UserBootstrapResponse,
+  PublicProfileResponse,
 } from "./user.types.js";
 
 const USER_BASE_PATH = "/api/user";
@@ -54,5 +55,12 @@ export class UserApi {
 
   completeTour(): Promise<UserTourStatusResponse> {
     return this.client.put(`${USER_BASE_PATH}/me/tour`, {});
+  }
+
+  /** Any account's public side, for its wall. 404 USER_NOT_FOUND for an id that names none. */
+  publicProfile(userId: string): Promise<PublicProfileResponse> {
+    return this.client.get(
+      `${USER_BASE_PATH}/${encodeURIComponent(userId)}/public-profile`,
+    );
   }
 }
