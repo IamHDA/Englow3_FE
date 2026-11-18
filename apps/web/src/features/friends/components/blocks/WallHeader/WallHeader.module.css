@@ -1,0 +1,28 @@
+.paper {
+  overflow: hidden;
+  background-color: var(--mantine-color-body);
+  box-shadow: none;
+}
+
+.banner {
+  height: 160px;
+  background-color: var(--mantine-color-navy-9);
+  background-size: cover;
+  background-position: center;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  margin-top: -48px;
+  font-size: 30px;
+  border: 4px solid var(--mantine-color-body);
+  background-color: var(--mantine-color-navy-0);
+  color: var(--mantine-color-navy-9);
+}
+
+@media (min-width: $mantine-breakpoint-sm) {
+  .banner {
+    height: 200px;
+  }
+}

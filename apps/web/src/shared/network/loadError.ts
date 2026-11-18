@@ -42,6 +42,17 @@ export function backendCodeOf(error: unknown): string | null {
   return typeof code === "string" ? code : null;
 }
 
+/**
+ * Whether any error of a response carries this backend code. For a query that
+ * ran with `errorPolicy: "all"` next to its data: `backendCodeOf` reads only the
+ * first error, and a response can carry several.
+ */
+export function hasBackendCode(error: unknown, code: string): boolean {
+  return extensionsOf(error).some(
+    (extensions) => extensions.backendCode === code,
+  );
+}
+
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

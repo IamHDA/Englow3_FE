@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   backendCodeOf,
   errorCodeOf,
+  hasBackendCode,
   isWellFormedId,
   loadErrorKind,
 } from "./loadError";
@@ -56,6 +57,28 @@ describe("backendCodeOf and errorCodeOf", () => {
   it("finds nothing on an error that did not come from the BFF", () => {
     expect(backendCodeOf(new Error("Failed to fetch"))).toBeNull();
     expect(errorCodeOf(undefined)).toBeNull();
+  });
+});
+
+describe("hasBackendCode", () => {
+  it("finds the code on any error of the response, not only the first", () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [
+        { message: "a", extensions: { backendCode: "SOMETHING_ELSE" } },
+        { message: "b", extensions: { backendCode: "USER_NOT_FOUND" } },
+      ],
+    });
+
+    expect(hasBackendCode(error, "USER_NOT_FOUND")).toBe(true);
+    expect(backendCodeOf(error)).toBe("SOMETHING_ELSE");
+  });
+
+  it("is false for another code, no error, or an error from outside the BFF", () => {
+    expect(
+      hasBackendCode(graphQLError({ backendCode: "A" }), "USER_NOT_FOUND"),
+    ).toBe(false);
+    expect(hasBackendCode(undefined, "USER_NOT_FOUND")).toBe(false);
+    expect(hasBackendCode(new Error("Failed to fetch"), "X")).toBe(false);
   });
 });
 
