@@ -20,6 +20,8 @@ export default function robots(): MetadataRoute.Robots {
         "/exams",
         "/ai-tutor",
         "/profile",
+        "/friends",
+        "/people",
         "/dictation",
       ],
     },

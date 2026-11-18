@@ -11,7 +11,14 @@ describe("robots.txt", () => {
     const rule = Array.isArray(rules) ? rules[0] : rules;
 
     expect(rule.disallow).toEqual(
-      expect.arrayContaining(["/api/", "/admin", "/study", "/profile"]),
+      expect.arrayContaining([
+        "/api/",
+        "/admin",
+        "/study",
+        "/profile",
+        "/friends",
+        "/people",
+      ]),
     );
     expect(rule.allow).toBe("/");
   });
