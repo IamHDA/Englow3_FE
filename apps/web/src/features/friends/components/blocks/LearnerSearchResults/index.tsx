@@ -3,7 +3,8 @@
 import { Paper, Stack } from "@mantine/core";
 import { SearchX } from "lucide-react";
 
-import { SEARCH_COPY } from "../../../constants/friends";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import type {
   LearnerSearchItem,
   PendingRelationshipAction,
@@ -33,13 +34,14 @@ export function LearnerSearchResults({
   pending,
   onAction,
 }: LearnerSearchResultsProps) {
+  const copy = useLanguage().t.friends.search;
   if (items.length === 0) {
     return (
       <Paper withBorder radius="lg">
         <ListEmptyState
           icon={<SearchX size={24} aria-hidden="true" />}
-          title={SEARCH_COPY.emptyTitle}
-          description={SEARCH_COPY.emptyDescription}
+          title={copy.emptyTitle}
+          description={copy.emptyDescription}
         />
       </Paper>
     );

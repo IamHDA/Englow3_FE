@@ -15,9 +15,19 @@ type LoadErrorStateProps = {
   error?: unknown;
   /** Set when the page already knows, without an error to read it from. */
   kind?: LoadErrorKind;
-  /** What was being opened, as the sentence needs it: "bộ thẻ", "bài nghe"... */
-  thing: { vi: string; en: string };
+  /**
+   * What was being opened, as the sentence needs it: "bộ thẻ", "bài nghe"...
+   * A plain string is already in the interface language (it came from
+   * `useLanguage().t`); a pair is chosen from here.
+   */
+  thing: string | { vi: string; en: string };
   back: { href: string; label: string };
+  /**
+   * What to say when the thing does not exist. The default sends the person
+   * back to "the library", which suits a deck or an exam and reads wrongly for
+   * a person, so a page whose subject is not in a library says its own.
+   */
+  notFoundDescription?: string;
   /** Offered only when the server failed - retrying a missing thing is pointless. */
   onRetry?: () => void;
 };
@@ -35,11 +45,12 @@ export function LoadErrorState({
   kind,
   thing,
   back,
+  notFoundDescription,
   onRetry,
 }: LoadErrorStateProps) {
   const { isVi, t } = useLanguage();
   const notFound = (kind ?? loadErrorKind(error)) === "not-found";
-  const name = isVi ? thing.vi : thing.en;
+  const name = typeof thing === "string" ? thing : isVi ? thing.vi : thing.en;
   const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
 
   const code = errorCodeOf(error);
@@ -66,7 +77,8 @@ export function LoadErrorState({
         ? "Tài khoản hiện tại không được phép mở nội dung này."
         : "Your account cannot access this content."
       : notFound
-        ? t.common.notFoundDescription.replace("{Thing}", capitalizedName)
+        ? (notFoundDescription ??
+          t.common.notFoundDescription.replace("{Thing}", capitalizedName))
         : t.common.loadErrorDescription;
 
   return (

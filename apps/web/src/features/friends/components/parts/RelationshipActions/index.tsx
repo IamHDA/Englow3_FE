@@ -16,8 +16,9 @@ import {
 import Link from "next/link";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-import { ACTION_LABELS, FRIENDS_ROUTES } from "../../../constants/friends";
+import { FRIENDS_ROUTES } from "../../../constants/friends";
 import type {
   PendingRelationshipAction,
   RelationshipActionHandler,
@@ -50,6 +51,7 @@ export function RelationshipActions({
   onAction,
   showFriendsLink = true,
 }: RelationshipActionsProps) {
+  const labels = useLanguage().t.friends.actions;
   const locked = pending !== null;
   const loadingKind = pending?.userId === target.userId ? pending.kind : null;
   const button = (kind: RelationshipActionKind) => ({
@@ -59,7 +61,11 @@ export function RelationshipActions({
     onClick: () => onAction(kind, target),
   });
   const blockMenu = (
-    <BlockMenu disabled={locked} onBlock={() => onAction("block", target)} />
+    <BlockMenu
+      name={target.displayName}
+      disabled={locked}
+      onBlock={() => onAction("block", target)}
+    />
   );
 
   switch (status) {
@@ -73,7 +79,7 @@ export function RelationshipActions({
             variant="default"
             leftSection={<Pencil size={16} aria-hidden="true" />}
           >
-            {ACTION_LABELS.editProfile}
+            {labels.editProfile}
           </Button>
           {showFriendsLink && (
             <Button
@@ -83,7 +89,7 @@ export function RelationshipActions({
               variant="default"
               leftSection={<Users size={16} aria-hidden="true" />}
             >
-              {ACTION_LABELS.friendsPage}
+              {labels.friendsPage}
             </Button>
           )}
         </Group>
@@ -95,7 +101,7 @@ export function RelationshipActions({
             {...button("send")}
             leftSection={<UserPlus size={16} aria-hidden="true" />}
           >
-            {ACTION_LABELS.add}
+            {labels.add}
           </Button>
           {blockMenu}
         </Group>
@@ -108,7 +114,7 @@ export function RelationshipActions({
             variant="default"
             leftSection={<UserX size={16} aria-hidden="true" />}
           >
-            {ACTION_LABELS.cancel}
+            {labels.cancel}
           </Button>
           {blockMenu}
         </Group>
@@ -120,10 +126,10 @@ export function RelationshipActions({
             {...button("accept")}
             leftSection={<UserCheck size={16} aria-hidden="true" />}
           >
-            {ACTION_LABELS.accept}
+            {labels.accept}
           </Button>
           <Button {...button("decline")} variant="default">
-            {ACTION_LABELS.decline}
+            {labels.decline}
           </Button>
           {blockMenu}
         </Group>
@@ -138,10 +144,15 @@ export function RelationshipActions({
                 size="sm"
                 variant="light"
                 disabled={locked}
+                // "Friends" on every row says nothing about whose menu it is.
+                aria-label={labels.friendMenuFor.replace(
+                  "{name}",
+                  () => target.displayName,
+                )}
                 leftSection={<Check size={16} aria-hidden="true" />}
                 rightSection={<ChevronDown size={16} aria-hidden="true" />}
               >
-                {ACTION_LABELS.friends}
+                {labels.friends}
               </Button>
             </Menu.Target>
             <Menu.Dropdown>
@@ -149,14 +160,14 @@ export function RelationshipActions({
                 leftSection={<UserMinus size={16} aria-hidden="true" />}
                 onClick={() => onAction("unfriend", target)}
               >
-                {ACTION_LABELS.unfriend}
+                {labels.unfriend}
               </Menu.Item>
               <Menu.Item
                 color="warn"
                 leftSection={<Ban size={16} aria-hidden="true" />}
                 onClick={() => onAction("block", target)}
               >
-                {ACTION_LABELS.block}
+                {labels.block}
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
@@ -169,7 +180,7 @@ export function RelationshipActions({
           variant="default"
           leftSection={<ShieldOff size={16} aria-hidden="true" />}
         >
-          {ACTION_LABELS.unblock}
+          {labels.unblock}
         </Button>
       );
     case RelationshipStatus.UNAVAILABLE:

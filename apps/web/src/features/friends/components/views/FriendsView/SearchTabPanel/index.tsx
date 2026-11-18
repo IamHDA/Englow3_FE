@@ -4,7 +4,9 @@ import { Paper } from "@mantine/core";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
-import { SEARCH_COPY } from "../../../../constants/friends";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
+import { MIN_SEARCH_TERM_LENGTH } from "../../../../constants/friends";
 import { useLearnerSearchTerm } from "../../../../hooks/useLearnerSearchTerm";
 import type {
   PendingRelationshipAction,
@@ -21,8 +23,9 @@ type SearchTabPanelProps = {
   onAction: RelationshipActionHandler;
 };
 
-/** The "Tìm bạn" tab: a box to type a name in, and what that name finds. */
+/** The "search" tab: a box to type a name in, and what that name finds. */
 export function SearchTabPanel({ pending, onAction }: SearchTabPanelProps) {
+  const { t } = useLanguage();
   const [input, setInput] = useState("");
   const search = useLearnerSearchTerm(input);
 
@@ -30,7 +33,14 @@ export function SearchTabPanel({ pending, onAction }: SearchTabPanelProps) {
     <LearnerSearch
       value={input}
       onChange={setInput}
-      hint={search.status === "tooShort" ? SEARCH_COPY.tooShort : undefined}
+      hint={
+        search.status === "tooShort"
+          ? t.friends.search.tooShort.replace(
+              "{min}",
+              String(MIN_SEARCH_TERM_LENGTH),
+            )
+          : undefined
+      }
     >
       {search.status === "ready" ? (
         <SearchResults
@@ -45,8 +55,8 @@ export function SearchTabPanel({ pending, onAction }: SearchTabPanelProps) {
         <Paper withBorder radius="lg">
           <ListEmptyState
             icon={<Search size={24} aria-hidden="true" />}
-            title={SEARCH_COPY.idleTitle}
-            description={SEARCH_COPY.idleDescription}
+            title={t.friends.search.idleTitle}
+            description={t.friends.search.idleDescription}
           />
         </Paper>
       )}

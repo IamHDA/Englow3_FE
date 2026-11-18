@@ -16,17 +16,15 @@ import {
   useUnfriendMutation,
   useWithdrawFriendRequestMutation,
 } from "@/lib/graphql/generated/hooks";
+import type { FriendsTranslations } from "@/shared/constants/translations";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 import { backendCodeOf } from "@/shared/network/loadError";
 
 import {
-  ACTION_ERROR_TITLE,
-  ACTION_SUCCESS_MESSAGES,
   AFFECTED_QUERY_NAMES,
   BACKEND_CODES,
-  BACKEND_ERROR_MESSAGES,
   FRIENDS_MAX_PAGE_SIZE,
-  GENERIC_ERROR_MESSAGE,
-  NOW_FRIENDS_MESSAGE,
+  MIN_SEARCH_TERM_LENGTH,
 } from "../constants/friends";
 import type {
   ConfirmableActionKind,
@@ -65,10 +63,17 @@ function isConfirmable(
   }
 }
 
-function messageFor(error: unknown): string {
+/** Which sentence of `success` tells the person it worked. */
+type SuccessKey = keyof FriendsTranslations["success"];
+
+function messageFor(error: unknown, copy: FriendsTranslations): string {
   const code =
     error instanceof ActionRefused ? error.backendCode : backendCodeOf(error);
-  return (code && BACKEND_ERROR_MESSAGES[code]) || GENERIC_ERROR_MESSAGE;
+  const sentence =
+    code && Object.hasOwn(copy.backendErrors, code)
+      ? copy.backendErrors[code as keyof FriendsTranslations["backendErrors"]]
+      : copy.genericError;
+  return sentence.replace("{min}", String(MIN_SEARCH_TERM_LENGTH));
 }
 
 /**
@@ -81,6 +86,8 @@ function messageFor(error: unknown): string {
  * shown as a sentence, never decided here.
  */
 export function useRelationshipActions() {
+  const { t } = useLanguage();
+  const copy = t.friends;
   const client = useApolloClient();
   const [sendRequest] = useSendFriendRequestMutation();
   const [acceptRequest] = useAcceptFriendRequestMutation();
@@ -133,12 +140,12 @@ export function useRelationshipActions() {
     [client],
   );
 
-  /** Runs one action and returns the sentence for its toast. */
+  /** Runs one action and returns which sentence of `success` tells the person it worked. */
   const run = useCallback(
     async (
       kind: RelationshipActionKind,
       target: RelationshipTarget,
-    ): Promise<string> => {
+    ): Promise<SuccessKey> => {
       const requestId = () => {
         if (!target.requestId) {
           throw new ActionRefused(BACKEND_CODES.friendRequestNotFound);
@@ -151,8 +158,8 @@ export function useRelationshipActions() {
             variables: { addresseeId: target.userId },
           });
           return data?.sendFriendRequest.status === FriendRequestStatus.ACCEPTED
-            ? NOW_FRIENDS_MESSAGE
-            : ACTION_SUCCESS_MESSAGES.send;
+            ? "nowFriends"
+            : "send";
         }
         case "accept":
           await acceptRequest({ variables: { requestId: requestId() } });
@@ -181,7 +188,7 @@ export function useRelationshipActions() {
           return unreachable;
         }
       }
-      return ACTION_SUCCESS_MESSAGES[kind];
+      return kind;
     },
     [
       sendRequest,
@@ -200,14 +207,14 @@ export function useRelationshipActions() {
       inFlight.current = true;
       setPending({ kind, userId: target.userId });
       try {
-        const message = await run(kind, target);
-        notifications.show({ color: "teal", message });
+        const done = await run(kind, target);
+        notifications.show({ color: "teal", message: copy.success[done] });
         await refreshAffected();
       } catch (error) {
         notifications.show({
           color: "warn",
-          title: ACTION_ERROR_TITLE,
-          message: messageFor(error),
+          title: copy.actionErrorTitle,
+          message: messageFor(error, copy),
         });
         // A refusal by the backend usually means the screen was out of date
         // (the request was already answered, the friendship already gone).
@@ -220,7 +227,7 @@ export function useRelationshipActions() {
         setPending(null);
       }
     },
-    [run, refreshAffected],
+    [run, refreshAffected, copy],
   );
 
   const perform: RelationshipActionHandler = useCallback(

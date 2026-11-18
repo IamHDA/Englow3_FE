@@ -1,6 +1,8 @@
 import { CombinedGraphQLErrors } from "@apollo/client";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { LanguageProvider } from "@/shared/context/LanguageContext";
 
 import { useRelationshipActions } from "./useRelationshipActions";
 
@@ -369,6 +371,77 @@ describe("what is refreshed afterwards", () => {
     expect(toast.show).toHaveBeenCalledOnce();
     expect(toast.show).toHaveBeenCalledWith(
       expect.objectContaining({ color: "teal" }),
+    );
+  });
+});
+
+/** The same screens speak English when the interface does: no sentence is Vietnamese-only. */
+describe("in English", () => {
+  beforeEach(() => localStorage.setItem("englow3_lang", "en"));
+  // Back to Vietnamese rather than removed: the language provider also keeps
+  // the last language in memory, and "unset" would leave English there.
+  afterEach(() => localStorage.setItem("englow3_lang", "vi"));
+
+  const renderEnglish = () =>
+    renderHook(() => useRelationshipActions(), { wrapper: LanguageProvider });
+
+  it("tells a sent request, and a request that was already waiting, in English", async () => {
+    const { result } = renderEnglish();
+
+    await perform(result, "send", PERSON);
+    await waitFor(() =>
+      expect(toast.show).toHaveBeenLastCalledWith({
+        color: "teal",
+        message: "Friend request sent.",
+      }),
+    );
+
+    mutations.send.mockResolvedValue({
+      data: { sendFriendRequest: { status: "ACCEPTED" } },
+    });
+    await perform(result, "send", PERSON);
+    await waitFor(() =>
+      expect(toast.show).toHaveBeenLastCalledWith({
+        color: "teal",
+        message: "You are now friends.",
+      }),
+    );
+  });
+
+  it("says a refusal in English, and a code nobody wrote a sentence for generally", async () => {
+    mutations.send.mockRejectedValueOnce(refusal("ALREADY_FRIENDS"));
+    const { result } = renderEnglish();
+
+    await perform(result, "send", PERSON);
+    await waitFor(() =>
+      expect(toast.show).toHaveBeenLastCalledWith({
+        color: "warn",
+        title: "That did not work",
+        message: "You are already friends.",
+      }),
+    );
+
+    mutations.send.mockRejectedValueOnce(refusal("SOMETHING_NEW"));
+    await perform(result, "send", PERSON);
+    await waitFor(() =>
+      expect(toast.show).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          message: "Something went wrong. Please try again.",
+        }),
+      ),
+    );
+  });
+
+  it("fills the shortest search length into the sentence", async () => {
+    mutations.send.mockRejectedValue(refusal("SEARCH_TERM_TOO_SHORT"));
+    const { result } = renderEnglish();
+
+    await perform(result, "send", PERSON);
+
+    await waitFor(() =>
+      expect(toast.show).toHaveBeenLastCalledWith(
+        expect.objectContaining({ message: "Type at least 2 characters." }),
+      ),
     );
   });
 });

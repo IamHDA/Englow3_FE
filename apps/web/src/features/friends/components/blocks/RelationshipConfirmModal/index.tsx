@@ -2,7 +2,8 @@
 
 import { Button, Group, Modal, Text } from "@mantine/core";
 
-import { CONFIRM_COPY } from "../../../constants/friends";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import type { RelationshipConfirmation } from "../../../types";
 
 type RelationshipConfirmModalProps = {
@@ -21,8 +22,9 @@ export function RelationshipConfirmModal({
   onConfirm,
   onCancel,
 }: RelationshipConfirmModalProps) {
+  const { t } = useLanguage();
   if (!confirming) return null;
-  const copy = CONFIRM_COPY[confirming.kind];
+  const copy = t.friends.confirm[confirming.kind];
 
   return (
     <Modal
@@ -33,7 +35,8 @@ export function RelationshipConfirmModal({
       closeOnClickOutside={!loading}
       closeOnEscape={!loading}
       withCloseButton={!loading}
-      title={copy.title.replace("{name}", confirming.target.displayName)}
+      // A function, not the name itself: a name with "$&" in it must stay a name.
+      title={copy.title.replace("{name}", () => confirming.target.displayName)}
     >
       <Text size="sm" c="ink.7">
         {copy.body}

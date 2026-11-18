@@ -3,19 +3,20 @@
 import { Badge, VisuallyHidden } from "@mantine/core";
 
 import { useIncomingFriendRequestCountQuery } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import {
-  REQUEST_BADGE_COPY,
   REQUEST_BADGE_MAX,
   REQUEST_COUNT_POLL_MS,
 } from "../../../constants/friends";
 
 /**
- * How many friend requests are waiting, beside the "Bạn bè" link in the header.
+ * How many friend requests are waiting, beside the friends link in the header.
  * Nothing at all for none, and nothing when the count cannot be read: a header
  * that cannot count must still be a header.
  */
 export function IncomingRequestsBadge() {
+  const { t } = useLanguage();
   const { data } = useIncomingFriendRequestCountQuery({
     fetchPolicy: "cache-and-network",
     errorPolicy: "ignore",
@@ -34,7 +35,10 @@ export function IncomingRequestsBadge() {
         {count > REQUEST_BADGE_MAX ? `${REQUEST_BADGE_MAX}+` : count}
       </Badge>
       <VisuallyHidden>
-        {count} {REQUEST_BADGE_COPY.hiddenLabel}
+        {(count === 1
+          ? t.friends.requestBadge.labelOne
+          : t.friends.requestBadge.labelOther
+        ).replace("{count}", String(count))}
       </VisuallyHidden>
     </>
   );

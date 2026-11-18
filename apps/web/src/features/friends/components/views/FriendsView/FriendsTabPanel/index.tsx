@@ -9,7 +9,7 @@ import type {
   RelationshipActionHandler,
 } from "../../../../types";
 import { FriendList } from "../../../blocks/FriendList";
-import { FriendListSkeleton } from "../../../blocks/FriendList/FriendListSkeleton";
+import { FriendListSkeleton } from "../../../parts/FriendListSkeleton";
 import { ListLoadError } from "../../../parts/ListLoadError";
 
 type FriendsTabPanelProps = {

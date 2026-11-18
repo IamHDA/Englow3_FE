@@ -50,6 +50,21 @@ describe("LoadErrorState", () => {
     expect(onRetry).toHaveBeenCalledOnce();
   });
 
+  /** "Pick one from the library" is nonsense for a person: such a page words its own. */
+  it("says what the page says when a missing thing is not in a library", () => {
+    renderState({
+      kind: "not-found",
+      thing: "người dùng",
+      notFoundDescription: "Người dùng này không tồn tại.",
+    });
+
+    expect(screen.getByText("Không tìm thấy người dùng")).toBeInTheDocument();
+    expect(
+      screen.getByText("Người dùng này không tồn tại."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/chọn lại từ thư viện/)).toBeNull();
+  });
+
   it("takes the page's word for it when told the thing is missing", () => {
     renderState({ kind: "not-found" });
 

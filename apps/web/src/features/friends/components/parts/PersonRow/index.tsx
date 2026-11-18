@@ -4,7 +4,10 @@ import { Anchor, Avatar, Flex, Group, Stack, Text } from "@mantine/core";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { DATE_LOCALE, FRIENDS_ROUTES } from "../../../constants/friends";
+import { DATE_LOCALES } from "@/shared/constants/dateLocales";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
+import { FRIENDS_ROUTES } from "../../../constants/friends";
 
 import classes from "./PersonRow.module.css";
 
@@ -30,6 +33,7 @@ export function PersonRow({
   caption,
   actions,
 }: PersonRowProps) {
+  const { language } = useLanguage();
   return (
     <Flex
       className={classes.row}
@@ -55,7 +59,9 @@ export function PersonRow({
           {caption && (
             <Text size="xs" c="ink.5">
               {caption.label}{" "}
-              {new Date(caption.date).toLocaleDateString(DATE_LOCALE)}
+              {new Date(caption.date).toLocaleDateString(
+                DATE_LOCALES[language],
+              )}
             </Text>
           )}
         </Stack>

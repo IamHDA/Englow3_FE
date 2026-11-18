@@ -4,8 +4,9 @@ import { Paper, Stack } from "@mantine/core";
 import { Inbox, SendHorizontal } from "lucide-react";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-import { LIST_COPY, type RequestDirection } from "../../../constants/friends";
+import type { RequestDirection } from "../../../constants/friends";
 import type {
   FriendRequestItem,
   PendingRelationshipAction,
@@ -38,6 +39,7 @@ export function FriendRequestList({
   pending,
   onAction,
 }: FriendRequestListProps) {
+  const copy = useLanguage().t.friends.list;
   const incoming = direction === "incoming";
 
   if (items.length === 0) {
@@ -51,15 +53,11 @@ export function FriendRequestList({
               <SendHorizontal size={24} aria-hidden="true" />
             )
           }
-          title={
-            incoming
-              ? LIST_COPY.incomingEmptyTitle
-              : LIST_COPY.outgoingEmptyTitle
-          }
+          title={incoming ? copy.incomingEmptyTitle : copy.outgoingEmptyTitle}
           description={
             incoming
-              ? LIST_COPY.incomingEmptyDescription
-              : LIST_COPY.outgoingEmptyDescription
+              ? copy.incomingEmptyDescription
+              : copy.outgoingEmptyDescription
           }
         />
       </Paper>
@@ -76,9 +74,7 @@ export function FriendRequestList({
             displayName={request.displayName}
             avatarUrl={request.avatarUrl}
             caption={{
-              label: incoming
-                ? LIST_COPY.requestReceived
-                : LIST_COPY.requestSent,
+              label: incoming ? copy.requestReceived : copy.requestSent,
               date: request.requestedAt,
             }}
             actions={

@@ -1,13 +1,20 @@
 "use client";
 
-import { Group, SegmentedControl } from "@mantine/core";
+import { Badge, Group, SegmentedControl } from "@mantine/core";
 import type { ReactNode } from "react";
+
+import classes from "./PageTabs.module.css";
 
 type PageTab<T extends string> = {
   value: T;
   label: string;
   icon?: ReactNode;
+  /** How many things wait behind the tab. Nothing is drawn for 0 or for no count. */
+  count?: number;
 };
+
+/** Past this the number on a tab reads "99+": it has to stay a few characters wide. */
+const TAB_COUNT_MAX = 99;
 
 type PageTabsProps<T extends string> = {
   value: T;
@@ -30,6 +37,7 @@ export function PageTabs<T extends string>({
     <SegmentedControl
       fullWidth
       radius="md"
+      classNames={{ root: classes.root }}
       value={value}
       onChange={(next) => onChange(next as T)}
       data={tabs.map((tab) => ({
@@ -38,6 +46,13 @@ export function PageTabs<T extends string>({
           <Group gap={6} wrap="nowrap" justify="center">
             {tab.icon}
             <span>{tab.label}</span>
+            {tab.count ? (
+              // flex="none": inside a full-width control the badge is what a
+              // squeezed row shrank first, down to a capsule with no number.
+              <Badge size="xs" variant="filled" color="navy" px={6} flex="none">
+                {tab.count > TAB_COUNT_MAX ? `${TAB_COUNT_MAX}+` : tab.count}
+              </Badge>
+            ) : null}
           </Group>
         ),
       }))}

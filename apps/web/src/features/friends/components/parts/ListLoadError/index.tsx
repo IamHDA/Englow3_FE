@@ -3,7 +3,7 @@
 import { Alert, Button } from "@mantine/core";
 import { AlertCircle, RotateCw } from "lucide-react";
 
-import { LIST_COPY } from "../../../constants/friends";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 type ListLoadErrorProps = {
   title?: string;
@@ -11,18 +11,16 @@ type ListLoadErrorProps = {
 };
 
 /** A list the server did not give us, with the way to ask again. */
-export function ListLoadError({
-  title = LIST_COPY.loadErrorTitle,
-  onRetry,
-}: ListLoadErrorProps) {
+export function ListLoadError({ title, onRetry }: ListLoadErrorProps) {
+  const copy = useLanguage().t.friends.list;
   return (
     <Alert
       color="warn"
       radius="md"
       icon={<AlertCircle size={20} aria-hidden="true" />}
-      title={title}
+      title={title ?? copy.loadErrorTitle}
     >
-      {LIST_COPY.loadErrorDescription}
+      {copy.loadErrorDescription}
       <Button
         variant="light"
         color="warn"
@@ -32,7 +30,7 @@ export function ListLoadError({
         leftSection={<RotateCw size={16} aria-hidden="true" />}
         onClick={onRetry}
       >
-        {LIST_COPY.retry}
+        {copy.retry}
       </Button>
     </Alert>
   );

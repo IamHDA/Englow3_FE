@@ -4,8 +4,8 @@ import { Paper, Stack } from "@mantine/core";
 import { Ban } from "lucide-react";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-import { LIST_COPY } from "../../../constants/friends";
 import type {
   BlockedUserItem,
   PendingRelationshipAction,
@@ -35,13 +35,14 @@ export function BlockedUserList({
   pending,
   onAction,
 }: BlockedUserListProps) {
+  const copy = useLanguage().t.friends.list;
   if (items.length === 0) {
     return (
       <Paper withBorder radius="lg">
         <ListEmptyState
           icon={<Ban size={24} aria-hidden="true" />}
-          title={LIST_COPY.blockedEmptyTitle}
-          description={LIST_COPY.blockedEmptyDescription}
+          title={copy.blockedEmptyTitle}
+          description={copy.blockedEmptyDescription}
         />
       </Paper>
     );
@@ -57,7 +58,7 @@ export function BlockedUserList({
             displayName={blocked.displayName}
             avatarUrl={blocked.avatarUrl}
             caption={{
-              label: LIST_COPY.blockedSince,
+              label: copy.blockedSince,
               date: blocked.blockedAt,
             }}
             actions={

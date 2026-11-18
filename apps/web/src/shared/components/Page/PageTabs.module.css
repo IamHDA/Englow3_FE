@@ -1,0 +1,11 @@
+/*
+ * Four tabs share a 360px phone, and some of them carry a count. Mantine's own
+ * padding for this size (10px a side) leaves "Find friends" and a count about
+ * 7px short, so on a phone each tab gives up 4px a side. `div.` lifts this over
+ * Mantine's single-class rule that sets the same variable.
+ */
+@media (max-width: $mantine-breakpoint-xs) {
+  div.root {
+    --sc-padding: 3px 6px;
+  }
+}

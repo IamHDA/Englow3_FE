@@ -1,6 +1,6 @@
 import { Skeleton, Stack } from "@mantine/core";
 
-import { FriendListSkeleton } from "../FriendList/FriendListSkeleton";
+import { FriendListSkeleton } from "../../parts/FriendListSkeleton";
 
 /** The /friends page on its way: title, the four tabs, the first list. */
 export function FriendsSkeleton() {

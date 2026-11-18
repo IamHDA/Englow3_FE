@@ -3603,8 +3603,9 @@ export type UserTourStatus = {
 export type UserWall = {
   __typename?: "UserWall";
   /**
-   * False when either side blocked the other. Every other field is then null
-   * and nothing else is fetched.
+   * False when either side blocked the other. userId and relationship stay set
+   * (BLOCKED_BY_ME is what offers the viewer "unblock"); friendCount and profile
+   * are then null, and nothing else is fetched.
    */
   available: Scalars["Boolean"]["output"];
   /** Null for staff and when unavailable. */

@@ -1,4 +1,4 @@
-import { PersonListSkeleton } from "../../parts/PersonListSkeleton";
+import { PersonListSkeleton } from "../PersonListSkeleton";
 
 /** A page of friends: picture, name, and the one "Bạn bè" button. */
 export function FriendListSkeleton() {

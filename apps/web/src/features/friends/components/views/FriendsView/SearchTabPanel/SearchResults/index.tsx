@@ -1,11 +1,9 @@
 "use client";
 
 import { useSearchLearnersQuery } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-import {
-  FRIENDS_PAGE_SIZE,
-  SEARCH_COPY,
-} from "../../../../../constants/friends";
+import { FRIENDS_PAGE_SIZE } from "../../../../../constants/friends";
 import { usePageNumber } from "../../../../../hooks/usePageNumber";
 import type {
   PendingRelationshipAction,
@@ -27,6 +25,7 @@ type SearchResultsProps = {
  * starts again on page 1.
  */
 export function SearchResults({ term, pending, onAction }: SearchResultsProps) {
+  const { t } = useLanguage();
   const { page, setPage, fitTo } = usePageNumber();
   const { data, loading, error, refetch } = useSearchLearnersQuery({
     variables: { q: term, page: page - 1, size: FRIENDS_PAGE_SIZE },
@@ -39,7 +38,7 @@ export function SearchResults({ term, pending, onAction }: SearchResultsProps) {
   if (!results) {
     return error && !loading ? (
       <ListLoadError
-        title={SEARCH_COPY.loadErrorTitle}
+        title={t.friends.search.loadErrorTitle}
         onRetry={() => void refetch().catch(() => undefined)}
       />
     ) : (

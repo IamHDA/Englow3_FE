@@ -4,8 +4,8 @@ import { Button, Paper, Stack } from "@mantine/core";
 import { Search, Users } from "lucide-react";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
-import { LIST_COPY } from "../../../constants/friends";
 import type {
   FriendItem,
   PendingRelationshipAction,
@@ -38,20 +38,21 @@ export function FriendList({
   onAction,
   onFindFriends,
 }: FriendListProps) {
+  const copy = useLanguage().t.friends.list;
   if (items.length === 0) {
     return (
       <Paper withBorder radius="lg">
         <ListEmptyState
           icon={<Users size={24} aria-hidden="true" />}
-          title={LIST_COPY.friendsEmptyTitle}
-          description={LIST_COPY.friendsEmptyDescription}
+          title={copy.friendsEmptyTitle}
+          description={copy.friendsEmptyDescription}
           action={
             <Button
               variant="light"
               leftSection={<Search size={16} aria-hidden="true" />}
               onClick={onFindFriends}
             >
-              {LIST_COPY.friendsEmptyAction}
+              {copy.friendsEmptyAction}
             </Button>
           }
         />
@@ -69,7 +70,7 @@ export function FriendList({
             displayName={friend.displayName}
             avatarUrl={friend.avatarUrl}
             caption={{
-              label: LIST_COPY.friendsSince,
+              label: copy.friendsSince,
               date: friend.friendsSince,
             }}
             actions={

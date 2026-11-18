@@ -4,7 +4,7 @@ import { Alert, Box, Button, Flex, Paper, Stack, Text } from "@mantine/core";
 import { AlertCircle, RotateCw } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { WALL_COPY } from "../../../constants/friends";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 type WallProfileErrorProps = {
   friendCount: number | null;
@@ -21,15 +21,16 @@ export function WallProfileError({
   actions,
   onRetry,
 }: WallProfileErrorProps) {
+  const copy = useLanguage().t.friends.wall;
   return (
     <Stack gap="md">
       <Alert
         color="warn"
         radius="md"
         icon={<AlertCircle size={20} aria-hidden="true" />}
-        title={WALL_COPY.profileErrorTitle}
+        title={copy.profileErrorTitle}
       >
-        {WALL_COPY.profileErrorDescription}
+        {copy.profileErrorDescription}
         <Button
           variant="light"
           color="warn"
@@ -39,7 +40,7 @@ export function WallProfileError({
           leftSection={<RotateCw size={16} aria-hidden="true" />}
           onClick={onRetry}
         >
-          {WALL_COPY.retry}
+          {copy.retry}
         </Button>
       </Alert>
       <Paper radius="lg" withBorder p="md">
@@ -51,7 +52,10 @@ export function WallProfileError({
         >
           {friendCount !== null && (
             <Text size="sm" fw={600} c="ink.8">
-              {friendCount} {WALL_COPY.friendCountSuffix}
+              {(friendCount === 1
+                ? copy.friendCountOne
+                : copy.friendCountOther
+              ).replace("{count}", String(friendCount))}
             </Text>
           )}
           <Box ml={{ sm: "auto" }}>{actions}</Box>

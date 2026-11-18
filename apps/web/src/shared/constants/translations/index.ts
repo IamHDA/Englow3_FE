@@ -1,4 +1,8 @@
+import { friendsEn, friendsVi, type FriendsTranslations } from "./friends";
+
 export type Language = "vi" | "en";
+
+export type { FriendsBackendCode, FriendsTranslations } from "./friends";
 
 export interface NavTranslations {
   study: string;
@@ -823,6 +827,7 @@ export interface AppTranslations {
   exam: ExamTranslations;
   home: HomeTranslations;
   auth: AuthTranslations;
+  friends: FriendsTranslations;
 }
 
 export const translations: Record<Language, AppTranslations> = {
@@ -1720,6 +1725,7 @@ export const translations: Record<Language, AppTranslations> = {
       createAccountSubmit: "Tạo tài khoản",
       closeAria: "Đóng",
     },
+    friends: friendsVi,
   },
   en: {
     nav: {
@@ -2624,5 +2630,6 @@ export const translations: Record<Language, AppTranslations> = {
       createAccountSubmit: "Create Account",
       closeAria: "Close",
     },
+    friends: friendsEn,
   },
 };

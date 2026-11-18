@@ -14,7 +14,9 @@ import {
 import { Users } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { DATE_LOCALE, WALL_COPY } from "../../../constants/friends";
+import { DATE_LOCALES } from "@/shared/constants/dateLocales";
+import { useLanguage } from "@/shared/hooks/useLanguage";
+
 import type { WallProfile } from "../../../types";
 
 import classes from "./WallHeader.module.css";
@@ -29,13 +31,17 @@ type WallHeaderProps = {
 
 /** Banner, picture and name of an account, with how long it has been here and how many friends it has. */
 export function WallHeader({ profile, friendCount, actions }: WallHeaderProps) {
+  const { language, t } = useLanguage();
+  const copy = t.friends.wall;
   return (
     <Paper radius="lg" withBorder className={classes.paper}>
       <Box
         className={classes.banner}
         style={
           profile.bannerUrl
-            ? { backgroundImage: `url(${profile.bannerUrl})` }
+            ? // Quoted (JSON.stringify escapes a quote or backslash inside), so a
+              // ")" or a space in the address cannot end the url() early.
+              { backgroundImage: `url(${JSON.stringify(profile.bannerUrl)})` }
             : undefined
         }
       />
@@ -57,20 +63,23 @@ export function WallHeader({ profile, friendCount, actions }: WallHeaderProps) {
               <Title order={1} fz={24} fw={700} c="ink.9">
                 {profile.displayName}
               </Title>
-              {profile.staff && (
-                <Badge color="navy">{WALL_COPY.staffBadge}</Badge>
-              )}
+              {profile.staff && <Badge color="navy">{copy.staffBadge}</Badge>}
             </Group>
             <Group gap="md">
               <Text size="sm" c="ink.6">
-                {WALL_COPY.joined}{" "}
-                {new Date(profile.joinedAt).toLocaleDateString(DATE_LOCALE)}
+                {copy.joined}{" "}
+                {new Date(profile.joinedAt).toLocaleDateString(
+                  DATE_LOCALES[language],
+                )}
               </Text>
               {friendCount !== null && (
                 <Group gap={4} wrap="nowrap">
                   <Users size={14} aria-hidden="true" />
                   <Text size="sm" fw={600} c="ink.8">
-                    {friendCount} {WALL_COPY.friendCountSuffix}
+                    {(friendCount === 1
+                      ? copy.friendCountOne
+                      : copy.friendCountOther
+                    ).replace("{count}", String(friendCount))}
                   </Text>
                 </Group>
               )}

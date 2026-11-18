@@ -7,6 +7,7 @@ import {
   useIncomingFriendRequestsQuery,
   useOutgoingFriendRequestsQuery,
 } from "@/lib/graphql/generated/hooks";
+import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import {
   FRIENDS_PAGE_SIZE,
@@ -27,8 +28,9 @@ type RequestsTabPanelProps = {
   onAction: RelationshipActionHandler;
 };
 
-/** The "Lời mời" tab: requests the viewer received, and the ones they sent. */
+/** The "requests" tab: requests the viewer received, and the ones they sent. */
 export function RequestsTabPanel({ pending, onAction }: RequestsTabPanelProps) {
+  const { t } = useLanguage();
   const [direction, setDirection] = useState<RequestDirection>("incoming");
   const incomingPager = usePageNumber();
   const outgoingPager = usePageNumber();
@@ -63,7 +65,10 @@ export function RequestsTabPanel({ pending, onAction }: RequestsTabPanelProps) {
         mb="md"
         value={direction}
         onChange={(next) => setDirection(next as RequestDirection)}
-        data={REQUEST_DIRECTIONS}
+        data={REQUEST_DIRECTIONS.map((value) => ({
+          value,
+          label: t.friends.directions[value],
+        }))}
       />
       {!requests ? (
         query.error && !query.loading ? (
