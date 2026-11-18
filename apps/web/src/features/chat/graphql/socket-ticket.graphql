@@ -1,0 +1,8 @@
+# A single-use ticket for one chat socket. Run it with fetchPolicy "no-cache":
+# it must neither be stored nor served twice.
+mutation ChatSocketTicket {
+  chatSocketTicket {
+    ticket
+    expiresInSeconds
+  }
+}

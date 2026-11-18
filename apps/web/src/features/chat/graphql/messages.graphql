@@ -1,0 +1,28 @@
+fragment ChatMessageFields on ChatMessage {
+  id
+  conversationId
+  seq
+  senderId
+  body
+  imageUrl
+  recalled
+  sentAt
+  clientId
+}
+
+# The newest messages by default; afterSeq catches up, beforeSeq scrolls back.
+query ChatMessages(
+  $conversationId: ID!
+  $afterSeq: Float
+  $beforeSeq: Float
+  $limit: Int
+) {
+  chatMessages(
+    conversationId: $conversationId
+    afterSeq: $afterSeq
+    beforeSeq: $beforeSeq
+    limit: $limit
+  ) {
+    ...ChatMessageFields
+  }
+}

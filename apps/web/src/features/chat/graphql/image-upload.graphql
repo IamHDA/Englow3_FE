@@ -1,0 +1,16 @@
+mutation StartChatImageUpload(
+  $conversationId: ID!
+  $contentType: String!
+  $contentLength: Int!
+) {
+  startChatImageUpload(
+    conversationId: $conversationId
+    contentType: $contentType
+    contentLength: $contentLength
+  ) {
+    uploadId
+    uploadUrl
+    contentType
+    expiresInSeconds
+  }
+}

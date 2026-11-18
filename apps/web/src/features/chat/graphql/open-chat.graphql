@@ -1,0 +1,6 @@
+mutation OpenChat($friendId: ID!) {
+  openChat(friendId: $friendId) {
+    ...ChatConversationFields
+    canSend
+  }
+}

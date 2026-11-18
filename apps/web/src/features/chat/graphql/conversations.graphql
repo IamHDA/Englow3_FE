@@ -1,0 +1,31 @@
+fragment ChatConversationFields on ChatConversation {
+  id
+  otherUser {
+    userId
+    displayName
+    avatarUrl
+  }
+  lastSeq
+  lastReadSeq
+  unreadCount
+  lastMessage {
+    seq
+    senderId
+    preview
+    hasImage
+    recalled
+    sentAt
+  }
+}
+
+query ChatConversations($page: Int, $size: Int) {
+  chatConversations(page: $page, size: $size) {
+    items {
+      ...ChatConversationFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}

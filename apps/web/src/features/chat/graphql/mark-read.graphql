@@ -1,0 +1,3 @@
+mutation MarkChatRead($conversationId: ID!, $upToSeq: Float!) {
+  markChatRead(conversationId: $conversationId, upToSeq: $upToSeq)
+}

@@ -1,0 +1,5 @@
+mutation RecallChatMessage($messageId: ID!) {
+  recallChatMessage(messageId: $messageId) {
+    ...ChatMessageFields
+  }
+}

@@ -2051,6 +2051,217 @@ export type AssignAssessmentMutation = {
   };
 };
 
+export type ChatConversationQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ChatConversationQuery = {
+  chatConversation: {
+    canSend: boolean | null;
+    id: string;
+    lastSeq: number;
+    lastReadSeq: number;
+    unreadCount: number;
+    otherUser: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    lastMessage: {
+      seq: number;
+      senderId: string | null;
+      preview: string | null;
+      hasImage: boolean;
+      recalled: boolean;
+      sentAt: string;
+    } | null;
+  };
+};
+
+export type ChatConversationFieldsFragment = {
+  id: string;
+  lastSeq: number;
+  lastReadSeq: number;
+  unreadCount: number;
+  otherUser: {
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+  lastMessage: {
+    seq: number;
+    senderId: string | null;
+    preview: string | null;
+    hasImage: boolean;
+    recalled: boolean;
+    sentAt: string;
+  } | null;
+};
+
+export type ChatConversationsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type ChatConversationsQuery = {
+  chatConversations: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      lastSeq: number;
+      lastReadSeq: number;
+      unreadCount: number;
+      otherUser: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      lastMessage: {
+        seq: number;
+        senderId: string | null;
+        preview: string | null;
+        hasImage: boolean;
+        recalled: boolean;
+        sentAt: string;
+      } | null;
+    }>;
+  };
+};
+
+export type StartChatImageUploadMutationVariables = Exact<{
+  conversationId: string | number;
+  contentType: string;
+  contentLength: number;
+}>;
+
+export type StartChatImageUploadMutation = {
+  startChatImageUpload: {
+    uploadId: string;
+    uploadUrl: string;
+    contentType: string;
+    expiresInSeconds: number;
+  };
+};
+
+export type MarkChatReadMutationVariables = Exact<{
+  conversationId: string | number;
+  upToSeq: number;
+}>;
+
+export type MarkChatReadMutation = { markChatRead: boolean };
+
+export type ChatMessageFieldsFragment = {
+  id: string;
+  conversationId: string;
+  seq: number;
+  senderId: string | null;
+  body: string | null;
+  imageUrl: string | null;
+  recalled: boolean;
+  sentAt: string;
+  clientId: string | null;
+};
+
+export type ChatMessagesQueryVariables = Exact<{
+  conversationId: string | number;
+  afterSeq?: number | null | undefined;
+  beforeSeq?: number | null | undefined;
+  limit?: number | null | undefined;
+}>;
+
+export type ChatMessagesQuery = {
+  chatMessages: Array<{
+    id: string;
+    conversationId: string;
+    seq: number;
+    senderId: string | null;
+    body: string | null;
+    imageUrl: string | null;
+    recalled: boolean;
+    sentAt: string;
+    clientId: string | null;
+  }>;
+};
+
+export type OpenChatMutationVariables = Exact<{
+  friendId: string | number;
+}>;
+
+export type OpenChatMutation = {
+  openChat: {
+    canSend: boolean | null;
+    id: string;
+    lastSeq: number;
+    lastReadSeq: number;
+    unreadCount: number;
+    otherUser: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    lastMessage: {
+      seq: number;
+      senderId: string | null;
+      preview: string | null;
+      hasImage: boolean;
+      recalled: boolean;
+      sentAt: string;
+    } | null;
+  };
+};
+
+export type RecallChatMessageMutationVariables = Exact<{
+  messageId: string | number;
+}>;
+
+export type RecallChatMessageMutation = {
+  recallChatMessage: {
+    id: string;
+    conversationId: string;
+    seq: number;
+    senderId: string | null;
+    body: string | null;
+    imageUrl: string | null;
+    recalled: boolean;
+    sentAt: string;
+    clientId: string | null;
+  };
+};
+
+export type SendChatMessageMutationVariables = Exact<{
+  conversationId: string | number;
+  clientId: string;
+  body?: string | null | undefined;
+  imageUploadId?: string | number | null | undefined;
+}>;
+
+export type SendChatMessageMutation = {
+  sendChatMessage: {
+    id: string;
+    conversationId: string;
+    seq: number;
+    senderId: string | null;
+    body: string | null;
+    imageUrl: string | null;
+    recalled: boolean;
+    sentAt: string;
+    clientId: string | null;
+  };
+};
+
+export type ChatSocketTicketMutationVariables = Exact<{ [key: string]: never }>;
+
+export type ChatSocketTicketMutation = {
+  chatSocketTicket: { ticket: string; expiresInSeconds: number };
+};
+
+export type ChatUnreadCountQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ChatUnreadCountQuery = { chatUnreadCount: number };
+
 export type ContentReviewFieldsFragment = {
   id: string;
   slug: string;
@@ -5158,6 +5369,40 @@ export const AssessmentAssignmentFieldsFragmentDoc = gql`
       note
       createdAt
     }
+  }
+`;
+export const ChatConversationFieldsFragmentDoc = gql`
+  fragment ChatConversationFields on ChatConversation {
+    id
+    otherUser {
+      userId
+      displayName
+      avatarUrl
+    }
+    lastSeq
+    lastReadSeq
+    unreadCount
+    lastMessage {
+      seq
+      senderId
+      preview
+      hasImage
+      recalled
+      sentAt
+    }
+  }
+`;
+export const ChatMessageFieldsFragmentDoc = gql`
+  fragment ChatMessageFields on ChatMessage {
+    id
+    conversationId
+    seq
+    senderId
+    body
+    imageUrl
+    recalled
+    sentAt
+    clientId
   }
 `;
 export const ContentReviewFieldsFragmentDoc = gql`
@@ -10947,6 +11192,774 @@ export type AssignAssessmentMutationOptions =
     AssignAssessmentMutation,
     AssignAssessmentMutationVariables
   >;
+export const ChatConversationDocument = gql`
+  query ChatConversation($id: ID!) {
+    chatConversation(id: $id) {
+      ...ChatConversationFields
+      canSend
+    }
+  }
+  ${ChatConversationFieldsFragmentDoc}
+`;
+
+/**
+ * __useChatConversationQuery__
+ *
+ * To run a query within a React component, call `useChatConversationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChatConversationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChatConversationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useChatConversationQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ChatConversationQuery,
+    ChatConversationQueryVariables
+  > &
+    (
+      | { variables: ChatConversationQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ChatConversationQuery,
+    ChatConversationQueryVariables
+  >(ChatConversationDocument, options);
+}
+export function useChatConversationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ChatConversationQuery,
+    ChatConversationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ChatConversationQuery,
+    ChatConversationQueryVariables
+  >(ChatConversationDocument, options);
+}
+export function useChatConversationSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ChatConversationQuery,
+    ChatConversationQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatConversationQuery,
+  ChatConversationQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useChatConversationSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatConversationQuery,
+        ChatConversationQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatConversationQuery | undefined,
+  ChatConversationQueryVariables
+>;
+export function useChatConversationSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatConversationQuery,
+        ChatConversationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ChatConversationQuery,
+    ChatConversationQueryVariables
+  >(ChatConversationDocument, options as any);
+}
+export type ChatConversationQueryHookResult = ReturnType<
+  typeof useChatConversationQuery
+>;
+export type ChatConversationLazyQueryHookResult = ReturnType<
+  typeof useChatConversationLazyQuery
+>;
+export type ChatConversationSuspenseQueryHookResult = ReturnType<
+  typeof useChatConversationSuspenseQuery
+>;
+export type ChatConversationQueryResult = ApolloReactCommon.QueryResult<
+  ChatConversationQuery,
+  ChatConversationQueryVariables
+>;
+export const ChatConversationsDocument = gql`
+  query ChatConversations($page: Int, $size: Int) {
+    chatConversations(page: $page, size: $size) {
+      items {
+        ...ChatConversationFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${ChatConversationFieldsFragmentDoc}
+`;
+
+/**
+ * __useChatConversationsQuery__
+ *
+ * To run a query within a React component, call `useChatConversationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChatConversationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChatConversationsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useChatConversationsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    ChatConversationsQuery,
+    ChatConversationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ChatConversationsQuery,
+    ChatConversationsQueryVariables
+  >(ChatConversationsDocument, options);
+}
+export function useChatConversationsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ChatConversationsQuery,
+    ChatConversationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ChatConversationsQuery,
+    ChatConversationsQueryVariables
+  >(ChatConversationsDocument, options);
+}
+export function useChatConversationsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ChatConversationsQuery,
+    ChatConversationsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatConversationsQuery,
+  ChatConversationsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useChatConversationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatConversationsQuery,
+        ChatConversationsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatConversationsQuery | undefined,
+  ChatConversationsQueryVariables
+>;
+export function useChatConversationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatConversationsQuery,
+        ChatConversationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ChatConversationsQuery,
+    ChatConversationsQueryVariables
+  >(ChatConversationsDocument, options as any);
+}
+export type ChatConversationsQueryHookResult = ReturnType<
+  typeof useChatConversationsQuery
+>;
+export type ChatConversationsLazyQueryHookResult = ReturnType<
+  typeof useChatConversationsLazyQuery
+>;
+export type ChatConversationsSuspenseQueryHookResult = ReturnType<
+  typeof useChatConversationsSuspenseQuery
+>;
+export type ChatConversationsQueryResult = ApolloReactCommon.QueryResult<
+  ChatConversationsQuery,
+  ChatConversationsQueryVariables
+>;
+export const StartChatImageUploadDocument = gql`
+  mutation StartChatImageUpload(
+    $conversationId: ID!
+    $contentType: String!
+    $contentLength: Int!
+  ) {
+    startChatImageUpload(
+      conversationId: $conversationId
+      contentType: $contentType
+      contentLength: $contentLength
+    ) {
+      uploadId
+      uploadUrl
+      contentType
+      expiresInSeconds
+    }
+  }
+`;
+export type StartChatImageUploadMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartChatImageUploadMutation,
+    StartChatImageUploadMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartChatImageUploadMutation__
+ *
+ * To run a mutation, you first call `useStartChatImageUploadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartChatImageUploadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startChatImageUploadMutation, { data, loading, error }] = useStartChatImageUploadMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      contentType: // value for 'contentType'
+ *      contentLength: // value for 'contentLength'
+ *   },
+ * });
+ */
+export function useStartChatImageUploadMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartChatImageUploadMutation,
+    StartChatImageUploadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartChatImageUploadMutation,
+    StartChatImageUploadMutationVariables
+  >(StartChatImageUploadDocument, options);
+}
+export type StartChatImageUploadMutationHookResult = ReturnType<
+  typeof useStartChatImageUploadMutation
+>;
+export type StartChatImageUploadMutationResult =
+  ApolloReactCommon.MutationResult<StartChatImageUploadMutation>;
+export type StartChatImageUploadMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartChatImageUploadMutation,
+    StartChatImageUploadMutationVariables
+  >;
+export const MarkChatReadDocument = gql`
+  mutation MarkChatRead($conversationId: ID!, $upToSeq: Float!) {
+    markChatRead(conversationId: $conversationId, upToSeq: $upToSeq)
+  }
+`;
+export type MarkChatReadMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    MarkChatReadMutation,
+    MarkChatReadMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useMarkChatReadMutation__
+ *
+ * To run a mutation, you first call `useMarkChatReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkChatReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markChatReadMutation, { data, loading, error }] = useMarkChatReadMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      upToSeq: // value for 'upToSeq'
+ *   },
+ * });
+ */
+export function useMarkChatReadMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    MarkChatReadMutation,
+    MarkChatReadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    MarkChatReadMutation,
+    MarkChatReadMutationVariables
+  >(MarkChatReadDocument, options);
+}
+export type MarkChatReadMutationHookResult = ReturnType<
+  typeof useMarkChatReadMutation
+>;
+export type MarkChatReadMutationResult =
+  ApolloReactCommon.MutationResult<MarkChatReadMutation>;
+export type MarkChatReadMutationOptions = ApolloReactCommon.MutationHookOptions<
+  MarkChatReadMutation,
+  MarkChatReadMutationVariables
+>;
+export const ChatMessagesDocument = gql`
+  query ChatMessages(
+    $conversationId: ID!
+    $afterSeq: Float
+    $beforeSeq: Float
+    $limit: Int
+  ) {
+    chatMessages(
+      conversationId: $conversationId
+      afterSeq: $afterSeq
+      beforeSeq: $beforeSeq
+      limit: $limit
+    ) {
+      ...ChatMessageFields
+    }
+  }
+  ${ChatMessageFieldsFragmentDoc}
+`;
+
+/**
+ * __useChatMessagesQuery__
+ *
+ * To run a query within a React component, call `useChatMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChatMessagesQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      afterSeq: // value for 'afterSeq'
+ *      beforeSeq: // value for 'beforeSeq'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useChatMessagesQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    ChatMessagesQuery,
+    ChatMessagesQueryVariables
+  > &
+    (
+      | { variables: ChatMessagesQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ChatMessagesQuery,
+    ChatMessagesQueryVariables
+  >(ChatMessagesDocument, options);
+}
+export function useChatMessagesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ChatMessagesQuery,
+    ChatMessagesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ChatMessagesQuery,
+    ChatMessagesQueryVariables
+  >(ChatMessagesDocument, options);
+}
+export function useChatMessagesSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ChatMessagesQuery,
+    ChatMessagesQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatMessagesQuery,
+  ChatMessagesQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useChatMessagesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatMessagesQuery,
+        ChatMessagesQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatMessagesQuery | undefined,
+  ChatMessagesQueryVariables
+>;
+export function useChatMessagesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatMessagesQuery,
+        ChatMessagesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ChatMessagesQuery,
+    ChatMessagesQueryVariables
+  >(ChatMessagesDocument, options as any);
+}
+export type ChatMessagesQueryHookResult = ReturnType<
+  typeof useChatMessagesQuery
+>;
+export type ChatMessagesLazyQueryHookResult = ReturnType<
+  typeof useChatMessagesLazyQuery
+>;
+export type ChatMessagesSuspenseQueryHookResult = ReturnType<
+  typeof useChatMessagesSuspenseQuery
+>;
+export type ChatMessagesQueryResult = ApolloReactCommon.QueryResult<
+  ChatMessagesQuery,
+  ChatMessagesQueryVariables
+>;
+export const OpenChatDocument = gql`
+  mutation OpenChat($friendId: ID!) {
+    openChat(friendId: $friendId) {
+      ...ChatConversationFields
+      canSend
+    }
+  }
+  ${ChatConversationFieldsFragmentDoc}
+`;
+export type OpenChatMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    OpenChatMutation,
+    OpenChatMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useOpenChatMutation__
+ *
+ * To run a mutation, you first call `useOpenChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOpenChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [openChatMutation, { data, loading, error }] = useOpenChatMutation({
+ *   variables: {
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useOpenChatMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    OpenChatMutation,
+    OpenChatMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    OpenChatMutation,
+    OpenChatMutationVariables
+  >(OpenChatDocument, options);
+}
+export type OpenChatMutationHookResult = ReturnType<typeof useOpenChatMutation>;
+export type OpenChatMutationResult =
+  ApolloReactCommon.MutationResult<OpenChatMutation>;
+export type OpenChatMutationOptions = ApolloReactCommon.MutationHookOptions<
+  OpenChatMutation,
+  OpenChatMutationVariables
+>;
+export const RecallChatMessageDocument = gql`
+  mutation RecallChatMessage($messageId: ID!) {
+    recallChatMessage(messageId: $messageId) {
+      ...ChatMessageFields
+    }
+  }
+  ${ChatMessageFieldsFragmentDoc}
+`;
+export type RecallChatMessageMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    RecallChatMessageMutation,
+    RecallChatMessageMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useRecallChatMessageMutation__
+ *
+ * To run a mutation, you first call `useRecallChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRecallChatMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [recallChatMessageMutation, { data, loading, error }] = useRecallChatMessageMutation({
+ *   variables: {
+ *      messageId: // value for 'messageId'
+ *   },
+ * });
+ */
+export function useRecallChatMessageMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RecallChatMessageMutation,
+    RecallChatMessageMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    RecallChatMessageMutation,
+    RecallChatMessageMutationVariables
+  >(RecallChatMessageDocument, options);
+}
+export type RecallChatMessageMutationHookResult = ReturnType<
+  typeof useRecallChatMessageMutation
+>;
+export type RecallChatMessageMutationResult =
+  ApolloReactCommon.MutationResult<RecallChatMessageMutation>;
+export type RecallChatMessageMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    RecallChatMessageMutation,
+    RecallChatMessageMutationVariables
+  >;
+export const SendChatMessageDocument = gql`
+  mutation SendChatMessage(
+    $conversationId: ID!
+    $clientId: String!
+    $body: String
+    $imageUploadId: ID
+  ) {
+    sendChatMessage(
+      conversationId: $conversationId
+      clientId: $clientId
+      body: $body
+      imageUploadId: $imageUploadId
+    ) {
+      ...ChatMessageFields
+    }
+  }
+  ${ChatMessageFieldsFragmentDoc}
+`;
+export type SendChatMessageMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SendChatMessageMutation,
+    SendChatMessageMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSendChatMessageMutation__
+ *
+ * To run a mutation, you first call `useSendChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendChatMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendChatMessageMutation, { data, loading, error }] = useSendChatMessageMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      clientId: // value for 'clientId'
+ *      body: // value for 'body'
+ *      imageUploadId: // value for 'imageUploadId'
+ *   },
+ * });
+ */
+export function useSendChatMessageMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SendChatMessageMutation,
+    SendChatMessageMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SendChatMessageMutation,
+    SendChatMessageMutationVariables
+  >(SendChatMessageDocument, options);
+}
+export type SendChatMessageMutationHookResult = ReturnType<
+  typeof useSendChatMessageMutation
+>;
+export type SendChatMessageMutationResult =
+  ApolloReactCommon.MutationResult<SendChatMessageMutation>;
+export type SendChatMessageMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SendChatMessageMutation,
+    SendChatMessageMutationVariables
+  >;
+export const ChatSocketTicketDocument = gql`
+  mutation ChatSocketTicket {
+    chatSocketTicket {
+      ticket
+      expiresInSeconds
+    }
+  }
+`;
+export type ChatSocketTicketMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ChatSocketTicketMutation,
+    ChatSocketTicketMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useChatSocketTicketMutation__
+ *
+ * To run a mutation, you first call `useChatSocketTicketMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChatSocketTicketMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [chatSocketTicketMutation, { data, loading, error }] = useChatSocketTicketMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useChatSocketTicketMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ChatSocketTicketMutation,
+    ChatSocketTicketMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ChatSocketTicketMutation,
+    ChatSocketTicketMutationVariables
+  >(ChatSocketTicketDocument, options);
+}
+export type ChatSocketTicketMutationHookResult = ReturnType<
+  typeof useChatSocketTicketMutation
+>;
+export type ChatSocketTicketMutationResult =
+  ApolloReactCommon.MutationResult<ChatSocketTicketMutation>;
+export type ChatSocketTicketMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ChatSocketTicketMutation,
+    ChatSocketTicketMutationVariables
+  >;
+export const ChatUnreadCountDocument = gql`
+  query ChatUnreadCount {
+    chatUnreadCount
+  }
+`;
+
+/**
+ * __useChatUnreadCountQuery__
+ *
+ * To run a query within a React component, call `useChatUnreadCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChatUnreadCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChatUnreadCountQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useChatUnreadCountQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    ChatUnreadCountQuery,
+    ChatUnreadCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    ChatUnreadCountQuery,
+    ChatUnreadCountQueryVariables
+  >(ChatUnreadCountDocument, options);
+}
+export function useChatUnreadCountLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ChatUnreadCountQuery,
+    ChatUnreadCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    ChatUnreadCountQuery,
+    ChatUnreadCountQueryVariables
+  >(ChatUnreadCountDocument, options);
+}
+export function useChatUnreadCountSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    ChatUnreadCountQuery,
+    ChatUnreadCountQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatUnreadCountQuery,
+  ChatUnreadCountQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useChatUnreadCountSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatUnreadCountQuery,
+        ChatUnreadCountQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  ChatUnreadCountQuery | undefined,
+  ChatUnreadCountQueryVariables
+>;
+export function useChatUnreadCountSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ChatUnreadCountQuery,
+        ChatUnreadCountQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    ChatUnreadCountQuery,
+    ChatUnreadCountQueryVariables
+  >(ChatUnreadCountDocument, options as any);
+}
+export type ChatUnreadCountQueryHookResult = ReturnType<
+  typeof useChatUnreadCountQuery
+>;
+export type ChatUnreadCountLazyQueryHookResult = ReturnType<
+  typeof useChatUnreadCountLazyQuery
+>;
+export type ChatUnreadCountSuspenseQueryHookResult = ReturnType<
+  typeof useChatUnreadCountSuspenseQuery
+>;
+export type ChatUnreadCountQueryResult = ApolloReactCommon.QueryResult<
+  ChatUnreadCountQuery,
+  ChatUnreadCountQueryVariables
+>;
 export const AdminContentDocument = gql`
   query AdminContent(
     $kind: ContentKind!

@@ -2048,6 +2048,217 @@ export type AssignAssessmentMutation = {
   };
 };
 
+export type ChatConversationQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ChatConversationQuery = {
+  chatConversation: {
+    canSend: boolean | null;
+    id: string;
+    lastSeq: number;
+    lastReadSeq: number;
+    unreadCount: number;
+    otherUser: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    lastMessage: {
+      seq: number;
+      senderId: string | null;
+      preview: string | null;
+      hasImage: boolean;
+      recalled: boolean;
+      sentAt: string;
+    } | null;
+  };
+};
+
+export type ChatConversationFieldsFragment = {
+  id: string;
+  lastSeq: number;
+  lastReadSeq: number;
+  unreadCount: number;
+  otherUser: {
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+  lastMessage: {
+    seq: number;
+    senderId: string | null;
+    preview: string | null;
+    hasImage: boolean;
+    recalled: boolean;
+    sentAt: string;
+  } | null;
+};
+
+export type ChatConversationsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type ChatConversationsQuery = {
+  chatConversations: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      lastSeq: number;
+      lastReadSeq: number;
+      unreadCount: number;
+      otherUser: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      lastMessage: {
+        seq: number;
+        senderId: string | null;
+        preview: string | null;
+        hasImage: boolean;
+        recalled: boolean;
+        sentAt: string;
+      } | null;
+    }>;
+  };
+};
+
+export type StartChatImageUploadMutationVariables = Exact<{
+  conversationId: string | number;
+  contentType: string;
+  contentLength: number;
+}>;
+
+export type StartChatImageUploadMutation = {
+  startChatImageUpload: {
+    uploadId: string;
+    uploadUrl: string;
+    contentType: string;
+    expiresInSeconds: number;
+  };
+};
+
+export type MarkChatReadMutationVariables = Exact<{
+  conversationId: string | number;
+  upToSeq: number;
+}>;
+
+export type MarkChatReadMutation = { markChatRead: boolean };
+
+export type ChatMessageFieldsFragment = {
+  id: string;
+  conversationId: string;
+  seq: number;
+  senderId: string | null;
+  body: string | null;
+  imageUrl: string | null;
+  recalled: boolean;
+  sentAt: string;
+  clientId: string | null;
+};
+
+export type ChatMessagesQueryVariables = Exact<{
+  conversationId: string | number;
+  afterSeq?: number | null | undefined;
+  beforeSeq?: number | null | undefined;
+  limit?: number | null | undefined;
+}>;
+
+export type ChatMessagesQuery = {
+  chatMessages: Array<{
+    id: string;
+    conversationId: string;
+    seq: number;
+    senderId: string | null;
+    body: string | null;
+    imageUrl: string | null;
+    recalled: boolean;
+    sentAt: string;
+    clientId: string | null;
+  }>;
+};
+
+export type OpenChatMutationVariables = Exact<{
+  friendId: string | number;
+}>;
+
+export type OpenChatMutation = {
+  openChat: {
+    canSend: boolean | null;
+    id: string;
+    lastSeq: number;
+    lastReadSeq: number;
+    unreadCount: number;
+    otherUser: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    lastMessage: {
+      seq: number;
+      senderId: string | null;
+      preview: string | null;
+      hasImage: boolean;
+      recalled: boolean;
+      sentAt: string;
+    } | null;
+  };
+};
+
+export type RecallChatMessageMutationVariables = Exact<{
+  messageId: string | number;
+}>;
+
+export type RecallChatMessageMutation = {
+  recallChatMessage: {
+    id: string;
+    conversationId: string;
+    seq: number;
+    senderId: string | null;
+    body: string | null;
+    imageUrl: string | null;
+    recalled: boolean;
+    sentAt: string;
+    clientId: string | null;
+  };
+};
+
+export type SendChatMessageMutationVariables = Exact<{
+  conversationId: string | number;
+  clientId: string;
+  body?: string | null | undefined;
+  imageUploadId?: string | number | null | undefined;
+}>;
+
+export type SendChatMessageMutation = {
+  sendChatMessage: {
+    id: string;
+    conversationId: string;
+    seq: number;
+    senderId: string | null;
+    body: string | null;
+    imageUrl: string | null;
+    recalled: boolean;
+    sentAt: string;
+    clientId: string | null;
+  };
+};
+
+export type ChatSocketTicketMutationVariables = Exact<{ [key: string]: never }>;
+
+export type ChatSocketTicketMutation = {
+  chatSocketTicket: { ticket: string; expiresInSeconds: number };
+};
+
+export type ChatUnreadCountQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ChatUnreadCountQuery = { chatUnreadCount: number };
+
 export type ContentReviewFieldsFragment = {
   id: string;
   slug: string;
@@ -5397,6 +5608,82 @@ export const AssessmentAssignmentFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<AssessmentAssignmentFieldsFragment, unknown>;
+export const ChatConversationFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatConversationFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatConversation" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "otherUser" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "lastReadSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "unreadCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "lastMessage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "seq" } },
+                { kind: "Field", name: { kind: "Name", value: "senderId" } },
+                { kind: "Field", name: { kind: "Name", value: "preview" } },
+                { kind: "Field", name: { kind: "Name", value: "hasImage" } },
+                { kind: "Field", name: { kind: "Name", value: "recalled" } },
+                { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ChatConversationFieldsFragment, unknown>;
+export const ChatMessageFieldsFragmentDoc = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "conversationId" } },
+          { kind: "Field", name: { kind: "Name", value: "seq" } },
+          { kind: "Field", name: { kind: "Name", value: "senderId" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recalled" } },
+          { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+          { kind: "Field", name: { kind: "Name", value: "clientId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ChatMessageFieldsFragment, unknown>;
 export const ContentReviewFieldsFragmentDoc = {
   kind: "Document",
   definitions: [
@@ -13648,6 +13935,853 @@ export const AssignAssessmentDocument = {
 } as unknown as DocumentNode<
   AssignAssessmentMutation,
   AssignAssessmentMutationVariables
+>;
+export const ChatConversationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ChatConversation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "chatConversation" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ChatConversationFields" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "canSend" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatConversationFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatConversation" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "otherUser" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "lastReadSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "unreadCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "lastMessage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "seq" } },
+                { kind: "Field", name: { kind: "Name", value: "senderId" } },
+                { kind: "Field", name: { kind: "Name", value: "preview" } },
+                { kind: "Field", name: { kind: "Name", value: "hasImage" } },
+                { kind: "Field", name: { kind: "Name", value: "recalled" } },
+                { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ChatConversationQuery,
+  ChatConversationQueryVariables
+>;
+export const ChatConversationsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ChatConversations" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "chatConversations" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "ChatConversationFields" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "page" } },
+                { kind: "Field", name: { kind: "Name", value: "size" } },
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatConversationFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatConversation" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "otherUser" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "lastReadSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "unreadCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "lastMessage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "seq" } },
+                { kind: "Field", name: { kind: "Name", value: "senderId" } },
+                { kind: "Field", name: { kind: "Name", value: "preview" } },
+                { kind: "Field", name: { kind: "Name", value: "hasImage" } },
+                { kind: "Field", name: { kind: "Name", value: "recalled" } },
+                { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ChatConversationsQuery,
+  ChatConversationsQueryVariables
+>;
+export const StartChatImageUploadDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "StartChatImageUpload" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentType" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "contentLength" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "startChatImageUpload" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentType" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentType" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "contentLength" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "contentLength" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "uploadId" } },
+                { kind: "Field", name: { kind: "Name", value: "uploadUrl" } },
+                { kind: "Field", name: { kind: "Name", value: "contentType" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "expiresInSeconds" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  StartChatImageUploadMutation,
+  StartChatImageUploadMutationVariables
+>;
+export const MarkChatReadDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "MarkChatRead" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "upToSeq" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "markChatRead" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "upToSeq" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "upToSeq" },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  MarkChatReadMutation,
+  MarkChatReadMutationVariables
+>;
+export const ChatMessagesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ChatMessages" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "afterSeq" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "beforeSeq" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "limit" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "chatMessages" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "afterSeq" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "afterSeq" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "beforeSeq" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "beforeSeq" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "limit" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "limit" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ChatMessageFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "conversationId" } },
+          { kind: "Field", name: { kind: "Name", value: "seq" } },
+          { kind: "Field", name: { kind: "Name", value: "senderId" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recalled" } },
+          { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+          { kind: "Field", name: { kind: "Name", value: "clientId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ChatMessagesQuery, ChatMessagesQueryVariables>;
+export const OpenChatDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "OpenChat" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "friendId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "openChat" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "friendId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "friendId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ChatConversationFields" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "canSend" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatConversationFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatConversation" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "otherUser" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+              ],
+            },
+          },
+          { kind: "Field", name: { kind: "Name", value: "lastSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "lastReadSeq" } },
+          { kind: "Field", name: { kind: "Name", value: "unreadCount" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "lastMessage" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "seq" } },
+                { kind: "Field", name: { kind: "Name", value: "senderId" } },
+                { kind: "Field", name: { kind: "Name", value: "preview" } },
+                { kind: "Field", name: { kind: "Name", value: "hasImage" } },
+                { kind: "Field", name: { kind: "Name", value: "recalled" } },
+                { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<OpenChatMutation, OpenChatMutationVariables>;
+export const RecallChatMessageDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RecallChatMessage" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "messageId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "recallChatMessage" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "messageId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "messageId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ChatMessageFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "conversationId" } },
+          { kind: "Field", name: { kind: "Name", value: "seq" } },
+          { kind: "Field", name: { kind: "Name", value: "senderId" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recalled" } },
+          { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+          { kind: "Field", name: { kind: "Name", value: "clientId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RecallChatMessageMutation,
+  RecallChatMessageMutationVariables
+>;
+export const SendChatMessageDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SendChatMessage" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "conversationId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "clientId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "body" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "imageUploadId" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "sendChatMessage" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "conversationId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "conversationId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "clientId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "clientId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "body" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "body" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "imageUploadId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "imageUploadId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "ChatMessageFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "ChatMessageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "ChatMessage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "conversationId" } },
+          { kind: "Field", name: { kind: "Name", value: "seq" } },
+          { kind: "Field", name: { kind: "Name", value: "senderId" } },
+          { kind: "Field", name: { kind: "Name", value: "body" } },
+          { kind: "Field", name: { kind: "Name", value: "imageUrl" } },
+          { kind: "Field", name: { kind: "Name", value: "recalled" } },
+          { kind: "Field", name: { kind: "Name", value: "sentAt" } },
+          { kind: "Field", name: { kind: "Name", value: "clientId" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SendChatMessageMutation,
+  SendChatMessageMutationVariables
+>;
+export const ChatSocketTicketDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ChatSocketTicket" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "chatSocketTicket" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "ticket" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "expiresInSeconds" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ChatSocketTicketMutation,
+  ChatSocketTicketMutationVariables
+>;
+export const ChatUnreadCountDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ChatUnreadCount" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "chatUnreadCount" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ChatUnreadCountQuery,
+  ChatUnreadCountQueryVariables
 >;
 export const AdminContentDocument = {
   kind: "Document",

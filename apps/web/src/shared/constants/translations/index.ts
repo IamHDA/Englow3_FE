@@ -1,7 +1,9 @@
+import { chatEn, chatVi, type ChatTranslations } from "./chat";
 import { friendsEn, friendsVi, type FriendsTranslations } from "./friends";
 
 export type Language = "vi" | "en";
 
+export type { ChatBackendCode, ChatTranslations } from "./chat";
 export type { FriendsBackendCode, FriendsTranslations } from "./friends";
 
 export interface NavTranslations {
@@ -828,6 +830,7 @@ export interface AppTranslations {
   home: HomeTranslations;
   auth: AuthTranslations;
   friends: FriendsTranslations;
+  chat: ChatTranslations;
 }
 
 export const translations: Record<Language, AppTranslations> = {
@@ -1726,6 +1729,7 @@ export const translations: Record<Language, AppTranslations> = {
       closeAria: "Đóng",
     },
     friends: friendsVi,
+    chat: chatVi,
   },
   en: {
     nav: {
@@ -2631,5 +2635,6 @@ export const translations: Record<Language, AppTranslations> = {
       closeAria: "Close",
     },
     friends: friendsEn,
+    chat: chatEn,
   },
 };

@@ -1,0 +1,8 @@
+# One conversation also says whether the viewer may still write in it
+# (canSend) - the list does not.
+query ChatConversation($id: ID!) {
+  chatConversation(id: $id) {
+    ...ChatConversationFields
+    canSend
+  }
+}

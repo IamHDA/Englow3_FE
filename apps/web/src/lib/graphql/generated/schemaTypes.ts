@@ -350,6 +350,102 @@ export enum CertificateVariant {
   SW = "SW",
 }
 
+export type ChatConversation = {
+  __typename?: "ChatConversation";
+  /**
+   * Set only when one conversation is asked for or opened, null in the list.
+   * False once the two are no longer friends (history stays readable).
+   */
+  canSend?: Maybe<Scalars["Boolean"]["output"]>;
+  id: Scalars["ID"]["output"];
+  /** Null for a conversation nobody has written in yet. */
+  lastMessage?: Maybe<ChatLastMessage>;
+  lastReadSeq: Scalars["Float"]["output"];
+  lastSeq: Scalars["Float"]["output"];
+  /**
+   * Null when the other person erased their account: the conversation stays,
+   * as "a deleted user".
+   */
+  otherUser?: Maybe<ChatOtherUser>;
+  /** max(0, lastSeq - lastReadSeq). */
+  unreadCount: Scalars["Float"]["output"];
+};
+
+export type ChatConversationPage = {
+  __typename?: "ChatConversationPage";
+  items: Array<ChatConversation>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/**
+ * Where to PUT the image bytes (with the same content type), then send a
+ * message naming uploadId.
+ */
+export type ChatImageUpload = {
+  __typename?: "ChatImageUpload";
+  contentType: Scalars["String"]["output"];
+  expiresInSeconds: Scalars["Int"]["output"];
+  uploadId: Scalars["ID"]["output"];
+  uploadUrl: Scalars["String"]["output"];
+};
+
+export type ChatLastMessage = {
+  __typename?: "ChatLastMessage";
+  hasImage: Scalars["Boolean"]["output"];
+  /** Null once recalled, and for an image without text. */
+  preview?: Maybe<Scalars["String"]["output"]>;
+  recalled: Scalars["Boolean"]["output"];
+  /** Null for a deleted user. */
+  senderId?: Maybe<Scalars["ID"]["output"]>;
+  sentAt: Scalars["DateTime"]["output"];
+  seq: Scalars["Float"]["output"];
+};
+
+export type ChatMessage = {
+  __typename?: "ChatMessage";
+  /** Null once recalled. */
+  body?: Maybe<Scalars["String"]["output"]>;
+  /** Only on the caller's own messages. */
+  clientId?: Maybe<Scalars["String"]["output"]>;
+  conversationId: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  /** A link that expires after an hour. Null once recalled, and for text only. */
+  imageUrl?: Maybe<Scalars["String"]["output"]>;
+  recalled: Scalars["Boolean"]["output"];
+  /** Null for a deleted user. */
+  senderId?: Maybe<Scalars["ID"]["output"]>;
+  sentAt: Scalars["DateTime"]["output"];
+  seq: Scalars["Float"]["output"];
+};
+
+/**
+ * Every sequence number in this module - seq, lastSeq, lastReadSeq, upToSeq,
+ * afterSeq, beforeSeq and the unread count (a difference of two of them) - is a
+ * Float, on purpose. The backend counts them as 64-bit and GraphQL's Int is
+ * 32-bit; a Float carries a whole number exactly up to 2^53, far more than a
+ * conversation will ever hold. One choice for all of them, so a seq read from
+ * one field can be sent back through another without a conversion.
+ */
+export type ChatOtherUser = {
+  __typename?: "ChatOtherUser";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  userId: Scalars["ID"]["output"];
+};
+
+/**
+ * Opens one chat socket, once, within expiresInSeconds. A new one is made on
+ * every call; never keep or log it.
+ */
+export type ChatSocketTicket = {
+  __typename?: "ChatSocketTicket";
+  expiresInSeconds: Scalars["Int"]["output"];
+  ticket: Scalars["String"]["output"];
+};
+
 /**
  * The four kinds of authored content. They share one review workflow, so this
  * schema presents one surface over four backend resources rather than four
@@ -1527,6 +1623,11 @@ export type Mutation = {
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
   /**
+   * A mutation, not a query: every call makes a new single-use ticket, which
+   * must never be served from a cache.
+   */
+  chatSocketTicket: ChatSocketTicket;
+  /**
    * Wears one of the preset pictures. Refused with extensions.backendCode
    * AVATAR_PRESET_UNKNOWN for an id that names none.
    */
@@ -1557,6 +1658,9 @@ export type Mutation = {
    * the backend, and a screen that was away learns that here.
    */
   heartbeatExamAttempt: Scalars["Boolean"]["output"];
+  markChatRead: Scalars["Boolean"]["output"];
+  /** Opens the conversation with a friend, or returns the one they already have. */
+  openChat: ChatConversation;
   /** DRAFT -> PUBLISHED, skipping review. Administrators only. */
   publishContent: ContentReview;
   /**
@@ -1572,6 +1676,8 @@ export type Mutation = {
    */
   rateFlashcard: FlashcardReview;
   readAssessmentResult: Scalars["Boolean"]["output"];
+  /** Only the sender, once. Fails with CHAT_MESSAGE_ALREADY_RECALLED the second time. */
+  recallChatMessage: ChatMessage;
   /** A finished sitting of the current stage's mock paper. */
   recordMilestoneSitting: Roadmap;
   regenerateTutorReply: TutorConversation;
@@ -1637,6 +1743,12 @@ export type Mutation = {
    */
   selectTargetSkills: OnboardingState;
   selectTutorReply: TutorConversation;
+  /**
+   * Sends a message. clientId is chosen by the caller for each message and kept
+   * when it retries, so a retry returns the first message instead of sending a
+   * second. At least one of body and imageUploadId is needed.
+   */
+  sendChatMessage: ChatMessage;
   sendFriendRequest: FriendRequestOutcome;
   /**
    * Sends a question. Omit conversationId to start a new thread - whether one
@@ -1666,6 +1778,7 @@ export type Mutation = {
   setLevelCheckWeight: LevelCheckWeights;
   skipLevelCheckSpeaking: LevelCheck;
   startAssessment: AssessmentUpload;
+  startChatImageUpload: ChatImageUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
    * backend enforces one live attempt per learner, exam and mode, so calling this
@@ -1853,6 +1966,15 @@ export type MutationHeartbeatExamAttemptArgs = {
   attemptId: Scalars["ID"]["input"];
 };
 
+export type MutationMarkChatReadArgs = {
+  conversationId: Scalars["ID"]["input"];
+  upToSeq: Scalars["Float"]["input"];
+};
+
+export type MutationOpenChatArgs = {
+  friendId: Scalars["ID"]["input"];
+};
+
 export type MutationPublishContentArgs = {
   id: Scalars["ID"]["input"];
   kind: ContentKind;
@@ -1871,6 +1993,10 @@ export type MutationRateFlashcardArgs = {
 export type MutationReadAssessmentResultArgs = {
   id: Scalars["ID"]["input"];
   version: Scalars["Int"]["input"];
+};
+
+export type MutationRecallChatMessageArgs = {
+  messageId: Scalars["ID"]["input"];
 };
 
 export type MutationRecordMilestoneSittingArgs = {
@@ -1989,6 +2115,13 @@ export type MutationSelectTutorReplyArgs = {
   revision: Scalars["Int"]["input"];
 };
 
+export type MutationSendChatMessageArgs = {
+  body?: InputMaybe<Scalars["String"]["input"]>;
+  clientId: Scalars["String"]["input"];
+  conversationId: Scalars["ID"]["input"];
+  imageUploadId?: InputMaybe<Scalars["ID"]["input"]>;
+};
+
 export type MutationSendFriendRequestArgs = {
   addresseeId: Scalars["ID"]["input"];
 };
@@ -2032,6 +2165,12 @@ export type MutationStartAssessmentArgs = {
   contentLength?: InputMaybe<Scalars["Int"]["input"]>;
   contentType?: InputMaybe<Scalars["String"]["input"]>;
   taskId: Scalars["ID"]["input"];
+};
+
+export type MutationStartChatImageUploadArgs = {
+  contentLength: Scalars["Int"]["input"];
+  contentType: Scalars["String"]["input"];
+  conversationId: Scalars["ID"]["input"];
 };
 
 export type MutationStartExamAttemptArgs = {
@@ -2265,6 +2404,24 @@ export type Query = {
   avatarPresets: Array<AvatarPreset>;
   blockedUsers: BlockedUserPage;
   /**
+   * One conversation, with canSend. Fails with extensions.backendCode
+   * CHAT_CONVERSATION_NOT_FOUND when it does not exist or is not the caller's.
+   */
+  chatConversation: ChatConversation;
+  /** The caller's conversations that have a message, newest first. */
+  chatConversations: ChatConversationPage;
+  /**
+   * Messages in ascending seq order, at most 100. afterSeq catches up after a
+   * reconnect, beforeSeq scrolls back, neither gives the newest; giving both is
+   * refused (CHAT_HISTORY_CURSOR_CONFLICT).
+   */
+  chatMessages: Array<ChatMessage>;
+  /**
+   * How many conversations hold something unread - the badge, not a count of
+   * messages.
+   */
+  chatUnreadCount: Scalars["Int"]["output"];
+  /**
    * The learner's own plan for today: streak, points, roadmap and goals. Takes
    * no argument because the only path anyone can read is their own.
    */
@@ -2480,6 +2637,22 @@ export type QueryAuthoringAssessmentTasksArgs = {
 export type QueryBlockedUsersArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryChatConversationArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryChatConversationsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryChatMessagesArgs = {
+  afterSeq?: InputMaybe<Scalars["Float"]["input"]>;
+  beforeSeq?: InputMaybe<Scalars["Float"]["input"]>;
+  conversationId: Scalars["ID"]["input"];
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QueryDictationLessonArgs = {

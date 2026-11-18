@@ -1,0 +1,15 @@
+mutation SendChatMessage(
+  $conversationId: ID!
+  $clientId: String!
+  $body: String
+  $imageUploadId: ID
+) {
+  sendChatMessage(
+    conversationId: $conversationId
+    clientId: $clientId
+    body: $body
+    imageUploadId: $imageUploadId
+  ) {
+    ...ChatMessageFields
+  }
+}
