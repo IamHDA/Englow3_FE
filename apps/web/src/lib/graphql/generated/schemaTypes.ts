@@ -312,6 +312,23 @@ export type AvatarPreset = {
   url: Scalars["String"]["output"];
 };
 
+export type BlockedUser = {
+  __typename?: "BlockedUser";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  blockedAt: Scalars["DateTime"]["output"];
+  displayName: Scalars["String"]["output"];
+  userId: Scalars["ID"]["output"];
+};
+
+export type BlockedUserPage = {
+  __typename?: "BlockedUserPage";
+  items: Array<BlockedUser>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
 export enum CefrLevel {
   A1 = "A1",
   A2 = "A2",
@@ -1026,6 +1043,55 @@ export type FlashcardStats = {
   studySeconds: Scalars["Int"]["output"];
 };
 
+export type Friend = {
+  __typename?: "Friend";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  friendsSince: Scalars["DateTime"]["output"];
+  userId: Scalars["ID"]["output"];
+};
+
+export type FriendPage = {
+  __typename?: "FriendPage";
+  items: Array<Friend>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export type FriendRequest = {
+  __typename?: "FriendRequest";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  requestId: Scalars["ID"]["output"];
+  requestedAt: Scalars["DateTime"]["output"];
+  userId: Scalars["ID"]["output"];
+};
+
+export type FriendRequestOutcome = {
+  __typename?: "FriendRequestOutcome";
+  acceptedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  requestId: Scalars["ID"]["output"];
+  requestedAt: Scalars["DateTime"]["output"];
+  status: FriendRequestStatus;
+  userId: Scalars["ID"]["output"];
+};
+
+export type FriendRequestPage = {
+  __typename?: "FriendRequestPage";
+  items: Array<FriendRequest>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export enum FriendRequestStatus {
+  ACCEPTED = "ACCEPTED",
+  PENDING = "PENDING",
+}
+
 /**
  * An IELTS full test: one Listening + Reading paper and five Writing and
  * Speaking tasks, sat as one test with one overall band. It is the IELTS
@@ -1236,6 +1302,28 @@ export type LearnerExamPage = {
   totalPages: Scalars["Int"]["output"];
 };
 
+export type LearnerSearchPage = {
+  __typename?: "LearnerSearchPage";
+  items: Array<LearnerSearchResult>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export type LearnerSearchResult = {
+  __typename?: "LearnerSearchResult";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  relationship: RelationshipStatus;
+  /**
+   * Set only when the learner has asked the viewer (REQUEST_RECEIVED): the
+   * id to accept or decline.
+   */
+  requestId?: Maybe<Scalars["ID"]["output"]>;
+  userId: Scalars["ID"]["output"];
+};
+
 export type LearningGoalInput = {
   certificateType: TargetCertificate;
   /**
@@ -1409,6 +1497,7 @@ export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["Boolean"]["output"]>;
   abandonRoadmap: Scalars["Boolean"]["output"];
+  acceptFriendRequest: FriendRequestOutcome;
   /**
    * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
    * same step - there is no approved-but-unpublished state.
@@ -1434,6 +1523,7 @@ export type Mutation = {
   assignAssessment: AssessmentAssignment;
   attachLevelCheckExamAttempt: LevelCheck;
   attachLevelCheckSpeakingAttempt: LevelCheck;
+  blockUser: Scalars["Boolean"]["output"];
   branchTutorConversation: TutorConversation;
   cancelTutorReply: TutorMessage;
   /**
@@ -1547,6 +1637,7 @@ export type Mutation = {
    */
   selectTargetSkills: OnboardingState;
   selectTutorReply: TutorConversation;
+  sendFriendRequest: FriendRequestOutcome;
   /**
    * Sends a question. Omit conversationId to start a new thread - whether one
    * already exists is not the learner's concern.
@@ -1651,9 +1742,17 @@ export type Mutation = {
   submitTranslation: TranslationAttempt;
   summarizeTutorConversation: TutorConversation;
   transitionAssessmentTask: AssessmentTask;
+  unblockUser: Scalars["Boolean"]["output"];
+  unfriend: Scalars["Boolean"]["output"];
   updateProfile: Me;
   updateTutorPolicy: TutorPolicy;
   updateTutorResource: TutorResource;
+  /** Declines a request sent to the viewer, or cancels one the viewer sent. */
+  withdrawFriendRequest: Scalars["Boolean"]["output"];
+};
+
+export type MutationAcceptFriendRequestArgs = {
+  requestId: Scalars["ID"]["input"];
 };
 
 export type MutationApproveContentArgs = {
@@ -1701,6 +1800,10 @@ export type MutationAttachLevelCheckExamAttemptArgs = {
 export type MutationAttachLevelCheckSpeakingAttemptArgs = {
   attemptId: Scalars["ID"]["input"];
   id: Scalars["ID"]["input"];
+};
+
+export type MutationBlockUserArgs = {
+  userId: Scalars["ID"]["input"];
 };
 
 export type MutationBranchTutorConversationArgs = {
@@ -1886,6 +1989,10 @@ export type MutationSelectTutorReplyArgs = {
   revision: Scalars["Int"]["input"];
 };
 
+export type MutationSendFriendRequestArgs = {
+  addresseeId: Scalars["ID"]["input"];
+};
+
 export type MutationSendTutorMessageArgs = {
   assessmentAttemptId?: InputMaybe<Scalars["ID"]["input"]>;
   clientMessageId?: InputMaybe<Scalars["ID"]["input"]>;
@@ -2016,6 +2123,14 @@ export type MutationTransitionAssessmentTaskArgs = {
   note?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type MutationUnblockUserArgs = {
+  userId: Scalars["ID"]["input"];
+};
+
+export type MutationUnfriendArgs = {
+  userId: Scalars["ID"]["input"];
+};
+
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
@@ -2027,6 +2142,10 @@ export type MutationUpdateTutorPolicyArgs = {
 export type MutationUpdateTutorResourceArgs = {
   id: Scalars["ID"]["input"];
   input: TutorResourceInput;
+};
+
+export type MutationWithdrawFriendRequestArgs = {
+  requestId: Scalars["ID"]["input"];
 };
 
 export type OnboardingState = {
@@ -2089,6 +2208,21 @@ export enum OverviewContentKind {
   WRITING_ASSESSMENT = "WRITING_ASSESSMENT",
 }
 
+/**
+ * What anyone may see of an account on its wall. Deliberately nothing about
+ * level, goals or scores.
+ */
+export type PublicProfile = {
+  __typename?: "PublicProfile";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  bannerUrl?: Maybe<Scalars["String"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  joinedAt: Scalars["DateTime"]["output"];
+  /** True for a staff or admin account: it has a wall but no friend actions. */
+  staff: Scalars["Boolean"]["output"];
+  userId: Scalars["ID"]["output"];
+};
+
 export type Query = {
   __typename?: "Query";
   activeExamAttempt?: Maybe<ExamAttempt>;
@@ -2129,6 +2263,7 @@ export type Query = {
   authoringAssessmentTask: AssessmentTask;
   authoringAssessmentTasks: AssessmentTaskPage;
   avatarPresets: Array<AvatarPreset>;
+  blockedUsers: BlockedUserPage;
   /**
    * The learner's own plan for today: streak, points, roadmap and goals. Takes
    * no argument because the only path anyone can read is their own.
@@ -2179,6 +2314,7 @@ export type Query = {
    * worth more than a new one, and reordering here would undo the schedule.
    */
   flashcardStudyQueue: Array<Flashcard>;
+  friends: FriendPage;
   /** Brought up to date with every part graded so far. */
   fullTestSitting: FullTestSitting;
   /** Published full tests, newest first. */
@@ -2187,6 +2323,8 @@ export type Query = {
   generationRequest: GenerationRequest;
   generationRequests: GenerationRequestPage;
   health: Scalars["String"]["output"];
+  incomingFriendRequestCount: Scalars["Int"]["output"];
+  incomingFriendRequests: FriendRequestPage;
   /** The learner's most recent level check, or null. */
   latestLevelCheck?: Maybe<LevelCheck>;
   learningPurposes: Array<LearningPurpose>;
@@ -2200,6 +2338,7 @@ export type Query = {
   me: Me;
   myFullTestSittings: Array<FullTestSitting>;
   myTourStatus: UserTourStatus;
+  outgoingFriendRequests: FriendRequestPage;
   /**
    * The placement paper, for a learner who does not know their level. Errors
    * with NOT_FOUND when the deployment has no published placement exam, which
@@ -2211,11 +2350,17 @@ export type Query = {
   /** The paper to sit, reachable only through an open attempt. */
   quizPaper: QuizPaper;
   quizzes: QuizPage;
+  relationship: Relationship;
   /**
    * The plan in play, else the newest one (failed or finished), else null.
    * Reading it can start an automatic replan when the learner is a week behind.
    */
   roadmap?: Maybe<Roadmap>;
+  /**
+   * Learners by display name. Refused with extensions.backendCode
+   * SEARCH_TERM_TOO_SHORT below the backend's minimum length.
+   */
+  searchLearners: LearnerSearchPage;
   /** What the screen polls while it waits for a score. */
   speakingAttempt: SpeakingAttempt;
   /** This learner's own attempts at one prompt, newest first. No word breakdown. */
@@ -2244,6 +2389,7 @@ export type Query = {
   tutorResources: TutorResourcePage;
   tutorStaffMembers: Array<TutorStaffMember>;
   tutorUsage: TutorUsage;
+  userWall: UserWall;
 };
 
 export type QueryActiveExamAttemptArgs = {
@@ -2331,6 +2477,11 @@ export type QueryAuthoringAssessmentTasksArgs = {
   status?: InputMaybe<AssessmentTaskStatus>;
 };
 
+export type QueryBlockedUsersArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type QueryDictationLessonArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -2405,6 +2556,11 @@ export type QueryFlashcardStudyQueueArgs = {
   setId: Scalars["ID"]["input"];
 };
 
+export type QueryFriendsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type QueryFullTestSittingArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -2418,11 +2574,21 @@ export type QueryGenerationRequestsArgs = {
   size?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
+export type QueryIncomingFriendRequestsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type QueryLevelCheckArgs = {
   id: Scalars["ID"]["input"];
 };
 
 export type QueryMyFullTestSittingsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryOutgoingFriendRequestsArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
 };
@@ -2440,6 +2606,16 @@ export type QueryQuizzesArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
   title?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryRelationshipArgs = {
+  userId: Scalars["ID"]["input"];
+};
+
+export type QuerySearchLearnersArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  q: Scalars["String"]["input"];
+  size?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QuerySpeakingAttemptArgs = {
@@ -2532,6 +2708,10 @@ export type QueryTutorResourceArgs = {
 export type QueryTutorResourcesArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   status?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryUserWallArgs = {
+  userId: Scalars["ID"]["input"];
 };
 
 /**
@@ -2687,6 +2867,31 @@ export enum QuizQuestionType {
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
   REORDER = "REORDER",
   REWRITE = "REWRITE",
+}
+
+export type Relationship = {
+  __typename?: "Relationship";
+  /** Set only for REQUEST_RECEIVED: the id to accept or decline. */
+  requestId?: Maybe<Scalars["ID"]["output"]>;
+  status: RelationshipStatus;
+  userId: Scalars["ID"]["output"];
+};
+
+/**
+ * How the viewer stands with one account. Only NONE offers "add friend"; the
+ * last three offer nothing. UNAVAILABLE is the other side having blocked the
+ * viewer - it never says why, so a block is not revealed to the person it was
+ * placed on.
+ */
+export enum RelationshipStatus {
+  BLOCKED_BY_ME = "BLOCKED_BY_ME",
+  FRIENDS = "FRIENDS",
+  NONE = "NONE",
+  NOT_APPLICABLE = "NOT_APPLICABLE",
+  REQUEST_RECEIVED = "REQUEST_RECEIVED",
+  REQUEST_SENT = "REQUEST_SENT",
+  SELF = "SELF",
+  UNAVAILABLE = "UNAVAILABLE",
 }
 
 /**
@@ -3392,4 +3597,24 @@ export type UpdateProfileInput = {
 export type UserTourStatus = {
   __typename?: "UserTourStatus";
   completed: Scalars["Boolean"]["output"];
+};
+
+/** The wall of one account: composed from user, friendship and (later) blog. */
+export type UserWall = {
+  __typename?: "UserWall";
+  /**
+   * False when either side blocked the other. Every other field is then null
+   * and nothing else is fetched.
+   */
+  available: Scalars["Boolean"]["output"];
+  /** Null for staff and when unavailable. */
+  friendCount?: Maybe<Scalars["Int"]["output"]>;
+  /**
+   * Null when the wall is unavailable (blocked either way), or when the profile
+   * call failed. An id that names no account fails with extensions.backendCode
+   * USER_NOT_FOUND.
+   */
+  profile?: Maybe<PublicProfile>;
+  relationship: Relationship;
+  userId: Scalars["ID"]["output"];
 };

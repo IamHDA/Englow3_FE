@@ -1,0 +1,14 @@
+query Friends($page: Int, $size: Int) {
+  friends(page: $page, size: $size) {
+    items {
+      userId
+      displayName
+      avatarUrl
+      friendsSince
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}

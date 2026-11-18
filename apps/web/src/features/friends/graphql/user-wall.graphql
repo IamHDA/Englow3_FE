@@ -1,0 +1,18 @@
+query UserWall($userId: ID!) {
+  userWall(userId: $userId) {
+    userId
+    available
+    friendCount
+    relationship {
+      ...RelationshipFields
+    }
+    profile {
+      userId
+      displayName
+      avatarUrl
+      bannerUrl
+      staff
+      joinedAt
+    }
+  }
+}

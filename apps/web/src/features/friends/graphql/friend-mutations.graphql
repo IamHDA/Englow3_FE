@@ -1,0 +1,35 @@
+fragment FriendRequestOutcomeFields on FriendRequestOutcome {
+  requestId
+  userId
+  status
+  requestedAt
+  acceptedAt
+}
+
+mutation SendFriendRequest($addresseeId: ID!) {
+  sendFriendRequest(addresseeId: $addresseeId) {
+    ...FriendRequestOutcomeFields
+  }
+}
+
+mutation AcceptFriendRequest($requestId: ID!) {
+  acceptFriendRequest(requestId: $requestId) {
+    ...FriendRequestOutcomeFields
+  }
+}
+
+mutation WithdrawFriendRequest($requestId: ID!) {
+  withdrawFriendRequest(requestId: $requestId)
+}
+
+mutation Unfriend($userId: ID!) {
+  unfriend(userId: $userId)
+}
+
+mutation BlockUser($userId: ID!) {
+  blockUser(userId: $userId)
+}
+
+mutation UnblockUser($userId: ID!) {
+  unblockUser(userId: $userId)
+}

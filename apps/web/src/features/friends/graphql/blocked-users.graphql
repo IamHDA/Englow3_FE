@@ -1,0 +1,14 @@
+query BlockedUsers($page: Int, $size: Int) {
+  blockedUsers(page: $page, size: $size) {
+    items {
+      userId
+      displayName
+      avatarUrl
+      blockedAt
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}

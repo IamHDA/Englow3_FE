@@ -1,0 +1,3 @@
+query IncomingFriendRequestCount {
+  incomingFriendRequestCount
+}

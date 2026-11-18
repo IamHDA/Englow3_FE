@@ -1,0 +1,15 @@
+query SearchLearners($q: String!, $page: Int, $size: Int) {
+  searchLearners(q: $q, page: $page, size: $size) {
+    items {
+      userId
+      displayName
+      avatarUrl
+      relationship
+      requestId
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}

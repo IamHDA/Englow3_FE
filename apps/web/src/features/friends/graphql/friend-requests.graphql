@@ -1,0 +1,31 @@
+fragment FriendRequestFields on FriendRequest {
+  requestId
+  userId
+  displayName
+  avatarUrl
+  requestedAt
+}
+
+query IncomingFriendRequests($page: Int, $size: Int) {
+  incomingFriendRequests(page: $page, size: $size) {
+    items {
+      ...FriendRequestFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}
+
+query OutgoingFriendRequests($page: Int, $size: Int) {
+  outgoingFriendRequests(page: $page, size: $size) {
+    items {
+      ...FriendRequestFields
+    }
+    page
+    size
+    totalItems
+    totalPages
+  }
+}

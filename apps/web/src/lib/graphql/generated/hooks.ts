@@ -3242,6 +3242,229 @@ export type FlashcardStatsQuery = {
   };
 };
 
+export type BlockedUsersQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type BlockedUsersQuery = {
+  blockedUsers: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+      blockedAt: string;
+    }>;
+  };
+};
+
+export type FriendRequestOutcomeFieldsFragment = {
+  requestId: string;
+  userId: string;
+  status: Types.FriendRequestStatus;
+  requestedAt: string;
+  acceptedAt: string | null;
+};
+
+export type SendFriendRequestMutationVariables = Exact<{
+  addresseeId: string | number;
+}>;
+
+export type SendFriendRequestMutation = {
+  sendFriendRequest: {
+    requestId: string;
+    userId: string;
+    status: Types.FriendRequestStatus;
+    requestedAt: string;
+    acceptedAt: string | null;
+  };
+};
+
+export type AcceptFriendRequestMutationVariables = Exact<{
+  requestId: string | number;
+}>;
+
+export type AcceptFriendRequestMutation = {
+  acceptFriendRequest: {
+    requestId: string;
+    userId: string;
+    status: Types.FriendRequestStatus;
+    requestedAt: string;
+    acceptedAt: string | null;
+  };
+};
+
+export type WithdrawFriendRequestMutationVariables = Exact<{
+  requestId: string | number;
+}>;
+
+export type WithdrawFriendRequestMutation = { withdrawFriendRequest: boolean };
+
+export type UnfriendMutationVariables = Exact<{
+  userId: string | number;
+}>;
+
+export type UnfriendMutation = { unfriend: boolean };
+
+export type BlockUserMutationVariables = Exact<{
+  userId: string | number;
+}>;
+
+export type BlockUserMutation = { blockUser: boolean };
+
+export type UnblockUserMutationVariables = Exact<{
+  userId: string | number;
+}>;
+
+export type UnblockUserMutation = { unblockUser: boolean };
+
+export type FriendRequestFieldsFragment = {
+  requestId: string;
+  userId: string;
+  displayName: string;
+  avatarUrl: string | null;
+  requestedAt: string;
+};
+
+export type IncomingFriendRequestsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type IncomingFriendRequestsQuery = {
+  incomingFriendRequests: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      requestId: string;
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+      requestedAt: string;
+    }>;
+  };
+};
+
+export type OutgoingFriendRequestsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type OutgoingFriendRequestsQuery = {
+  outgoingFriendRequests: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      requestId: string;
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+      requestedAt: string;
+    }>;
+  };
+};
+
+export type FriendsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type FriendsQuery = {
+  friends: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+      friendsSince: string;
+    }>;
+  };
+};
+
+export type IncomingFriendRequestCountQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type IncomingFriendRequestCountQuery = {
+  incomingFriendRequestCount: number;
+};
+
+export type RelationshipFieldsFragment = {
+  userId: string;
+  status: Types.RelationshipStatus;
+  requestId: string | null;
+};
+
+export type RelationshipQueryVariables = Exact<{
+  userId: string | number;
+}>;
+
+export type RelationshipQuery = {
+  relationship: {
+    userId: string;
+    status: Types.RelationshipStatus;
+    requestId: string | null;
+  };
+};
+
+export type SearchLearnersQueryVariables = Exact<{
+  q: string;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type SearchLearnersQuery = {
+  searchLearners: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+      relationship: Types.RelationshipStatus;
+      requestId: string | null;
+    }>;
+  };
+};
+
+export type UserWallQueryVariables = Exact<{
+  userId: string | number;
+}>;
+
+export type UserWallQuery = {
+  userWall: {
+    userId: string;
+    available: boolean;
+    friendCount: number | null;
+    relationship: {
+      userId: string;
+      status: Types.RelationshipStatus;
+      requestId: string | null;
+    };
+    profile: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+      bannerUrl: string | null;
+      staff: boolean;
+      joinedAt: string;
+    } | null;
+  };
+};
+
 export type AdminFullTestFieldsFragment = {
   id: string;
   title: string;
@@ -5096,6 +5319,31 @@ export const FlashcardFieldsFragmentDoc = gql`
     status
     dueAt
     lapseCount
+  }
+`;
+export const FriendRequestOutcomeFieldsFragmentDoc = gql`
+  fragment FriendRequestOutcomeFields on FriendRequestOutcome {
+    requestId
+    userId
+    status
+    requestedAt
+    acceptedAt
+  }
+`;
+export const FriendRequestFieldsFragmentDoc = gql`
+  fragment FriendRequestFields on FriendRequest {
+    requestId
+    userId
+    displayName
+    avatarUrl
+    requestedAt
+  }
+`;
+export const RelationshipFieldsFragmentDoc = gql`
+  fragment RelationshipFields on Relationship {
+    userId
+    status
+    requestId
   }
 `;
 export const AdminFullTestFieldsFragmentDoc = gql`
@@ -14112,6 +14360,1166 @@ export type FlashcardStatsSuspenseQueryHookResult = ReturnType<
 export type FlashcardStatsQueryResult = ApolloReactCommon.QueryResult<
   FlashcardStatsQuery,
   FlashcardStatsQueryVariables
+>;
+export const BlockedUsersDocument = gql`
+  query BlockedUsers($page: Int, $size: Int) {
+    blockedUsers(page: $page, size: $size) {
+      items {
+        userId
+        displayName
+        avatarUrl
+        blockedAt
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+`;
+
+/**
+ * __useBlockedUsersQuery__
+ *
+ * To run a query within a React component, call `useBlockedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlockedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlockedUsersQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useBlockedUsersQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    BlockedUsersQuery,
+    BlockedUsersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    BlockedUsersQuery,
+    BlockedUsersQueryVariables
+  >(BlockedUsersDocument, options);
+}
+export function useBlockedUsersLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlockedUsersQuery,
+    BlockedUsersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    BlockedUsersQuery,
+    BlockedUsersQueryVariables
+  >(BlockedUsersDocument, options);
+}
+export function useBlockedUsersSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlockedUsersQuery,
+    BlockedUsersQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlockedUsersQuery,
+  BlockedUsersQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlockedUsersSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlockedUsersQuery,
+        BlockedUsersQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlockedUsersQuery | undefined,
+  BlockedUsersQueryVariables
+>;
+export function useBlockedUsersSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlockedUsersQuery,
+        BlockedUsersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlockedUsersQuery,
+    BlockedUsersQueryVariables
+  >(BlockedUsersDocument, options as any);
+}
+export type BlockedUsersQueryHookResult = ReturnType<
+  typeof useBlockedUsersQuery
+>;
+export type BlockedUsersLazyQueryHookResult = ReturnType<
+  typeof useBlockedUsersLazyQuery
+>;
+export type BlockedUsersSuspenseQueryHookResult = ReturnType<
+  typeof useBlockedUsersSuspenseQuery
+>;
+export type BlockedUsersQueryResult = ApolloReactCommon.QueryResult<
+  BlockedUsersQuery,
+  BlockedUsersQueryVariables
+>;
+export const SendFriendRequestDocument = gql`
+  mutation SendFriendRequest($addresseeId: ID!) {
+    sendFriendRequest(addresseeId: $addresseeId) {
+      ...FriendRequestOutcomeFields
+    }
+  }
+  ${FriendRequestOutcomeFieldsFragmentDoc}
+`;
+export type SendFriendRequestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SendFriendRequestMutation,
+    SendFriendRequestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSendFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useSendFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendFriendRequestMutation, { data, loading, error }] = useSendFriendRequestMutation({
+ *   variables: {
+ *      addresseeId: // value for 'addresseeId'
+ *   },
+ * });
+ */
+export function useSendFriendRequestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SendFriendRequestMutation,
+    SendFriendRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SendFriendRequestMutation,
+    SendFriendRequestMutationVariables
+  >(SendFriendRequestDocument, options);
+}
+export type SendFriendRequestMutationHookResult = ReturnType<
+  typeof useSendFriendRequestMutation
+>;
+export type SendFriendRequestMutationResult =
+  ApolloReactCommon.MutationResult<SendFriendRequestMutation>;
+export type SendFriendRequestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    SendFriendRequestMutation,
+    SendFriendRequestMutationVariables
+  >;
+export const AcceptFriendRequestDocument = gql`
+  mutation AcceptFriendRequest($requestId: ID!) {
+    acceptFriendRequest(requestId: $requestId) {
+      ...FriendRequestOutcomeFields
+    }
+  }
+  ${FriendRequestOutcomeFieldsFragmentDoc}
+`;
+export type AcceptFriendRequestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AcceptFriendRequestMutation,
+    AcceptFriendRequestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAcceptFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useAcceptFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptFriendRequestMutation, { data, loading, error }] = useAcceptFriendRequestMutation({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useAcceptFriendRequestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AcceptFriendRequestMutation,
+    AcceptFriendRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AcceptFriendRequestMutation,
+    AcceptFriendRequestMutationVariables
+  >(AcceptFriendRequestDocument, options);
+}
+export type AcceptFriendRequestMutationHookResult = ReturnType<
+  typeof useAcceptFriendRequestMutation
+>;
+export type AcceptFriendRequestMutationResult =
+  ApolloReactCommon.MutationResult<AcceptFriendRequestMutation>;
+export type AcceptFriendRequestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AcceptFriendRequestMutation,
+    AcceptFriendRequestMutationVariables
+  >;
+export const WithdrawFriendRequestDocument = gql`
+  mutation WithdrawFriendRequest($requestId: ID!) {
+    withdrawFriendRequest(requestId: $requestId)
+  }
+`;
+export type WithdrawFriendRequestMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    WithdrawFriendRequestMutation,
+    WithdrawFriendRequestMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useWithdrawFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useWithdrawFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useWithdrawFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [withdrawFriendRequestMutation, { data, loading, error }] = useWithdrawFriendRequestMutation({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useWithdrawFriendRequestMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    WithdrawFriendRequestMutation,
+    WithdrawFriendRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    WithdrawFriendRequestMutation,
+    WithdrawFriendRequestMutationVariables
+  >(WithdrawFriendRequestDocument, options);
+}
+export type WithdrawFriendRequestMutationHookResult = ReturnType<
+  typeof useWithdrawFriendRequestMutation
+>;
+export type WithdrawFriendRequestMutationResult =
+  ApolloReactCommon.MutationResult<WithdrawFriendRequestMutation>;
+export type WithdrawFriendRequestMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    WithdrawFriendRequestMutation,
+    WithdrawFriendRequestMutationVariables
+  >;
+export const UnfriendDocument = gql`
+  mutation Unfriend($userId: ID!) {
+    unfriend(userId: $userId)
+  }
+`;
+export type UnfriendMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UnfriendMutation,
+    UnfriendMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUnfriendMutation__
+ *
+ * To run a mutation, you first call `useUnfriendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnfriendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unfriendMutation, { data, loading, error }] = useUnfriendMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUnfriendMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UnfriendMutation,
+    UnfriendMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UnfriendMutation,
+    UnfriendMutationVariables
+  >(UnfriendDocument, options);
+}
+export type UnfriendMutationHookResult = ReturnType<typeof useUnfriendMutation>;
+export type UnfriendMutationResult =
+  ApolloReactCommon.MutationResult<UnfriendMutation>;
+export type UnfriendMutationOptions = ApolloReactCommon.MutationHookOptions<
+  UnfriendMutation,
+  UnfriendMutationVariables
+>;
+export const BlockUserDocument = gql`
+  mutation BlockUser($userId: ID!) {
+    blockUser(userId: $userId)
+  }
+`;
+export type BlockUserMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    BlockUserMutation,
+    BlockUserMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useBlockUserMutation__
+ *
+ * To run a mutation, you first call `useBlockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blockUserMutation, { data, loading, error }] = useBlockUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useBlockUserMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    BlockUserMutation,
+    BlockUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    BlockUserMutation,
+    BlockUserMutationVariables
+  >(BlockUserDocument, options);
+}
+export type BlockUserMutationHookResult = ReturnType<
+  typeof useBlockUserMutation
+>;
+export type BlockUserMutationResult =
+  ApolloReactCommon.MutationResult<BlockUserMutation>;
+export type BlockUserMutationOptions = ApolloReactCommon.MutationHookOptions<
+  BlockUserMutation,
+  BlockUserMutationVariables
+>;
+export const UnblockUserDocument = gql`
+  mutation UnblockUser($userId: ID!) {
+    unblockUser(userId: $userId)
+  }
+`;
+export type UnblockUserMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UnblockUserMutation,
+    UnblockUserMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUnblockUserMutation__
+ *
+ * To run a mutation, you first call `useUnblockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnblockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unblockUserMutation, { data, loading, error }] = useUnblockUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUnblockUserMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UnblockUserMutation,
+    UnblockUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UnblockUserMutation,
+    UnblockUserMutationVariables
+  >(UnblockUserDocument, options);
+}
+export type UnblockUserMutationHookResult = ReturnType<
+  typeof useUnblockUserMutation
+>;
+export type UnblockUserMutationResult =
+  ApolloReactCommon.MutationResult<UnblockUserMutation>;
+export type UnblockUserMutationOptions = ApolloReactCommon.MutationHookOptions<
+  UnblockUserMutation,
+  UnblockUserMutationVariables
+>;
+export const IncomingFriendRequestsDocument = gql`
+  query IncomingFriendRequests($page: Int, $size: Int) {
+    incomingFriendRequests(page: $page, size: $size) {
+      items {
+        ...FriendRequestFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${FriendRequestFieldsFragmentDoc}
+`;
+
+/**
+ * __useIncomingFriendRequestsQuery__
+ *
+ * To run a query within a React component, call `useIncomingFriendRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIncomingFriendRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIncomingFriendRequestsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useIncomingFriendRequestsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    IncomingFriendRequestsQuery,
+    IncomingFriendRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    IncomingFriendRequestsQuery,
+    IncomingFriendRequestsQueryVariables
+  >(IncomingFriendRequestsDocument, options);
+}
+export function useIncomingFriendRequestsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    IncomingFriendRequestsQuery,
+    IncomingFriendRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    IncomingFriendRequestsQuery,
+    IncomingFriendRequestsQueryVariables
+  >(IncomingFriendRequestsDocument, options);
+}
+export function useIncomingFriendRequestsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    IncomingFriendRequestsQuery,
+    IncomingFriendRequestsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  IncomingFriendRequestsQuery,
+  IncomingFriendRequestsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useIncomingFriendRequestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        IncomingFriendRequestsQuery,
+        IncomingFriendRequestsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  IncomingFriendRequestsQuery | undefined,
+  IncomingFriendRequestsQueryVariables
+>;
+export function useIncomingFriendRequestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        IncomingFriendRequestsQuery,
+        IncomingFriendRequestsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    IncomingFriendRequestsQuery,
+    IncomingFriendRequestsQueryVariables
+  >(IncomingFriendRequestsDocument, options as any);
+}
+export type IncomingFriendRequestsQueryHookResult = ReturnType<
+  typeof useIncomingFriendRequestsQuery
+>;
+export type IncomingFriendRequestsLazyQueryHookResult = ReturnType<
+  typeof useIncomingFriendRequestsLazyQuery
+>;
+export type IncomingFriendRequestsSuspenseQueryHookResult = ReturnType<
+  typeof useIncomingFriendRequestsSuspenseQuery
+>;
+export type IncomingFriendRequestsQueryResult = ApolloReactCommon.QueryResult<
+  IncomingFriendRequestsQuery,
+  IncomingFriendRequestsQueryVariables
+>;
+export const OutgoingFriendRequestsDocument = gql`
+  query OutgoingFriendRequests($page: Int, $size: Int) {
+    outgoingFriendRequests(page: $page, size: $size) {
+      items {
+        ...FriendRequestFields
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+  ${FriendRequestFieldsFragmentDoc}
+`;
+
+/**
+ * __useOutgoingFriendRequestsQuery__
+ *
+ * To run a query within a React component, call `useOutgoingFriendRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOutgoingFriendRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOutgoingFriendRequestsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useOutgoingFriendRequestsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    OutgoingFriendRequestsQuery,
+    OutgoingFriendRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    OutgoingFriendRequestsQuery,
+    OutgoingFriendRequestsQueryVariables
+  >(OutgoingFriendRequestsDocument, options);
+}
+export function useOutgoingFriendRequestsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    OutgoingFriendRequestsQuery,
+    OutgoingFriendRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    OutgoingFriendRequestsQuery,
+    OutgoingFriendRequestsQueryVariables
+  >(OutgoingFriendRequestsDocument, options);
+}
+export function useOutgoingFriendRequestsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    OutgoingFriendRequestsQuery,
+    OutgoingFriendRequestsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  OutgoingFriendRequestsQuery,
+  OutgoingFriendRequestsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useOutgoingFriendRequestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        OutgoingFriendRequestsQuery,
+        OutgoingFriendRequestsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  OutgoingFriendRequestsQuery | undefined,
+  OutgoingFriendRequestsQueryVariables
+>;
+export function useOutgoingFriendRequestsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        OutgoingFriendRequestsQuery,
+        OutgoingFriendRequestsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    OutgoingFriendRequestsQuery,
+    OutgoingFriendRequestsQueryVariables
+  >(OutgoingFriendRequestsDocument, options as any);
+}
+export type OutgoingFriendRequestsQueryHookResult = ReturnType<
+  typeof useOutgoingFriendRequestsQuery
+>;
+export type OutgoingFriendRequestsLazyQueryHookResult = ReturnType<
+  typeof useOutgoingFriendRequestsLazyQuery
+>;
+export type OutgoingFriendRequestsSuspenseQueryHookResult = ReturnType<
+  typeof useOutgoingFriendRequestsSuspenseQuery
+>;
+export type OutgoingFriendRequestsQueryResult = ApolloReactCommon.QueryResult<
+  OutgoingFriendRequestsQuery,
+  OutgoingFriendRequestsQueryVariables
+>;
+export const FriendsDocument = gql`
+  query Friends($page: Int, $size: Int) {
+    friends(page: $page, size: $size) {
+      items {
+        userId
+        displayName
+        avatarUrl
+        friendsSince
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+`;
+
+/**
+ * __useFriendsQuery__
+ *
+ * To run a query within a React component, call `useFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFriendsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useFriendsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FriendsQuery,
+    FriendsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<FriendsQuery, FriendsQueryVariables>(
+    FriendsDocument,
+    options,
+  );
+}
+export function useFriendsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FriendsQuery,
+    FriendsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<FriendsQuery, FriendsQueryVariables>(
+    FriendsDocument,
+    options,
+  );
+}
+export function useFriendsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    FriendsQuery,
+    FriendsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<FriendsQuery, FriendsQueryVariables>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useFriendsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FriendsQuery,
+        FriendsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  FriendsQuery | undefined,
+  FriendsQueryVariables
+>;
+export function useFriendsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        FriendsQuery,
+        FriendsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<FriendsQuery, FriendsQueryVariables>(
+    FriendsDocument,
+    options as any,
+  );
+}
+export type FriendsQueryHookResult = ReturnType<typeof useFriendsQuery>;
+export type FriendsLazyQueryHookResult = ReturnType<typeof useFriendsLazyQuery>;
+export type FriendsSuspenseQueryHookResult = ReturnType<
+  typeof useFriendsSuspenseQuery
+>;
+export type FriendsQueryResult = ApolloReactCommon.QueryResult<
+  FriendsQuery,
+  FriendsQueryVariables
+>;
+export const IncomingFriendRequestCountDocument = gql`
+  query IncomingFriendRequestCount {
+    incomingFriendRequestCount
+  }
+`;
+
+/**
+ * __useIncomingFriendRequestCountQuery__
+ *
+ * To run a query within a React component, call `useIncomingFriendRequestCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIncomingFriendRequestCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIncomingFriendRequestCountQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIncomingFriendRequestCountQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >(IncomingFriendRequestCountDocument, options);
+}
+export function useIncomingFriendRequestCountLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >(IncomingFriendRequestCountDocument, options);
+}
+export function useIncomingFriendRequestCountSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  IncomingFriendRequestCountQuery,
+  IncomingFriendRequestCountQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useIncomingFriendRequestCountSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        IncomingFriendRequestCountQuery,
+        IncomingFriendRequestCountQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  IncomingFriendRequestCountQuery | undefined,
+  IncomingFriendRequestCountQueryVariables
+>;
+export function useIncomingFriendRequestCountSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        IncomingFriendRequestCountQuery,
+        IncomingFriendRequestCountQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >(IncomingFriendRequestCountDocument, options as any);
+}
+export type IncomingFriendRequestCountQueryHookResult = ReturnType<
+  typeof useIncomingFriendRequestCountQuery
+>;
+export type IncomingFriendRequestCountLazyQueryHookResult = ReturnType<
+  typeof useIncomingFriendRequestCountLazyQuery
+>;
+export type IncomingFriendRequestCountSuspenseQueryHookResult = ReturnType<
+  typeof useIncomingFriendRequestCountSuspenseQuery
+>;
+export type IncomingFriendRequestCountQueryResult =
+  ApolloReactCommon.QueryResult<
+    IncomingFriendRequestCountQuery,
+    IncomingFriendRequestCountQueryVariables
+  >;
+export const RelationshipDocument = gql`
+  query Relationship($userId: ID!) {
+    relationship(userId: $userId) {
+      ...RelationshipFields
+    }
+  }
+  ${RelationshipFieldsFragmentDoc}
+`;
+
+/**
+ * __useRelationshipQuery__
+ *
+ * To run a query within a React component, call `useRelationshipQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRelationshipQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRelationshipQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useRelationshipQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    RelationshipQuery,
+    RelationshipQueryVariables
+  > &
+    (
+      | { variables: RelationshipQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    RelationshipQuery,
+    RelationshipQueryVariables
+  >(RelationshipDocument, options);
+}
+export function useRelationshipLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    RelationshipQuery,
+    RelationshipQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    RelationshipQuery,
+    RelationshipQueryVariables
+  >(RelationshipDocument, options);
+}
+export function useRelationshipSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    RelationshipQuery,
+    RelationshipQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  RelationshipQuery,
+  RelationshipQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useRelationshipSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        RelationshipQuery,
+        RelationshipQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  RelationshipQuery | undefined,
+  RelationshipQueryVariables
+>;
+export function useRelationshipSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        RelationshipQuery,
+        RelationshipQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    RelationshipQuery,
+    RelationshipQueryVariables
+  >(RelationshipDocument, options as any);
+}
+export type RelationshipQueryHookResult = ReturnType<
+  typeof useRelationshipQuery
+>;
+export type RelationshipLazyQueryHookResult = ReturnType<
+  typeof useRelationshipLazyQuery
+>;
+export type RelationshipSuspenseQueryHookResult = ReturnType<
+  typeof useRelationshipSuspenseQuery
+>;
+export type RelationshipQueryResult = ApolloReactCommon.QueryResult<
+  RelationshipQuery,
+  RelationshipQueryVariables
+>;
+export const SearchLearnersDocument = gql`
+  query SearchLearners($q: String!, $page: Int, $size: Int) {
+    searchLearners(q: $q, page: $page, size: $size) {
+      items {
+        userId
+        displayName
+        avatarUrl
+        relationship
+        requestId
+      }
+      page
+      size
+      totalItems
+      totalPages
+    }
+  }
+`;
+
+/**
+ * __useSearchLearnersQuery__
+ *
+ * To run a query within a React component, call `useSearchLearnersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchLearnersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchLearnersQuery({
+ *   variables: {
+ *      q: // value for 'q'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useSearchLearnersQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    SearchLearnersQuery,
+    SearchLearnersQueryVariables
+  > &
+    (
+      | { variables: SearchLearnersQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    SearchLearnersQuery,
+    SearchLearnersQueryVariables
+  >(SearchLearnersDocument, options);
+}
+export function useSearchLearnersLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SearchLearnersQuery,
+    SearchLearnersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    SearchLearnersQuery,
+    SearchLearnersQueryVariables
+  >(SearchLearnersDocument, options);
+}
+export function useSearchLearnersSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    SearchLearnersQuery,
+    SearchLearnersQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SearchLearnersQuery,
+  SearchLearnersQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useSearchLearnersSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SearchLearnersQuery,
+        SearchLearnersQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SearchLearnersQuery | undefined,
+  SearchLearnersQueryVariables
+>;
+export function useSearchLearnersSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SearchLearnersQuery,
+        SearchLearnersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    SearchLearnersQuery,
+    SearchLearnersQueryVariables
+  >(SearchLearnersDocument, options as any);
+}
+export type SearchLearnersQueryHookResult = ReturnType<
+  typeof useSearchLearnersQuery
+>;
+export type SearchLearnersLazyQueryHookResult = ReturnType<
+  typeof useSearchLearnersLazyQuery
+>;
+export type SearchLearnersSuspenseQueryHookResult = ReturnType<
+  typeof useSearchLearnersSuspenseQuery
+>;
+export type SearchLearnersQueryResult = ApolloReactCommon.QueryResult<
+  SearchLearnersQuery,
+  SearchLearnersQueryVariables
+>;
+export const UserWallDocument = gql`
+  query UserWall($userId: ID!) {
+    userWall(userId: $userId) {
+      userId
+      available
+      friendCount
+      relationship {
+        ...RelationshipFields
+      }
+      profile {
+        userId
+        displayName
+        avatarUrl
+        bannerUrl
+        staff
+        joinedAt
+      }
+    }
+  }
+  ${RelationshipFieldsFragmentDoc}
+`;
+
+/**
+ * __useUserWallQuery__
+ *
+ * To run a query within a React component, call `useUserWallQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserWallQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserWallQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUserWallQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    UserWallQuery,
+    UserWallQueryVariables
+  > &
+    ({ variables: UserWallQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<UserWallQuery, UserWallQueryVariables>(
+    UserWallDocument,
+    options,
+  );
+}
+export function useUserWallLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    UserWallQuery,
+    UserWallQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<UserWallQuery, UserWallQueryVariables>(
+    UserWallDocument,
+    options,
+  );
+}
+export function useUserWallSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    UserWallQuery,
+    UserWallQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  UserWallQuery,
+  UserWallQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useUserWallSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        UserWallQuery,
+        UserWallQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  UserWallQuery | undefined,
+  UserWallQueryVariables
+>;
+export function useUserWallSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        UserWallQuery,
+        UserWallQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    UserWallQuery,
+    UserWallQueryVariables
+  >(UserWallDocument, options as any);
+}
+export type UserWallQueryHookResult = ReturnType<typeof useUserWallQuery>;
+export type UserWallLazyQueryHookResult = ReturnType<
+  typeof useUserWallLazyQuery
+>;
+export type UserWallSuspenseQueryHookResult = ReturnType<
+  typeof useUserWallSuspenseQuery
+>;
+export type UserWallQueryResult = ApolloReactCommon.QueryResult<
+  UserWallQuery,
+  UserWallQueryVariables
 >;
 export const AdminFullTestsDocument = gql`
   query AdminFullTests {

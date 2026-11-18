@@ -1,0 +1,11 @@
+fragment RelationshipFields on Relationship {
+  userId
+  status
+  requestId
+}
+
+query Relationship($userId: ID!) {
+  relationship(userId: $userId) {
+    ...RelationshipFields
+  }
+}
