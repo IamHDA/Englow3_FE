@@ -27,6 +27,7 @@ export interface NavTranslations {
   home: string;
   account: string;
   completeOnboarding: string;
+  friends: string;
 }
 
 export interface CommonTranslations {
@@ -68,6 +69,8 @@ export interface CommonTranslations {
 export interface AccountTranslations {
   title: string;
   subtitle: string;
+  /** The link from the profile page to the public page others see. */
+  viewPublicPage: string;
   personalInfoTab: string;
   learningTab: string;
   securityTab: string;
@@ -852,6 +855,7 @@ export const translations: Record<Language, AppTranslations> = {
       home: "Trang chủ",
       account: "Tài khoản",
       completeOnboarding: "Hoàn thiện thông tin",
+      friends: "Bạn bè",
     },
     common: {
       save: "Lưu thay đổi",
@@ -889,6 +893,7 @@ export const translations: Record<Language, AppTranslations> = {
     },
     account: {
       title: "Hồ sơ cá nhân",
+      viewPublicPage: "Xem trang cá nhân",
       subtitle:
         "Quản lý thông tin tài khoản, mục tiêu luyện thi và các thiết lập cá nhân trên Englow3",
       personalInfoTab: "Thông tin cá nhân",
@@ -1744,6 +1749,7 @@ export const translations: Record<Language, AppTranslations> = {
       home: "Home",
       account: "Account",
       completeOnboarding: "Complete Profile",
+      friends: "Friends",
     },
     common: {
       save: "Save Changes",
@@ -1782,6 +1788,7 @@ export const translations: Record<Language, AppTranslations> = {
     },
     account: {
       title: "My Profile",
+      viewPublicPage: "View my public page",
       subtitle:
         "Manage your account settings, target goals, and personalized learning preferences on Englow3",
       personalInfoTab: "Personal Information",

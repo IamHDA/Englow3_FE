@@ -19,10 +19,12 @@ import { Fragment, useState, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { AuthModal, isBackOfficeRole, useAuth } from "@/features/auth";
+import { IncomingRequestsBadge } from "@/features/friends";
 import { useOnboarding } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
 import {
+  getFriendsLink,
   getPrimaryLinks,
   getStudyLinks,
   studyIcon as StudyIcon,
@@ -54,13 +56,18 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
   const isStudyActive = isLinkActive(pathname, "/study");
   const { t } = useLanguage();
 
-  const studyLinks = getStudyLinks(t.nav);
-  const primaryLinks = getPrimaryLinks(t.nav);
-
   // Hai nguồn tách biệt: `session` quyết định hiện nút đăng nhập hay menu tài
   // khoản, `profile` chỉ lo tên và avatar. BFF hỏng thì mất tên chứ không đá
   // người dùng về trạng thái khách.
   const { session } = useAuth();
+
+  const studyLinks = getStudyLinks(t.nav);
+  // Bạn bè chỉ dành cho học viên; khách vẫn thấy mục này như các mục khác và
+  // bấm vào thì được mời đăng nhập.
+  const primaryLinks = [
+    ...getPrimaryLinks(t.nav),
+    ...(isBackOfficeRole(session?.role) ? [] : [getFriendsLink(t.nav)]),
+  ];
   const { profile } = useAccountProfile();
   const accountName =
     profile?.displayName ??
@@ -180,7 +187,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               </Menu.Dropdown>
             </Menu>
 
-            {primaryLinks.map(({ icon: Icon, ...link }) => (
+            {primaryLinks.map(({ icon: Icon, badge, ...link }) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -190,6 +197,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               >
                 <Icon aria-hidden="true" size={16} strokeWidth={2.5} />
                 {link.label}
+                {badge === "friendRequests" && session ? (
+                  <IncomingRequestsBadge />
+                ) : null}
               </Link>
             ))}
           </Group>
@@ -253,7 +263,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
             </Link>
           ))}
 
-          {primaryLinks.map(({ icon: Icon, ...link }) => (
+          {primaryLinks.map(({ icon: Icon, badge, ...link }) => (
             <Link
               key={link.href}
               href={link.href}
@@ -267,6 +277,9 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
                 <Icon aria-hidden="true" size={18} />
               </Center>
               <span className={classes.drawerLinkLabel}>{link.label}</span>
+              {badge === "friendRequests" && session ? (
+                <IncomingRequestsBadge />
+              ) : null}
             </Link>
           ))}
 

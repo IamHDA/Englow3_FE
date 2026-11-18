@@ -35,6 +35,8 @@ const MEMBER_ONLY_PREFIXES = [
   "/ai-tutor",
   "/dictation",
   "/profile",
+  "/friends",
+  "/people",
   "/admin",
 ];
 

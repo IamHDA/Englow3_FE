@@ -8,6 +8,7 @@ import {
   Mic,
   Flag,
   Route,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import type { AppTranslations } from "./translations";
@@ -17,6 +18,8 @@ export type NavLink = {
   label: string;
   href: string;
   icon: LucideIcon;
+  /** Marks the link that carries a count of what is waiting behind it. */
+  badge?: "friendRequests";
 };
 
 export type StudyLink = NavLink & {
@@ -92,6 +95,21 @@ export function getPrimaryLinks(t?: AppTranslations["nav"]): NavLink[] {
     { label: nav.exams, href: "/exams", icon: ClipboardCheck },
     { label: nav.aiTutor, href: "/ai-tutor", icon: Bot },
   ];
+}
+
+/**
+ * Friends belong to learners: staff and admin have no friend list, so the
+ * header leaves this link to them out. Hiding it is not what keeps them out -
+ * the backend refuses every friend action for them.
+ */
+export function getFriendsLink(t?: AppTranslations["nav"]): NavLink {
+  const nav = t || translations.vi.nav;
+  return {
+    label: nav.friends,
+    href: "/friends",
+    icon: Users,
+    badge: "friendRequests",
+  };
 }
 
 // Backwards compatibility for existing imports

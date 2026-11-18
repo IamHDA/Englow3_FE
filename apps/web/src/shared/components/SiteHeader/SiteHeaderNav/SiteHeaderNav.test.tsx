@@ -8,7 +8,11 @@ import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { SiteHeaderNav } from "./index";
 
 const auth = vi.hoisted(() => ({
-  session: null as { userId: string; email: string } | null,
+  session: null as {
+    userId: string;
+    email: string;
+    role?: string | null;
+  } | null,
 }));
 const guardOnboarding = vi.hoisted(() => vi.fn());
 
@@ -27,6 +31,11 @@ vi.mock("@/features/auth", () => ({
   useAuth: () => ({ session: auth.session, signOut: vi.fn() }),
   AuthModal: ({ opened }: { opened: boolean }) =>
     opened ? <div role="dialog">login form</div> : null,
+}));
+
+// The badge asks the BFF how many requests wait; here it only has to be drawn.
+vi.mock("@/features/friends", () => ({
+  IncomingRequestsBadge: () => <span data-testid="friend-request-badge" />,
 }));
 
 vi.mock("@/features/account", () => ({
@@ -106,5 +115,33 @@ describe("SiteHeaderNav", () => {
 
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(guardOnboarding).not.toHaveBeenCalled();
+  });
+
+  it("gives a signed-in learner the friends link, with the waiting-requests badge", () => {
+    auth.session = { userId: "u1", email: "learner@example.com", role: null };
+    renderNav();
+
+    expect(linkTo("/friends")).toBeTruthy();
+    expect(
+      screen.getAllByTestId("friend-request-badge").length,
+    ).toBeGreaterThan(0);
+  });
+
+  // Friends are for learners: the backend refuses them for staff, so the
+  // header does not offer the link (and does not ask for a count they lack).
+  it("leaves the friends link, and its badge, out for staff and admin", () => {
+    auth.session = { userId: "s1", email: "staff@example.com", role: "STAFF" };
+    renderNav();
+
+    expect(() => linkTo("/friends")).toThrow("no link to /friends");
+    expect(screen.queryByTestId("friend-request-badge")).toBeNull();
+  });
+
+  it("shows a guest the friends link but asks for no count, and opens the login form on click", () => {
+    renderNav();
+
+    expect(screen.queryByTestId("friend-request-badge")).toBeNull();
+    expect(fireEvent.click(linkTo("/friends"))).toBe(false);
+    expect(screen.getByRole("dialog")).toBeTruthy();
   });
 });

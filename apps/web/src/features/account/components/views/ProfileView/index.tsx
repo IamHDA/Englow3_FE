@@ -19,8 +19,10 @@ import {
   GraduationCap,
   ShieldCheck,
   User,
+  UserRound,
   UserX,
 } from "lucide-react";
+import Link from "next/link";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { type Gender } from "@/lib/graphql/generated";
@@ -140,7 +142,20 @@ export function ProfileView({ initialTab = "info" }: { initialTab?: string }) {
 
   return (
     <Stack gap="lg" className={classes.viewContainer}>
-      <PageHeader title={t.account.title} />
+      <PageHeader
+        title={t.account.title}
+        actions={
+          <Button
+            component={Link}
+            href={`/people/${profile.id}`}
+            variant="default"
+            w={{ base: "100%", sm: "auto" }}
+            leftSection={<UserRound size={16} aria-hidden="true" />}
+          >
+            {t.account.viewPublicPage}
+          </Button>
+        }
+      />
 
       {/* 2-Column Responsive Layout */}
       <Grid gap="xl" align="flex-start">
