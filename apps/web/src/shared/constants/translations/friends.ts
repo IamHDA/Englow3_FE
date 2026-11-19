@@ -267,7 +267,10 @@ export const friendsEn: FriendsTranslations = {
   tabs: {
     friends: "Friends",
     requests: "Requests",
-    search: "Find friends",
+    // Not "Find friends": the four tabs, with "99+" on "Requests", need about
+    // 311 px on a phone and a 320 px one has 288 for them. Measured in both
+    // languages from 320 to 390 px; "Find" is what the tab does.
+    search: "Find",
     blocked: "Blocked",
   },
   directions: {

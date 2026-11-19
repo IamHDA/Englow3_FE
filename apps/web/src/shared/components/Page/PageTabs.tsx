@@ -37,7 +37,7 @@ export function PageTabs<T extends string>({
     <SegmentedControl
       fullWidth
       radius="md"
-      classNames={{ root: classes.root }}
+      classNames={{ root: classes.root, control: classes.control }}
       value={value}
       onChange={(next) => onChange(next as T)}
       data={tabs.map((tab) => ({

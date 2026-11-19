@@ -9,3 +9,15 @@
     --sc-padding: 3px 6px;
   }
 }
+
+/*
+ * Equal shares, unless a tab needs more: a control's label cuts what does not
+ * fit (overflow: hidden), so with the flex basis of 0 that Mantine gives every
+ * tab, "Requests" and a "99+" count were each given an equal quarter of a
+ * 360px phone and the count ran out of the tab. max-content is the floor under
+ * that share: a tab never gets less than its own text, icon and count, and the
+ * others split what is left.
+ */
+.control {
+  min-width: max-content;
+}
