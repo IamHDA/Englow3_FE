@@ -159,6 +159,10 @@ export function PostEditorForm({
   const bodyField = useRef<HTMLTextAreaElement>(null);
 
   const guard = useUnsavedChangesGuard(isDirty);
+  // What the guard is asking about: leaving the page, or reloading the post
+  // over the edits. Only the words of the question differ.
+  const [asking, setAsking] = useState<"leave" | "reload">("leave");
+  const ask = asking === "reload" ? copy.reloadConfirm : copy.leave;
 
   // Previews are made when a picture is chosen and given back when the form
   // goes. They are kept in a ref as well, so the cleanup sees the ones made
@@ -435,7 +439,11 @@ export function PostEditorForm({
               color="orange"
               size="sm"
               mt="sm"
-              onClick={onReload}
+              onClick={() => {
+                // Reloading replaces what is typed: a form with unsaved edits asks first.
+                if (isDirty) setAsking("reload");
+                guard.confirmBefore(onReload);
+              }}
             >
               {copy.staleReload}
             </Button>
@@ -463,13 +471,19 @@ export function PostEditorForm({
 
       <ConfirmModal
         opened={guard.asking}
-        title={copy.leave.title}
-        body={copy.leave.body}
-        confirmLabel={copy.leave.confirmLabel}
-        cancelLabel={copy.leave.cancelLabel}
+        title={ask.title}
+        body={ask.body}
+        confirmLabel={ask.confirmLabel}
+        cancelLabel={ask.cancelLabel}
         danger
-        onConfirm={guard.leave}
-        onCancel={guard.stay}
+        onConfirm={() => {
+          guard.leave();
+          setAsking("leave");
+        }}
+        onCancel={() => {
+          guard.stay();
+          setAsking("leave");
+        }}
       />
     </form>
   );

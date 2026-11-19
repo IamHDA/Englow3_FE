@@ -221,8 +221,11 @@ export interface BlogTranslations {
     cancel: string;
     savedNew: string;
     savedEdit: string;
+    /** Says what reloading does to the edits, since it replaces them. */
     stale: string;
     staleReload: string;
+    /** Asked before a reload throws unsaved edits away. */
+    reloadConfirm: ConfirmCopy;
     cannotEditTitle: string;
     cannotEditDescription: string;
     leave: ConfirmCopy;
@@ -539,8 +542,15 @@ export const blogVi: BlogTranslations = {
     cancel: "Hủy",
     savedNew: "Đã đăng bài.",
     savedEdit: "Đã lưu bài viết.",
-    stale: "Bài đã thay đổi từ lúc bạn mở, tải lại để xem bản mới.",
+    stale:
+      "Bài đã thay đổi từ lúc bạn mở. Tải lại để xem bản mới - phần bạn đang sửa sẽ bị thay bằng bản mới.",
     staleReload: "Tải lại bài",
+    reloadConfirm: {
+      title: "Thay phần đang sửa bằng bản mới?",
+      body: "Tải lại sẽ bỏ những gì bạn đã sửa và hiện bản mới nhất của bài.",
+      confirmLabel: "Tải lại, bỏ bản đang sửa",
+      cancelLabel: "Giữ bản đang sửa",
+    },
     cannotEditTitle: "Bạn không thể sửa bài này",
     cannotEditDescription:
       "Chỉ tác giả sửa được bài, và bài đã bị ẩn hoặc gỡ thì không sửa được.",
@@ -897,8 +907,14 @@ export const blogEn: BlogTranslations = {
     savedNew: "Post published.",
     savedEdit: "Post saved.",
     stale:
-      "The post changed since you opened it, reload it to see the new version.",
+      "The post changed since you opened it. Reloading shows the new version and replaces what you are editing.",
     staleReload: "Reload the post",
+    reloadConfirm: {
+      title: "Replace your edits with the new version?",
+      body: "Reloading discards what you have changed and shows the latest version of the post.",
+      confirmLabel: "Reload and discard my edits",
+      cancelLabel: "Keep my edits",
+    },
     cannotEditTitle: "You cannot edit this post",
     cannotEditDescription:
       "Only the author can edit a post, and a hidden or removed post cannot be edited.",

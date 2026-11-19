@@ -59,7 +59,12 @@ const TEXT = {
     bodyTooLong: "Nội dung tối đa 20000 ký tự.",
     tooManyTags: "Một bài chỉ có tối đa 8 thẻ.",
     tooManyImages: "Một bài chỉ có tối đa 10 ảnh.",
-    stale: "Bài đã thay đổi từ lúc bạn mở, tải lại để xem bản mới.",
+    stale:
+      "Bài đã thay đổi từ lúc bạn mở. Tải lại để xem bản mới - phần bạn đang sửa sẽ bị thay bằng bản mới.",
+    reloadTitle: "Thay phần đang sửa bằng bản mới?",
+    reloadConfirm: "Tải lại, bỏ bản đang sửa",
+    reloadKeep: "Giữ bản đang sửa",
+    leaveTitle: "Rời trang này?",
     reload: "Tải lại bài",
     skill: "Kỹ năng",
     level: "Trình độ",
@@ -85,7 +90,11 @@ const TEXT = {
     tooManyTags: "A post has at most 8 tags.",
     tooManyImages: "A post has at most 10 images.",
     stale:
-      "The post changed since you opened it, reload it to see the new version.",
+      "The post changed since you opened it. Reloading shows the new version and replaces what you are editing.",
+    reloadTitle: "Replace your edits with the new version?",
+    reloadConfirm: "Reload and discard my edits",
+    reloadKeep: "Keep my edits",
+    leaveTitle: "Leave this page?",
     reload: "Reload the post",
     skill: "Skill",
     level: "Level",
@@ -383,7 +392,7 @@ describe("PostEditorForm: what the backend refuses", () => {
   });
 
   it.each(["vi", "en"] as const)(
-    "says the post changed since it was opened, in %s, keeps the text and offers to reload",
+    "says the post changed since it was opened, in %s, and that reloading replaces the edits; keeps the text",
     async (language) => {
       const onSave = vi
         .fn()
@@ -394,11 +403,99 @@ describe("PostEditorForm: what the backend refuses", () => {
 
       expect(await screen.findByText(s.text.stale)).toBeInTheDocument();
       expect(s.body()).toHaveValue("Some **markdown**");
-
-      await s.user.click(screen.getByRole("button", { name: s.text.reload }));
-      expect(s.onReload).toHaveBeenCalledTimes(1);
+      expect(s.onReload).not.toHaveBeenCalled();
     },
   );
+
+  describe("reloading after a stale save", () => {
+    async function staleWithEdits(language: TestLanguage = "vi") {
+      const onSave = vi
+        .fn()
+        .mockRejectedValue(refusal("BLOG_POST_STALE", "CONFLICT"));
+      const s = setup({ onSave, mode: "update" }, language);
+      await fillValid(s);
+      await s.user.click(screen.getByRole("button", { name: s.text.save }));
+      await screen.findByText(s.text.stale);
+      return s;
+    }
+
+    it.each(["vi", "en"] as const)(
+      "asks before it throws edits away, in %s, and reloads only when the person agrees",
+      async (language) => {
+        const s = await staleWithEdits(language);
+
+        await s.user.click(screen.getByRole("button", { name: s.text.reload }));
+
+        const dialog = await screen.findByRole("dialog", {
+          name: s.text.reloadTitle,
+        });
+        expect(s.onReload).not.toHaveBeenCalled();
+
+        await s.user.click(
+          within(dialog).getByRole("button", { name: s.text.reloadConfirm }),
+        );
+        expect(s.onReload).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it("keeps the edits, and reloads nothing, when the person chooses to keep them", async () => {
+      const s = await staleWithEdits();
+
+      await s.user.click(screen.getByRole("button", { name: s.text.reload }));
+      const dialog = await screen.findByRole("dialog", {
+        name: s.text.reloadTitle,
+      });
+      await s.user.click(
+        within(dialog).getByRole("button", { name: s.text.reloadKeep }),
+      );
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole("dialog", { name: s.text.reloadTitle }),
+        ).not.toBeInTheDocument(),
+      );
+      expect(s.onReload).not.toHaveBeenCalled();
+      expect(s.body()).toHaveValue("Some **markdown**");
+    });
+
+    it("reloads at once when nothing was edited: there is nothing to throw away", async () => {
+      const onSave = vi
+        .fn()
+        .mockRejectedValue(refusal("BLOG_POST_STALE", "CONFLICT"));
+      const s = setup({
+        onSave,
+        mode: "update",
+        initial: { title: "Saved title", body: "Saved text", tags: [] },
+      });
+      await s.user.click(screen.getByRole("button", { name: s.text.save }));
+      await screen.findByText(s.text.stale);
+
+      await s.user.click(screen.getByRole("button", { name: s.text.reload }));
+
+      expect(s.onReload).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("words a later question about leaving as leaving, not as reloading", async () => {
+      const s = await staleWithEdits();
+      await s.user.click(screen.getByRole("button", { name: s.text.reload }));
+      const reload = await screen.findByRole("dialog", {
+        name: s.text.reloadTitle,
+      });
+      await s.user.click(
+        within(reload).getByRole("button", { name: s.text.reloadKeep }),
+      );
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+      );
+
+      await s.user.click(screen.getByRole("button", { name: "Hủy" }));
+
+      expect(
+        await screen.findByRole("dialog", { name: s.text.leaveTitle }),
+      ).toBeInTheDocument();
+    });
+  });
 });
 
 describe("PostEditorForm: images", () => {
