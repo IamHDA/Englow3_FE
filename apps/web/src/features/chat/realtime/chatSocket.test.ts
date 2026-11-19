@@ -3,14 +3,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   BACKOFF_BASE_MS,
   BACKOFF_MAX_MS,
+  MAX_FAILED_CONNECTS,
   MAX_TICKET_AUTH_FAILURES,
+  SOCKET_CLOSE_POLICY_VIOLATION,
 } from "../constants/chat";
 
 import {
   backoffDelay,
+  CHAT_SOCKET_FAILURE,
   CHAT_SOCKET_STATUS,
   ChatTicketRefused,
   createChatSocket,
+  type ChatSocketFailure,
   type ChatSocketStatus,
 } from "./chatSocket";
 import { FRAME_TYPE, type ChatFrame } from "./frames";
@@ -28,7 +32,7 @@ class FakeWebSocket {
   closedWith: number | null = null;
   onopen: (() => void) | null = null;
   onmessage: ((event: { data: unknown }) => void) | null = null;
-  onclose: (() => void) | null = null;
+  onclose: ((event: { code: number }) => void) | null = null;
   onerror: (() => void) | null = null;
 
   constructor(readonly url: string) {
@@ -43,7 +47,7 @@ class FakeWebSocket {
   close(code?: number) {
     this.closedWith = code ?? null;
     this.readyState = FakeWebSocket.CLOSED;
-    this.onclose?.();
+    this.onclose?.({ code: code ?? NO_STATUS_CODE });
   }
 
   open() {
@@ -55,14 +59,17 @@ class FakeWebSocket {
     this.onmessage?.({ data });
   }
 
-  /** The connection dropped, or the handshake was refused. */
-  drop() {
+  /** The connection dropped, or the handshake was refused: the browser's 1006 unless the server said otherwise. */
+  drop(code = ABNORMAL_CLOSE_CODE) {
     this.readyState = FakeWebSocket.CLOSED;
-    this.onclose?.();
+    this.onclose?.({ code });
   }
 }
 
 const URL = "wss://backend.test/ws/chat";
+
+const NO_STATUS_CODE = 1005;
+const ABNORMAL_CLOSE_CODE = 1006;
 
 function setup(
   getTicket: () => Promise<string> = (() => {
@@ -72,6 +79,8 @@ function setup(
 ) {
   const frames: ChatFrame[] = [];
   const statuses: ChatSocketStatus[] = [];
+  /** The reason that came with the latest status, if any. */
+  const failures: Array<ChatSocketFailure | undefined> = [];
   const onConnected = vi.fn();
   const getTicketSpy = vi.fn(getTicket);
   const socket = createChatSocket({
@@ -79,10 +88,20 @@ function setup(
     getTicket: getTicketSpy,
     onFrame: (frame) => frames.push(frame),
     onConnected,
-    onStatus: (status) => statuses.push(status),
+    onStatus: (status, failure) => {
+      statuses.push(status);
+      failures.push(failure);
+    },
     random: () => 0,
   });
-  return { socket, frames, statuses, onConnected, getTicket: getTicketSpy };
+  return {
+    socket,
+    frames,
+    statuses,
+    failures,
+    onConnected,
+    getTicket: getTicketSpy,
+  };
 }
 
 const latest = () => FakeWebSocket.instances.at(-1)!;
@@ -171,7 +190,9 @@ describe("backing off", () => {
     await settle();
 
     const waits: number[] = [];
-    for (let attempt = 0; attempt < 8; attempt += 1) {
+    // One fewer than the attempts after which it gives up: the point here is
+    // the growth and the cap, not the end.
+    for (let attempt = 0; attempt < MAX_FAILED_CONNECTS - 1; attempt += 1) {
       const before = FakeWebSocket.instances.length;
       latest().drop();
       // The wait is the smallest time after which a new socket exists.
@@ -183,7 +204,7 @@ describe("backing off", () => {
       waits.push(waited);
     }
 
-    expect(waits).toEqual([1000, 2000, 4000, 8000, 16000, 30000, 30000, 30000]);
+    expect(waits).toEqual([1000, 2000, 4000, 8000, 16000, 30000, 30000]);
     expect(Math.max(...waits)).toBeLessThanOrEqual(BACKOFF_MAX_MS);
   });
 
@@ -259,6 +280,112 @@ describe("backing off", () => {
 
     expect(getTicket).toHaveBeenCalledTimes(2);
     expect(constructed).toBe(2);
+  });
+});
+
+describe("a socket the backend ended", () => {
+  it("is final when the backend closes it with 1008, and says why", async () => {
+    const { socket, statuses, failures, getTicket } = setup();
+    socket.start();
+    await settle();
+    latest().open();
+
+    latest().drop(SOCKET_CLOSE_POLICY_VIOLATION);
+    await vi.advanceTimersByTimeAsync(10 * BACKOFF_MAX_MS);
+
+    expect(statuses.at(-1)).toBe(CHAT_SOCKET_STATUS.failed);
+    expect(failures.at(-1)).toBe(CHAT_SOCKET_FAILURE.tooManyConnections);
+    expect(statuses).not.toContain(CHAT_SOCKET_STATUS.reconnecting);
+    // One ticket, one socket: it never asked to come back.
+    expect(getTicket).toHaveBeenCalledTimes(1);
+    expect(FakeWebSocket.instances).toHaveLength(1);
+  });
+
+  it("does not reconnect after 1008 even when the socket had never opened", async () => {
+    const { socket, statuses, getTicket } = setup();
+    socket.start();
+    await settle();
+
+    latest().drop(SOCKET_CLOSE_POLICY_VIOLATION);
+    await vi.advanceTimersByTimeAsync(10 * BACKOFF_MAX_MS);
+
+    expect(statuses.at(-1)).toBe(CHAT_SOCKET_STATUS.failed);
+    expect(getTicket).toHaveBeenCalledTimes(1);
+  });
+
+  it("still reconnects after an ordinary drop, with no failure reason", async () => {
+    const { socket, statuses, failures } = setup();
+    socket.start();
+    await settle();
+    latest().open();
+
+    latest().drop();
+    await vi.advanceTimersByTimeAsync(BACKOFF_BASE_MS);
+
+    expect(statuses).not.toContain(CHAT_SOCKET_STATUS.failed);
+    expect(failures.every((failure) => failure === undefined)).toBe(true);
+    expect(FakeWebSocket.instances).toHaveLength(2);
+  });
+});
+
+describe("a handshake that is refused every time", () => {
+  /** Drops the latest socket, which never opened, and waits until the next one exists or the attempts are over. */
+  async function refuse() {
+    const before = FakeWebSocket.instances.length;
+    latest().drop();
+    for (let waited = 0; waited < BACKOFF_MAX_MS + 1_000; waited += 500) {
+      if (FakeWebSocket.instances.length > before) return;
+      await vi.advanceTimersByTimeAsync(500);
+    }
+  }
+
+  it(`gives up after ${MAX_FAILED_CONNECTS} connections in a row that never opened, and says it failed`, async () => {
+    const { socket, statuses, failures, getTicket } = setup();
+    socket.start();
+    await settle();
+
+    for (let failed = 0; failed < MAX_FAILED_CONNECTS; failed += 1) {
+      await refuse();
+    }
+    await vi.advanceTimersByTimeAsync(10 * BACKOFF_MAX_MS);
+
+    expect(statuses.at(-1)).toBe(CHAT_SOCKET_STATUS.failed);
+    // No reason to give: the screens say the general sentence.
+    expect(failures.at(-1)).toBeUndefined();
+    expect(FakeWebSocket.instances).toHaveLength(MAX_FAILED_CONNECTS);
+    expect(getTicket).toHaveBeenCalledTimes(MAX_FAILED_CONNECTS);
+  });
+
+  it("is still trying one connection before that", async () => {
+    const { socket, statuses } = setup();
+    socket.start();
+    await settle();
+
+    for (let failed = 0; failed < MAX_FAILED_CONNECTS - 1; failed += 1) {
+      await refuse();
+    }
+
+    expect(statuses).not.toContain(CHAT_SOCKET_STATUS.failed);
+    expect(statuses.at(-1)).toBe(CHAT_SOCKET_STATUS.reconnecting);
+    expect(FakeWebSocket.instances).toHaveLength(MAX_FAILED_CONNECTS);
+  });
+
+  it("counts only connections in a row: one that opened starts the count again", async () => {
+    const { socket, statuses } = setup();
+    socket.start();
+    await settle();
+
+    for (let failed = 0; failed < MAX_FAILED_CONNECTS - 1; failed += 1) {
+      await refuse();
+    }
+    latest().open();
+    // A socket that opened and was then dropped is not a refused handshake.
+    await refuse();
+    for (let failed = 0; failed < MAX_FAILED_CONNECTS - 1; failed += 1) {
+      await refuse();
+    }
+
+    expect(statuses).not.toContain(CHAT_SOCKET_STATUS.failed);
   });
 });
 

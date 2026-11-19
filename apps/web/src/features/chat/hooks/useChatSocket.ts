@@ -1,9 +1,10 @@
 "use client";
 
+import { useApolloClient } from "@apollo/client/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { chatSocketUrl } from "@/config/chat";
-import { useChatSocketTicketMutation } from "@/lib/graphql/generated/hooks";
+import { ChatSocketTicketDocument } from "@/lib/graphql/generated";
 import { errorCodeOf } from "@/shared/network/loadError";
 
 import {
@@ -11,6 +12,7 @@ import {
   ChatTicketRefused,
   createChatSocket,
   type ChatSocket,
+  type ChatSocketFailure,
   type ChatSocketStatus,
 } from "../realtime/chatSocket";
 import type { ChatFrame } from "../realtime/frames";
@@ -25,25 +27,29 @@ const NOT_A_LEARNER_CODE = "FORBIDDEN";
  * The socket's life inside React: open while `enabled`, closed the moment it
  * is not or the component goes, and never opened at all for an account that
  * may not chat. Every connection - the first and each reconnect - asks the BFF
- * for a new ticket, and the ticket is never cached (`no-cache`), kept or logged.
+ * for a new ticket, and the ticket is never cached, kept or logged. It is asked
+ * for with `client.mutate` and `no-cache` rather than with the mutation hook,
+ * because the hook keeps the last answer in the component's state: a credential
+ * held by a React component for as long as the chat is open.
  *
  * `enabled` false means no socket and no ticket request.
  */
 export function useChatSocket({ enabled }: { enabled: boolean }): ChatRealtime {
   const url = chatSocketUrl();
-  const [status, setStatus] = useState<ChatSocketStatus>(
-    CHAT_SOCKET_STATUS.idle,
-  );
+  const [{ status, failure }, setReport] = useState<{
+    status: ChatSocketStatus;
+    failure: ChatSocketFailure | null;
+  }>({ status: CHAT_SOCKET_STATUS.idle, failure: null });
   const [connectionCount, setConnectionCount] = useState(0);
   const listeners = useRef(new Set<(frame: ChatFrame) => void>());
   const socket = useRef<ChatSocket | null>(null);
 
-  const [requestTicket] = useChatSocketTicketMutation();
-  // The socket outlives renders; it must ask with the mutation of the latest one.
-  const requestTicketRef = useRef(requestTicket);
+  const client = useApolloClient();
+  // The socket outlives renders; it must ask with the client of the latest one.
+  const clientRef = useRef(client);
   useEffect(() => {
-    requestTicketRef.current = requestTicket;
-  }, [requestTicket]);
+    clientRef.current = client;
+  }, [client]);
 
   useEffect(() => {
     if (!enabled || !url) return;
@@ -51,7 +57,8 @@ export function useChatSocket({ enabled }: { enabled: boolean }): ChatRealtime {
       url,
       getTicket: async () => {
         try {
-          const { data } = await requestTicketRef.current({
+          const { data } = await clientRef.current.mutate({
+            mutation: ChatSocketTicketDocument,
             // A ticket works once. Writing it to the cache would keep a
             // credential for nothing.
             fetchPolicy: "no-cache",
@@ -69,7 +76,8 @@ export function useChatSocket({ enabled }: { enabled: boolean }): ChatRealtime {
       onFrame: (frame) =>
         listeners.current.forEach((listener) => listener(frame)),
       onConnected: () => setConnectionCount((count) => count + 1),
-      onStatus: setStatus,
+      onStatus: (next, why) =>
+        setReport({ status: next, failure: why ?? null }),
     });
     socket.current = next;
     next.start();
@@ -100,5 +108,11 @@ export function useChatSocket({ enabled }: { enabled: boolean }): ChatRealtime {
       ? CHAT_SOCKET_STATUS.failed
       : status;
 
-  return { status: shown, connectionCount, subscribe, sendTyping };
+  return {
+    status: shown,
+    failure: shown === CHAT_SOCKET_STATUS.failed ? failure : null,
+    connectionCount,
+    subscribe,
+    sendTyping,
+  };
 }

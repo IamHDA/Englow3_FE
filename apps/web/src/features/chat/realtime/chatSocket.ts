@@ -2,7 +2,9 @@ import {
   BACKOFF_BASE_MS,
   BACKOFF_JITTER_MS,
   BACKOFF_MAX_MS,
+  MAX_FAILED_CONNECTS,
   MAX_TICKET_AUTH_FAILURES,
+  SOCKET_CLOSE_POLICY_VIOLATION,
 } from "../constants/chat";
 
 import { parseFrame, typingPayload, type ChatFrame } from "./frames";
@@ -19,6 +21,18 @@ export const CHAT_SOCKET_STATUS = {
 
 export type ChatSocketStatus =
   (typeof CHAT_SOCKET_STATUS)[keyof typeof CHAT_SOCKET_STATUS];
+
+/**
+ * Why a socket that gave up did, when the screens have something more to say
+ * than "reload": the backend closed it because the person has the chat open in
+ * more places than it allows. Every other end says nothing more.
+ */
+export const CHAT_SOCKET_FAILURE = {
+  tooManyConnections: "tooManyConnections",
+} as const;
+
+export type ChatSocketFailure =
+  (typeof CHAT_SOCKET_FAILURE)[keyof typeof CHAT_SOCKET_FAILURE];
 
 /**
  * What `getTicket` throws when the BFF refused to make a ticket for want of a
@@ -41,7 +55,8 @@ export type ChatSocketOptions = {
   onFrame: (frame: ChatFrame) => void;
   /** After every successful open, the first one included: the moment to catch up over REST. */
   onConnected: () => void;
-  onStatus: (status: ChatSocketStatus) => void;
+  /** `failure` accompanies `failed` when the reason is one the screens word; otherwise it is absent. */
+  onStatus: (status: ChatSocketStatus, failure?: ChatSocketFailure) => void;
   /** For the jitter; a test passes a fixed one. */
   random?: () => number;
 };
@@ -69,8 +84,10 @@ export function backoffDelay(retry: number, random: () => number): number {
  * One connection to the chat socket that keeps itself open: it asks for a new
  * ticket every time (a ticket works once, for 30 seconds), opens
  * `${url}?ticket=...`, hands on every frame it understands, and when the socket
- * drops waits - 1 s, 2 s, 4 s... at most 30 s - and goes again. Plain
- * TypeScript on purpose: no React, so it can be driven with a fake WebSocket
+ * drops waits - 1 s, 2 s, 4 s... at most 30 s - and goes again. Two ends are
+ * final: the backend closing it with 1008 (the person has too many sockets
+ * open), and `MAX_FAILED_CONNECTS` connections in a row that never opened.
+ * Plain TypeScript on purpose: no React, so it can be driven with a fake WebSocket
  * and fake timers.
  *
  * Neither the ticket nor a frame is ever logged.
@@ -83,14 +100,16 @@ export function createChatSocket(options: ChatSocketOptions): ChatSocket {
   let finished = false;
   let retry = 0;
   let authFailures = 0;
+  /** Connections in a row that closed without ever opening. */
+  let failedConnects = 0;
   /** Which attempt is current, so an answer to a stale one (a ticket that came back after close) is ignored. */
   let attempt = 0;
 
-  const finish = (status: ChatSocketStatus) => {
+  const finish = (status: ChatSocketStatus, failure?: ChatSocketFailure) => {
     finished = true;
     if (timer !== null) clearTimeout(timer);
     timer = null;
-    options.onStatus(status);
+    options.onStatus(status, failure);
   };
 
   const scheduleReconnect = () => {
@@ -143,10 +162,13 @@ export function createChatSocket(options: ChatSocketOptions): ChatSocket {
       return;
     }
     socket = opened;
+    let reachedOpen = false;
 
     opened.onopen = () => {
       if (socket !== opened) return;
+      reachedOpen = true;
       retry = 0;
+      failedConnects = 0;
       options.onStatus(CHAT_SOCKET_STATUS.open);
       options.onConnected();
     };
@@ -155,12 +177,29 @@ export function createChatSocket(options: ChatSocketOptions): ChatSocket {
       const frame = parseFrame(event.data);
       if (frame) options.onFrame(frame);
     };
-    opened.onclose = () => {
-      if (socket === opened) socket = null;
+    opened.onclose = (event: { code?: number }) => {
+      // The caller's own close() has already let go of this socket.
+      const current = socket === opened;
+      if (current) socket = null;
+      if (!current || finished) return;
+      if (event.code === SOCKET_CLOSE_POLICY_VIOLATION) {
+        finish(
+          CHAT_SOCKET_STATUS.failed,
+          CHAT_SOCKET_FAILURE.tooManyConnections,
+        );
+        return;
+      }
+      if (!reachedOpen) {
+        failedConnects += 1;
+        if (failedConnects >= MAX_FAILED_CONNECTS) {
+          finish(CHAT_SOCKET_STATUS.failed);
+          return;
+        }
+      }
       scheduleReconnect();
     };
-    // A failed handshake or a dropped connection ends in close, which retries;
-    // the error event itself carries nothing worth acting on.
+    // A failed handshake or a dropped connection ends in close, which decides
+    // whether to retry; the error event itself carries nothing worth acting on.
     opened.onerror = () => undefined;
   }
 

@@ -2,8 +2,16 @@ import { CombinedGraphQLErrors } from "@apollo/client";
 import { act, render, renderHook, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { BACKOFF_MAX_MS, MAX_TICKET_AUTH_FAILURES } from "../constants/chat";
-import { CHAT_SOCKET_STATUS } from "../realtime/chatSocket";
+import {
+  BACKOFF_MAX_MS,
+  MAX_FAILED_CONNECTS,
+  MAX_TICKET_AUTH_FAILURES,
+  SOCKET_CLOSE_POLICY_VIOLATION,
+} from "../constants/chat";
+import {
+  CHAT_SOCKET_FAILURE,
+  CHAT_SOCKET_STATUS,
+} from "../realtime/chatSocket";
 import { FRAME_TYPE } from "../realtime/frames";
 
 import { ChatRealtimeProvider } from "../components/views/ChatRealtimeProvider";
@@ -16,8 +24,13 @@ const auth = vi.hoisted(() => ({
   session: null as { userId: string; role: string | null } | null,
 }));
 
-vi.mock("@/lib/graphql/generated/hooks", () => ({
-  useChatSocketTicketMutation: () => [requestTicket],
+// The ticket is asked for with client.mutate, not with a mutation hook: a hook
+// keeps the last answer in the component's state.
+vi.mock("@apollo/client/react", () => ({
+  useApolloClient: () => ({ mutate: requestTicket }),
+}));
+vi.mock("@/lib/graphql/generated", () => ({
+  ChatSocketTicketDocument: "ChatSocketTicketDocument",
 }));
 vi.mock("@/features/auth", () => ({
   isBackOfficeRole: (role: string | null) =>
@@ -33,7 +46,7 @@ class FakeWebSocket {
   closedWith: number | null = null;
   onopen: (() => void) | null = null;
   onmessage: ((event: { data: unknown }) => void) | null = null;
-  onclose: (() => void) | null = null;
+  onclose: ((event: { code: number }) => void) | null = null;
   onerror: (() => void) | null = null;
   constructor(readonly url: string) {
     FakeWebSocket.instances.push(this);
@@ -44,11 +57,16 @@ class FakeWebSocket {
   close(code?: number) {
     this.closedWith = code ?? null;
     this.readyState = 3;
-    this.onclose?.();
+    this.onclose?.({ code: code ?? 1005 });
   }
   open() {
     this.readyState = FakeWebSocket.OPEN;
     this.onopen?.();
+  }
+  /** The server ended the connection, or refused the handshake. */
+  drop(code = 1006) {
+    this.readyState = 3;
+    this.onclose?.({ code });
   }
 }
 
@@ -96,6 +114,7 @@ describe("useChatSocket", () => {
     await settle();
 
     expect(requestTicket).toHaveBeenCalledExactlyOnceWith({
+      mutation: "ChatSocketTicketDocument",
       fetchPolicy: "no-cache",
     });
     expect(latest().url).toBe("ws://backend.test/ws/chat?ticket=t1");
@@ -209,6 +228,42 @@ describe("useChatSocket", () => {
     expect(requestTicket).toHaveBeenCalledTimes(MAX_TICKET_AUTH_FAILURES);
     expect(result.current.status).toBe(CHAT_SOCKET_STATUS.failed);
     expect(FakeWebSocket.instances).toHaveLength(0);
+  });
+
+  it("fails for good, with its reason, when the backend closes the socket with 1008", async () => {
+    const { result } = renderHook(() => useChatSocket({ enabled: true }));
+    await settle();
+    act(() => latest().open());
+
+    act(() => latest().drop(SOCKET_CLOSE_POLICY_VIOLATION));
+    await act(() => vi.advanceTimersByTimeAsync(10 * BACKOFF_MAX_MS));
+
+    expect(result.current.status).toBe(CHAT_SOCKET_STATUS.failed);
+    expect(result.current.failure).toBe(CHAT_SOCKET_FAILURE.tooManyConnections);
+    expect(requestTicket).toHaveBeenCalledTimes(1);
+    expect(FakeWebSocket.instances).toHaveLength(1);
+  });
+
+  it(`fails after ${MAX_FAILED_CONNECTS} handshakes in a row that never opened, with no reason to give`, async () => {
+    const { result } = renderHook(() => useChatSocket({ enabled: true }));
+    await settle();
+
+    for (let failed = 0; failed < MAX_FAILED_CONNECTS; failed += 1) {
+      act(() => latest().drop());
+      await act(() => vi.advanceTimersByTimeAsync(BACKOFF_MAX_MS));
+    }
+
+    expect(result.current.status).toBe(CHAT_SOCKET_STATUS.failed);
+    expect(result.current.failure).toBeNull();
+    expect(FakeWebSocket.instances).toHaveLength(MAX_FAILED_CONNECTS);
+  });
+
+  it("has no failure reason while it is not failed", async () => {
+    const { result } = renderHook(() => useChatSocket({ enabled: true }));
+    await settle();
+    act(() => latest().open());
+
+    expect(result.current.failure).toBeNull();
   });
 
   it("gives up at once for an account that is not a learner", async () => {

@@ -109,6 +109,7 @@ export function ChatView({ children }: { children: ReactNode }) {
     <Stack className={classes.root} gap="sm">
       <ConnectionNotice
         status={realtime.status}
+        failure={realtime.failure}
         onReload={() => window.location.reload()}
       />
       <Flex

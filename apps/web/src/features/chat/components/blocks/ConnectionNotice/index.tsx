@@ -6,12 +6,16 @@ import { RotateCw, WifiOff } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import {
+  CHAT_SOCKET_FAILURE,
   CHAT_SOCKET_STATUS,
+  type ChatSocketFailure,
   type ChatSocketStatus,
 } from "../../../realtime/chatSocket";
 
 type ConnectionNoticeProps = {
   status: ChatSocketStatus;
+  /** Why a socket that gave up did, when there is more to say than "reload". */
+  failure: ChatSocketFailure | null;
   /** For a socket that gave up: a new page load starts everything again. */
   onReload: () => void;
 };
@@ -22,7 +26,11 @@ type ConnectionNoticeProps = {
  * given up asks for a reload. Nothing at all while connected, and nothing during
  * the first connection, which is over before anyone looks.
  */
-export function ConnectionNotice({ status, onReload }: ConnectionNoticeProps) {
+export function ConnectionNotice({
+  status,
+  failure,
+  onReload,
+}: ConnectionNoticeProps) {
   const copy = useLanguage().t.chat.connection;
 
   switch (status) {
@@ -50,7 +58,11 @@ export function ConnectionNotice({ status, onReload }: ConnectionNoticeProps) {
           icon={<WifiOff size={18} aria-hidden="true" />}
         >
           <Group justify="space-between" gap="sm">
-            <Text size="sm">{copy.failed}</Text>
+            <Text size="sm">
+              {failure === CHAT_SOCKET_FAILURE.tooManyConnections
+                ? copy.failedTooManyConnections
+                : copy.failed}
+            </Text>
             <Button
               size="compact-sm"
               variant="light"

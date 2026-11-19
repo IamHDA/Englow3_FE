@@ -24,6 +24,23 @@ export const BACKOFF_JITTER_MS = 250;
  */
 export const MAX_TICKET_AUTH_FAILURES = 3;
 
+/**
+ * Connections that never reached `open` this many times in a row end the
+ * attempts. A handshake the server refuses on every try (a wrong Origin, a
+ * rejected ticket) answers the same each time, so trying for ever only keeps a
+ * tab asking. The backoff makes this about a minute and a half of trying, which
+ * a restart of the backend does not outlast; a socket that did open starts the
+ * count again.
+ */
+export const MAX_FAILED_CONNECTS = 8;
+
+/**
+ * The close code the backend ends the oldest socket with when a person opens
+ * more than it allows (WebSocket "policy violation"). Reconnecting would only
+ * push out another of their sockets, in a loop between two tabs, so it is final.
+ */
+export const SOCKET_CLOSE_POLICY_VIOLATION = 1008;
+
 /* ---- Typing and reading ------------------------------------------------ */
 
 /** While someone types, a "typing" signal goes out at most this often. */

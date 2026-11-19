@@ -2,12 +2,17 @@
 
 import { createContext, useContext } from "react";
 
-import type { ChatSocketStatus } from "../realtime/chatSocket";
+import type {
+  ChatSocketFailure,
+  ChatSocketStatus,
+} from "../realtime/chatSocket";
 import type { ChatFrame } from "../realtime/frames";
 
 /** What the chat screens get from the one socket the chat area holds. */
 export type ChatRealtime = {
   status: ChatSocketStatus;
+  /** Why a socket that is `failed` gave up, when there is more to say than "reload". Null otherwise. */
+  failure: ChatSocketFailure | null;
   /** Goes up by one every time the socket opens - the first time included - so a screen knows to catch up. */
   connectionCount: number;
   /** Listens to every frame; returns the way to stop. Stable. */

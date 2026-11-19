@@ -113,6 +113,8 @@ export interface ChatTranslations {
   connection: {
     reconnecting: string;
     failed: string;
+    /** The backend closed this socket because the chat is open in more places than it allows. */
+    failedTooManyConnections: string;
     reload: string;
   };
   learnersOnly: {
@@ -206,6 +208,8 @@ export const chatVi: ChatTranslations = {
   connection: {
     reconnecting: "Đang kết nối lại… Bạn vẫn gửi được tin nhắn.",
     failed: "Tin nhắn mới sẽ không tự hiện lên. Tải lại trang để kết nối lại.",
+    failedTooManyConnections:
+      "Tin nhắn đang mở ở quá nhiều tab hoặc thiết bị. Đóng bớt rồi tải lại trang để dùng ở đây.",
     reload: "Tải lại",
   },
   learnersOnly: {
@@ -322,6 +326,8 @@ export const chatEn: ChatTranslations = {
     reconnecting: "Reconnecting… You can still send messages.",
     failed:
       "New messages will not appear by themselves. Reload the page to reconnect.",
+    failedTooManyConnections:
+      "Messages are open in too many tabs or devices. Close some, then reload to use them here.",
     reload: "Reload",
   },
   learnersOnly: {
