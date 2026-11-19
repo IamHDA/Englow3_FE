@@ -87,6 +87,16 @@ export interface BlogTranslations {
     commentRemoved: string;
   };
   deletedAuthor: string;
+  /**
+   * When the viewer's own account did not load: what is theirs and what is
+   * somebody else's cannot be told, so the controls that depend on it are left
+   * out and this says so.
+   */
+  viewer: {
+    errorTitle: string;
+    errorDescription: string;
+    retry: string;
+  };
   list: {
     subtitle: string;
     write: string;
@@ -394,6 +404,12 @@ export const blogVi: BlogTranslations = {
     commentRemoved: "Bình luận này đã bị gỡ bởi đội ngũ kiểm duyệt",
   },
   deletedAuthor: "Người dùng đã xóa",
+  viewer: {
+    errorTitle: "Chưa xác định được tài khoản của bạn",
+    errorDescription:
+      "Chưa tải được thông tin tài khoản nên chưa biết đâu là nội dung của bạn. Các nút báo cáo, xóa và kiểm duyệt sẽ hiện khi tải được.",
+    retry: "Thử lại",
+  },
   list: {
     subtitle: "Chia sẻ kinh nghiệm và kiến thức học tiếng Anh cùng mọi người.",
     write: "Viết bài",
@@ -757,6 +773,12 @@ export const blogEn: BlogTranslations = {
     commentRemoved: "This comment was removed by the moderation team",
   },
   deletedAuthor: "Deleted user",
+  viewer: {
+    errorTitle: "Could not tell who you are",
+    errorDescription:
+      "Your account could not be loaded, so what is yours and what is somebody else's cannot be told. The report, delete and moderation buttons come back once it loads.",
+    retry: "Try again",
+  },
   list: {
     subtitle:
       "Share what you know about learning English, and read what others share.",

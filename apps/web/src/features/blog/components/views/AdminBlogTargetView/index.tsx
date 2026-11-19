@@ -14,7 +14,6 @@ import { notifications } from "@mantine/notifications";
 import { ArrowLeft, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
-import { useAccountProfile } from "@/features/account";
 import {
   AdminBlogTargetDocument,
   BlogReportStatus,
@@ -35,11 +34,14 @@ import {
   targetTypeLabel,
 } from "../../../constants/blogLabels";
 import type { ModerationFormValues } from "../../../schemas/moderation";
+import { useBlogViewer } from "../../../hooks/useBlogViewer";
 import { MarkdownContent } from "../../blocks/MarkdownContent";
 import { ModerationActionForm } from "../../blocks/ModerationActionForm";
+import { ModerationActionFormSkeleton } from "../../blocks/ModerationActionForm/ModerationActionFormSkeleton";
 import { ModerationHistory } from "../../blocks/ModerationHistory";
 import { ModerationReportList } from "../../blocks/ModerationReportList";
 import { AuthorChip } from "../../parts/AuthorChip";
+import { BlogLoadError } from "../../parts/BlogLoadError";
 import { TagBadges } from "../../parts/TagBadges";
 import { TargetStatusBadge } from "../../parts/TargetStatusBadge";
 import { Timestamp } from "../../parts/Timestamp";
@@ -65,8 +67,7 @@ type AdminBlogTargetViewProps = {
 export function AdminBlogTargetView({ type, id }: AdminBlogTargetViewProps) {
   const { t } = useLanguage();
   const copy = t.blog.admin.target;
-  const { profile } = useAccountProfile();
-  const viewerId = profile?.id ?? null;
+  const viewer = useBlogViewer();
   const { data, error, refetch } = useAdminBlogTargetQuery({
     variables: { type, id },
     fetchPolicy: "cache-and-network",
@@ -92,7 +93,6 @@ export function AdminBlogTargetView({ type, id }: AdminBlogTargetViewProps) {
   const openReports = target.reports.filter(
     (report) => report.status === BlogReportStatus.OPEN,
   ).length;
-  const isOwn = viewerId !== null && target.author?.userId === viewerId;
   const content = target.content;
 
   async function act({ action, reason }: ModerationFormValues) {
@@ -112,25 +112,47 @@ export function AdminBlogTargetView({ type, id }: AdminBlogTargetViewProps) {
     notifications.show({ color: "teal", message: t.blog.admin.form.done });
   }
 
+  // Whose content this is decides whether the form is there at all, so it is not
+  // drawn until the viewer's own id is known: for the moment a profile takes to
+  // load - or for good, if it failed - a moderator would be shown a form on
+  // their own content.
   let decision;
-  if (isOwn) {
-    decision = (
-      <Alert
-        color="orange"
-        radius="md"
-        role="status"
-        icon={<ShieldAlert size={20} aria-hidden="true" />}
-      >
-        {copy.ownContent}
-      </Alert>
-    );
-  } else {
-    decision = (
-      <ModerationActionForm
-        actions={offeredActions(target.targetStatus, openReports)}
-        onSubmit={act}
-      />
-    );
+  switch (viewer.status) {
+    case "loading":
+      decision = <ModerationActionFormSkeleton />;
+      break;
+    case "failed":
+      decision = (
+        <BlogLoadError
+          title={t.blog.viewer.errorTitle}
+          description={t.blog.viewer.errorDescription}
+          retryLabel={t.blog.viewer.retry}
+          onRetry={viewer.retry}
+        />
+      );
+      break;
+    case "known":
+      decision =
+        target.author !== null && target.author.userId === viewer.id ? (
+          <Alert
+            color="orange"
+            radius="md"
+            role="status"
+            icon={<ShieldAlert size={20} aria-hidden="true" />}
+          >
+            {copy.ownContent}
+          </Alert>
+        ) : (
+          <ModerationActionForm
+            actions={offeredActions(target.targetStatus, openReports)}
+            onSubmit={act}
+          />
+        );
+      break;
+    default: {
+      const unreachable: never = viewer;
+      return unreachable;
+    }
   }
 
   return (

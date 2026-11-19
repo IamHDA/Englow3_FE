@@ -2,6 +2,7 @@
 
 import { Flex } from "@mantine/core";
 
+import { ownershipOf, type BlogViewer } from "../../../hooks/useBlogViewer";
 import type { BlogCommentData } from "../../../types";
 
 import { CommentItem } from "./CommentItem";
@@ -9,8 +10,8 @@ import classes from "./CommentList.module.css";
 
 type CommentListProps = {
   comments: BlogCommentData[];
-  /** The id the backend knows the viewer by, to tell their own comments. Null until it is known. */
-  viewerId: string | null;
+  /** Who is looking, to tell their own comments from the rest - and not to offer Delete or Report until that is known. */
+  viewer: BlogViewer;
   canInteract: boolean;
   onEdit: (commentId: string, body: string) => Promise<void>;
   onDelete: (commentId: string) => void;
@@ -20,7 +21,7 @@ type CommentListProps = {
 /** The comments of one page, oldest first, the viewer's own marked by what they may do to them. */
 export function CommentList({
   comments,
-  viewerId,
+  viewer,
   canInteract,
   onEdit,
   onDelete,
@@ -32,7 +33,7 @@ export function CommentList({
         <CommentItem
           key={comment.id}
           comment={comment}
-          isOwn={viewerId !== null && comment.author?.userId === viewerId}
+          ownership={ownershipOf(viewer, comment.author?.userId)}
           canInteract={canInteract}
           onEdit={onEdit}
           onDelete={onDelete}

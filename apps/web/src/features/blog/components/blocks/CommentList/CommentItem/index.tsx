@@ -7,6 +7,7 @@ import { BlogCommentStatus } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { commentStatusSentence } from "../../../../constants/blogLabels";
+import type { Ownership } from "../../../../hooks/useBlogViewer";
 import type { BlogCommentData } from "../../../../types";
 import { AuthorChip } from "../../../parts/AuthorChip";
 import { Timestamp } from "../../../parts/Timestamp";
@@ -16,8 +17,11 @@ import classes from "./CommentItem.module.css";
 
 type CommentItemProps = {
   comment: BlogCommentData;
-  /** Whether the viewer wrote it: they may delete it in any state, others may report it. */
-  isOwn: boolean;
+  /**
+   * Whether the viewer wrote it: they may delete it in any state, others may
+   * report it. While that is not known neither is offered.
+   */
+  ownership: Ownership;
   /** Whether comments and likes are open on the post: a report needs it. */
   canInteract: boolean;
   onEdit: (commentId: string, body: string) => Promise<void>;
@@ -34,7 +38,7 @@ type CommentItemProps = {
  */
 export function CommentItem({
   comment,
-  isOwn,
+  ownership,
   canInteract,
   onEdit,
   onDelete,
@@ -106,7 +110,7 @@ export function CommentItem({
                 {copy.edit}
               </Anchor>
             )}
-            {isOwn && (
+            {ownership === "own" && (
               <Anchor
                 component="button"
                 type="button"
@@ -117,7 +121,7 @@ export function CommentItem({
                 {copy.delete}
               </Anchor>
             )}
-            {!isOwn && visible && canInteract && (
+            {ownership === "other" && visible && canInteract && (
               <Anchor
                 component="button"
                 type="button"

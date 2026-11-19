@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useAccountProfile } from "@/features/account";
 import { useBlogErrorMessage } from "../../../hooks/useBlogErrorMessage";
 import {
   useBlogPostQuery,
@@ -19,9 +18,11 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { BLOG_ROUTES } from "../../../constants/blog";
 import { useBlogLike } from "../../../hooks/useBlogLike";
+import { ownershipOf, useBlogViewer } from "../../../hooks/useBlogViewer";
 import { PostArticle } from "../../blocks/PostArticle";
 import { PostArticleSkeleton } from "../../blocks/PostArticle/PostArticleSkeleton";
 import { ReportDialog } from "../../blocks/ReportDialog";
+import { BlogLoadError } from "../../parts/BlogLoadError";
 import { ConfirmModal } from "../../parts/ConfirmModal";
 
 import { CommentsSection } from "./CommentsSection";
@@ -38,8 +39,7 @@ export function BlogPostView({ postId }: { postId: string }) {
   const copy = t.blog;
   const router = useRouter();
   const messageFor = useBlogErrorMessage();
-  const { profile } = useAccountProfile();
-  const viewerId = profile?.id ?? null;
+  const viewer = useBlogViewer();
 
   const { data, error, refetch } = useBlogPostQuery({
     variables: { id: postId },
@@ -75,7 +75,7 @@ export function BlogPostView({ postId }: { postId: string }) {
     );
   }
 
-  const isOwn = viewerId !== null && post.author?.userId === viewerId;
+  const ownership = ownershipOf(viewer, post.author?.userId);
 
   async function remove() {
     try {
@@ -115,9 +115,19 @@ export function BlogPostView({ postId }: { postId: string }) {
         {copy.backToList}
       </Button>
 
+      {/* Without the viewer's own account, what is theirs cannot be told: the controls that depend on it stay out, and this says so. */}
+      {viewer.status === "failed" && (
+        <BlogLoadError
+          title={copy.viewer.errorTitle}
+          description={copy.viewer.errorDescription}
+          retryLabel={copy.viewer.retry}
+          onRetry={viewer.retry}
+        />
+      )}
+
       <PostArticle
         post={post}
-        isOwn={isOwn}
+        ownership={ownership}
         likePending={like.pendingId === post.id}
         onToggleLike={() => void like.toggle(post)}
         onReport={() => setReporting(true)}
@@ -128,7 +138,7 @@ export function BlogPostView({ postId }: { postId: string }) {
       <Divider />
       <CommentsSection
         postId={post.id}
-        viewerId={viewerId}
+        viewer={viewer}
         canInteract={post.canInteract}
       />
 

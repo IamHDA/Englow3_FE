@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   Group,
+  Skeleton,
   Stack,
   Text,
   Title,
@@ -16,6 +17,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { BLOG_ROUTES } from "../../../constants/blog";
 import { countLabel } from "../../../constants/blogLabels";
+import type { Ownership } from "../../../hooks/useBlogViewer";
 import type { BlogPostData } from "../../../types";
 import { AuthorChip } from "../../parts/AuthorChip";
 import { TagBadges } from "../../parts/TagBadges";
@@ -28,8 +30,13 @@ import { PostStatusBanner } from "./PostStatusBanner";
 
 type PostArticleProps = {
   post: BlogPostData;
-  /** Whether the viewer wrote it: only then are Delete offered and Report left out. */
-  isOwn: boolean;
+  /**
+   * Whether the viewer wrote it. Delete is for `own`, Report for `other`; while
+   * that is not known (`loading`, or `unavailable` when the profile failed) neither
+   * is offered - a Report button on a moderator's own post, even for a moment,
+   * is the mistake.
+   */
+  ownership: Ownership;
   likePending: boolean;
   onToggleLike: () => void;
   onReport: () => void;
@@ -45,7 +52,7 @@ type PostArticleProps = {
  */
 export function PostArticle({
   post,
-  isOwn,
+  ownership,
   likePending,
   onToggleLike,
   onReport,
@@ -53,6 +60,9 @@ export function PostArticle({
 }: PostArticleProps) {
   const { t } = useLanguage();
   const copy = t.blog.post;
+  const canDelete = ownership === "own";
+  const canReport = ownership === "other" && post.canInteract;
+  const waiting = ownership === "loading";
 
   return (
     <Flex component="article" direction="column" gap="lg">
@@ -80,7 +90,7 @@ export function PostArticle({
         <TagBadges tags={post.tags} />
       </Stack>
 
-      {(post.canEdit || isOwn || (!isOwn && post.canInteract)) && (
+      {(post.canEdit || canDelete || canReport || waiting) && (
         <Group gap="xs">
           {post.canEdit && (
             <Button
@@ -92,7 +102,7 @@ export function PostArticle({
               {copy.edit}
             </Button>
           )}
-          {isOwn && (
+          {canDelete && (
             <Button
               variant="default"
               color="warn"
@@ -102,7 +112,10 @@ export function PostArticle({
               {copy.delete}
             </Button>
           )}
-          {!isOwn && post.canInteract && (
+          {waiting && (
+            <Skeleton height={36} width={96} radius="md" aria-hidden="true" />
+          )}
+          {canReport && (
             <Button
               variant="subtle"
               color="ink"

@@ -16,6 +16,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { COMMENTS_PAGE_SIZE } from "../../../../constants/blog";
 import { useBlogErrorMessage } from "../../../../hooks/useBlogErrorMessage";
+import type { BlogViewer } from "../../../../hooks/useBlogViewer";
 import { CommentForm } from "../../../blocks/CommentForm";
 import { CommentList } from "../../../blocks/CommentList";
 import { CommentListSkeleton } from "../../../blocks/CommentList/CommentListSkeleton";
@@ -27,8 +28,8 @@ import { ConfirmModal } from "../../../parts/ConfirmModal";
 
 type CommentsSectionProps = {
   postId: string;
-  /** The id the backend knows the viewer by, to tell their own comments. */
-  viewerId: string | null;
+  /** Who is looking: Delete and Report are not offered on a comment until it is known whose it is. */
+  viewer: BlogViewer;
   /** From the post: when false the box and the Report links are not offered. */
   canInteract: boolean;
 };
@@ -41,7 +42,7 @@ type CommentsSectionProps = {
  */
 export function CommentsSection({
   postId,
-  viewerId,
+  viewer,
   canInteract,
 }: CommentsSectionProps) {
   const { t } = useLanguage();
@@ -102,7 +103,7 @@ export function CommentsSection({
       <Stack gap="md">
         <CommentList
           comments={comments.items}
-          viewerId={viewerId}
+          viewer={viewer}
           canInteract={canInteract}
           onEdit={async (id, text) => {
             await updateComment({ variables: { id, body: text } });
