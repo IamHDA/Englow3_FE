@@ -1,0 +1,17 @@
+.item {
+  list-style: none;
+}
+
+.item[data-dimmed] {
+  background: var(--mantine-color-ink-0);
+}
+
+.item[data-dimmed] .body {
+  opacity: 0.6;
+}
+
+/* A comment is plain text: its line breaks are the writer's. */
+.body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

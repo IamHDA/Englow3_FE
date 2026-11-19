@@ -1,0 +1,11 @@
+/* The page on screen while the next one loads: readable, plainly not final. */
+.posts[aria-busy="true"] {
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .posts[aria-busy="true"] {
+    transition: none;
+  }
+}

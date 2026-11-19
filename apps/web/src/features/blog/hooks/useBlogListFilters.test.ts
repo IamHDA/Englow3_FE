@@ -7,8 +7,8 @@ import {
   DEFAULT_LIST_FILTERS,
   parseListFilters,
   serializeListFilters,
-  useBlogListFilters,
-} from "./useBlogListFilters";
+} from "./blogFilters";
+import { useBlogListFilters } from "./useBlogListFilters";
 
 afterEach(() => vi.restoreAllMocks());
 

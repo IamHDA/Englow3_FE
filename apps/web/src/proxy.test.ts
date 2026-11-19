@@ -39,6 +39,11 @@ describe("pages that need an account", () => {
     "/people/67136874-3a1b-40fa-90c1-7411689b42e3",
     "/chat",
     "/chat/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10",
+    "/blog",
+    "/blog?sort=MOST_LIKED&page=2",
+    "/blog/new",
+    "/blog/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10",
+    "/blog/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10/edit",
     "/profile",
   ])(
     "sends a guest from %s to the login page, remembering where they were going",
@@ -57,6 +62,9 @@ describe("pages that need an account", () => {
     "/people/67136874-3a1b-40fa-90c1-7411689b42e3",
     "/chat",
     "/chat/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10",
+    "/blog",
+    "/blog/new",
+    "/blog/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10",
   ])("lets a signed-in account open %s", async (path) => {
     session.claims = { sub: "u1" };
 
@@ -66,7 +74,7 @@ describe("pages that need an account", () => {
     expect(response.headers.get("location")).toBeNull();
   });
 
-  it.each(["/friendship-tips", "/chatter"])(
+  it.each(["/friendship-tips", "/chatter", "/blogging"])(
     "does not treat %s, which merely starts with the same letters, as member-only",
     async (path) => {
       const response = await visit(path);

@@ -133,6 +133,31 @@ describe("SiteHeaderNav", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("gives every signed-in account the blog link, learner, staff and admin alike", () => {
+    for (const role of [null, "STAFF", "ADMIN"]) {
+      auth.session = { userId: "u1", email: "a@example.com", role };
+      const { unmount } = render(
+        <MantineProvider theme={theme}>
+          <LanguageProvider>
+            <SiteHeaderNav>logo</SiteHeaderNav>
+          </LanguageProvider>
+        </MantineProvider>,
+      );
+
+      expect(linkTo("/blog")).toBeTruthy();
+      unmount();
+    }
+  });
+
+  it("asks a guest to sign in, as for every other section, instead of opening the blog", () => {
+    renderNav();
+
+    const click = fireEvent.click(linkTo("/blog"));
+
+    expect(click).toBe(false);
+    expect(screen.getByRole("dialog")).toBeTruthy();
+  });
+
   // Friends are for learners: the backend refuses them for staff, so the
   // header does not offer the link (and does not ask for a count they lack).
   it("leaves the friends link, and its badge, out for staff and admin", () => {

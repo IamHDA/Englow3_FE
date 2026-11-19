@@ -1,4 +1,4 @@
-import { act, fireEvent, render, renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useUnsavedChangesGuard } from "./useUnsavedChangesGuard";
@@ -139,16 +139,10 @@ describe("with something unsaved", () => {
   it("is caught before a handler on the link itself sees the click", () => {
     renderHook(() => useUnsavedChangesGuard(true));
     const seen = vi.fn();
-    function Link() {
-      return (
-        <a href="/blog" onClick={seen}>
-          go
-        </a>
-      );
-    }
-    const { getByText } = render(<Link />);
+    const anchor = link("/blog");
+    anchor.addEventListener("click", seen);
 
-    fireEvent.click(getByText("go"));
+    click(anchor);
 
     expect(seen).not.toHaveBeenCalled();
   });

@@ -23,6 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         "/friends",
         "/people",
         "/chat",
+        "/blog",
         "/dictation",
       ],
     },

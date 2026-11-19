@@ -1,6 +1,7 @@
 import {
   Bot,
   ClipboardCheck,
+  Newspaper,
   GraduationCap,
   Headphones,
   Languages,
@@ -94,6 +95,8 @@ export function getPrimaryLinks(t?: AppTranslations["nav"]): NavLink[] {
   return [
     { label: nav.exams, href: "/exams", icon: ClipboardCheck },
     { label: nav.aiTutor, href: "/ai-tutor", icon: Bot },
+    // The blog is for every account: staff and admin read and write posts too.
+    { label: nav.blog, href: "/blog", icon: Newspaper },
   ];
 }
 

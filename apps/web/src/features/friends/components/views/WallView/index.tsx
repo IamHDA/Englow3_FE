@@ -1,8 +1,15 @@
 "use client";
 
 import { Stack } from "@mantine/core";
+import { useState } from "react";
 
 import { isBackOfficeRole, useAuth } from "@/features/auth";
+import {
+  WALL_POSTS_PAGE_SIZE,
+  WallPosts,
+  WallPostsSkeleton,
+} from "@/features/blog";
+import { RelationshipStatus } from "@/lib/graphql/generated";
 import { useUserWallQuery } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -29,8 +36,13 @@ export function WallView({ userId }: { userId: string }) {
   const copy = t.friends.wall;
   const back = { href: FRIENDS_ROUTES.home, label: copy.backLabel };
   const { session } = useAuth();
-  const { data, error, loading, refetch } = useUserWallQuery({
-    variables: { userId },
+  const [postsPage, setPostsPage] = useState(1);
+  const { data, previousData, error, loading, refetch } = useUserWallQuery({
+    variables: {
+      userId,
+      postsPage: postsPage - 1,
+      postsSize: WALL_POSTS_PAGE_SIZE,
+    },
     errorPolicy: "all",
     // Who stands where changes without this screen's help.
     fetchPolicy: "cache-and-network",
@@ -39,12 +51,19 @@ export function WallView({ userId }: { userId: string }) {
   const actions = useRelationshipActions();
   const retry = () => void refetch().catch(() => undefined);
 
-  const wall = data?.userWall;
+  // Asking for another page of posts is a new query: until it answers, the
+  // wall that was on screen is what is shown.
+  const wall = (data ?? previousData)?.userWall;
+  const changingPage =
+    loading && data === undefined && previousData !== undefined;
   if (!wall) {
     // Neither the wall nor a verdict yet: loading, or the query itself failed
     // (a malformed id is "not found" too - nothing could ever be there).
     return loading || !error ? (
-      <WallSkeleton />
+      <Stack gap="xl">
+        <WallSkeleton />
+        <WallPostsSkeleton />
+      </Stack>
     ) : (
       <LoadErrorState
         error={error}
@@ -56,7 +75,7 @@ export function WallView({ userId }: { userId: string }) {
     );
   }
 
-  const { relationship, profile, friendCount } = wall;
+  const { relationship, profile, friendCount, posts } = wall;
   const target = {
     userId,
     displayName: profile?.displayName ?? copy.fallbackName,
@@ -107,8 +126,21 @@ export function WallView({ userId }: { userId: string }) {
   }
 
   return (
-    <Stack gap="lg">
+    <Stack gap="xl">
       {content}
+      {wall.available && (
+        <WallPosts
+          posts={posts ?? null}
+          isOwn={relationship.status === RelationshipStatus.SELF}
+          loading={changingPage}
+          page={postsPage}
+          onPageChange={(next) => {
+            setPostsPage(next);
+            window.scrollTo({ top: 0 });
+          }}
+          onRetry={retry}
+        />
+      )}
       <RelationshipConfirmModal {...actions.confirmation} />
     </Stack>
   );
