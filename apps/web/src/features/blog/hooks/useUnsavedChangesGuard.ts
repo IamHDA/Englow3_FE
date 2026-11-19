@@ -5,12 +5,18 @@ import { useCallback, useEffect, useState } from "react";
 
 /** Leaves a page with something unsaved on it only when the person says so. */
 export type UnsavedChangesGuard = {
-  /** Whether a click on a link was held back and the person is being asked. */
+  /** Whether a way out was held back and the person is being asked. */
   asking: boolean;
   /** The person chose to leave: go where the click was going. */
   leave: () => void;
   /** The person chose to stay and keep writing. */
   stay: () => void;
+  /**
+   * For a way out that is not a link - a Cancel button: runs `go` at once when
+   * nothing is unsaved, and otherwise asks first and runs it only if the person
+   * chooses to leave.
+   */
+  confirmBefore: (go: () => void) => void;
 };
 
 /**
@@ -21,7 +27,9 @@ export type UnsavedChangesGuard = {
  *   "leave this page?" (`beforeunload`), which no page can word;
  * - a click on a link to another page of this site - the header, a logo, an
  *   author's name: the click is held back and `asking` says so, for the page to
- *   ask in its own words and in the person's language.
+ *   ask in its own words and in the person's language;
+ * - a way out that is not a link, such as a Cancel button, through
+ *   `confirmBefore`.
  *
  * Next.js's App Router has no hook that sees a route change before it happens,
  * which is why links are caught by their click. What this cannot see is the
@@ -33,7 +41,8 @@ export type UnsavedChangesGuard = {
  */
 export function useUnsavedChangesGuard(dirty: boolean): UnsavedChangesGuard {
   const router = useRouter();
-  const [held, setHeld] = useState<string | null>(null);
+  // What to do if the person chooses to leave, for the way out that was held back.
+  const [held, setHeld] = useState<{ go: () => void } | null>(null);
 
   useEffect(() => {
     if (!dirty) return;
@@ -76,21 +85,30 @@ export function useUnsavedChangesGuard(dirty: boolean): UnsavedChangesGuard {
       }
       event.preventDefault();
       event.stopPropagation();
-      setHeld(`${to.pathname}${to.search}${to.hash}`);
+      const path = `${to.pathname}${to.search}${to.hash}`;
+      setHeld({ go: () => router.push(path) });
     };
     // The capture phase, so it runs before the router's own handler on the link.
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, [dirty]);
+  }, [dirty, router]);
 
   const leave = useCallback(() => {
     if (held === null) return;
-    const to = held;
+    const { go } = held;
     setHeld(null);
-    router.push(to);
-  }, [held, router]);
+    go();
+  }, [held]);
 
   const stay = useCallback(() => setHeld(null), []);
 
-  return { asking: held !== null, leave, stay };
+  const confirmBefore = useCallback(
+    (go: () => void) => {
+      if (dirty) setHeld({ go });
+      else go();
+    },
+    [dirty],
+  );
+
+  return { asking: held !== null, leave, stay, confirmBefore };
 }

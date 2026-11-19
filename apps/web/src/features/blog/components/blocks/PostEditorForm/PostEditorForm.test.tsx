@@ -199,11 +199,44 @@ describe("PostEditorForm: saving", () => {
     finish();
   });
 
-  it("cancels without saving", async () => {
+  it("cancels without saving, at once when nothing was typed", async () => {
     const s = setup();
 
     await s.user.click(screen.getByRole("button", { name: "Hủy" }));
 
+    expect(s.onCancel).toHaveBeenCalledTimes(1);
+    expect(s.onSave).not.toHaveBeenCalled();
+  });
+
+  it("asks before cancelling over unsaved work, and cancels only when the person leaves", async () => {
+    const s = setup();
+    await s.user.type(s.title(), "Half a post");
+
+    await s.user.click(screen.getByRole("button", { name: "Hủy" }));
+    const dialog = await screen.findByRole("dialog", {
+      name: "Rời trang này?",
+    });
+    expect(s.onCancel).not.toHaveBeenCalled();
+
+    await s.user.click(
+      within(dialog).getByRole("button", { name: "Ở lại soạn tiếp" }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Rời trang này?" }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(s.onCancel).not.toHaveBeenCalled();
+    expect(s.title()).toHaveValue("Half a post");
+
+    await s.user.click(screen.getByRole("button", { name: "Hủy" }));
+    await s.user.click(
+      within(
+        await screen.findByRole("dialog", { name: "Rời trang này?" }),
+      ).getByRole("button", {
+        name: "Rời đi",
+      }),
+    );
     expect(s.onCancel).toHaveBeenCalledTimes(1);
     expect(s.onSave).not.toHaveBeenCalled();
   });

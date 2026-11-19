@@ -448,7 +448,11 @@ export function PostEditorForm({
         )}
 
         <Group justify="flex-end" gap="sm">
-          <Button variant="default" onClick={onCancel} disabled={isSubmitting}>
+          <Button
+            variant="default"
+            onClick={() => guard.confirmBefore(onCancel)}
+            disabled={isSubmitting}
+          >
             {copy.cancel}
           </Button>
           <Button type="submit" loading={isSubmitting} disabled={uploading}>

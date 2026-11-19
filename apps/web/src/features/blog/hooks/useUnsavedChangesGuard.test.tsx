@@ -119,6 +119,33 @@ describe("with something unsaved", () => {
     expect(click(anchor, { button: 1 })).toBe(false);
   });
 
+  it("asks before a way out that is not a link, and runs it only if the person leaves", () => {
+    const { result } = renderHook(() => useUnsavedChangesGuard(true));
+    const cancel = vi.fn();
+
+    act(() => result.current.confirmBefore(cancel));
+    expect(result.current.asking).toBe(true);
+    expect(cancel).not.toHaveBeenCalled();
+
+    act(() => result.current.stay());
+    expect(cancel).not.toHaveBeenCalled();
+
+    act(() => result.current.confirmBefore(cancel));
+    act(() => result.current.leave());
+    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("runs a way out that is not a link at once when nothing is unsaved", () => {
+    const { result } = renderHook(() => useUnsavedChangesGuard(false));
+    const cancel = vi.fn();
+
+    act(() => result.current.confirmBefore(cancel));
+
+    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(result.current.asking).toBe(false);
+  });
+
   it("stops holding anything back once the changes are saved, and takes its listeners off when the page goes", () => {
     const { rerender, unmount } = renderHook(
       ({ dirty }) => useUnsavedChangesGuard(dirty),
