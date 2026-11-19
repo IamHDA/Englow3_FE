@@ -15,7 +15,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { OpenChatButton } from "@/features/chat";
+// Through the chat's own narrow entry, not its barrel: the barrel carries the
+// socket and the image upload into the wall and the friends page.
+import { OpenChatButton } from "@/features/chat/openChat";
 import { RelationshipStatus } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
