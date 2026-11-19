@@ -1,0 +1,13 @@
+mutation LikeBlogPost($id: ID!) {
+  likeBlogPost(id: $id) {
+    liked
+    likeCount
+  }
+}
+
+mutation UnlikeBlogPost($id: ID!) {
+  unlikeBlogPost(id: $id) {
+    liked
+    likeCount
+  }
+}

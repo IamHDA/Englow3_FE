@@ -1,0 +1,8 @@
+# The words a post may be tagged with. They change only with a release.
+query BlogTagCatalogue {
+  blogTagCatalogue {
+    skills
+    levels
+    certificates
+  }
+}

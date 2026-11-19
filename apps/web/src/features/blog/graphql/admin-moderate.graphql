@@ -1,0 +1,11 @@
+# Answers with the content as it is afterwards, which replaces what the page shows.
+mutation AdminModerateBlog(
+  $type: BlogTargetType!
+  $id: ID!
+  $action: BlogModerationAction!
+  $reason: String!
+) {
+  adminModerateBlog(type: $type, id: $id, action: $action, reason: $reason) {
+    ...BlogModerationTargetFields
+  }
+}

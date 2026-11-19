@@ -1,0 +1,11 @@
+query BlogComments($postId: ID!, $page: Int, $size: Int) {
+  blogComments(postId: $postId, page: $page, size: $size) {
+    page
+    size
+    totalItems
+    totalPages
+    items {
+      ...BlogCommentFields
+    }
+  }
+}

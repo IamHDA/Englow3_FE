@@ -1,4 +1,6 @@
-query UserWall($userId: ID!) {
+# `posts` is the owner's posts, a page at a time; null when the wall is unavailable
+# or the posts could not be read.
+query UserWall($userId: ID!, $postsPage: Int, $postsSize: Int) {
   userWall(userId: $userId) {
     userId
     available
@@ -13,6 +15,9 @@ query UserWall($userId: ID!) {
       bannerUrl
       staff
       joinedAt
+    }
+    posts(page: $postsPage, size: $postsSize) {
+      ...BlogPostPageFields
     }
   }
 }

@@ -1,0 +1,19 @@
+query AdminBlogActions($page: Int, $size: Int) {
+  adminBlogActions(page: $page, size: $size) {
+    page
+    size
+    totalItems
+    totalPages
+    items {
+      id
+      targetType
+      targetId
+      action
+      reason
+      createdAt
+      moderator {
+        ...BlogAuthorFields
+      }
+    }
+  }
+}

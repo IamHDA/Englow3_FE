@@ -1,0 +1,5 @@
+query BlogPost($id: ID!) {
+  blogPost(id: $id) {
+    ...BlogPostFields
+  }
+}

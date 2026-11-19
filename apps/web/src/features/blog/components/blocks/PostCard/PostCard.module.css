@@ -1,0 +1,70 @@
+.card {
+  position: relative;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.card:hover {
+  border-color: var(--mantine-color-brand-3);
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+/* A post a moderator acted on: still readable, visibly not like the others. */
+.card[data-dimmed] {
+  background: var(--mantine-color-ink-0);
+}
+
+.title {
+  font-size: 1.2rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* The whole card is the target: the link's own box is stretched over it. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--mantine-radius-lg);
+}
+
+.link:hover {
+  color: var(--mantine-color-brand-7);
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.link:focus-visible::after {
+  outline: 2px solid var(--mantine-color-brand-5);
+  outline-offset: 2px;
+}
+
+/* The author's name is its own link and has to stay clickable above the stretched one. */
+.card a:not(.link) {
+  position: relative;
+  z-index: 1;
+}
+
+.excerpt {
+  overflow-wrap: anywhere;
+}
+
+.icon {
+  flex: none;
+  color: var(--mantine-color-ink-5);
+}
+
+.icon[data-active] {
+  color: var(--mantine-color-warn-6);
+  fill: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

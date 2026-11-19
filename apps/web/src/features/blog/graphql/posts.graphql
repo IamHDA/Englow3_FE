@@ -1,0 +1,24 @@
+# The list at /blog. Every filter is optional; an unset one is not sent.
+query BlogPosts(
+  $q: String
+  $skill: String
+  $level: String
+  $certificate: String
+  $authorId: ID
+  $sort: BlogPostSort
+  $page: Int
+  $size: Int
+) {
+  blogPosts(
+    q: $q
+    skill: $skill
+    level: $level
+    certificate: $certificate
+    authorId: $authorId
+    sort: $sort
+    page: $page
+    size: $size
+  ) {
+    ...BlogPostPageFields
+  }
+}

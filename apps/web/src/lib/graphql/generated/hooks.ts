@@ -2051,6 +2051,573 @@ export type AssignAssessmentMutation = {
   };
 };
 
+export type AdminBlogActionsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type AdminBlogActionsQuery = {
+  adminBlogActions: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      targetType: Types.BlogTargetType;
+      targetId: string;
+      action: Types.BlogModerationAction;
+      reason: string;
+      createdAt: string;
+      moderator: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+  };
+};
+
+export type AdminModerateBlogMutationVariables = Exact<{
+  type: Types.BlogTargetType;
+  id: string | number;
+  action: Types.BlogModerationAction;
+  reason: string;
+}>;
+
+export type AdminModerateBlogMutation = {
+  adminModerateBlog: {
+    targetType: Types.BlogTargetType;
+    targetId: string;
+    targetStatus: Types.BlogTargetStatus;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    content: {
+      title: string | null;
+      body: string;
+      postId: string | null;
+      createdAt: string;
+      images: Array<{ id: string; url: string }>;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    } | null;
+    reports: Array<{
+      id: string;
+      reason: Types.BlogReportReason;
+      detail: string | null;
+      status: Types.BlogReportStatus;
+      resolutionNote: string | null;
+      createdAt: string;
+      resolvedAt: string | null;
+      reporter: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+    actions: Array<{
+      id: string;
+      action: Types.BlogModerationAction;
+      reason: string;
+      createdAt: string;
+      moderator: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+  };
+};
+
+export type AdminBlogQueueQueryVariables = Exact<{
+  type?: Types.BlogTargetType | null | undefined;
+  sort?: Types.BlogQueueSort | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type AdminBlogQueueQuery = {
+  adminBlogQueue: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      targetType: Types.BlogTargetType;
+      targetId: string;
+      title: string | null;
+      excerpt: string | null;
+      targetStatus: Types.BlogTargetStatus;
+      openReports: number;
+      reasons: Array<Types.BlogReportReason>;
+      firstReportedAt: string;
+      lastReportedAt: string;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+  };
+};
+
+export type BlogModerationTargetFieldsFragment = {
+  targetType: Types.BlogTargetType;
+  targetId: string;
+  targetStatus: Types.BlogTargetStatus;
+  author: {
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+  content: {
+    title: string | null;
+    body: string;
+    postId: string | null;
+    createdAt: string;
+    images: Array<{ id: string; url: string }>;
+    tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+  } | null;
+  reports: Array<{
+    id: string;
+    reason: Types.BlogReportReason;
+    detail: string | null;
+    status: Types.BlogReportStatus;
+    resolutionNote: string | null;
+    createdAt: string;
+    resolvedAt: string | null;
+    reporter: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+  }>;
+  actions: Array<{
+    id: string;
+    action: Types.BlogModerationAction;
+    reason: string;
+    createdAt: string;
+    moderator: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+  }>;
+};
+
+export type AdminBlogTargetQueryVariables = Exact<{
+  type: Types.BlogTargetType;
+  id: string | number;
+}>;
+
+export type AdminBlogTargetQuery = {
+  adminBlogTarget: {
+    targetType: Types.BlogTargetType;
+    targetId: string;
+    targetStatus: Types.BlogTargetStatus;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    content: {
+      title: string | null;
+      body: string;
+      postId: string | null;
+      createdAt: string;
+      images: Array<{ id: string; url: string }>;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    } | null;
+    reports: Array<{
+      id: string;
+      reason: Types.BlogReportReason;
+      detail: string | null;
+      status: Types.BlogReportStatus;
+      resolutionNote: string | null;
+      createdAt: string;
+      resolvedAt: string | null;
+      reporter: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+    actions: Array<{
+      id: string;
+      action: Types.BlogModerationAction;
+      reason: string;
+      createdAt: string;
+      moderator: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+  };
+};
+
+export type CreateBlogCommentMutationVariables = Exact<{
+  postId: string | number;
+  body: string;
+}>;
+
+export type CreateBlogCommentMutation = {
+  createBlogComment: {
+    id: string;
+    postId: string;
+    body: string;
+    status: Types.BlogCommentStatus;
+    canEdit: boolean;
+    createdAt: string;
+    editedAt: string | null;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+  };
+};
+
+export type UpdateBlogCommentMutationVariables = Exact<{
+  id: string | number;
+  body: string;
+}>;
+
+export type UpdateBlogCommentMutation = {
+  updateBlogComment: {
+    id: string;
+    postId: string;
+    body: string;
+    status: Types.BlogCommentStatus;
+    canEdit: boolean;
+    createdAt: string;
+    editedAt: string | null;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+  };
+};
+
+export type DeleteBlogCommentMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type DeleteBlogCommentMutation = { deleteBlogComment: boolean };
+
+export type BlogCommentsQueryVariables = Exact<{
+  postId: string | number;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type BlogCommentsQuery = {
+  blogComments: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      postId: string;
+      body: string;
+      status: Types.BlogCommentStatus;
+      canEdit: boolean;
+      createdAt: string;
+      editedAt: string | null;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+    }>;
+  };
+};
+
+export type BlogAuthorFieldsFragment = {
+  userId: string;
+  displayName: string;
+  avatarUrl: string | null;
+};
+
+export type BlogTagFieldsFragment = { kind: Types.BlogTagKind; value: string };
+
+export type BlogPostSummaryFieldsFragment = {
+  id: string;
+  title: string;
+  excerpt: string;
+  status: Types.BlogPostStatus;
+  likeCount: number;
+  commentCount: number;
+  likedByMe: boolean;
+  createdAt: string;
+  editedAt: string | null;
+  author: {
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+  tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+};
+
+export type BlogPostPageFieldsFragment = {
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+  items: Array<{
+    id: string;
+    title: string;
+    excerpt: string;
+    status: Types.BlogPostStatus;
+    likeCount: number;
+    commentCount: number;
+    likedByMe: boolean;
+    createdAt: string;
+    editedAt: string | null;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+  }>;
+};
+
+export type BlogPostFieldsFragment = {
+  id: string;
+  title: string;
+  body: string;
+  status: Types.BlogPostStatus;
+  version: number;
+  likeCount: number;
+  commentCount: number;
+  likedByMe: boolean;
+  canEdit: boolean;
+  canInteract: boolean;
+  createdAt: string;
+  editedAt: string | null;
+  moderationNote: string | null;
+  author: {
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+  tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+  images: Array<{ id: string; url: string }>;
+};
+
+export type BlogCommentFieldsFragment = {
+  id: string;
+  postId: string;
+  body: string;
+  status: Types.BlogCommentStatus;
+  canEdit: boolean;
+  createdAt: string;
+  editedAt: string | null;
+  author: {
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+  } | null;
+};
+
+export type StartBlogImageUploadMutationVariables = Exact<{
+  contentType: string;
+  contentLength: number;
+}>;
+
+export type StartBlogImageUploadMutation = {
+  startBlogImageUpload: {
+    imageId: string;
+    uploadUrl: string;
+    contentType: string;
+    expiresInSeconds: number;
+    reference: string;
+  };
+};
+
+export type LikeBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type LikeBlogPostMutation = {
+  likeBlogPost: { liked: boolean; likeCount: number };
+};
+
+export type UnlikeBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type UnlikeBlogPostMutation = {
+  unlikeBlogPost: { liked: boolean; likeCount: number };
+};
+
+export type CreateBlogPostMutationVariables = Exact<{
+  input: Types.SaveBlogPostInput;
+}>;
+
+export type CreateBlogPostMutation = {
+  createBlogPost: {
+    id: string;
+    title: string;
+    body: string;
+    status: Types.BlogPostStatus;
+    version: number;
+    likeCount: number;
+    commentCount: number;
+    likedByMe: boolean;
+    canEdit: boolean;
+    canInteract: boolean;
+    createdAt: string;
+    editedAt: string | null;
+    moderationNote: string | null;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    images: Array<{ id: string; url: string }>;
+  };
+};
+
+export type UpdateBlogPostMutationVariables = Exact<{
+  id: string | number;
+  input: Types.SaveBlogPostInput;
+  version: number;
+}>;
+
+export type UpdateBlogPostMutation = {
+  updateBlogPost: {
+    id: string;
+    title: string;
+    body: string;
+    status: Types.BlogPostStatus;
+    version: number;
+    likeCount: number;
+    commentCount: number;
+    likedByMe: boolean;
+    canEdit: boolean;
+    canInteract: boolean;
+    createdAt: string;
+    editedAt: string | null;
+    moderationNote: string | null;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    images: Array<{ id: string; url: string }>;
+  };
+};
+
+export type DeleteBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type DeleteBlogPostMutation = { deleteBlogPost: boolean };
+
+export type BlogPostQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type BlogPostQuery = {
+  blogPost: {
+    id: string;
+    title: string;
+    body: string;
+    status: Types.BlogPostStatus;
+    version: number;
+    likeCount: number;
+    commentCount: number;
+    likedByMe: boolean;
+    canEdit: boolean;
+    canInteract: boolean;
+    createdAt: string;
+    editedAt: string | null;
+    moderationNote: string | null;
+    author: {
+      userId: string;
+      displayName: string;
+      avatarUrl: string | null;
+    } | null;
+    tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    images: Array<{ id: string; url: string }>;
+  };
+};
+
+export type BlogPostsQueryVariables = Exact<{
+  q?: string | null | undefined;
+  skill?: string | null | undefined;
+  level?: string | null | undefined;
+  certificate?: string | null | undefined;
+  authorId?: string | number | null | undefined;
+  sort?: Types.BlogPostSort | null | undefined;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type BlogPostsQuery = {
+  blogPosts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      excerpt: string;
+      status: Types.BlogPostStatus;
+      likeCount: number;
+      commentCount: number;
+      likedByMe: boolean;
+      createdAt: string;
+      editedAt: string | null;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    }>;
+  };
+};
+
+export type ReportBlogPostMutationVariables = Exact<{
+  id: string | number;
+  reason: Types.BlogReportReason;
+  detail?: string | null | undefined;
+}>;
+
+export type ReportBlogPostMutation = {
+  reportBlogPost: { id: string; status: Types.BlogReportStatus };
+};
+
+export type ReportBlogCommentMutationVariables = Exact<{
+  id: string | number;
+  reason: Types.BlogReportReason;
+  detail?: string | null | undefined;
+}>;
+
+export type ReportBlogCommentMutation = {
+  reportBlogComment: { id: string; status: Types.BlogReportStatus };
+};
+
+export type BlogTagCatalogueQueryVariables = Exact<{ [key: string]: never }>;
+
+export type BlogTagCatalogueQuery = {
+  blogTagCatalogue: {
+    skills: Array<string>;
+    levels: Array<string>;
+    certificates: Array<string>;
+  };
+};
+
 export type ChatConversationQueryVariables = Exact<{
   id: string | number;
 }>;
@@ -3653,6 +4220,8 @@ export type SearchLearnersQuery = {
 
 export type UserWallQueryVariables = Exact<{
   userId: string | number;
+  postsPage?: number | null | undefined;
+  postsSize?: number | null | undefined;
 }>;
 
 export type UserWallQuery = {
@@ -3672,6 +4241,29 @@ export type UserWallQuery = {
       bannerUrl: string | null;
       staff: boolean;
       joinedAt: string;
+    } | null;
+    posts: {
+      page: number;
+      size: number;
+      totalItems: number;
+      totalPages: number;
+      items: Array<{
+        id: string;
+        title: string;
+        excerpt: string;
+        status: Types.BlogPostStatus;
+        likeCount: number;
+        commentCount: number;
+        likedByMe: boolean;
+        createdAt: string;
+        editedAt: string | null;
+        author: {
+          userId: string;
+          displayName: string;
+          avatarUrl: string | null;
+        } | null;
+        tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+      }>;
     } | null;
   };
 };
@@ -5370,6 +5962,142 @@ export const AssessmentAssignmentFieldsFragmentDoc = gql`
       createdAt
     }
   }
+`;
+export const BlogAuthorFieldsFragmentDoc = gql`
+  fragment BlogAuthorFields on BlogAuthor {
+    userId
+    displayName
+    avatarUrl
+  }
+`;
+export const BlogTagFieldsFragmentDoc = gql`
+  fragment BlogTagFields on BlogTag {
+    kind
+    value
+  }
+`;
+export const BlogModerationTargetFieldsFragmentDoc = gql`
+  fragment BlogModerationTargetFields on BlogModerationTarget {
+    targetType
+    targetId
+    targetStatus
+    author {
+      ...BlogAuthorFields
+    }
+    content {
+      title
+      body
+      postId
+      createdAt
+      images {
+        id
+        url
+      }
+      tags {
+        ...BlogTagFields
+      }
+    }
+    reports {
+      id
+      reason
+      detail
+      status
+      resolutionNote
+      createdAt
+      resolvedAt
+      reporter {
+        ...BlogAuthorFields
+      }
+    }
+    actions {
+      id
+      action
+      reason
+      createdAt
+      moderator {
+        ...BlogAuthorFields
+      }
+    }
+  }
+  ${BlogAuthorFieldsFragmentDoc}
+  ${BlogTagFieldsFragmentDoc}
+`;
+export const BlogPostSummaryFieldsFragmentDoc = gql`
+  fragment BlogPostSummaryFields on BlogPostSummary {
+    id
+    title
+    excerpt
+    status
+    likeCount
+    commentCount
+    likedByMe
+    createdAt
+    editedAt
+    author {
+      ...BlogAuthorFields
+    }
+    tags {
+      ...BlogTagFields
+    }
+  }
+  ${BlogAuthorFieldsFragmentDoc}
+  ${BlogTagFieldsFragmentDoc}
+`;
+export const BlogPostPageFieldsFragmentDoc = gql`
+  fragment BlogPostPageFields on BlogPostPage {
+    page
+    size
+    totalItems
+    totalPages
+    items {
+      ...BlogPostSummaryFields
+    }
+  }
+  ${BlogPostSummaryFieldsFragmentDoc}
+`;
+export const BlogPostFieldsFragmentDoc = gql`
+  fragment BlogPostFields on BlogPost {
+    id
+    title
+    body
+    status
+    version
+    likeCount
+    commentCount
+    likedByMe
+    canEdit
+    canInteract
+    createdAt
+    editedAt
+    moderationNote
+    author {
+      ...BlogAuthorFields
+    }
+    tags {
+      ...BlogTagFields
+    }
+    images {
+      id
+      url
+    }
+  }
+  ${BlogAuthorFieldsFragmentDoc}
+  ${BlogTagFieldsFragmentDoc}
+`;
+export const BlogCommentFieldsFragmentDoc = gql`
+  fragment BlogCommentFields on BlogComment {
+    id
+    postId
+    body
+    status
+    canEdit
+    createdAt
+    editedAt
+    author {
+      ...BlogAuthorFields
+    }
+  }
+  ${BlogAuthorFieldsFragmentDoc}
 `;
 export const ChatConversationFieldsFragmentDoc = gql`
   fragment ChatConversationFields on ChatConversation {
@@ -11192,6 +11920,1461 @@ export type AssignAssessmentMutationOptions =
     AssignAssessmentMutation,
     AssignAssessmentMutationVariables
   >;
+export const AdminBlogActionsDocument = gql`
+  query AdminBlogActions($page: Int, $size: Int) {
+    adminBlogActions(page: $page, size: $size) {
+      page
+      size
+      totalItems
+      totalPages
+      items {
+        id
+        targetType
+        targetId
+        action
+        reason
+        createdAt
+        moderator {
+          ...BlogAuthorFields
+        }
+      }
+    }
+  }
+  ${BlogAuthorFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminBlogActionsQuery__
+ *
+ * To run a query within a React component, call `useAdminBlogActionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminBlogActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminBlogActionsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useAdminBlogActionsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminBlogActionsQuery,
+    AdminBlogActionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminBlogActionsQuery,
+    AdminBlogActionsQueryVariables
+  >(AdminBlogActionsDocument, options);
+}
+export function useAdminBlogActionsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminBlogActionsQuery,
+    AdminBlogActionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminBlogActionsQuery,
+    AdminBlogActionsQueryVariables
+  >(AdminBlogActionsDocument, options);
+}
+export function useAdminBlogActionsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminBlogActionsQuery,
+    AdminBlogActionsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminBlogActionsQuery,
+  AdminBlogActionsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminBlogActionsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminBlogActionsQuery,
+        AdminBlogActionsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminBlogActionsQuery | undefined,
+  AdminBlogActionsQueryVariables
+>;
+export function useAdminBlogActionsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminBlogActionsQuery,
+        AdminBlogActionsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminBlogActionsQuery,
+    AdminBlogActionsQueryVariables
+  >(AdminBlogActionsDocument, options as any);
+}
+export type AdminBlogActionsQueryHookResult = ReturnType<
+  typeof useAdminBlogActionsQuery
+>;
+export type AdminBlogActionsLazyQueryHookResult = ReturnType<
+  typeof useAdminBlogActionsLazyQuery
+>;
+export type AdminBlogActionsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminBlogActionsSuspenseQuery
+>;
+export type AdminBlogActionsQueryResult = ApolloReactCommon.QueryResult<
+  AdminBlogActionsQuery,
+  AdminBlogActionsQueryVariables
+>;
+export const AdminModerateBlogDocument = gql`
+  mutation AdminModerateBlog(
+    $type: BlogTargetType!
+    $id: ID!
+    $action: BlogModerationAction!
+    $reason: String!
+  ) {
+    adminModerateBlog(type: $type, id: $id, action: $action, reason: $reason) {
+      ...BlogModerationTargetFields
+    }
+  }
+  ${BlogModerationTargetFieldsFragmentDoc}
+`;
+export type AdminModerateBlogMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    AdminModerateBlogMutation,
+    AdminModerateBlogMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useAdminModerateBlogMutation__
+ *
+ * To run a mutation, you first call `useAdminModerateBlogMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminModerateBlogMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminModerateBlogMutation, { data, loading, error }] = useAdminModerateBlogMutation({
+ *   variables: {
+ *      type: // value for 'type'
+ *      id: // value for 'id'
+ *      action: // value for 'action'
+ *      reason: // value for 'reason'
+ *   },
+ * });
+ */
+export function useAdminModerateBlogMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AdminModerateBlogMutation,
+    AdminModerateBlogMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    AdminModerateBlogMutation,
+    AdminModerateBlogMutationVariables
+  >(AdminModerateBlogDocument, options);
+}
+export type AdminModerateBlogMutationHookResult = ReturnType<
+  typeof useAdminModerateBlogMutation
+>;
+export type AdminModerateBlogMutationResult =
+  ApolloReactCommon.MutationResult<AdminModerateBlogMutation>;
+export type AdminModerateBlogMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    AdminModerateBlogMutation,
+    AdminModerateBlogMutationVariables
+  >;
+export const AdminBlogQueueDocument = gql`
+  query AdminBlogQueue(
+    $type: BlogTargetType
+    $sort: BlogQueueSort
+    $page: Int
+    $size: Int
+  ) {
+    adminBlogQueue(type: $type, sort: $sort, page: $page, size: $size) {
+      page
+      size
+      totalItems
+      totalPages
+      items {
+        targetType
+        targetId
+        title
+        excerpt
+        targetStatus
+        openReports
+        reasons
+        firstReportedAt
+        lastReportedAt
+        author {
+          ...BlogAuthorFields
+        }
+      }
+    }
+  }
+  ${BlogAuthorFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminBlogQueueQuery__
+ *
+ * To run a query within a React component, call `useAdminBlogQueueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminBlogQueueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminBlogQueueQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      sort: // value for 'sort'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useAdminBlogQueueQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    AdminBlogQueueQuery,
+    AdminBlogQueueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminBlogQueueQuery,
+    AdminBlogQueueQueryVariables
+  >(AdminBlogQueueDocument, options);
+}
+export function useAdminBlogQueueLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminBlogQueueQuery,
+    AdminBlogQueueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminBlogQueueQuery,
+    AdminBlogQueueQueryVariables
+  >(AdminBlogQueueDocument, options);
+}
+export function useAdminBlogQueueSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminBlogQueueQuery,
+    AdminBlogQueueQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminBlogQueueQuery,
+  AdminBlogQueueQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminBlogQueueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminBlogQueueQuery,
+        AdminBlogQueueQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminBlogQueueQuery | undefined,
+  AdminBlogQueueQueryVariables
+>;
+export function useAdminBlogQueueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminBlogQueueQuery,
+        AdminBlogQueueQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminBlogQueueQuery,
+    AdminBlogQueueQueryVariables
+  >(AdminBlogQueueDocument, options as any);
+}
+export type AdminBlogQueueQueryHookResult = ReturnType<
+  typeof useAdminBlogQueueQuery
+>;
+export type AdminBlogQueueLazyQueryHookResult = ReturnType<
+  typeof useAdminBlogQueueLazyQuery
+>;
+export type AdminBlogQueueSuspenseQueryHookResult = ReturnType<
+  typeof useAdminBlogQueueSuspenseQuery
+>;
+export type AdminBlogQueueQueryResult = ApolloReactCommon.QueryResult<
+  AdminBlogQueueQuery,
+  AdminBlogQueueQueryVariables
+>;
+export const AdminBlogTargetDocument = gql`
+  query AdminBlogTarget($type: BlogTargetType!, $id: ID!) {
+    adminBlogTarget(type: $type, id: $id) {
+      ...BlogModerationTargetFields
+    }
+  }
+  ${BlogModerationTargetFieldsFragmentDoc}
+`;
+
+/**
+ * __useAdminBlogTargetQuery__
+ *
+ * To run a query within a React component, call `useAdminBlogTargetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminBlogTargetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminBlogTargetQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAdminBlogTargetQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AdminBlogTargetQuery,
+    AdminBlogTargetQueryVariables
+  > &
+    (
+      | { variables: AdminBlogTargetQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    AdminBlogTargetQuery,
+    AdminBlogTargetQueryVariables
+  >(AdminBlogTargetDocument, options);
+}
+export function useAdminBlogTargetLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AdminBlogTargetQuery,
+    AdminBlogTargetQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AdminBlogTargetQuery,
+    AdminBlogTargetQueryVariables
+  >(AdminBlogTargetDocument, options);
+}
+export function useAdminBlogTargetSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    AdminBlogTargetQuery,
+    AdminBlogTargetQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminBlogTargetQuery,
+  AdminBlogTargetQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useAdminBlogTargetSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminBlogTargetQuery,
+        AdminBlogTargetQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  AdminBlogTargetQuery | undefined,
+  AdminBlogTargetQueryVariables
+>;
+export function useAdminBlogTargetSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminBlogTargetQuery,
+        AdminBlogTargetQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminBlogTargetQuery,
+    AdminBlogTargetQueryVariables
+  >(AdminBlogTargetDocument, options as any);
+}
+export type AdminBlogTargetQueryHookResult = ReturnType<
+  typeof useAdminBlogTargetQuery
+>;
+export type AdminBlogTargetLazyQueryHookResult = ReturnType<
+  typeof useAdminBlogTargetLazyQuery
+>;
+export type AdminBlogTargetSuspenseQueryHookResult = ReturnType<
+  typeof useAdminBlogTargetSuspenseQuery
+>;
+export type AdminBlogTargetQueryResult = ApolloReactCommon.QueryResult<
+  AdminBlogTargetQuery,
+  AdminBlogTargetQueryVariables
+>;
+export const CreateBlogCommentDocument = gql`
+  mutation CreateBlogComment($postId: ID!, $body: String!) {
+    createBlogComment(postId: $postId, body: $body) {
+      ...BlogCommentFields
+    }
+  }
+  ${BlogCommentFieldsFragmentDoc}
+`;
+export type CreateBlogCommentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CreateBlogCommentMutation,
+    CreateBlogCommentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useCreateBlogCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateBlogCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBlogCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBlogCommentMutation, { data, loading, error }] = useCreateBlogCommentMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      body: // value for 'body'
+ *   },
+ * });
+ */
+export function useCreateBlogCommentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateBlogCommentMutation,
+    CreateBlogCommentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CreateBlogCommentMutation,
+    CreateBlogCommentMutationVariables
+  >(CreateBlogCommentDocument, options);
+}
+export type CreateBlogCommentMutationHookResult = ReturnType<
+  typeof useCreateBlogCommentMutation
+>;
+export type CreateBlogCommentMutationResult =
+  ApolloReactCommon.MutationResult<CreateBlogCommentMutation>;
+export type CreateBlogCommentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CreateBlogCommentMutation,
+    CreateBlogCommentMutationVariables
+  >;
+export const UpdateBlogCommentDocument = gql`
+  mutation UpdateBlogComment($id: ID!, $body: String!) {
+    updateBlogComment(id: $id, body: $body) {
+      ...BlogCommentFields
+    }
+  }
+  ${BlogCommentFieldsFragmentDoc}
+`;
+export type UpdateBlogCommentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UpdateBlogCommentMutation,
+    UpdateBlogCommentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUpdateBlogCommentMutation__
+ *
+ * To run a mutation, you first call `useUpdateBlogCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBlogCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBlogCommentMutation, { data, loading, error }] = useUpdateBlogCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      body: // value for 'body'
+ *   },
+ * });
+ */
+export function useUpdateBlogCommentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateBlogCommentMutation,
+    UpdateBlogCommentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UpdateBlogCommentMutation,
+    UpdateBlogCommentMutationVariables
+  >(UpdateBlogCommentDocument, options);
+}
+export type UpdateBlogCommentMutationHookResult = ReturnType<
+  typeof useUpdateBlogCommentMutation
+>;
+export type UpdateBlogCommentMutationResult =
+  ApolloReactCommon.MutationResult<UpdateBlogCommentMutation>;
+export type UpdateBlogCommentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UpdateBlogCommentMutation,
+    UpdateBlogCommentMutationVariables
+  >;
+export const DeleteBlogCommentDocument = gql`
+  mutation DeleteBlogComment($id: ID!) {
+    deleteBlogComment(id: $id)
+  }
+`;
+export type DeleteBlogCommentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    DeleteBlogCommentMutation,
+    DeleteBlogCommentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useDeleteBlogCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteBlogCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteBlogCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteBlogCommentMutation, { data, loading, error }] = useDeleteBlogCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteBlogCommentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteBlogCommentMutation,
+    DeleteBlogCommentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    DeleteBlogCommentMutation,
+    DeleteBlogCommentMutationVariables
+  >(DeleteBlogCommentDocument, options);
+}
+export type DeleteBlogCommentMutationHookResult = ReturnType<
+  typeof useDeleteBlogCommentMutation
+>;
+export type DeleteBlogCommentMutationResult =
+  ApolloReactCommon.MutationResult<DeleteBlogCommentMutation>;
+export type DeleteBlogCommentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    DeleteBlogCommentMutation,
+    DeleteBlogCommentMutationVariables
+  >;
+export const BlogCommentsDocument = gql`
+  query BlogComments($postId: ID!, $page: Int, $size: Int) {
+    blogComments(postId: $postId, page: $page, size: $size) {
+      page
+      size
+      totalItems
+      totalPages
+      items {
+        ...BlogCommentFields
+      }
+    }
+  }
+  ${BlogCommentFieldsFragmentDoc}
+`;
+
+/**
+ * __useBlogCommentsQuery__
+ *
+ * To run a query within a React component, call `useBlogCommentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogCommentsQuery({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useBlogCommentsQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    BlogCommentsQuery,
+    BlogCommentsQueryVariables
+  > &
+    (
+      | { variables: BlogCommentsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    BlogCommentsQuery,
+    BlogCommentsQueryVariables
+  >(BlogCommentsDocument, options);
+}
+export function useBlogCommentsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogCommentsQuery,
+    BlogCommentsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    BlogCommentsQuery,
+    BlogCommentsQueryVariables
+  >(BlogCommentsDocument, options);
+}
+export function useBlogCommentsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogCommentsQuery,
+    BlogCommentsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogCommentsQuery,
+  BlogCommentsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogCommentsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogCommentsQuery,
+        BlogCommentsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogCommentsQuery | undefined,
+  BlogCommentsQueryVariables
+>;
+export function useBlogCommentsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogCommentsQuery,
+        BlogCommentsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogCommentsQuery,
+    BlogCommentsQueryVariables
+  >(BlogCommentsDocument, options as any);
+}
+export type BlogCommentsQueryHookResult = ReturnType<
+  typeof useBlogCommentsQuery
+>;
+export type BlogCommentsLazyQueryHookResult = ReturnType<
+  typeof useBlogCommentsLazyQuery
+>;
+export type BlogCommentsSuspenseQueryHookResult = ReturnType<
+  typeof useBlogCommentsSuspenseQuery
+>;
+export type BlogCommentsQueryResult = ApolloReactCommon.QueryResult<
+  BlogCommentsQuery,
+  BlogCommentsQueryVariables
+>;
+export const StartBlogImageUploadDocument = gql`
+  mutation StartBlogImageUpload($contentType: String!, $contentLength: Int!) {
+    startBlogImageUpload(
+      contentType: $contentType
+      contentLength: $contentLength
+    ) {
+      imageId
+      uploadUrl
+      contentType
+      expiresInSeconds
+      reference
+    }
+  }
+`;
+export type StartBlogImageUploadMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    StartBlogImageUploadMutation,
+    StartBlogImageUploadMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useStartBlogImageUploadMutation__
+ *
+ * To run a mutation, you first call `useStartBlogImageUploadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartBlogImageUploadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startBlogImageUploadMutation, { data, loading, error }] = useStartBlogImageUploadMutation({
+ *   variables: {
+ *      contentType: // value for 'contentType'
+ *      contentLength: // value for 'contentLength'
+ *   },
+ * });
+ */
+export function useStartBlogImageUploadMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    StartBlogImageUploadMutation,
+    StartBlogImageUploadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    StartBlogImageUploadMutation,
+    StartBlogImageUploadMutationVariables
+  >(StartBlogImageUploadDocument, options);
+}
+export type StartBlogImageUploadMutationHookResult = ReturnType<
+  typeof useStartBlogImageUploadMutation
+>;
+export type StartBlogImageUploadMutationResult =
+  ApolloReactCommon.MutationResult<StartBlogImageUploadMutation>;
+export type StartBlogImageUploadMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    StartBlogImageUploadMutation,
+    StartBlogImageUploadMutationVariables
+  >;
+export const LikeBlogPostDocument = gql`
+  mutation LikeBlogPost($id: ID!) {
+    likeBlogPost(id: $id) {
+      liked
+      likeCount
+    }
+  }
+`;
+export type LikeBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    LikeBlogPostMutation,
+    LikeBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useLikeBlogPostMutation__
+ *
+ * To run a mutation, you first call `useLikeBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeBlogPostMutation, { data, loading, error }] = useLikeBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikeBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    LikeBlogPostMutation,
+    LikeBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    LikeBlogPostMutation,
+    LikeBlogPostMutationVariables
+  >(LikeBlogPostDocument, options);
+}
+export type LikeBlogPostMutationHookResult = ReturnType<
+  typeof useLikeBlogPostMutation
+>;
+export type LikeBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<LikeBlogPostMutation>;
+export type LikeBlogPostMutationOptions = ApolloReactCommon.MutationHookOptions<
+  LikeBlogPostMutation,
+  LikeBlogPostMutationVariables
+>;
+export const UnlikeBlogPostDocument = gql`
+  mutation UnlikeBlogPost($id: ID!) {
+    unlikeBlogPost(id: $id) {
+      liked
+      likeCount
+    }
+  }
+`;
+export type UnlikeBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UnlikeBlogPostMutation,
+    UnlikeBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUnlikeBlogPostMutation__
+ *
+ * To run a mutation, you first call `useUnlikeBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnlikeBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unlikeBlogPostMutation, { data, loading, error }] = useUnlikeBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUnlikeBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UnlikeBlogPostMutation,
+    UnlikeBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UnlikeBlogPostMutation,
+    UnlikeBlogPostMutationVariables
+  >(UnlikeBlogPostDocument, options);
+}
+export type UnlikeBlogPostMutationHookResult = ReturnType<
+  typeof useUnlikeBlogPostMutation
+>;
+export type UnlikeBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<UnlikeBlogPostMutation>;
+export type UnlikeBlogPostMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UnlikeBlogPostMutation,
+    UnlikeBlogPostMutationVariables
+  >;
+export const CreateBlogPostDocument = gql`
+  mutation CreateBlogPost($input: SaveBlogPostInput!) {
+    createBlogPost(input: $input) {
+      ...BlogPostFields
+    }
+  }
+  ${BlogPostFieldsFragmentDoc}
+`;
+export type CreateBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    CreateBlogPostMutation,
+    CreateBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useCreateBlogPostMutation__
+ *
+ * To run a mutation, you first call `useCreateBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBlogPostMutation, { data, loading, error }] = useCreateBlogPostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateBlogPostMutation,
+    CreateBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    CreateBlogPostMutation,
+    CreateBlogPostMutationVariables
+  >(CreateBlogPostDocument, options);
+}
+export type CreateBlogPostMutationHookResult = ReturnType<
+  typeof useCreateBlogPostMutation
+>;
+export type CreateBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<CreateBlogPostMutation>;
+export type CreateBlogPostMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    CreateBlogPostMutation,
+    CreateBlogPostMutationVariables
+  >;
+export const UpdateBlogPostDocument = gql`
+  mutation UpdateBlogPost(
+    $id: ID!
+    $input: SaveBlogPostInput!
+    $version: Float!
+  ) {
+    updateBlogPost(id: $id, input: $input, version: $version) {
+      ...BlogPostFields
+    }
+  }
+  ${BlogPostFieldsFragmentDoc}
+`;
+export type UpdateBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UpdateBlogPostMutation,
+    UpdateBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUpdateBlogPostMutation__
+ *
+ * To run a mutation, you first call `useUpdateBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBlogPostMutation, { data, loading, error }] = useUpdateBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useUpdateBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateBlogPostMutation,
+    UpdateBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UpdateBlogPostMutation,
+    UpdateBlogPostMutationVariables
+  >(UpdateBlogPostDocument, options);
+}
+export type UpdateBlogPostMutationHookResult = ReturnType<
+  typeof useUpdateBlogPostMutation
+>;
+export type UpdateBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<UpdateBlogPostMutation>;
+export type UpdateBlogPostMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UpdateBlogPostMutation,
+    UpdateBlogPostMutationVariables
+  >;
+export const DeleteBlogPostDocument = gql`
+  mutation DeleteBlogPost($id: ID!) {
+    deleteBlogPost(id: $id)
+  }
+`;
+export type DeleteBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    DeleteBlogPostMutation,
+    DeleteBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useDeleteBlogPostMutation__
+ *
+ * To run a mutation, you first call `useDeleteBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteBlogPostMutation, { data, loading, error }] = useDeleteBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteBlogPostMutation,
+    DeleteBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    DeleteBlogPostMutation,
+    DeleteBlogPostMutationVariables
+  >(DeleteBlogPostDocument, options);
+}
+export type DeleteBlogPostMutationHookResult = ReturnType<
+  typeof useDeleteBlogPostMutation
+>;
+export type DeleteBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<DeleteBlogPostMutation>;
+export type DeleteBlogPostMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    DeleteBlogPostMutation,
+    DeleteBlogPostMutationVariables
+  >;
+export const BlogPostDocument = gql`
+  query BlogPost($id: ID!) {
+    blogPost(id: $id) {
+      ...BlogPostFields
+    }
+  }
+  ${BlogPostFieldsFragmentDoc}
+`;
+
+/**
+ * __useBlogPostQuery__
+ *
+ * To run a query within a React component, call `useBlogPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogPostQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useBlogPostQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    BlogPostQuery,
+    BlogPostQueryVariables
+  > &
+    ({ variables: BlogPostQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<BlogPostQuery, BlogPostQueryVariables>(
+    BlogPostDocument,
+    options,
+  );
+}
+export function useBlogPostLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogPostQuery,
+    BlogPostQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<BlogPostQuery, BlogPostQueryVariables>(
+    BlogPostDocument,
+    options,
+  );
+}
+export function useBlogPostSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogPostQuery,
+    BlogPostQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogPostQuery,
+  BlogPostQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogPostSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogPostQuery,
+        BlogPostQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogPostQuery | undefined,
+  BlogPostQueryVariables
+>;
+export function useBlogPostSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogPostQuery,
+        BlogPostQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogPostQuery,
+    BlogPostQueryVariables
+  >(BlogPostDocument, options as any);
+}
+export type BlogPostQueryHookResult = ReturnType<typeof useBlogPostQuery>;
+export type BlogPostLazyQueryHookResult = ReturnType<
+  typeof useBlogPostLazyQuery
+>;
+export type BlogPostSuspenseQueryHookResult = ReturnType<
+  typeof useBlogPostSuspenseQuery
+>;
+export type BlogPostQueryResult = ApolloReactCommon.QueryResult<
+  BlogPostQuery,
+  BlogPostQueryVariables
+>;
+export const BlogPostsDocument = gql`
+  query BlogPosts(
+    $q: String
+    $skill: String
+    $level: String
+    $certificate: String
+    $authorId: ID
+    $sort: BlogPostSort
+    $page: Int
+    $size: Int
+  ) {
+    blogPosts(
+      q: $q
+      skill: $skill
+      level: $level
+      certificate: $certificate
+      authorId: $authorId
+      sort: $sort
+      page: $page
+      size: $size
+    ) {
+      ...BlogPostPageFields
+    }
+  }
+  ${BlogPostPageFieldsFragmentDoc}
+`;
+
+/**
+ * __useBlogPostsQuery__
+ *
+ * To run a query within a React component, call `useBlogPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogPostsQuery({
+ *   variables: {
+ *      q: // value for 'q'
+ *      skill: // value for 'skill'
+ *      level: // value for 'level'
+ *      certificate: // value for 'certificate'
+ *      authorId: // value for 'authorId'
+ *      sort: // value for 'sort'
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useBlogPostsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    BlogPostsQuery,
+    BlogPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<BlogPostsQuery, BlogPostsQueryVariables>(
+    BlogPostsDocument,
+    options,
+  );
+}
+export function useBlogPostsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogPostsQuery,
+    BlogPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<BlogPostsQuery, BlogPostsQueryVariables>(
+    BlogPostsDocument,
+    options,
+  );
+}
+export function useBlogPostsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogPostsQuery,
+    BlogPostsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogPostsQuery,
+  BlogPostsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogPostsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogPostsQuery,
+        BlogPostsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogPostsQuery | undefined,
+  BlogPostsQueryVariables
+>;
+export function useBlogPostsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogPostsQuery,
+        BlogPostsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogPostsQuery,
+    BlogPostsQueryVariables
+  >(BlogPostsDocument, options as any);
+}
+export type BlogPostsQueryHookResult = ReturnType<typeof useBlogPostsQuery>;
+export type BlogPostsLazyQueryHookResult = ReturnType<
+  typeof useBlogPostsLazyQuery
+>;
+export type BlogPostsSuspenseQueryHookResult = ReturnType<
+  typeof useBlogPostsSuspenseQuery
+>;
+export type BlogPostsQueryResult = ApolloReactCommon.QueryResult<
+  BlogPostsQuery,
+  BlogPostsQueryVariables
+>;
+export const ReportBlogPostDocument = gql`
+  mutation ReportBlogPost(
+    $id: ID!
+    $reason: BlogReportReason!
+    $detail: String
+  ) {
+    reportBlogPost(id: $id, reason: $reason, detail: $detail) {
+      id
+      status
+    }
+  }
+`;
+export type ReportBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ReportBlogPostMutation,
+    ReportBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useReportBlogPostMutation__
+ *
+ * To run a mutation, you first call `useReportBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReportBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reportBlogPostMutation, { data, loading, error }] = useReportBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      reason: // value for 'reason'
+ *      detail: // value for 'detail'
+ *   },
+ * });
+ */
+export function useReportBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ReportBlogPostMutation,
+    ReportBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ReportBlogPostMutation,
+    ReportBlogPostMutationVariables
+  >(ReportBlogPostDocument, options);
+}
+export type ReportBlogPostMutationHookResult = ReturnType<
+  typeof useReportBlogPostMutation
+>;
+export type ReportBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<ReportBlogPostMutation>;
+export type ReportBlogPostMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ReportBlogPostMutation,
+    ReportBlogPostMutationVariables
+  >;
+export const ReportBlogCommentDocument = gql`
+  mutation ReportBlogComment(
+    $id: ID!
+    $reason: BlogReportReason!
+    $detail: String
+  ) {
+    reportBlogComment(id: $id, reason: $reason, detail: $detail) {
+      id
+      status
+    }
+  }
+`;
+export type ReportBlogCommentMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ReportBlogCommentMutation,
+    ReportBlogCommentMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useReportBlogCommentMutation__
+ *
+ * To run a mutation, you first call `useReportBlogCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReportBlogCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reportBlogCommentMutation, { data, loading, error }] = useReportBlogCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      reason: // value for 'reason'
+ *      detail: // value for 'detail'
+ *   },
+ * });
+ */
+export function useReportBlogCommentMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ReportBlogCommentMutation,
+    ReportBlogCommentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ReportBlogCommentMutation,
+    ReportBlogCommentMutationVariables
+  >(ReportBlogCommentDocument, options);
+}
+export type ReportBlogCommentMutationHookResult = ReturnType<
+  typeof useReportBlogCommentMutation
+>;
+export type ReportBlogCommentMutationResult =
+  ApolloReactCommon.MutationResult<ReportBlogCommentMutation>;
+export type ReportBlogCommentMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ReportBlogCommentMutation,
+    ReportBlogCommentMutationVariables
+  >;
+export const BlogTagCatalogueDocument = gql`
+  query BlogTagCatalogue {
+    blogTagCatalogue {
+      skills
+      levels
+      certificates
+    }
+  }
+`;
+
+/**
+ * __useBlogTagCatalogueQuery__
+ *
+ * To run a query within a React component, call `useBlogTagCatalogueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogTagCatalogueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogTagCatalogueQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBlogTagCatalogueQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    BlogTagCatalogueQuery,
+    BlogTagCatalogueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    BlogTagCatalogueQuery,
+    BlogTagCatalogueQueryVariables
+  >(BlogTagCatalogueDocument, options);
+}
+export function useBlogTagCatalogueLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogTagCatalogueQuery,
+    BlogTagCatalogueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    BlogTagCatalogueQuery,
+    BlogTagCatalogueQueryVariables
+  >(BlogTagCatalogueDocument, options);
+}
+export function useBlogTagCatalogueSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogTagCatalogueQuery,
+    BlogTagCatalogueQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogTagCatalogueQuery,
+  BlogTagCatalogueQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogTagCatalogueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogTagCatalogueQuery,
+        BlogTagCatalogueQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogTagCatalogueQuery | undefined,
+  BlogTagCatalogueQueryVariables
+>;
+export function useBlogTagCatalogueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogTagCatalogueQuery,
+        BlogTagCatalogueQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogTagCatalogueQuery,
+    BlogTagCatalogueQueryVariables
+  >(BlogTagCatalogueDocument, options as any);
+}
+export type BlogTagCatalogueQueryHookResult = ReturnType<
+  typeof useBlogTagCatalogueQuery
+>;
+export type BlogTagCatalogueLazyQueryHookResult = ReturnType<
+  typeof useBlogTagCatalogueLazyQuery
+>;
+export type BlogTagCatalogueSuspenseQueryHookResult = ReturnType<
+  typeof useBlogTagCatalogueSuspenseQuery
+>;
+export type BlogTagCatalogueQueryResult = ApolloReactCommon.QueryResult<
+  BlogTagCatalogueQuery,
+  BlogTagCatalogueQueryVariables
+>;
 export const ChatConversationDocument = gql`
   query ChatConversation($id: ID!) {
     chatConversation(id: $id) {
@@ -16423,7 +18606,7 @@ export type SearchLearnersQueryResult = ApolloReactCommon.QueryResult<
   SearchLearnersQueryVariables
 >;
 export const UserWallDocument = gql`
-  query UserWall($userId: ID!) {
+  query UserWall($userId: ID!, $postsPage: Int, $postsSize: Int) {
     userWall(userId: $userId) {
       userId
       available
@@ -16439,9 +18622,13 @@ export const UserWallDocument = gql`
         staff
         joinedAt
       }
+      posts(page: $postsPage, size: $postsSize) {
+        ...BlogPostPageFields
+      }
     }
   }
   ${RelationshipFieldsFragmentDoc}
+  ${BlogPostPageFieldsFragmentDoc}
 `;
 
 /**
@@ -16457,6 +18644,8 @@ export const UserWallDocument = gql`
  * const { data, loading, error } = useUserWallQuery({
  *   variables: {
  *      userId: // value for 'userId'
+ *      postsPage: // value for 'postsPage'
+ *      postsSize: // value for 'postsSize'
  *   },
  * });
  */

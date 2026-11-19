@@ -1,0 +1,79 @@
+fragment BlogAuthorFields on BlogAuthor {
+  userId
+  displayName
+  avatarUrl
+}
+
+fragment BlogTagFields on BlogTag {
+  kind
+  value
+}
+
+# One post in a list: what a card shows. `author` is null for an erased account.
+fragment BlogPostSummaryFields on BlogPostSummary {
+  id
+  title
+  excerpt
+  status
+  likeCount
+  commentCount
+  likedByMe
+  createdAt
+  editedAt
+  author {
+    ...BlogAuthorFields
+  }
+  tags {
+    ...BlogTagFields
+  }
+}
+
+fragment BlogPostPageFields on BlogPostPage {
+  page
+  size
+  totalItems
+  totalPages
+  items {
+    ...BlogPostSummaryFields
+  }
+}
+
+# One post in full, as the reader and the editor both need it.
+fragment BlogPostFields on BlogPost {
+  id
+  title
+  body
+  status
+  version
+  likeCount
+  commentCount
+  likedByMe
+  canEdit
+  canInteract
+  createdAt
+  editedAt
+  moderationNote
+  author {
+    ...BlogAuthorFields
+  }
+  tags {
+    ...BlogTagFields
+  }
+  images {
+    id
+    url
+  }
+}
+
+fragment BlogCommentFields on BlogComment {
+  id
+  postId
+  body
+  status
+  canEdit
+  createdAt
+  editedAt
+  author {
+    ...BlogAuthorFields
+  }
+}

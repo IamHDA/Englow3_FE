@@ -1,0 +1,15 @@
+mutation CreateBlogComment($postId: ID!, $body: String!) {
+  createBlogComment(postId: $postId, body: $body) {
+    ...BlogCommentFields
+  }
+}
+
+mutation UpdateBlogComment($id: ID!, $body: String!) {
+  updateBlogComment(id: $id, body: $body) {
+    ...BlogCommentFields
+  }
+}
+
+mutation DeleteBlogComment($id: ID!) {
+  deleteBlogComment(id: $id)
+}

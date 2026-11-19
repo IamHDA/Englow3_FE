@@ -1,8 +1,10 @@
+import { blogEn, blogVi, type BlogTranslations } from "./blog";
 import { chatEn, chatVi, type ChatTranslations } from "./chat";
 import { friendsEn, friendsVi, type FriendsTranslations } from "./friends";
 
 export type Language = "vi" | "en";
 
+export type { BlogBackendCode, BlogTranslations } from "./blog";
 export type { ChatBackendCode, ChatTranslations } from "./chat";
 export type { FriendsBackendCode, FriendsTranslations } from "./friends";
 
@@ -34,6 +36,7 @@ export interface NavTranslations {
   account: string;
   completeOnboarding: string;
   friends: string;
+  blog: string;
 }
 
 export interface CommonTranslations {
@@ -831,6 +834,7 @@ export interface AppTranslations {
   auth: AuthTranslations;
   friends: FriendsTranslations;
   chat: ChatTranslations;
+  blog: BlogTranslations;
 }
 
 export const translations: Record<Language, AppTranslations> = {
@@ -864,6 +868,7 @@ export const translations: Record<Language, AppTranslations> = {
       account: "Tài khoản",
       completeOnboarding: "Hoàn thiện thông tin",
       friends: "Bạn bè",
+      blog: "Blog",
     },
     common: {
       save: "Lưu thay đổi",
@@ -1730,6 +1735,7 @@ export const translations: Record<Language, AppTranslations> = {
     },
     friends: friendsVi,
     chat: chatVi,
+    blog: blogVi,
   },
   en: {
     nav: {
@@ -1760,6 +1766,7 @@ export const translations: Record<Language, AppTranslations> = {
       account: "Account",
       completeOnboarding: "Complete Profile",
       friends: "Friends",
+      blog: "Blog",
     },
     common: {
       save: "Save Changes",
@@ -2636,5 +2643,6 @@ export const translations: Record<Language, AppTranslations> = {
     },
     friends: friendsEn,
     chat: chatEn,
+    blog: blogEn,
   },
 };

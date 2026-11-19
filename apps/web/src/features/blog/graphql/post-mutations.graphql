@@ -1,0 +1,20 @@
+mutation CreateBlogPost($input: SaveBlogPostInput!) {
+  createBlogPost(input: $input) {
+    ...BlogPostFields
+  }
+}
+
+# `version` is the one the post had when the editor opened it.
+mutation UpdateBlogPost(
+  $id: ID!
+  $input: SaveBlogPostInput!
+  $version: Float!
+) {
+  updateBlogPost(id: $id, input: $input, version: $version) {
+    ...BlogPostFields
+  }
+}
+
+mutation DeleteBlogPost($id: ID!) {
+  deleteBlogPost(id: $id)
+}

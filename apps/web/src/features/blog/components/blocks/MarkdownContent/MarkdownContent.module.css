@@ -1,0 +1,171 @@
+/*
+ * An article, not a chat bubble: a comfortable measure, a generous line, and a
+ * scale of headings that reads as a hierarchy. Everything is scoped under
+ * .content, because the elements inside are whatever Markdown produced.
+ */
+.content {
+  min-width: 0;
+  max-width: 68ch;
+  color: var(--mantine-color-ink-8);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child {
+  margin-bottom: 0;
+}
+
+.content :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 1.8em 0.5em;
+  color: var(--mantine-color-navy-9);
+  font-family: var(--font-heading), var(--mantine-font-family);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.content h1 {
+  font-size: 1.6rem;
+}
+
+.content h2 {
+  font-size: 1.35rem;
+}
+
+.content h3 {
+  font-size: 1.15rem;
+}
+
+.content :is(h4, h5, h6) {
+  font-size: 1rem;
+}
+
+.content p {
+  margin-block: 0 1.1em;
+}
+
+.content a {
+  color: var(--mantine-color-brand-7);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.content a:hover {
+  color: var(--mantine-color-brand-9);
+}
+
+.content a:focus-visible {
+  outline: 2px solid var(--mantine-color-brand-5);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.content :is(ul, ol) {
+  margin-block: 0 1.1em;
+  padding-inline-start: 1.5em;
+}
+
+.content li + li {
+  margin-top: 0.3em;
+}
+
+.content li > :is(ul, ol) {
+  margin-block: 0.3em 0;
+}
+
+/* A task list from GFM: the box sits where the bullet would. */
+.content li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-inline-start: -1.25em;
+}
+
+.content blockquote {
+  margin: 1.4em 0;
+  padding: 0.2em 1.1em;
+  border-inline-start: 3px solid var(--mantine-color-brand-4);
+  background: var(--mantine-color-brand-0);
+  border-radius: 0 var(--mantine-radius-sm) var(--mantine-radius-sm) 0;
+  color: var(--mantine-color-ink-7);
+}
+
+.content blockquote > :last-child {
+  margin-bottom: 0.6em;
+}
+
+.content hr {
+  margin-block: 2em;
+  border: 0;
+  border-top: 1px solid var(--mantine-color-ink-2);
+}
+
+.content code {
+  padding: 0.12em 0.4em;
+  border-radius: var(--mantine-radius-xs);
+  background: var(--mantine-color-ink-1);
+  color: var(--mantine-color-navy-9);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 0.9em;
+}
+
+.content pre {
+  margin-block: 1.2em;
+  padding: 1em 1.1em;
+  overflow-x: auto;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-ink-9);
+  color: var(--mantine-color-ink-1);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.content pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+.image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-block: 1.4em;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-ink-2);
+}
+
+.table {
+  margin-block: 1.2em;
+  border: 1px solid var(--mantine-color-ink-2);
+  border-radius: var(--mantine-radius-md);
+}
+
+.table table {
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: normal;
+}
+
+.table :is(th, td) {
+  padding: 0.55em 0.8em;
+  text-align: start;
+  border-bottom: 1px solid var(--mantine-color-ink-2);
+  white-space: nowrap;
+}
+
+.table th {
+  background: var(--mantine-color-ink-0);
+  color: var(--mantine-color-navy-9);
+  font-weight: 600;
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}

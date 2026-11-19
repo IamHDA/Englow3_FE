@@ -1,0 +1,27 @@
+query AdminBlogQueue(
+  $type: BlogTargetType
+  $sort: BlogQueueSort
+  $page: Int
+  $size: Int
+) {
+  adminBlogQueue(type: $type, sort: $sort, page: $page, size: $size) {
+    page
+    size
+    totalItems
+    totalPages
+    items {
+      targetType
+      targetId
+      title
+      excerpt
+      targetStatus
+      openReports
+      reasons
+      firstReportedAt
+      lastReportedAt
+      author {
+        ...BlogAuthorFields
+      }
+    }
+  }
+}

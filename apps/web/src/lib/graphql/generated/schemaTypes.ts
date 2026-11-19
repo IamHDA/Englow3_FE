@@ -329,6 +329,351 @@ export type BlockedUserPage = {
   totalPages: Scalars["Int"]["output"];
 };
 
+/**
+ * Null wherever an author appears means the account was erased: the content
+ * stays, as by a deleted user.
+ */
+export type BlogAuthor = {
+  __typename?: "BlogAuthor";
+  avatarUrl?: Maybe<Scalars["String"]["output"]>;
+  displayName: Scalars["String"]["output"];
+  userId: Scalars["ID"]["output"];
+};
+
+export type BlogComment = {
+  __typename?: "BlogComment";
+  author?: Maybe<BlogAuthor>;
+  body: Scalars["String"]["output"];
+  canEdit: Scalars["Boolean"]["output"];
+  createdAt: Scalars["DateTime"]["output"];
+  editedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  id: Scalars["ID"]["output"];
+  postId: Scalars["ID"]["output"];
+  status: BlogCommentStatus;
+};
+
+export type BlogCommentPage = {
+  __typename?: "BlogCommentPage";
+  items: Array<BlogComment>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/**
+ * VISIBLE for everyone. A comment the viewer wrote that moderation hid or
+ * removed is still listed for them, with the status; nobody else sees it.
+ */
+export enum BlogCommentStatus {
+  HIDDEN = "HIDDEN",
+  REMOVED = "REMOVED",
+  VISIBLE = "VISIBLE",
+}
+
+/**
+ * An image of a post: the Markdown names it blog-image:<id>, and url is a link
+ * that expires (a few hours) to show it from.
+ */
+export type BlogImage = {
+  __typename?: "BlogImage";
+  id: Scalars["ID"]["output"];
+  url: Scalars["String"]["output"];
+};
+
+/**
+ * Where to PUT the image bytes (with the same content type). Once that is done,
+ * write reference - blog-image:<id> - into the Markdown where the image goes and
+ * save the post.
+ */
+export type BlogImageUpload = {
+  __typename?: "BlogImageUpload";
+  contentType: Scalars["String"]["output"];
+  expiresInSeconds: Scalars["Int"]["output"];
+  imageId: Scalars["ID"]["output"];
+  reference: Scalars["String"]["output"];
+  uploadUrl: Scalars["String"]["output"];
+};
+
+export type BlogLikeState = {
+  __typename?: "BlogLikeState";
+  likeCount: Scalars["Int"]["output"];
+  liked: Scalars["Boolean"]["output"];
+};
+
+/**
+ * What a moderator does to content. DISMISS closes its open reports and leaves
+ * it as it is.
+ */
+export enum BlogModerationAction {
+  DISMISS = "DISMISS",
+  HIDE = "HIDE",
+  REMOVE = "REMOVE",
+  RESTORE = "RESTORE",
+}
+
+export type BlogModerationActionPage = {
+  __typename?: "BlogModerationActionPage";
+  items: Array<BlogModerationActionRecord>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+/** One entry of the history of moderation, with what it was done to. */
+export type BlogModerationActionRecord = {
+  __typename?: "BlogModerationActionRecord";
+  action: BlogModerationAction;
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  moderator?: Maybe<BlogAuthor>;
+  reason: Scalars["String"]["output"];
+  targetId: Scalars["ID"]["output"];
+  targetType: BlogTargetType;
+};
+
+/**
+ * What a moderator is reading. For a comment, title and postId are those of the
+ * post it is on, and images and tags are empty; for a post postId is null.
+ */
+export type BlogModerationContent = {
+  __typename?: "BlogModerationContent";
+  body: Scalars["String"]["output"];
+  createdAt: Scalars["DateTime"]["output"];
+  images: Array<BlogImage>;
+  postId?: Maybe<Scalars["ID"]["output"]>;
+  tags: Array<BlogTag>;
+  title?: Maybe<Scalars["String"]["output"]>;
+};
+
+/**
+ * One piece of reported content in the moderation queue, however many reports it
+ * has. Once the author deleted it (targetStatus DELETED) title, excerpt and
+ * author are null.
+ */
+export type BlogModerationQueueItem = {
+  __typename?: "BlogModerationQueueItem";
+  author?: Maybe<BlogAuthor>;
+  excerpt?: Maybe<Scalars["String"]["output"]>;
+  firstReportedAt: Scalars["DateTime"]["output"];
+  lastReportedAt: Scalars["DateTime"]["output"];
+  openReports: Scalars["Int"]["output"];
+  reasons: Array<BlogReportReason>;
+  targetId: Scalars["ID"]["output"];
+  targetStatus: BlogTargetStatus;
+  targetType: BlogTargetType;
+  /** A post's title; for a comment, the title of the post it is on. */
+  title?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type BlogModerationQueuePage = {
+  __typename?: "BlogModerationQueuePage";
+  items: Array<BlogModerationQueueItem>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export type BlogModerationReport = {
+  __typename?: "BlogModerationReport";
+  createdAt: Scalars["DateTime"]["output"];
+  detail?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  reason: BlogReportReason;
+  reporter?: Maybe<BlogAuthor>;
+  resolutionNote?: Maybe<Scalars["String"]["output"]>;
+  resolvedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  status: BlogReportStatus;
+};
+
+/**
+ * Reported content in any status, with every report about it and the history of
+ * what was done. content and author are null once the author deleted it.
+ */
+export type BlogModerationTarget = {
+  __typename?: "BlogModerationTarget";
+  actions: Array<BlogModerationTargetAction>;
+  author?: Maybe<BlogAuthor>;
+  content?: Maybe<BlogModerationContent>;
+  reports: Array<BlogModerationReport>;
+  targetId: Scalars["ID"]["output"];
+  targetStatus: BlogTargetStatus;
+  targetType: BlogTargetType;
+};
+
+/** One thing a moderator did to the content in front of them. */
+export type BlogModerationTargetAction = {
+  __typename?: "BlogModerationTargetAction";
+  action: BlogModerationAction;
+  createdAt: Scalars["DateTime"]["output"];
+  id: Scalars["ID"]["output"];
+  moderator?: Maybe<BlogAuthor>;
+  reason: Scalars["String"]["output"];
+};
+
+/**
+ * One post in full. body is the Markdown as written, with blog-image:<id> where
+ * an image goes; images gives each id a link to show it from.
+ */
+export type BlogPost = {
+  __typename?: "BlogPost";
+  author?: Maybe<BlogAuthor>;
+  body: Scalars["String"]["output"];
+  canEdit: Scalars["Boolean"]["output"];
+  /**
+   * Whether comments and likes are open: false for a post that is hidden or
+   * removed.
+   */
+  canInteract: Scalars["Boolean"]["output"];
+  commentCount: Scalars["Int"]["output"];
+  createdAt: Scalars["DateTime"]["output"];
+  editedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  id: Scalars["ID"]["output"];
+  images: Array<BlogImage>;
+  likeCount: Scalars["Int"]["output"];
+  likedByMe: Scalars["Boolean"]["output"];
+  /**
+   * Why a moderator hid or removed the post. Set only for its author, and only
+   * while it is not published.
+   */
+  moderationNote?: Maybe<Scalars["String"]["output"]>;
+  status: BlogPostStatus;
+  tags: Array<BlogTag>;
+  title: Scalars["String"]["output"];
+  /**
+   * What an edit sends back (updateBlogPost) so a post that changed since it was
+   * opened - a moderator hid it, say - is refused instead of overwritten. A
+   * Float, on purpose: the backend counts it as 64-bit, and GraphQL's Int is
+   * 32-bit.
+   */
+  version: Scalars["Float"]["output"];
+};
+
+export type BlogPostPage = {
+  __typename?: "BlogPostPage";
+  items: Array<BlogPostSummary>;
+  page: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  totalItems: Scalars["Int"]["output"];
+  totalPages: Scalars["Int"]["output"];
+};
+
+export enum BlogPostSort {
+  MOST_LIKED = "MOST_LIKED",
+  NEWEST = "NEWEST",
+}
+
+/**
+ * PUBLISHED for everyone. HIDDEN (reversible) and REMOVED (permanent) are
+ * moderation's, and only the author sees a post in either - on their own wall,
+ * and by its link.
+ */
+export enum BlogPostStatus {
+  HIDDEN = "HIDDEN",
+  PUBLISHED = "PUBLISHED",
+  REMOVED = "REMOVED",
+}
+
+/** One post in a list: an excerpt, no body. */
+export type BlogPostSummary = {
+  __typename?: "BlogPostSummary";
+  author?: Maybe<BlogAuthor>;
+  commentCount: Scalars["Int"]["output"];
+  createdAt: Scalars["DateTime"]["output"];
+  editedAt?: Maybe<Scalars["DateTime"]["output"]>;
+  excerpt: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  likeCount: Scalars["Int"]["output"];
+  likedByMe: Scalars["Boolean"]["output"];
+  /**
+   * PUBLISHED, except when an author lists their own posts: then hidden and
+   * removed ones are in the list, marked.
+   */
+  status: BlogPostStatus;
+  tags: Array<BlogTag>;
+  title: Scalars["String"]["output"];
+};
+
+export enum BlogQueueSort {
+  MOST_REPORTED = "MOST_REPORTED",
+  OLDEST = "OLDEST",
+}
+
+export type BlogReport = {
+  __typename?: "BlogReport";
+  createdAt: Scalars["DateTime"]["output"];
+  detail?: Maybe<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  reason: BlogReportReason;
+  status: BlogReportStatus;
+  targetId: Scalars["ID"]["output"];
+  targetType: BlogTargetType;
+};
+
+export enum BlogReportReason {
+  HARASSMENT = "HARASSMENT",
+  INAPPROPRIATE = "INAPPROPRIATE",
+  MISINFORMATION = "MISINFORMATION",
+  OTHER = "OTHER",
+  SPAM = "SPAM",
+}
+
+export enum BlogReportStatus {
+  DISMISSED = "DISMISSED",
+  OPEN = "OPEN",
+  RESOLVED = "RESOLVED",
+}
+
+export type BlogTag = {
+  __typename?: "BlogTag";
+  kind: BlogTagKind;
+  value: Scalars["String"]["output"];
+};
+
+/** The words a post may be tagged with, one list for each kind. */
+export type BlogTagCatalogue = {
+  __typename?: "BlogTagCatalogue";
+  certificates: Array<Scalars["String"]["output"]>;
+  levels: Array<Scalars["String"]["output"]>;
+  skills: Array<Scalars["String"]["output"]>;
+};
+
+export type BlogTagInput = {
+  kind: BlogTagKind;
+  value: Scalars["String"]["input"];
+};
+
+/**
+ * The three kinds of tag a post can carry. Their values (WRITING, B2, IELTS...)
+ * are plain strings here, listed by blogTagCatalogue: the backend owns them, and
+ * a copy of its enums in this schema would be one more place to keep in step.
+ */
+export enum BlogTagKind {
+  CERTIFICATE = "CERTIFICATE",
+  LEVEL = "LEVEL",
+  SKILL = "SKILL",
+}
+
+/**
+ * The status of reported content, as moderation sees it: a post's, or a
+ * comment's, or DELETED once its author deleted it (then the content and the
+ * author are gone and only the reports and the history remain).
+ */
+export enum BlogTargetStatus {
+  DELETED = "DELETED",
+  HIDDEN = "HIDDEN",
+  PUBLISHED = "PUBLISHED",
+  REMOVED = "REMOVED",
+  VISIBLE = "VISIBLE",
+}
+
+export enum BlogTargetType {
+  COMMENT = "COMMENT",
+  POST = "POST",
+}
+
 export enum CefrLevel {
   A1 = "A1",
   A2 = "A2",
@@ -1595,6 +1940,11 @@ export type Mutation = {
   abandonRoadmap: Scalars["Boolean"]["output"];
   acceptFriendRequest: FriendRequestOutcome;
   /**
+   * Staff and Admin. Answers with the content as it is afterwards. Refused for
+   * content the moderator wrote (BLOG_MODERATION_OWN_CONTENT).
+   */
+  adminModerateBlog: BlogModerationTarget;
+  /**
    * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
    * same step - there is no approved-but-unpublished state.
    */
@@ -1641,6 +1991,8 @@ export type Mutation = {
    */
   completeOnboarding: OnboardingState;
   createAssessmentTask: AssessmentTask;
+  createBlogComment: BlogComment;
+  createBlogPost: BlogPost;
   /**
    * A plan for the learner's current goal. The same goal returns the same plan;
    * a changed score, level or date adjusts it; a different goal replaces it.
@@ -1650,6 +2002,8 @@ export type Mutation = {
    */
   createRoadmap: Roadmap;
   createTutorResource: TutorResource;
+  deleteBlogComment: Scalars["Boolean"]["output"];
+  deleteBlogPost: Scalars["Boolean"]["output"];
   editAssessmentTask: AssessmentTask;
   gradeAssessment: AssessmentAttempt;
   /**
@@ -1658,6 +2012,7 @@ export type Mutation = {
    * the backend, and a screen that was away learns that here.
    */
   heartbeatExamAttempt: Scalars["Boolean"]["output"];
+  likeBlogPost: BlogLikeState;
   markChatRead: Scalars["Boolean"]["output"];
   /** Opens the conversation with a friend, or returns the one they already have. */
   openChat: ChatConversation;
@@ -1698,6 +2053,12 @@ export type Mutation = {
   /** Drops a Writing Task 1's chart while the task is still a draft or rejected. */
   removeAssessmentTaskImage: AssessmentTask;
   renameTutorConversation: TutorConversationSummary;
+  reportBlogComment: BlogReport;
+  /**
+   * Reporting again while the viewer's own report of it is open answers with that
+   * report.
+   */
+  reportBlogPost: BlogReport;
   /** Reports an answer as wrong or inappropriate. The note is optional. */
   reportTutorMessage: TutorMessage;
   requestAssessmentReview: AssessmentAttempt;
@@ -1778,6 +2139,7 @@ export type Mutation = {
   setLevelCheckWeight: LevelCheckWeights;
   skipLevelCheckSpeaking: LevelCheck;
   startAssessment: AssessmentUpload;
+  startBlogImageUpload: BlogImageUpload;
   startChatImageUpload: ChatImageUpload;
   /**
    * Opens an attempt, or returns the one already open with resumed: true. The
@@ -1857,6 +2219,13 @@ export type Mutation = {
   transitionAssessmentTask: AssessmentTask;
   unblockUser: Scalars["Boolean"]["output"];
   unfriend: Scalars["Boolean"]["output"];
+  unlikeBlogPost: BlogLikeState;
+  updateBlogComment: BlogComment;
+  /**
+   * version is the one the post had when it was opened. A post that changed since
+   * is refused with extensions.backendCode BLOG_POST_STALE.
+   */
+  updateBlogPost: BlogPost;
   updateProfile: Me;
   updateTutorPolicy: TutorPolicy;
   updateTutorResource: TutorResource;
@@ -1866,6 +2235,13 @@ export type Mutation = {
 
 export type MutationAcceptFriendRequestArgs = {
   requestId: Scalars["ID"]["input"];
+};
+
+export type MutationAdminModerateBlogArgs = {
+  action: BlogModerationAction;
+  id: Scalars["ID"]["input"];
+  reason: Scalars["String"]["input"];
+  type: BlogTargetType;
 };
 
 export type MutationApproveContentArgs = {
@@ -1944,8 +2320,25 @@ export type MutationCreateAssessmentTaskArgs = {
   input: AssessmentTaskInput;
 };
 
+export type MutationCreateBlogCommentArgs = {
+  body: Scalars["String"]["input"];
+  postId: Scalars["ID"]["input"];
+};
+
+export type MutationCreateBlogPostArgs = {
+  input: SaveBlogPostInput;
+};
+
 export type MutationCreateTutorResourceArgs = {
   input: TutorResourceInput;
+};
+
+export type MutationDeleteBlogCommentArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationDeleteBlogPostArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type MutationEditAssessmentTaskArgs = {
@@ -1964,6 +2357,10 @@ export type MutationGradeAssessmentArgs = {
 
 export type MutationHeartbeatExamAttemptArgs = {
   attemptId: Scalars["ID"]["input"];
+};
+
+export type MutationLikeBlogPostArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type MutationMarkChatReadArgs = {
@@ -2033,6 +2430,18 @@ export type MutationRemoveAssessmentTaskImageArgs = {
 export type MutationRenameTutorConversationArgs = {
   id: Scalars["ID"]["input"];
   title: Scalars["String"]["input"];
+};
+
+export type MutationReportBlogCommentArgs = {
+  detail?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["ID"]["input"];
+  reason: BlogReportReason;
+};
+
+export type MutationReportBlogPostArgs = {
+  detail?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["ID"]["input"];
+  reason: BlogReportReason;
 };
 
 export type MutationReportTutorMessageArgs = {
@@ -2167,6 +2576,11 @@ export type MutationStartAssessmentArgs = {
   taskId: Scalars["ID"]["input"];
 };
 
+export type MutationStartBlogImageUploadArgs = {
+  contentLength: Scalars["Int"]["input"];
+  contentType: Scalars["String"]["input"];
+};
+
 export type MutationStartChatImageUploadArgs = {
   contentLength: Scalars["Int"]["input"];
   contentType: Scalars["String"]["input"];
@@ -2270,6 +2684,21 @@ export type MutationUnfriendArgs = {
   userId: Scalars["ID"]["input"];
 };
 
+export type MutationUnlikeBlogPostArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationUpdateBlogCommentArgs = {
+  body: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationUpdateBlogPostArgs = {
+  id: Scalars["ID"]["input"];
+  input: SaveBlogPostInput;
+  version: Scalars["Float"]["input"];
+};
+
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
@@ -2365,6 +2794,14 @@ export type PublicProfile = {
 export type Query = {
   __typename?: "Query";
   activeExamAttempt?: Maybe<ExamAttempt>;
+  /** Staff and Admin. What moderators did, newest first. */
+  adminBlogActions: BlogModerationActionPage;
+  /**
+   * Staff and Admin. Content with open reports, one entry for each however many
+   * reports it has.
+   */
+  adminBlogQueue: BlogModerationQueuePage;
+  adminBlogTarget: BlogModerationTarget;
   /**
    * The authoring list for one kind of content, at every status. Omitting
    * status asks for all of them, so this serves both the full list and the
@@ -2403,6 +2840,24 @@ export type Query = {
   authoringAssessmentTasks: AssessmentTaskPage;
   avatarPresets: Array<AvatarPreset>;
   blockedUsers: BlockedUserPage;
+  /**
+   * Comments of a post, oldest first. The viewer's own hidden or removed ones are
+   * in the list, with their status.
+   */
+  blogComments: BlogCommentPage;
+  /**
+   * One post. A post that does not exist, is hidden from the viewer or is by
+   * someone they have a block with is the same BLOG_POST_NOT_FOUND.
+   */
+  blogPost: BlogPost;
+  /**
+   * Published posts. q searches titles and is refused with extensions.backendCode
+   * SEARCH_TERM_TOO_SHORT below the backend's minimum. skill, level and
+   * certificate are values from blogTagCatalogue and combine with AND. authorId
+   * lists one person's posts - the viewer's own include every status.
+   */
+  blogPosts: BlogPostPage;
+  blogTagCatalogue: BlogTagCatalogue;
   /**
    * One conversation, with canSend. Fails with extensions.backendCode
    * CHAT_CONVERSATION_NOT_FOUND when it does not exist or is not the caller's.
@@ -2554,6 +3009,23 @@ export type QueryActiveExamAttemptArgs = {
   mode: ExamAttemptMode;
 };
 
+export type QueryAdminBlogActionsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryAdminBlogQueueArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  sort?: InputMaybe<BlogQueueSort>;
+  type?: InputMaybe<BlogTargetType>;
+};
+
+export type QueryAdminBlogTargetArgs = {
+  id: Scalars["ID"]["input"];
+  type: BlogTargetType;
+};
+
 export type QueryAdminContentArgs = {
   kind: ContentKind;
   page?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2637,6 +3109,27 @@ export type QueryAuthoringAssessmentTasksArgs = {
 export type QueryBlockedUsersArgs = {
   page?: InputMaybe<Scalars["Int"]["input"]>;
   size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryBlogCommentsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  postId: Scalars["ID"]["input"];
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type QueryBlogPostArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryBlogPostsArgs = {
+  authorId?: InputMaybe<Scalars["ID"]["input"]>;
+  certificate?: InputMaybe<Scalars["String"]["input"]>;
+  level?: InputMaybe<Scalars["String"]["input"]>;
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  q?: InputMaybe<Scalars["String"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
+  skill?: InputMaybe<Scalars["String"]["input"]>;
+  sort?: InputMaybe<BlogPostSort>;
 };
 
 export type QueryChatConversationArgs = {
@@ -3214,6 +3707,12 @@ export enum Role {
   STAFF = "STAFF",
 }
 
+export type SaveBlogPostInput = {
+  body: Scalars["String"]["input"];
+  tags: Array<BlogTagInput>;
+  title: Scalars["String"]["input"];
+};
+
 export type SaveFullTestInput = {
   certificateVariant: CertificateVariant;
   description?: InputMaybe<Scalars["String"]["input"]>;
@@ -3784,6 +4283,12 @@ export type UserWall = {
   /** Null for staff and when unavailable. */
   friendCount?: Maybe<Scalars["Int"]["output"]>;
   /**
+   * Posts by the wall's owner. Null when the wall is unavailable (blocked either
+   * way) or the call failed. On the viewer's own wall the backend also lists
+   * their hidden and removed posts, with their status.
+   */
+  posts?: Maybe<BlogPostPage>;
+  /**
    * Null when the wall is unavailable (blocked either way), or when the profile
    * call failed. An id that names no account fails with extensions.backendCode
    * USER_NOT_FOUND.
@@ -3791,4 +4296,10 @@ export type UserWall = {
   profile?: Maybe<PublicProfile>;
   relationship: Relationship;
   userId: Scalars["ID"]["output"];
+};
+
+/** The wall of one account: composed from user, friendship and (later) blog. */
+export type UserWallPostsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
 };

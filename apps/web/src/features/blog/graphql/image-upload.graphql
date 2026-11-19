@@ -1,0 +1,13 @@
+# Where to PUT the bytes of one image, and the reference to write into the text.
+mutation StartBlogImageUpload($contentType: String!, $contentLength: Int!) {
+  startBlogImageUpload(
+    contentType: $contentType
+    contentLength: $contentLength
+  ) {
+    imageId
+    uploadUrl
+    contentType
+    expiresInSeconds
+    reference
+  }
+}

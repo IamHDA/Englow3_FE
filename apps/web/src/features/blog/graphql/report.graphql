@@ -1,0 +1,17 @@
+mutation ReportBlogPost($id: ID!, $reason: BlogReportReason!, $detail: String) {
+  reportBlogPost(id: $id, reason: $reason, detail: $detail) {
+    id
+    status
+  }
+}
+
+mutation ReportBlogComment(
+  $id: ID!
+  $reason: BlogReportReason!
+  $detail: String
+) {
+  reportBlogComment(id: $id, reason: $reason, detail: $detail) {
+    id
+    status
+  }
+}
