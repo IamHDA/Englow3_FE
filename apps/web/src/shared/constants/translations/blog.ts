@@ -628,7 +628,8 @@ export const blogVi: BlogTranslations = {
       title: "Xử lý nội dung",
       actionLabel: "Hành động",
       actionRequired: "Hãy chọn một hành động.",
-      reasonLabel: "Lý do (người viết sẽ thấy khi bài bị ẩn hoặc gỡ)",
+      reasonLabel:
+        "Lý do (được lưu vào lịch sử; tác giả bài viết thấy lý do khi bài bị ẩn hoặc gỡ)",
       reasonPlaceholder: "Ghi rõ lý do của quyết định",
       reasonRequired: "Hãy nhập lý do.",
       reasonTooLong: "Lý do tối đa {max} ký tự.",
@@ -986,7 +987,7 @@ export const blogEn: BlogTranslations = {
       actionLabel: "Action",
       actionRequired: "Choose an action.",
       reasonLabel:
-        "Reason (the author sees it when a post is hidden or removed)",
+        "Reason (kept in the history; a post's author sees it when the post is hidden or removed)",
       reasonPlaceholder: "State the reason for your decision",
       reasonRequired: "Enter a reason.",
       reasonTooLong: "The reason is {max} characters at most.",

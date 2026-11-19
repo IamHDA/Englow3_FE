@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Flex,
   Group,
   Select,
   SegmentedControl,
@@ -163,7 +164,12 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
         {copy.subtitle}
       </Text>
 
-      <Stack gap="sm" component="search" aria-label={copy.search.label}>
+      <Flex
+        component="search"
+        direction="column"
+        gap="sm"
+        aria-label={copy.search.label}
+      >
         <TextInput
           value={filters.q}
           onChange={(event) => setFilter({ q: event.currentTarget.value })}
@@ -236,7 +242,7 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
             </Button>
           )}
         </Group>
-      </Stack>
+      </Flex>
 
       {list}
     </>
