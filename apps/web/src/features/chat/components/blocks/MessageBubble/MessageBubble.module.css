@@ -54,6 +54,9 @@
 .image {
   display: block;
   margin-bottom: 4px;
+  /* If the picture cannot load, its description stands in: in the bubble's own colour, not a link's. */
+  color: inherit;
+  text-decoration: none;
 }
 
 /* A way to take a message back that is there when it is wanted and quiet when it is not. */

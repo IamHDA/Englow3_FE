@@ -3,7 +3,6 @@
 import { notifications } from "@mantine/notifications";
 import { useCallback, useMemo, useState } from "react";
 
-import { useAuth } from "@/features/auth";
 import {
   useChatConversationQuery,
   useChatMessagesQuery,
@@ -26,7 +25,7 @@ import { useConversationMessages } from "../../../hooks/useConversationMessages"
 import { useMarkRead } from "../../../hooks/useMarkRead";
 import { useRefreshChatLists } from "../../../hooks/useRefreshChatLists";
 import { useTypingSignal } from "../../../hooks/useTypingSignal";
-import { highestSeq } from "../../../realtime/messageList";
+import { highestSeq, isOwnMessage } from "../../../realtime/messageList";
 import { ConversationPane } from "../../blocks/ConversationPane";
 import { ConversationPaneSkeleton } from "../../blocks/ConversationPane/ConversationPaneSkeleton";
 
@@ -47,8 +46,6 @@ export function ConversationView({
 }) {
   const { t } = useLanguage();
   const copy = t.chat;
-  const { session } = useAuth();
-  const meId = session?.userId ?? "";
   const realtime = useChatRealtime();
   const errorMessage = useChatErrorMessage();
   const refreshLists = useRefreshChatLists();
@@ -95,7 +92,7 @@ export function ConversationView({
   const { api, validateImage } = useChatMessagesApi();
   const messages = useConversationMessages({
     conversationId,
-    meId,
+    partnerId: partner?.userId ?? null,
     seed: messagesQuery.data?.chatMessages,
     subscribe: realtime.subscribe,
     connectionCount: realtime.connectionCount,
@@ -111,9 +108,8 @@ export function ConversationView({
 
   const [markChatRead] = useMarkChatReadMutation();
   const incomingSeq = useMemo(
-    () =>
-      highestSeq(messages.entries.filter((entry) => entry.senderId !== meId)),
-    [messages.entries, meId],
+    () => highestSeq(messages.entries.filter((entry) => !isOwnMessage(entry))),
+    [messages.entries],
   );
   useMarkRead({
     upToSeq: conversation ? incomingSeq : null,
@@ -152,7 +148,6 @@ export function ConversationView({
   return (
     <ConversationPane
       partner={partner}
-      meId={meId}
       messagesLoaded={messagesQuery.data !== undefined}
       entries={messages.entries}
       partnerReadSeq={messages.partnerReadSeq}

@@ -56,8 +56,8 @@ export type ChatMessagesApi = {
 
 type Options = {
   conversationId: string;
-  /** The viewer: whose messages are "mine", and whose read marks are not the partner's. */
-  meId: string;
+  /** The other person, whose read marks are the ones that matter. Null for a deleted user. */
+  partnerId: string | null;
   /** The newest page, from the view's query; undefined while that loads. */
   seed: ChatMessageData[] | undefined;
   subscribe: (listener: (frame: ChatFrame) => void) => () => void;
@@ -155,6 +155,14 @@ function reduce(state: State, action: Action): State {
   }
 }
 
+// Defaults at module level: a default written in the parameter list is a new
+// function on every render, and a callback or effect that depends on it would
+// then run again on every render - which, for the cleanup that releases a
+// preview, released it while the message was still on its way.
+const randomClientId = () => crypto.randomUUID();
+const objectUrlFor = (file: File) => URL.createObjectURL(file);
+const releaseObjectUrl = (url: string) => URL.revokeObjectURL(url);
+
 /**
  * The messages of one conversation, live.
  *
@@ -174,15 +182,15 @@ function reduce(state: State, action: Action): State {
  */
 export function useConversationMessages({
   conversationId,
-  meId,
+  partnerId,
   seed,
   subscribe,
   connectionCount,
   api,
   onSendRefused,
-  newClientId = () => crypto.randomUUID(),
-  createPreviewUrl = (file) => URL.createObjectURL(file),
-  revokePreviewUrl = (url) => URL.revokeObjectURL(url),
+  newClientId = randomClientId,
+  createPreviewUrl = objectUrlFor,
+  revokePreviewUrl = releaseObjectUrl,
 }: Options) {
   const [state, dispatch] = useReducer(reduce, INITIAL_STATE);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -221,11 +229,11 @@ export function useConversationMessages({
             }
             return;
           case FRAME_TYPE.read:
-            // Mine, from another tab, is the list's business; this is how far
-            // the other person has read.
+            // The viewer's own read mark, from another tab, is the list's
+            // business; this is how far the other person has read.
             if (
               frame.conversationId === conversationId &&
-              frame.userId !== meId
+              frame.userId === partnerId
             ) {
               dispatch({ type: "partnerRead", upToSeq: frame.upToSeq });
             }
@@ -238,7 +246,7 @@ export function useConversationMessages({
           }
         }
       }),
-    [subscribe, conversationId, meId],
+    [subscribe, conversationId, partnerId],
   );
 
   /* ---- Catching up after the socket (re)opens --------------------------- */
@@ -366,7 +374,6 @@ export function useConversationMessages({
         type: "queued",
         entry: optimisticEntry({
           clientId,
-          senderId: meId,
           body: text,
           imageUrl: previewUrl,
           sentAt: new Date().toISOString(),
@@ -374,7 +381,7 @@ export function useConversationMessages({
       });
       enqueue(clientId);
     },
-    [createPreviewUrl, enqueue, meId, newClientId],
+    [createPreviewUrl, enqueue, newClientId],
   );
 
   /** Sends a failed message again, under the same clientId. */
@@ -399,14 +406,21 @@ export function useConversationMessages({
     [entries, forget],
   );
 
+  // Previews still held when the conversation is left are given back. Through a
+  // ref, so that a caller's new `revokePreviewUrl` does not run this cleanup
+  // before the conversation is actually left.
+  const revokeRef = useRef(revokePreviewUrl);
+  useEffect(() => {
+    revokeRef.current = revokePreviewUrl;
+  }, [revokePreviewUrl]);
   useEffect(() => {
     const pending = outgoing.current;
     return () => {
       for (const sent of pending.values()) {
-        if (sent.previewUrl) revokePreviewUrl(sent.previewUrl);
+        if (sent.previewUrl) revokeRef.current(sent.previewUrl);
       }
     };
-  }, [revokePreviewUrl]);
+  }, []);
 
   /* ---- Recalling and refreshing ----------------------------------------- */
 

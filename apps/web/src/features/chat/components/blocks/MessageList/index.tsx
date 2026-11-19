@@ -10,7 +10,10 @@ import type { ChatTranslations } from "@/shared/constants/translations";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 import { useMessageScroll } from "../../../hooks/useMessageScroll";
-import type { ChatMessageEntry } from "../../../realtime/messageList";
+import {
+  isOwnMessage,
+  type ChatMessageEntry,
+} from "../../../realtime/messageList";
 import { ChatEmptyState } from "../ChatEmptyState";
 import { MessageBubble } from "../MessageBubble";
 
@@ -20,8 +23,6 @@ import { RecallModal } from "./RecallModal";
 type MessageListProps = {
   /** Oldest first. */
   entries: ChatMessageEntry[];
-  /** The viewer. */
-  meId: string;
   /** Who the conversation is with, for the labels. */
   partnerName: string;
   /** How far the other person has read, as far as this session knows. */
@@ -63,7 +64,6 @@ function dayLabel(
  */
 export function MessageList({
   entries,
-  meId,
   partnerName,
   partnerReadSeq,
   hasOlder,
@@ -77,7 +77,7 @@ export function MessageList({
   const { language, t } = useLanguage();
   const copy = t.chat.pane;
   const { viewportRef, onScrollPositionChange, keepAtBottom } =
-    useMessageScroll({ entries, meId, hasOlder, loadingOlder, onLoadOlder });
+    useMessageScroll({ entries, hasOlder, loadingOlder, onLoadOlder });
 
   const [recalling, setRecalling] = useState<ChatMessageEntry | null>(null);
   const [recallRunning, setRecallRunning] = useState(false);
@@ -97,7 +97,7 @@ export function MessageList({
   if (partnerReadSeq !== null) {
     for (const entry of entries) {
       if (
-        entry.senderId === meId &&
+        isOwnMessage(entry) &&
         entry.seq !== null &&
         entry.seq <= partnerReadSeq
       ) {
@@ -156,7 +156,7 @@ export function MessageList({
                 <Flex direction="column">
                   <MessageBubble
                     entry={entry}
-                    mine={entry.senderId === meId}
+                    mine={isOwnMessage(entry)}
                     seen={entry.key === seenKey}
                     onRetry={onRetry}
                     onDismiss={onDismiss}

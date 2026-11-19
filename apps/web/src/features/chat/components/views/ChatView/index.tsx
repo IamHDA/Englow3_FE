@@ -98,7 +98,6 @@ export function ChatView({ children }: { children: ReactNode }) {
       <ConversationList
         items={conversations.items}
         selectedId={conversationId}
-        meId={session.userId}
         page={page}
         totalPages={conversations.totalPages}
         onPageChange={setPage}

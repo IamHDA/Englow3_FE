@@ -7,6 +7,7 @@ import {
   applyRecall,
   entryFromMessage,
   highestSeq,
+  isOwnMessage,
   lowestSeq,
   markFailed,
   mergeEntries,
@@ -33,11 +34,43 @@ const data = (
 const waiting = (clientId: string) =>
   optimisticEntry({
     clientId,
-    senderId: "me",
     body: "hi",
     imageUrl: null,
     sentAt: "2026-11-16T03:01:00Z",
   });
+
+describe("isOwnMessage", () => {
+  /**
+   * The signed-in account's id (Supabase's) is not the user id the backend
+   * writes into senderId, so it cannot say whose a message is. The backend's
+   * own signal can: a message carries its clientId only to the one who sent it.
+   */
+  it("is the clientId and nothing else: the viewer's messages have one, the other person's and a deleted user's do not", () => {
+    expect(isOwnMessage(entryFromMessage(data(1, { clientId: "k1" })))).toBe(
+      true,
+    );
+    expect(isOwnMessage(entryFromMessage(data(2, { clientId: null })))).toBe(
+      false,
+    );
+    expect(
+      isOwnMessage(
+        entryFromMessage(data(3, { senderId: null, clientId: null })),
+      ),
+    ).toBe(false);
+  });
+
+  it("holds for a message the viewer has just written and the backend has not answered", () => {
+    expect(isOwnMessage(waiting("k1"))).toBe(true);
+  });
+
+  it("does not look at senderId, so an id from another namespace cannot make a message the other person's", () => {
+    const own = entryFromMessage(
+      data(4, { senderId: "an-id-the-session-does-not-know", clientId: "k4" }),
+    );
+
+    expect(isOwnMessage(own)).toBe(true);
+  });
+});
 
 describe("mergeEntries", () => {
   it("puts messages in ascending seq and the unconfirmed ones last, in the order written", () => {
@@ -69,7 +102,7 @@ describe("mergeEntries", () => {
   it("replaces an unconfirmed message with its confirmation by clientId", () => {
     const merged = mergeEntries(
       [waiting("k1")],
-      [entryFromMessage(data(7, { senderId: "me", clientId: "k1" }))],
+      [entryFromMessage(data(7, { clientId: "k1" }))],
     );
 
     expect(merged).toHaveLength(1);
@@ -82,9 +115,7 @@ describe("mergeEntries", () => {
   });
 
   it("never lets an unconfirmed message replace a confirmed one with the same clientId", () => {
-    const confirmed = entryFromMessage(
-      data(7, { senderId: "me", clientId: "k1" }),
-    );
+    const confirmed = entryFromMessage(data(7, { clientId: "k1" }));
 
     const merged = mergeEntries([confirmed], [waiting("k1")]);
 
@@ -128,7 +159,7 @@ describe("markFailed", () => {
     const entries = [
       waiting("a"),
       waiting("b"),
-      entryFromMessage(data(3, { senderId: "me", clientId: "a" })),
+      entryFromMessage(data(3, { clientId: "a" })),
     ];
 
     const failed = markFailed(entries, "a", { code: null, retryable: true });

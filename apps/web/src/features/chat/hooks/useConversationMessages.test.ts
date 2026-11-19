@@ -88,12 +88,13 @@ function setup(
     ),
   };
   const onSendRefused = vi.fn();
+  const revokePreviewUrl = vi.fn();
   let nextClientId = 0;
   const hook = renderHook(
     (props: { seed: ChatMessageData[] | undefined; connectionCount: number }) =>
       useConversationMessages({
         conversationId: CONVERSATION,
-        meId: ME,
+        partnerId: PARTNER,
         seed: props.seed,
         subscribe: bus.subscribe,
         connectionCount: props.connectionCount,
@@ -101,7 +102,9 @@ function setup(
         onSendRefused,
         newClientId: () => `client-${++nextClientId}`,
         createPreviewUrl: (file) => `blob:${file.name}`,
-        revokePreviewUrl: vi.fn(),
+        // A new function every render, as an inline one in a component is: the
+        // hook must not take that for the conversation having been left.
+        revokePreviewUrl: (url) => revokePreviewUrl(url),
       }),
     {
       initialProps: {
@@ -110,7 +113,7 @@ function setup(
       },
     },
   );
-  return { ...hook, bus, api, onSendRefused };
+  return { ...hook, bus, api, onSendRefused, revokePreviewUrl };
 }
 
 const seqs = (entries: { seq: number | null }[]) =>
@@ -198,7 +201,8 @@ describe("sending", () => {
       key: "client-1",
       id: null,
       body: "hello",
-      senderId: ME,
+      // Written by the viewer, and known to be: it carries its clientId.
+      clientId: "client-1",
       delivery: DELIVERY.sending,
     });
 
@@ -446,6 +450,39 @@ describe("sending an image", () => {
       body: "look",
       imageUploadId: "upload-1",
     });
+  });
+
+  it("keeps the picture's preview for as long as the message is on its way, however often the screen draws again, and gives it back once confirmed", async () => {
+    let finishUpload: (id: string) => void = () => undefined;
+    const { result, api, rerender, revokePreviewUrl } = setup({ seed: [] });
+    api.uploadImage.mockReturnValue(
+      new Promise((resolve) => {
+        finishUpload = resolve;
+      }),
+    );
+
+    act(() => result.current.send({ body: "", image: photo }));
+    for (let draw = 0; draw < 3; draw += 1) {
+      rerender({ seed: [], connectionCount: 0 });
+    }
+    expect(revokePreviewUrl).not.toHaveBeenCalled();
+    expect(result.current.entries[0].imageUrl).toBe("blob:photo.png");
+
+    await act(async () => finishUpload("upload-1"));
+    await waitFor(() =>
+      expect(result.current.entries[0].delivery).toBe(DELIVERY.sent),
+    );
+    expect(revokePreviewUrl).toHaveBeenCalledExactlyOnceWith("blob:photo.png");
+  });
+
+  it("gives back a preview that is still held when the conversation is left", () => {
+    const { result, api, unmount, revokePreviewUrl } = setup({ seed: [] });
+    api.uploadImage.mockReturnValue(new Promise(() => undefined));
+    act(() => result.current.send({ body: "", image: photo }));
+
+    unmount();
+
+    expect(revokePreviewUrl).toHaveBeenCalledExactlyOnceWith("blob:photo.png");
   });
 
   it("sends no message when the upload fails, and uploads again on the next try", async () => {

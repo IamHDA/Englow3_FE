@@ -4,6 +4,7 @@
  * 60px (76px from md) plus its 1px border; the rest is this page's own padding.
  */
 .root {
+  width: 100%;
   max-width: 1200px;
   height: calc(100dvh - 61px);
   min-height: 480px;

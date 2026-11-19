@@ -23,7 +23,6 @@ import { ConversationHeader } from "./ConversationHeader";
 type ConversationPaneProps = {
   /** Null when the other person erased their account. */
   partner: ConversationPartner | null;
-  meId: string;
   /** False while the newest messages are still on their way. */
   messagesLoaded: boolean;
   entries: ChatMessageEntry[];
@@ -51,7 +50,6 @@ type ConversationPaneProps = {
  */
 export function ConversationPane({
   partner,
-  meId,
   messagesLoaded,
   entries,
   partnerReadSeq,
@@ -79,7 +77,6 @@ export function ConversationPane({
         {messagesLoaded ? (
           <MessageList
             entries={entries}
-            meId={meId}
             partnerName={partnerName}
             partnerReadSeq={partnerReadSeq}
             hasOlder={hasOlder}

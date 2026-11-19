@@ -23,7 +23,6 @@ import classes from "./ConversationRow.module.css";
 
 type ConversationRowProps = {
   conversation: ConversationItem;
-  meId: string;
   selected: boolean;
 };
 
@@ -49,7 +48,6 @@ function shortTime(iso: string, language: Language): string {
 /** One conversation of the list: who, what was said last and when, and how much has not been read. */
 export function ConversationRow({
   conversation,
-  meId,
   selected,
 }: ConversationRowProps) {
   const { language, t } = useLanguage();
@@ -57,6 +55,11 @@ export function ConversationRow({
   const { otherUser, lastMessage, unreadCount } = conversation;
   const name = otherUser?.displayName ?? copy.deletedUser;
   const unread = unreadCount > 0;
+  // A one-to-one conversation has two voices. The list carries no clientId, so
+  // the viewer's is the one that is not the other person's - and a sender that
+  // is gone (null) is the other person.
+  const lastWrittenByViewer =
+    lastMessage?.senderId != null && lastMessage.senderId !== otherUser?.userId;
 
   let preview: string | null = null;
   if (lastMessage) {
@@ -111,7 +114,7 @@ export function ConversationRow({
                 fw={unread ? 600 : 400}
                 fs={lastMessage?.recalled ? "italic" : undefined}
               >
-                {lastMessage?.senderId === meId ? copy.youPrefix : ""}
+                {lastWrittenByViewer ? copy.youPrefix : ""}
                 {preview}
               </Text>
             </Group>

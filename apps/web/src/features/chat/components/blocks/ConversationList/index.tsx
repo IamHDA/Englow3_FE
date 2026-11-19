@@ -24,7 +24,6 @@ type ConversationListProps = {
   items: ConversationItem[];
   /** The open conversation, to mark in the list. */
   selectedId: string | null;
-  meId: string;
   /** Counted from 1. */
   page: number;
   totalPages: number;
@@ -35,7 +34,6 @@ type ConversationListProps = {
 export function ConversationList({
   items,
   selectedId,
-  meId,
   page,
   totalPages,
   onPageChange,
@@ -74,7 +72,6 @@ export function ConversationList({
               <ConversationRow
                 key={conversation.id}
                 conversation={conversation}
-                meId={meId}
                 selected={conversation.id === selectedId}
               />
             ))}

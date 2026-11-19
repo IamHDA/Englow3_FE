@@ -39,6 +39,19 @@ export type ChatMessageEntry = {
   failureCode: string | null;
 };
 
+/**
+ * Whether the viewer wrote this message. The backend marks it itself: a message
+ * carries its `clientId` only to the person who sent it (ChatMessageResult), and
+ * every message has one. That is the whole rule - the id of the signed-in
+ * account is no use here, since the Supabase id the session holds is not the
+ * user id the backend writes into `senderId`.
+ */
+export function isOwnMessage(
+  entry: Pick<ChatMessageEntry, "clientId">,
+): boolean {
+  return entry.clientId !== null;
+}
+
 /** A confirmed message as an entry. */
 export function entryFromMessage(message: ChatMessageData): ChatMessageEntry {
   return {
@@ -59,7 +72,6 @@ export function entryFromMessage(message: ChatMessageData): ChatMessageEntry {
 /** What the viewer just wrote, before the backend has heard of it. */
 export function optimisticEntry(input: {
   clientId: string;
-  senderId: string;
   body: string | null;
   imageUrl: string | null;
   sentAt: string;
@@ -68,7 +80,8 @@ export function optimisticEntry(input: {
     key: input.clientId,
     id: null,
     seq: null,
-    senderId: input.senderId,
+    // Not known until the backend answers - and not needed: it is the viewer's.
+    senderId: null,
     body: input.body,
     imageUrl: input.imageUrl,
     recalled: false,

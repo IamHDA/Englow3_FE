@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef } from "react";
 
-import type { ChatMessageEntry } from "../realtime/messageList";
+import { isOwnMessage, type ChatMessageEntry } from "../realtime/messageList";
 
 /** Within this many pixels of the bottom counts as "at the bottom": a new message then keeps it there. */
 const BOTTOM_THRESHOLD_PX = 80;
@@ -12,8 +12,6 @@ const TOP_THRESHOLD_PX = 120;
 
 type Options = {
   entries: ChatMessageEntry[];
-  /** The viewer: their own new message always scrolls into view. */
-  meId: string;
   hasOlder: boolean;
   loadingOlder: boolean;
   onLoadOlder: () => void;
@@ -41,7 +39,6 @@ type Snapshot = {
  */
 export function useMessageScroll({
   entries,
-  meId,
   hasOlder,
   loadingOlder,
   onLoadOlder,
@@ -74,13 +71,14 @@ export function useMessageScroll({
       element.scrollTop = element.scrollHeight - before.height + before.top;
     } else if (
       lastKey !== before.lastKey &&
-      (atBottom.current || entries.at(-1)?.senderId === meId)
+      // The viewer's own new message always scrolls into view.
+      (atBottom.current || isOwnMessage(entries.at(-1)!))
     ) {
       element.scrollTop = element.scrollHeight;
       atBottom.current = true;
     }
     remember(element, { firstKey, lastKey });
-  }, [entries, meId, remember]);
+  }, [entries, remember]);
 
   const onScrollPositionChange = useCallback(() => {
     const element = viewportRef.current;
