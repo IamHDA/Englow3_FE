@@ -214,6 +214,27 @@ export function highestSeq(entries: ChatMessageEntry[]): number | null {
   return highest;
 }
 
+/**
+ * Where the unbroken run of seqs that starts at the lowest one held ends, or
+ * null when none is held. A conversation's seqs have no gaps (1, 2, 3...) and a
+ * message is never removed, so the seq after this one - if the list holds
+ * anything higher - is a message the viewer has not been given: the first
+ * thing to ask the backend for. `highestSeq` is not that place: a frame that
+ * arrives after a reconnect, or after one failed push, sits above a hole.
+ */
+export function contiguousHighSeq(entries: ChatMessageEntry[]): number | null {
+  const held = [
+    ...new Set(entries.flatMap(({ seq }) => (seq === null ? [] : [seq]))),
+  ].sort((a, b) => a - b);
+  if (held.length === 0) return null;
+  let high = held[0];
+  for (const seq of held.slice(1)) {
+    if (seq !== high + 1) break;
+    high = seq;
+  }
+  return high;
+}
+
 export function lowestSeq(entries: ChatMessageEntry[]): number | null {
   let lowest: number | null = null;
   for (const { seq } of entries) {

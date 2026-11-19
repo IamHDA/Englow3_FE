@@ -683,6 +683,119 @@ describe("catching up after the socket opens", () => {
     );
   });
 
+  it("counts from the first hole, not from a frame that arrived once the socket was back", async () => {
+    // Messages 11-13 were sent while the socket was down; 14 was pushed after
+    // it reopened. Counting from the highest seq held (14) would skip them
+    // until a reload.
+    const { rerender, api, result, bus } = setup({
+      seed: [message(8), message(9), message(10)],
+    });
+    api.fetchMessages.mockResolvedValue([
+      message(11),
+      message(12),
+      message(13),
+      message(14),
+    ]);
+
+    bus.emit(messageFrame(message(14)));
+    rerender({
+      seed: [message(8), message(9), message(10)],
+      connectionCount: 1,
+    });
+
+    await waitFor(() =>
+      expect(seqs(result.current.entries)).toEqual([8, 9, 10, 11, 12, 13, 14]),
+    );
+    // The first thing asked for is what follows seq 10; a call that counted
+    // from the highest seq held (14) would have asked for nothing that was lost.
+    expect(api.fetchMessages.mock.calls[0][0].afterSeq).toBe(10);
+  });
+
+  it("fills a hole when a frame arrives more than one above the unbroken run, with no reconnect", async () => {
+    const { api, result, bus } = setup({
+      seed: [message(1), message(2)],
+      connectionCount: 1,
+    });
+    await waitFor(() => expect(api.fetchMessages).toHaveBeenCalledTimes(1));
+    api.fetchMessages.mockClear();
+    api.fetchMessages.mockResolvedValue([message(4), message(5)]);
+
+    bus.emit(messageFrame(message(3)));
+    expect(api.fetchMessages).not.toHaveBeenCalled();
+    bus.emit(messageFrame(message(5)));
+
+    await waitFor(() =>
+      expect(seqs(result.current.entries)).toEqual([1, 2, 3, 4, 5]),
+    );
+    expect(api.fetchMessages).toHaveBeenCalledExactlyOnceWith({
+      conversationId: CONVERSATION,
+      afterSeq: 3,
+      limit: CATCH_UP_PAGE_SIZE,
+    });
+  });
+
+  it("makes a hole over the seed's own seqs too: the unbroken run is counted from the lowest seq held", async () => {
+    const { api, result, rerender } = setup({ seed: undefined });
+    api.fetchMessages.mockResolvedValue([message(3), message(4), message(5)]);
+
+    rerender({
+      seed: [message(1), message(2), message(5)],
+      connectionCount: 0,
+    });
+
+    await waitFor(() =>
+      expect(seqs(result.current.entries)).toEqual([1, 2, 3, 4, 5]),
+    );
+    expect(api.fetchMessages.mock.calls[0][0].afterSeq).toBe(2);
+  });
+
+  it("runs one catch-up at a time, and goes round once more for what arrived while it ran", async () => {
+    const { api, result, bus } = setup({
+      seed: [message(1), message(2)],
+    });
+    let finishFirst: (page: ChatMessageData[]) => void = () => undefined;
+    api.fetchMessages.mockImplementationOnce(
+      () =>
+        new Promise<ChatMessageData[]>((resolve) => {
+          finishFirst = resolve;
+        }),
+    );
+    api.fetchMessages.mockResolvedValue([message(6), message(7), message(8)]);
+
+    bus.emit(messageFrame(message(5)));
+    await waitFor(() => expect(api.fetchMessages).toHaveBeenCalledTimes(1));
+    bus.emit(messageFrame(message(8)));
+    // Still the first one: nothing runs beside it.
+    expect(api.fetchMessages).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      finishFirst([message(3), message(4), message(5)]);
+    });
+
+    await waitFor(() => expect(api.fetchMessages).toHaveBeenCalledTimes(2));
+    expect(api.fetchMessages.mock.calls[1][0].afterSeq).toBe(5);
+    await waitFor(() =>
+      expect(seqs(result.current.entries)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]),
+    );
+  });
+
+  it("tries a hole again when the next frame arrives after a catch-up that failed", async () => {
+    const { api, result, bus } = setup({ seed: [message(1)] });
+    api.fetchMessages.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    bus.emit(messageFrame(message(3)));
+    await waitFor(() => expect(api.fetchMessages).toHaveBeenCalledTimes(1));
+    expect(seqs(result.current.entries)).toEqual([1, 3]);
+
+    api.fetchMessages.mockResolvedValue([message(2), message(3), message(4)]);
+    bus.emit(messageFrame(message(4)));
+
+    await waitFor(() =>
+      expect(seqs(result.current.entries)).toEqual([1, 2, 3, 4]),
+    );
+    expect(api.fetchMessages).toHaveBeenCalledTimes(2);
+  });
+
   it("shows nothing for a catch-up that fails", async () => {
     const { rerender, api, result } = setup({ seed: [message(1)] });
     api.fetchMessages.mockRejectedValue(new TypeError("Failed to fetch"));

@@ -23,6 +23,7 @@ import {
 import { FRAME_TYPE, type ChatFrame } from "../realtime/frames";
 import {
   applyRecall,
+  contiguousHighSeq,
   entryFromMessage,
   highestSeq,
   lowestSeq,
@@ -249,13 +250,21 @@ export function useConversationMessages({
     [subscribe, conversationId, partnerId],
   );
 
-  /* ---- Catching up after the socket (re)opens --------------------------- */
+  /* ---- Catching up: after the socket (re)opens, and over a hole ---------- */
 
   const seeded = seed !== undefined;
   const caughtUpFor = useRef(0);
+  const catchingUp = useRef(false);
+  const catchUpAgain = useRef(false);
 
-  const catchUp = useEffectEvent(async () => {
-    let after = highestSeq(entries);
+  /**
+   * Fetches what is missing, starting at the first hole - the seq after the end
+   * of the unbroken run the list holds - and not after the highest seq: a frame
+   * that arrived once the socket was back (or after one failed push) is above
+   * the messages that were missed, and counting from it would skip them for good.
+   */
+  const fetchMissing = useEffectEvent(async () => {
+    let after = contiguousHighSeq(entries);
     for (let page = 0; page < MAX_CATCH_UP_PAGES; page += 1) {
       const batch = await api.fetchMessages({
         conversationId,
@@ -269,15 +278,56 @@ export function useConversationMessages({
     }
   });
 
+  /**
+   * One catch-up at a time. One asked for while another runs is not dropped and
+   * not run beside it: it is run once this one is done, as a later render - the
+   * one that has the pages this one brought in - so it counts from the list as
+   * it is then, not from the list this one started with.
+   */
+  const [followUp, setFollowUp] = useState(0);
+  const catchUp = useEffectEvent(async () => {
+    if (catchingUp.current) {
+      catchUpAgain.current = true;
+      return;
+    }
+    catchingUp.current = true;
+    try {
+      await fetchMissing();
+    } catch {
+      // Not shown: the next reconnect, the next frame over a hole, or a reload repeats it.
+    } finally {
+      catchingUp.current = false;
+      if (catchUpAgain.current) {
+        catchUpAgain.current = false;
+        setFollowUp((round) => round + 1);
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (followUp > 0) void catchUp();
+  }, [followUp]);
+
   useEffect(() => {
     // Wait for the seed: until then there is no seq to count from, and the seed
     // is itself fetched after the socket opened or catches up as it arrives.
     if (connectionCount === 0 || !seeded) return;
     if (caughtUpFor.current === connectionCount) return;
     caughtUpFor.current = connectionCount;
-    // A catch-up that fails is not shown: the next reconnect, or a reload, repeats it.
-    catchUp().catch(() => undefined);
+    void catchUp();
   }, [connectionCount, seeded]);
+
+  // A hole in the list: a frame whose seq is more than one above the end of
+  // the unbroken run. The backend's push failed once, or the socket dropped
+  // and a later frame came back first. Asked again for each newer frame, so a
+  // catch-up that failed is retried by the next one.
+  const unbrokenTo = contiguousHighSeq(entries);
+  const newest = highestSeq(entries);
+  const hasHole = unbrokenTo !== null && newest !== null && newest > unbrokenTo;
+  useEffect(() => {
+    if (!seeded || !hasHole) return;
+    void catchUp();
+  }, [seeded, hasHole, newest]);
 
   /* ---- Scrolling back --------------------------------------------------- */
 

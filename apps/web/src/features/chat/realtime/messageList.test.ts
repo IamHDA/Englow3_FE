@@ -5,6 +5,7 @@ import type { ChatMessageData } from "../types";
 import {
   DELIVERY,
   applyRecall,
+  contiguousHighSeq,
   entryFromMessage,
   highestSeq,
   isOwnMessage,
@@ -189,5 +190,30 @@ describe("highestSeq and lowestSeq", () => {
     ]);
     expect(highestSeq(entries)).toBe(9);
     expect(lowestSeq(entries)).toBe(4);
+  });
+});
+
+describe("contiguousHighSeq", () => {
+  const held = (...seqs: number[]) =>
+    seqs.map((seq) => entryFromMessage(data(seq)));
+
+  it("is the end of the unbroken run that starts at the lowest seq", () => {
+    expect(contiguousHighSeq(held(8, 9, 10))).toBe(10);
+    expect(contiguousHighSeq(held(8, 9, 10, 14))).toBe(10);
+    expect(contiguousHighSeq(held(1, 3, 4, 5))).toBe(1);
+  });
+
+  it("does not depend on the order the entries are in, and counts a seq held twice once", () => {
+    expect(contiguousHighSeq(held(10, 8, 9, 9, 13))).toBe(10);
+  });
+
+  it("is the one seq held when only one is, and null when none is numbered", () => {
+    expect(contiguousHighSeq(held(7))).toBe(7);
+    expect(contiguousHighSeq([])).toBeNull();
+    expect(contiguousHighSeq([waiting("a")])).toBeNull();
+  });
+
+  it("ignores messages still waiting to be numbered", () => {
+    expect(contiguousHighSeq([...held(1, 2), waiting("a")])).toBe(2);
   });
 });
