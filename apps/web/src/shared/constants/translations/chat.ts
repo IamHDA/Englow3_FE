@@ -34,7 +34,6 @@ export type ChatBackendCode =
   | "RATE_LIMITED";
 
 export interface ChatTranslations {
-  pageTitle: string;
   /** The header's icon button. */
   indicator: {
     /** No unread conversation. */
@@ -58,7 +57,6 @@ export interface ChatTranslations {
     recalledPreview: string;
     unreadOne: string;
     unreadOther: string;
-    openWith: string;
   };
   pane: {
     /** Mobile: the way back from a conversation to the list. */
@@ -132,7 +130,6 @@ export interface ChatTranslations {
 }
 
 export const chatVi: ChatTranslations = {
-  pageTitle: "Tin nhắn",
   indicator: {
     label: "Tin nhắn",
     unreadOne: "Tin nhắn, {count} cuộc trò chuyện chưa đọc",
@@ -153,7 +150,6 @@ export const chatVi: ChatTranslations = {
     recalledPreview: "Tin nhắn đã thu hồi",
     unreadOne: "{count} tin chưa đọc",
     unreadOther: "{count} tin chưa đọc",
-    openWith: "Mở cuộc trò chuyện với {name}",
   },
   pane: {
     backToList: "Quay lại danh sách tin nhắn",
@@ -247,7 +243,6 @@ export const chatVi: ChatTranslations = {
 };
 
 export const chatEn: ChatTranslations = {
-  pageTitle: "Messages",
   indicator: {
     label: "Messages",
     unreadOne: "Messages, {count} unread conversation",
@@ -269,7 +264,6 @@ export const chatEn: ChatTranslations = {
     recalledPreview: "Message recalled",
     unreadOne: "{count} unread message",
     unreadOther: "{count} unread messages",
-    openWith: "Open the conversation with {name}",
   },
   pane: {
     backToList: "Back to messages",
