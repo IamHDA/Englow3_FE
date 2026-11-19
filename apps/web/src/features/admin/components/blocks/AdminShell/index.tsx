@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   LogOut,
   Scale,
+  ShieldCheck,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -42,7 +43,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const { replay, activeTarget } = useUserTour();
   const navigationOpened =
     opened || Boolean(activeTarget?.startsWith("admin-"));
-  const { isVi, toggleLanguage } = useLanguage();
+  const { isVi, t, toggleLanguage } = useLanguage();
   const admin = session?.role === "ADMIN";
   const workload = useAssessmentWorkloadQuery({
     fetchPolicy: "cache-and-network",
@@ -97,6 +98,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
       href: "/admin/assessments",
       label: "Writing & Speaking",
       icon: ClipboardList,
+    },
+    // Staff and admin both moderate; the backend refuses anyone else.
+    {
+      href: "/admin/blog",
+      label: t.blog.admin.menu,
+      icon: ShieldCheck,
     },
     // Changing a plan is the administrator's alone.
     ...(admin

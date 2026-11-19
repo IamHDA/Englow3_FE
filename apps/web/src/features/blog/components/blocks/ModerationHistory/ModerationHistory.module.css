@@ -1,0 +1,11 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A moderator's reason is plain text with their own line breaks. */
+.reason {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

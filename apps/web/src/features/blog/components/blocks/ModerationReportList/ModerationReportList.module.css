@@ -1,0 +1,11 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A reporter's note is plain text with their own line breaks. */
+.note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,9 @@
+.title {
+  overflow-wrap: anywhere;
+}
+
+/* A comment is plain text, as the people who read it see it: its line breaks are the writer's. */
+.comment {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

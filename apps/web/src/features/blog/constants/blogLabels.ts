@@ -180,3 +180,27 @@ export function offeredActions(
 export function countLabel(count: number, one: string, other: string): string {
   return (count === 1 ? one : other).replace("{count}", String(count));
 }
+
+/** The colour of the badge of a piece of content's status. */
+export const TARGET_STATUS_COLOR = {
+  [BlogTargetStatus.PUBLISHED]: "green",
+  [BlogTargetStatus.VISIBLE]: "green",
+  [BlogTargetStatus.HIDDEN]: "orange",
+  [BlogTargetStatus.REMOVED]: "warn",
+  [BlogTargetStatus.DELETED]: "ink",
+} as const satisfies Record<BlogTargetStatus, string>;
+
+/** The colour of the badge of what a moderator did. */
+export const MODERATION_ACTION_COLOR = {
+  [BlogModerationAction.HIDE]: "orange",
+  [BlogModerationAction.RESTORE]: "green",
+  [BlogModerationAction.REMOVE]: "warn",
+  [BlogModerationAction.DISMISS]: "ink",
+} as const satisfies Record<BlogModerationAction, string>;
+
+/** The colour of the badge of a report's status. */
+export const REPORT_STATUS_COLOR = {
+  [BlogReportStatus.OPEN]: "orange",
+  [BlogReportStatus.RESOLVED]: "green",
+  [BlogReportStatus.DISMISSED]: "ink",
+} as const satisfies Record<BlogReportStatus, string>;

@@ -1,0 +1,37 @@
+.row {
+  position: relative;
+  list-style: none;
+  transition: border-color 150ms ease;
+}
+
+.row:hover {
+  border-color: var(--mantine-color-brand-3);
+}
+
+/* The whole row opens the content; the author's own link stays clickable above it. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--mantine-radius-md);
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.link:focus-visible::after {
+  outline: 2px solid var(--mantine-color-brand-5);
+  outline-offset: 2px;
+}
+
+.row a:not(.link) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}
