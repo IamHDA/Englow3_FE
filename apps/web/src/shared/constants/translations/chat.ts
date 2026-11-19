@@ -66,12 +66,10 @@ export interface ChatTranslations {
     viewProfile: string;
     placeholderTitle: string;
     placeholderDescription: string;
-    notFoundTitle: string;
+    /** What the not-found and load-error states say is missing: "Không tìm thấy cuộc trò chuyện". */
+    thing: string;
     notFoundDescription: string;
     notFoundBack: string;
-    loadErrorTitle: string;
-    loadErrorDescription: string;
-    retry: string;
     emptyTitle: string;
     emptyDescription: string;
     loadingOlder: string;
@@ -163,13 +161,10 @@ export const chatVi: ChatTranslations = {
     placeholderTitle: "Chọn một cuộc trò chuyện",
     placeholderDescription:
       "Chọn một người bạn ở danh sách bên trái để đọc và nhắn tin.",
-    notFoundTitle: "Không tìm thấy cuộc trò chuyện",
+    thing: "cuộc trò chuyện",
     notFoundDescription:
       "Cuộc trò chuyện này không tồn tại, hoặc không phải của bạn.",
     notFoundBack: "Về danh sách tin nhắn",
-    loadErrorTitle: "Không tải được cuộc trò chuyện",
-    loadErrorDescription: "Máy chủ chưa phản hồi. Thử lại sau ít phút.",
-    retry: "Thử lại",
     emptyTitle: "Hãy nói xin chào",
     emptyDescription: "Chưa có tin nhắn nào. Gửi tin đầu tiên cho {name}.",
     loadingOlder: "Đang tải tin nhắn cũ hơn…",
@@ -282,14 +277,10 @@ export const chatEn: ChatTranslations = {
     placeholderTitle: "Pick a conversation",
     placeholderDescription:
       "Choose a friend from the list to read and send messages.",
-    notFoundTitle: "Conversation not found",
+    thing: "conversation",
     notFoundDescription:
       "This conversation does not exist, or it is not yours.",
     notFoundBack: "Back to messages",
-    loadErrorTitle: "Could not load the conversation",
-    loadErrorDescription:
-      "The server did not answer. Try again in a few minutes.",
-    retry: "Try again",
     emptyTitle: "Say hello",
     emptyDescription: "No messages yet. Send the first one to {name}.",
     loadingOlder: "Loading older messages…",

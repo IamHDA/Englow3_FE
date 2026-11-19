@@ -52,7 +52,14 @@ export function contentSecurityPolicy({
     : localPreview
       ? " http://localhost:9000 http://127.0.0.1:9000"
       : "";
-  const websocket = development ? " ws://localhost:* ws://127.0.0.1:*" : "";
+  // The chat socket goes straight to the backend. A deployed page reaches it
+  // through "wss:"; locally it is plain ws on the backend's own port, which a
+  // production build previewed on loopback needs as much as `next dev` does.
+  const websocket = development
+    ? " ws://localhost:* ws://127.0.0.1:*"
+    : localPreview
+      ? " ws://localhost:8080 ws://127.0.0.1:8080"
+      : "";
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${development ? " 'unsafe-eval'" : ""}`,

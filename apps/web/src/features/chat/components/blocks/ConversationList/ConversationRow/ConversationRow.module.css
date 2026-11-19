@@ -1,0 +1,31 @@
+.row {
+  display: block;
+  padding: 12px var(--mantine-spacing-md);
+  border-bottom: 1px solid var(--mantine-color-ink-2);
+  color: var(--mantine-color-ink-9);
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+.row:hover {
+  background-color: var(--mantine-color-ink-0);
+}
+
+.row[data-selected] {
+  background-color: var(--mantine-color-brand-0);
+  box-shadow: inset 3px 0 0 var(--mantine-color-brand-7);
+}
+
+.row:focus-visible {
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}
+
+.icon {
+  flex: none;
+}

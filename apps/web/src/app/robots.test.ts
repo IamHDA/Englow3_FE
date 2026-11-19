@@ -18,6 +18,7 @@ describe("robots.txt", () => {
         "/profile",
         "/friends",
         "/people",
+        "/chat",
       ]),
     );
     expect(rule.allow).toBe("/");

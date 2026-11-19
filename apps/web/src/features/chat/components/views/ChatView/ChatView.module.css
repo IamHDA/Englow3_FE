@@ -1,0 +1,53 @@
+/*
+ * The chat fills the screen under the header instead of scrolling the page, so
+ * the box stays at the bottom and the messages scroll inside it. The header is
+ * 60px (76px from md) plus its 1px border; the rest is this page's own padding.
+ */
+.root {
+  max-width: 1200px;
+  height: calc(100dvh - 61px);
+  min-height: 480px;
+  margin-inline: auto;
+  padding: 12px var(--mantine-spacing-md) var(--mantine-spacing-md);
+}
+
+.paper {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--mantine-color-body);
+  box-shadow: none;
+}
+
+/* One pane on a phone: the list, or - once a conversation is open - the conversation. */
+.list {
+  flex: 1;
+}
+
+.pane {
+  flex: 1;
+}
+
+.shell[data-conversation] .list {
+  display: none;
+}
+
+.shell:not([data-conversation]) .pane {
+  display: none;
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .root {
+    height: calc(100dvh - 77px);
+    padding: 24px 32px;
+  }
+
+  .list {
+    flex: 0 0 340px;
+  }
+
+  .shell[data-conversation] .list,
+  .shell:not([data-conversation]) .pane {
+    display: block;
+  }
+}

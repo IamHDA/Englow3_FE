@@ -120,3 +120,21 @@ export const LIST_QUERY_NAMES: ReadonlySet<string> = new Set([
   "ChatConversations",
   "ChatUnreadCount",
 ]);
+
+/** Why the box cannot be written in: the two are no longer friends, or the other person erased their account. */
+export const CONVERSATION_LOCK = {
+  notFriends: "notFriends",
+  partnerGone: "partnerGone",
+} as const;
+
+export type ConversationLock =
+  (typeof CONVERSATION_LOCK)[keyof typeof CONVERSATION_LOCK];
+
+/** Which sentence of the composer's copy explains each lock: a Record, so a new reason is a type error until it has words. */
+export const CONVERSATION_LOCK_SENTENCE: Record<
+  ConversationLock,
+  "lockedNotFriends" | "lockedPartnerGone"
+> = {
+  [CONVERSATION_LOCK.notFriends]: "lockedNotFriends",
+  [CONVERSATION_LOCK.partnerGone]: "lockedPartnerGone",
+};

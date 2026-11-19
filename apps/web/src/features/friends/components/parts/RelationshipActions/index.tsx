@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { OpenChatButton } from "@/features/chat";
 import { RelationshipStatus } from "@/lib/graphql/generated";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
@@ -136,8 +137,12 @@ export function RelationshipActions({
       );
     case RelationshipStatus.FRIENDS:
       return (
-        // The group leaves room for the "Nhắn tin" button of the chat plan.
         <Group gap="xs" wrap="nowrap">
+          <OpenChatButton
+            friendId={target.userId}
+            friendName={target.displayName}
+            disabled={locked}
+          />
           <Menu position="bottom-end" disabled={locked}>
             <Menu.Target>
               <Button

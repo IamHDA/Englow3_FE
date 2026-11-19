@@ -19,6 +19,7 @@ import { Fragment, useState, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { AuthModal, isBackOfficeRole, useAuth } from "@/features/auth";
+import { ChatUnreadIndicator } from "@/features/chat";
 import { IncomingRequestsBadge } from "@/features/friends";
 import { useOnboarding } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
@@ -206,6 +207,12 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         </Group>
 
         <Group gap={8} wrap="nowrap">
+          {/* One instance for every screen width: it polls, so it is not drawn
+              twice (once in the bar, once in the drawer). Learners only - staff
+              have no chat, and a guest has no one to hear from. */}
+          {session && !isBackOfficeRole(session.role) ? (
+            <ChatUnreadIndicator />
+          ) : null}
           <Group visibleFrom="md" gap={12}>
             <LanguageSwitcher />
             {session ? (

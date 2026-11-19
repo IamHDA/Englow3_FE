@@ -1,0 +1,81 @@
+.line {
+  max-width: min(88%, 520px);
+}
+
+.bubble {
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: var(--mantine-radius-lg);
+  overflow-wrap: anywhere;
+}
+
+.bubble[data-mine] {
+  border-end-end-radius: var(--mantine-radius-xs);
+  background-color: var(--mantine-color-brand-7);
+  color: var(--mantine-color-white);
+}
+
+.bubble:not([data-mine]) {
+  border-end-start-radius: var(--mantine-radius-xs);
+  background-color: var(--mantine-color-ink-1);
+  color: var(--mantine-color-ink-9);
+}
+
+.bubble[data-delivery="sending"] {
+  opacity: 0.7;
+}
+
+.bubble[data-delivery="failed"],
+.bubble[data-delivery="rejected"] {
+  outline: 1px solid var(--mantine-color-warn-5);
+  outline-offset: 1px;
+}
+
+.bubble[data-recalled] {
+  background-color: transparent;
+  color: var(--mantine-color-ink-5);
+  border: 1px dashed var(--mantine-color-ink-3);
+}
+
+.text {
+  white-space: pre-wrap;
+}
+
+.time {
+  margin-top: 2px;
+  text-align: end;
+  color: var(--mantine-color-ink-5);
+}
+
+.bubble[data-mine]:not([data-recalled]) .time {
+  color: var(--mantine-color-brand-1);
+}
+
+.image {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* A way to take a message back that is there when it is wanted and quiet when it is not. */
+.options {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.line:hover .options,
+.line:focus-within .options,
+.options[data-expanded] {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .options {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .options {
+    transition: none;
+  }
+}

@@ -38,6 +38,12 @@ vi.mock("@/features/friends", () => ({
   IncomingRequestsBadge: () => <span data-testid="friend-request-badge" />,
 }));
 
+// The indicator asks the BFF how many conversations are unread; here it only
+// has to be drawn, and counted, since it polls and must exist once.
+vi.mock("@/features/chat", () => ({
+  ChatUnreadIndicator: () => <span data-testid="chat-unread-indicator" />,
+}));
+
 vi.mock("@/features/account", () => ({
   useAccountProfile: () => ({ profile: null }),
 }));
@@ -143,5 +149,31 @@ describe("SiteHeaderNav", () => {
     expect(screen.queryByTestId("friend-request-badge")).toBeNull();
     expect(fireEvent.click(linkTo("/friends"))).toBe(false);
     expect(screen.getByRole("dialog")).toBeTruthy();
+  });
+
+  // The header's way into the chat, with its "something new" mark: learners
+  // only, and drawn once - it polls, so a second copy in the drawer would ask
+  // twice as often.
+  it("gives a signed-in learner one chat indicator", () => {
+    auth.session = { userId: "u1", email: "learner@example.com", role: null };
+    renderNav();
+
+    expect(screen.getAllByTestId("chat-unread-indicator")).toHaveLength(1);
+  });
+
+  it.each(["STAFF", "ADMIN"])(
+    "leaves the chat indicator out for %s, who have no chat",
+    (role) => {
+      auth.session = { userId: "s1", email: "staff@example.com", role };
+      renderNav();
+
+      expect(screen.queryByTestId("chat-unread-indicator")).toBeNull();
+    },
+  );
+
+  it("leaves the chat indicator out for a guest", () => {
+    renderNav();
+
+    expect(screen.queryByTestId("chat-unread-indicator")).toBeNull();
   });
 });

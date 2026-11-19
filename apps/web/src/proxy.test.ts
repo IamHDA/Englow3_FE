@@ -37,6 +37,8 @@ describe("pages that need an account", () => {
     "/friends",
     "/friends?tab=requests",
     "/people/67136874-3a1b-40fa-90c1-7411689b42e3",
+    "/chat",
+    "/chat/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10",
     "/profile",
   ])(
     "sends a guest from %s to the login page, remembering where they were going",
@@ -50,21 +52,26 @@ describe("pages that need an account", () => {
     },
   );
 
-  it.each(["/friends", "/people/67136874-3a1b-40fa-90c1-7411689b42e3"])(
-    "lets a signed-in account open %s",
-    async (path) => {
-      session.claims = { sub: "u1" };
+  it.each([
+    "/friends",
+    "/people/67136874-3a1b-40fa-90c1-7411689b42e3",
+    "/chat",
+    "/chat/0b1b5d1e-7d6e-4a43-8a63-0c6f6b7f3f10",
+  ])("lets a signed-in account open %s", async (path) => {
+    session.claims = { sub: "u1" };
 
+    const response = await visit(path);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+  });
+
+  it.each(["/friendship-tips", "/chatter"])(
+    "does not treat %s, which merely starts with the same letters, as member-only",
+    async (path) => {
       const response = await visit(path);
 
-      expect(response.status).toBe(200);
       expect(response.headers.get("location")).toBeNull();
     },
   );
-
-  it("does not treat a page that merely starts with the same letters as member-only", async () => {
-    const response = await visit("/friendship-tips");
-
-    expect(response.headers.get("location")).toBeNull();
-  });
 });

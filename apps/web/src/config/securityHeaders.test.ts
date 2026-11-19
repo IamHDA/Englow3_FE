@@ -49,6 +49,23 @@ describe("contentSecurityPolicy", () => {
     expect(policy).not.toContain("upgrade-insecure-requests");
   });
 
+  it("opens no plain ws:// socket to a deployed page, which has wss: only", () => {
+    expect(directive(production(), "connect-src")).not.toContain("ws://");
+    expect(
+      contentSecurityPolicy({
+        nonce: "abc123",
+        development: false,
+        pageUrl: "https://englow3-web-test.vercel.app/chat",
+      }),
+    ).not.toContain("ws://");
+  });
+
+  it("lets local development open the chat socket on any local port", () => {
+    expect(directive(development(), "connect-src")).toContain(
+      "ws://localhost:* ws://127.0.0.1:*",
+    );
+  });
+
   it("refuses framing, plugins and a changed base address", () => {
     const policy = production();
 
@@ -76,6 +93,13 @@ describe("contentSecurityPolicy", () => {
       expect(policy).not.toContain("upgrade-insecure-requests");
       expect(policy).not.toContain("unsafe-eval");
       expect(policy).not.toContain("http://localhost:*");
+      // The chat socket of the local backend, and no wider than that.
+      expect(directive(policy, "connect-src")).toContain("ws://localhost:8080");
+      expect(directive(policy, "connect-src")).toContain("ws://127.0.0.1:8080");
+      expect(policy).not.toContain("ws://localhost:*");
+      for (const name of ["media-src", "img-src"]) {
+        expect(directive(policy, name)).not.toContain("ws://");
+      }
       expect(directive(policy, "script-src")).toContain(
         "'nonce-preview' 'strict-dynamic'",
       );

@@ -37,6 +37,7 @@ const MEMBER_ONLY_PREFIXES = [
   "/profile",
   "/friends",
   "/people",
+  "/chat",
   "/admin",
 ];
 

@@ -1,0 +1,4 @@
+.locked {
+  border-top: 1px solid var(--mantine-color-ink-2);
+  background-color: var(--mantine-color-ink-0);
+}

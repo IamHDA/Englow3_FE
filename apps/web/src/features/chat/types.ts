@@ -12,3 +12,6 @@ export type ConversationDetail = ChatConversationQuery["chatConversation"];
 
 /** A message as the backend says it - a REST answer, a history page or a socket frame. */
 export type ChatMessageData = ChatMessageFieldsFragment;
+
+/** The other person of a conversation, as much as the list and the header show. */
+export type ConversationPartner = NonNullable<ConversationItem["otherUser"]>;
