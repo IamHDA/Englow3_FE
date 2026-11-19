@@ -591,3 +591,259 @@ describe("chat - schema wiring, the nullable fields and the error contract", () 
     });
   });
 });
+
+describe("blog - schema wiring, the wall's posts and the error contract", () => {
+  const server = new ApolloServer({ typeDefs, resolvers, formatError });
+
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
+  async function run(query: string, apis: Record<string, unknown>) {
+    const response = await server.executeOperation(
+      { query },
+      { contextValue: makeContext({ apis }) },
+    );
+    if (response.body.kind !== "single")
+      throw new Error("expected single result");
+    return response.body.singleResult;
+  }
+
+  const WALL_POSTS = `
+    query {
+      userWall(userId: "u2") {
+        available
+        profile { displayName }
+        posts(size: 5) { totalItems items { id title status author { displayName } } }
+      }
+    }
+  `;
+
+  const profile = {
+    userId: "u2",
+    displayName: "An",
+    avatarUrl: null,
+    bannerUrl: null,
+    staff: false,
+    joinedAt: "2026-01-01T00:00:00Z",
+  };
+
+  const relationship = (status: string) =>
+    vi.fn().mockResolvedValue({
+      userId: "u2",
+      relationship: status,
+      requestId: null,
+    });
+
+  it("lists the owner's posts on the wall next to the profile, with their status and an erased author as null", async () => {
+    const list = vi.fn().mockResolvedValue({
+      items: [
+        {
+          id: "p1",
+          title: "Mine, hidden",
+          excerpt: "x",
+          author: null,
+          status: "HIDDEN",
+          tags: [],
+          likeCount: 0,
+          commentCount: 0,
+          likedByMe: false,
+          createdAt: "2026-11-16T03:00:00Z",
+          editedAt: null,
+        },
+      ],
+      page: 0,
+      size: 5,
+      totalItems: 1,
+      totalPages: 1,
+    });
+    const result = await run(WALL_POSTS, {
+      friendshipApi: {
+        relationship: relationship("FRIENDS"),
+        friendCount: vi.fn().mockResolvedValue({ count: 1 }),
+      },
+      userApi: { publicProfile: vi.fn().mockResolvedValue(profile) },
+      blogApi: { list },
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      userWall: {
+        available: true,
+        profile: { displayName: "An" },
+        posts: {
+          totalItems: 1,
+          items: [
+            {
+              id: "p1",
+              title: "Mine, hidden",
+              status: "HIDDEN",
+              author: null,
+            },
+          ],
+        },
+      },
+    });
+    expect(list).toHaveBeenCalledWith({
+      authorId: "u2",
+      sort: "NEWEST",
+      page: 0,
+      size: 5,
+    });
+  });
+
+  it("asks for no posts when either side blocked the other", async () => {
+    const list = vi.fn();
+    const result = await run(WALL_POSTS, {
+      friendshipApi: {
+        relationship: relationship("BLOCKED_BY_ME"),
+        friendCount: vi.fn(),
+      },
+      userApi: { publicProfile: vi.fn() },
+      blogApi: { list },
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      userWall: { available: false, profile: null, posts: null },
+    });
+    expect(list).not.toHaveBeenCalled();
+  });
+
+  it("keeps the rest of the wall when only the posts fail", async () => {
+    const result = await run(WALL_POSTS, {
+      friendshipApi: {
+        relationship: relationship("NONE"),
+        friendCount: vi.fn().mockResolvedValue({ count: 1 }),
+      },
+      userApi: { publicProfile: vi.fn().mockResolvedValue(profile) },
+      blogApi: {
+        list: vi.fn().mockRejectedValue(new BackendError("boom", 500)),
+      },
+    });
+
+    expect(result.data).toEqual({
+      userWall: {
+        available: true,
+        profile: { displayName: "An" },
+        posts: null,
+      },
+    });
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors?.[0]?.message).not.toContain("boom");
+  });
+
+  it("maps a post that is not there - or not for this viewer - to NOT_FOUND with its backendCode", async () => {
+    const result = await run('query { blogPost(id: "p9") { id } }', {
+      blogApi: {
+        post: vi
+          .fn()
+          .mockRejectedValue(
+            new BackendError("No post", 404, "BLOG_POST_NOT_FOUND", "trace-1"),
+          ),
+      },
+    });
+
+    expect(result.errors?.[0]?.extensions).toMatchObject({
+      code: "NOT_FOUND",
+      backendCode: "BLOG_POST_NOT_FOUND",
+      traceId: "trace-1",
+    });
+  });
+
+  it("maps a stale edit to CONFLICT with BLOG_POST_STALE, and sends the version", async () => {
+    const update = vi
+      .fn()
+      .mockRejectedValue(new BackendError("stale", 409, "BLOG_POST_STALE"));
+    const result = await run(
+      `mutation {
+        updateBlogPost(
+          id: "p1"
+          version: 4
+          input: { title: "T", body: "B", tags: [{ kind: SKILL, value: "WRITING" }] }
+        ) { id }
+      }`,
+      { blogApi: { update } },
+    );
+
+    expect(result.errors?.[0]?.extensions).toMatchObject({
+      code: "CONFLICT",
+      backendCode: "BLOG_POST_STALE",
+    });
+    expect(update).toHaveBeenCalledWith("p1", {
+      title: "T",
+      body: "B",
+      tags: [{ kind: "SKILL", value: "WRITING" }],
+      version: 4,
+    });
+  });
+
+  it("maps a learner's refused moderation to FORBIDDEN, and acts through the enum", async () => {
+    const adminModerate = vi
+      .fn()
+      .mockRejectedValue(
+        new BackendError("no", 403, "BLOG_MODERATION_OWN_CONTENT"),
+      );
+    const result = await run(
+      `mutation {
+        adminModerateBlog(type: POST, id: "p1", action: HIDE, reason: "spam") {
+          targetStatus
+        }
+      }`,
+      { blogApi: { adminModerate } },
+    );
+
+    expect(result.errors?.[0]?.extensions).toMatchObject({
+      code: "FORBIDDEN",
+      backendCode: "BLOG_MODERATION_OWN_CONTENT",
+    });
+    expect(adminModerate).toHaveBeenCalledWith("POST", "p1", {
+      action: "HIDE",
+      reason: "spam",
+    });
+  });
+
+  it("shows a moderated target with its deleted content and erased people as null", async () => {
+    const adminTarget = vi.fn().mockResolvedValue({
+      targetType: "COMMENT",
+      targetId: "c1",
+      targetStatus: "DELETED",
+      content: null,
+      author: null,
+      reports: [
+        {
+          id: "r1",
+          reporter: null,
+          reason: "SPAM",
+          detail: null,
+          status: "OPEN",
+          resolutionNote: null,
+          createdAt: "2026-11-16T03:00:00Z",
+          resolvedAt: null,
+        },
+      ],
+      actions: [],
+    });
+    const result = await run(
+      `query {
+        adminBlogTarget(type: COMMENT, id: "c1") {
+          targetStatus
+          content { body }
+          author { userId }
+          reports { reporter { userId } reason status }
+        }
+      }`,
+      { blogApi: { adminTarget } },
+    );
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      adminBlogTarget: {
+        targetStatus: "DELETED",
+        content: null,
+        author: null,
+        reports: [{ reporter: null, reason: "SPAM", status: "OPEN" }],
+      },
+    });
+    expect(adminTarget).toHaveBeenCalledWith("COMMENT", "c1");
+  });
+});

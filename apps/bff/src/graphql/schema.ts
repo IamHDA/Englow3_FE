@@ -1,6 +1,8 @@
 import { dateScalar, dateTimeScalar } from "./scalars.js";
 import { assessmentResolvers } from "../modules/assessment/assessment.resolvers.js";
 import { assessmentTypeDefs } from "../modules/assessment/assessment.typeDefs.js";
+import { blogResolvers } from "../modules/blog/blog.resolvers.js";
+import { blogTypeDefs } from "../modules/blog/blog.typeDefs.js";
 import { chatResolvers } from "../modules/chat/chat.resolvers.js";
 import { chatTypeDefs } from "../modules/chat/chat.typeDefs.js";
 import { contentManagementResolvers } from "../modules/contentManagement/contentManagement.resolvers.js";
@@ -52,6 +54,8 @@ export const typeDefs = [
   assessmentTypeDefs,
   // Declares UserWall, which userTypeDefs extends with the profile.
   friendshipTypeDefs,
+  // Extends UserWall with the owner's posts.
+  blogTypeDefs,
   chatTypeDefs,
   userTypeDefs,
   onboardingTypeDefs,
@@ -77,6 +81,7 @@ export const resolvers = {
     ...assessmentResolvers.Query,
     ...userResolvers.Query,
     ...friendshipResolvers.Query,
+    ...blogResolvers.Query,
     ...chatResolvers.Query,
     ...onboardingResolvers.Query,
     ...examResolvers.Query,
@@ -96,6 +101,7 @@ export const resolvers = {
     ...assessmentResolvers.Mutation,
     ...userResolvers.Mutation,
     ...friendshipResolvers.Mutation,
+    ...blogResolvers.Mutation,
     ...chatResolvers.Mutation,
     ...onboardingResolvers.Mutation,
     ...examResolvers.Mutation,
@@ -113,10 +119,11 @@ export const resolvers = {
   Me: {
     ...onboardingResolvers.Me,
   },
-  // One type, fields from two modules: the wall's block rule and friend count
-  // come from friendship, its profile from user.
+  // One type, fields from three modules: the wall's block rule and friend count
+  // come from friendship, its profile from user, its posts from blog.
   UserWall: {
     ...friendshipResolvers.UserWall,
     ...userResolvers.UserWall,
+    ...blogResolvers.UserWall,
   },
 };

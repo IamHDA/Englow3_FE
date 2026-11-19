@@ -2,6 +2,7 @@ import type { ExpressContextFunctionArgument } from "@as-integrations/express4";
 import { GraphQLError } from "graphql";
 import { AssessmentApi } from "../modules/assessment/assessment.api.js";
 
+import { BlogApi } from "../modules/blog/blog.api.js";
 import { ChatApi } from "../modules/chat/chat.api.js";
 import { ContentManagementApi } from "../modules/contentManagement/contentManagement.api.js";
 import { DictationApi } from "../modules/dictation/dictation.api.js";
@@ -33,6 +34,7 @@ export type GraphQLContext = {
     examApi: ExamApi;
     fullTestApi: FullTestApi;
     generationApi: GenerationApi;
+    blogApi: BlogApi;
     chatApi: ChatApi;
     flashcardApi: FlashcardApi;
     friendshipApi: FriendshipApi;
@@ -74,6 +76,7 @@ export async function createContext({
       examApi: new ExamApi(client),
       fullTestApi: new FullTestApi(client),
       generationApi: new GenerationApi(client),
+      blogApi: new BlogApi(client),
       chatApi: new ChatApi(client),
       flashcardApi: new FlashcardApi(client),
       friendshipApi: new FriendshipApi(client),
