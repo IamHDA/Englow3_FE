@@ -8,7 +8,7 @@ import {
   WALL_POSTS_PAGE_SIZE,
   WallPosts,
   WallPostsSkeleton,
-} from "@/features/blog";
+} from "@/features/blog/wall";
 import { RelationshipStatus } from "@/lib/graphql/generated";
 import { useUserWallQuery } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";

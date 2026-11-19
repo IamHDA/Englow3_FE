@@ -1,4 +1,5 @@
-// What the routes and other features may import.
+// What the routes may import. A wall, which lists the owner's posts, does not
+// come through here: it uses "./wall".
 //
 // `loading.tsx` is a Server Component: it imports its skeleton straight from the
 // view or block, not through this barrel, which also pulls the views (client)
@@ -10,6 +11,4 @@ export { AdminBlogTargetView } from "./components/views/AdminBlogTargetView";
 export { BlogEditorView } from "./components/views/BlogEditorView";
 export { BlogListView } from "./components/views/BlogListView";
 export { BlogPostView } from "./components/views/BlogPostView";
-export { WallPosts } from "./components/blocks/WallPosts";
-export { TARGET_TYPE_SEGMENT, WALL_POSTS_PAGE_SIZE } from "./constants/blog";
-export { WallPostsSkeleton } from "./components/blocks/WallPosts/WallPostsSkeleton";
+export { TARGET_TYPE_SEGMENT } from "./constants/blog";
