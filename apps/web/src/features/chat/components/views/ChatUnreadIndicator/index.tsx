@@ -21,7 +21,11 @@ import { useUnreadPolling } from "../../../hooks/useUnreadPolling";
  * the viewer moves to another page, when they come back to the tab and once a
  * minute while it is showing; inside the chat the socket keeps the same query
  * fresh. A failed ask leaves the number as it was: a header that cannot count
- * must still be a header.
+ * must still be a header. That is the default error policy, and it is why none
+ * is set below: with `errorPolicy: "ignore"` Apollo Client 4 answers a failed
+ * refetch by clearing `data` (to null for a GraphQL error, to undefined for a
+ * network one), which would have dropped the dot to 0. The refetch's own
+ * rejection is swallowed in `refresh`, and a first ask that fails shows 0.
  */
 export function ChatUnreadIndicator() {
   const { t } = useLanguage();
@@ -29,7 +33,6 @@ export function ChatUnreadIndicator() {
   const pathname = usePathname();
   const { data, refetch } = useChatUnreadCountQuery({
     fetchPolicy: "cache-and-network",
-    errorPolicy: "ignore",
     // The server render has no session to ask with.
     ssr: false,
   });

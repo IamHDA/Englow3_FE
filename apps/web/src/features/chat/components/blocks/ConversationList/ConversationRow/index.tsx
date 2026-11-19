@@ -104,7 +104,7 @@ export function ConversationRow({
                 <ImageIcon
                   size={14}
                   aria-hidden="true"
-                  style={{ flex: "none" }}
+                  className={classes.icon}
                 />
               )}
               <Text
