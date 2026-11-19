@@ -34,13 +34,13 @@ vi.mock("@/features/auth", () => ({
 }));
 
 // The badge asks the BFF how many requests wait; here it only has to be drawn.
-vi.mock("@/features/friends", () => ({
+vi.mock("@/features/friends/header", () => ({
   IncomingRequestsBadge: () => <span data-testid="friend-request-badge" />,
 }));
 
 // The indicator asks the BFF how many conversations are unread; here it only
 // has to be drawn, and counted, since it polls and must exist once.
-vi.mock("@/features/chat", () => ({
+vi.mock("@/features/chat/header", () => ({
   ChatUnreadIndicator: () => <span data-testid="chat-unread-indicator" />,
 }));
 

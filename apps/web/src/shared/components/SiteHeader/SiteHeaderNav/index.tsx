@@ -19,8 +19,10 @@ import { Fragment, useState, type MouseEvent, type ReactNode } from "react";
 
 import { useAccountProfile } from "@/features/account";
 import { AuthModal, isBackOfficeRole, useAuth } from "@/features/auth";
-import { ChatUnreadIndicator } from "@/features/chat";
-import { IncomingRequestsBadge } from "@/features/friends";
+// Through each feature's header entry, not its barrel: this component is on every
+// page, and a barrel would pull the chat socket and the friends screens with it.
+import { ChatUnreadIndicator } from "@/features/chat/header";
+import { IncomingRequestsBadge } from "@/features/friends/header";
 import { useOnboarding } from "@/features/onboarding";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import { cancelNavigationProgress } from "@/shared/components/NavigationProgress";
