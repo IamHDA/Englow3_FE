@@ -721,24 +721,6 @@ button.diamondTab:focus-visible {
   max-width: 210px;
   color: white;
 }
-.footerLanguages button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: white;
-  font-size: 13px;
-  cursor: pointer;
-}
-.footerLanguages button:hover {
-  text-decoration: underline;
-}
-.footerLanguages button[aria-pressed="true"] {
-  font-weight: 700;
-}
 .footerBottom {
   display: flex;
   justify-content: space-between;

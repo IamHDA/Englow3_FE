@@ -15,12 +15,12 @@ export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
 
   return (
     <Menu position="bottom-end" shadow="md" width={170} withinPortal>
-      <Menu.Target>
-        <Tooltip
-          label={t.common.languageSwitcherTooltip}
-          withArrow
-          position="bottom"
-        >
+      <Tooltip
+        label={t.common.languageSwitcherTooltip}
+        withArrow
+        position="bottom"
+      >
+        <Menu.Target>
           <UnstyledButton
             className={classes.trigger}
             style={
@@ -34,8 +34,8 @@ export function LanguageSwitcher({ fullWidth = false }: LanguageSwitcherProps) {
             <span className={classes.flag}>{isVi ? "🇻🇳" : "🇬🇧"}</span>
             <span className={classes.langText}>{isVi ? "VI" : "EN"}</span>
           </UnstyledButton>
-        </Tooltip>
-      </Menu.Target>
+        </Menu.Target>
+      </Tooltip>
 
       <Menu.Dropdown>
         <Menu.Label>

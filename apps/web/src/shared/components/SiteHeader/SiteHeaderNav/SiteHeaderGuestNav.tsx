@@ -4,6 +4,7 @@ import { Burger, Button, Drawer, Group, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
+import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { landingFont } from "@/shared/styles/landingFont";
 import classes from "./SiteHeaderNav.module.css";
@@ -17,7 +18,7 @@ export function SiteHeaderGuestNav({
   onLogin: () => void;
   accountHref?: string;
 }) {
-  const { isVi, setLanguage } = useLanguage();
+  const { isVi } = useLanguage();
   const [opened, drawer] = useDisclosure(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -53,25 +54,8 @@ export function SiteHeaderGuestNav({
             </a>
           ))}
         </Group>
-        <Group gap={0} wrap="nowrap" className={classes.landingActions}>
-          <button
-            type="button"
-            aria-label="English"
-            aria-pressed={!isVi}
-            onClick={() => setLanguage("en")}
-            className={classes.landingLanguage}
-          >
-            <span>EN</span>
-          </button>
-          <button
-            type="button"
-            aria-label="Tiếng Việt"
-            aria-pressed={isVi}
-            onClick={() => setLanguage("vi")}
-            className={classes.landingLanguage}
-          >
-            <span>VI</span>
-          </button>
+        <Group gap={8} wrap="nowrap">
+          <LanguageSwitcher />
           <Burger
             opened={opened}
             onClick={drawer.toggle}

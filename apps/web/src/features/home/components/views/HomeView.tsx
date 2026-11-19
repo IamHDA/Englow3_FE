@@ -1,16 +1,11 @@
 "use client";
 
 import { Button, Tabs } from "@mantine/core";
-import {
-  ArrowRight,
-  BookOpen,
-  Bot,
-  GraduationCap,
-  ShieldCheck,
-} from "lucide-react";
+import { BookOpen, Bot, GraduationCap, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { isBackOfficeRole, useAuth } from "@/features/auth";
 import { HomeCtaButton } from "@/features/home/components/blocks/HomeCtaButton";
+import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { landingFont } from "@/shared/styles/landingFont";
 import { landingContent } from "../../constants/landingContent";
@@ -29,7 +24,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
 }
 
 export function HomeView() {
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
   const c = landingContent[language];
   const { session } = useAuth();
   const actionLabel = session
@@ -402,22 +397,9 @@ export function HomeView() {
               />
               <p>{c.footerCta}</p>
             </div>
-            <div className={classes.footerLanguages}>
+            <div>
               <strong>{c.languageNav}</strong>
-              <button
-                type="button"
-                onClick={() => setLanguage("vi")}
-                aria-pressed={language === "vi"}
-              >
-                Tiếng Việt <ArrowRight size={14} aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage("en")}
-                aria-pressed={language === "en"}
-              >
-                English <ArrowRight size={14} aria-hidden="true" />
-              </button>
+              <LanguageSwitcher />
             </div>
           </div>
           <div className={classes.footerBottom}>

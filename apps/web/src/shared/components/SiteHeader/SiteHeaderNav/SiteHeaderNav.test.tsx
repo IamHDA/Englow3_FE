@@ -59,7 +59,7 @@ vi.mock("@/features/tour", () => ({
 
 function renderNav() {
   render(
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} env="test">
       <LanguageProvider>
         <SiteHeaderNav>logo</SiteHeaderNav>
       </LanguageProvider>
@@ -90,9 +90,18 @@ describe("SiteHeaderNav", () => {
     expect(linkTo("#learning-path")).toBeTruthy();
     expect(linkTo("#features")).toBeTruthy();
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(screen.getByRole("button", { name: "Tiếng Việt" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
+    const language = screen.getByRole("button", {
+      name: "Switch Language / Đổi ngôn ngữ",
+    });
+    expect(language).toHaveAttribute("aria-haspopup", "menu");
+    fireEvent.click(language);
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /English \(EN\)/ }),
+    );
+    expect(linkTo("#how-it-works")).toHaveTextContent("How it works");
+    fireEvent.click(language);
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /Tiếng Việt \(VI\)/ }),
     );
     fireEvent.click(
       screen.getByRole("button", { name: "Mở menu giới thiệu", hidden: true }),
@@ -137,7 +146,7 @@ describe("SiteHeaderNav", () => {
     for (const role of [null, "STAFF", "ADMIN"]) {
       auth.session = { userId: "u1", email: "a@example.com", role };
       const { unmount } = render(
-        <MantineProvider theme={theme}>
+        <MantineProvider theme={theme} env="test">
           <LanguageProvider>
             <SiteHeaderNav>logo</SiteHeaderNav>
           </LanguageProvider>
