@@ -14,3 +14,22 @@ export function withFullTestSitting(path: string, sittingId?: string | null) {
     ? `${path}${path.includes("?") ? "&" : "?"}${FULL_TEST_SITTING_PARAM}=${encodeURIComponent(sittingId)}`
     : path;
 }
+
+/**
+ * Which full test an IELTS paper was opened from for practice. The paper page
+ * then leads back there, and sends "sit it for real" to the full test.
+ */
+export const FULL_TEST_PARAM = "fullTest";
+
+export const readFullTest = readFullTestSitting;
+
+export const fullTestPath = (fullTestId: string) =>
+  `/exams/full-tests/${encodeURIComponent(fullTestId)}`;
+
+/** Practising a full test's Listening + Reading paper, part by part. */
+export const paperPracticePath = (examId: string, fullTestId: string) =>
+  `/exams/${encodeURIComponent(examId)}?${FULL_TEST_PARAM}=${encodeURIComponent(fullTestId)}`;
+
+/** The library tab listing a variant's full tests. */
+export const ieltsLibraryPath = (variant?: string | null) =>
+  `/exams?tab=${variant === "GENERAL" ? "ielts_general" : "ielts_academic"}`;

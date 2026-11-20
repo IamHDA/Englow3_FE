@@ -31,6 +31,12 @@ query FullTestLibrary($page: Int = 0) {
     title
     description
     certificateVariant
+    examId
+    writingTask1Id
+    writingTask2Id
+    speakingPart1Id
+    speakingPart2Id
+    speakingPart3Id
   }
   myFullTestSittings(page: $page, size: 20) {
     ...FullTestSittingFields

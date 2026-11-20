@@ -13,7 +13,11 @@ import { paperForFullTestPath } from "@/features/exam";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { useLanguage } from "@/shared/hooks/useLanguage";
-import { withFullTestSitting } from "@/shared/constants/fullTestNavigation";
+import {
+  fullTestPath,
+  ieltsLibraryPath,
+  withFullTestSitting,
+} from "@/shared/constants/fullTestNavigation";
 import {
   attemptPath,
   GRADING_COPY,
@@ -71,7 +75,10 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
       <LoadErrorState
         error={error}
         thing={{ vi: "lượt full test này", en: "this full test sitting" }}
-        back={{ href: "/exams/full-tests", label: "IELTS Full Test" }}
+        back={{
+          href: ieltsLibraryPath(),
+          label: tr("Thư viện đề", "Exam library"),
+        }}
         onRetry={() => void refetch()}
       />
     );
@@ -118,11 +125,11 @@ export function FullTestSittingView({ sittingId }: { sittingId: string }) {
           above={
             <Text
               component={Link}
-              href="/exams/full-tests"
+              href={fullTestPath(sitting.fullTestId)}
               size="sm"
               c="dimmed"
             >
-              ← IELTS Full Test
+              ← {tr("Về đề full test", "Back to the full test")}
             </Text>
           }
         />

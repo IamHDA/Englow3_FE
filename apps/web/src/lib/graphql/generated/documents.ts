@@ -3913,6 +3913,26 @@ export type ExamOutlineQuery = {
   };
 };
 
+export type IeltsFullTestCatalogueQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type IeltsFullTestCatalogueQuery = {
+  fullTests: Array<{
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+  }>;
+  myFullTestSittings: Array<{
+    id: string;
+    fullTestId: string;
+    status: Types.FullTestSittingStatus;
+    overallBand: number | null;
+    provisionalBand: number | null;
+  }>;
+};
+
 export type FlashcardSetFieldsFragment = {
   id: string;
   slug: string;
@@ -4589,6 +4609,12 @@ export type FullTestLibraryQuery = {
     title: string;
     description: string;
     certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
   }>;
   myFullTestSittings: Array<{
     id: string;
@@ -22788,6 +22814,69 @@ export const ExamOutlineDocument = {
     },
   ],
 } as unknown as DocumentNode<ExamOutlineQuery, ExamOutlineQueryVariables>;
+export const IeltsFullTestCatalogueDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "IeltsFullTestCatalogue" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "fullTests" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "description" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "certificateVariant" },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "myFullTestSittings" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: { kind: "IntValue", value: "0" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "50" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "overallBand" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "provisionalBand" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  IeltsFullTestCatalogueQuery,
+  IeltsFullTestCatalogueQueryVariables
+>;
 export const FlashcardSetsDocument = {
   kind: "Document",
   definitions: [
@@ -25336,6 +25425,27 @@ export const FullTestLibraryDocument = {
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "certificateVariant" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "examId" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "writingTask1Id" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "writingTask2Id" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "speakingPart1Id" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "speakingPart2Id" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "speakingPart3Id" },
                 },
               ],
             },

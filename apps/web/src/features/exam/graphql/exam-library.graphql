@@ -88,3 +88,21 @@ query ExamOutline($examId: ID!) {
     }
   }
 }
+
+# IELTS has no stand-alone papers: its tabs list full tests, each card showing
+# how the learner's own sittings of it stand (D-IELTS-11).
+query IeltsFullTestCatalogue {
+  fullTests {
+    id
+    title
+    description
+    certificateVariant
+  }
+  myFullTestSittings(page: 0, size: 50) {
+    id
+    fullTestId
+    status
+    overallBand
+    provisionalBand
+  }
+}
