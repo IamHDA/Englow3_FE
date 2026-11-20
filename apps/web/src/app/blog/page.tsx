@@ -17,7 +17,7 @@ export default async function BlogPage({
 }) {
   const params = await searchParams;
   return (
-    <Page width="focus">
+    <Page width="wide">
       <BlogListView initial={parseListFilters(params)} />
     </Page>
   );
