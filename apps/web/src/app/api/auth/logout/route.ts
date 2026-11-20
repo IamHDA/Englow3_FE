@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import {
   createSupabaseServerClient,
+  currentSessionId,
+  rememberRevokedSession,
   rememberSessionPreference,
 } from "@/lib/supabase/server";
 import { authFailure, authSuccess, readAuthRequest } from "@/server/authRoute";
@@ -13,9 +15,11 @@ export async function POST(request: Request) {
   const read = await readAuthRequest(request, z.object({}).passthrough());
   if (!read.ok) return read.response;
 
+  const sessionId = await currentSessionId();
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signOut({ scope: "local" });
   if (error) return authFailure(error);
+  await rememberRevokedSession(sessionId);
   await rememberSessionPreference(false);
 
   return authSuccess();

@@ -2,6 +2,12 @@ import { createServerClient, type SetAllCookies } from "@supabase/ssr";
 import { cookies, headers } from "next/headers";
 
 import { hardenedCookieOptions, isHttps, SESSION_ONLY_COOKIE } from "./cookies";
+import {
+  REVOKED_SESSION_COOKIE,
+  REVOKED_SESSION_MAX_AGE,
+  revokedAuthCookieNames,
+  sessionIdOf,
+} from "./revokedSession";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -35,7 +41,29 @@ export async function createSupabaseServerClient({
 
   return createServerClient(supabaseUrl!, supabaseAnonKey!, {
     cookies: {
-      getAll: () => cookieStore.getAll(),
+      getAll: () => {
+        const all = cookieStore.getAll();
+        // A session this browser signed out of, written back by a request
+        // that was still in flight (see revokedSession.ts): read it as absent.
+        const revoked = revokedAuthCookieNames(all);
+        if (revoked.length === 0) return all;
+        try {
+          for (const name of revoked) {
+            cookieStore.set(
+              name,
+              "",
+              hardenedCookieOptions(
+                { maxAge: 0 },
+                { secure, sessionOnly: false },
+              ),
+            );
+          }
+        } catch {
+          // A Server Component can't write cookies; proxy.ts clears them on the
+          // next navigation, and until then they are ignored here anyway.
+        }
+        return all.filter((cookie) => !revoked.includes(cookie.name));
+      },
       setAll: ((cookiesToSet) => {
         try {
           for (const { name, value, options } of cookiesToSet) {
@@ -69,5 +97,31 @@ export async function rememberSessionPreference(sessionOnly: boolean) {
     httpOnly: true,
     sameSite: "lax",
     secure: isHttps(await headers()),
+  });
+}
+
+/**
+ * The id of the sign-in this request carries, read before signing out - once
+ * signed out, the cookies that name it are gone.
+ */
+export async function currentSessionId(): Promise<string | null> {
+  return sessionIdOf((await cookies()).getAll());
+}
+
+/**
+ * Records the sign-in that just ended, so a late response that writes its
+ * cookies back cannot sign this browser in again (see revokedSession.ts).
+ * Written only after signing out: the server client reads this cookie too, and
+ * would otherwise hide the very session it is asked to end.
+ */
+export async function rememberRevokedSession(sessionId: string | null) {
+  if (!sessionId) return;
+  const cookieStore = await cookies();
+  cookieStore.set(REVOKED_SESSION_COOKIE, sessionId, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: isHttps(await headers()),
+    maxAge: REVOKED_SESSION_MAX_AGE,
   });
 }

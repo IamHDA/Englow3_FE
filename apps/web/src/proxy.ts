@@ -13,6 +13,7 @@ import {
   isHttps,
   SESSION_ONLY_COOKIE,
 } from "@/lib/supabase/cookies";
+import { revokedAuthCookieNames } from "@/lib/supabase/revokedSession";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -109,6 +110,15 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const secure = isHttps(request.headers, request.nextUrl.protocol);
   const sessionOnly = request.cookies.get(SESSION_ONLY_COOKIE)?.value === "1";
 
+  // A session this browser signed out of, written back by a request that was
+  // still in flight when it did (see revokedSession.ts). Dropped from the
+  // request before anything reads it, and from the browser below.
+  const revoked = revokedAuthCookieNames(request.cookies.getAll());
+  if (revoked.length > 0) {
+    for (const name of revoked) request.cookies.delete(name);
+    response = proceed();
+  }
+
   const supabase = createServerClient(supabaseUrl!, supabaseAnonKey!, {
     cookies: {
       getAll: () => request.cookies.getAll(),
@@ -134,6 +144,13 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   // It still refreshes an expired session, which is what this file is for.
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims ?? null;
+  for (const name of revoked) {
+    response.cookies.set(
+      name,
+      "",
+      hardenedCookieOptions({ maxAge: 0 }, { secure, sessionOnly: false }),
+    );
+  }
 
   if (!user && isMemberOnly(request.nextUrl.pathname)) {
     const landing = request.nextUrl.clone();

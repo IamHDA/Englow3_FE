@@ -8,10 +8,14 @@ const api = vi.hoisted(() => ({
   resend: vi.fn(),
   signOut: vi.fn(),
   remember: vi.fn(),
+  currentSessionId: vi.fn(),
+  rememberRevoked: vi.fn(),
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: async () => ({ auth: api }),
   rememberSessionPreference: api.remember,
+  currentSessionId: api.currentSessionId,
+  rememberRevokedSession: api.rememberRevoked,
 }));
 import { POST as register } from "./register/route";
 import { POST as forgot } from "./forgot/route";
@@ -159,11 +163,24 @@ it("does not change remember-me preference on failed logout", async () => {
   api.signOut.mockResolvedValue({ error: { status: 503 } });
   await logout(request({}));
   expect(api.remember).not.toHaveBeenCalled();
+  expect(api.rememberRevoked).not.toHaveBeenCalled();
 });
 it("signs out locally and clears the preference on success", async () => {
   expect((await logout(request({}))).status).toBe(200);
   expect(api.signOut).toHaveBeenCalledWith({ scope: "local" });
   expect(api.remember).toHaveBeenCalledWith(false);
+});
+it("remembers the ended session only after signing out of it", async () => {
+  // Recorded any earlier, the server client would hide the session from the
+  // very signOut call that has to end it at Supabase.
+  api.currentSessionId.mockResolvedValue("session-1");
+  api.signOut.mockImplementation(async () => {
+    expect(api.rememberRevoked).not.toHaveBeenCalled();
+    return { error: null };
+  });
+
+  expect((await logout(request({}))).status).toBe(200);
+  expect(api.rememberRevoked).toHaveBeenCalledWith("session-1");
 });
 it.each([register, forgot, password, resend, logout])(
   "refuses a cross-site account mutation",
