@@ -99,4 +99,16 @@ export const FAILURE_COPY: Record<string, Copy> = {
     vi: "Chưa cấu hình model tạo đề trên AI service (AI_SERVICE_GENERATION_*).",
     en: "The generation model is not configured on the AI service (AI_SERVICE_GENERATION_*).",
   },
+  AI_PROVIDER_TIMEOUT: {
+    vi: "Model trả lời quá lâu ở bước này, đã thử lại nhưng lần nào cũng quá giờ. Hạ AI_SERVICE_GENERATION_REASONING_EFFORT, hoặc nới cùng lúc ba giới hạn thời gian tạo đề.",
+    en: "The model took too long at this step on every try. Lower AI_SERVICE_GENERATION_REASONING_EFFORT, or raise the three generation timeouts together.",
+  },
+  AI_PROVIDER_UNAVAILABLE: {
+    vi: "AI service không kết nối được tới nhà cung cấp model. Kiểm tra AI_SERVICE_GENERATION_BASE_URL và mạng của AI service.",
+    en: "The AI service could not reach the model provider. Check AI_SERVICE_GENERATION_BASE_URL and the AI service's network.",
+  },
+  AI_GENERATION_UNREACHABLE: {
+    vi: "Backend không gọi được AI service. Kiểm tra AI service có đang chạy và AI_SERVICE_BASE_URL.",
+    en: "The backend could not reach the AI service. Check that it is running and AI_SERVICE_BASE_URL.",
+  },
 };
