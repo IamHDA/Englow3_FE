@@ -1,12 +1,9 @@
-import type { Metadata } from "next";
-import { FullTestLibraryView } from "@/features/fullTest";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "IELTS Full Test — Englow3",
-  description:
-    "Làm IELTS full test 4 kỹ năng và nhận band tổng ước tính như thi thật.",
-};
-
+/**
+ * The IELTS full tests are the library's IELTS tabs now (D-IELTS-11); this
+ * address is kept for the links and bookmarks that still point here.
+ */
 export default function FullTestsPage() {
-  return <FullTestLibraryView />;
+  redirect("/exams?tab=ielts_academic");
 }

@@ -31,6 +31,11 @@ type ExamFiltersProps = {
   onFilterChange: (newFilters: Partial<ExamFiltersState>) => void;
   onResetFilters: () => void;
   totalItems: number;
+  /**
+   * Sort, skill, level and status describe a single paper. An IELTS tab lists
+   * full tests, which have none of them, so it shows only search and tabs.
+   */
+  paperFilters?: boolean;
 };
 
 export function ExamFilters({
@@ -38,6 +43,7 @@ export function ExamFilters({
   onFilterChange,
   onResetFilters,
   totalItems,
+  paperFilters = true,
 }: ExamFiltersProps) {
   const { t, isVi } = useLanguage();
 
@@ -126,42 +132,44 @@ export function ExamFilters({
           </Tabs.List>
         </Tabs>
 
-        <Group gap="xs">
-          <Text size="xs" c="dimmed" fw={600}>
-            {t.exam.sortByLabel}
-          </Text>
-          <Menu shadow="md" width={200} position="bottom-end">
-            <Menu.Target>
-              <Button
-                variant="default"
-                size="xs"
-                radius="xl"
-                rightSection={<ChevronDown size={14} aria-hidden="true" />}
-              >
-                {currentSortLabel}
-              </Button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              {sortOptions.map((opt) => (
-                <Menu.Item
-                  key={opt.value}
-                  onClick={() =>
-                    onFilterChange({ sortBy: opt.value as SortKey, page: 0 })
-                  }
-                  leftSection={
-                    filters.sortBy === opt.value ? (
-                      <Check size={14} color="var(--mantine-color-blue-6)" />
-                    ) : (
-                      <Box w={14} />
-                    )
-                  }
+        {paperFilters && (
+          <Group gap="xs">
+            <Text size="xs" c="dimmed" fw={600}>
+              {t.exam.sortByLabel}
+            </Text>
+            <Menu shadow="md" width={200} position="bottom-end">
+              <Menu.Target>
+                <Button
+                  variant="default"
+                  size="xs"
+                  radius="xl"
+                  rightSection={<ChevronDown size={14} aria-hidden="true" />}
                 >
-                  {opt.label}
-                </Menu.Item>
-              ))}
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
+                  {currentSortLabel}
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {sortOptions.map((opt) => (
+                  <Menu.Item
+                    key={opt.value}
+                    onClick={() =>
+                      onFilterChange({ sortBy: opt.value as SortKey, page: 0 })
+                    }
+                    leftSection={
+                      filters.sortBy === opt.value ? (
+                        <Check size={14} color="var(--mantine-color-blue-6)" />
+                      ) : (
+                        <Box w={14} />
+                      )
+                    }
+                  >
+                    {opt.label}
+                  </Menu.Item>
+                ))}
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+        )}
       </Flex>
 
       <Flex
@@ -172,108 +180,116 @@ export function ExamFilters({
         pt="xs"
         style={{ borderTop: "1px solid var(--mantine-color-gray-2)" }}
       >
-        {/* Kỹ năng */}
-        <Menu shadow="md" width={180}>
-          <Menu.Target>
-            <Button
-              variant={filters.skill !== "ALL" ? "light" : "default"}
-              color={filters.skill !== "ALL" ? "blue" : undefined}
-              size="xs"
-              radius="xl"
-              rightSection={<ChevronDown size={14} aria-hidden="true" />}
-            >
-              {currentSkillLabel}
-            </Button>
-          </Menu.Target>
-          <Menu.Dropdown>
-            {skillOptions.map((opt) => (
-              <Menu.Item
-                key={opt.value}
-                onClick={() => onFilterChange({ skill: opt.value, page: 0 })}
-                leftSection={
-                  filters.skill === opt.value ? (
-                    <Check size={14} color="var(--mantine-color-blue-6)" />
-                  ) : (
-                    <Box w={14} />
-                  )
-                }
-              >
-                {opt.label}
-              </Menu.Item>
-            ))}
-          </Menu.Dropdown>
-        </Menu>
+        {paperFilters && (
+          <>
+            {/* Kỹ năng */}
+            <Menu shadow="md" width={180}>
+              <Menu.Target>
+                <Button
+                  variant={filters.skill !== "ALL" ? "light" : "default"}
+                  color={filters.skill !== "ALL" ? "blue" : undefined}
+                  size="xs"
+                  radius="xl"
+                  rightSection={<ChevronDown size={14} aria-hidden="true" />}
+                >
+                  {currentSkillLabel}
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {skillOptions.map((opt) => (
+                  <Menu.Item
+                    key={opt.value}
+                    onClick={() =>
+                      onFilterChange({ skill: opt.value, page: 0 })
+                    }
+                    leftSection={
+                      filters.skill === opt.value ? (
+                        <Check size={14} color="var(--mantine-color-blue-6)" />
+                      ) : (
+                        <Box w={14} />
+                      )
+                    }
+                  >
+                    {opt.label}
+                  </Menu.Item>
+                ))}
+              </Menu.Dropdown>
+            </Menu>
 
-        {/* Độ khó */}
-        <Menu shadow="md" width={190}>
-          <Menu.Target>
-            <Button
-              variant={filters.targetLevel !== "ALL" ? "light" : "default"}
-              color={filters.targetLevel !== "ALL" ? "blue" : undefined}
-              size="xs"
-              radius="xl"
-              rightSection={<ChevronDown size={14} aria-hidden="true" />}
-            >
-              {currentDiffLabel}
-            </Button>
-          </Menu.Target>
-          <Menu.Dropdown>
-            {difficultyOptions.map((opt) => (
-              <Menu.Item
-                key={opt.value}
-                onClick={() =>
-                  onFilterChange({
-                    targetLevel: opt.value as TargetLevel | "ALL",
-                    page: 0,
-                  })
-                }
-                leftSection={
-                  filters.targetLevel === opt.value ? (
-                    <Check size={14} color="var(--mantine-color-blue-6)" />
-                  ) : (
-                    <Box w={14} />
-                  )
-                }
-              >
-                {opt.label}
-              </Menu.Item>
-            ))}
-          </Menu.Dropdown>
-        </Menu>
+            {/* Độ khó */}
+            <Menu shadow="md" width={190}>
+              <Menu.Target>
+                <Button
+                  variant={filters.targetLevel !== "ALL" ? "light" : "default"}
+                  color={filters.targetLevel !== "ALL" ? "blue" : undefined}
+                  size="xs"
+                  radius="xl"
+                  rightSection={<ChevronDown size={14} aria-hidden="true" />}
+                >
+                  {currentDiffLabel}
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {difficultyOptions.map((opt) => (
+                  <Menu.Item
+                    key={opt.value}
+                    onClick={() =>
+                      onFilterChange({
+                        targetLevel: opt.value as TargetLevel | "ALL",
+                        page: 0,
+                      })
+                    }
+                    leftSection={
+                      filters.targetLevel === opt.value ? (
+                        <Check size={14} color="var(--mantine-color-blue-6)" />
+                      ) : (
+                        <Box w={14} />
+                      )
+                    }
+                  >
+                    {opt.label}
+                  </Menu.Item>
+                ))}
+              </Menu.Dropdown>
+            </Menu>
 
-        {/* Trạng thái */}
-        <Menu shadow="md" width={180}>
-          <Menu.Target>
-            <Button
-              variant={filters.attemptStatus !== "ALL" ? "light" : "default"}
-              color={filters.attemptStatus !== "ALL" ? "blue" : undefined}
-              size="xs"
-              radius="xl"
-              rightSection={<ChevronDown size={14} aria-hidden="true" />}
-            >
-              {currentStatusLabel}
-            </Button>
-          </Menu.Target>
-          <Menu.Dropdown>
-            {statusOptions.map((opt) => (
-              <Menu.Item
-                key={opt.value}
-                onClick={() =>
-                  onFilterChange({ attemptStatus: opt.value, page: 0 })
-                }
-                leftSection={
-                  filters.attemptStatus === opt.value ? (
-                    <Check size={14} color="var(--mantine-color-blue-6)" />
-                  ) : (
-                    <Box w={14} />
-                  )
-                }
-              >
-                {opt.label}
-              </Menu.Item>
-            ))}
-          </Menu.Dropdown>
-        </Menu>
+            {/* Trạng thái */}
+            <Menu shadow="md" width={180}>
+              <Menu.Target>
+                <Button
+                  variant={
+                    filters.attemptStatus !== "ALL" ? "light" : "default"
+                  }
+                  color={filters.attemptStatus !== "ALL" ? "blue" : undefined}
+                  size="xs"
+                  radius="xl"
+                  rightSection={<ChevronDown size={14} aria-hidden="true" />}
+                >
+                  {currentStatusLabel}
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {statusOptions.map((opt) => (
+                  <Menu.Item
+                    key={opt.value}
+                    onClick={() =>
+                      onFilterChange({ attemptStatus: opt.value, page: 0 })
+                    }
+                    leftSection={
+                      filters.attemptStatus === opt.value ? (
+                        <Check size={14} color="var(--mantine-color-blue-6)" />
+                      ) : (
+                        <Box w={14} />
+                      )
+                    }
+                  >
+                    {opt.label}
+                  </Menu.Item>
+                ))}
+              </Menu.Dropdown>
+            </Menu>
+          </>
+        )}
 
         {isFiltered ? (
           <Button
@@ -288,9 +304,11 @@ export function ExamFilters({
           </Button>
         ) : null}
 
-        <Text size="xs" c="dimmed" fw={600} ml="auto">
-          {totalItems} {t.exam.examsCountUnit}
-        </Text>
+        {paperFilters && (
+          <Text size="xs" c="dimmed" fw={600} ml="auto">
+            {totalItems} {t.exam.examsCountUnit}
+          </Text>
+        )}
       </Flex>
     </Paper>
   );

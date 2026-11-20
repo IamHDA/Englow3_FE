@@ -155,3 +155,43 @@ it("offers only the full test, and the way back to the sitting, for a full test'
     expect.objectContaining({ skip: true }),
   );
 });
+
+it("keeps an IELTS paper opened on its own to practice, and sends the real test to its full test", () => {
+  const onStart = vi.fn();
+  render(
+    <MantineProvider>
+      <ExamOverview
+        exam={{
+          ...exam,
+          certificateType:
+            "IELTS" as ExamOverviewProps["exam"]["certificateType"],
+          certificateVariant:
+            "ACADEMIC" as ExamOverviewProps["exam"]["certificateVariant"],
+        }}
+        outline={[]}
+        outlineLoading={false}
+        outlineFailed={false}
+        onRetryOutline={vi.fn()}
+        starting={false}
+        onStart={onStart}
+        fullTestHome={{
+          href: "/exams/full-tests/ft1",
+          label: "Về đề full test",
+        }}
+      />
+    </MantineProvider>,
+  );
+  expect(screen.getByRole("link", { name: /Về đề full test/ })).toHaveAttribute(
+    "href",
+    "/exams/full-tests/ft1",
+  );
+  fireEvent.click(screen.getByRole("tab", { name: /Thi thật/ }));
+  expect(
+    screen.queryByRole("button", { name: /Bắt đầu thi/ }),
+  ).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: /Sang full test/ })).toHaveAttribute(
+    "href",
+    "/exams/full-tests/ft1",
+  );
+  expect(onStart).not.toHaveBeenCalled();
+});

@@ -52,6 +52,7 @@ import { useExamTimer } from "../../../hooks/useExamTimer";
 import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
 
 import { fullTestSittingPath } from "../../../constants/fullTestLink";
+import { fullTestPath } from "@/shared/constants/fullTestNavigation";
 import { ExamOverview } from "../../blocks/ExamOverview";
 import { ExamOverviewSkeleton } from "../../blocks/ExamOverview/ExamOverviewSkeleton";
 import { ExamSittingHeader } from "../../blocks/ExamSittingHeader";
@@ -96,6 +97,8 @@ interface ExamSittingViewProps {
   examId: string;
   /** Set when an IELTS full test sitting sent the learner here. */
   fullTestSittingId?: string | null;
+  /** Set when a full test's practice tab sent the learner here. */
+  fullTestId?: string | null;
 }
 
 type StoredProgress = {
@@ -140,6 +143,7 @@ function readProgress(attemptId: string): StoredProgress | null {
 export function ExamSittingView({
   examId,
   fullTestSittingId = null,
+  fullTestId = null,
 }: ExamSittingViewProps) {
   const router = useRouter();
   const client = useApolloClient();
@@ -153,6 +157,13 @@ export function ExamSittingView({
         label: isVi ? "Về lượt full test" : "Back to the full test",
       }
     : null;
+  const fullTestHome =
+    !fullTestSittingId && fullTestId
+      ? {
+          href: fullTestPath(fullTestId),
+          label: isVi ? "Về đề full test" : "Back to the full test",
+        }
+      : null;
 
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -737,6 +748,7 @@ export function ExamSittingView({
           starting={starting || openingDraft}
           onStart={(choice, onOpen) => void handleStart(choice, onOpen)}
           fullTestBack={fullTestBack}
+          fullTestHome={fullTestHome}
         />
         <Modal
           opened={blockedChoice !== null}

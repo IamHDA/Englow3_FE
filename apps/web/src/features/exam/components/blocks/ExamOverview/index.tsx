@@ -41,6 +41,7 @@ import {
   useAttemptPaperQuery,
 } from "@/lib/graphql/generated/hooks";
 import { ExamAttemptMode, OpenAttemptChoice } from "@/lib/graphql/generated";
+import { ieltsLibraryPath } from "@/shared/constants/fullTestNavigation";
 
 export interface ExamOverviewProps {
   /**
@@ -61,6 +62,11 @@ export interface ExamOverviewProps {
    * the sitting. Null for an ordinary visit from the library.
    */
   fullTestBack?: { href: string; label: string } | null;
+  /**
+   * The full test an IELTS paper was opened from for practice. Null when the
+   * paper was reached some other way; the library tab stands in for it then.
+   */
+  fullTestHome?: { href: string; label: string } | null;
 }
 
 export function ExamOverview({
@@ -72,12 +78,25 @@ export function ExamOverview({
   starting,
   onStart,
   fullTestBack = null,
+  fullTestHome = null,
 }: ExamOverviewProps) {
   const { t, isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   // Bài kiểm tra đầu vào quyết định trình độ nên chỉ làm trọn đề; phần L+R của
   // full test cũng vậy - full test chỉ tính lượt thi thật.
   const practiceAllowed = exam.examType !== "PLACEMENT" && !fullTestBack;
+  // An IELTS paper is the Listening + Reading of a full test, not a test of its
+  // own (D-IELTS-11): opened outside a sitting it is for practice, and sitting
+  // it for real means the full test.
+  const ieltsPractice = exam.certificateType === "IELTS" && !fullTestBack;
+  const back =
+    fullTestBack ??
+    (ieltsPractice
+      ? (fullTestHome ?? {
+          href: ieltsLibraryPath(exam.certificateVariant),
+          label: t.exam.backToLibrary,
+        })
+      : null);
   const [resumeOpened, setResumeOpened] = useState(false);
   const [previewAt, setPreviewAt] = useState(0);
   const activeQuery = useActiveExamAttemptQuery({
@@ -100,11 +119,11 @@ export function ExamOverview({
       <Flex align="center" gap="xs" mb="lg">
         <Text
           component={Link}
-          href={fullTestBack?.href ?? "/exams"}
+          href={back?.href ?? "/exams"}
           className={classes.breadcrumbLink}
         >
           <ArrowLeft size={16} />
-          {fullTestBack?.label ?? t.exam.backToLibrary}
+          {back?.label ?? t.exam.backToLibrary}
         </Text>
         <Text c="ink.3" size="sm">
           /
@@ -275,96 +294,123 @@ export function ExamOverview({
                 )}
               </Tabs.Panel>
               <Tabs.Panel value="full">
-                <Stack gap="lg">
-                  <Text size="sm" c="ink.6">
-                    {tr(
-                      `Làm toàn bộ đề trong ${durationMinutes} phút như thi thật. Hết giờ, bài được nộp tự động; kết quả được tính vào tiến độ và điểm cao nhất.`,
-                      `The whole paper in ${durationMinutes} minutes, as on test day. It is submitted automatically when time runs out, and counts toward your progress and best score.`,
-                    )}
-                  </Text>
-                  {/* Guidelines Box */}
-                  <Paper
-                    p="md"
-                    radius="md"
-                    withBorder
-                    className={classes.guidelinesBox}
-                  >
-                    <Group gap="xs" mb="xs">
-                      <AlertCircle
-                        size={18}
-                        color="var(--mantine-color-navy-9)"
-                      />
-                      <Text fw={700} size="sm" c="navy.9">
-                        {t.exam.rulesTitle}
-                      </Text>
-                    </Group>
-                    <Stack gap={8}>
-                      <Flex gap="xs" align="flex-start">
-                        <CheckCircle2
-                          size={16}
-                          color="var(--mantine-color-navy-9)"
-                          style={{ marginTop: 2, flexShrink: 0 }}
-                        />
-                        <Text size="xs" c="ink.6">
-                          {t.exam.rule1}
-                        </Text>
-                      </Flex>
-                      <Flex gap="xs" align="flex-start">
-                        <CheckCircle2
-                          size={16}
-                          color="var(--mantine-color-navy-9)"
-                          style={{ marginTop: 2, flexShrink: 0 }}
-                        />
-                        <Text size="xs" c="ink.6">
-                          {t.exam.rule2}
-                        </Text>
-                      </Flex>
-                      <Flex gap="xs" align="flex-start">
-                        <CheckCircle2
-                          size={16}
-                          color="var(--mantine-color-navy-9)"
-                          style={{ marginTop: 2, flexShrink: 0 }}
-                        />
-                        <Text size="xs" c="ink.6">
-                          {t.exam.rule3}
-                        </Text>
-                      </Flex>
-                      <Flex gap="xs" align="flex-start">
-                        <CheckCircle2
-                          size={16}
-                          color="var(--mantine-color-navy-9)"
-                          style={{ marginTop: 2, flexShrink: 0 }}
-                        />
-                        <Text size="xs" c="ink.6">
-                          {t.exam.rule4}
-                        </Text>
-                      </Flex>
-                    </Stack>
-                  </Paper>
-
-                  {/* Action CTA */}
-                  <Group justify="flex-end" pt="sm">
+                {ieltsPractice ? (
+                  <Stack gap="md" align="flex-start">
+                    <Text size="sm" c="ink.6">
+                      {tr(
+                        "Thi thật IELTS là full test 4 kỹ năng: Listening + Reading của đề này cùng Writing và Speaking, nộp đủ trong 7 ngày và nhận một band tổng.",
+                        "The real IELTS test is the four-skill full test: this paper's Listening + Reading with Writing and Speaking, all handed in within seven days for one overall band.",
+                      )}
+                    </Text>
                     <Button
                       component={Link}
-                      href="/exams"
-                      variant="default"
-                      radius="xl"
-                      size="md"
-                    >
-                      {t.exam.returnToLibrary}
-                    </Button>
-                    <Button
-                      onClick={() => onStart({ mode: "FULL" })}
-                      loading={starting}
+                      href={
+                        back?.href ?? ieltsLibraryPath(exam.certificateVariant)
+                      }
                       radius="xl"
                       size="md"
                       rightSection={<Play size={16} />}
-                      className={classes.startBtn}
                     >
-                      {tr("Bắt đầu thi", "Start the test")}
+                      {fullTestHome
+                        ? tr("Sang full test", "Go to the full test")
+                        : tr(
+                            "Chọn full test IELTS",
+                            "Choose an IELTS full test",
+                          )}
                     </Button>
-                  </Group>
-                </Stack>
+                  </Stack>
+                ) : (
+                  <Stack gap="lg">
+                    <Text size="sm" c="ink.6">
+                      {tr(
+                        `Làm toàn bộ đề trong ${durationMinutes} phút như thi thật. Hết giờ, bài được nộp tự động; kết quả được tính vào tiến độ và điểm cao nhất.`,
+                        `The whole paper in ${durationMinutes} minutes, as on test day. It is submitted automatically when time runs out, and counts toward your progress and best score.`,
+                      )}
+                    </Text>
+                    {/* Guidelines Box */}
+                    <Paper
+                      p="md"
+                      radius="md"
+                      withBorder
+                      className={classes.guidelinesBox}
+                    >
+                      <Group gap="xs" mb="xs">
+                        <AlertCircle
+                          size={18}
+                          color="var(--mantine-color-navy-9)"
+                        />
+                        <Text fw={700} size="sm" c="navy.9">
+                          {t.exam.rulesTitle}
+                        </Text>
+                      </Group>
+                      <Stack gap={8}>
+                        <Flex gap="xs" align="flex-start">
+                          <CheckCircle2
+                            size={16}
+                            color="var(--mantine-color-navy-9)"
+                            style={{ marginTop: 2, flexShrink: 0 }}
+                          />
+                          <Text size="xs" c="ink.6">
+                            {t.exam.rule1}
+                          </Text>
+                        </Flex>
+                        <Flex gap="xs" align="flex-start">
+                          <CheckCircle2
+                            size={16}
+                            color="var(--mantine-color-navy-9)"
+                            style={{ marginTop: 2, flexShrink: 0 }}
+                          />
+                          <Text size="xs" c="ink.6">
+                            {t.exam.rule2}
+                          </Text>
+                        </Flex>
+                        <Flex gap="xs" align="flex-start">
+                          <CheckCircle2
+                            size={16}
+                            color="var(--mantine-color-navy-9)"
+                            style={{ marginTop: 2, flexShrink: 0 }}
+                          />
+                          <Text size="xs" c="ink.6">
+                            {t.exam.rule3}
+                          </Text>
+                        </Flex>
+                        <Flex gap="xs" align="flex-start">
+                          <CheckCircle2
+                            size={16}
+                            color="var(--mantine-color-navy-9)"
+                            style={{ marginTop: 2, flexShrink: 0 }}
+                          />
+                          <Text size="xs" c="ink.6">
+                            {t.exam.rule4}
+                          </Text>
+                        </Flex>
+                      </Stack>
+                    </Paper>
+
+                    {/* Action CTA */}
+                    <Group justify="flex-end" pt="sm">
+                      <Button
+                        component={Link}
+                        href="/exams"
+                        variant="default"
+                        radius="xl"
+                        size="md"
+                      >
+                        {t.exam.returnToLibrary}
+                      </Button>
+                      <Button
+                        onClick={() => onStart({ mode: "FULL" })}
+                        loading={starting}
+                        radius="xl"
+                        size="md"
+                        rightSection={<Play size={16} />}
+                        className={classes.startBtn}
+                      >
+                        {tr("Bắt đầu thi", "Start the test")}
+                      </Button>
+                    </Group>
+                  </Stack>
+                )}
               </Tabs.Panel>
             </Tabs>
           ) : (

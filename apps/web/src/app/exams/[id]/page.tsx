@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { ExamSittingView, FULL_TEST_SITTING_PARAM } from "@/features/exam";
+import {
+  FULL_TEST_PARAM,
+  readFullTest,
+} from "@/shared/constants/fullTestNavigation";
 
 export const metadata: Metadata = {
   title: "Làm bài thi thử | Englow3",
@@ -19,9 +23,16 @@ export default async function MockTestDetailPage({
   searchParams,
 }: PageProps) {
   const { id } = await params;
-  const sitting = (await searchParams)[FULL_TEST_SITTING_PARAM];
+  const query = await searchParams;
+  const sitting = query[FULL_TEST_SITTING_PARAM];
   // Only a well-formed id is passed on; anything else is an ordinary visit.
   const fullTestSittingId =
     typeof sitting === "string" && UUID.test(sitting) ? sitting : null;
-  return <ExamSittingView examId={id} fullTestSittingId={fullTestSittingId} />;
+  return (
+    <ExamSittingView
+      examId={id}
+      fullTestSittingId={fullTestSittingId}
+      fullTestId={readFullTest(query[FULL_TEST_PARAM])}
+    />
+  );
 }

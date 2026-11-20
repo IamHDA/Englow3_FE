@@ -20,7 +20,8 @@ import { ExamEmptyState } from "../../blocks/ExamEmptyState";
 import { ProductiveSkillsNotice } from "../../blocks/ProductiveSkillsNotice";
 import { ExamFilters } from "../../blocks/ExamFilters";
 import { ExamLibrarySkeleton } from "../../blocks/ExamLibrarySkeleton";
-import { EXAM_TYPE_TABS } from "../../../constants/examLibrary";
+import { IeltsFullTestGrid } from "../../blocks/IeltsFullTestGrid";
+import { EXAM_TYPE_TABS, knownTabId } from "../../../constants/examLibrary";
 import type { ExamFiltersState } from "../../../types";
 import type {
   CertificateType,
@@ -30,15 +31,20 @@ import type {
   TargetLevel,
 } from "@/lib/graphql/generated/schemaTypes";
 import { Page, PageHeader } from "@/shared/components/Page";
-import Link from "next/link";
 
 const PAGE_SIZE = 8;
 
-export function ExamLibraryView() {
+type ExamLibraryViewProps = {
+  /** The tab to open on, from `?tab=` - how a full test page links back. */
+  initialTabId?: string | null;
+};
+
+export function ExamLibraryView({ initialTabId }: ExamLibraryViewProps = {}) {
   const { t, isVi } = useLanguage();
+  const tr = (vi: string, en: string) => (isVi ? vi : en);
   const [filters, setFilters] = useState<ExamFiltersState>({
     searchQuery: "",
-    tabId: "all",
+    tabId: knownTabId(initialTabId),
     skill: "ALL",
     targetLevel: "ALL",
     attemptStatus: "ALL",
@@ -46,17 +52,24 @@ export function ExamLibraryView() {
     page: 0,
   });
 
-  // Writing and Speaking are practised in their own module; the notice points
-  // there, and an empty mock-exam list under it would only repeat the point.
-  const productiveFocus =
-    filters.tabId === "toeic_sw" ||
-    filters.skill === "WRITING" ||
-    filters.skill === "SPEAKING";
-
   const activeTab = useMemo(
     () => EXAM_TYPE_TABS.find((t) => t.id === filters.tabId),
     [filters.tabId],
   );
+  // IELTS has no stand-alone papers: its tabs list full tests (D-IELTS-11).
+  const fullTestTab = Boolean(activeTab?.fullTests);
+  // Full tests carry no level, so a level filter on "all" leaves them out.
+  const fullTestsOnAll =
+    filters.tabId === "all" && filters.targetLevel === "ALL";
+
+  // Writing and Speaking are practised in their own module; the notice points
+  // there, and an empty mock-exam list under it would only repeat the point.
+  // An IELTS full test holds both, so its tabs need no such pointer.
+  const productiveFocus =
+    !fullTestTab &&
+    (filters.tabId === "toeic_sw" ||
+      filters.skill === "WRITING" ||
+      filters.skill === "SPEAKING");
 
   const queryVariables = useMemo(() => {
     return {
@@ -86,6 +99,7 @@ export function ExamLibraryView() {
   const { data, loading, error, refetch } = useExamLibraryQuery({
     variables: queryVariables,
     notifyOnNetworkStatusChange: true,
+    skip: fullTestTab,
   });
 
   const handleFilterChange = (newFilters: Partial<ExamFiltersState>) => {
@@ -118,14 +132,7 @@ export function ExamLibraryView() {
   return (
     <Page>
       <Stack gap="xl">
-        <PageHeader
-          title={t.exam.title}
-          actions={
-            <Button component={Link} href="/exams/full-tests" variant="light">
-              IELTS Full Test
-            </Button>
-          }
-        />
+        <PageHeader title={t.exam.title} />
 
         {/* Filter Toolbar */}
         <ExamFilters
@@ -133,12 +140,28 @@ export function ExamLibraryView() {
           onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
           totalItems={totalItems}
+          paperFilters={!fullTestTab}
         />
 
         {productiveFocus && <ProductiveSkillsNotice />}
 
+        {fullTestsOnAll && (
+          <IeltsFullTestGrid
+            searchQuery={filters.searchQuery}
+            heading={tr(
+              "IELTS — Full test 4 kỹ năng",
+              "IELTS — four-skill full tests",
+            )}
+          />
+        )}
+
         {/* Content Area */}
-        {loading && !data ? (
+        {fullTestTab ? (
+          <IeltsFullTestGrid
+            variant={activeTab?.certificateVariant}
+            searchQuery={filters.searchQuery}
+          />
+        ) : loading && !data ? (
           <ExamLibrarySkeleton />
         ) : error ? (
           <Center py={64}>

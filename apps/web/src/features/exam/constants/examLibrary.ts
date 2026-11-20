@@ -9,6 +9,11 @@ export type ExamTypeTab = {
   name: string;
   certificateType?: CertificateType;
   certificateVariant?: CertificateVariant;
+  /**
+   * IELTS has no stand-alone papers: the tab lists full tests - four skills,
+   * one band - rather than the paper catalogue (D-IELTS-11).
+   */
+  fullTests?: boolean;
 };
 
 export const EXAM_TYPE_TABS: ExamTypeTab[] = [
@@ -30,14 +35,28 @@ export const EXAM_TYPE_TABS: ExamTypeTab[] = [
     name: "IELTS Academic",
     certificateType: "IELTS" as CertificateType,
     certificateVariant: "ACADEMIC" as CertificateVariant,
+    fullTests: true,
   },
   {
     id: "ielts_general",
     name: "IELTS General",
     certificateType: "IELTS" as CertificateType,
     certificateVariant: "GENERAL" as CertificateVariant,
+    fullTests: true,
   },
 ];
+
+/** The library tab holding a variant's IELTS full tests. */
+export function ieltsTabId(variant: CertificateVariant | string): string {
+  return variant === "GENERAL" ? "ielts_general" : "ielts_academic";
+}
+
+/** A tab id from the address bar, kept only when it names a real tab. */
+export function knownTabId(value: string | null | undefined): string {
+  return EXAM_TYPE_TABS.some((tab) => tab.id === value)
+    ? (value as string)
+    : "all";
+}
 
 export type FilterOption<T> = {
   value: T | "ALL";
@@ -98,12 +117,14 @@ export function getExamTypeTabs(allExamsLabel?: string): ExamTypeTab[] {
       name: "IELTS Academic",
       certificateType: "IELTS" as CertificateType,
       certificateVariant: "ACADEMIC" as CertificateVariant,
+      fullTests: true,
     },
     {
       id: "ielts_general",
       name: "IELTS General",
       certificateType: "IELTS" as CertificateType,
       certificateVariant: "GENERAL" as CertificateVariant,
+      fullTests: true,
     },
   ];
 }

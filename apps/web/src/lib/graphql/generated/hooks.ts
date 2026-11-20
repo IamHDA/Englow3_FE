@@ -3815,6 +3815,26 @@ export type ExamOutlineQuery = {
   };
 };
 
+export type IeltsFullTestCatalogueQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type IeltsFullTestCatalogueQuery = {
+  fullTests: Array<{
+    id: string;
+    title: string;
+    description: string;
+    certificateVariant: Types.CertificateVariant;
+  }>;
+  myFullTestSittings: Array<{
+    id: string;
+    fullTestId: string;
+    status: Types.FullTestSittingStatus;
+    overallBand: number | null;
+    provisionalBand: number | null;
+  }>;
+};
+
 export type FlashcardSetFieldsFragment = {
   id: string;
   slug: string;
@@ -4490,6 +4510,12 @@ export type FullTestLibraryQuery = {
     title: string;
     description: string;
     certificateVariant: Types.CertificateVariant;
+    examId: string;
+    writingTask1Id: string;
+    writingTask2Id: string;
+    speakingPart1Id: string;
+    speakingPart2Id: string;
+    speakingPart3Id: string;
   }>;
   myFullTestSittings: Array<{
     id: string;
@@ -16916,6 +16942,114 @@ export type ExamOutlineQueryResult = ApolloReactCommon.QueryResult<
   ExamOutlineQuery,
   ExamOutlineQueryVariables
 >;
+export const IeltsFullTestCatalogueDocument = gql`
+  query IeltsFullTestCatalogue {
+    fullTests {
+      id
+      title
+      description
+      certificateVariant
+    }
+    myFullTestSittings(page: 0, size: 50) {
+      id
+      fullTestId
+      status
+      overallBand
+      provisionalBand
+    }
+  }
+`;
+
+/**
+ * __useIeltsFullTestCatalogueQuery__
+ *
+ * To run a query within a React component, call `useIeltsFullTestCatalogueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIeltsFullTestCatalogueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIeltsFullTestCatalogueQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIeltsFullTestCatalogueQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    IeltsFullTestCatalogueQuery,
+    IeltsFullTestCatalogueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    IeltsFullTestCatalogueQuery,
+    IeltsFullTestCatalogueQueryVariables
+  >(IeltsFullTestCatalogueDocument, options);
+}
+export function useIeltsFullTestCatalogueLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    IeltsFullTestCatalogueQuery,
+    IeltsFullTestCatalogueQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    IeltsFullTestCatalogueQuery,
+    IeltsFullTestCatalogueQueryVariables
+  >(IeltsFullTestCatalogueDocument, options);
+}
+export function useIeltsFullTestCatalogueSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    IeltsFullTestCatalogueQuery,
+    IeltsFullTestCatalogueQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  IeltsFullTestCatalogueQuery,
+  IeltsFullTestCatalogueQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useIeltsFullTestCatalogueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        IeltsFullTestCatalogueQuery,
+        IeltsFullTestCatalogueQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  IeltsFullTestCatalogueQuery | undefined,
+  IeltsFullTestCatalogueQueryVariables
+>;
+export function useIeltsFullTestCatalogueSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        IeltsFullTestCatalogueQuery,
+        IeltsFullTestCatalogueQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    IeltsFullTestCatalogueQuery,
+    IeltsFullTestCatalogueQueryVariables
+  >(IeltsFullTestCatalogueDocument, options as any);
+}
+export type IeltsFullTestCatalogueQueryHookResult = ReturnType<
+  typeof useIeltsFullTestCatalogueQuery
+>;
+export type IeltsFullTestCatalogueLazyQueryHookResult = ReturnType<
+  typeof useIeltsFullTestCatalogueLazyQuery
+>;
+export type IeltsFullTestCatalogueSuspenseQueryHookResult = ReturnType<
+  typeof useIeltsFullTestCatalogueSuspenseQuery
+>;
+export type IeltsFullTestCatalogueQueryResult = ApolloReactCommon.QueryResult<
+  IeltsFullTestCatalogueQuery,
+  IeltsFullTestCatalogueQueryVariables
+>;
 export const FlashcardSetsDocument = gql`
   query FlashcardSets(
     $topic: String
@@ -19230,6 +19364,12 @@ export const FullTestLibraryDocument = gql`
       title
       description
       certificateVariant
+      examId
+      writingTask1Id
+      writingTask2Id
+      speakingPart1Id
+      speakingPart2Id
+      speakingPart3Id
     }
     myFullTestSittings(page: $page, size: 20) {
       ...FullTestSittingFields
