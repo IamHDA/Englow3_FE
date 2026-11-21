@@ -26,22 +26,8 @@ export const FRIENDS_ADDRESS_PARAMS = {
  */
 export const LEGACY_SEARCH_TAB = "search";
 
-/** The tabs of /friends, in the order they are shown. Their labels are copy: `t.friends.tabs`. */
-export const FRIENDS_TABS = [
-  "friends",
-  "requests",
-  "search",
-  "blocked",
-] as const;
-
-export type FriendsTab = (typeof FRIENDS_TABS)[number];
-
-export const DEFAULT_FRIENDS_TAB: FriendsTab = "friends";
-
-/** Which requests the "requests" tab lists. Labels: `t.friends.directions`. */
-export const REQUEST_DIRECTIONS = ["incoming", "outgoing"] as const;
-
-export type RequestDirection = (typeof REQUEST_DIRECTIONS)[number];
+/** Which friend requests a list shows: the ones the viewer received, or the ones the viewer sent. */
+export type RequestDirection = "incoming" | "outgoing";
 
 /** How many rows a list shows per page. The backend allows up to 50. */
 export const FRIENDS_PAGE_SIZE = 20;

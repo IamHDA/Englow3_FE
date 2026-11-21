@@ -1,6 +1,5 @@
 "use client";
 
-import { Paper, Stack } from "@mantine/core";
 import { Ban } from "lucide-react";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
@@ -26,7 +25,11 @@ type BlockedUserListProps = {
   onAction: RelationshipActionHandler;
 };
 
-/** The people the viewer blocked, each with the way to unblock. */
+/**
+ * The people the viewer blocked, each with the way to unblock. Only the rows
+ * (or the empty state) and the page buttons: the card around them is the
+ * PeoplePanel's.
+ */
 export function BlockedUserList({
   items,
   page,
@@ -38,48 +41,44 @@ export function BlockedUserList({
   const copy = useLanguage().t.friends.list;
   if (items.length === 0) {
     return (
-      <Paper withBorder radius="lg">
-        <ListEmptyState
-          icon={<Ban size={24} aria-hidden="true" />}
-          title={copy.blockedEmptyTitle}
-          description={copy.blockedEmptyDescription}
-        />
-      </Paper>
+      <ListEmptyState
+        icon={<Ban size={24} aria-hidden="true" />}
+        title={copy.blockedEmptyTitle}
+        description={copy.blockedEmptyDescription}
+      />
     );
   }
 
   return (
-    <Stack gap="md">
-      <Paper withBorder radius="lg">
-        {items.map((blocked) => (
-          <PersonRow
-            key={blocked.userId}
-            userId={blocked.userId}
-            displayName={blocked.displayName}
-            avatarUrl={blocked.avatarUrl}
-            caption={{
-              label: copy.blockedSince,
-              date: blocked.blockedAt,
-            }}
-            actions={
-              <RelationshipActions
-                status={RelationshipStatus.BLOCKED_BY_ME}
-                target={{
-                  userId: blocked.userId,
-                  displayName: blocked.displayName,
-                }}
-                pending={pending}
-                onAction={onAction}
-              />
-            }
-          />
-        ))}
-      </Paper>
+    <>
+      {items.map((blocked) => (
+        <PersonRow
+          key={blocked.userId}
+          userId={blocked.userId}
+          displayName={blocked.displayName}
+          avatarUrl={blocked.avatarUrl}
+          caption={{
+            label: copy.blockedSince,
+            date: blocked.blockedAt,
+          }}
+          actions={
+            <RelationshipActions
+              status={RelationshipStatus.BLOCKED_BY_ME}
+              target={{
+                userId: blocked.userId,
+                displayName: blocked.displayName,
+              }}
+              pending={pending}
+              onAction={onAction}
+            />
+          }
+        />
+      ))}
       <ListPagination
         page={page}
         totalPages={totalPages}
         onChange={onPageChange}
       />
-    </Stack>
+    </>
   );
 }

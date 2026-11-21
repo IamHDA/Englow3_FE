@@ -1,6 +1,5 @@
 "use client";
 
-import { Paper, Stack } from "@mantine/core";
 import { Inbox, SendHorizontal } from "lucide-react";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
@@ -29,7 +28,11 @@ type FriendRequestListProps = {
   onAction: RelationshipActionHandler;
 };
 
-/** Friend requests, received (accept or decline) or sent (cancel). */
+/**
+ * Friend requests, received (accept or decline) or sent (cancel). Only the
+ * rows (or the empty state) and the page buttons: the card around them is the
+ * PeoplePanel's.
+ */
 export function FriendRequestList({
   direction,
   items,
@@ -44,63 +47,59 @@ export function FriendRequestList({
 
   if (items.length === 0) {
     return (
-      <Paper withBorder radius="lg">
-        <ListEmptyState
-          icon={
-            incoming ? (
-              <Inbox size={24} aria-hidden="true" />
-            ) : (
-              <SendHorizontal size={24} aria-hidden="true" />
-            )
-          }
-          title={incoming ? copy.incomingEmptyTitle : copy.outgoingEmptyTitle}
-          description={
-            incoming
-              ? copy.incomingEmptyDescription
-              : copy.outgoingEmptyDescription
-          }
-        />
-      </Paper>
+      <ListEmptyState
+        icon={
+          incoming ? (
+            <Inbox size={24} aria-hidden="true" />
+          ) : (
+            <SendHorizontal size={24} aria-hidden="true" />
+          )
+        }
+        title={incoming ? copy.incomingEmptyTitle : copy.outgoingEmptyTitle}
+        description={
+          incoming
+            ? copy.incomingEmptyDescription
+            : copy.outgoingEmptyDescription
+        }
+      />
     );
   }
 
   return (
-    <Stack gap="md">
-      <Paper withBorder radius="lg">
-        {items.map((request) => (
-          <PersonRow
-            key={request.requestId}
-            userId={request.userId}
-            displayName={request.displayName}
-            avatarUrl={request.avatarUrl}
-            caption={{
-              label: incoming ? copy.requestReceived : copy.requestSent,
-              date: request.requestedAt,
-            }}
-            actions={
-              <RelationshipActions
-                status={
-                  incoming
-                    ? RelationshipStatus.REQUEST_RECEIVED
-                    : RelationshipStatus.REQUEST_SENT
-                }
-                target={{
-                  userId: request.userId,
-                  displayName: request.displayName,
-                  requestId: request.requestId,
-                }}
-                pending={pending}
-                onAction={onAction}
-              />
-            }
-          />
-        ))}
-      </Paper>
+    <>
+      {items.map((request) => (
+        <PersonRow
+          key={request.requestId}
+          userId={request.userId}
+          displayName={request.displayName}
+          avatarUrl={request.avatarUrl}
+          caption={{
+            label: incoming ? copy.requestReceived : copy.requestSent,
+            date: request.requestedAt,
+          }}
+          actions={
+            <RelationshipActions
+              status={
+                incoming
+                  ? RelationshipStatus.REQUEST_RECEIVED
+                  : RelationshipStatus.REQUEST_SENT
+              }
+              target={{
+                userId: request.userId,
+                displayName: request.displayName,
+                requestId: request.requestId,
+              }}
+              pending={pending}
+              onAction={onAction}
+            />
+          }
+        />
+      ))}
       <ListPagination
         page={page}
         totalPages={totalPages}
         onChange={onPageChange}
       />
-    </Stack>
+    </>
   );
 }

@@ -10,13 +10,14 @@ type ListLoadErrorProps = {
   onRetry: () => void;
 };
 
-/** A list the server did not give us, with the way to ask again. */
+/** A list the server did not give us, with the way to ask again. It sits inside the list's card, hence the margin. */
 export function ListLoadError({ title, onRetry }: ListLoadErrorProps) {
   const copy = useLanguage().t.friends.list;
   return (
     <Alert
       color="warn"
       radius="md"
+      m="md"
       icon={<AlertCircle size={20} aria-hidden="true" />}
       title={title ?? copy.loadErrorTitle}
     >

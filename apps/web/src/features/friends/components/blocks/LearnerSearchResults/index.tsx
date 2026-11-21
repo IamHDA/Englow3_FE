@@ -1,6 +1,5 @@
 "use client";
 
-import { Paper, Stack } from "@mantine/core";
 import { SearchX } from "lucide-react";
 
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -25,7 +24,11 @@ type LearnerSearchResultsProps = {
   onAction: RelationshipActionHandler;
 };
 
-/** Learners found by name, each with the button that fits how the viewer stands with them. */
+/**
+ * Learners found by name, each with the button that fits how the viewer
+ * stands with them. Only the rows (or the empty state) and the page buttons:
+ * the card around them is the PeoplePanel's.
+ */
 export function LearnerSearchResults({
   items,
   page,
@@ -37,45 +40,41 @@ export function LearnerSearchResults({
   const copy = useLanguage().t.friends.search;
   if (items.length === 0) {
     return (
-      <Paper withBorder radius="lg">
-        <ListEmptyState
-          icon={<SearchX size={24} aria-hidden="true" />}
-          title={copy.emptyTitle}
-          description={copy.emptyDescription}
-        />
-      </Paper>
+      <ListEmptyState
+        icon={<SearchX size={24} aria-hidden="true" />}
+        title={copy.emptyTitle}
+        description={copy.emptyDescription}
+      />
     );
   }
 
   return (
-    <Stack gap="md">
-      <Paper withBorder radius="lg">
-        {items.map((learner) => (
-          <PersonRow
-            key={learner.userId}
-            userId={learner.userId}
-            displayName={learner.displayName}
-            avatarUrl={learner.avatarUrl}
-            actions={
-              <RelationshipActions
-                status={learner.relationship}
-                target={{
-                  userId: learner.userId,
-                  displayName: learner.displayName,
-                  requestId: learner.requestId,
-                }}
-                pending={pending}
-                onAction={onAction}
-              />
-            }
-          />
-        ))}
-      </Paper>
+    <>
+      {items.map((learner) => (
+        <PersonRow
+          key={learner.userId}
+          userId={learner.userId}
+          displayName={learner.displayName}
+          avatarUrl={learner.avatarUrl}
+          actions={
+            <RelationshipActions
+              status={learner.relationship}
+              target={{
+                userId: learner.userId,
+                displayName: learner.displayName,
+                requestId: learner.requestId,
+              }}
+              pending={pending}
+              onAction={onAction}
+            />
+          }
+        />
+      ))}
       <ListPagination
         page={page}
         totalPages={totalPages}
         onChange={onPageChange}
       />
-    </Stack>
+    </>
   );
 }

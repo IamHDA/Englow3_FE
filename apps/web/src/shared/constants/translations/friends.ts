@@ -2,7 +2,7 @@
  * The words of the friends feature: /friends, the wall at /people/[userId],
  * the buttons on a person's row and the header badge.
  *
- * `{name}`, `{count}` and `{min}` are replaced by the caller. Beyond that the
+ * `{name}`, `{count}`, `{min}` and `{term}` are replaced by the caller. Beyond that the
  * feature never builds a sentence out of pieces, so a language is free to word
  * each one its own way.
  */
@@ -34,16 +34,17 @@ type ConfirmCopy = {
 
 export interface FriendsTranslations {
   pageTitle: string;
-  tabs: {
+  /** The line under the page title. */
+  pageSubtitle: string;
+  /** The side menu's lists: its entries, and the heading of each list. */
+  sections: {
     friends: string;
     requests: string;
-    search: string;
+    sent: string;
     blocked: string;
   };
-  directions: {
-    incoming: string;
-    outgoing: string;
-  };
+  /** Names the side menu for a screen reader. */
+  navLabel: string;
   actions: {
     add: string;
     cancel: string;
@@ -88,6 +89,9 @@ export interface FriendsTranslations {
     friendsEmptyTitle: string;
     friendsEmptyDescription: string;
     friendsEmptyAction: string;
+    /** How many people a list has, in the heading: "{count} người". */
+    countOne: string;
+    countOther: string;
     incomingEmptyTitle: string;
     incomingEmptyDescription: string;
     outgoingEmptyTitle: string;
@@ -100,11 +104,21 @@ export interface FriendsTranslations {
     blockedSince: string;
   };
   search: {
+    /** The heading of what a search finds. */
+    title: string;
+    /** Names the search box for a screen reader; it has no visible label. */
     label: string;
     placeholder: string;
-    idleTitle: string;
-    idleDescription: string;
+    /** The button that empties the search box. */
+    clear: string;
+    /** Under the box while what was typed is too short to search for. */
     tooShort: string;
+    /** In the results' place while it is. */
+    promptTitle: string;
+    promptDescription: string;
+    /** How many learners a search found, in the heading: "{count}" and "{term}". */
+    resultsOne: string;
+    resultsOther: string;
     emptyTitle: string;
     emptyDescription: string;
     loadErrorTitle: string;
@@ -139,16 +153,15 @@ export interface FriendsTranslations {
 
 export const friendsVi: FriendsTranslations = {
   pageTitle: "Bạn bè",
-  tabs: {
+  pageSubtitle:
+    "Kết nối với những người cùng học để nhắn tin và theo dõi bài viết của nhau",
+  sections: {
     friends: "Bạn bè",
-    requests: "Lời mời",
-    search: "Tìm bạn",
+    requests: "Lời mời nhận được",
+    sent: "Lời mời đã gửi",
     blocked: "Đã chặn",
   },
-  directions: {
-    incoming: "Đã nhận",
-    outgoing: "Đã gửi",
-  },
+  navLabel: "Mục bạn bè",
   actions: {
     add: "Kết bạn",
     cancel: "Hủy lời mời",
@@ -211,6 +224,8 @@ export const friendsVi: FriendsTranslations = {
     friendsEmptyTitle: "Bạn chưa có bạn bè nào",
     friendsEmptyDescription: "Thử tìm bạn theo tên để gửi lời mời.",
     friendsEmptyAction: "Tìm bạn",
+    countOne: "{count} người",
+    countOther: "{count} người",
     incomingEmptyTitle: "Không có lời mời nào",
     incomingEmptyDescription: "Lời mời kết bạn bạn nhận được sẽ hiện ở đây.",
     outgoingEmptyTitle: "Bạn chưa gửi lời mời nào",
@@ -225,13 +240,17 @@ export const friendsVi: FriendsTranslations = {
     blockedSince: "Chặn từ",
   },
   search: {
-    label: "Tìm học viên theo tên",
-    placeholder: "Nhập tên hiển thị",
-    idleTitle: "Tìm bạn theo tên",
-    idleDescription: "Nhập tên hiển thị của học viên để gửi lời mời kết bạn.",
+    title: "Tìm learner",
+    label: "Tìm learner theo tên",
+    placeholder: "Tìm learner theo tên…",
+    clear: "Xóa từ khóa",
     tooShort: "Nhập ít nhất {min} ký tự.",
-    emptyTitle: "Không tìm thấy học viên nào",
-    emptyDescription: "Thử một tên khác.",
+    promptTitle: "Tìm learner theo tên",
+    promptDescription: "Nhập tên hiển thị của learner để gửi lời mời kết bạn.",
+    resultsOne: "{count} kết quả cho “{term}”",
+    resultsOther: "{count} kết quả cho “{term}”",
+    emptyTitle: "Không có learner nào khớp",
+    emptyDescription: "Tìm theo tên hiển thị, thử từ khóa ngắn hơn.",
     loadErrorTitle: "Không tìm kiếm được",
   },
   learnersOnly: {
@@ -264,19 +283,15 @@ export const friendsVi: FriendsTranslations = {
 
 export const friendsEn: FriendsTranslations = {
   pageTitle: "Friends",
-  tabs: {
+  pageSubtitle:
+    "Connect with people who study alongside you, message them and follow each other's posts",
+  sections: {
     friends: "Friends",
-    requests: "Requests",
-    // Not "Find friends": the four tabs, with "99+" on "Requests", need about
-    // 311 px on a phone and a 320 px one has 288 for them. Measured in both
-    // languages from 320 to 390 px; "Find" is what the tab does.
-    search: "Find",
+    requests: "Requests received",
+    sent: "Requests sent",
     blocked: "Blocked",
   },
-  directions: {
-    incoming: "Received",
-    outgoing: "Sent",
-  },
+  navLabel: "Friends sections",
   actions: {
     add: "Add friend",
     cancel: "Cancel request",
@@ -340,6 +355,8 @@ export const friendsEn: FriendsTranslations = {
     friendsEmptyTitle: "You have no friends yet",
     friendsEmptyDescription: "Search for someone by name to send a request.",
     friendsEmptyAction: "Find friends",
+    countOne: "{count} person",
+    countOther: "{count} people",
     incomingEmptyTitle: "No requests",
     incomingEmptyDescription: "Friend requests you receive will show up here.",
     outgoingEmptyTitle: "You have not sent any requests",
@@ -354,13 +371,18 @@ export const friendsEn: FriendsTranslations = {
     blockedSince: "Blocked since",
   },
   search: {
+    title: "Find learners",
     label: "Search learners by name",
-    placeholder: "Type a display name",
-    idleTitle: "Find friends by name",
-    idleDescription: "Type a learner's display name to send a friend request.",
+    placeholder: "Search learners by name…",
+    clear: "Clear search",
     tooShort: "Type at least {min} characters.",
-    emptyTitle: "No learners found",
-    emptyDescription: "Try a different name.",
+    promptTitle: "Find learners by name",
+    promptDescription:
+      "Type a learner's display name to send a friend request.",
+    resultsOne: "{count} result for “{term}”",
+    resultsOther: "{count} results for “{term}”",
+    emptyTitle: "No learners match",
+    emptyDescription: "Search by display name, or try a shorter term.",
     loadErrorTitle: "Could not search",
   },
   learnersOnly: {

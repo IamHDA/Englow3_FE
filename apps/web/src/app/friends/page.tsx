@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 export default async function FriendsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string | string[]; q?: string | string[] }>;
 }) {
-  const { tab } = await searchParams;
+  const { tab, q } = await searchParams;
   return (
     <Page width="wide">
-      <FriendsView initialTab={tab} />
+      <FriendsView initialTab={tab} initialQuery={q} />
     </Page>
   );
 }

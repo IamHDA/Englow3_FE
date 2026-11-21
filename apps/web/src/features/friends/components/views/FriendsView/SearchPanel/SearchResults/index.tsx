@@ -11,6 +11,7 @@ import type {
 } from "../../../../../types";
 import { LearnerSearchResults } from "../../../../blocks/LearnerSearchResults";
 import { LearnerSearchResultsSkeleton } from "../../../../blocks/LearnerSearchResults/LearnerSearchResultsSkeleton";
+import { PeoplePanel } from "../../../../blocks/PeoplePanel";
 import { ListLoadError } from "../../../../parts/ListLoadError";
 
 type SearchResultsProps = {
@@ -25,7 +26,7 @@ type SearchResultsProps = {
  * starts again on page 1.
  */
 export function SearchResults({ term, pending, onAction }: SearchResultsProps) {
-  const { t } = useLanguage();
+  const copy = useLanguage().t.friends.search;
   const { page, setPage, fitTo } = usePageNumber();
   const { data, loading, error, refetch } = useSearchLearnersQuery({
     variables: { q: term, page: page - 1, size: FRIENDS_PAGE_SIZE },
@@ -36,24 +37,30 @@ export function SearchResults({ term, pending, onAction }: SearchResultsProps) {
   fitTo(results?.totalPages);
 
   if (!results) {
-    return error && !loading ? (
-      <ListLoadError
-        title={t.friends.search.loadErrorTitle}
-        onRetry={() => void refetch().catch(() => undefined)}
-      />
-    ) : (
-      <LearnerSearchResultsSkeleton />
+    return (
+      <PeoplePanel title={copy.title}>
+        {error && !loading ? (
+          <ListLoadError
+            title={copy.loadErrorTitle}
+            onRetry={() => void refetch().catch(() => undefined)}
+          />
+        ) : (
+          <LearnerSearchResultsSkeleton />
+        )}
+      </PeoplePanel>
     );
   }
 
   return (
-    <LearnerSearchResults
-      items={results.items}
-      page={page}
-      totalPages={results.totalPages}
-      onPageChange={setPage}
-      pending={pending}
-      onAction={onAction}
-    />
+    <PeoplePanel title={copy.title} count={results.totalItems} term={term}>
+      <LearnerSearchResults
+        items={results.items}
+        page={page}
+        totalPages={results.totalPages}
+        onPageChange={setPage}
+        pending={pending}
+        onAction={onAction}
+      />
+    </PeoplePanel>
   );
 }

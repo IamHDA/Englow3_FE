@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Paper, Stack } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { Search, Users } from "lucide-react";
 
 import { RelationshipStatus } from "@/lib/graphql/generated";
@@ -28,7 +28,11 @@ type FriendListProps = {
   onFindFriends: () => void;
 };
 
-/** The viewer's friends, one row each, with what can be done about them. */
+/**
+ * The viewer's friends, one row each, with what can be done about them. Only
+ * the rows (or the empty state) and the page buttons: the card around them is
+ * the PeoplePanel's.
+ */
 export function FriendList({
   items,
   page,
@@ -41,57 +45,53 @@ export function FriendList({
   const copy = useLanguage().t.friends.list;
   if (items.length === 0) {
     return (
-      <Paper withBorder radius="lg">
-        <ListEmptyState
-          icon={<Users size={24} aria-hidden="true" />}
-          title={copy.friendsEmptyTitle}
-          description={copy.friendsEmptyDescription}
-          action={
-            <Button
-              variant="light"
-              leftSection={<Search size={16} aria-hidden="true" />}
-              onClick={onFindFriends}
-            >
-              {copy.friendsEmptyAction}
-            </Button>
-          }
-        />
-      </Paper>
+      <ListEmptyState
+        icon={<Users size={24} aria-hidden="true" />}
+        title={copy.friendsEmptyTitle}
+        description={copy.friendsEmptyDescription}
+        action={
+          <Button
+            variant="light"
+            leftSection={<Search size={16} aria-hidden="true" />}
+            onClick={onFindFriends}
+          >
+            {copy.friendsEmptyAction}
+          </Button>
+        }
+      />
     );
   }
 
   return (
-    <Stack gap="md">
-      <Paper withBorder radius="lg">
-        {items.map((friend) => (
-          <PersonRow
-            key={friend.userId}
-            userId={friend.userId}
-            displayName={friend.displayName}
-            avatarUrl={friend.avatarUrl}
-            caption={{
-              label: copy.friendsSince,
-              date: friend.friendsSince,
-            }}
-            actions={
-              <RelationshipActions
-                status={RelationshipStatus.FRIENDS}
-                target={{
-                  userId: friend.userId,
-                  displayName: friend.displayName,
-                }}
-                pending={pending}
-                onAction={onAction}
-              />
-            }
-          />
-        ))}
-      </Paper>
+    <>
+      {items.map((friend) => (
+        <PersonRow
+          key={friend.userId}
+          userId={friend.userId}
+          displayName={friend.displayName}
+          avatarUrl={friend.avatarUrl}
+          caption={{
+            label: copy.friendsSince,
+            date: friend.friendsSince,
+          }}
+          actions={
+            <RelationshipActions
+              status={RelationshipStatus.FRIENDS}
+              target={{
+                userId: friend.userId,
+                displayName: friend.displayName,
+              }}
+              pending={pending}
+              onAction={onAction}
+            />
+          }
+        />
+      ))}
       <ListPagination
         page={page}
         totalPages={totalPages}
         onChange={onPageChange}
       />
-    </Stack>
+    </>
   );
 }
