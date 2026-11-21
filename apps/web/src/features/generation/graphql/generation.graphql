@@ -15,6 +15,8 @@ fragment GenerationRequestFields on GenerationRequest {
   failureCode
   failureMessage
   lastProblems
+  resumeCount
+  resumable
   createdAt
   completedAt
 }
@@ -37,6 +39,12 @@ query AdminGeneration($page: Int) {
 
 mutation RequestGeneration($kind: GenerationKind!, $brief: String) {
   requestGeneration(kind: $kind, brief: $brief) {
+    ...GenerationRequestFields
+  }
+}
+
+mutation ResumeGeneration($id: ID!) {
+  resumeGeneration(id: $id) {
     ...GenerationRequestFields
   }
 }

@@ -10,6 +10,7 @@ import {
 import {
   useAdminGenerationQuery,
   useRequestGenerationMutation,
+  useResumeGenerationMutation,
 } from "@/lib/graphql/generated/hooks";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -40,6 +41,8 @@ export function AdminGenerationView() {
       fetchPolicy: "cache-and-network",
     });
   const [requestGeneration, requestState] = useRequestGenerationMutation();
+  const [resumeGeneration] = useResumeGenerationMutation();
+  const [resumingId, setResumingId] = useState<string | null>(null);
   const requests = data?.generationRequests.items ?? [];
   const running = requests.some(
     (r) =>
@@ -53,6 +56,36 @@ export function AdminGenerationView() {
     startPolling(GENERATION_POLL_MS);
     return () => stopPolling();
   }, [running, startPolling, stopPolling]);
+
+  async function handleResume(id: string) {
+    setResumingId(id);
+    try {
+      await resumeGeneration({ variables: { id } });
+      notifications.show({
+        color: "teal",
+        message: tr(
+          "Đã chạy tiếp từ bước lỗi. Trang sẽ tự cập nhật tiến độ.",
+          "Resumed from the failed step. This page follows its progress.",
+        ),
+      });
+      await refetch().catch(() => undefined);
+    } catch (failure) {
+      const copy = REFUSAL_COPY[backendCodeOf(failure) ?? ""];
+      notifications.show({
+        color: "red",
+        message: copy
+          ? isVi
+            ? copy.vi
+            : copy.en
+          : tr(
+              "Chưa chạy tiếp được. Kiểm tra kết nối rồi thử lại.",
+              "Could not resume. Check the connection and try again.",
+            ),
+      });
+    } finally {
+      setResumingId(null);
+    }
+  }
 
   async function handleSubmit(values: GenerationRequestValues) {
     try {
@@ -124,7 +157,12 @@ export function AdminGenerationView() {
                 onSubmit={handleSubmit}
               />
             </Card>
-            <GenerationRequestList requests={requests} />
+            <GenerationRequestList
+              requests={requests}
+              onResume={(id) => void handleResume(id)}
+              resumingId={resumingId}
+              inProgress={data?.generationAllowance.inProgress ?? false}
+            />
             {(data?.generationRequests.totalPages ?? 0) > 1 && (
               <Pagination
                 value={page + 1}

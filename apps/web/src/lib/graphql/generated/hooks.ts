@@ -4623,6 +4623,8 @@ export type GenerationRequestFieldsFragment = {
   failureCode: string | null;
   failureMessage: string | null;
   lastProblems: Array<string>;
+  resumeCount: number;
+  resumable: boolean;
   createdAt: string;
   completedAt: string | null;
 };
@@ -4652,6 +4654,8 @@ export type AdminGenerationQuery = {
       failureCode: string | null;
       failureMessage: string | null;
       lastProblems: Array<string>;
+      resumeCount: number;
+      resumable: boolean;
       createdAt: string;
       completedAt: string | null;
     }>;
@@ -4687,6 +4691,37 @@ export type RequestGenerationMutation = {
     failureCode: string | null;
     failureMessage: string | null;
     lastProblems: Array<string>;
+    resumeCount: number;
+    resumable: boolean;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
+export type ResumeGenerationMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ResumeGenerationMutation = {
+  resumeGeneration: {
+    id: string;
+    kind: Types.GenerationKind;
+    status: Types.GenerationStatus;
+    step: string | null;
+    stepIndex: number;
+    stepsTotal: number;
+    attempt: number;
+    brief: string | null;
+    requestedByName: string | null;
+    title: string | null;
+    examId: string | null;
+    taskIds: Array<string>;
+    fullTestId: string | null;
+    failureCode: string | null;
+    failureMessage: string | null;
+    lastProblems: Array<string>;
+    resumeCount: number;
+    resumable: boolean;
     createdAt: string;
     completedAt: string | null;
   };
@@ -6383,6 +6418,8 @@ export const GenerationRequestFieldsFragmentDoc = gql`
     failureCode
     failureMessage
     lastProblems
+    resumeCount
+    resumable
     createdAt
     completedAt
   }
@@ -19820,6 +19857,60 @@ export type RequestGenerationMutationOptions =
   ApolloReactCommon.MutationHookOptions<
     RequestGenerationMutation,
     RequestGenerationMutationVariables
+  >;
+export const ResumeGenerationDocument = gql`
+  mutation ResumeGeneration($id: ID!) {
+    resumeGeneration(id: $id) {
+      ...GenerationRequestFields
+    }
+  }
+  ${GenerationRequestFieldsFragmentDoc}
+`;
+export type ResumeGenerationMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    ResumeGenerationMutation,
+    ResumeGenerationMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useResumeGenerationMutation__
+ *
+ * To run a mutation, you first call `useResumeGenerationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResumeGenerationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resumeGenerationMutation, { data, loading, error }] = useResumeGenerationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useResumeGenerationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ResumeGenerationMutation,
+    ResumeGenerationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    ResumeGenerationMutation,
+    ResumeGenerationMutationVariables
+  >(ResumeGenerationDocument, options);
+}
+export type ResumeGenerationMutationHookResult = ReturnType<
+  typeof useResumeGenerationMutation
+>;
+export type ResumeGenerationMutationResult =
+  ApolloReactCommon.MutationResult<ResumeGenerationMutation>;
+export type ResumeGenerationMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    ResumeGenerationMutation,
+    ResumeGenerationMutationVariables
   >;
 export const LearningPurposesDocument = gql`
   query LearningPurposes {
