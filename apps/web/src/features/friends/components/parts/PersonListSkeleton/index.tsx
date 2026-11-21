@@ -27,15 +27,15 @@ export function PersonListSkeleton({
             direction={{ base: "column", sm: "row" }}
             align={{ base: "stretch", sm: "center" }}
             justify="space-between"
-            gap="sm"
-            px="md"
-            py="sm"
+            gap="md"
+            px="lg"
+            py="md"
           >
-            <Group gap="sm" wrap="nowrap">
-              <Skeleton circle height={44} width={44} />
+            <Group gap="md" wrap="nowrap">
+              <Skeleton circle height={52} width={52} />
               <Stack gap={6}>
-                <Skeleton height={16} width={160} radius="sm" />
-                <Skeleton height={12} width={110} radius="sm" />
+                <Skeleton height={18} width={160} radius="sm" />
+                <Skeleton height={14} width={110} radius="sm" />
               </Stack>
             </Group>
             <Group gap="xs" wrap="nowrap">

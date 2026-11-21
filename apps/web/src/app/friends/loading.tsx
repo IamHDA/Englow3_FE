@@ -6,7 +6,7 @@ import { Page } from "@/shared/components/Page";
 
 export default function FriendsLoading() {
   return (
-    <Page width="focus">
+    <Page width="wide">
       <FriendsSkeleton />
     </Page>
   );

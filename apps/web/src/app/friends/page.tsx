@@ -15,7 +15,7 @@ export default async function FriendsPage({
 }) {
   const { tab } = await searchParams;
   return (
-    <Page width="focus">
+    <Page width="wide">
       <FriendsView initialTab={tab} />
     </Page>
   );
