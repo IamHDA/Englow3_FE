@@ -1,0 +1,19 @@
+.link {
+  min-height: 48px;
+  color: var(--mantine-color-ink-7);
+}
+
+/* Mantine sizes the label itself, so the menu's text size is set on it. */
+.label {
+  font-size: var(--mantine-font-size-md);
+}
+
+/* The lit entry: Mantine reads these three for its active and hover colours. */
+.link[data-active] {
+  --nl-bg: var(--mantine-color-brand-0);
+  --nl-hover: var(--mantine-color-brand-0);
+  --nl-color: var(--mantine-color-brand-7);
+
+  color: var(--mantine-color-brand-7);
+  font-weight: 600;
+}

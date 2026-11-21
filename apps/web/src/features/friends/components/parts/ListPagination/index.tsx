@@ -12,7 +12,10 @@ type ListPaginationProps = {
   onChange: (page: number) => void;
 };
 
-/** Page buttons under a list - nothing at all while the list fits on one page. */
+/**
+ * Page buttons under a list - nothing at all while the list fits on one page.
+ * They follow the rows in the same card, and the last row's hairline sets them off.
+ */
 export function ListPagination({
   page,
   totalPages,
@@ -21,7 +24,7 @@ export function ListPagination({
   const { isVi } = useLanguage();
   if (totalPages <= 1) return null;
   return (
-    <Group justify="center">
+    <Group justify="center" p="md">
       <Pagination
         value={page}
         onChange={onChange}

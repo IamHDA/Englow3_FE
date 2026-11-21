@@ -1,0 +1,8 @@
+/* The hover on a row is a square background: the card's corners clip it. */
+.panel {
+  overflow: hidden;
+}
+
+.header {
+  border-bottom: 1px solid var(--mantine-color-ink-2);
+}

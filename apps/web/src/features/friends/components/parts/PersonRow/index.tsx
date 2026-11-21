@@ -40,16 +40,17 @@ export function PersonRow({
       direction={{ base: "column", sm: "row" }}
       align={{ base: "stretch", sm: "center" }}
       justify="space-between"
-      gap="sm"
-      px="md"
-      py="sm"
+      gap="md"
+      px="lg"
+      py="md"
     >
-      <Group gap="sm" wrap="nowrap" miw={0}>
-        <Avatar src={avatarUrl} name={displayName} radius="xl" size={44} />
-        <Stack gap={0} miw={0}>
+      <Group gap="md" wrap="nowrap" miw={0}>
+        <Avatar src={avatarUrl} name={displayName} radius="xl" size={52} />
+        <Stack gap={2} miw={0}>
           <Anchor
             component={Link}
             href={FRIENDS_ROUTES.wall(userId)}
+            size="lg"
             fw={600}
             c="ink.9"
             truncate
@@ -57,7 +58,7 @@ export function PersonRow({
             {displayName}
           </Anchor>
           {caption && (
-            <Text size="xs" c="ink.5">
+            <Text size="sm" c="ink.5">
               {caption.label}{" "}
               {new Date(caption.date).toLocaleDateString(
                 DATE_LOCALES[language],

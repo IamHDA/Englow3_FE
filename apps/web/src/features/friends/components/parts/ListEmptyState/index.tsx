@@ -19,7 +19,7 @@ export function ListEmptyState({
   action,
 }: ListEmptyStateProps) {
   return (
-    <Stack align="center" gap="xs" px="md" py="xl">
+    <Stack align="center" gap="xs" px="md" py={56}>
       <ThemeIcon size={48} radius="xl" variant="light" color="brand">
         {icon}
       </ThemeIcon>

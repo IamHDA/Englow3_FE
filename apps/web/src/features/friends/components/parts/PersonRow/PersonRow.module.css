@@ -1,3 +1,20 @@
+.row {
+  transition: background-color 120ms ease;
+}
+
 .row:not(:last-child) {
-  border-bottom: 1px solid var(--mantine-color-ink-2);
+  border-bottom: 1px solid var(--mantine-color-ink-1);
+}
+
+/* Not on a touch screen, where a hover would stay on the row last tapped. */
+@media (hover: hover) {
+  .row:hover {
+    background-color: var(--mantine-color-ink-0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
 }

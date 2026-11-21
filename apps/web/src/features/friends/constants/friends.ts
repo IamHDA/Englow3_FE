@@ -1,19 +1,33 @@
-/** The tabs of /friends, in the order they are shown. Their labels are copy: `t.friends.tabs`. */
-export const FRIENDS_TABS = [
+/**
+ * The lists of /friends, in the order the side menu shows them. "requests" is
+ * the ones the viewer received, "sent" the ones the viewer sent. Their labels
+ * are copy: `t.friends.sections`.
+ */
+export const FRIENDS_SECTIONS = [
   "friends",
   "requests",
-  "search",
+  "sent",
   "blocked",
 ] as const;
 
-export type FriendsTab = (typeof FRIENDS_TABS)[number];
+export type FriendsSection = (typeof FRIENDS_SECTIONS)[number];
 
-export const DEFAULT_FRIENDS_TAB: FriendsTab = "friends";
+export const DEFAULT_FRIENDS_SECTION: FriendsSection = "friends";
 
-/** Which requests the "requests" tab lists. Labels: `t.friends.directions`. */
-export const REQUEST_DIRECTIONS = ["incoming", "outgoing"] as const;
+/** The address parameters of /friends: `?tab=<section>&q=<what is searched for>`. */
+export const FRIENDS_ADDRESS_PARAMS = {
+  section: "tab",
+  query: "q",
+} as const;
 
-export type RequestDirection = (typeof REQUEST_DIRECTIONS)[number];
+/**
+ * Links from before the search box moved into the side column asked for
+ * `?tab=search`. It is still understood: the default list, with the box focused.
+ */
+export const LEGACY_SEARCH_TAB = "search";
+
+/** Which friend requests a list shows: the ones the viewer received, or the ones the viewer sent. */
+export type RequestDirection = "incoming" | "outgoing";
 
 /** How many rows a list shows per page. The backend allows up to 50. */
 export const FRIENDS_PAGE_SIZE = 20;
@@ -58,6 +72,9 @@ export const FRIENDS_ROUTES = {
   friends: "/friends",
   requests: "/friends?tab=requests",
   search: "/friends?tab=search",
+  /** /friends opened on what a search for this term finds. */
+  searchFor: (term: string) =>
+    `/friends?${FRIENDS_ADDRESS_PARAMS.query}=${encodeURIComponent(term)}`,
   profile: "/profile",
   admin: "/admin",
   home: "/",

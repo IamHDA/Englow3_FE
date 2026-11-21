@@ -1,56 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { Stack, Text } from "@mantine/core";
+import { useRef } from "react";
 
 import { isBackOfficeRole, useAuth } from "@/features/auth";
 import { useIncomingFriendRequestCountQuery } from "@/lib/graphql/generated/hooks";
-import { PageHeader, PageTabs } from "@/shared/components/Page";
+import { PageHeader } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
+import type { FriendsSection } from "../../../constants/friends";
 import {
-  DEFAULT_FRIENDS_TAB,
-  FRIENDS_TABS,
-  type FriendsTab,
-} from "../../../constants/friends";
+  useFriendsLocation,
+  type FriendsAddress,
+} from "../../../hooks/useFriendsLocation";
+import { useLearnerSearchTerm } from "../../../hooks/useLearnerSearchTerm";
 import { useRelationshipActions } from "../../../hooks/useRelationshipActions";
+import { FriendsLayout } from "../../blocks/FriendsLayout";
 import { FriendsLearnersOnly } from "../../blocks/FriendsLearnersOnly";
+import { LearnerSearch } from "../../blocks/LearnerSearch";
 import { RelationshipConfirmModal } from "../../blocks/RelationshipConfirmModal";
 
-import { BlockedTabPanel } from "./BlockedTabPanel";
-import { FriendsTabPanel } from "./FriendsTabPanel";
-import { RequestsTabPanel } from "./RequestsTabPanel";
-import { SearchTabPanel } from "./SearchTabPanel";
+import { BlockedPanel } from "./BlockedPanel";
+import { FriendsNav } from "./FriendsNav";
+import { FriendsPanel } from "./FriendsPanel";
+import { RequestsPanel } from "./RequestsPanel";
+import { SearchPanel } from "./SearchPanel";
 
-function parseTab(value: string | null | undefined): FriendsTab {
-  return FRIENDS_TABS.find((tab) => tab === value) ?? DEFAULT_FRIENDS_TAB;
-}
+type FriendsViewProps = {
+  /** `?tab=` of the address the page was opened with. */
+  initialTab?: FriendsAddress["tab"];
+  /** `?q=` of the same address. */
+  initialQuery?: FriendsAddress["q"];
+};
 
 /**
- * /friends: four tabs - friends, requests, search, blocked - each fetching its
- * own list when it is the one shown. An account that is not a learner gets a
- * notice and no request at all: the backend refuses every write for it anyway.
+ * /friends: a search box and a menu of four lists on the left, the open list
+ * on the right - or, while something is typed in the box, what it finds. Each
+ * list fetches itself when it is the one shown. An account that is not a
+ * learner gets a notice and no request at all: the backend refuses every
+ * write for it anyway.
  */
-export function FriendsView({ initialTab }: { initialTab?: string }) {
+export function FriendsView({ initialTab, initialQuery }: FriendsViewProps) {
   const { t } = useLanguage();
   const { session } = useAuth();
   const isLearner = !isBackOfficeRole(session?.role);
 
-  // Switching tabs rewrites the address in place (replaceState) instead of
-  // adding history entries, so there is no tab to restore on "back": going
-  // back leaves the page, and coming here again mounts it with the address's tab.
-  const [tab, setTab] = useState(parseTab(initialTab));
-  const changeTab = (next: FriendsTab) => {
-    setTab(next);
-    const url = new URL(window.location.href);
-    url.searchParams.set("tab", next);
-    window.history.replaceState(null, "", url);
-  };
+  const location = useFriendsLocation({ tab: initialTab, q: initialQuery });
+  const search = useLearnerSearchTerm(location.query);
+  const searchInput = useRef<HTMLInputElement>(null);
 
   const actions = useRelationshipActions();
   const { data: countData } = useIncomingFriendRequestCountQuery({
     skip: !isLearner,
     fetchPolicy: "cache-and-network",
-    // A failed count only leaves the tab without its number.
+    // A failed count only leaves the menu entry without its number.
     errorPolicy: "ignore",
   });
   const waiting = countData?.incomingFriendRequestCount ?? 0;
@@ -64,37 +67,87 @@ export function FriendsView({ initialTab }: { initialTab?: string }) {
     );
   }
 
+  const focusSearch = () => searchInput.current?.focus();
+  const clearSearch = () => {
+    location.setQuery("");
+    focusSearch();
+  };
+
+  const renderSection = (section: FriendsSection) => {
+    switch (section) {
+      case "friends":
+        return (
+          <FriendsPanel
+            pending={actions.pending}
+            onAction={actions.perform}
+            onFindFriends={focusSearch}
+          />
+        );
+      case "requests":
+        return (
+          <RequestsPanel
+            key={section}
+            direction="incoming"
+            pending={actions.pending}
+            onAction={actions.perform}
+          />
+        );
+      case "sent":
+        return (
+          <RequestsPanel
+            key={section}
+            direction="outgoing"
+            pending={actions.pending}
+            onAction={actions.perform}
+          />
+        );
+      case "blocked":
+        return (
+          <BlockedPanel pending={actions.pending} onAction={actions.perform} />
+        );
+      default: {
+        const unreachable: never = section;
+        return unreachable;
+      }
+    }
+  };
+
   return (
     <>
-      <PageHeader title={t.friends.pageTitle} />
-      <PageTabs
-        value={tab}
-        onChange={changeTab}
-        tabs={FRIENDS_TABS.map((value) => ({
-          value,
-          label: t.friends.tabs[value],
-          count: value === "requests" ? waiting : undefined,
-        }))}
-      />
-      {tab === "friends" && (
-        <FriendsTabPanel
-          pending={actions.pending}
-          onAction={actions.perform}
-          onFindFriends={() => changeTab("search")}
-        />
-      )}
-      {tab === "requests" && (
-        <RequestsTabPanel
-          pending={actions.pending}
-          onAction={actions.perform}
-        />
-      )}
-      {tab === "search" && (
-        <SearchTabPanel pending={actions.pending} onAction={actions.perform} />
-      )}
-      {tab === "blocked" && (
-        <BlockedTabPanel pending={actions.pending} onAction={actions.perform} />
-      )}
+      <Stack gap="xs">
+        <PageHeader title={t.friends.pageTitle} />
+        <Text c="ink.5">{t.friends.pageSubtitle}</Text>
+      </Stack>
+      <FriendsLayout
+        sidebar={
+          <Stack gap="md">
+            <LearnerSearch
+              value={location.query}
+              onChange={location.setQuery}
+              onClear={clearSearch}
+              tooShort={search.status === "tooShort"}
+              inputRef={searchInput}
+              autoFocus={location.focusSearchOnMount}
+            />
+            <FriendsNav
+              // While a search is on screen it is what is shown, not the list under it.
+              active={search.status === "idle" ? location.section : null}
+              waiting={waiting}
+              onSelect={location.selectSection}
+            />
+          </Stack>
+        }
+      >
+        {search.status === "idle" ? (
+          renderSection(location.section)
+        ) : (
+          <SearchPanel
+            search={search}
+            pending={actions.pending}
+            onAction={actions.perform}
+          />
+        )}
+      </FriendsLayout>
       <RelationshipConfirmModal {...actions.confirmation} />
     </>
   );
