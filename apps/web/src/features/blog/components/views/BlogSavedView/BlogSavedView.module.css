@@ -1,0 +1,11 @@
+/* The list on screen while the next page loads: still readable, plainly not final. */
+.results[aria-busy="true"] {
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results[aria-busy="true"] {
+    transition: none;
+  }
+}

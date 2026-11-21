@@ -11,4 +11,5 @@ export { AdminBlogTargetView } from "./components/views/AdminBlogTargetView";
 export { BlogEditorView } from "./components/views/BlogEditorView";
 export { BlogListView } from "./components/views/BlogListView";
 export { BlogPostView } from "./components/views/BlogPostView";
+export { BlogSavedView } from "./components/views/BlogSavedView";
 export { TARGET_TYPE_SEGMENT } from "./constants/blog";
