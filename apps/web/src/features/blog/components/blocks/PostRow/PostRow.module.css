@@ -1,0 +1,20 @@
+.title {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: $mantine-breakpoint-sm) {
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+.link:hover {
+  color: var(--mantine-color-brand-7);
+}
+
+.excerpt {
+  overflow-wrap: anywhere;
+}

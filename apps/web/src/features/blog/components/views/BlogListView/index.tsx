@@ -1,24 +1,16 @@
 "use client";
 
-import {
-  Button,
-  Flex,
-  Group,
-  Select,
-  SegmentedControl,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import { FileText, PenLine, Search } from "lucide-react";
+import { Badge, Box, Button, Flex, Paper, Stack, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { Bookmark, FileText, PenLine } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useState } from "react";
 
-import { BlogPostSort } from "@/lib/graphql/generated";
+import { useAuth, isBackOfficeRole } from "@/features/auth";
 import {
+  useBlogRecommendationsQuery,
   useBlogPostsQuery,
+  useBlogSavedCountQuery,
   useBlogTagCatalogueQuery,
 } from "@/lib/graphql/generated/hooks";
 import { PageHeader } from "@/shared/components/Page";
@@ -28,38 +20,62 @@ import {
   BLOG_ROUTES,
   MIN_SEARCH_TERM_LENGTH,
   POSTS_PAGE_SIZE,
+  RECOMMENDED_POSTS,
 } from "../../../constants/blog";
 import type { BlogListFilters } from "../../../hooks/blogFilters";
+import { useBlogErrorMessage } from "../../../hooks/useBlogErrorMessage";
 import { useBlogListFilters } from "../../../hooks/useBlogListFilters";
+import { useBlogSave } from "../../../hooks/useBlogSave";
+import { useBlogSearchSuggestions } from "../../../hooks/useBlogSearchSuggestions";
 import { useBlogSearchTerm } from "../../../hooks/useBlogSearchTerm";
-import { PostList } from "../../blocks/PostList";
-import { PostListSkeleton } from "../../blocks/PostList/PostListSkeleton";
+import { BlogSearchBox } from "../../blocks/BlogSearchBox";
+import { ListFilters } from "../../blocks/ListFilters";
+import { PostRowList } from "../../blocks/PostRowList";
+import { PostRowListSkeleton } from "../../blocks/PostRowList/PostRowListSkeleton";
+import { RecommendedPosts } from "../../blocks/RecommendedPosts";
+import { RecommendedPostsSkeleton } from "../../blocks/RecommendedPosts/RecommendedPostsSkeleton";
+import { TopicChips } from "../../blocks/TopicChips";
 import { BlogEmptyState } from "../../parts/BlogEmptyState";
 import { BlogLoadError } from "../../parts/BlogLoadError";
 import { BlogPagination } from "../../parts/BlogPagination";
-import { tagLabel } from "../../parts/TagBadges";
 
 import classes from "./BlogListView.module.css";
 
+/** What a save changes the answer of on this screen: the count on the button, and the recommendations, which leave out what is saved. */
+const SAVE_REFETCH = ["BlogSavedCount", "BlogRecommendations"];
+
 /**
- * /blog: the posts of everyone, newest first or most liked, narrowed by a word
- * in the title and by skill, level and certificate. The filters live in the
- * address, so a link to a filtered list can be shared; the search waits for a
- * pause in typing and never asks below the two characters the backend takes.
- * While another page or filter loads, the list on screen stays - dimmed - rather
- * than being replaced by a skeleton and jumping.
+ * /blog: a grey panel at the top with the search, the saved posts and the
+ * recommendations for the viewer, and below it the posts of everyone - by
+ * topic (a skill), newest or most liked, and by level and certificate - one
+ * line each, with a bookmark. The filters live in the address, so a link to a
+ * filtered list can be shared. Typing in the search box only opens its
+ * dropdown; "Xem tất cả" is what puts the word in the list's filter. While
+ * another page or filter loads, the list on screen stays - dimmed - rather than
+ * being replaced by a skeleton and jumping.
  */
 export function BlogListView({ initial }: { initial: BlogListFilters }) {
   const { t } = useLanguage();
   const copy = t.blog.list;
+  const { session } = useAuth();
+  const messageFor = useBlogErrorMessage();
   const { filters, setFilter, setPage, clear, narrowed } =
     useBlogListFilters(initial);
-  const search = useBlogSearchTerm(filters.q);
+
+  // What is typed in the box, apart from the word the list is filtered by.
+  const [typed, setTyped] = useState(filters.q);
+  const search = useBlogSearchTerm(typed);
+  // Staff and Admin are not learners: the backend refuses the people search.
+  const suggestions = useBlogSearchSuggestions(
+    search.term,
+    !isBackOfficeRole(session?.role),
+  );
 
   const catalogue = useBlogTagCatalogueQuery({ fetchPolicy: "cache-first" });
+  const filteredBy = filters.q.trim();
   const { data, previousData, loading, error, refetch } = useBlogPostsQuery({
     variables: {
-      q: search.term,
+      q: filteredBy.length >= MIN_SEARCH_TERM_LENGTH ? filteredBy : null,
       skill: filters.skill,
       level: filters.level,
       certificate: filters.certificate,
@@ -70,28 +86,46 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
     fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
   });
+  const recommendations = useBlogRecommendationsQuery({
+    variables: { limit: RECOMMENDED_POSTS },
+    fetchPolicy: "cache-and-network",
+  });
+  const savedCount = useBlogSavedCountQuery({
+    fetchPolicy: "cache-and-network",
+  });
+  const save = useBlogSave({
+    refetch: SAVE_REFETCH,
+    onError: (failure) =>
+      notifications.show({
+        color: "warn",
+        title: t.blog.actionErrorTitle,
+        message: messageFor(failure),
+      }),
+  });
+
   const posts = (data ?? previousData)?.blogPosts;
   const retry = () => void refetch().catch(() => undefined);
+  const words = catalogue.data?.blogTagCatalogue;
+  const savedTotal = savedCount.data?.savedBlogPosts.totalItems;
 
-  const options = useMemo(() => {
-    const words = catalogue.data?.blogTagCatalogue;
-    const toOptions = (values: string[] | undefined) =>
-      (values ?? []).map((value) => ({
-        value,
-        label: tagLabel(t.blog, value),
-      }));
-    return {
-      skills: toOptions(words?.skills),
-      levels: toOptions(words?.levels),
-      certificates: toOptions(words?.certificates),
-    };
-  }, [catalogue.data, t.blog]);
+  const clearAll = () => {
+    clear();
+    setTyped("");
+  };
+  const clearSearch = () => {
+    setFilter({ q: "" });
+    setTyped("");
+  };
 
   let list;
   if (posts && posts.items.length > 0) {
     list = (
       <Stack gap="lg" className={classes.results} aria-busy={loading}>
-        <PostList posts={posts.items} />
+        <PostRowList
+          posts={posts.items}
+          savingId={save.pendingId}
+          onToggleSave={(post) => void save.toggle(post)}
+        />
         <BlogPagination
           page={filters.page}
           totalPages={posts.totalPages}
@@ -110,7 +144,7 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
         description={copy.emptyDescription}
         action={
           narrowed ? (
-            <Button variant="light" onClick={clear}>
+            <Button variant="light" onClick={clearAll}>
               {copy.filters.clear}
             </Button>
           ) : (
@@ -127,124 +161,148 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
     );
   } else if (error) {
     list = (
-      <Stack gap="sm">
-        <BlogLoadError
-          title={copy.loadErrorTitle}
-          description={copy.loadErrorDescription}
-          retryLabel={copy.retry}
-          onRetry={retry}
-        />
-        {narrowed && (
-          <Button variant="subtle" onClick={clear} w="fit-content">
-            {copy.filters.clear}
-          </Button>
-        )}
-      </Stack>
+      <BlogLoadError
+        title={copy.loadErrorTitle}
+        description={copy.loadErrorDescription}
+        retryLabel={copy.retry}
+        onRetry={retry}
+      />
     );
   } else {
-    list = <PostListSkeleton count={POSTS_PAGE_SIZE / 2} />;
+    list = <PostRowListSkeleton count={POSTS_PAGE_SIZE / 2} />;
+  }
+
+  let recommended;
+  if (recommendations.data) {
+    recommended = (
+      <RecommendedPosts
+        recommendations={recommendations.data.blogRecommendations}
+        savingId={save.pendingId}
+        onToggleSave={(post) => void save.toggle(post)}
+      />
+    );
+  } else if (recommendations.error) {
+    recommended = (
+      <Flex gap="sm" align="center" wrap="wrap">
+        <Text c="ink.6">{t.blog.recommended.loadError}</Text>
+        <Button
+          variant="subtle"
+          size="compact-md"
+          onClick={() => void recommendations.refetch().catch(() => undefined)}
+        >
+          {t.blog.recommended.retry}
+        </Button>
+      </Flex>
+    );
+  } else {
+    recommended = <RecommendedPostsSkeleton />;
   }
 
   return (
     <>
-      <PageHeader
-        title={t.blog.title}
-        actions={
-          <Button
-            component={Link}
-            href={BLOG_ROUTES.write}
-            fullWidth
-            leftSection={<PenLine size={16} aria-hidden="true" />}
-          >
-            {copy.write}
-          </Button>
-        }
+      <Paper bg="ink.0" withBorder className={classes.hero}>
+        <Stack gap="lg">
+          <Stack gap={6}>
+            <PageHeader title={t.blog.title} />
+            <Text c="ink.6" maw={560}>
+              {copy.subtitle}
+            </Text>
+          </Stack>
+
+          <Flex component="search" gap="sm" wrap="wrap" align="center">
+            <Box flex="1 1 360px" miw={0}>
+              <BlogSearchBox
+                value={typed}
+                onChange={setTyped}
+                status={search.status}
+                term={search.term}
+                posts={suggestions.posts}
+                people={suggestions.people}
+                onViewAllPosts={(term) => setFilter({ q: term })}
+              />
+            </Box>
+            <Button
+              component={Link}
+              href={BLOG_ROUTES.saved}
+              variant="default"
+              size="lg"
+              aria-label={
+                savedTotal === undefined
+                  ? copy.saved
+                  : copy.savedWithCount.replace("{count}", String(savedTotal))
+              }
+              leftSection={<Bookmark size={18} aria-hidden="true" />}
+              rightSection={
+                savedTotal === undefined ? null : (
+                  <Badge variant="light" size="lg" circle={savedTotal < 10}>
+                    {savedTotal}
+                  </Badge>
+                )
+              }
+            >
+              {copy.saved}
+            </Button>
+            <Button
+              component={Link}
+              href={BLOG_ROUTES.write}
+              size="lg"
+              leftSection={<PenLine size={18} aria-hidden="true" />}
+            >
+              {copy.write}
+            </Button>
+          </Flex>
+
+          {recommended}
+        </Stack>
+      </Paper>
+
+      <TopicChips
+        skills={words?.skills ?? []}
+        value={filters.skill}
+        onChange={(skill) => setFilter({ skill })}
       />
-      <Text c="ink.6" maw={560}>
-        {copy.subtitle}
-      </Text>
 
       <Flex
-        component="search"
-        direction="column"
-        gap="sm"
-        aria-label={copy.search.label}
+        direction={{ base: "column", md: "row-reverse" }}
+        gap={{ base: "xl", md: 48 }}
+        align={{ md: "flex-start" }}
       >
-        <TextInput
-          value={filters.q}
-          onChange={(event) => setFilter({ q: event.currentTarget.value })}
-          aria-label={copy.search.label}
-          placeholder={copy.search.placeholder}
-          leftSection={<Search size={16} aria-hidden="true" />}
-          error={
-            search.status === "tooShort"
-              ? copy.search.tooShort.replace(
-                  "{min}",
-                  String(MIN_SEARCH_TERM_LENGTH),
-                )
-              : undefined
-          }
-        />
-        {catalogue.loading && !catalogue.data ? (
-          <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-            <Skeleton height={36} radius="md" />
-            <Skeleton height={36} radius="md" />
-            <Skeleton height={36} radius="md" />
-          </SimpleGrid>
-        ) : (
-          <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-            <Select
-              aria-label={copy.filters.skill}
-              placeholder={`${copy.filters.skill}: ${copy.filters.any}`}
-              data={options.skills}
-              value={filters.skill}
-              onChange={(skill) => setFilter({ skill })}
-              clearable
-            />
-            <Select
-              aria-label={copy.filters.level}
-              placeholder={`${copy.filters.level}: ${copy.filters.any}`}
-              data={options.levels}
-              value={filters.level}
-              onChange={(level) => setFilter({ level })}
-              clearable
-            />
-            <Select
-              aria-label={copy.filters.certificate}
-              placeholder={`${copy.filters.certificate}: ${copy.filters.any}`}
-              data={options.certificates}
-              value={filters.certificate}
-              onChange={(certificate) => setFilter({ certificate })}
-              clearable
-            />
-          </SimpleGrid>
-        )}
-        <Group justify="space-between" gap="sm">
-          <SegmentedControl
-            aria-label={copy.filters.sort}
-            value={filters.sort}
-            onChange={(sort) =>
-              setFilter({
-                sort:
-                  sort === BlogPostSort.MOST_LIKED
-                    ? BlogPostSort.MOST_LIKED
-                    : BlogPostSort.NEWEST,
-              })
-            }
-            data={[
-              { value: BlogPostSort.NEWEST, label: copy.filters.newest },
-              { value: BlogPostSort.MOST_LIKED, label: copy.filters.mostLiked },
-            ]}
+        <Box w={{ base: "100%", md: 280 }} flex="none">
+          <ListFilters
+            sort={filters.sort}
+            onSort={(sort) => setFilter({ sort })}
+            levels={words?.levels ?? null}
+            level={filters.level}
+            onLevel={(level) => setFilter({ level })}
+            certificates={words?.certificates ?? null}
+            certificate={filters.certificate}
+            onCertificate={(certificate) => setFilter({ certificate })}
+            narrowed={narrowed}
+            onClear={clearAll}
           />
-          {narrowed && (
-            <Button variant="subtle" size="compact-md" onClick={clear}>
-              {copy.filters.clear}
-            </Button>
-          )}
-        </Group>
-      </Flex>
+        </Box>
 
-      {list}
+        <Stack gap="sm" flex={1} miw={0}>
+          <Flex gap="sm" wrap="wrap" align="center">
+            <Text component="h2" fz="xl" fw={600} c="navy.9" ff="heading" m={0}>
+              {filteredBy
+                ? copy.resultsFor.replace("{q}", filteredBy)
+                : copy.allPosts}
+            </Text>
+            {filteredBy && (
+              <Button
+                variant="default"
+                size="compact-md"
+                radius="xl"
+                onClick={clearSearch}
+              >
+                {copy.clearSearch} ×
+              </Button>
+            )}
+          </Flex>
+          {list}
+        </Stack>
+      </Flex>
     </>
   );
 }

@@ -5,7 +5,7 @@ import { Page } from "@/shared/components/Page";
 
 export default function BlogLoading() {
   return (
-    <Page width="focus">
+    <Page width="wide">
       <BlogListViewSkeleton />
     </Page>
   );

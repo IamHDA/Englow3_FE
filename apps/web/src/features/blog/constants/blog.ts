@@ -38,6 +38,20 @@ export const IMAGE_UPLOAD_TIMEOUT_MS = 60_000;
 /** A search waits for a pause in typing this long. */
 export const SEARCH_DEBOUNCE_MS = 300;
 
+/* ---- The search box's dropdown -------------------------------------------- */
+
+/** How many of each group the dropdown lists; "Xem tất cả" is for the rest. */
+export const SUGGESTED_POSTS = 8;
+export const SUGGESTED_PEOPLE = 3;
+/** The dropdown's results scroll inside this height rather than push the page. */
+export const SUGGESTIONS_MAX_HEIGHT = 360;
+
+/** How many posts "Gợi ý cho bạn" shows: one large, the rest small. */
+export const RECOMMENDED_POSTS = 3;
+
+/** The value of the topic chip that means no skill is chosen; it is not a skill of the catalogue. */
+export const ALL_TOPICS = "ALL";
+
 /** The counter under a text box appears once the text is this close to its limit. */
 export const BODY_COUNTER_FROM = 18_000;
 export const COMMENT_COUNTER_FROM = 1_800;
@@ -46,6 +60,7 @@ export const COMMENT_COUNTER_FROM = 1_800;
 // The backend allows up to 50 on each of these.
 
 export const POSTS_PAGE_SIZE = 10;
+export const SAVED_POSTS_PAGE_SIZE = 10;
 export const WALL_POSTS_PAGE_SIZE = 5;
 export const COMMENTS_PAGE_SIZE = 20;
 export const ADMIN_QUEUE_PAGE_SIZE = 20;
@@ -60,7 +75,13 @@ export const BLOG_ROUTES = {
   write: "/blog/new",
   post: (postId: string) => `/blog/${enc(postId)}`,
   edit: (postId: string) => `/blog/${enc(postId)}/edit`,
+  saved: "/blog/saved",
   wall: (userId: string) => `/people/${enc(userId)}`,
+  /**
+   * The people search of the friends screen, opened on a word. Written here
+   * because the friends feature does not export its routes; it reads `q`.
+   */
+  friendsSearch: (q: string) => `/friends?q=${enc(q)}`,
   adminQueue: "/admin/blog",
   adminActions: "/admin/blog/actions",
   /** The path says the type in lower case, the way the backend's own routes do. */

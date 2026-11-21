@@ -7,8 +7,11 @@ import type {
   BlogPostFieldsFragment,
   BlogPostPageFieldsFragment,
   BlogPostSummaryFieldsFragment,
+  BlogRecommendationsQuery,
+  BlogSearchSuggestQuery,
   BlogTagCatalogueQuery,
   BlogTagFieldsFragment,
+  SearchLearnersQuery,
 } from "@/lib/graphql/generated";
 
 /** The person behind a post or a comment. Null wherever one appears: the account was erased. */
@@ -37,3 +40,21 @@ export type ModerationTargetData = BlogModerationTargetFieldsFragment;
 
 export type ModerationActionRecordData =
   AdminBlogActionsQuery["adminBlogActions"]["items"][number];
+
+/** A post with the reason it is recommended. */
+export type BlogRecommendationData =
+  BlogRecommendationsQuery["blogRecommendations"][number];
+
+/** A post in the search box's dropdown: its title, tags and date. */
+export type PostSuggestionData =
+  BlogSearchSuggestQuery["blogPosts"]["items"][number];
+
+/** A person in the search box's dropdown, as the friends search finds them. */
+export type PersonSuggestionData =
+  SearchLearnersQuery["searchLearners"]["items"][number];
+
+/** One group of the dropdown: still loading, failed, or the first few and how many there are in all. */
+export type SuggestionGroup<Item> =
+  | { status: "loading" }
+  | { status: "failed" }
+  | { status: "ready"; items: Item[]; total: number };

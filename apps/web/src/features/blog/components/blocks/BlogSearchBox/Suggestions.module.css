@@ -1,0 +1,48 @@
+/* The small caps label over each group of the dropdown. */
+.heading {
+  margin: 0;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mantine-color-ink-6);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A row of the dropdown is a link; it is flat until the pointer or the keyboard is on it. */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  padding: 10px var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-lg);
+  background: transparent;
+  transition: background-color 120ms ease;
+}
+
+.row:hover,
+.row:focus-visible {
+  background: var(--mantine-color-ink-1);
+  outline: none;
+}
+
+.row:focus-visible {
+  box-shadow: 0 0 0 2px var(--mantine-color-brand-5);
+}
+
+.icon {
+  flex: none;
+  color: var(--mantine-color-ink-5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

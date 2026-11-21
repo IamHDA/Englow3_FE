@@ -1,0 +1,15 @@
+.button {
+  flex: none;
+  color: var(--mantine-color-ink-5);
+  border-color: var(--mantine-color-ink-2);
+}
+
+.button[data-saved] {
+  color: var(--mantine-color-brand-7);
+  border-color: var(--mantine-color-brand-7);
+  background: var(--mantine-color-brand-0);
+}
+
+.button[data-saved] .icon {
+  fill: currentColor;
+}

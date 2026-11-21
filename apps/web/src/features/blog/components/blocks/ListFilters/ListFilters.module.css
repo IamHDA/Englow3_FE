@@ -1,0 +1,10 @@
+/* A small caps label over each control, the same in every section of the column. */
+.heading {
+  margin: 0;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mantine-color-ink-6);
+}

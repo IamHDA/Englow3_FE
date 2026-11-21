@@ -1,5 +1,7 @@
 import {
   BlogModerationAction,
+  BlogRecommendationKind,
+  RelationshipStatus,
   BlogPostStatus,
   BlogReportReason,
   BlogReportStatus,
@@ -204,3 +206,79 @@ export const REPORT_STATUS_COLOR = {
   [BlogReportStatus.RESOLVED]: "green",
   [BlogReportStatus.DISMISSED]: "ink",
 } as const satisfies Record<BlogReportStatus, string>;
+
+/**
+ * What a person in the search results is to the viewer, as the key of its
+ * words; null for who needs none (a stranger, or someone who cannot be reached).
+ */
+export const RELATIONSHIP_KEY = {
+  [RelationshipStatus.FRIENDS]: "friends",
+  [RelationshipStatus.REQUEST_SENT]: "requestSent",
+  [RelationshipStatus.REQUEST_RECEIVED]: "requestReceived",
+  [RelationshipStatus.BLOCKED_BY_ME]: "blockedByMe",
+  [RelationshipStatus.SELF]: "self",
+  [RelationshipStatus.NONE]: null,
+  [RelationshipStatus.UNAVAILABLE]: null,
+  [RelationshipStatus.NOT_APPLICABLE]: null,
+} as const satisfies Record<
+  RelationshipStatus,
+  keyof BlogTranslations["search"]["relationship"] | null
+>;
+
+/** The colour of the badge that says what a person is to the viewer. */
+export const RELATIONSHIP_COLOR = {
+  friends: "green",
+  requestSent: "ink",
+  requestReceived: "orange",
+  blockedByMe: "warn",
+  self: "brand",
+} as const satisfies Record<
+  keyof BlogTranslations["search"]["relationship"],
+  string
+>;
+
+/**
+ * The line that says why a post is recommended, in the interface language.
+ * Popular posts are about the week, not the viewer. A post that fits the
+ * viewer names what matched - the certificate they aim for, the skills they
+ * want to improve, their level - in one sentence worded for that combination.
+ */
+export function recommendationReason(
+  copy: BlogTranslations,
+  kind: BlogRecommendationKind,
+  matchedTags: ReadonlyArray<{ kind: BlogTagKind; value: string }>,
+  wordsOf: (value: string) => string,
+): string {
+  const reasons = copy.recommended.reasons;
+  switch (kind) {
+    case BlogRecommendationKind.POPULAR_THIS_WEEK:
+      return reasons.popular;
+    case BlogRecommendationKind.PROFILE:
+      break;
+    default: {
+      const unreachable: never = kind;
+      return unreachable;
+    }
+  }
+
+  const named = (tagKind: BlogTagKind) =>
+    matchedTags.filter((tag) => tag.kind === tagKind).map((tag) => tag.value);
+  const certificate = named(BlogTagKind.CERTIFICATE)[0];
+  const skills = named(BlogTagKind.SKILL).map(wordsOf).join(", ");
+  const level = named(BlogTagKind.LEVEL)[0];
+
+  const sentence = (() => {
+    if (certificate && skills && level) return reasons.certificateSkillsLevel;
+    if (certificate && skills) return reasons.certificateSkills;
+    if (certificate && level) return reasons.certificateLevel;
+    if (skills && level) return reasons.skillsLevel;
+    if (certificate) return reasons.certificate;
+    if (skills) return reasons.skills;
+    if (level) return reasons.level;
+    return reasons.fallback;
+  })();
+  return sentence
+    .replace("{certificate}", certificate ?? "")
+    .replace("{skills}", skills)
+    .replace("{level}", level ?? "");
+}

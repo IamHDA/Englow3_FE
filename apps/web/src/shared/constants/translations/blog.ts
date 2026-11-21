@@ -100,11 +100,14 @@ export interface BlogTranslations {
   list: {
     subtitle: string;
     write: string;
-    search: {
-      label: string;
-      placeholder: string;
-      tooShort: string;
-    };
+    /** The button to the viewer's saved posts, with how many there are. */
+    saved: string;
+    savedWithCount: string;
+    allPosts: string;
+    /** `{q}` is the word searched for. */
+    resultsFor: string;
+    clearSearch: string;
+    topics: { label: string; all: string };
     filters: {
       skill: string;
       level: string;
@@ -121,6 +124,70 @@ export interface BlogTranslations {
     loadErrorDescription: string;
     retry: string;
     catalogueError: string;
+  };
+  /** The search box and the dropdown under it. */
+  search: {
+    label: string;
+    placeholder: string;
+    /** Names the dropdown for a screen reader. */
+    resultsLabel: string;
+    clear: string;
+    /** Asked of whoever has typed too little: `{min}` characters. */
+    tooShort: string;
+    peopleHeading: string;
+    postsHeading: string;
+    /** `{count}` is how many there are in all. */
+    peopleCount: string;
+    postsCount: string;
+    viewAll: string;
+    /** `{q}` is the word searched for. */
+    emptyTitle: string;
+    emptyHint: string;
+    loadError: string;
+    /** What a person in the results is to the viewer; nothing is said of a stranger. */
+    relationship: {
+      friends: string;
+      requestSent: string;
+      requestReceived: string;
+      blockedByMe: string;
+      self: string;
+    };
+  };
+  /** The bookmark on a post. */
+  save: {
+    save: string;
+    unsave: string;
+  };
+  /** "Gợi ý cho bạn" at the top of the list. */
+  recommended: {
+    heading: string;
+    read: string;
+    /** Why a post is recommended, when it is about the viewer. `{certificate}`, `{skills}` and `{level}` are the words of what matched. */
+    reasons: {
+      popular: string;
+      fallback: string;
+      certificate: string;
+      skills: string;
+      level: string;
+      certificateSkills: string;
+      certificateLevel: string;
+      skillsLevel: string;
+      certificateSkillsLevel: string;
+    };
+    emptyTitle: string;
+    emptyDescription: string;
+    loadError: string;
+    retry: string;
+  };
+  /** /blog/saved */
+  saved: {
+    title: string;
+    subtitle: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    loadErrorTitle: string;
+    loadErrorDescription: string;
+    retry: string;
   };
   card: {
     edited: string;
@@ -413,11 +480,12 @@ export const blogVi: BlogTranslations = {
   list: {
     subtitle: "Chia sẻ kinh nghiệm và kiến thức học tiếng Anh cùng mọi người.",
     write: "Viết bài",
-    search: {
-      label: "Tìm theo tiêu đề",
-      placeholder: "Tìm theo tiêu đề bài viết",
-      tooShort: "Nhập ít nhất {min} ký tự để tìm.",
-    },
+    saved: "Đã lưu",
+    savedWithCount: "Đã lưu, {count} bài",
+    allPosts: "Tất cả bài viết",
+    resultsFor: "Kết quả cho “{q}”",
+    clearSearch: "Bỏ tìm kiếm",
+    topics: { label: "Chủ đề", all: "Tất cả" },
     filters: {
       skill: "Kỹ năng",
       level: "Trình độ",
@@ -435,6 +503,65 @@ export const blogVi: BlogTranslations = {
     loadErrorDescription: "Máy chủ chưa trả lời. Hãy thử lại sau ít phút.",
     retry: "Thử lại",
     catalogueError: "Chưa tải được danh sách thẻ để lọc.",
+  },
+  search: {
+    label: "Tìm bài viết hoặc người dùng",
+    placeholder: "Tìm bài viết hoặc người dùng…",
+    resultsLabel: "Kết quả tìm kiếm",
+    clear: "Xóa từ khóa",
+    tooShort: "Nhập ít nhất {min} ký tự để tìm.",
+    peopleHeading: "Người dùng",
+    postsHeading: "Bài viết",
+    peopleCount: "Người dùng · {count}",
+    postsCount: "Bài viết · {count}",
+    viewAll: "Xem tất cả",
+    emptyTitle: "Không có bài viết hay người dùng nào khớp “{q}”",
+    emptyHint:
+      "Thử từ khóa ngắn hơn. Bài viết tìm theo tiêu đề, người dùng tìm theo tên hiển thị.",
+    loadError: "Chưa tìm được. Hãy thử lại sau ít phút.",
+    relationship: {
+      friends: "Bạn bè",
+      requestSent: "Đã gửi lời mời",
+      requestReceived: "Mời bạn kết bạn",
+      blockedByMe: "Đã chặn",
+      self: "Bạn",
+    },
+  },
+  save: {
+    save: "Lưu bài viết",
+    unsave: "Bỏ lưu bài viết",
+  },
+  recommended: {
+    heading: "Gợi ý cho bạn",
+    read: "Đọc bài",
+    reasons: {
+      popular: "Được yêu thích tuần này",
+      fallback: "Gợi ý cho bạn",
+      certificate: "Vì bạn đang luyện {certificate}",
+      skills: "Vì bạn muốn cải thiện {skills}",
+      level: "Phù hợp trình độ {level} của bạn",
+      certificateSkills:
+        "Vì bạn đang luyện {certificate} · muốn cải thiện {skills}",
+      certificateLevel: "Vì bạn đang luyện {certificate} · trình độ {level}",
+      skillsLevel: "Vì bạn muốn cải thiện {skills} · {level}",
+      certificateSkillsLevel:
+        "Vì bạn đang luyện {certificate} · muốn cải thiện {skills} · {level}",
+    },
+    emptyTitle: "Chưa có bài nào để gợi ý cho bạn",
+    emptyDescription:
+      "Gợi ý xuất hiện khi có bài khớp mục tiêu học của bạn, hoặc được nhiều người yêu thích. Bạn có thể là người đầu tiên chia sẻ.",
+    loadError: "Chưa tải được gợi ý.",
+    retry: "Thử lại",
+  },
+  saved: {
+    title: "Đã lưu",
+    subtitle: "Những bài viết bạn đã lưu để đọc lại.",
+    emptyTitle: "Bạn chưa lưu bài viết nào",
+    emptyDescription:
+      "Bấm biểu tượng đánh dấu ở một bài viết để lưu và đọc lại sau.",
+    loadErrorTitle: "Không tải được bài đã lưu",
+    loadErrorDescription: "Máy chủ chưa trả lời. Hãy thử lại sau ít phút.",
+    retry: "Thử lại",
   },
   card: {
     edited: "đã sửa",
@@ -783,11 +910,12 @@ export const blogEn: BlogTranslations = {
     subtitle:
       "Share what you know about learning English, and read what others share.",
     write: "Write a post",
-    search: {
-      label: "Search titles",
-      placeholder: "Search post titles",
-      tooShort: "Type at least {min} characters to search.",
-    },
+    saved: "Saved",
+    savedWithCount: "Saved, {count} posts",
+    allPosts: "All posts",
+    resultsFor: "Results for “{q}”",
+    clearSearch: "Clear search",
+    topics: { label: "Topics", all: "All" },
     filters: {
       skill: "Skill",
       level: "Level",
@@ -805,6 +933,66 @@ export const blogEn: BlogTranslations = {
     loadErrorDescription: "The server did not answer. Try again in a moment.",
     retry: "Try again",
     catalogueError: "The tags to filter by could not be loaded.",
+  },
+  search: {
+    label: "Search posts or people",
+    placeholder: "Search posts or people…",
+    resultsLabel: "Search results",
+    clear: "Clear search text",
+    tooShort: "Type at least {min} characters to search.",
+    peopleHeading: "People",
+    postsHeading: "Posts",
+    peopleCount: "People · {count}",
+    postsCount: "Posts · {count}",
+    viewAll: "View all",
+    emptyTitle: "No posts or people match “{q}”",
+    emptyHint:
+      "Try a shorter word. Posts are searched by title, people by display name.",
+    loadError: "Could not search. Try again in a moment.",
+    relationship: {
+      friends: "Friends",
+      requestSent: "Request sent",
+      requestReceived: "Wants to be friends",
+      blockedByMe: "Blocked",
+      self: "You",
+    },
+  },
+  save: {
+    save: "Save this post",
+    unsave: "Remove from saved",
+  },
+  recommended: {
+    heading: "Recommended for you",
+    read: "Read post",
+    reasons: {
+      popular: "Liked a lot this week",
+      fallback: "Recommended for you",
+      certificate: "Because you are preparing for {certificate}",
+      skills: "Because you want to improve {skills}",
+      level: "Fits your {level} level",
+      certificateSkills:
+        "Because you are preparing for {certificate} · want to improve {skills}",
+      certificateLevel:
+        "Because you are preparing for {certificate} · {level} level",
+      skillsLevel: "Because you want to improve {skills} · {level}",
+      certificateSkillsLevel:
+        "Because you are preparing for {certificate} · want to improve {skills} · {level}",
+    },
+    emptyTitle: "Nothing to recommend yet",
+    emptyDescription:
+      "Recommendations appear when a post fits your learning goal or many people like it. You could be the first to share.",
+    loadError: "Could not load the recommendations.",
+    retry: "Try again",
+  },
+  saved: {
+    title: "Saved",
+    subtitle: "The posts you saved to read again.",
+    emptyTitle: "You have not saved any posts",
+    emptyDescription:
+      "Press the bookmark on a post to save it and come back to it later.",
+    loadErrorTitle: "Could not load your saved posts",
+    loadErrorDescription: "The server did not answer. Try again in a moment.",
+    retry: "Try again",
   },
   card: {
     edited: "edited",
