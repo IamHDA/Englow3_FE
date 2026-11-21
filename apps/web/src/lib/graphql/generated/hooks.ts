@@ -2353,6 +2353,7 @@ export type BlogPostSummaryFieldsFragment = {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+  savedByMe: boolean;
   createdAt: string;
   editedAt: string | null;
   author: {
@@ -2376,6 +2377,7 @@ export type BlogPostPageFieldsFragment = {
     likeCount: number;
     commentCount: number;
     likedByMe: boolean;
+    savedByMe: boolean;
     createdAt: string;
     editedAt: string | null;
     author: {
@@ -2576,6 +2578,7 @@ export type BlogPostsQuery = {
       likeCount: number;
       commentCount: number;
       likedByMe: boolean;
+      savedByMe: boolean;
       createdAt: string;
       editedAt: string | null;
       author: {
@@ -2586,6 +2589,35 @@ export type BlogPostsQuery = {
       tags: Array<{ kind: Types.BlogTagKind; value: string }>;
     }>;
   };
+};
+
+export type BlogRecommendationsQueryVariables = Exact<{
+  limit?: number | null | undefined;
+}>;
+
+export type BlogRecommendationsQuery = {
+  blogRecommendations: Array<{
+    kind: Types.BlogRecommendationKind;
+    matchedTags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    post: {
+      id: string;
+      title: string;
+      excerpt: string;
+      status: Types.BlogPostStatus;
+      likeCount: number;
+      commentCount: number;
+      likedByMe: boolean;
+      savedByMe: boolean;
+      createdAt: string;
+      editedAt: string | null;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    };
+  }>;
 };
 
 export type ReportBlogPostMutationVariables = Exact<{
@@ -2606,6 +2638,75 @@ export type ReportBlogCommentMutationVariables = Exact<{
 
 export type ReportBlogCommentMutation = {
   reportBlogComment: { id: string; status: Types.BlogReportStatus };
+};
+
+export type SaveBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SaveBlogPostMutation = {
+  saveBlogPost: { postId: string; saved: boolean };
+};
+
+export type UnsaveBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type UnsaveBlogPostMutation = {
+  unsaveBlogPost: { postId: string; saved: boolean };
+};
+
+export type SavedBlogPostsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type SavedBlogPostsQuery = {
+  savedBlogPosts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      excerpt: string;
+      status: Types.BlogPostStatus;
+      likeCount: number;
+      commentCount: number;
+      likedByMe: boolean;
+      savedByMe: boolean;
+      createdAt: string;
+      editedAt: string | null;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    }>;
+  };
+};
+
+export type BlogSavedCountQueryVariables = Exact<{ [key: string]: never }>;
+
+export type BlogSavedCountQuery = { savedBlogPosts: { totalItems: number } };
+
+export type BlogSearchSuggestQueryVariables = Exact<{
+  q: string;
+  size?: number | null | undefined;
+}>;
+
+export type BlogSearchSuggestQuery = {
+  blogPosts: {
+    totalItems: number;
+    items: Array<{
+      id: string;
+      title: string;
+      createdAt: string;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    }>;
+  };
 };
 
 export type BlogTagCatalogueQueryVariables = Exact<{ [key: string]: never }>;
@@ -4255,6 +4356,7 @@ export type UserWallQuery = {
         likeCount: number;
         commentCount: number;
         likedByMe: boolean;
+        savedByMe: boolean;
         createdAt: string;
         editedAt: string | null;
         author: {
@@ -6031,6 +6133,7 @@ export const BlogPostSummaryFieldsFragmentDoc = gql`
     likeCount
     commentCount
     likedByMe
+    savedByMe
     createdAt
     editedAt
     author {
@@ -13155,6 +13258,113 @@ export type BlogPostsQueryResult = ApolloReactCommon.QueryResult<
   BlogPostsQuery,
   BlogPostsQueryVariables
 >;
+export const BlogRecommendationsDocument = gql`
+  query BlogRecommendations($limit: Int) {
+    blogRecommendations(limit: $limit) {
+      kind
+      matchedTags {
+        ...BlogTagFields
+      }
+      post {
+        ...BlogPostSummaryFields
+      }
+    }
+  }
+  ${BlogTagFieldsFragmentDoc}
+  ${BlogPostSummaryFieldsFragmentDoc}
+`;
+
+/**
+ * __useBlogRecommendationsQuery__
+ *
+ * To run a query within a React component, call `useBlogRecommendationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogRecommendationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogRecommendationsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useBlogRecommendationsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    BlogRecommendationsQuery,
+    BlogRecommendationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    BlogRecommendationsQuery,
+    BlogRecommendationsQueryVariables
+  >(BlogRecommendationsDocument, options);
+}
+export function useBlogRecommendationsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogRecommendationsQuery,
+    BlogRecommendationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    BlogRecommendationsQuery,
+    BlogRecommendationsQueryVariables
+  >(BlogRecommendationsDocument, options);
+}
+export function useBlogRecommendationsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogRecommendationsQuery,
+    BlogRecommendationsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogRecommendationsQuery,
+  BlogRecommendationsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogRecommendationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogRecommendationsQuery,
+        BlogRecommendationsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogRecommendationsQuery | undefined,
+  BlogRecommendationsQueryVariables
+>;
+export function useBlogRecommendationsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogRecommendationsQuery,
+        BlogRecommendationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogRecommendationsQuery,
+    BlogRecommendationsQueryVariables
+  >(BlogRecommendationsDocument, options as any);
+}
+export type BlogRecommendationsQueryHookResult = ReturnType<
+  typeof useBlogRecommendationsQuery
+>;
+export type BlogRecommendationsLazyQueryHookResult = ReturnType<
+  typeof useBlogRecommendationsLazyQuery
+>;
+export type BlogRecommendationsSuspenseQueryHookResult = ReturnType<
+  typeof useBlogRecommendationsSuspenseQuery
+>;
+export type BlogRecommendationsQueryResult = ApolloReactCommon.QueryResult<
+  BlogRecommendationsQuery,
+  BlogRecommendationsQueryVariables
+>;
 export const ReportBlogPostDocument = gql`
   mutation ReportBlogPost(
     $id: ID!
@@ -13275,6 +13485,425 @@ export type ReportBlogCommentMutationOptions =
     ReportBlogCommentMutation,
     ReportBlogCommentMutationVariables
   >;
+export const SaveBlogPostDocument = gql`
+  mutation SaveBlogPost($id: ID!) {
+    saveBlogPost(id: $id) {
+      postId
+      saved
+    }
+  }
+`;
+export type SaveBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    SaveBlogPostMutation,
+    SaveBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useSaveBlogPostMutation__
+ *
+ * To run a mutation, you first call `useSaveBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveBlogPostMutation, { data, loading, error }] = useSaveBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSaveBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SaveBlogPostMutation,
+    SaveBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    SaveBlogPostMutation,
+    SaveBlogPostMutationVariables
+  >(SaveBlogPostDocument, options);
+}
+export type SaveBlogPostMutationHookResult = ReturnType<
+  typeof useSaveBlogPostMutation
+>;
+export type SaveBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<SaveBlogPostMutation>;
+export type SaveBlogPostMutationOptions = ApolloReactCommon.MutationHookOptions<
+  SaveBlogPostMutation,
+  SaveBlogPostMutationVariables
+>;
+export const UnsaveBlogPostDocument = gql`
+  mutation UnsaveBlogPost($id: ID!) {
+    unsaveBlogPost(id: $id) {
+      postId
+      saved
+    }
+  }
+`;
+export type UnsaveBlogPostMutationFn = (
+  options?: ApolloReactCommon.MutationFunctionOptions<
+    UnsaveBlogPostMutation,
+    UnsaveBlogPostMutationVariables
+  >,
+) => Promise<any>;
+
+/**
+ * __useUnsaveBlogPostMutation__
+ *
+ * To run a mutation, you first call `useUnsaveBlogPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsaveBlogPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsaveBlogPostMutation, { data, loading, error }] = useUnsaveBlogPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUnsaveBlogPostMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UnsaveBlogPostMutation,
+    UnsaveBlogPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UnsaveBlogPostMutation,
+    UnsaveBlogPostMutationVariables
+  >(UnsaveBlogPostDocument, options);
+}
+export type UnsaveBlogPostMutationHookResult = ReturnType<
+  typeof useUnsaveBlogPostMutation
+>;
+export type UnsaveBlogPostMutationResult =
+  ApolloReactCommon.MutationResult<UnsaveBlogPostMutation>;
+export type UnsaveBlogPostMutationOptions =
+  ApolloReactCommon.MutationHookOptions<
+    UnsaveBlogPostMutation,
+    UnsaveBlogPostMutationVariables
+  >;
+export const SavedBlogPostsDocument = gql`
+  query SavedBlogPosts($page: Int, $size: Int) {
+    savedBlogPosts(page: $page, size: $size) {
+      ...BlogPostPageFields
+    }
+  }
+  ${BlogPostPageFieldsFragmentDoc}
+`;
+
+/**
+ * __useSavedBlogPostsQuery__
+ *
+ * To run a query within a React component, call `useSavedBlogPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSavedBlogPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSavedBlogPostsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useSavedBlogPostsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    SavedBlogPostsQuery,
+    SavedBlogPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    SavedBlogPostsQuery,
+    SavedBlogPostsQueryVariables
+  >(SavedBlogPostsDocument, options);
+}
+export function useSavedBlogPostsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SavedBlogPostsQuery,
+    SavedBlogPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    SavedBlogPostsQuery,
+    SavedBlogPostsQueryVariables
+  >(SavedBlogPostsDocument, options);
+}
+export function useSavedBlogPostsSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    SavedBlogPostsQuery,
+    SavedBlogPostsQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SavedBlogPostsQuery,
+  SavedBlogPostsQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useSavedBlogPostsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SavedBlogPostsQuery,
+        SavedBlogPostsQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  SavedBlogPostsQuery | undefined,
+  SavedBlogPostsQueryVariables
+>;
+export function useSavedBlogPostsSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        SavedBlogPostsQuery,
+        SavedBlogPostsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    SavedBlogPostsQuery,
+    SavedBlogPostsQueryVariables
+  >(SavedBlogPostsDocument, options as any);
+}
+export type SavedBlogPostsQueryHookResult = ReturnType<
+  typeof useSavedBlogPostsQuery
+>;
+export type SavedBlogPostsLazyQueryHookResult = ReturnType<
+  typeof useSavedBlogPostsLazyQuery
+>;
+export type SavedBlogPostsSuspenseQueryHookResult = ReturnType<
+  typeof useSavedBlogPostsSuspenseQuery
+>;
+export type SavedBlogPostsQueryResult = ApolloReactCommon.QueryResult<
+  SavedBlogPostsQuery,
+  SavedBlogPostsQueryVariables
+>;
+export const BlogSavedCountDocument = gql`
+  query BlogSavedCount {
+    savedBlogPosts(size: 1) {
+      totalItems
+    }
+  }
+`;
+
+/**
+ * __useBlogSavedCountQuery__
+ *
+ * To run a query within a React component, call `useBlogSavedCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogSavedCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogSavedCountQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBlogSavedCountQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    BlogSavedCountQuery,
+    BlogSavedCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    BlogSavedCountQuery,
+    BlogSavedCountQueryVariables
+  >(BlogSavedCountDocument, options);
+}
+export function useBlogSavedCountLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogSavedCountQuery,
+    BlogSavedCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    BlogSavedCountQuery,
+    BlogSavedCountQueryVariables
+  >(BlogSavedCountDocument, options);
+}
+export function useBlogSavedCountSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogSavedCountQuery,
+    BlogSavedCountQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogSavedCountQuery,
+  BlogSavedCountQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogSavedCountSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogSavedCountQuery,
+        BlogSavedCountQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogSavedCountQuery | undefined,
+  BlogSavedCountQueryVariables
+>;
+export function useBlogSavedCountSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogSavedCountQuery,
+        BlogSavedCountQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogSavedCountQuery,
+    BlogSavedCountQueryVariables
+  >(BlogSavedCountDocument, options as any);
+}
+export type BlogSavedCountQueryHookResult = ReturnType<
+  typeof useBlogSavedCountQuery
+>;
+export type BlogSavedCountLazyQueryHookResult = ReturnType<
+  typeof useBlogSavedCountLazyQuery
+>;
+export type BlogSavedCountSuspenseQueryHookResult = ReturnType<
+  typeof useBlogSavedCountSuspenseQuery
+>;
+export type BlogSavedCountQueryResult = ApolloReactCommon.QueryResult<
+  BlogSavedCountQuery,
+  BlogSavedCountQueryVariables
+>;
+export const BlogSearchSuggestDocument = gql`
+  query BlogSearchSuggest($q: String!, $size: Int) {
+    blogPosts(q: $q, sort: NEWEST, page: 0, size: $size) {
+      totalItems
+      items {
+        id
+        title
+        createdAt
+        tags {
+          ...BlogTagFields
+        }
+      }
+    }
+  }
+  ${BlogTagFieldsFragmentDoc}
+`;
+
+/**
+ * __useBlogSearchSuggestQuery__
+ *
+ * To run a query within a React component, call `useBlogSearchSuggestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBlogSearchSuggestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBlogSearchSuggestQuery({
+ *   variables: {
+ *      q: // value for 'q'
+ *      size: // value for 'size'
+ *   },
+ * });
+ */
+export function useBlogSearchSuggestQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    BlogSearchSuggestQuery,
+    BlogSearchSuggestQueryVariables
+  > &
+    (
+      | { variables: BlogSearchSuggestQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<
+    BlogSearchSuggestQuery,
+    BlogSearchSuggestQueryVariables
+  >(BlogSearchSuggestDocument, options);
+}
+export function useBlogSearchSuggestLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    BlogSearchSuggestQuery,
+    BlogSearchSuggestQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    BlogSearchSuggestQuery,
+    BlogSearchSuggestQueryVariables
+  >(BlogSearchSuggestDocument, options);
+}
+export function useBlogSearchSuggestSuspenseQuery(
+  baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<
+    BlogSearchSuggestQuery,
+    BlogSearchSuggestQueryVariables
+  >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogSearchSuggestQuery,
+  BlogSearchSuggestQueryVariables
+>;
+// @ts-expect-error - see scripts/fixSuspenseOverload.mjs
+export function useBlogSearchSuggestSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogSearchSuggestQuery,
+        BlogSearchSuggestQueryVariables
+      >,
+): ApolloReactHooks.UseSuspenseQueryResult<
+  BlogSearchSuggestQuery | undefined,
+  BlogSearchSuggestQueryVariables
+>;
+export function useBlogSearchSuggestSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        BlogSearchSuggestQuery,
+        BlogSearchSuggestQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useSuspenseQuery<
+    BlogSearchSuggestQuery,
+    BlogSearchSuggestQueryVariables
+  >(BlogSearchSuggestDocument, options as any);
+}
+export type BlogSearchSuggestQueryHookResult = ReturnType<
+  typeof useBlogSearchSuggestQuery
+>;
+export type BlogSearchSuggestLazyQueryHookResult = ReturnType<
+  typeof useBlogSearchSuggestLazyQuery
+>;
+export type BlogSearchSuggestSuspenseQueryHookResult = ReturnType<
+  typeof useBlogSearchSuggestSuspenseQuery
+>;
+export type BlogSearchSuggestQueryResult = ApolloReactCommon.QueryResult<
+  BlogSearchSuggestQuery,
+  BlogSearchSuggestQueryVariables
+>;
 export const BlogTagCatalogueDocument = gql`
   query BlogTagCatalogue {
     blogTagCatalogue {

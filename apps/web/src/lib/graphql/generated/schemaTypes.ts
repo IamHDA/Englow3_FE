@@ -587,6 +587,8 @@ export type BlogPostSummary = {
   id: Scalars["ID"]["output"];
   likeCount: Scalars["Int"]["output"];
   likedByMe: Scalars["Boolean"]["output"];
+  /** Whether the viewer saved it. A saved post is the viewer's alone to see. */
+  savedByMe: Scalars["Boolean"]["output"];
   /**
    * PUBLISHED, except when an author lists their own posts: then hidden and
    * removed ones are in the list, marked.
@@ -599,6 +601,28 @@ export type BlogPostSummary = {
 export enum BlogQueueSort {
   MOST_REPORTED = "MOST_REPORTED",
   OLDEST = "OLDEST",
+}
+
+/**
+ * A post and why it is recommended. matchedTags are the post's tags that are
+ * what the viewer declared (their certificate, skills and level); empty for
+ * POPULAR_THIS_WEEK.
+ */
+export type BlogRecommendation = {
+  __typename?: "BlogRecommendation";
+  kind: BlogRecommendationKind;
+  matchedTags: Array<BlogTag>;
+  post: BlogPostSummary;
+};
+
+/**
+ * Why a post is recommended. PROFILE: it fits what the viewer declared (see
+ * matchedTags). POPULAR_THIS_WEEK: nothing fit enough, or the viewer declared
+ * nothing (Staff and Admin), so it is what readers liked in the last week.
+ */
+export enum BlogRecommendationKind {
+  POPULAR_THIS_WEEK = "POPULAR_THIS_WEEK",
+  PROFILE = "PROFILE",
 }
 
 export type BlogReport = {
@@ -625,6 +649,12 @@ export enum BlogReportStatus {
   OPEN = "OPEN",
   RESOLVED = "RESOLVED",
 }
+
+export type BlogSaveState = {
+  __typename?: "BlogSaveState";
+  postId: Scalars["ID"]["output"];
+  saved: Scalars["Boolean"]["output"];
+};
 
 export type BlogTag = {
   __typename?: "BlogTag";
@@ -2087,6 +2117,7 @@ export type Mutation = {
   reviewTutorReport: TutorReport;
   reviewTutorResource: TutorResource;
   saveAssessmentDraft: AssessmentAttempt;
+  saveBlogPost: BlogSaveState;
   saveExamDraft: ExamDraft;
   /** Creates a draft when id is omitted. Components are checked at review. */
   saveFullTest: FullTest;
@@ -2220,6 +2251,7 @@ export type Mutation = {
   unblockUser: Scalars["Boolean"]["output"];
   unfriend: Scalars["Boolean"]["output"];
   unlikeBlogPost: BlogLikeState;
+  unsaveBlogPost: BlogSaveState;
   updateBlogComment: BlogComment;
   /**
    * version is the one the post had when it was opened. A post that changed since
@@ -2498,6 +2530,10 @@ export type MutationSaveAssessmentDraftArgs = {
   version: Scalars["Int"]["input"];
 };
 
+export type MutationSaveBlogPostArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationSaveExamDraftArgs = {
   answers: Array<SubmitAnswerInput>;
   attemptId: Scalars["ID"]["input"];
@@ -2688,6 +2724,10 @@ export type MutationUnlikeBlogPostArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationUnsaveBlogPostArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type MutationUpdateBlogCommentArgs = {
   body: Scalars["String"]["input"];
   id: Scalars["ID"]["input"];
@@ -2857,6 +2897,12 @@ export type Query = {
    * lists one person's posts - the viewer's own include every status.
    */
   blogPosts: BlogPostPage;
+  /**
+   * The best posts for the viewer, best first: the same ones for the same data,
+   * nothing rotates. Fewer than limit (3 unless asked, at most 10) when fewer
+   * qualify, and an empty list when nothing does.
+   */
+  blogRecommendations: Array<BlogRecommendation>;
   blogTagCatalogue: BlogTagCatalogue;
   /**
    * One conversation, with canSend. Fails with extensions.backendCode
@@ -2968,6 +3014,8 @@ export type Query = {
    * Reading it can start an automatic replan when the learner is a week behind.
    */
   roadmap?: Maybe<Roadmap>;
+  /** The posts the viewer saved and may still read, the latest save first. */
+  savedBlogPosts: BlogPostPage;
   /**
    * Learners by display name. Refused with extensions.backendCode
    * SEARCH_TERM_TOO_SHORT below the backend's minimum length.
@@ -3132,6 +3180,10 @@ export type QueryBlogPostsArgs = {
   sort?: InputMaybe<BlogPostSort>;
 };
 
+export type QueryBlogRecommendationsArgs = {
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type QueryChatConversationArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -3276,6 +3328,11 @@ export type QueryQuizzesArgs = {
 
 export type QueryRelationshipArgs = {
   userId: Scalars["ID"]["input"];
+};
+
+export type QuerySavedBlogPostsArgs = {
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  size?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QuerySearchLearnersArgs = {

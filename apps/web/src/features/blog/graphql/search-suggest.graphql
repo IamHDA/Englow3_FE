@@ -1,0 +1,15 @@
+# The posts group of the search box's dropdown: the first few titles that match,
+# and how many there are in all.
+query BlogSearchSuggest($q: String!, $size: Int) {
+  blogPosts(q: $q, sort: NEWEST, page: 0, size: $size) {
+    totalItems
+    items {
+      id
+      title
+      createdAt
+      tags {
+        ...BlogTagFields
+      }
+    }
+  }
+}

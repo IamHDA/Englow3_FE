@@ -18,6 +18,7 @@ fragment BlogPostSummaryFields on BlogPostSummary {
   likeCount
   commentCount
   likedByMe
+  savedByMe
   createdAt
   editedAt
   author {

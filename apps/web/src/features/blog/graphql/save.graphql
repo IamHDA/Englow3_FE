@@ -1,0 +1,13 @@
+mutation SaveBlogPost($id: ID!) {
+  saveBlogPost(id: $id) {
+    postId
+    saved
+  }
+}
+
+mutation UnsaveBlogPost($id: ID!) {
+  unsaveBlogPost(id: $id) {
+    postId
+    saved
+  }
+}

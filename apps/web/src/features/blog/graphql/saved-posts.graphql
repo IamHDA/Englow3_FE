@@ -1,0 +1,14 @@
+# The page at /blog/saved: the posts the viewer saved and may still read,
+# latest save first.
+query SavedBlogPosts($page: Int, $size: Int) {
+  savedBlogPosts(page: $page, size: $size) {
+    ...BlogPostPageFields
+  }
+}
+
+# How many posts the "Đã lưu" button says there are: a page of one, for its total.
+query BlogSavedCount {
+  savedBlogPosts(size: 1) {
+    totalItems
+  }
+}

@@ -2350,6 +2350,7 @@ export type BlogPostSummaryFieldsFragment = {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+  savedByMe: boolean;
   createdAt: string;
   editedAt: string | null;
   author: {
@@ -2373,6 +2374,7 @@ export type BlogPostPageFieldsFragment = {
     likeCount: number;
     commentCount: number;
     likedByMe: boolean;
+    savedByMe: boolean;
     createdAt: string;
     editedAt: string | null;
     author: {
@@ -2573,6 +2575,7 @@ export type BlogPostsQuery = {
       likeCount: number;
       commentCount: number;
       likedByMe: boolean;
+      savedByMe: boolean;
       createdAt: string;
       editedAt: string | null;
       author: {
@@ -2583,6 +2586,35 @@ export type BlogPostsQuery = {
       tags: Array<{ kind: Types.BlogTagKind; value: string }>;
     }>;
   };
+};
+
+export type BlogRecommendationsQueryVariables = Exact<{
+  limit?: number | null | undefined;
+}>;
+
+export type BlogRecommendationsQuery = {
+  blogRecommendations: Array<{
+    kind: Types.BlogRecommendationKind;
+    matchedTags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    post: {
+      id: string;
+      title: string;
+      excerpt: string;
+      status: Types.BlogPostStatus;
+      likeCount: number;
+      commentCount: number;
+      likedByMe: boolean;
+      savedByMe: boolean;
+      createdAt: string;
+      editedAt: string | null;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    };
+  }>;
 };
 
 export type ReportBlogPostMutationVariables = Exact<{
@@ -2603,6 +2635,75 @@ export type ReportBlogCommentMutationVariables = Exact<{
 
 export type ReportBlogCommentMutation = {
   reportBlogComment: { id: string; status: Types.BlogReportStatus };
+};
+
+export type SaveBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type SaveBlogPostMutation = {
+  saveBlogPost: { postId: string; saved: boolean };
+};
+
+export type UnsaveBlogPostMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type UnsaveBlogPostMutation = {
+  unsaveBlogPost: { postId: string; saved: boolean };
+};
+
+export type SavedBlogPostsQueryVariables = Exact<{
+  page?: number | null | undefined;
+  size?: number | null | undefined;
+}>;
+
+export type SavedBlogPostsQuery = {
+  savedBlogPosts: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+    items: Array<{
+      id: string;
+      title: string;
+      excerpt: string;
+      status: Types.BlogPostStatus;
+      likeCount: number;
+      commentCount: number;
+      likedByMe: boolean;
+      savedByMe: boolean;
+      createdAt: string;
+      editedAt: string | null;
+      author: {
+        userId: string;
+        displayName: string;
+        avatarUrl: string | null;
+      } | null;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    }>;
+  };
+};
+
+export type BlogSavedCountQueryVariables = Exact<{ [key: string]: never }>;
+
+export type BlogSavedCountQuery = { savedBlogPosts: { totalItems: number } };
+
+export type BlogSearchSuggestQueryVariables = Exact<{
+  q: string;
+  size?: number | null | undefined;
+}>;
+
+export type BlogSearchSuggestQuery = {
+  blogPosts: {
+    totalItems: number;
+    items: Array<{
+      id: string;
+      title: string;
+      createdAt: string;
+      tags: Array<{ kind: Types.BlogTagKind; value: string }>;
+    }>;
+  };
 };
 
 export type BlogTagCatalogueQueryVariables = Exact<{ [key: string]: never }>;
@@ -4252,6 +4353,7 @@ export type UserWallQuery = {
         likeCount: number;
         commentCount: number;
         likedByMe: boolean;
+        savedByMe: boolean;
         createdAt: string;
         editedAt: string | null;
         author: {
@@ -6421,6 +6523,7 @@ export const BlogPostSummaryFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "likeCount" } },
           { kind: "Field", name: { kind: "Name", value: "commentCount" } },
           { kind: "Field", name: { kind: "Name", value: "likedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "savedByMe" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "editedAt" } },
           {
@@ -6566,6 +6669,7 @@ export const BlogPostPageFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "likeCount" } },
           { kind: "Field", name: { kind: "Name", value: "commentCount" } },
           { kind: "Field", name: { kind: "Name", value: "likedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "savedByMe" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "editedAt" } },
           {
@@ -17170,6 +17274,7 @@ export const BlogPostsDocument = {
           { kind: "Field", name: { kind: "Name", value: "likeCount" } },
           { kind: "Field", name: { kind: "Name", value: "commentCount" } },
           { kind: "Field", name: { kind: "Name", value: "likedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "savedByMe" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "editedAt" } },
           {
@@ -17233,6 +17338,160 @@ export const BlogPostsDocument = {
     },
   ],
 } as unknown as DocumentNode<BlogPostsQuery, BlogPostsQueryVariables>;
+export const BlogRecommendationsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "BlogRecommendations" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "limit" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "blogRecommendations" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "limit" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "limit" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "kind" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "matchedTags" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "BlogTagFields" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "post" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "FragmentSpread",
+                        name: { kind: "Name", value: "BlogPostSummaryFields" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogAuthorFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogAuthor" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "userId" } },
+          { kind: "Field", name: { kind: "Name", value: "displayName" } },
+          { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogTagFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogTag" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "value" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogPostSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogPostSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "likeCount" } },
+          { kind: "Field", name: { kind: "Name", value: "commentCount" } },
+          { kind: "Field", name: { kind: "Name", value: "likedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "savedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "editedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "author" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "BlogAuthorFields" },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tags" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "BlogTagFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  BlogRecommendationsQuery,
+  BlogRecommendationsQueryVariables
+>;
 export const ReportBlogPostDocument = {
   kind: "Document",
   definitions: [
@@ -17406,6 +17665,418 @@ export const ReportBlogCommentDocument = {
 } as unknown as DocumentNode<
   ReportBlogCommentMutation,
   ReportBlogCommentMutationVariables
+>;
+export const SaveBlogPostDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SaveBlogPost" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "saveBlogPost" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "postId" } },
+                { kind: "Field", name: { kind: "Name", value: "saved" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SaveBlogPostMutation,
+  SaveBlogPostMutationVariables
+>;
+export const UnsaveBlogPostDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "UnsaveBlogPost" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "unsaveBlogPost" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "postId" } },
+                { kind: "Field", name: { kind: "Name", value: "saved" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UnsaveBlogPostMutation,
+  UnsaveBlogPostMutationVariables
+>;
+export const SavedBlogPostsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "SavedBlogPosts" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "savedBlogPosts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "page" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "BlogPostPageFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogAuthorFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogAuthor" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "userId" } },
+          { kind: "Field", name: { kind: "Name", value: "displayName" } },
+          { kind: "Field", name: { kind: "Name", value: "avatarUrl" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogTagFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogTag" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "value" } },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogPostSummaryFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogPostSummary" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "excerpt" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "likeCount" } },
+          { kind: "Field", name: { kind: "Name", value: "commentCount" } },
+          { kind: "Field", name: { kind: "Name", value: "likedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "savedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "editedAt" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "author" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "BlogAuthorFields" },
+                },
+              ],
+            },
+          },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tags" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "BlogTagFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogPostPageFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogPostPage" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "page" } },
+          { kind: "Field", name: { kind: "Name", value: "size" } },
+          { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+          { kind: "Field", name: { kind: "Name", value: "totalPages" } },
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "items" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "BlogPostSummaryFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<SavedBlogPostsQuery, SavedBlogPostsQueryVariables>;
+export const BlogSavedCountDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "BlogSavedCount" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "savedBlogPosts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: { kind: "IntValue", value: "1" },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<BlogSavedCountQuery, BlogSavedCountQueryVariables>;
+export const BlogSearchSuggestDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "BlogSearchSuggest" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "q" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "blogPosts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "q" },
+                value: { kind: "Variable", name: { kind: "Name", value: "q" } },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "sort" },
+                value: { kind: "EnumValue", value: "NEWEST" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "page" },
+                value: { kind: "IntValue", value: "0" },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "size" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "size" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "totalItems" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "createdAt" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "tags" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "FragmentSpread",
+                              name: { kind: "Name", value: "BlogTagFields" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "BlogTagFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "BlogTag" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "value" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  BlogSearchSuggestQuery,
+  BlogSearchSuggestQueryVariables
 >;
 export const BlogTagCatalogueDocument = {
   kind: "Document",
@@ -23842,6 +24513,7 @@ export const UserWallDocument = {
           { kind: "Field", name: { kind: "Name", value: "likeCount" } },
           { kind: "Field", name: { kind: "Name", value: "commentCount" } },
           { kind: "Field", name: { kind: "Name", value: "likedByMe" } },
+          { kind: "Field", name: { kind: "Name", value: "savedByMe" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "editedAt" } },
           {

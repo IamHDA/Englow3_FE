@@ -1,0 +1,14 @@
+# "Gợi ý cho bạn" at the top of /blog: the best posts for the viewer, each with
+# why. Empty when nothing qualifies, which the screen answers with an invitation
+# to write.
+query BlogRecommendations($limit: Int) {
+  blogRecommendations(limit: $limit) {
+    kind
+    matchedTags {
+      ...BlogTagFields
+    }
+    post {
+      ...BlogPostSummaryFields
+    }
+  }
+}
