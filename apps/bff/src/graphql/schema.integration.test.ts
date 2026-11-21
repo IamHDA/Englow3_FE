@@ -732,6 +732,111 @@ describe("blog - schema wiring, the wall's posts and the error contract", () => 
     expect(result.errors?.[0]?.message).not.toContain("boom");
   });
 
+  it("answers recommendations flat through the real schema and keeps an empty list", async () => {
+    const summary = {
+      id: "p1",
+      title: "Speaking drills",
+      excerpt: "x",
+      author: null,
+      status: "PUBLISHED",
+      tags: [{ kind: "SKILL", value: "SPEAKING" }],
+      likeCount: 2,
+      commentCount: 0,
+      likedByMe: false,
+      savedByMe: true,
+      createdAt: "2026-11-16T03:00:00Z",
+      editedAt: null,
+    };
+    const recommendations = vi
+      .fn()
+      .mockResolvedValueOnce([
+        {
+          post: summary,
+          reason: {
+            kind: "PROFILE",
+            matchedTags: [{ kind: "SKILL", value: "SPEAKING" }],
+          },
+        },
+      ])
+      .mockResolvedValueOnce([]);
+    const query = `query {
+      blogRecommendations(limit: 3) {
+        kind
+        matchedTags { kind value }
+        post { id savedByMe author { displayName } }
+      }
+    }`;
+
+    const first = await run(query, { blogApi: { recommendations } });
+    const second = await run(query, { blogApi: { recommendations } });
+
+    expect(first.errors).toBeUndefined();
+    expect(first.data).toEqual({
+      blogRecommendations: [
+        {
+          kind: "PROFILE",
+          matchedTags: [{ kind: "SKILL", value: "SPEAKING" }],
+          post: { id: "p1", savedByMe: true, author: null },
+        },
+      ],
+    });
+    expect(second.data).toEqual({ blogRecommendations: [] });
+    expect(recommendations).toHaveBeenCalledWith({ limit: 3 });
+  });
+
+  it("saves and unsaves through the real schema, and maps a refused save to CONFLICT with its backendCode", async () => {
+    const save = vi
+      .fn()
+      .mockResolvedValueOnce({ saved: true })
+      .mockRejectedValueOnce(
+        new BackendError("closed", 409, "BLOG_POST_NOT_OPEN"),
+      );
+    const unsave = vi.fn().mockResolvedValue({ saved: false });
+
+    const saved = await run(
+      'mutation { saveBlogPost(id: "p1") { postId saved } }',
+      { blogApi: { save } },
+    );
+    const refused = await run('mutation { saveBlogPost(id: "p2") { saved } }', {
+      blogApi: { save },
+    });
+    const unsaved = await run(
+      'mutation { unsaveBlogPost(id: "p1") { postId saved } }',
+      { blogApi: { unsave } },
+    );
+
+    expect(saved.data).toEqual({
+      saveBlogPost: { postId: "p1", saved: true },
+    });
+    expect(refused.errors?.[0]?.extensions).toMatchObject({
+      code: "CONFLICT",
+      backendCode: "BLOG_POST_NOT_OPEN",
+    });
+    expect(unsaved.data).toEqual({
+      unsaveBlogPost: { postId: "p1", saved: false },
+    });
+  });
+
+  it("pages the saved posts through the real schema", async () => {
+    const savedPosts = vi.fn().mockResolvedValue({
+      items: [],
+      page: 1,
+      size: 12,
+      totalItems: 13,
+      totalPages: 2,
+    });
+
+    const result = await run(
+      "query { savedBlogPosts(page: 1, size: 12) { totalItems totalPages items { id } } }",
+      { blogApi: { savedPosts } },
+    );
+
+    expect(result.data).toEqual({
+      savedBlogPosts: { totalItems: 13, totalPages: 2, items: [] },
+    });
+    expect(savedPosts).toHaveBeenCalledWith({ page: 1, size: 12 });
+  });
+
   it("maps a post that is not there - or not for this viewer - to NOT_FOUND with its backendCode", async () => {
     const result = await run('query { blogPost(id: "p9") { id } }', {
       blogApi: {

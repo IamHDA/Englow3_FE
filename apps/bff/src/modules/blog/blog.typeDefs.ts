@@ -68,6 +68,16 @@ export const blogTypeDefs = /* GraphQL */ `
     DELETED
   }
 
+  """
+  Why a post is recommended. PROFILE: it fits what the viewer declared (see
+  matchedTags). POPULAR_THIS_WEEK: nothing fit enough, or the viewer declared
+  nothing (Staff and Admin), so it is what readers liked in the last week.
+  """
+  enum BlogRecommendationKind {
+    PROFILE
+    POPULAR_THIS_WEEK
+  }
+
   enum BlogQueueSort {
     OLDEST
     MOST_REPORTED
@@ -134,6 +144,10 @@ export const blogTypeDefs = /* GraphQL */ `
     likeCount: Int!
     commentCount: Int!
     likedByMe: Boolean!
+    """
+    Whether the viewer saved it. A saved post is the viewer's alone to see.
+    """
+    savedByMe: Boolean!
     createdAt: DateTime!
     editedAt: DateTime
   }
@@ -205,6 +219,22 @@ export const blogTypeDefs = /* GraphQL */ `
   type BlogLikeState {
     liked: Boolean!
     likeCount: Int!
+  }
+
+  type BlogSaveState {
+    postId: ID!
+    saved: Boolean!
+  }
+
+  """
+  A post and why it is recommended. matchedTags are the post's tags that are
+  what the viewer declared (their certificate, skills and level); empty for
+  POPULAR_THIS_WEEK.
+  """
+  type BlogRecommendation {
+    post: BlogPostSummary!
+    kind: BlogRecommendationKind!
+    matchedTags: [BlogTag!]!
   }
 
   """
@@ -377,6 +407,16 @@ export const blogTypeDefs = /* GraphQL */ `
     """
     blogComments(postId: ID!, page: Int, size: Int): BlogCommentPage!
     blogTagCatalogue: BlogTagCatalogue!
+    """
+    The best posts for the viewer, best first: the same ones for the same data,
+    nothing rotates. Fewer than limit (3 unless asked, at most 10) when fewer
+    qualify, and an empty list when nothing does.
+    """
+    blogRecommendations(limit: Int): [BlogRecommendation!]!
+    """
+    The posts the viewer saved and may still read, the latest save first.
+    """
+    savedBlogPosts(page: Int, size: Int): BlogPostPage!
 
     """
     Staff and Admin. Content with open reports, one entry for each however many
@@ -409,6 +449,8 @@ export const blogTypeDefs = /* GraphQL */ `
     deleteBlogPost(id: ID!): Boolean!
     likeBlogPost(id: ID!): BlogLikeState!
     unlikeBlogPost(id: ID!): BlogLikeState!
+    saveBlogPost(id: ID!): BlogSaveState!
+    unsaveBlogPost(id: ID!): BlogSaveState!
     createBlogComment(postId: ID!, body: String!): BlogComment!
     updateBlogComment(id: ID!, body: String!): BlogComment!
     deleteBlogComment(id: ID!): Boolean!

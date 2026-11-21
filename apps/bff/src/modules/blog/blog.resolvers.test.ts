@@ -30,6 +30,14 @@ const withoutToken: Array<[string, () => unknown]> = [
     () => blogResolvers.Query.blogTagCatalogue({}, {}, noToken()),
   ],
   [
+    "blogRecommendations",
+    () => blogResolvers.Query.blogRecommendations({}, {}, noToken()),
+  ],
+  [
+    "savedBlogPosts",
+    () => blogResolvers.Query.savedBlogPosts({}, {}, noToken()),
+  ],
+  [
     "adminBlogQueue",
     () => blogResolvers.Query.adminBlogQueue({}, {}, noToken()),
   ],
@@ -75,6 +83,14 @@ const withoutToken: Array<[string, () => unknown]> = [
   [
     "unlikeBlogPost",
     () => blogResolvers.Mutation.unlikeBlogPost({}, { id: "p1" }, noToken()),
+  ],
+  [
+    "saveBlogPost",
+    () => blogResolvers.Mutation.saveBlogPost({}, { id: "p1" }, noToken()),
+  ],
+  [
+    "unsaveBlogPost",
+    () => blogResolvers.Mutation.unsaveBlogPost({}, { id: "p1" }, noToken()),
   ],
   [
     "createBlogComment",
@@ -226,6 +242,84 @@ describe("Query.blogPosts", () => {
   });
 });
 
+describe("Query.savedBlogPosts", () => {
+  it("pages the saved posts, 20 by default and 50 at most, and returns the page as given", async () => {
+    const page = { items: [], page: 0, size: 20, totalItems: 0, totalPages: 0 };
+    const savedPosts = vi.fn().mockResolvedValue(page);
+    const ctx = makeContext({ apis: { blogApi: { savedPosts } } });
+
+    const first = await blogResolvers.Query.savedBlogPosts({}, {}, ctx);
+    await blogResolvers.Query.savedBlogPosts({}, { page: 2, size: 999 }, ctx);
+
+    expect(first).toBe(page);
+    expect(savedPosts.mock.calls).toEqual([
+      [{ page: 0, size: 20 }],
+      [{ page: 2, size: 50 }],
+    ]);
+  });
+});
+
+describe("Query.blogRecommendations", () => {
+  const recommendation = (kind: string) => ({
+    post: { id: `p-${kind}` },
+    reason: {
+      kind,
+      matchedTags:
+        kind === "PROFILE" ? [{ kind: "SKILL", value: "WRITING" }] : [],
+    },
+  });
+
+  it("reads the reason flat: the post, its kind and the tags that matched", async () => {
+    const recommendations = vi
+      .fn()
+      .mockResolvedValue([
+        recommendation("PROFILE"),
+        recommendation("POPULAR_THIS_WEEK"),
+      ]);
+    const ctx = makeContext({ apis: { blogApi: { recommendations } } });
+
+    expect(await blogResolvers.Query.blogRecommendations({}, {}, ctx)).toEqual([
+      {
+        post: { id: "p-PROFILE" },
+        kind: "PROFILE",
+        matchedTags: [{ kind: "SKILL", value: "WRITING" }],
+      },
+      {
+        post: { id: "p-POPULAR_THIS_WEEK" },
+        kind: "POPULAR_THIS_WEEK",
+        matchedTags: [],
+      },
+    ]);
+  });
+
+  it("asks for 3 unless told otherwise, and never for more than the backend's 10", async () => {
+    const recommendations = vi.fn().mockResolvedValue([]);
+    const ctx = makeContext({ apis: { blogApi: { recommendations } } });
+
+    await blogResolvers.Query.blogRecommendations({}, {}, ctx);
+    await blogResolvers.Query.blogRecommendations({}, { limit: 5 }, ctx);
+    await blogResolvers.Query.blogRecommendations({}, { limit: 500 }, ctx);
+
+    expect(recommendations.mock.calls).toEqual([
+      [{ limit: 3 }],
+      [{ limit: 5 }],
+      [{ limit: 10 }],
+    ]);
+  });
+
+  it("answers an empty list when there is nothing to recommend", async () => {
+    const ctx = makeContext({
+      apis: {
+        blogApi: { recommendations: vi.fn().mockResolvedValue([]) },
+      },
+    });
+
+    expect(await blogResolvers.Query.blogRecommendations({}, {}, ctx)).toEqual(
+      [],
+    );
+  });
+});
+
 describe("the other reads", () => {
   it("reads one post by id", async () => {
     const post = vi.fn().mockResolvedValue({ id: "p1" });
@@ -337,6 +431,32 @@ describe("likes, comments and images", () => {
     expect(
       await blogResolvers.Mutation.unlikeBlogPost({}, { id: "p1" }, ctx),
     ).toEqual({ liked: false, likeCount: 3 });
+  });
+
+  it("saves and unsaves a post, naming the post in the answer", async () => {
+    const save = vi.fn().mockResolvedValue({ saved: true });
+    const unsave = vi.fn().mockResolvedValue({ saved: false });
+    const ctx = makeContext({ apis: { blogApi: { save, unsave } } });
+
+    expect(
+      await blogResolvers.Mutation.saveBlogPost({}, { id: "p1" }, ctx),
+    ).toEqual({ postId: "p1", saved: true });
+    expect(
+      await blogResolvers.Mutation.unsaveBlogPost({}, { id: "p1" }, ctx),
+    ).toEqual({ postId: "p1", saved: false });
+    expect(save).toHaveBeenCalledWith("p1");
+    expect(unsave).toHaveBeenCalledWith("p1");
+  });
+
+  it("lets a refused save through for the central formatter to map", async () => {
+    const save = vi
+      .fn()
+      .mockRejectedValue(new BackendError("closed", 409, "BLOG_POST_NOT_OPEN"));
+    const ctx = makeContext({ apis: { blogApi: { save } } });
+
+    await expect(
+      blogResolvers.Mutation.saveBlogPost({}, { id: "p1" }, ctx),
+    ).rejects.toMatchObject({ status: 409, code: "BLOG_POST_NOT_OPEN" });
   });
 
   it("writes and edits a comment with its text as the body", async () => {

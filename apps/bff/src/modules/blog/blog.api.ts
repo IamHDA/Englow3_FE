@@ -8,7 +8,9 @@ import type {
   BlogLikeStateResponse,
   BlogPostDetailResponse,
   BlogPostPageResponse,
+  BlogRecommendationResponse,
   BlogReportResponse,
+  BlogSaveStateResponse,
   BlogTagCatalogueResponse,
   ModerationActionPageResponse,
   ModerationActionRequest,
@@ -24,6 +26,8 @@ import type {
 const BLOG_BASE_PATH = "/api/blog";
 const POSTS_PATH = `${BLOG_BASE_PATH}/posts`;
 const COMMENTS_PATH = `${BLOG_BASE_PATH}/comments`;
+const SAVED_POSTS_PATH = `${BLOG_BASE_PATH}/saved-posts`;
+const RECOMMENDATIONS_PATH = `${BLOG_BASE_PATH}/recommendations`;
 const ADMIN_BASE_PATH = "/api/admin/blog";
 
 type PageParams = { page: number; size: number };
@@ -86,6 +90,24 @@ export class BlogApi {
 
   unlike(id: string): Promise<BlogLikeStateResponse> {
     return this.client.delete(`${postPath(id)}/like`);
+  }
+
+  save(id: string): Promise<BlogSaveStateResponse> {
+    return this.client.put(`${postPath(id)}/save`);
+  }
+
+  unsave(id: string): Promise<BlogSaveStateResponse> {
+    return this.client.delete(`${postPath(id)}/save`);
+  }
+
+  savedPosts(params: PageParams): Promise<BlogPostPageResponse> {
+    return this.client.get(`${SAVED_POSTS_PATH}?${toQueryString(params)}`);
+  }
+
+  recommendations(params: {
+    limit: number;
+  }): Promise<BlogRecommendationResponse[]> {
+    return this.client.get(`${RECOMMENDATIONS_PATH}?${toQueryString(params)}`);
   }
 
   tagCatalogue(): Promise<BlogTagCatalogueResponse> {

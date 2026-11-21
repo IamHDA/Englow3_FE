@@ -581,6 +581,8 @@ export type BlogPostSummary = {
   id: Scalars['ID']['output'];
   likeCount: Scalars['Int']['output'];
   likedByMe: Scalars['Boolean']['output'];
+  /** Whether the viewer saved it. A saved post is the viewer's alone to see. */
+  savedByMe: Scalars['Boolean']['output'];
   /**
    * PUBLISHED, except when an author lists their own posts: then hidden and
    * removed ones are in the list, marked.
@@ -593,6 +595,27 @@ export type BlogPostSummary = {
 export type BlogQueueSort =
   | 'MOST_REPORTED'
   | 'OLDEST';
+
+/**
+ * A post and why it is recommended. matchedTags are the post's tags that are
+ * what the viewer declared (their certificate, skills and level); empty for
+ * POPULAR_THIS_WEEK.
+ */
+export type BlogRecommendation = {
+  __typename?: 'BlogRecommendation';
+  kind: BlogRecommendationKind;
+  matchedTags: Array<BlogTag>;
+  post: BlogPostSummary;
+};
+
+/**
+ * Why a post is recommended. PROFILE: it fits what the viewer declared (see
+ * matchedTags). POPULAR_THIS_WEEK: nothing fit enough, or the viewer declared
+ * nothing (Staff and Admin), so it is what readers liked in the last week.
+ */
+export type BlogRecommendationKind =
+  | 'POPULAR_THIS_WEEK'
+  | 'PROFILE';
 
 export type BlogReport = {
   __typename?: 'BlogReport';
@@ -616,6 +639,12 @@ export type BlogReportStatus =
   | 'DISMISSED'
   | 'OPEN'
   | 'RESOLVED';
+
+export type BlogSaveState = {
+  __typename?: 'BlogSaveState';
+  postId: Scalars['ID']['output'];
+  saved: Scalars['Boolean']['output'];
+};
 
 export type BlogTag = {
   __typename?: 'BlogTag';
@@ -2047,6 +2076,7 @@ export type Mutation = {
   reviewTutorReport: TutorReport;
   reviewTutorResource: TutorResource;
   saveAssessmentDraft: AssessmentAttempt;
+  saveBlogPost: BlogSaveState;
   saveExamDraft: ExamDraft;
   /** Creates a draft when id is omitted. Components are checked at review. */
   saveFullTest: FullTest;
@@ -2180,6 +2210,7 @@ export type Mutation = {
   unblockUser: Scalars['Boolean']['output'];
   unfriend: Scalars['Boolean']['output'];
   unlikeBlogPost: BlogLikeState;
+  unsaveBlogPost: BlogSaveState;
   updateBlogComment: BlogComment;
   /**
    * version is the one the post had when it was opened. A post that changed since
@@ -2513,6 +2544,11 @@ export type MutationSaveAssessmentDraftArgs = {
 };
 
 
+export type MutationSaveBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationSaveExamDraftArgs = {
   answers: Array<SubmitAnswerInput>;
   attemptId: Scalars['ID']['input'];
@@ -2740,6 +2776,11 @@ export type MutationUnlikeBlogPostArgs = {
 };
 
 
+export type MutationUnsaveBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationUpdateBlogCommentArgs = {
   body: Scalars['String']['input'];
   id: Scalars['ID']['input'];
@@ -2911,6 +2952,12 @@ export type Query = {
    * lists one person's posts - the viewer's own include every status.
    */
   blogPosts: BlogPostPage;
+  /**
+   * The best posts for the viewer, best first: the same ones for the same data,
+   * nothing rotates. Fewer than limit (3 unless asked, at most 10) when fewer
+   * qualify, and an empty list when nothing does.
+   */
+  blogRecommendations: Array<BlogRecommendation>;
   blogTagCatalogue: BlogTagCatalogue;
   /**
    * One conversation, with canSend. Fails with extensions.backendCode
@@ -3022,6 +3069,8 @@ export type Query = {
    * Reading it can start an automatic replan when the learner is a week behind.
    */
   roadmap?: Maybe<Roadmap>;
+  /** The posts the viewer saved and may still read, the latest save first. */
+  savedBlogPosts: BlogPostPage;
   /**
    * Learners by display name. Refused with extensions.backendCode
    * SEARCH_TERM_TOO_SHORT below the backend's minimum length.
@@ -3210,6 +3259,11 @@ export type QueryBlogPostsArgs = {
 };
 
 
+export type QueryBlogRecommendationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryChatConversationArgs = {
   id: Scalars['ID']['input'];
 };
@@ -3382,6 +3436,12 @@ export type QueryQuizzesArgs = {
 
 export type QueryRelationshipArgs = {
   userId: Scalars['ID']['input'];
+};
+
+
+export type QuerySavedBlogPostsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -4540,9 +4600,12 @@ export type ResolversTypes = ResolversObject<{
   BlogPostStatus: BlogPostStatus;
   BlogPostSummary: ResolverTypeWrapper<BlogPostSummary>;
   BlogQueueSort: BlogQueueSort;
+  BlogRecommendation: ResolverTypeWrapper<BlogRecommendation>;
+  BlogRecommendationKind: BlogRecommendationKind;
   BlogReport: ResolverTypeWrapper<BlogReport>;
   BlogReportReason: BlogReportReason;
   BlogReportStatus: BlogReportStatus;
+  BlogSaveState: ResolverTypeWrapper<BlogSaveState>;
   BlogTag: ResolverTypeWrapper<BlogTag>;
   BlogTagCatalogue: ResolverTypeWrapper<BlogTagCatalogue>;
   BlogTagInput: BlogTagInput;
@@ -4789,7 +4852,9 @@ export type ResolversParentTypes = ResolversObject<{
   BlogPost: BlogPost;
   BlogPostPage: BlogPostPage;
   BlogPostSummary: BlogPostSummary;
+  BlogRecommendation: BlogRecommendation;
   BlogReport: BlogReport;
+  BlogSaveState: BlogSaveState;
   BlogTag: BlogTag;
   BlogTagCatalogue: BlogTagCatalogue;
   BlogTagInput: BlogTagInput;
@@ -5308,9 +5373,16 @@ export type BlogPostSummaryResolvers<ContextType = GraphQLContext, ParentType ex
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   likeCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   likedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  savedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['BlogPostStatus'], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['BlogTag']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type BlogRecommendationResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['BlogRecommendation'] = ResolversParentTypes['BlogRecommendation']> = ResolversObject<{
+  kind?: Resolver<ResolversTypes['BlogRecommendationKind'], ParentType, ContextType>;
+  matchedTags?: Resolver<Array<ResolversTypes['BlogTag']>, ParentType, ContextType>;
+  post?: Resolver<ResolversTypes['BlogPostSummary'], ParentType, ContextType>;
 }>;
 
 export type BlogReportResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['BlogReport'] = ResolversParentTypes['BlogReport']> = ResolversObject<{
@@ -5321,6 +5393,11 @@ export type BlogReportResolvers<ContextType = GraphQLContext, ParentType extends
   status?: Resolver<ResolversTypes['BlogReportStatus'], ParentType, ContextType>;
   targetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   targetType?: Resolver<ResolversTypes['BlogTargetType'], ParentType, ContextType>;
+}>;
+
+export type BlogSaveStateResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['BlogSaveState'] = ResolversParentTypes['BlogSaveState']> = ResolversObject<{
+  postId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  saved?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
 export type BlogTagResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['BlogTag'] = ResolversParentTypes['BlogTag']> = ResolversObject<{
@@ -6119,6 +6196,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   reviewTutorReport?: Resolver<ResolversTypes['TutorReport'], ParentType, ContextType, RequireFields<MutationReviewTutorReportArgs, 'id' | 'input'>>;
   reviewTutorResource?: Resolver<ResolversTypes['TutorResource'], ParentType, ContextType, RequireFields<MutationReviewTutorResourceArgs, 'id' | 'input'>>;
   saveAssessmentDraft?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationSaveAssessmentDraftArgs, 'answerText' | 'id' | 'version'>>;
+  saveBlogPost?: Resolver<ResolversTypes['BlogSaveState'], ParentType, ContextType, RequireFields<MutationSaveBlogPostArgs, 'id'>>;
   saveExamDraft?: Resolver<ResolversTypes['ExamDraft'], ParentType, ContextType, RequireFields<MutationSaveExamDraftArgs, 'answers' | 'attemptId' | 'version'>>;
   saveFullTest?: Resolver<ResolversTypes['FullTest'], ParentType, ContextType, RequireFields<MutationSaveFullTestArgs, 'input'>>;
   selectLearningPurposes?: Resolver<ResolversTypes['OnboardingState'], ParentType, ContextType, RequireFields<MutationSelectLearningPurposesArgs, 'purposeIds'>>;
@@ -6156,6 +6234,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   unblockUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnblockUserArgs, 'userId'>>;
   unfriend?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnfriendArgs, 'userId'>>;
   unlikeBlogPost?: Resolver<ResolversTypes['BlogLikeState'], ParentType, ContextType, RequireFields<MutationUnlikeBlogPostArgs, 'id'>>;
+  unsaveBlogPost?: Resolver<ResolversTypes['BlogSaveState'], ParentType, ContextType, RequireFields<MutationUnsaveBlogPostArgs, 'id'>>;
   updateBlogComment?: Resolver<ResolversTypes['BlogComment'], ParentType, ContextType, RequireFields<MutationUpdateBlogCommentArgs, 'body' | 'id'>>;
   updateBlogPost?: Resolver<ResolversTypes['BlogPost'], ParentType, ContextType, RequireFields<MutationUpdateBlogPostArgs, 'id' | 'input' | 'version'>>;
   updateProfile?: Resolver<ResolversTypes['Me'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
@@ -6224,6 +6303,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   blogComments?: Resolver<ResolversTypes['BlogCommentPage'], ParentType, ContextType, RequireFields<QueryBlogCommentsArgs, 'postId'>>;
   blogPost?: Resolver<ResolversTypes['BlogPost'], ParentType, ContextType, RequireFields<QueryBlogPostArgs, 'id'>>;
   blogPosts?: Resolver<ResolversTypes['BlogPostPage'], ParentType, ContextType, Partial<QueryBlogPostsArgs>>;
+  blogRecommendations?: Resolver<Array<ResolversTypes['BlogRecommendation']>, ParentType, ContextType, Partial<QueryBlogRecommendationsArgs>>;
   blogTagCatalogue?: Resolver<ResolversTypes['BlogTagCatalogue'], ParentType, ContextType>;
   chatConversation?: Resolver<ResolversTypes['ChatConversation'], ParentType, ContextType, RequireFields<QueryChatConversationArgs, 'id'>>;
   chatConversations?: Resolver<ResolversTypes['ChatConversationPage'], ParentType, ContextType, Partial<QueryChatConversationsArgs>>;
@@ -6269,6 +6349,7 @@ export type QueryResolvers<ContextType = GraphQLContext, ParentType extends Reso
   quizzes?: Resolver<ResolversTypes['QuizPage'], ParentType, ContextType, RequireFields<QueryQuizzesArgs, 'page' | 'size'>>;
   relationship?: Resolver<ResolversTypes['Relationship'], ParentType, ContextType, RequireFields<QueryRelationshipArgs, 'userId'>>;
   roadmap?: Resolver<Maybe<ResolversTypes['Roadmap']>, ParentType, ContextType>;
+  savedBlogPosts?: Resolver<ResolversTypes['BlogPostPage'], ParentType, ContextType, Partial<QuerySavedBlogPostsArgs>>;
   searchLearners?: Resolver<ResolversTypes['LearnerSearchPage'], ParentType, ContextType, RequireFields<QuerySearchLearnersArgs, 'q'>>;
   speakingAttempt?: Resolver<ResolversTypes['SpeakingAttempt'], ParentType, ContextType, RequireFields<QuerySpeakingAttemptArgs, 'id'>>;
   speakingAttempts?: Resolver<Array<ResolversTypes['SpeakingAttempt']>, ParentType, ContextType, RequireFields<QuerySpeakingAttemptsArgs, 'promptId'>>;
@@ -6860,7 +6941,9 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   BlogPost?: BlogPostResolvers<ContextType>;
   BlogPostPage?: BlogPostPageResolvers<ContextType>;
   BlogPostSummary?: BlogPostSummaryResolvers<ContextType>;
+  BlogRecommendation?: BlogRecommendationResolvers<ContextType>;
   BlogReport?: BlogReportResolvers<ContextType>;
+  BlogSaveState?: BlogSaveStateResolvers<ContextType>;
   BlogTag?: BlogTagResolvers<ContextType>;
   BlogTagCatalogue?: BlogTagCatalogueResolvers<ContextType>;
   ChatConversation?: ChatConversationResolvers<ContextType>;

@@ -98,6 +98,30 @@ describe("BlogApi posts", () => {
     expect(del).toHaveBeenCalledExactlyOnceWith("/api/blog/posts/p1/like");
   });
 
+  it("saves with a PUT and unsaves with a DELETE, neither with a body, the id encoded", async () => {
+    const { api, put, del } = setup();
+    await api.save("p/1");
+    await api.unsave("p/1");
+    expect(put).toHaveBeenCalledExactlyOnceWith("/api/blog/posts/p%2F1/save");
+    expect(del).toHaveBeenCalledExactlyOnceWith("/api/blog/posts/p%2F1/save");
+  });
+
+  it("pages the saved posts", async () => {
+    const { api, get } = setup();
+    await api.savedPosts({ page: 0, size: 12 });
+    expect(get).toHaveBeenCalledExactlyOnceWith(
+      "/api/blog/saved-posts?page=0&size=12",
+    );
+  });
+
+  it("asks for as many recommendations as it is told", async () => {
+    const { api, get } = setup();
+    await api.recommendations({ limit: 3 });
+    expect(get).toHaveBeenCalledExactlyOnceWith(
+      "/api/blog/recommendations?limit=3",
+    );
+  });
+
   it("reads the tag catalogue", async () => {
     const { api, get } = setup();
     await api.tagCatalogue();

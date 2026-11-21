@@ -2,6 +2,9 @@ import type { Resolvers } from "../../generated/graphql.js";
 import { clampPageSize } from "../../shared/graphql/pagination.js";
 
 const DEFAULT_PAGE_SIZE = 20;
+/** BlogRecommendationServiceImpl answers 3 unless asked and never more than 10. */
+const DEFAULT_RECOMMENDATIONS = 3;
+const MAX_RECOMMENDATIONS = 10;
 /** The backend's own cap on every list of this module (BlogPostServiceImpl, BlogCommentServiceImpl, BlogModerationServiceImpl). */
 const MAX_PAGE_SIZE = 50;
 
@@ -39,6 +42,26 @@ export const blogResolvers = {
     blogTagCatalogue: (_, __, ctx) => {
       ctx.requireToken();
       return ctx.apis.blogApi.tagCatalogue();
+    },
+    blogRecommendations: async (_, { limit }, ctx) => {
+      ctx.requireToken();
+      const recommendations = await ctx.apis.blogApi.recommendations({
+        limit: clampPageSize(
+          limit,
+          DEFAULT_RECOMMENDATIONS,
+          MAX_RECOMMENDATIONS,
+        ),
+      });
+      // The REST answer nests the reason; the screen reads it flat.
+      return recommendations.map(({ post, reason }) => ({
+        post,
+        kind: reason.kind,
+        matchedTags: reason.matchedTags,
+      }));
+    },
+    savedBlogPosts: (_, args, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.blogApi.savedPosts(pageParams(args));
     },
     adminBlogQueue: (_, args, ctx) => {
       ctx.requireToken();
@@ -78,6 +101,18 @@ export const blogResolvers = {
     unlikeBlogPost: (_, { id }, ctx) => {
       ctx.requireToken();
       return ctx.apis.blogApi.unlike(id);
+    },
+    saveBlogPost: async (_, { id }, ctx) => {
+      ctx.requireToken();
+      const { saved } = await ctx.apis.blogApi.save(id);
+      // The REST answer is the state alone; naming the post lets the client
+      // tell which post it is about without keeping the argument around.
+      return { postId: id, saved };
+    },
+    unsaveBlogPost: async (_, { id }, ctx) => {
+      ctx.requireToken();
+      const { saved } = await ctx.apis.blogApi.unsave(id);
+      return { postId: id, saved };
     },
     createBlogComment: (_, { postId, body }, ctx) => {
       ctx.requireToken();

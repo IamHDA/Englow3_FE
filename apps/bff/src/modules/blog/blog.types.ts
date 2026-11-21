@@ -3,6 +3,7 @@ import type {
   BlogCommentStatus,
   BlogModerationAction,
   BlogPostStatus,
+  BlogRecommendationKind,
   BlogReportReason,
   BlogReportStatus,
   BlogTagKind,
@@ -69,6 +70,19 @@ export type BlogPostSummaryResponse = Omit<
 export type BlogPostPageResponse = Omit<RawPostPageResponse, "items"> & {
   items: BlogPostSummaryResponse[];
 };
+// GET /api/blog/saved-posts answers with the same page of the same summaries.
+
+// GET /api/blog/recommendations: the reason is nested here, the GraphQL type
+// reads it flat. `kind` arrives as a plain string like every other fixed set.
+type RawRecommendationResponse =
+  paths["/api/blog/recommendations"]["get"]["responses"][200]["content"]["application/json"][number];
+export type BlogRecommendationResponse = {
+  post: BlogPostSummaryResponse;
+  reason: Omit<RawRecommendationResponse["reason"], "kind" | "matchedTags"> & {
+    kind: BlogRecommendationKind;
+    matchedTags: BlogTagResponse[];
+  };
+};
 
 // GET /api/blog/posts/{id}/comments; POST and PUT answer with one comment.
 type RawCommentPageResponse =
@@ -92,6 +106,10 @@ export type BlogTagCatalogueResponse =
 // PUT and DELETE /api/blog/posts/{id}/like answer with the same body.
 export type BlogLikeStateResponse =
   paths["/api/blog/posts/{id}/like"]["put"]["responses"][200]["content"]["application/json"];
+
+// PUT and DELETE /api/blog/posts/{id}/save answer with the same body.
+export type BlogSaveStateResponse =
+  paths["/api/blog/posts/{id}/save"]["put"]["responses"][200]["content"]["application/json"];
 
 // POST /api/blog/images
 export type BlogImageUploadResponse = Json<
