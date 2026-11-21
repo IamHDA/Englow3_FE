@@ -1,3 +1,31 @@
+/**
+ * The lists of /friends, in the order the side menu shows them. "requests" is
+ * the ones the viewer received, "sent" the ones the viewer sent. Their labels
+ * are copy: `t.friends.sections`.
+ */
+export const FRIENDS_SECTIONS = [
+  "friends",
+  "requests",
+  "sent",
+  "blocked",
+] as const;
+
+export type FriendsSection = (typeof FRIENDS_SECTIONS)[number];
+
+export const DEFAULT_FRIENDS_SECTION: FriendsSection = "friends";
+
+/** The address parameters of /friends: `?tab=<section>&q=<what is searched for>`. */
+export const FRIENDS_ADDRESS_PARAMS = {
+  section: "tab",
+  query: "q",
+} as const;
+
+/**
+ * Links from before the search box moved into the side column asked for
+ * `?tab=search`. It is still understood: the default list, with the box focused.
+ */
+export const LEGACY_SEARCH_TAB = "search";
+
 /** The tabs of /friends, in the order they are shown. Their labels are copy: `t.friends.tabs`. */
 export const FRIENDS_TABS = [
   "friends",
@@ -58,6 +86,9 @@ export const FRIENDS_ROUTES = {
   friends: "/friends",
   requests: "/friends?tab=requests",
   search: "/friends?tab=search",
+  /** /friends opened on what a search for this term finds. */
+  searchFor: (term: string) =>
+    `/friends?${FRIENDS_ADDRESS_PARAMS.query}=${encodeURIComponent(term)}`,
   profile: "/profile",
   admin: "/admin",
   home: "/",
