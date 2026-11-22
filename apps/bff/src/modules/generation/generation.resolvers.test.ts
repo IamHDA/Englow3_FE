@@ -59,4 +59,19 @@ describe("generation resolvers", () => {
 
     expect(list).toHaveBeenCalledWith(2, 10);
   });
+
+  /** Which requests may be resumed, and the author's limits, are the backend's to decide. */
+  it("resumes the request it is given", async () => {
+    const resume = vi.fn().mockResolvedValue({ id: "r1", status: "QUEUED" });
+    const ctx = makeContext({ apis: { generationApi: { resume } } });
+
+    const result = await generationResolvers.Mutation.resumeGeneration(
+      {},
+      { id: "r1" },
+      ctx,
+    );
+
+    expect(resume).toHaveBeenCalledWith("r1");
+    expect(result).toEqual({ id: "r1", status: "QUEUED" });
+  });
 });

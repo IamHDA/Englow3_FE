@@ -24,5 +24,9 @@ export const generationResolvers = {
         brief: trimmed ? trimmed : undefined,
       });
     },
+    resumeGeneration: (_, { id }, ctx) => {
+      ctx.requireToken();
+      return ctx.apis.generationApi.resume(id);
+    },
   },
 } satisfies Resolvers;

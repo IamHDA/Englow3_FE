@@ -39,6 +39,10 @@ export const generationTypeDefs = /* GraphQL */ `
     failureMessage: String
     "What the model got wrong on its last attempt at the current step."
     lastProblems: [String!]!
+    "How many times this request was picked up again after failing (at most 3)."
+    resumeCount: Int!
+    "The request failed and may still be resumed from the step it stopped at."
+    resumable: Boolean!
     createdAt: DateTime!
     completedAt: DateTime
   }
@@ -71,5 +75,14 @@ export const generationTypeDefs = /* GraphQL */ `
     GENERATION_IN_PROGRESS.
     """
     requestGeneration(kind: GenerationKind!, brief: String): GenerationRequest!
+
+    """
+    Picks a failed request up again at the step it stopped at, keeping what the
+    model already wrote. Runs as the person who asked for it, so their limits
+    apply. Refused with extensions.backendCode GENERATION_NOT_RESUMABLE,
+    GENERATION_RESUME_LIMIT (three resumes), GENERATION_IN_PROGRESS or
+    GENERATION_DAILY_LIMIT.
+    """
+    resumeGeneration(id: ID!): GenerationRequest!
   }
 `;

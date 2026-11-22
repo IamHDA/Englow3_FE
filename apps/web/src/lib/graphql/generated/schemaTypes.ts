@@ -1711,6 +1711,10 @@ export type GenerationRequest = {
   /** What the model got wrong on its last attempt at the current step. */
   lastProblems: Array<Scalars["String"]["output"]>;
   requestedByName?: Maybe<Scalars["String"]["output"]>;
+  /** The request failed and may still be resumed from the step it stopped at. */
+  resumable: Scalars["Boolean"]["output"];
+  /** How many times this request was picked up again after failing (at most 3). */
+  resumeCount: Scalars["Int"]["output"];
   status: GenerationStatus;
   /** The step running, or where the request stopped. */
   step?: Maybe<Scalars["String"]["output"]>;
@@ -2112,6 +2116,14 @@ export type Mutation = {
    */
   restoreExam: Exam;
   restoreTutorConversation: TutorConversationSummary;
+  /**
+   * Picks a failed request up again at the step it stopped at, keeping what the
+   * model already wrote. Runs as the person who asked for it, so their limits
+   * apply. Refused with extensions.backendCode GENERATION_NOT_RESUMABLE,
+   * GENERATION_RESUME_LIMIT (three resumes), GENERATION_IN_PROGRESS or
+   * GENERATION_DAILY_LIMIT.
+   */
+  resumeGeneration: GenerationRequest;
   retryAssessment: AssessmentAttempt;
   retryTutorReply: TutorConversation;
   reviewTutorReport: TutorReport;
@@ -2501,6 +2513,10 @@ export type MutationRestoreExamArgs = {
 };
 
 export type MutationRestoreTutorConversationArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationResumeGenerationArgs = {
   id: Scalars["ID"]["input"];
 };
 

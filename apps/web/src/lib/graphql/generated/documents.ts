@@ -4722,6 +4722,8 @@ export type GenerationRequestFieldsFragment = {
   failureCode: string | null;
   failureMessage: string | null;
   lastProblems: Array<string>;
+  resumeCount: number;
+  resumable: boolean;
   createdAt: string;
   completedAt: string | null;
 };
@@ -4751,6 +4753,8 @@ export type AdminGenerationQuery = {
       failureCode: string | null;
       failureMessage: string | null;
       lastProblems: Array<string>;
+      resumeCount: number;
+      resumable: boolean;
       createdAt: string;
       completedAt: string | null;
     }>;
@@ -4786,6 +4790,37 @@ export type RequestGenerationMutation = {
     failureCode: string | null;
     failureMessage: string | null;
     lastProblems: Array<string>;
+    resumeCount: number;
+    resumable: boolean;
+    createdAt: string;
+    completedAt: string | null;
+  };
+};
+
+export type ResumeGenerationMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type ResumeGenerationMutation = {
+  resumeGeneration: {
+    id: string;
+    kind: Types.GenerationKind;
+    status: Types.GenerationStatus;
+    step: string | null;
+    stepIndex: number;
+    stepsTotal: number;
+    attempt: number;
+    brief: string | null;
+    requestedByName: string | null;
+    title: string | null;
+    examId: string | null;
+    taskIds: Array<string>;
+    fullTestId: string | null;
+    failureCode: string | null;
+    failureMessage: string | null;
+    lastProblems: Array<string>;
+    resumeCount: number;
+    resumable: boolean;
     createdAt: string;
     completedAt: string | null;
   };
@@ -7460,6 +7495,8 @@ export const GenerationRequestFieldsFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "failureCode" } },
           { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
           { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "resumeCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumable" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
         ],
@@ -25831,6 +25868,8 @@ export const AdminGenerationDocument = {
           { kind: "Field", name: { kind: "Name", value: "failureCode" } },
           { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
           { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "resumeCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumable" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
         ],
@@ -25932,6 +25971,8 @@ export const RequestGenerationDocument = {
           { kind: "Field", name: { kind: "Name", value: "failureCode" } },
           { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
           { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "resumeCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumable" } },
           { kind: "Field", name: { kind: "Name", value: "createdAt" } },
           { kind: "Field", name: { kind: "Name", value: "completedAt" } },
         ],
@@ -25941,6 +25982,90 @@ export const RequestGenerationDocument = {
 } as unknown as DocumentNode<
   RequestGenerationMutation,
   RequestGenerationMutationVariables
+>;
+export const ResumeGenerationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ResumeGeneration" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resumeGeneration" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: { kind: "Name", value: "GenerationRequestFields" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: "FragmentDefinition",
+      name: { kind: "Name", value: "GenerationRequestFields" },
+      typeCondition: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "GenerationRequest" },
+      },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "id" } },
+          { kind: "Field", name: { kind: "Name", value: "kind" } },
+          { kind: "Field", name: { kind: "Name", value: "status" } },
+          { kind: "Field", name: { kind: "Name", value: "step" } },
+          { kind: "Field", name: { kind: "Name", value: "stepIndex" } },
+          { kind: "Field", name: { kind: "Name", value: "stepsTotal" } },
+          { kind: "Field", name: { kind: "Name", value: "attempt" } },
+          { kind: "Field", name: { kind: "Name", value: "brief" } },
+          { kind: "Field", name: { kind: "Name", value: "requestedByName" } },
+          { kind: "Field", name: { kind: "Name", value: "title" } },
+          { kind: "Field", name: { kind: "Name", value: "examId" } },
+          { kind: "Field", name: { kind: "Name", value: "taskIds" } },
+          { kind: "Field", name: { kind: "Name", value: "fullTestId" } },
+          { kind: "Field", name: { kind: "Name", value: "failureCode" } },
+          { kind: "Field", name: { kind: "Name", value: "failureMessage" } },
+          { kind: "Field", name: { kind: "Name", value: "lastProblems" } },
+          { kind: "Field", name: { kind: "Name", value: "resumeCount" } },
+          { kind: "Field", name: { kind: "Name", value: "resumable" } },
+          { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+          { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ResumeGenerationMutation,
+  ResumeGenerationMutationVariables
 >;
 export const LearningPurposesDocument = {
   kind: "Document",

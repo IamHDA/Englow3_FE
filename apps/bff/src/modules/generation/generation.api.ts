@@ -19,6 +19,13 @@ export class GenerationApi {
     return this.client.post(`${PATH}/requests`, body);
   }
 
+  /** Picks a failed request up again at the step it stopped at; what the model wrote is kept. */
+  resume(id: string): Promise<GenerationRequestResponse> {
+    return this.client.post(
+      `${PATH}/requests/${encodeURIComponent(id)}/resume`,
+    );
+  }
+
   list(page: number, size: number): Promise<GenerationRequestPage> {
     return this.client.get(`${PATH}/requests?page=${page}&size=${size}`);
   }

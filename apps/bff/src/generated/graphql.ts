@@ -1677,6 +1677,10 @@ export type GenerationRequest = {
   /** What the model got wrong on its last attempt at the current step. */
   lastProblems: Array<Scalars['String']['output']>;
   requestedByName?: Maybe<Scalars['String']['output']>;
+  /** The request failed and may still be resumed from the step it stopped at. */
+  resumable: Scalars['Boolean']['output'];
+  /** How many times this request was picked up again after failing (at most 3). */
+  resumeCount: Scalars['Int']['output'];
   status: GenerationStatus;
   /** The step running, or where the request stopped. */
   step?: Maybe<Scalars['String']['output']>;
@@ -2071,6 +2075,14 @@ export type Mutation = {
    */
   restoreExam: Exam;
   restoreTutorConversation: TutorConversationSummary;
+  /**
+   * Picks a failed request up again at the step it stopped at, keeping what the
+   * model already wrote. Runs as the person who asked for it, so their limits
+   * apply. Refused with extensions.backendCode GENERATION_NOT_RESUMABLE,
+   * GENERATION_RESUME_LIMIT (three resumes), GENERATION_IN_PROGRESS or
+   * GENERATION_DAILY_LIMIT.
+   */
+  resumeGeneration: GenerationRequest;
   retryAssessment: AssessmentAttempt;
   retryTutorReply: TutorConversation;
   reviewTutorReport: TutorReport;
@@ -2509,6 +2521,11 @@ export type MutationRestoreExamArgs = {
 
 
 export type MutationRestoreTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationResumeGenerationArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -6003,6 +6020,8 @@ export type GenerationRequestResolvers<ContextType = GraphQLContext, ParentType 
   kind?: Resolver<ResolversTypes['GenerationKind'], ParentType, ContextType>;
   lastProblems?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   requestedByName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  resumable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  resumeCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['GenerationStatus'], ParentType, ContextType>;
   step?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -6191,6 +6210,7 @@ export type MutationResolvers<ContextType = GraphQLContext, ParentType extends R
   restoreContent?: Resolver<ResolversTypes['ContentReview'], ParentType, ContextType, RequireFields<MutationRestoreContentArgs, 'id' | 'kind'>>;
   restoreExam?: Resolver<ResolversTypes['Exam'], ParentType, ContextType, RequireFields<MutationRestoreExamArgs, 'id'>>;
   restoreTutorConversation?: Resolver<ResolversTypes['TutorConversationSummary'], ParentType, ContextType, RequireFields<MutationRestoreTutorConversationArgs, 'id'>>;
+  resumeGeneration?: Resolver<ResolversTypes['GenerationRequest'], ParentType, ContextType, RequireFields<MutationResumeGenerationArgs, 'id'>>;
   retryAssessment?: Resolver<ResolversTypes['AssessmentAttempt'], ParentType, ContextType, RequireFields<MutationRetryAssessmentArgs, 'id'>>;
   retryTutorReply?: Resolver<ResolversTypes['TutorConversation'], ParentType, ContextType, RequireFields<MutationRetryTutorReplyArgs, 'clientMessageId' | 'conversationId' | 'messageId'>>;
   reviewTutorReport?: Resolver<ResolversTypes['TutorReport'], ParentType, ContextType, RequireFields<MutationReviewTutorReportArgs, 'id' | 'input'>>;

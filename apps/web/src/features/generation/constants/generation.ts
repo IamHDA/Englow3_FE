@@ -79,6 +79,14 @@ export const STATUS_COPY: Record<GenerationStatus, Copy & { color: string }> = {
 
 /** Why the backend refused to start a request. */
 export const REFUSAL_COPY: Record<string, Copy> = {
+  GENERATION_NOT_RESUMABLE: {
+    vi: "Lượt này không còn ở trạng thái thất bại nên không chạy tiếp được. Tải lại trang để xem trạng thái mới.",
+    en: "This request is no longer failed, so it cannot be resumed. Reload to see where it is.",
+  },
+  GENERATION_RESUME_LIMIT: {
+    vi: "Lượt này đã chạy tiếp 3 lần. Hãy tạo một lượt mới.",
+    en: "This request has been resumed three times. Start a new one.",
+  },
   GENERATION_DAILY_LIMIT: {
     vi: "Bạn đã dùng hết lượt tạo đề hôm nay. Lượt hỏng không bị tính.",
     en: "You have used today's requests. Failed ones do not count.",

@@ -4,6 +4,7 @@ import {
   Alert,
   Anchor,
   Badge,
+  Button,
   Card,
   Group,
   List,
@@ -29,12 +30,27 @@ const TASK_LABELS = [
   "Speaking Part 3",
 ];
 
-/** Every request, newest first: where it is, what went wrong, and the drafts it made. */
+type GenerationRequestListProps = {
+  requests: GenerationRequestFieldsFragment[];
+  /** Picks a failed request up again at the step it stopped at. */
+  onResume?: (id: string) => void;
+  /** The request being resumed now, to show its button busy. */
+  resumingId?: string | null;
+  /** Another request is running, so none can be resumed until it ends. */
+  inProgress?: boolean;
+};
+
+/**
+ * Every request, newest first: where it is, what went wrong, and the drafts it
+ * made. A failed one can be picked up again at the step it stopped at, keeping
+ * what the AI already wrote.
+ */
 export function GenerationRequestList({
   requests,
-}: {
-  requests: GenerationRequestFieldsFragment[];
-}) {
+  onResume,
+  resumingId = null,
+  inProgress = false,
+}: GenerationRequestListProps) {
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const when = (at: string) =>
@@ -135,6 +151,42 @@ export function GenerationRequestList({
                       ? failure.vi
                       : failure.en
                     : `${request.failureCode ?? ""} ${request.failureMessage ?? ""}`}
+                  {onResume && request.resumable && (
+                    <Stack gap={6} mt="sm" align="flex-start">
+                      <Text size="sm">
+                        {tr(
+                          "Các phần AI đã viết được giữ lại; chạy tiếp chỉ làm lại từ bước này.",
+                          "What the AI already wrote is kept; resuming redoes only this step onwards.",
+                        )}
+                        {request.resumeCount > 0 &&
+                          tr(
+                            ` Đã chạy tiếp ${request.resumeCount}/3 lần.`,
+                            ` Resumed ${request.resumeCount} of 3 times.`,
+                          )}
+                      </Text>
+                      <Button
+                        size="xs"
+                        variant="light"
+                        color="red"
+                        loading={resumingId === request.id}
+                        disabled={
+                          inProgress ||
+                          (resumingId !== null && resumingId !== request.id)
+                        }
+                        onClick={() => onResume(request.id)}
+                      >
+                        {tr("Chạy tiếp từ bước lỗi", "Resume from this step")}
+                      </Button>
+                      {inProgress && (
+                        <Text size="xs" c="dimmed">
+                          {tr(
+                            "Đang có một lượt khác chạy; chờ lượt đó xong rồi chạy tiếp.",
+                            "Another request is running; resume once it ends.",
+                          )}
+                        </Text>
+                      )}
+                    </Stack>
+                  )}
                 </Alert>
               )}
               {done && (
