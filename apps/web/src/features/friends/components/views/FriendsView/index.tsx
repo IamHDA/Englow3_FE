@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Text } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useRef } from "react";
 
 import { isBackOfficeRole, useAuth } from "@/features/auth";
@@ -114,10 +114,7 @@ export function FriendsView({ initialTab, initialQuery }: FriendsViewProps) {
 
   return (
     <>
-      <Stack gap="xs">
-        <PageHeader title={t.friends.pageTitle} />
-        <Text c="ink.5">{t.friends.pageSubtitle}</Text>
-      </Stack>
+      <PageHeader title={t.friends.pageTitle} />
       <FriendsLayout
         sidebar={
           <Stack gap="md">

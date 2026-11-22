@@ -35,7 +35,6 @@ type ConfirmCopy = {
 export interface FriendsTranslations {
   pageTitle: string;
   /** The line under the page title. */
-  pageSubtitle: string;
   /** The side menu's lists: its entries, and the heading of each list. */
   sections: {
     friends: string;
@@ -153,8 +152,6 @@ export interface FriendsTranslations {
 
 export const friendsVi: FriendsTranslations = {
   pageTitle: "Bạn bè",
-  pageSubtitle:
-    "Kết nối với những người cùng học để nhắn tin và theo dõi bài viết của nhau",
   sections: {
     friends: "Bạn bè",
     requests: "Lời mời nhận được",
@@ -283,8 +280,6 @@ export const friendsVi: FriendsTranslations = {
 
 export const friendsEn: FriendsTranslations = {
   pageTitle: "Friends",
-  pageSubtitle:
-    "Connect with people who study alongside you, message them and follow each other's posts",
   sections: {
     friends: "Friends",
     requests: "Requests received",

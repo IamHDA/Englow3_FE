@@ -43,6 +43,13 @@ export function LearnerSearch({
         ref={inputRef}
         value={value}
         onChange={(event) => onChange(event.currentTarget.value)}
+        onKeyDown={(event) => {
+          // Escape takes the search off and brings back the list it covered.
+          if (event.key === "Escape" && value) {
+            event.preventDefault();
+            onClear();
+          }
+        }}
         // The placeholder says what the box is for; the name is for a screen reader.
         aria-label={copy.label}
         placeholder={copy.placeholder}
