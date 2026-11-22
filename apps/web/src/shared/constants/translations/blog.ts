@@ -108,6 +108,7 @@ export interface BlogTranslations {
     resultsFor: string;
     clearSearch: string;
     topics: { label: string; all: string };
+    tools: { open: string; title: string };
     filters: {
       skill: string;
       level: string;
@@ -486,6 +487,7 @@ export const blogVi: BlogTranslations = {
     resultsFor: "Kết quả cho “{q}”",
     clearSearch: "Bỏ tìm kiếm",
     topics: { label: "Chủ đề", all: "Tất cả" },
+    tools: { open: "Tìm và lọc", title: "Tìm và lọc bài viết" },
     filters: {
       skill: "Kỹ năng",
       level: "Trình độ",
@@ -916,6 +918,7 @@ export const blogEn: BlogTranslations = {
     resultsFor: "Results for “{q}”",
     clearSearch: "Clear search",
     topics: { label: "Topics", all: "All" },
+    tools: { open: "Search & filter", title: "Search and filter posts" },
     filters: {
       skill: "Skill",
       level: "Level",

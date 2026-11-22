@@ -1,8 +1,9 @@
 "use client";
 
-import { Badge, Box, Button, Flex, Paper, Stack, Text } from "@mantine/core";
+import { Box, Button, Flex, Group, Paper, Stack, Text } from "@mantine/core";
+import { useIntersection } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { Bookmark, FileText, PenLine } from "lucide-react";
+import { FileText, PenLine } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -30,6 +31,7 @@ import { useBlogSearchSuggestions } from "../../../hooks/useBlogSearchSuggestion
 import { useBlogSearchTerm } from "../../../hooks/useBlogSearchTerm";
 import { BlogSearchBox } from "../../blocks/BlogSearchBox";
 import { ListFilters } from "../../blocks/ListFilters";
+import { MobileListTools } from "../../blocks/MobileListTools";
 import { PostRowList } from "../../blocks/PostRowList";
 import { PostRowListSkeleton } from "../../blocks/PostRowList/PostRowListSkeleton";
 import { RecommendedPosts } from "../../blocks/RecommendedPosts";
@@ -38,6 +40,7 @@ import { TopicChips } from "../../blocks/TopicChips";
 import { BlogEmptyState } from "../../parts/BlogEmptyState";
 import { BlogLoadError } from "../../parts/BlogLoadError";
 import { BlogPagination } from "../../parts/BlogPagination";
+import { SavedPostsButton } from "../../parts/SavedPostsButton";
 
 import classes from "./BlogListView.module.css";
 
@@ -48,7 +51,9 @@ const SAVE_REFETCH = ["BlogSavedCount", "BlogRecommendations"];
  * /blog: a grey panel at the top with the search, the saved posts and the
  * recommendations for the viewer, and below it the posts of everyone - by
  * topic (a skill), newest or most liked, and by level and certificate - one
- * line each, with a bookmark. The filters live in the address, so a link to a
+ * line each, with a bookmark. Once the panel is scrolled away, its search and
+ * buttons come back in the column beside the list, which stays in view (on a
+ * phone: in a drawer behind a floating button). The filters live in the address, so a link to a
  * filtered list can be shared. Typing in the search box only opens its
  * dropdown; "Xem tất cả" is what puts the word in the list's filter. While
  * another page or filter loads, the list on screen stays - dimmed - rather than
@@ -103,6 +108,12 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
       }),
   });
 
+  // Whether the grey panel's search and buttons are on screen. Until the
+  // observer has answered they count as on screen, so nothing flashes in.
+  const { ref: toolbarRef, entry: toolbarEntry } =
+    useIntersection<HTMLDivElement>();
+  const toolbarInView = toolbarEntry?.isIntersecting ?? true;
+
   const posts = (data ?? previousData)?.blogPosts;
   const retry = () => void refetch().catch(() => undefined);
   const words = catalogue.data?.blogTagCatalogue;
@@ -116,6 +127,54 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
     setFilter({ q: "" });
     setTyped("");
   };
+
+  const searchBox = (compact: boolean) => (
+    <BlogSearchBox
+      value={typed}
+      onChange={setTyped}
+      status={search.status}
+      term={search.term}
+      posts={suggestions.posts}
+      people={suggestions.people}
+      onViewAllPosts={(term) => setFilter({ q: term })}
+      size={compact ? "md" : "lg"}
+      portal={compact}
+    />
+  );
+  const writeButton = (size: "lg" | "sm") => (
+    <Button
+      component={Link}
+      href={BLOG_ROUTES.write}
+      size={size}
+      leftSection={
+        <PenLine size={size === "lg" ? 18 : 16} aria-hidden="true" />
+      }
+    >
+      {copy.write}
+    </Button>
+  );
+  const filterColumn = (
+    <ListFilters
+      sort={filters.sort}
+      onSort={(sort) => setFilter({ sort })}
+      levels={words?.levels ?? null}
+      level={filters.level}
+      onLevel={(level) => setFilter({ level })}
+      certificates={words?.certificates ?? null}
+      certificate={filters.certificate}
+      onCertificate={(certificate) => setFilter({ certificate })}
+      narrowed={narrowed}
+      onClear={clearAll}
+    />
+  );
+  // The panel's tools again, compact: beside the list on a wide screen and in
+  // the phone drawer, once the panel itself is scrolled away.
+  const shortcuts = (
+    <Group gap="xs" grow>
+      {writeButton("sm")}
+      <SavedPostsButton total={savedTotal} size="sm" />
+    </Group>
+  );
 
   let list;
   if (posts && posts.items.length > 0) {
@@ -209,47 +268,18 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
             </Text>
           </Stack>
 
-          <Flex component="search" gap="sm" wrap="wrap" align="center">
+          <Flex
+            ref={toolbarRef}
+            component="search"
+            gap="sm"
+            wrap="wrap"
+            align="center"
+          >
             <Box flex="1 1 360px" miw={0}>
-              <BlogSearchBox
-                value={typed}
-                onChange={setTyped}
-                status={search.status}
-                term={search.term}
-                posts={suggestions.posts}
-                people={suggestions.people}
-                onViewAllPosts={(term) => setFilter({ q: term })}
-              />
+              {searchBox(false)}
             </Box>
-            <Button
-              component={Link}
-              href={BLOG_ROUTES.saved}
-              variant="default"
-              size="lg"
-              aria-label={
-                savedTotal === undefined
-                  ? copy.saved
-                  : copy.savedWithCount.replace("{count}", String(savedTotal))
-              }
-              leftSection={<Bookmark size={18} aria-hidden="true" />}
-              rightSection={
-                savedTotal === undefined ? null : (
-                  <Badge variant="light" size="lg" circle={savedTotal < 10}>
-                    {savedTotal}
-                  </Badge>
-                )
-              }
-            >
-              {copy.saved}
-            </Button>
-            <Button
-              component={Link}
-              href={BLOG_ROUTES.write}
-              size="lg"
-              leftSection={<PenLine size={18} aria-hidden="true" />}
-            >
-              {copy.write}
-            </Button>
+            <SavedPostsButton total={savedTotal} size="lg" />
+            {writeButton("lg")}
           </Flex>
 
           {recommended}
@@ -267,19 +297,16 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
         gap={{ base: "xl", md: 48 }}
         align={{ md: "flex-start" }}
       >
-        <Box w={{ base: "100%", md: 280 }} flex="none">
-          <ListFilters
-            sort={filters.sort}
-            onSort={(sort) => setFilter({ sort })}
-            levels={words?.levels ?? null}
-            level={filters.level}
-            onLevel={(level) => setFilter({ level })}
-            certificates={words?.certificates ?? null}
-            certificate={filters.certificate}
-            onCertificate={(certificate) => setFilter({ certificate })}
-            narrowed={narrowed}
-            onClear={clearAll}
-          />
+        <Box
+          w={{ base: "100%", md: 280 }}
+          flex="none"
+          className={classes.aside}
+        >
+          <Stack gap="xl">
+            {!toolbarInView && <Box visibleFrom="md">{searchBox(true)}</Box>}
+            {filterColumn}
+            {!toolbarInView && <Box visibleFrom="md">{shortcuts}</Box>}
+          </Stack>
         </Box>
 
         <Stack gap="sm" flex={1} miw={0}>
@@ -303,6 +330,14 @@ export function BlogListView({ initial }: { initial: BlogListFilters }) {
           {list}
         </Stack>
       </Flex>
+
+      <MobileListTools visible={!toolbarInView}>
+        <Stack gap="xl" pb="md">
+          {searchBox(true)}
+          {filterColumn}
+          {shortcuts}
+        </Stack>
+      </MobileListTools>
     </>
   );
 }

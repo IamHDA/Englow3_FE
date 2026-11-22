@@ -50,6 +50,14 @@ type BlogSearchBoxProps = {
   people: SuggestionGroup<PersonSuggestionData> | null;
   /** "Xem tất cả" of the posts: the term becomes the list's own filter. */
   onViewAllPosts: (term: string) => void;
+  /** "lg" in the grey panel; "md" for the compact copy beside the list and in the phone drawer. */
+  size?: "lg" | "md";
+  /**
+   * Render the dropdown at the end of the page instead of under the box. The
+   * compact copies need it: the column and the drawer they sit in scroll, and
+   * would clip a dropdown drawn inside them.
+   */
+  portal?: boolean;
 };
 
 /**
@@ -68,6 +76,8 @@ export function BlogSearchBox({
   posts,
   people,
   onViewAllPosts,
+  size = "lg",
+  portal = false,
 }: BlogSearchBoxProps) {
   const { t } = useLanguage();
   const copy = t.blog.search;
@@ -187,7 +197,7 @@ export function BlogSearchBox({
       shadow="lg"
       trapFocus={false}
       returnFocus={false}
-      withinPortal={false}
+      withinPortal={portal}
     >
       <Popover.Target>
         <TextInput
@@ -199,7 +209,7 @@ export function BlogSearchBox({
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={onInputKeyDown}
-          size="lg"
+          size={size}
           radius="lg"
           aria-label={copy.label}
           aria-controls={opened ? resultsId : undefined}

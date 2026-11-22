@@ -10,6 +10,21 @@
   }
 }
 
+/*
+ * The column beside the list stays in view under the site header while the
+ * list scrolls, and scrolls itself if it is taller than the screen. The header
+ * is 60px (SiteHeaderNav's .inner) plus its 1px border.
+ */
+@media (min-width: $mantine-breakpoint-md) {
+  .aside {
+    position: sticky;
+    top: calc(61px + var(--mantine-spacing-md));
+    max-height: calc(100dvh - 61px - 2 * var(--mantine-spacing-md));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 /* The list on screen while the next page loads: still readable, plainly not final. */
 .results[aria-busy="true"] {
   opacity: 0.6;
