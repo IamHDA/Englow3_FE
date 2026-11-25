@@ -4,7 +4,6 @@ import {
   Alert,
   Button,
   Card,
-  Container,
   Group,
   Loader,
   Anchor,
@@ -24,6 +23,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { FullTestSlot } from "@/lib/graphql/generated/schemaTypes";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
+import { Page } from "@/shared/components/Page";
 import { useAssessmentRecorder } from "../hooks/useAssessmentRecorder";
 import { taskTypeLabel, type PracticeTask } from "../types";
 import { MicrophoneCheck } from "./MicrophoneCheck";
@@ -46,20 +46,20 @@ export function AssessmentTaskView({
   const query = useAssessmentTaskDetailQuery({ variables: { id } });
   if (query.loading && !query.data)
     return (
-      <Container py="xl">
+      <Page width="focus">
         <Loader />
-      </Container>
+      </Page>
     );
   if (!query.data)
     return (
-      <Container py="xl">
+      <Page width="focus">
         <LoadErrorState
           error={query.error}
           thing={{ vi: tx("nội dung luyện tập"), en: "practice content" }}
           back={{ href: "/", label: tx("Trang chủ") }}
           onRetry={() => void query.refetch().catch(() => {})}
         />
-      </Container>
+      </Page>
     );
   return (
     <TaskWorkbench
@@ -260,7 +260,7 @@ function TaskWorkbench({
     }
   }
   return (
-    <Container size="md" py="xl">
+    <Page width="focus">
       <Stack gap="lg">
         <Button
           component={Link}
@@ -412,6 +412,6 @@ function TaskWorkbench({
             : tx("Nộp bản ghi")}
         </Button>
       </Stack>
-    </Container>
+    </Page>
   );
 }

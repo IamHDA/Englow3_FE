@@ -17,6 +17,25 @@
   --mantine-color-dimmed: var(--mantine-color-ink-6);
 }
 
+/*
+ * The one frame every screen sits in: the header's row and each page's
+ * content share this width and gutter, so the logo lines up with a page's
+ * title and the user menu with its right edge. When the header had a frame of
+ * its own (1440px, 40px gutter), every page looked pulled in by ~120px a side
+ * on a wide screen. `focus` pages are narrower on purpose and centred inside it.
+ */
+:root {
+  --page-width-wide: 1200px;
+  --page-width-focus: 880px;
+  --page-gutter: var(--mantine-spacing-md);
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  :root {
+    --page-gutter: 32px;
+  }
+}
+
 html,
 body {
   height: 100%;

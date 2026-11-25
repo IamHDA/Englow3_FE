@@ -1,15 +1,15 @@
 .page {
   width: 100%;
   margin-inline: auto;
-  padding: 20px var(--mantine-spacing-md) 48px;
+  padding: 20px var(--page-gutter) 48px;
 }
 
 .page[data-width="wide"] {
-  max-width: 1200px;
+  max-width: var(--page-width-wide);
 }
 
 .page[data-width="focus"] {
-  max-width: 880px;
+  max-width: var(--page-width-focus);
 }
 
 .title {
@@ -37,7 +37,7 @@
 
 @media (min-width: $mantine-breakpoint-md) {
   .page {
-    padding: 32px 32px 64px;
+    padding: 32px var(--page-gutter) 64px;
   }
 
   .title {

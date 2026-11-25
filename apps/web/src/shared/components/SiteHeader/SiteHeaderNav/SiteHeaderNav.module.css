@@ -1,8 +1,9 @@
+/* Same frame as the page below it - see `--page-width-wide` in globals.css. */
 .inner {
   height: 60px;
-  max-width: 1440px;
+  max-width: var(--page-width-wide);
   margin-inline: auto;
-  padding-inline: var(--mantine-spacing-md);
+  padding-inline: var(--page-gutter);
 }
 
 .guestLink {
@@ -28,7 +29,6 @@
 @media (min-width: $mantine-breakpoint-md) {
   .inner {
     height: 76px;
-    padding-inline: 40px;
   }
 }
 

@@ -24,6 +24,7 @@ import {
   useAssessmentRequestReviewMutation,
 } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
+import { Page } from "@/shared/components/Page";
 import { useWritingDraft } from "../hooks/useWritingDraft";
 import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentResultRead } from "./AssessmentResultRead";
@@ -80,20 +81,20 @@ export function AssessmentAttemptView({
   }, [status, startPolling, stopPolling, refetch]);
   if (query.loading && !query.data)
     return (
-      <Container py="xl">
+      <Page>
         <Loader />
-      </Container>
+      </Page>
     );
   if (!query.data)
     return (
-      <Container py="xl">
+      <Page>
         <LoadErrorState
           error={query.error}
           thing={{ vi: tx("nội dung luyện tập"), en: "practice content" }}
           back={{ href: "/", label: tx("Trang chủ") }}
           onRetry={() => void refetch().catch(() => {})}
         />
-      </Container>
+      </Page>
     );
   return (
     <AttemptContent
@@ -152,8 +153,13 @@ function AttemptContent({
   // Bài đã chấm: kết quả lên đầu, đề và bài làm là tab trong phần kết quả.
   const completed = attempt.status === "COMPLETED";
   return (
+    // A Container, not <Page>: the graded result is a frame exactly one screen
+    // tall, which Page's own top and bottom padding would push past the fold.
+    // Width and gutter are still the shared page frame, so it lines up with
+    // the header like every other screen.
     <Container
-      size="lg"
+      size="var(--page-width-wide)"
+      px="var(--page-gutter)"
       py={completed ? "sm" : "xl"}
       h={completed ? { base: "auto", md: RESULT_FRAME_HEIGHT } : undefined}
       mih={completed ? { md: 600 } : undefined}
