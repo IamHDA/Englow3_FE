@@ -5,11 +5,11 @@
  */
 .root {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--page-width-wide);
   height: calc(100dvh - 61px);
   min-height: 480px;
   margin-inline: auto;
-  padding: 12px var(--mantine-spacing-md) var(--mantine-spacing-md);
+  padding: 12px var(--page-gutter) var(--mantine-spacing-md);
 }
 
 .paper {
@@ -40,7 +40,7 @@
 @media (min-width: $mantine-breakpoint-md) {
   .root {
     height: calc(100dvh - 77px);
-    padding: 24px 32px;
+    padding: 24px var(--page-gutter);
   }
 
   .list {

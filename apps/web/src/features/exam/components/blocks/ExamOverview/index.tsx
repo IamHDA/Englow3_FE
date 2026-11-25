@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   Badge,
-  Box,
   Button,
   Card,
   Flex,
@@ -18,6 +17,7 @@ import {
   Title,
   Modal,
 } from "@mantine/core";
+import { Page } from "@/shared/components/Page";
 import {
   Clock,
   HelpCircle,
@@ -95,9 +95,9 @@ export function ExamOverview({
   const durationMinutes = Math.round(exam.durationSeconds / 60);
 
   return (
-    <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
+    <Page>
       {/* Breadcrumb Navigation */}
-      <Flex align="center" gap="xs" mb="lg">
+      <Flex align="center" gap="xs">
         <Text
           component={Link}
           href={fullTestBack?.href ?? "/exams"}
@@ -556,6 +556,6 @@ export function ExamOverview({
           )}
         </Stack>
       </Modal>
-    </Box>
+    </Page>
   );
 }

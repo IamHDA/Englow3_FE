@@ -10,12 +10,13 @@ import {
   Skeleton,
   Stack,
 } from "@mantine/core";
+import { Page } from "@/shared/components/Page";
 
 export function ExamOverviewSkeleton() {
   return (
-    <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
+    <Page>
       {/* Breadcrumb Skeleton */}
-      <Flex align="center" gap="xs" mb="lg">
+      <Flex align="center" gap="xs">
         <Skeleton width={120} height={18} radius="xl" />
         <Skeleton width={10} height={18} radius="xl" />
         <Skeleton width={200} height={18} radius="xl" />
@@ -115,6 +116,6 @@ export function ExamOverviewSkeleton() {
           </Group>
         </Stack>
       </Card>
-    </Box>
+    </Page>
   );
 }

@@ -20,6 +20,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
+import { Page } from "@/shared/components/Page";
 import {
   Award,
   CheckCircle2,
@@ -174,7 +175,7 @@ export function ExamResultView({
   });
 
   return (
-    <Box py="xl" px={{ base: "md", md: "xl" }} maw={1100} mx="auto">
+    <Page>
       <Stack gap="xl">
         {/* Breadcrumbs */}
         <Flex align="center" gap="xs">
@@ -635,6 +636,6 @@ export function ExamResultView({
           </Stack>
         </Card>
       </Stack>
-    </Box>
+    </Page>
   );
 }
