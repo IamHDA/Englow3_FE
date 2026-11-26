@@ -1,0 +1,4554 @@
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Date: { input: string; output: string; }
+  DateTime: { input: string; output: string; }
+};
+
+export enum AdjustmentReason {
+  AHEAD_OF_SCHEDULE = 'AHEAD_OF_SCHEDULE',
+  BEHIND_SCHEDULE = 'BEHIND_SCHEDULE',
+  GOAL_CHANGED = 'GOAL_CHANGED',
+  LEVEL_REASSESSED = 'LEVEL_REASSESSED',
+  MILESTONE_FAILED = 'MILESTONE_FAILED',
+  MILESTONE_PASSED = 'MILESTONE_PASSED'
+}
+
+/**
+ * The administrator's landing page: what is waiting on a decision, how much is
+ * live, and whether anyone is using it.
+ */
+export type AdminOverview = {
+  __typename?: 'AdminOverview';
+  /** Learners who did anything within the period, each counted once. */
+  activeLearners: Scalars['Int']['output'];
+  cardReviews: Scalars['Int']['output'];
+  content: Array<OverviewContentCounts>;
+  dictationSentences: Scalars['Int']['output'];
+  examsSubmitted: Scalars['Int']['output'];
+  learners: Scalars['Int']['output'];
+  /** Learners who signed up within the period. */
+  newLearners: Scalars['Int']['output'];
+  /** Items of every kind waiting on review. */
+  pendingReviewTotal: Scalars['Int']['output'];
+  /** Days the activity figures cover. */
+  periodDays: Scalars['Int']['output'];
+  quizzesSubmitted: Scalars['Int']['output'];
+};
+
+export type AssessmentAssignment = {
+  __typename?: 'AssessmentAssignment';
+  attemptId: Scalars['ID']['output'];
+  history: Array<AssessmentAssignmentEntry>;
+  reviewerId?: Maybe<Scalars['ID']['output']>;
+  reviewerName?: Maybe<Scalars['String']['output']>;
+  version: Scalars['Int']['output'];
+};
+
+export type AssessmentAssignmentEntry = {
+  __typename?: 'AssessmentAssignmentEntry';
+  assignedByUserId?: Maybe<Scalars['ID']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  note: Scalars['String']['output'];
+  reviewerId?: Maybe<Scalars['ID']['output']>;
+};
+
+export type AssessmentAttempt = {
+  __typename?: 'AssessmentAttempt';
+  answerText: Scalars['String']['output'];
+  assessedAt?: Maybe<Scalars['DateTime']['output']>;
+  audioUrl?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  errorCode?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  learnerId?: Maybe<Scalars['ID']['output']>;
+  learnerName?: Maybe<Scalars['String']['output']>;
+  recognizedText?: Maybe<Scalars['String']['output']>;
+  report?: Maybe<Scalars['String']['output']>;
+  skill: AssessmentSkill;
+  source?: Maybe<Scalars['String']['output']>;
+  status: AssessmentAttemptStatus;
+  submittedAt?: Maybe<Scalars['DateTime']['output']>;
+  task: AssessmentTask;
+  taskId: Scalars['ID']['output'];
+  version: Scalars['Int']['output'];
+  wordCount: Scalars['Int']['output'];
+};
+
+export type AssessmentAttemptPage = {
+  __typename?: 'AssessmentAttemptPage';
+  items: Array<AssessmentAttempt>;
+  page: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum AssessmentAttemptStatus {
+  COMPLETED = 'COMPLETED',
+  DRAFT = 'DRAFT',
+  FAILED = 'FAILED',
+  NEEDS_REVIEW = 'NEEDS_REVIEW',
+  QUEUED = 'QUEUED'
+}
+
+export type AssessmentCapabilities = {
+  __typename?: 'AssessmentCapabilities';
+  automaticSpeaking: Scalars['Boolean']['output'];
+  automaticWriting: Scalars['Boolean']['output'];
+  humanReview: Scalars['Boolean']['output'];
+};
+
+export type AssessmentNotification = {
+  __typename?: 'AssessmentNotification';
+  assessedAt: Scalars['DateTime']['output'];
+  attemptId: Scalars['ID']['output'];
+  skill: AssessmentSkill;
+  title: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type AssessmentNotificationPage = {
+  __typename?: 'AssessmentNotificationPage';
+  items: Array<AssessmentNotification>;
+  page: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type AssessmentReview = {
+  __typename?: 'AssessmentReview';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  note: Scalars['String']['output'];
+  previousReport?: Maybe<Scalars['String']['output']>;
+  report: Scalars['String']['output'];
+  reviewerId: Scalars['ID']['output'];
+  reviewerName?: Maybe<Scalars['String']['output']>;
+};
+
+export type AssessmentReviewer = {
+  __typename?: 'AssessmentReviewer';
+  displayName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
+export enum AssessmentSkill {
+  SPEAKING = 'SPEAKING',
+  WRITING = 'WRITING'
+}
+
+export type AssessmentSubmissionPage = {
+  __typename?: 'AssessmentSubmissionPage';
+  items: Array<AssessmentSubmissionSummary>;
+  page: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type AssessmentSubmissionSummary = {
+  __typename?: 'AssessmentSubmissionSummary';
+  id: Scalars['ID']['output'];
+  learnerId: Scalars['ID']['output'];
+  learnerName?: Maybe<Scalars['String']['output']>;
+  skill: AssessmentSkill;
+  status: AssessmentAttemptStatus;
+  submittedAt?: Maybe<Scalars['DateTime']['output']>;
+  task: AssessmentSubmissionTask;
+  version: Scalars['Int']['output'];
+};
+
+export type AssessmentSubmissionTask = {
+  __typename?: 'AssessmentSubmissionTask';
+  id: Scalars['ID']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type AssessmentTask = {
+  __typename?: 'AssessmentTask';
+  certificateType?: Maybe<CertificateType>;
+  id: Scalars['ID']['output'];
+  /**
+   * Writing Task 1's chart to describe, signed for a few hours. Uploaded through
+   * the REST authoring route (ASSESSMENT_TASK media), not GraphQL.
+   */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  instructions: Scalars['String']['output'];
+  minimumWords: Scalars['Int']['output'];
+  purpose: AssessmentTaskPurpose;
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  rubricNotes?: Maybe<Scalars['String']['output']>;
+  sampleAnswer?: Maybe<Scalars['String']['output']>;
+  skill: AssessmentSkill;
+  status: AssessmentTaskStatus;
+  targetLevel?: Maybe<CefrLevel>;
+  taskType: Scalars['String']['output'];
+  timeLimitSeconds: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type AssessmentTaskInput = {
+  /** Set for IELTS/TOEIC preparation; leave empty for general practice. */
+  certificateType?: InputMaybe<CertificateType>;
+  instructions: Scalars['String']['input'];
+  minimumWords: Scalars['Int']['input'];
+  /**
+   * Defaults to PRACTICE. LEVEL_CHECK is refused for a Writing task
+   * (TASK_PURPOSE_SKILL).
+   */
+  purpose?: InputMaybe<AssessmentTaskPurpose>;
+  rubricNotes?: InputMaybe<Scalars['String']['input']>;
+  sampleAnswer?: InputMaybe<Scalars['String']['input']>;
+  skill: AssessmentSkill;
+  targetLevel?: InputMaybe<CefrLevel>;
+  taskType: Scalars['String']['input'];
+  timeLimitSeconds: Scalars['Int']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type AssessmentTaskPage = {
+  __typename?: 'AssessmentTaskPage';
+  items: Array<AssessmentTask>;
+  page: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum AssessmentTaskPurpose {
+  /**
+   * The spoken part of the roadmap's level check (Speaking only). Kept out of
+   * the learner catalogue.
+   */
+  LEVEL_CHECK = 'LEVEL_CHECK',
+  PRACTICE = 'PRACTICE'
+}
+
+export enum AssessmentTaskStatus {
+  ARCHIVED = 'ARCHIVED',
+  DRAFT = 'DRAFT',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  PUBLISHED = 'PUBLISHED',
+  REJECTED = 'REJECTED'
+}
+
+export type AssessmentUpload = {
+  __typename?: 'AssessmentUpload';
+  attempt: AssessmentAttempt;
+  uploadUrl?: Maybe<Scalars['String']['output']>;
+};
+
+export type AssessmentWorkload = {
+  __typename?: 'AssessmentWorkload';
+  completed: Scalars['Int']['output'];
+  drafts: Scalars['Int']['output'];
+  failed: Scalars['Int']['output'];
+  needsReview: Scalars['Int']['output'];
+  pendingReview: Scalars['Int']['output'];
+  published: Scalars['Int']['output'];
+  rejected: Scalars['Int']['output'];
+};
+
+export type AttemptOptionReview = {
+  __typename?: 'AttemptOptionReview';
+  correct: Scalars['Boolean']['output'];
+  explanation?: Maybe<Scalars['String']['output']>;
+  optionId: Scalars['ID']['output'];
+};
+
+/** A part a practice covered. */
+export type AttemptPart = {
+  __typename?: 'AttemptPart';
+  id: Scalars['ID']['output'];
+  sectionType?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type AttemptQuestionReview = {
+  __typename?: 'AttemptQuestionReview';
+  /** The spellings a TEXT_ENTRY question accepts; empty on a choice question. */
+  acceptedAnswers: Array<Scalars['String']['output']>;
+  awardedRawScore: Scalars['Float']['output'];
+  correct: Scalars['Boolean']['output'];
+  correctOptionIds: Array<Scalars['ID']['output']>;
+  explanation?: Maybe<Scalars['String']['output']>;
+  numberFrom: Scalars['Int']['output'];
+  numberTo: Scalars['Int']['output'];
+  options: Array<AttemptOptionReview>;
+  questionId: Scalars['ID']['output'];
+  selectedOptionIds: Array<Scalars['ID']['output']>;
+  /** What was typed on a TEXT_ENTRY question; null otherwise or when left blank. */
+  textAnswer?: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * One section of a scored attempt. band is the estimated certificate band for a
+ * full section the certificate converts (IELTS Listening and Reading out of 40);
+ * null for a practice, a TOEIC section, or anything the table does not cover.
+ */
+export type AttemptSectionScore = {
+  __typename?: 'AttemptSectionScore';
+  band?: Maybe<Scalars['Float']['output']>;
+  correctAnswerCount?: Maybe<Scalars['Int']['output']>;
+  maxRawScore: Scalars['Float']['output'];
+  questionCount: Scalars['Int']['output'];
+  rawScore?: Maybe<Scalars['Float']['output']>;
+  sectionType: Scalars['String']['output'];
+};
+
+/**
+ * A profile picture to choose from. There is no upload: a profile wears one of
+ * these, served by the web app.
+ */
+export type AvatarPreset = {
+  __typename?: 'AvatarPreset';
+  id: Scalars['ID']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type BlockedUser = {
+  __typename?: 'BlockedUser';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  blockedAt: Scalars['DateTime']['output'];
+  displayName: Scalars['String']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type BlockedUserPage = {
+  __typename?: 'BlockedUserPage';
+  items: Array<BlockedUser>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/**
+ * Null wherever an author appears means the account was erased: the content
+ * stays, as by a deleted user.
+ */
+export type BlogAuthor = {
+  __typename?: 'BlogAuthor';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type BlogComment = {
+  __typename?: 'BlogComment';
+  author?: Maybe<BlogAuthor>;
+  body: Scalars['String']['output'];
+  canEdit: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  editedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  postId: Scalars['ID']['output'];
+  status: BlogCommentStatus;
+};
+
+export type BlogCommentPage = {
+  __typename?: 'BlogCommentPage';
+  items: Array<BlogComment>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/**
+ * VISIBLE for everyone. A comment the viewer wrote that moderation hid or
+ * removed is still listed for them, with the status; nobody else sees it.
+ */
+export enum BlogCommentStatus {
+  HIDDEN = 'HIDDEN',
+  REMOVED = 'REMOVED',
+  VISIBLE = 'VISIBLE'
+}
+
+/**
+ * An image of a post: the Markdown names it blog-image:<id>, and url is a link
+ * that expires (a few hours) to show it from.
+ */
+export type BlogImage = {
+  __typename?: 'BlogImage';
+  id: Scalars['ID']['output'];
+  url: Scalars['String']['output'];
+};
+
+/**
+ * Where to PUT the image bytes (with the same content type). Once that is done,
+ * write reference - blog-image:<id> - into the Markdown where the image goes and
+ * save the post.
+ */
+export type BlogImageUpload = {
+  __typename?: 'BlogImageUpload';
+  contentType: Scalars['String']['output'];
+  expiresInSeconds: Scalars['Int']['output'];
+  imageId: Scalars['ID']['output'];
+  reference: Scalars['String']['output'];
+  uploadUrl: Scalars['String']['output'];
+};
+
+export type BlogLikeState = {
+  __typename?: 'BlogLikeState';
+  likeCount: Scalars['Int']['output'];
+  liked: Scalars['Boolean']['output'];
+};
+
+/**
+ * What a moderator does to content. DISMISS closes its open reports and leaves
+ * it as it is.
+ */
+export enum BlogModerationAction {
+  DISMISS = 'DISMISS',
+  HIDE = 'HIDE',
+  REMOVE = 'REMOVE',
+  RESTORE = 'RESTORE'
+}
+
+export type BlogModerationActionPage = {
+  __typename?: 'BlogModerationActionPage';
+  items: Array<BlogModerationActionRecord>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/** One entry of the history of moderation, with what it was done to. */
+export type BlogModerationActionRecord = {
+  __typename?: 'BlogModerationActionRecord';
+  action: BlogModerationAction;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  moderator?: Maybe<BlogAuthor>;
+  reason: Scalars['String']['output'];
+  targetId: Scalars['ID']['output'];
+  targetType: BlogTargetType;
+};
+
+/**
+ * What a moderator is reading. For a comment, title and postId are those of the
+ * post it is on, and images and tags are empty; for a post postId is null.
+ */
+export type BlogModerationContent = {
+  __typename?: 'BlogModerationContent';
+  body: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  images: Array<BlogImage>;
+  postId?: Maybe<Scalars['ID']['output']>;
+  tags: Array<BlogTag>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * One piece of reported content in the moderation queue, however many reports it
+ * has. Once the author deleted it (targetStatus DELETED) title, excerpt and
+ * author are null.
+ */
+export type BlogModerationQueueItem = {
+  __typename?: 'BlogModerationQueueItem';
+  author?: Maybe<BlogAuthor>;
+  excerpt?: Maybe<Scalars['String']['output']>;
+  firstReportedAt: Scalars['DateTime']['output'];
+  lastReportedAt: Scalars['DateTime']['output'];
+  openReports: Scalars['Int']['output'];
+  reasons: Array<BlogReportReason>;
+  targetId: Scalars['ID']['output'];
+  targetStatus: BlogTargetStatus;
+  targetType: BlogTargetType;
+  /** A post's title; for a comment, the title of the post it is on. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type BlogModerationQueuePage = {
+  __typename?: 'BlogModerationQueuePage';
+  items: Array<BlogModerationQueueItem>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type BlogModerationReport = {
+  __typename?: 'BlogModerationReport';
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  reason: BlogReportReason;
+  reporter?: Maybe<BlogAuthor>;
+  resolutionNote?: Maybe<Scalars['String']['output']>;
+  resolvedAt?: Maybe<Scalars['DateTime']['output']>;
+  status: BlogReportStatus;
+};
+
+/**
+ * Reported content in any status, with every report about it and the history of
+ * what was done. content and author are null once the author deleted it.
+ */
+export type BlogModerationTarget = {
+  __typename?: 'BlogModerationTarget';
+  actions: Array<BlogModerationTargetAction>;
+  author?: Maybe<BlogAuthor>;
+  content?: Maybe<BlogModerationContent>;
+  reports: Array<BlogModerationReport>;
+  targetId: Scalars['ID']['output'];
+  targetStatus: BlogTargetStatus;
+  targetType: BlogTargetType;
+};
+
+/** One thing a moderator did to the content in front of them. */
+export type BlogModerationTargetAction = {
+  __typename?: 'BlogModerationTargetAction';
+  action: BlogModerationAction;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  moderator?: Maybe<BlogAuthor>;
+  reason: Scalars['String']['output'];
+};
+
+/**
+ * One post in full. body is the Markdown as written, with blog-image:<id> where
+ * an image goes; images gives each id a link to show it from.
+ */
+export type BlogPost = {
+  __typename?: 'BlogPost';
+  author?: Maybe<BlogAuthor>;
+  body: Scalars['String']['output'];
+  canEdit: Scalars['Boolean']['output'];
+  /**
+   * Whether comments and likes are open: false for a post that is hidden or
+   * removed.
+   */
+  canInteract: Scalars['Boolean']['output'];
+  commentCount: Scalars['Int']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  editedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  images: Array<BlogImage>;
+  likeCount: Scalars['Int']['output'];
+  likedByMe: Scalars['Boolean']['output'];
+  /**
+   * Why a moderator hid or removed the post. Set only for its author, and only
+   * while it is not published.
+   */
+  moderationNote?: Maybe<Scalars['String']['output']>;
+  status: BlogPostStatus;
+  tags: Array<BlogTag>;
+  title: Scalars['String']['output'];
+  /**
+   * What an edit sends back (updateBlogPost) so a post that changed since it was
+   * opened - a moderator hid it, say - is refused instead of overwritten. A
+   * Float, on purpose: the backend counts it as 64-bit, and GraphQL's Int is
+   * 32-bit.
+   */
+  version: Scalars['Float']['output'];
+};
+
+export type BlogPostPage = {
+  __typename?: 'BlogPostPage';
+  items: Array<BlogPostSummary>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum BlogPostSort {
+  MOST_LIKED = 'MOST_LIKED',
+  NEWEST = 'NEWEST'
+}
+
+/**
+ * PUBLISHED for everyone. HIDDEN (reversible) and REMOVED (permanent) are
+ * moderation's, and only the author sees a post in either - on their own wall,
+ * and by its link.
+ */
+export enum BlogPostStatus {
+  HIDDEN = 'HIDDEN',
+  PUBLISHED = 'PUBLISHED',
+  REMOVED = 'REMOVED'
+}
+
+/** One post in a list: an excerpt, no body. */
+export type BlogPostSummary = {
+  __typename?: 'BlogPostSummary';
+  author?: Maybe<BlogAuthor>;
+  commentCount: Scalars['Int']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  editedAt?: Maybe<Scalars['DateTime']['output']>;
+  excerpt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  likeCount: Scalars['Int']['output'];
+  likedByMe: Scalars['Boolean']['output'];
+  /** Whether the viewer saved it. A saved post is the viewer's alone to see. */
+  savedByMe: Scalars['Boolean']['output'];
+  /**
+   * PUBLISHED, except when an author lists their own posts: then hidden and
+   * removed ones are in the list, marked.
+   */
+  status: BlogPostStatus;
+  tags: Array<BlogTag>;
+  title: Scalars['String']['output'];
+};
+
+export enum BlogQueueSort {
+  MOST_REPORTED = 'MOST_REPORTED',
+  OLDEST = 'OLDEST'
+}
+
+/**
+ * A post and why it is recommended. matchedTags are the post's tags that are
+ * what the viewer declared (their certificate, skills and level); empty for
+ * POPULAR_THIS_WEEK.
+ */
+export type BlogRecommendation = {
+  __typename?: 'BlogRecommendation';
+  kind: BlogRecommendationKind;
+  matchedTags: Array<BlogTag>;
+  post: BlogPostSummary;
+};
+
+/**
+ * Why a post is recommended. PROFILE: it fits what the viewer declared (see
+ * matchedTags). POPULAR_THIS_WEEK: nothing fit enough, or the viewer declared
+ * nothing (Staff and Admin), so it is what readers liked in the last week.
+ */
+export enum BlogRecommendationKind {
+  POPULAR_THIS_WEEK = 'POPULAR_THIS_WEEK',
+  PROFILE = 'PROFILE'
+}
+
+export type BlogReport = {
+  __typename?: 'BlogReport';
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  reason: BlogReportReason;
+  status: BlogReportStatus;
+  targetId: Scalars['ID']['output'];
+  targetType: BlogTargetType;
+};
+
+export enum BlogReportReason {
+  HARASSMENT = 'HARASSMENT',
+  INAPPROPRIATE = 'INAPPROPRIATE',
+  MISINFORMATION = 'MISINFORMATION',
+  OTHER = 'OTHER',
+  SPAM = 'SPAM'
+}
+
+export enum BlogReportStatus {
+  DISMISSED = 'DISMISSED',
+  OPEN = 'OPEN',
+  RESOLVED = 'RESOLVED'
+}
+
+export type BlogSaveState = {
+  __typename?: 'BlogSaveState';
+  postId: Scalars['ID']['output'];
+  saved: Scalars['Boolean']['output'];
+};
+
+export type BlogTag = {
+  __typename?: 'BlogTag';
+  kind: BlogTagKind;
+  value: Scalars['String']['output'];
+};
+
+/** The words a post may be tagged with, one list for each kind. */
+export type BlogTagCatalogue = {
+  __typename?: 'BlogTagCatalogue';
+  certificates: Array<Scalars['String']['output']>;
+  levels: Array<Scalars['String']['output']>;
+  skills: Array<Scalars['String']['output']>;
+};
+
+export type BlogTagInput = {
+  kind: BlogTagKind;
+  value: Scalars['String']['input'];
+};
+
+/**
+ * The three kinds of tag a post can carry. Their values (WRITING, B2, IELTS...)
+ * are plain strings here, listed by blogTagCatalogue: the backend owns them, and
+ * a copy of its enums in this schema would be one more place to keep in step.
+ */
+export enum BlogTagKind {
+  CERTIFICATE = 'CERTIFICATE',
+  LEVEL = 'LEVEL',
+  SKILL = 'SKILL'
+}
+
+/**
+ * The status of reported content, as moderation sees it: a post's, or a
+ * comment's, or DELETED once its author deleted it (then the content and the
+ * author are gone and only the reports and the history remain).
+ */
+export enum BlogTargetStatus {
+  DELETED = 'DELETED',
+  HIDDEN = 'HIDDEN',
+  PUBLISHED = 'PUBLISHED',
+  REMOVED = 'REMOVED',
+  VISIBLE = 'VISIBLE'
+}
+
+export enum BlogTargetType {
+  COMMENT = 'COMMENT',
+  POST = 'POST'
+}
+
+export enum CefrLevel {
+  A1 = 'A1',
+  A2 = 'A2',
+  B1 = 'B1',
+  B2 = 'B2',
+  C1 = 'C1',
+  C2 = 'C2'
+}
+
+export enum CertificateType {
+  IELTS = 'IELTS',
+  TOEIC = 'TOEIC'
+}
+
+export enum CertificateVariant {
+  ACADEMIC = 'ACADEMIC',
+  GENERAL = 'GENERAL',
+  LR = 'LR',
+  SW = 'SW'
+}
+
+export type ChatConversation = {
+  __typename?: 'ChatConversation';
+  /**
+   * Set only when one conversation is asked for or opened, null in the list.
+   * False once the two are no longer friends (history stays readable).
+   */
+  canSend?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['ID']['output'];
+  /** Null for a conversation nobody has written in yet. */
+  lastMessage?: Maybe<ChatLastMessage>;
+  lastReadSeq: Scalars['Float']['output'];
+  lastSeq: Scalars['Float']['output'];
+  /**
+   * Null when the other person erased their account: the conversation stays,
+   * as "a deleted user".
+   */
+  otherUser?: Maybe<ChatOtherUser>;
+  /** max(0, lastSeq - lastReadSeq). */
+  unreadCount: Scalars['Float']['output'];
+};
+
+export type ChatConversationPage = {
+  __typename?: 'ChatConversationPage';
+  items: Array<ChatConversation>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/**
+ * Where to PUT the image bytes (with the same content type), then send a
+ * message naming uploadId.
+ */
+export type ChatImageUpload = {
+  __typename?: 'ChatImageUpload';
+  contentType: Scalars['String']['output'];
+  expiresInSeconds: Scalars['Int']['output'];
+  uploadId: Scalars['ID']['output'];
+  uploadUrl: Scalars['String']['output'];
+};
+
+export type ChatLastMessage = {
+  __typename?: 'ChatLastMessage';
+  hasImage: Scalars['Boolean']['output'];
+  /** Null once recalled, and for an image without text. */
+  preview?: Maybe<Scalars['String']['output']>;
+  recalled: Scalars['Boolean']['output'];
+  /** Null for a deleted user. */
+  senderId?: Maybe<Scalars['ID']['output']>;
+  sentAt: Scalars['DateTime']['output'];
+  seq: Scalars['Float']['output'];
+};
+
+export type ChatMessage = {
+  __typename?: 'ChatMessage';
+  /** Null once recalled. */
+  body?: Maybe<Scalars['String']['output']>;
+  /** Only on the caller's own messages. */
+  clientId?: Maybe<Scalars['String']['output']>;
+  conversationId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  /** A link that expires after an hour. Null once recalled, and for text only. */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  recalled: Scalars['Boolean']['output'];
+  /** Null for a deleted user. */
+  senderId?: Maybe<Scalars['ID']['output']>;
+  sentAt: Scalars['DateTime']['output'];
+  seq: Scalars['Float']['output'];
+};
+
+/**
+ * Every sequence number in this module - seq, lastSeq, lastReadSeq, upToSeq,
+ * afterSeq, beforeSeq and the unread count (a difference of two of them) - is a
+ * Float, on purpose. The backend counts them as 64-bit and GraphQL's Int is
+ * 32-bit; a Float carries a whole number exactly up to 2^53, far more than a
+ * conversation will ever hold. One choice for all of them, so a seq read from
+ * one field can be sent back through another without a conversion.
+ */
+export type ChatOtherUser = {
+  __typename?: 'ChatOtherUser';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+/**
+ * Opens one chat socket, once, within expiresInSeconds. A new one is made on
+ * every call; never keep or log it.
+ */
+export type ChatSocketTicket = {
+  __typename?: 'ChatSocketTicket';
+  expiresInSeconds: Scalars['Int']['output'];
+  ticket: Scalars['String']['output'];
+};
+
+/**
+ * The four kinds of authored content. They share one review workflow, so this
+ * schema presents one surface over four backend resources rather than four
+ * copies of the same six operations.
+ */
+export enum ContentKind {
+  DICTATION_LESSON = 'DICTATION_LESSON',
+  FLASHCARD_SET = 'FLASHCARD_SET',
+  QUIZ = 'QUIZ',
+  SPEAKING_PROMPT = 'SPEAKING_PROMPT',
+  TRANSLATION_SET = 'TRANSLATION_SET'
+}
+
+/**
+ * A piece of content as its author and reviewer see it. Never sent to a learner:
+ * it carries the rejection note, and nobody studying should read "rejected
+ * because the audio is unusable".
+ */
+export type ContentReview = {
+  __typename?: 'ContentReview';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  /**
+   * Cards, questions or sentences - whatever this kind is made of. Null for a
+   * speaking prompt, which is one sentence rather than a collection: "1 item"
+   * would be true and would tell a reviewer nothing.
+   */
+  itemCount?: Maybe<Scalars['Int']['output']>;
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Why it came back, in the reviewer words. Required when rejecting. */
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  reviewedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewedByUserId?: Maybe<Scalars['ID']['output']>;
+  slug: Scalars['String']['output'];
+  status: ContentStatus;
+  submittedForReviewAt?: Maybe<Scalars['DateTime']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type ContentReviewPage = {
+  __typename?: 'ContentReviewPage';
+  items: Array<ContentReview>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/**
+ * DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. The
+ * backend keeps a separate enum per content type; the values are identical by
+ * construction and this is what validates them on the wire.
+ */
+export enum ContentStatus {
+  ARCHIVED = 'ARCHIVED',
+  DRAFT = 'DRAFT',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  PUBLISHED = 'PUBLISHED',
+  REJECTED = 'REJECTED'
+}
+
+export type DailyPath = {
+  __typename?: 'DailyPath';
+  level: Scalars['Int']['output'];
+  levelCostXp: Scalars['Int']['output'];
+  quests: Array<DailyQuest>;
+  /**
+   * The roadmap stage today's work comes from, or null when the learner has no
+   * active roadmap and the general rules chose the work.
+   */
+  roadmapStageTitle?: Maybe<Scalars['String']['output']>;
+  /** Consecutive days with any practice, counted across every feature. */
+  streakDays: Scalars['Int']['output'];
+  tasks: Array<DailyTask>;
+  /** Derived from the activity tables on every read. There is no points ledger. */
+  totalXp: Scalars['Int']['output'];
+  xpIntoLevel: Scalars['Int']['output'];
+};
+
+export type DailyQuest = {
+  __typename?: 'DailyQuest';
+  completed: Scalars['Boolean']['output'];
+  kind: DailyQuestKind;
+  progress: Scalars['Int']['output'];
+  target: Scalars['Int']['output'];
+};
+
+export enum DailyQuestKind {
+  PASS_A_QUIZ = 'PASS_A_QUIZ',
+  PRACTISE_EVERY_DAY = 'PRACTISE_EVERY_DAY',
+  REVIEW_DUE_CARDS = 'REVIEW_DUE_CARDS',
+  TYPE_SENTENCES = 'TYPE_SENTENCES'
+}
+
+export type DailyTask = {
+  __typename?: 'DailyTask';
+  /** How far through it the learner is, or null if they have never opened it. */
+  completionPercent?: Maybe<Scalars['Int']['output']>;
+  kind: DailyTaskKind;
+  order: Scalars['Int']['output'];
+  status: DailyTaskStatus;
+  /** The set, lesson or quiz to open. The link is built from this and the kind. */
+  targetId: Scalars['ID']['output'];
+  title: Scalars['String']['output'];
+  unitsDoneToday: Scalars['Int']['output'];
+  /** Cards due, sentences left, or questions in the quiz. */
+  unitsRemaining: Scalars['Int']['output'];
+  /** What finishing it pays, from the same weights the counter pays from. */
+  xpReward: Scalars['Int']['output'];
+};
+
+export enum DailyTaskKind {
+  DICTATION = 'DICTATION',
+  /** Cards the spaced-repetition schedule says are due. */
+  FLASHCARD_REVIEW = 'FLASHCARD_REVIEW',
+  /**
+   * The test closing the current roadmap stage. targetId is the milestone; the
+   * roadmap page shows how to take it.
+   */
+  MILESTONE = 'MILESTONE',
+  /** A pronunciation prompt scheduled by the learner's roadmap. */
+  PRONUNCIATION = 'PRONUNCIATION',
+  QUIZ = 'QUIZ',
+  SPEAKING = 'SPEAKING',
+  WRITING = 'WRITING'
+}
+
+/**
+ * There is deliberately no LOCKED. Nothing gates one piece of content behind
+ * another, so UPCOMING says "not started" rather than "you may not".
+ */
+export enum DailyTaskStatus {
+  COMPLETED = 'COMPLETED',
+  CURRENT = 'CURRENT',
+  UPCOMING = 'UPCOMING'
+}
+
+export type DictationDailyAccuracy = {
+  __typename?: 'DictationDailyAccuracy';
+  accuracyPercent: Scalars['Int']['output'];
+  attemptCount: Scalars['Int']['output'];
+  day: Scalars['Date']['output'];
+};
+
+export type DictationDifficultSentence = {
+  __typename?: 'DictationDifficultSentence';
+  accuracyPercent: Scalars['Int']['output'];
+  attemptCount: Scalars['Int']['output'];
+  /** The lesson the line belongs to - where its practise button leads. */
+  lessonId: Scalars['ID']['output'];
+  sentenceId: Scalars['ID']['output'];
+  text: Scalars['String']['output'];
+  topic: Scalars['String']['output'];
+};
+
+export type DictationLesson = {
+  __typename?: 'DictationLesson';
+  /** Per learner: sentences whose best attempt cleared the completion threshold. */
+  completedSentenceCount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  lastPractisedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** When the lesson went live; what "newest first" sorts on. */
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  sentenceCount: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  targetLevel?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  topic: Scalars['String']['output'];
+  totalDurationSeconds: Scalars['Int']['output'];
+};
+
+export type DictationLessonDetail = {
+  __typename?: 'DictationLessonDetail';
+  lesson: DictationLesson;
+  sentences: Array<DictationSentence>;
+};
+
+export type DictationLessonPage = {
+  __typename?: 'DictationLessonPage';
+  items: Array<DictationLesson>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type DictationMissedWord = {
+  __typename?: 'DictationMissedWord';
+  accuracyPercent: Scalars['Int']['output'];
+  correctCount: Scalars['Int']['output'];
+  missedCount: Scalars['Int']['output'];
+  word: Scalars['String']['output'];
+};
+
+/**
+ * A sentence as the learner practises it. It carries the transcript so the
+ * screen can mark an answer the moment it is typed instead of waiting on a
+ * round trip per check. What is recorded is still the server's: a submission
+ * is scored again from the stored transcript.
+ */
+export type DictationSentence = {
+  __typename?: 'DictationSentence';
+  audioDurationSeconds: Scalars['Int']['output'];
+  audioEndMs?: Maybe<Scalars['Int']['output']>;
+  /**
+   * Where this sentence begins inside audioUrl, for a lesson cut from one long
+   * recording. Null on both means the file is this sentence and nothing else,
+   * which is what a lesson with a clip per line has always meant - so a player
+   * that ignores them keeps working on older content.
+   */
+  audioStartMs?: Maybe<Scalars['Int']['output']>;
+  /** Pre-signed and short-lived. */
+  audioUrl: Scalars['String']['output'];
+  /** The learner's best attempt on this line so far. Null if never tried. */
+  bestAccuracyPercent?: Maybe<Scalars['Float']['output']>;
+  hintFirstLetters?: Maybe<Scalars['String']['output']>;
+  hintPartialTranscript?: Maybe<Scalars['String']['output']>;
+  hintRevealWord?: Maybe<Scalars['String']['output']>;
+  /** Counted by the same scorer that marks the answer, so the two agree. */
+  hintWordCount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+  /** What is said in the audio, for marking an answer in the browser. */
+  text: Scalars['String']['output'];
+  /** The Vietnamese meaning, shown with the result. */
+  translationVi?: Maybe<Scalars['String']['output']>;
+};
+
+export type DictationSessionSummary = {
+  __typename?: 'DictationSessionSummary';
+  accuracyPercent: Scalars['Int']['output'];
+  day: Scalars['Date']['output'];
+  lessonId: Scalars['ID']['output'];
+  lessonTitle: Scalars['String']['output'];
+  listeningSeconds: Scalars['Int']['output'];
+  sentenceCount: Scalars['Int']['output'];
+};
+
+export type DictationStats = {
+  __typename?: 'DictationStats';
+  activity: Array<DictationDailyAccuracy>;
+  averageAccuracyPercent: Scalars['Int']['output'];
+  difficultSentences: Array<DictationDifficultSentence>;
+  history: Array<DictationSessionSummary>;
+  lessonsCompleted: Scalars['Int']['output'];
+  listeningSeconds: Scalars['Int']['output'];
+  /**
+   * Recomputed from recent answers rather than stored - ordered by accuracy, so
+   * a word missed twice out of two ranks above one missed three times in thirty.
+   */
+  missedWords: Array<DictationMissedWord>;
+  periodDays: Scalars['Int']['output'];
+  sentencesPractised: Scalars['Int']['output'];
+  streakDays: Scalars['Int']['output'];
+};
+
+/** The only type that carries the transcript. */
+export type DictationSubmission = {
+  __typename?: 'DictationSubmission';
+  accuracyPercent: Scalars['Float']['output'];
+  /**
+   * Whether the line now counts as done, by the server's one rule. Sent so no
+   * screen compares the accuracy to a threshold of its own.
+   */
+  cleared: Scalars['Boolean']['output'];
+  correctText: Scalars['String']['output'];
+  correctWordCount: Scalars['Int']['output'];
+  response: Scalars['String']['output'];
+  sentenceId: Scalars['ID']['output'];
+  totalWordCount: Scalars['Int']['output'];
+  translationVi?: Maybe<Scalars['String']['output']>;
+};
+
+/** The full paper shell returned by create, update, publish and archive. */
+export type Exam = {
+  __typename?: 'Exam';
+  certificateType?: Maybe<CertificateType>;
+  certificateVariant?: Maybe<CertificateVariant>;
+  createdByUserId: Scalars['ID']['output'];
+  description: Scalars['String']['output'];
+  durationSeconds: Scalars['Int']['output'];
+  examType: ExamType;
+  id: Scalars['ID']['output'];
+  maxRawScore: Scalars['Float']['output'];
+  passScore?: Maybe<Scalars['Float']['output']>;
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  reviewedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewedByUserId?: Maybe<Scalars['ID']['output']>;
+  status: ExamStatus;
+  submittedForReviewAt?: Maybe<Scalars['DateTime']['output']>;
+  targetLevel?: Maybe<TargetLevel>;
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type ExamAttempt = {
+  __typename?: 'ExamAttempt';
+  convertedScore?: Maybe<Scalars['Float']['output']>;
+  correctAnswerCount?: Maybe<Scalars['Int']['output']>;
+  examId: Scalars['ID']['output'];
+  /** Null except on a history row - a sitting knows its own paper's name. */
+  examTitle?: Maybe<Scalars['String']['output']>;
+  /**
+   * The deadline the backend issued. This is the only authority on remaining
+   * time - a countdown from durationSeconds drifts across a sleeping laptop.
+   */
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  maxRawScore: Scalars['Float']['output'];
+  mode: ExamAttemptMode;
+  /** Parts a practice covers; empty for a full attempt. */
+  parts: Array<AttemptPart>;
+  questionCount: Scalars['Int']['output'];
+  /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
+  questions: Array<AttemptQuestionReview>;
+  /** Null until the attempt is scored. */
+  rawScore?: Maybe<Scalars['Float']['output']>;
+  /** True when the backend handed back an attempt that was already open. */
+  resumed: Scalars['Boolean']['output'];
+  scorePercentage?: Maybe<Scalars['Float']['output']>;
+  scoredAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Each section's points and band; empty until the attempt is scored. */
+  sections: Array<AttemptSectionScore>;
+  startedAt: Scalars['DateTime']['output'];
+  status: ExamAttemptStatus;
+  submittedAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * Null only for an untimed practice; expiresAt is then a far safety net and
+   * the client shows no countdown.
+   */
+  timeLimitSeconds?: Maybe<Scalars['Int']['output']>;
+};
+
+/**
+ * FULL is the real sitting: every part on the paper's own clock, and the only
+ * mode that counts toward progress, the best score and placement. PRACTICE
+ * covers chosen parts on a clock the learner picked, or none.
+ */
+export enum ExamAttemptMode {
+  FULL = 'FULL',
+  PRACTICE = 'PRACTICE'
+}
+
+export type ExamAttemptPage = {
+  __typename?: 'ExamAttemptPage';
+  items: Array<ExamAttempt>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum ExamAttemptStatus {
+  EXPIRED = 'EXPIRED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  SCORED = 'SCORED'
+}
+
+export type ExamDraft = {
+  __typename?: 'ExamDraft';
+  answers: Array<ExamDraftAnswer>;
+  savedAt: Scalars['DateTime']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type ExamDraftAnswer = {
+  __typename?: 'ExamDraftAnswer';
+  questionId: Scalars['ID']['output'];
+  selectedOptionIds: Array<Scalars['ID']['output']>;
+  textAnswer?: Maybe<Scalars['String']['output']>;
+};
+
+export type ExamListItem = {
+  __typename?: 'ExamListItem';
+  /**
+   * Null on a paper with no certificate (e.g. a PLACEMENT exam) - the backend
+   * allows that combination, so this cannot be non-null.
+   */
+  certificateType?: Maybe<CertificateType>;
+  certificateVariant?: Maybe<CertificateVariant>;
+  createdAt: Scalars['DateTime']['output'];
+  createdByUserId: Scalars['ID']['output'];
+  examType: ExamType;
+  id: Scalars['ID']['output'];
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * Why the paper came back, in the reviewer words. On the list rather than only
+   * on the detail screen: this is where an author finds out and what to change.
+   */
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  status: ExamStatus;
+  submittedForReviewAt?: Maybe<Scalars['DateTime']['output']>;
+  targetLevel?: Maybe<TargetLevel>;
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type ExamOutline = {
+  __typename?: 'ExamOutline';
+  examId: Scalars['ID']['output'];
+  sections: Array<ExamOutlineSection>;
+};
+
+export type ExamOutlinePart = {
+  __typename?: 'ExamOutlinePart';
+  id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+  questionCount: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type ExamOutlineSection = {
+  __typename?: 'ExamOutlineSection';
+  id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+  parts: Array<ExamOutlinePart>;
+  sectionType: Scalars['String']['output'];
+};
+
+export type ExamPage = {
+  __typename?: 'ExamPage';
+  items: Array<ExamListItem>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type ExamPaper = {
+  __typename?: 'ExamPaper';
+  certificateType?: Maybe<CertificateType>;
+  certificateVariant?: Maybe<CertificateVariant>;
+  description: Scalars['String']['output'];
+  durationSeconds: Scalars['Int']['output'];
+  examType: ExamType;
+  id: Scalars['ID']['output'];
+  maxRawScore: Scalars['Float']['output'];
+  passScore?: Maybe<Scalars['Float']['output']>;
+  sections: Array<ExamSectionDetail>;
+  targetLevel?: Maybe<TargetLevel>;
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type ExamQuestion = {
+  __typename?: 'ExamQuestion';
+  /**
+   * How many options may be chosen: N on a choose-N question, 1 on a single
+   * choice or matching question, 0 on a TEXT_ENTRY question.
+   */
+  choiceLimit: Scalars['Int']['output'];
+  content: Scalars['String']['output'];
+  difficultyLevel: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  maxRawScore: Scalars['Float']['output'];
+  /**
+   * The number shown to the learner. The backend numbers the whole paper, so a
+   * practice keeps the numbers its parts have in the full test, and IELTS starts
+   * each section at 1. Never count questions on the client.
+   */
+  numberFrom: Scalars['Int']['output'];
+  /** Equals numberFrom except on a "choose N letters" question, which takes N. */
+  numberTo: Scalars['Int']['output'];
+  /**
+   * Empty on a TEXT_ENTRY question, which is typed, and on a MATCHING question,
+   * which chooses from its set's setOptions.
+   */
+  options: Array<QuestionOption>;
+  orderNo: Scalars['Int']['output'];
+  questionCategory?: Maybe<Scalars['String']['output']>;
+  questionType: ExamQuestionType;
+  skillType: Scalars['String']['output'];
+};
+
+export type ExamQuestionSet = {
+  __typename?: 'ExamQuestionSet';
+  /** Pre-signed and short-lived - the backend resolves the object key for us. */
+  audioUrl?: Maybe<Scalars['String']['output']>;
+  content?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  instruction?: Maybe<Scalars['String']['output']>;
+  orderNo: Scalars['Int']['output'];
+  questions: Array<ExamQuestion>;
+  /**
+   * The list this set's MATCHING questions choose from; empty when it has none.
+   * A gap in content is written {{n}}, n being a question's orderNo in this set.
+   */
+  setOptions: Array<QuestionSetOption>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * How a question is answered. SINGLE_CHOICE and MULTIPLE_CHOICE choose from the
+ * question's own options (MULTIPLE_CHOICE is "choose N", N being choiceLimit);
+ * TEXT_ENTRY is typed; MATCHING chooses one entry of its set's setOptions.
+ */
+export enum ExamQuestionType {
+  MATCHING = 'MATCHING',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  TEXT_ENTRY = 'TEXT_ENTRY'
+}
+
+export type ExamSectionDetail = {
+  __typename?: 'ExamSectionDetail';
+  id: Scalars['ID']['output'];
+  maxRawScore: Scalars['Float']['output'];
+  orderNo: Scalars['Int']['output'];
+  parts: Array<ExamSectionPart>;
+  scoredByCriteria: Scalars['Boolean']['output'];
+  sectionType: Scalars['String']['output'];
+  timeLimitSeconds?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ExamSectionPart = {
+  __typename?: 'ExamSectionPart';
+  audioUrl?: Maybe<Scalars['String']['output']>;
+  content?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  instruction?: Maybe<Scalars['String']['output']>;
+  orderNo: Scalars['Int']['output'];
+  questionSets: Array<ExamQuestionSet>;
+  title: Scalars['String']['output'];
+};
+
+/**
+ * How the learner catalogue is ordered, applied to the whole catalogue before
+ * it is cut into pages. Papers that tie come out as a numbered series
+ * ("Test 2" before "Test 10").
+ */
+export enum ExamSortBy {
+  LEVEL_ASC = 'LEVEL_ASC',
+  LEVEL_DESC = 'LEVEL_DESC',
+  NEWEST = 'NEWEST',
+  SCORE_DESC = 'SCORE_DESC'
+}
+
+/**
+ * DRAFT -> PENDING_REVIEW -> PUBLISHED, with REJECTED as the way back. There is
+ * no locked-style dead end: a rejected paper is editable, or its author could
+ * never answer the note.
+ */
+export enum ExamStatus {
+  ARCHIVED = 'ARCHIVED',
+  DRAFT = 'DRAFT',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  PUBLISHED = 'PUBLISHED',
+  REJECTED = 'REJECTED'
+}
+
+export enum ExamType {
+  /**
+   * The written part of the roadmap's level check: vocabulary and grammar in
+   * its READING section, plus LISTENING. Taken in full only, and kept out of
+   * the learner catalogue.
+   */
+  LEVEL_CHECK = 'LEVEL_CHECK',
+  MOCK = 'MOCK',
+  PLACEMENT = 'PLACEMENT'
+}
+
+export type Flashcard = {
+  __typename?: 'Flashcard';
+  audioUkUrl?: Maybe<Scalars['String']['output']>;
+  /** Pre-signed and short-lived - the backend resolves the object key. */
+  audioUsUrl?: Maybe<Scalars['String']['output']>;
+  cefrLevel?: Maybe<Scalars['String']['output']>;
+  definitionEn: Scalars['String']['output'];
+  definitionVi: Scalars['String']['output'];
+  /** Null for a card the learner has never answered. */
+  dueAt?: Maybe<Scalars['DateTime']['output']>;
+  exampleSentence: Scalars['String']['output'];
+  exampleTranslationVi?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  ipaUk?: Maybe<Scalars['String']['output']>;
+  ipaUs: Scalars['String']['output'];
+  lapseCount: Scalars['Int']['output'];
+  lemma: Scalars['String']['output'];
+  mnemonicTipVi?: Maybe<Scalars['String']['output']>;
+  orderNo: Scalars['Int']['output'];
+  partOfSpeech: Scalars['String']['output'];
+  /** Which sense the card teaches - "bank (river)" is not "bank (money)". */
+  senseLabel: Scalars['String']['output'];
+  status: FlashcardReviewStatus;
+};
+
+export type FlashcardCatalogueInfo = {
+  __typename?: 'FlashcardCatalogueInfo';
+  topics: Array<Scalars['String']['output']>;
+  totalDueCount: Scalars['Int']['output'];
+};
+
+export type FlashcardDailyActivity = {
+  __typename?: 'FlashcardDailyActivity';
+  cardCount: Scalars['Int']['output'];
+  day: Scalars['Date']['output'];
+};
+
+export type FlashcardDifficultCard = {
+  __typename?: 'FlashcardDifficultCard';
+  flashcardId: Scalars['ID']['output'];
+  /**
+   * Times the card was lost after having been learned. Not the same as times
+   * failed: failing a card still being learned is ordinary progress.
+   */
+  lapseCount: Scalars['Int']['output'];
+  lastReviewed?: Maybe<Scalars['DateTime']['output']>;
+  lemma: Scalars['String']['output'];
+  setName: Scalars['String']['output'];
+};
+
+export type FlashcardReview = {
+  __typename?: 'FlashcardReview';
+  dueAt: Scalars['DateTime']['output'];
+  flashcardId: Scalars['ID']['output'];
+  intervalDays: Scalars['Int']['output'];
+  lapseCount: Scalars['Int']['output'];
+  repetitions: Scalars['Int']['output'];
+  status: FlashcardReviewStatus;
+};
+
+export enum FlashcardReviewStatus {
+  LEARNING = 'LEARNING',
+  MASTERED = 'MASTERED',
+  NEW = 'NEW',
+  REVIEW = 'REVIEW'
+}
+
+export type FlashcardSessionSummary = {
+  __typename?: 'FlashcardSessionSummary';
+  cardCount: Scalars['Int']['output'];
+  day: Scalars['Date']['output'];
+  recallPercent: Scalars['Int']['output'];
+  setId: Scalars['ID']['output'];
+  setName: Scalars['String']['output'];
+  studySeconds: Scalars['Int']['output'];
+};
+
+export type FlashcardSet = {
+  __typename?: 'FlashcardSet';
+  cardCount: Scalars['Int']['output'];
+  description: Scalars['String']['output'];
+  /**
+   * Per learner, not per set: two learners looking at the same set see
+   * different numbers, which is why these are not fields of the set itself.
+   */
+  dueCount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  /** Null until the learner has answered a card in this set. */
+  lastStudiedAt?: Maybe<Scalars['DateTime']['output']>;
+  masteredCount: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+  /** Null on a set that deliberately mixes levels. */
+  targetLevel?: Maybe<Scalars['String']['output']>;
+  topic: Scalars['String']['output'];
+};
+
+export type FlashcardSetDetail = {
+  __typename?: 'FlashcardSetDetail';
+  cards: Array<Flashcard>;
+  page: Scalars['Int']['output'];
+  set: FlashcardSet;
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type FlashcardSetPage = {
+  __typename?: 'FlashcardSetPage';
+  items: Array<FlashcardSet>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type FlashcardStats = {
+  __typename?: 'FlashcardStats';
+  activity: Array<FlashcardDailyActivity>;
+  cardsStudied: Scalars['Int']['output'];
+  difficultCards: Array<FlashcardDifficultCard>;
+  history: Array<FlashcardSessionSummary>;
+  periodDays: Scalars['Int']['output'];
+  retentionPercent: Scalars['Int']['output'];
+  /** Counted over a year, not the period - a 7-day view still shows a 40-day streak. */
+  streakDays: Scalars['Int']['output'];
+  studySeconds: Scalars['Int']['output'];
+};
+
+export type Friend = {
+  __typename?: 'Friend';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  friendsSince: Scalars['DateTime']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type FriendPage = {
+  __typename?: 'FriendPage';
+  items: Array<Friend>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type FriendRequest = {
+  __typename?: 'FriendRequest';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  requestId: Scalars['ID']['output'];
+  requestedAt: Scalars['DateTime']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type FriendRequestOutcome = {
+  __typename?: 'FriendRequestOutcome';
+  acceptedAt?: Maybe<Scalars['DateTime']['output']>;
+  requestId: Scalars['ID']['output'];
+  requestedAt: Scalars['DateTime']['output'];
+  status: FriendRequestStatus;
+  userId: Scalars['ID']['output'];
+};
+
+export type FriendRequestPage = {
+  __typename?: 'FriendRequestPage';
+  items: Array<FriendRequest>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum FriendRequestStatus {
+  ACCEPTED = 'ACCEPTED',
+  PENDING = 'PENDING'
+}
+
+/**
+ * An IELTS full test: one Listening + Reading paper and five Writing and
+ * Speaking tasks, sat as one test with one overall band. It is the IELTS
+ * learner's placement test and is also in the catalogue. Reviewed like a paper.
+ */
+export type FullTest = {
+  __typename?: 'FullTest';
+  certificateVariant: CertificateVariant;
+  description: Scalars['String']['output'];
+  /** The Listening + Reading mock paper, sat through startExamAttempt. */
+  examId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  speakingPart1Id: Scalars['ID']['output'];
+  speakingPart2Id: Scalars['ID']['output'];
+  speakingPart3Id: Scalars['ID']['output'];
+  status: ExamStatus;
+  title: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+  writingTask1Id: Scalars['ID']['output'];
+  writingTask2Id: Scalars['ID']['output'];
+};
+
+/** One Writing or Speaking part: the task to answer, and the answer attached. */
+export type FullTestPart = {
+  __typename?: 'FullTestPart';
+  /** Null until an answer submitted since the sitting began is picked up. */
+  attemptId?: Maybe<Scalars['ID']['output']>;
+  /** Null with no answer attached, and in myFullTestSittings. */
+  grading?: Maybe<FullTestPartGrading>;
+  slot: FullTestSlot;
+  taskId: Scalars['ID']['output'];
+};
+
+/** How grading of a part's attached answer stands. */
+export enum FullTestPartGrading {
+  /** Waiting for a person to grade it. */
+  AWAITING_REVIEW = 'AWAITING_REVIEW',
+  /** The automatic grader gave up; resend it or ask for a person. */
+  FAILED = 'FAILED',
+  GRADED = 'GRADED',
+  /** Queued for the automatic grader. */
+  GRADING = 'GRADING'
+}
+
+export type FullTestPartStart = {
+  __typename?: 'FullTestPartStart';
+  attemptId: Scalars['ID']['output'];
+  uploadUrl?: Maybe<Scalars['String']['output']>;
+};
+
+export type FullTestSitting = {
+  __typename?: 'FullTestSitting';
+  bandRevision: Scalars['Int']['output'];
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Every part must be submitted by then; grading may finish later. */
+  deadlineAt: Scalars['DateTime']['output'];
+  examAttemptId?: Maybe<Scalars['ID']['output']>;
+  /** The paper to sit in full. */
+  examId: Scalars['ID']['output'];
+  fullTestId: Scalars['ID']['output'];
+  /**
+   * A sitting still missing a grade then expires and keeps its provisional
+   * band (a week after deadlineAt).
+   */
+  gradesDueAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  listeningBand?: Maybe<Scalars['Float']['output']>;
+  overallBand?: Maybe<Scalars['Float']['output']>;
+  parts: Array<FullTestPart>;
+  /**
+   * The lower of Listening and Reading, shown as an estimate until overallBand
+   * exists. It is also recorded as the learner's level.
+   */
+  provisionalBand?: Maybe<Scalars['Float']['output']>;
+  readingBand?: Maybe<Scalars['Float']['output']>;
+  revisedAt?: Maybe<Scalars['DateTime']['output']>;
+  speakingBand?: Maybe<Scalars['Float']['output']>;
+  startedAt: Scalars['DateTime']['output'];
+  status: FullTestSittingStatus;
+  title: Scalars['String']['output'];
+  writingBand?: Maybe<Scalars['Float']['output']>;
+};
+
+export enum FullTestSittingStatus {
+  /** Every part is in; at least one is not graded yet. */
+  AWAITING_GRADES = 'AWAITING_GRADES',
+  /** Every part graded; overallBand is set. */
+  COMPLETED = 'COMPLETED',
+  /**
+   * The seven days ran out with parts missing, or grading was still missing at
+   * gradesDueAt; provisionalBand stays.
+   */
+  EXPIRED = 'EXPIRED',
+  /** Parts may still be taken, until deadlineAt. */
+  IN_PROGRESS = 'IN_PROGRESS'
+}
+
+export enum FullTestSlot {
+  SPEAKING_PART_1 = 'SPEAKING_PART_1',
+  SPEAKING_PART_2 = 'SPEAKING_PART_2',
+  SPEAKING_PART_3 = 'SPEAKING_PART_3',
+  WRITING_TASK_1 = 'WRITING_TASK_1',
+  WRITING_TASK_2 = 'WRITING_TASK_2'
+}
+
+export enum Gender {
+  FEMALE = 'FEMALE',
+  MALE = 'MALE',
+  OTHER = 'OTHER'
+}
+
+/** Today's requests for the signed-in user; a failed request does not count. */
+export type GenerationAllowance = {
+  __typename?: 'GenerationAllowance';
+  inProgress: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  remaining: Scalars['Int']['output'];
+  used: Scalars['Int']['output'];
+};
+
+export enum GenerationKind {
+  /** A Listening + Reading paper, five Writing and Speaking tasks, a draft full test. */
+  IELTS_FULL_TEST = 'IELTS_FULL_TEST'
+}
+
+/**
+ * One press of "generate". The backend runs it step by step - plan, Listening
+ * parts, Reading passages, Writing, Speaking, assemble, chart, recordings,
+ * finish - and a screen follows it by asking again.
+ */
+export type GenerationRequest = {
+  __typename?: 'GenerationRequest';
+  /** Attempts already spent on the current step (at most 3). */
+  attempt: Scalars['Int']['output'];
+  brief?: Maybe<Scalars['String']['output']>;
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  examId?: Maybe<Scalars['ID']['output']>;
+  failureCode?: Maybe<Scalars['String']['output']>;
+  failureMessage?: Maybe<Scalars['String']['output']>;
+  fullTestId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  kind: GenerationKind;
+  /** What the model got wrong on its last attempt at the current step. */
+  lastProblems: Array<Scalars['String']['output']>;
+  requestedByName?: Maybe<Scalars['String']['output']>;
+  /** The request failed and may still be resumed from the step it stopped at. */
+  resumable: Scalars['Boolean']['output'];
+  /** How many times this request was picked up again after failing (at most 3). */
+  resumeCount: Scalars['Int']['output'];
+  status: GenerationStatus;
+  /** The step running, or where the request stopped. */
+  step?: Maybe<Scalars['String']['output']>;
+  stepIndex: Scalars['Int']['output'];
+  stepsTotal: Scalars['Int']['output'];
+  taskIds: Array<Scalars['ID']['output']>;
+  /** The set's title once the plan is written. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type GenerationRequestPage = {
+  __typename?: 'GenerationRequestPage';
+  items: Array<GenerationRequest>;
+  page: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum GenerationStatus {
+  /** The drafts are waiting for review. */
+  COMPLETED = 'COMPLETED',
+  /** Stopped at a step; failureCode and failureMessage say why. */
+  FAILED = 'FAILED',
+  QUEUED = 'QUEUED',
+  RUNNING = 'RUNNING'
+}
+
+export enum LearnerAttemptStatus {
+  COMPLETED = 'COMPLETED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOT_STARTED = 'NOT_STARTED'
+}
+
+export type LearnerExamItem = {
+  __typename?: 'LearnerExamItem';
+  attemptStatus: LearnerAttemptStatus;
+  /** Per learner. Null until they have finished a sitting. */
+  bestScorePercentage?: Maybe<Scalars['Float']['output']>;
+  certificateType?: Maybe<CertificateType>;
+  certificateVariant?: Maybe<CertificateVariant>;
+  description: Scalars['String']['output'];
+  durationSeconds: Scalars['Int']['output'];
+  examType: ExamType;
+  id: Scalars['ID']['output'];
+  maxRawScore: Scalars['Float']['output'];
+  passScore?: Maybe<Scalars['Float']['output']>;
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
+  questionCount: Scalars['Int']['output'];
+  status: ExamStatus;
+  targetLevel?: Maybe<TargetLevel>;
+  title: Scalars['String']['output'];
+};
+
+export type LearnerExamPage = {
+  __typename?: 'LearnerExamPage';
+  items: Array<LearnerExamItem>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type LearnerSearchPage = {
+  __typename?: 'LearnerSearchPage';
+  items: Array<LearnerSearchResult>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type LearnerSearchResult = {
+  __typename?: 'LearnerSearchResult';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  relationship: RelationshipStatus;
+  /**
+   * Set only when the learner has asked the viewer (REQUEST_RECEIVED): the
+   * id to accept or decline.
+   */
+  requestId?: Maybe<Scalars['ID']['output']>;
+  userId: Scalars['ID']['output'];
+};
+
+export type LearningGoalInput = {
+  certificateType: TargetCertificate;
+  /**
+   * Minutes a day the learner means to study, 10-240. The roadmap plans each
+   * week within it.
+   */
+  dailyStudyMinutes?: InputMaybe<Scalars['Int']['input']>;
+  targetDate?: InputMaybe<Scalars['Date']['input']>;
+  /**
+   * Only a learner without a certificate goal may send this, and it must be
+   * above their current level (TARGET_LEVEL_NOT_ABOVE_CURRENT otherwise).
+   */
+  targetLevel?: InputMaybe<CefrLevel>;
+  /** Only a certificate learner may send this - the backend refuses it otherwise. */
+  targetScore?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type LearningPurpose = {
+  __typename?: 'LearningPurpose';
+  displayName: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  purposeCode: Scalars['String']['output'];
+};
+
+export enum LearningSkill {
+  GRAMMAR = 'GRAMMAR',
+  LISTENING = 'LISTENING',
+  PRONUNCIATION = 'PRONUNCIATION',
+  READING = 'READING',
+  SPEAKING = 'SPEAKING',
+  VOCABULARY = 'VOCABULARY',
+  WRITING = 'WRITING'
+}
+
+export type LevelCheck = {
+  __typename?: 'LevelCheck';
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  examAttemptId?: Maybe<Scalars['ID']['output']>;
+  /** The paper to sit (vocabulary/grammar and listening), through the exam screens. */
+  examId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  listeningLevel?: Maybe<CefrLevel>;
+  milestoneId?: Maybe<Scalars['ID']['output']>;
+  /** The band from the written parts alone while the spoken part is outstanding. */
+  provisionalLevel?: Maybe<CefrLevel>;
+  purpose: LevelCheckPurpose;
+  resultLevel?: Maybe<CefrLevel>;
+  speakingAttemptId?: Maybe<Scalars['ID']['output']>;
+  /** The spoken answer could not be graded; answer again or skip it. */
+  speakingFailed: Scalars['Boolean']['output'];
+  speakingLevel?: Maybe<CefrLevel>;
+  speakingSkipped: Scalars['Boolean']['output'];
+  /** The spoken task to answer; null when none is published. */
+  speakingTaskId?: Maybe<Scalars['ID']['output']>;
+  status: LevelCheckStatus;
+  vocabLevel?: Maybe<CefrLevel>;
+};
+
+export enum LevelCheckPurpose {
+  /** The test closing a stage of a level roadmap. */
+  MILESTONE = 'MILESTONE',
+  /** The starting level of a learner without a certificate goal. */
+  ONBOARDING = 'ONBOARDING'
+}
+
+export enum LevelCheckStatus {
+  /** The paper is scored; the spoken answer is not graded yet, or not given. */
+  AWAITING_SPEAKING = 'AWAITING_SPEAKING',
+  COMPLETED = 'COMPLETED',
+  /** The paper is not scored yet. */
+  IN_PROGRESS = 'IN_PROGRESS'
+}
+
+export type LevelCheckWeightChange = {
+  __typename?: 'LevelCheckWeightChange';
+  /** Who set it; null for the seeded defaults. */
+  changedBy?: Maybe<Scalars['String']['output']>;
+  effectiveFrom: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  listening: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  purposeCode: Scalars['String']['output'];
+  speaking: Scalars['Int']['output'];
+  vocabulary: Scalars['Int']['output'];
+};
+
+export type LevelCheckWeightInput = {
+  listening: Scalars['Int']['input'];
+  /** Among a learner's purposes, the highest priority decides. 0-100. */
+  priority: Scalars['Int']['input'];
+  purposeCode: Scalars['String']['input'];
+  speaking: Scalars['Int']['input'];
+  vocabulary: Scalars['Int']['input'];
+};
+
+export type LevelCheckWeightPurpose = {
+  __typename?: 'LevelCheckWeightPurpose';
+  /** The purpose's name as learners see it; null for DEFAULT. */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** The purpose's own weights in force now; null when it falls back to DEFAULT. */
+  inForce?: Maybe<LevelCheckWeightChange>;
+  /** DEFAULT, or a learning purpose code. */
+  purposeCode: Scalars['String']['output'];
+};
+
+export type LevelCheckWeights = {
+  __typename?: 'LevelCheckWeights';
+  /** The latest changes, newest first. */
+  history: Array<LevelCheckWeightChange>;
+  purposes: Array<LevelCheckWeightPurpose>;
+};
+
+export type Me = {
+  __typename?: 'Me';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  bannerUrl?: Maybe<Scalars['String']['output']>;
+  birthDate?: Maybe<Scalars['Date']['output']>;
+  displayName: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  fullName: Scalars['String']['output'];
+  gender?: Maybe<Gender>;
+  id: Scalars['ID']['output'];
+  onboardingState?: Maybe<OnboardingState>;
+  onboardingStep: OnboardingStep;
+  role: Role;
+};
+
+export enum MilestoneKind {
+  /** Sit examId (or, for IELTS, the full test fullTestId) and reach requiredScore on the certificate scale. */
+  CERTIFICATE_MOCK = 'CERTIFICATE_MOCK',
+  /** Take a level check and reach requiredLevel. */
+  LEVEL_CHECK = 'LEVEL_CHECK'
+}
+
+export enum MilestoneStatus {
+  /** The last attempt fell short; it can be taken again. */
+  FAILED = 'FAILED',
+  PASSED = 'PASSED',
+  PENDING = 'PENDING'
+}
+
+/**
+ * One line to practise again.
+ *
+ * No transcript, like DictationSentence. It used to carry one - every row is a
+ * line the learner has already answered - but the screen then graded in the
+ * browser and never told the server, so reviewed lines were never recorded and
+ * came back on the next visit. Review now submits like practice does, and the
+ * answer arrives in that response, after one has been committed.
+ */
+export type MistakeSentence = {
+  __typename?: 'MistakeSentence';
+  attemptCount: Scalars['Int']['output'];
+  audioDurationSeconds: Scalars['Int']['output'];
+  audioEndMs?: Maybe<Scalars['Int']['output']>;
+  /** Where the line sits inside audioUrl, for a lesson cut from one passage. */
+  audioStartMs?: Maybe<Scalars['Int']['output']>;
+  /** Pre-signed and short-lived. */
+  audioUrl: Scalars['String']['output'];
+  /** Their best attempt so far - the reason this line is still in the queue. */
+  bestAccuracyPercent: Scalars['Int']['output'];
+  /** The last thing they typed, so the screen can show what changed. */
+  lastResponse?: Maybe<Scalars['String']['output']>;
+  lessonId: Scalars['ID']['output'];
+  lessonTitle: Scalars['String']['output'];
+  sentenceId: Scalars['ID']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['Boolean']['output']>;
+  abandonRoadmap: Scalars['Boolean']['output'];
+  acceptFriendRequest: FriendRequestOutcome;
+  /**
+   * Staff and Admin. Answers with the content as it is afterwards. Refused for
+   * content the moderator wrote (BLOG_MODERATION_OWN_CONTENT).
+   */
+  adminModerateBlog: BlogModerationTarget;
+  /**
+   * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in the
+   * same step - there is no approved-but-unpublished state.
+   */
+  approveContent: ContentReview;
+  /**
+   * PENDING_REVIEW -> PUBLISHED, administrators only. Approving publishes in
+   * the same step - there is no approved-but-unpublished state.
+   */
+  approveExam: Exam;
+  /** PENDING_REVIEW -> PUBLISHED, administrators only. */
+  approveFullTest: FullTest;
+  /** Anything -> ARCHIVED. Administrators only. There is no delete. */
+  archiveContent: ContentReview;
+  /**
+   * DRAFT or PUBLISHED -> ARCHIVED. There is no delete; archiving is the
+   * retirement path. Archiving an already-archived paper fails with
+   * extensions.backendCode: EXAM_ALREADY_ARCHIVED.
+   */
+  archiveExam: Exam;
+  archiveFullTest: FullTest;
+  archiveTutorConversation: TutorConversationSummary;
+  assignAssessment: AssessmentAssignment;
+  attachLevelCheckExamAttempt: LevelCheck;
+  attachLevelCheckSpeakingAttempt: LevelCheck;
+  blockUser: Scalars['Boolean']['output'];
+  branchTutorConversation: TutorConversation;
+  cancelTutorReply: TutorMessage;
+  /**
+   * A mutation, not a query: every call makes a new single-use ticket, which
+   * must never be served from a cache.
+   */
+  chatSocketTicket: ChatSocketTicket;
+  /**
+   * Wears one of the preset pictures. Refused with extensions.backendCode
+   * AVATAR_PRESET_UNKNOWN for an id that names none.
+   */
+  chooseAvatar: Me;
+  clearTutorMemory: Scalars['Boolean']['output'];
+  completeMyTour: UserTourStatus;
+  /**
+   * Final step. Refuses with ONBOARDING_PURPOSE_REQUIRED,
+   * ONBOARDING_LEVEL_REQUIRED or ONBOARDING_CERTIFICATE_TARGET_REQUIRED when an
+   * earlier step is missing.
+   */
+  completeOnboarding: OnboardingState;
+  createAssessmentTask: AssessmentTask;
+  createBlogComment: BlogComment;
+  createBlogPost: BlogPost;
+  /**
+   * A plan for the learner's current goal. The same goal returns the same plan;
+   * a changed score, level or date adjusts it; a different goal replaces it.
+   * Refuses with ROADMAP_LEVEL_UNKNOWN or ROADMAP_GOAL_INCOMPLETE before
+   * onboarding has a level and a goal, ROADMAP_NO_CONTENT when nothing is
+   * published to plan with, and ROADMAP_DAILY_LIMIT after five a day.
+   */
+  createRoadmap: Roadmap;
+  createTutorResource: TutorResource;
+  deleteBlogComment: Scalars['Boolean']['output'];
+  deleteBlogPost: Scalars['Boolean']['output'];
+  editAssessmentTask: AssessmentTask;
+  gradeAssessment: AssessmentAttempt;
+  /**
+   * The browser is still on a full sitting. Returns whether the sitting is still
+   * open: a sitting nobody has reported on for a couple of minutes is ended by
+   * the backend, and a screen that was away learns that here.
+   */
+  heartbeatExamAttempt: Scalars['Boolean']['output'];
+  likeBlogPost: BlogLikeState;
+  markChatRead: Scalars['Boolean']['output'];
+  /** Opens the conversation with a friend, or returns the one they already have. */
+  openChat: ChatConversation;
+  /** DRAFT -> PUBLISHED, skipping review. Administrators only. */
+  publishContent: ContentReview;
+  /**
+   * DRAFT -> PUBLISHED. The backend refuses a paper that is not a draft, has
+   * no section or question, whose section scores do not total maxRawScore, or
+   * that has an ungradeable question - the reason arrives as
+   * extensions.backendCode on the error (e.g. EXAM_SCORE_MISMATCH).
+   */
+  publishExam: Exam;
+  /**
+   * Records one answer and returns where the card now sits. Creates the review
+   * row on first sight, so browsing a set costs nothing until it is studied.
+   */
+  rateFlashcard: FlashcardReview;
+  readAssessmentResult: Scalars['Boolean']['output'];
+  /** Only the sender, once. Fails with CHAT_MESSAGE_ALREADY_RECALLED the second time. */
+  recallChatMessage: ChatMessage;
+  /** A finished sitting of the current stage's mock paper. */
+  recordMilestoneSitting: Roadmap;
+  regenerateTutorReply: TutorConversation;
+  /**
+   * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
+   * backend refuses a blank one with REVIEW_NOTE_REQUIRED, because "rejected"
+   * alone leaves the author nothing to change.
+   */
+  rejectContent: ContentReview;
+  /**
+   * PENDING_REVIEW -> REJECTED, administrators only. The note is required: the
+   * backend refuses a blank one with EXAM_REVIEW_NOTE_REQUIRED, because
+   * "rejected" alone leaves the author nothing to change.
+   */
+  rejectExam: Exam;
+  /** PENDING_REVIEW -> REJECTED, administrators only; the note is required. */
+  rejectFullTest: FullTest;
+  /** Drops a Writing Task 1's chart while the task is still a draft or rejected. */
+  removeAssessmentTaskImage: AssessmentTask;
+  renameTutorConversation: TutorConversationSummary;
+  reportBlogComment: BlogReport;
+  /**
+   * Reporting again while the viewer's own report of it is open answers with that
+   * report.
+   */
+  reportBlogPost: BlogReport;
+  /** Reports an answer as wrong or inappropriate. The note is optional. */
+  reportTutorMessage: TutorMessage;
+  requestAssessmentReview: AssessmentAttempt;
+  /**
+   * Starts a request for the signed-in staff member or administrator. Refused
+   * with extensions.backendCode GENERATION_DAILY_LIMIT or
+   * GENERATION_IN_PROGRESS.
+   */
+  requestGeneration: GenerationRequest;
+  /**
+   * ARCHIVED -> back where it was: PUBLISHED if it had been published (it is
+   * never edited, so it needs no second review), DRAFT otherwise.
+   * Administrators only. Anything not archived fails with
+   * extensions.backendCode: <KIND>_NOT_ARCHIVED.
+   */
+  restoreContent: ContentReview;
+  /**
+   * ARCHIVED -> PUBLISHED if the paper had been published, DRAFT otherwise.
+   * Administrators only; anything not archived fails with
+   * extensions.backendCode: EXAM_NOT_ARCHIVED.
+   */
+  restoreExam: Exam;
+  restoreTutorConversation: TutorConversationSummary;
+  /**
+   * Picks a failed request up again at the step it stopped at, keeping what the
+   * model already wrote. Runs as the person who asked for it, so their limits
+   * apply. Refused with extensions.backendCode GENERATION_NOT_RESUMABLE,
+   * GENERATION_RESUME_LIMIT (three resumes), GENERATION_IN_PROGRESS or
+   * GENERATION_DAILY_LIMIT.
+   */
+  resumeGeneration: GenerationRequest;
+  retryAssessment: AssessmentAttempt;
+  retryTutorReply: TutorConversation;
+  reviewTutorReport: TutorReport;
+  reviewTutorResource: TutorResource;
+  saveAssessmentDraft: AssessmentAttempt;
+  saveBlogPost: BlogSaveState;
+  saveExamDraft: ExamDraft;
+  /** Creates a draft when id is omitted. Components are checked at review. */
+  saveFullTest: FullTest;
+  /**
+   * Records the purposes and advances the step. Which step comes next is the
+   * backend's decision: a learner who picked the certificate purpose goes to
+   * CERTIFICATE_TARGET, everyone else skips straight to CURRENT_LEVEL. Read the
+   * new step from the result's step rather than assuming either branch.
+   */
+  selectLearningPurposes: OnboardingState;
+  /**
+   * An empty list means "I don't know yet" and is allowed. This does not
+   * advance the step - the backend leaves the learner on TARGET_SKILLS until
+   * completeOnboarding is called.
+   */
+  selectTargetSkills: OnboardingState;
+  selectTutorReply: TutorConversation;
+  /**
+   * Sends a message. clientId is chosen by the caller for each message and kept
+   * when it retries, so a retry returns the first message instead of sending a
+   * second. At least one of body and imageUploadId is needed.
+   */
+  sendChatMessage: ChatMessage;
+  sendFriendRequest: FriendRequestOutcome;
+  /**
+   * Sends a question. Omit conversationId to start a new thread - whether one
+   * already exists is not the learner's concern.
+   */
+  sendTutorMessage: TutorConversation;
+  /**
+   * Only valid for a certificate learner - the backend answers
+   * extensions.backendCode: CERTIFICATE_TARGET_NOT_APPLICABLE for anyone else.
+   */
+  setCertificateTarget: OnboardingState;
+  /**
+   * Non-null on purpose: the backend accepts a null level only to route the
+   * learner into a placement test or levelling quiz, and neither exists yet, so
+   * it answers PLACEMENT_NOT_AVAILABLE / QUIZ_NOT_AVAILABLE. Offering the field
+   * as nullable here would advertise a path that always fails.
+   */
+  setCurrentLevel: OnboardingState;
+  /** Refuses with ONBOARDING_LEVEL_REQUIRED until the level step is done. */
+  setLearningGoal: OnboardingState;
+  /**
+   * New weights for one purpose, in force from now; checks already completed
+   * keep theirs. Refuses with LEVEL_CHECK_WEIGHTS_INVALID unless the three add
+   * up to 100 with something on the written side, and LEVEL_CHECK_PURPOSE_UNKNOWN
+   * for a purpose that does not exist. Administrator only.
+   */
+  setLevelCheckWeight: LevelCheckWeights;
+  skipLevelCheckSpeaking: LevelCheck;
+  startAssessment: AssessmentUpload;
+  startBlogImageUpload: BlogImageUpload;
+  startChatImageUpload: ChatImageUpload;
+  /**
+   * Opens an attempt, or returns the one already open with resumed: true. The
+   * backend enforces one live attempt per learner, exam and mode, so calling this
+   * twice does not create two.
+   */
+  startExamAttempt: ExamAttempt;
+  /**
+   * Starts a sitting, or returns the one still open. Refused with
+   * extensions.backendCode FULL_TEST_IELTS_ONLY for a learner not preparing
+   * for IELTS.
+   */
+  startFullTest: FullTestSitting;
+  startFullTestAssessment: FullTestPartStart;
+  startFullTestPaper: ExamAttempt;
+  /** Starts a check, or returns the one already open for the same purpose. */
+  startLevelCheck: LevelCheck;
+  /**
+   * Opens an attempt, or returns the one already open with resumed: true. The
+   * backend enforces one live attempt per learner and quiz.
+   */
+  startQuizAttempt: QuizAttempt;
+  /**
+   * Opens an attempt and returns somewhere to PUT the recording. The format is
+   * checked now rather than at assessment time, so an unusable one is refused
+   * before the learner records anything.
+   */
+  startSpeakingAttempt: SpeakingUploadTicket;
+  submitAssessment: AssessmentAttempt;
+  /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators. Held
+   * to the publication rules at this end too, so a reviewer is never handed an
+   * empty set: the refusal arrives as extensions.backendCode.
+   */
+  submitContentForReview: ContentReview;
+  /**
+   * Marks one transcription and returns the correct text with it. An empty
+   * answer is a real answer - it scores zero rather than being rejected.
+   */
+  submitDictation: DictationSubmission;
+  /**
+   * Submits and scores in one step. The backend rejects a submission after
+   * expiresAt, which is why the client must never decide expiry itself.
+   */
+  submitExamAttempt: ExamAttempt;
+  /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Staff as well as administrators may
+   * call it. Held to the publication rules at this end too, so a reviewer is
+   * never handed a paper with no questions: the refusal arrives as
+   * extensions.backendCode (e.g. EXAM_HAS_NO_QUESTION).
+   */
+  submitExamForReview: Exam;
+  /**
+   * DRAFT or REJECTED -> PENDING_REVIEW. Refused with FULL_TEST_PAPER_INVALID,
+   * FULL_TEST_TASK_INVALID or FULL_TEST_TASK1_NEEDS_CHART when a component is
+   * not a published IELTS one of the right kind.
+   */
+  submitFullTestForReview: FullTest;
+  /**
+   * Submits and scores in one step. A question left out is marked wrong rather
+   * than skipped, so the percentage means what it says.
+   */
+  submitQuizAttempt: QuizAttempt;
+  /**
+   * The upload is done; queue the assessment. Refused with
+   * extensions.backendCode SPEAKING_RECORDING_MISSING if the recording is not
+   * actually in storage.
+   */
+  submitSpeakingAttempt: SpeakingAttempt;
+  /**
+   * Records the translation and queues its grading. Refused with
+   * extensions.backendCode TRANSLATION_DAILY_LIMIT_REACHED once today's AI
+   * allowance is spent.
+   */
+  submitTranslation: TranslationAttempt;
+  summarizeTutorConversation: TutorConversation;
+  transitionAssessmentTask: AssessmentTask;
+  unblockUser: Scalars['Boolean']['output'];
+  unfriend: Scalars['Boolean']['output'];
+  unlikeBlogPost: BlogLikeState;
+  unsaveBlogPost: BlogSaveState;
+  updateBlogComment: BlogComment;
+  /**
+   * version is the one the post had when it was opened. A post that changed since
+   * is refused with extensions.backendCode BLOG_POST_STALE.
+   */
+  updateBlogPost: BlogPost;
+  updateProfile: Me;
+  updateTutorPolicy: TutorPolicy;
+  updateTutorResource: TutorResource;
+  /** Declines a request sent to the viewer, or cancels one the viewer sent. */
+  withdrawFriendRequest: Scalars['Boolean']['output'];
+};
+
+
+export type MutationAcceptFriendRequestArgs = {
+  requestId: Scalars['ID']['input'];
+};
+
+
+export type MutationAdminModerateBlogArgs = {
+  action: BlogModerationAction;
+  id: Scalars['ID']['input'];
+  reason: Scalars['String']['input'];
+  type: BlogTargetType;
+};
+
+
+export type MutationApproveContentArgs = {
+  id: Scalars['ID']['input'];
+  kind: ContentKind;
+};
+
+
+export type MutationApproveExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationApproveFullTestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationArchiveContentArgs = {
+  id: Scalars['ID']['input'];
+  kind: ContentKind;
+};
+
+
+export type MutationArchiveExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationArchiveFullTestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationArchiveTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAssignAssessmentArgs = {
+  id: Scalars['ID']['input'];
+  note: Scalars['String']['input'];
+  reviewerId?: InputMaybe<Scalars['ID']['input']>;
+  version: Scalars['Int']['input'];
+};
+
+
+export type MutationAttachLevelCheckExamAttemptArgs = {
+  attemptId: Scalars['ID']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAttachLevelCheckSpeakingAttemptArgs = {
+  attemptId: Scalars['ID']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationBlockUserArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationBranchTutorConversationArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  message: Scalars['String']['input'];
+  messageId: Scalars['ID']['input'];
+  personalized?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type MutationCancelTutorReplyArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationChooseAvatarArgs = {
+  preset: Scalars['ID']['input'];
+};
+
+
+export type MutationClearTutorMemoryArgs = {
+  conversationId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateAssessmentTaskArgs = {
+  input: AssessmentTaskInput;
+};
+
+
+export type MutationCreateBlogCommentArgs = {
+  body: Scalars['String']['input'];
+  postId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateBlogPostArgs = {
+  input: SaveBlogPostInput;
+};
+
+
+export type MutationCreateTutorResourceArgs = {
+  input: TutorResourceInput;
+};
+
+
+export type MutationDeleteBlogCommentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationEditAssessmentTaskArgs = {
+  id: Scalars['ID']['input'];
+  input: AssessmentTaskInput;
+  version: Scalars['Int']['input'];
+};
+
+
+export type MutationGradeAssessmentArgs = {
+  id: Scalars['ID']['input'];
+  note: Scalars['String']['input'];
+  report: Scalars['String']['input'];
+  transcript?: InputMaybe<Scalars['String']['input']>;
+  version: Scalars['Int']['input'];
+};
+
+
+export type MutationHeartbeatExamAttemptArgs = {
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type MutationLikeBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationMarkChatReadArgs = {
+  conversationId: Scalars['ID']['input'];
+  upToSeq: Scalars['Float']['input'];
+};
+
+
+export type MutationOpenChatArgs = {
+  friendId: Scalars['ID']['input'];
+};
+
+
+export type MutationPublishContentArgs = {
+  id: Scalars['ID']['input'];
+  kind: ContentKind;
+};
+
+
+export type MutationPublishExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRateFlashcardArgs = {
+  flashcardId: Scalars['ID']['input'];
+  rating: ReviewRating;
+  timeSpentSeconds: Scalars['Int']['input'];
+};
+
+
+export type MutationReadAssessmentResultArgs = {
+  id: Scalars['ID']['input'];
+  version: Scalars['Int']['input'];
+};
+
+
+export type MutationRecallChatMessageArgs = {
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationRecordMilestoneSittingArgs = {
+  examAttemptId: Scalars['ID']['input'];
+  milestoneId: Scalars['ID']['input'];
+};
+
+
+export type MutationRegenerateTutorReplyArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationRejectContentArgs = {
+  id: Scalars['ID']['input'];
+  kind: ContentKind;
+  note: Scalars['String']['input'];
+};
+
+
+export type MutationRejectExamArgs = {
+  id: Scalars['ID']['input'];
+  note: Scalars['String']['input'];
+};
+
+
+export type MutationRejectFullTestArgs = {
+  id: Scalars['ID']['input'];
+  note: Scalars['String']['input'];
+};
+
+
+export type MutationRemoveAssessmentTaskImageArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRenameTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationReportBlogCommentArgs = {
+  detail?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  reason: BlogReportReason;
+};
+
+
+export type MutationReportBlogPostArgs = {
+  detail?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  reason: BlogReportReason;
+};
+
+
+export type MutationReportTutorMessageArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+  note?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationRequestAssessmentReviewArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRequestGenerationArgs = {
+  brief?: InputMaybe<Scalars['String']['input']>;
+  kind: GenerationKind;
+};
+
+
+export type MutationRestoreContentArgs = {
+  id: Scalars['ID']['input'];
+  kind: ContentKind;
+};
+
+
+export type MutationRestoreExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRestoreTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationResumeGenerationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRetryAssessmentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRetryTutorReplyArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type MutationReviewTutorReportArgs = {
+  id: Scalars['ID']['input'];
+  input: TutorReviewInput;
+};
+
+
+export type MutationReviewTutorResourceArgs = {
+  id: Scalars['ID']['input'];
+  input: TutorReviewInput;
+};
+
+
+export type MutationSaveAssessmentDraftArgs = {
+  answerText: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  version: Scalars['Int']['input'];
+};
+
+
+export type MutationSaveBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSaveExamDraftArgs = {
+  answers: Array<SubmitAnswerInput>;
+  attemptId: Scalars['ID']['input'];
+  version: Scalars['Int']['input'];
+};
+
+
+export type MutationSaveFullTestArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  input: SaveFullTestInput;
+};
+
+
+export type MutationSelectLearningPurposesArgs = {
+  purposeIds: Array<Scalars['Int']['input']>;
+};
+
+
+export type MutationSelectTargetSkillsArgs = {
+  skills: Array<LearningSkill>;
+};
+
+
+export type MutationSelectTutorReplyArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+  revision: Scalars['Int']['input'];
+};
+
+
+export type MutationSendChatMessageArgs = {
+  body?: InputMaybe<Scalars['String']['input']>;
+  clientId: Scalars['String']['input'];
+  conversationId: Scalars['ID']['input'];
+  imageUploadId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationSendFriendRequestArgs = {
+  addresseeId: Scalars['ID']['input'];
+};
+
+
+export type MutationSendTutorMessageArgs = {
+  assessmentAttemptId?: InputMaybe<Scalars['ID']['input']>;
+  clientMessageId?: InputMaybe<Scalars['ID']['input']>;
+  conversationId?: InputMaybe<Scalars['ID']['input']>;
+  examAttemptId?: InputMaybe<Scalars['ID']['input']>;
+  examQuestionId?: InputMaybe<Scalars['ID']['input']>;
+  message: Scalars['String']['input'];
+  mode?: InputMaybe<Scalars['String']['input']>;
+  personalized?: InputMaybe<Scalars['Boolean']['input']>;
+  quizAttemptId?: InputMaybe<Scalars['ID']['input']>;
+  quizQuestionId?: InputMaybe<Scalars['ID']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationSetCertificateTargetArgs = {
+  certificateType: TargetCertificate;
+};
+
+
+export type MutationSetCurrentLevelArgs = {
+  level: CefrLevel;
+};
+
+
+export type MutationSetLearningGoalArgs = {
+  input: LearningGoalInput;
+};
+
+
+export type MutationSetLevelCheckWeightArgs = {
+  input: LevelCheckWeightInput;
+};
+
+
+export type MutationSkipLevelCheckSpeakingArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationStartAssessmentArgs = {
+  clientKey: Scalars['ID']['input'];
+  contentLength?: InputMaybe<Scalars['Int']['input']>;
+  contentType?: InputMaybe<Scalars['String']['input']>;
+  taskId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartBlogImageUploadArgs = {
+  contentLength: Scalars['Int']['input'];
+  contentType: Scalars['String']['input'];
+};
+
+
+export type MutationStartChatImageUploadArgs = {
+  contentLength: Scalars['Int']['input'];
+  contentType: Scalars['String']['input'];
+  conversationId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartExamAttemptArgs = {
+  examId: Scalars['ID']['input'];
+  input?: InputMaybe<StartExamAttemptInput>;
+};
+
+
+export type MutationStartFullTestArgs = {
+  fullTestId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartFullTestAssessmentArgs = {
+  contentLength?: InputMaybe<Scalars['Int']['input']>;
+  contentType?: InputMaybe<Scalars['String']['input']>;
+  sittingId: Scalars['ID']['input'];
+  slot: FullTestSlot;
+  taskId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartFullTestPaperArgs = {
+  onOpen?: InputMaybe<OpenAttemptChoice>;
+  sittingId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartLevelCheckArgs = {
+  milestoneId?: InputMaybe<Scalars['ID']['input']>;
+  purpose: LevelCheckPurpose;
+};
+
+
+export type MutationStartQuizAttemptArgs = {
+  quizId: Scalars['ID']['input'];
+};
+
+
+export type MutationStartSpeakingAttemptArgs = {
+  contentLength: Scalars['Int']['input'];
+  contentType: Scalars['String']['input'];
+  promptId: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitAssessmentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitContentForReviewArgs = {
+  id: Scalars['ID']['input'];
+  kind: ContentKind;
+};
+
+
+export type MutationSubmitDictationArgs = {
+  response: Scalars['String']['input'];
+  sentenceId: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitExamAttemptArgs = {
+  answers: Array<SubmitAnswerInput>;
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitExamForReviewArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitFullTestForReviewArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitQuizAttemptArgs = {
+  answers: Array<QuizAnswerInput>;
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitSpeakingAttemptArgs = {
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type MutationSubmitTranslationArgs = {
+  itemId: Scalars['ID']['input'];
+  response: Scalars['String']['input'];
+};
+
+
+export type MutationSummarizeTutorConversationArgs = {
+  clientMessageId: Scalars['ID']['input'];
+  conversationId: Scalars['ID']['input'];
+};
+
+
+export type MutationTransitionAssessmentTaskArgs = {
+  action: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  note?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationUnblockUserArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationUnfriendArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationUnlikeBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationUnsaveBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateBlogCommentArgs = {
+  body: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateBlogPostArgs = {
+  id: Scalars['ID']['input'];
+  input: SaveBlogPostInput;
+  version: Scalars['Float']['input'];
+};
+
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateProfileInput;
+};
+
+
+export type MutationUpdateTutorPolicyArgs = {
+  input: TutorPolicyInput;
+};
+
+
+export type MutationUpdateTutorResourceArgs = {
+  id: Scalars['ID']['input'];
+  input: TutorResourceInput;
+};
+
+
+export type MutationWithdrawFriendRequestArgs = {
+  requestId: Scalars['ID']['input'];
+};
+
+export type OnboardingState = {
+  __typename?: 'OnboardingState';
+  certificateLearner: Scalars['Boolean']['output'];
+  currentLevel?: Maybe<CefrLevel>;
+  dailyStudyMinutes?: Maybe<Scalars['Int']['output']>;
+  learningPurposeIds: Array<Scalars['Int']['output']>;
+  /**
+   * The placement attempt the current level was measured by. Null when the
+   * learner chose their level themselves or has not taken the test.
+   */
+  placementAttemptId?: Maybe<Scalars['ID']['output']>;
+  /**
+   * The step after this write. Every onboarding write answers with it, so the
+   * client can move to the next screen without reading Me again.
+   */
+  step: OnboardingStep;
+  targetCertificateType?: Maybe<Scalars['String']['output']>;
+  targetDate?: Maybe<Scalars['Date']['output']>;
+  /** The CEFR level a learner without a certificate goal is aiming for. */
+  targetLevel?: Maybe<CefrLevel>;
+  targetScore?: Maybe<Scalars['Float']['output']>;
+  targetSkills: Array<LearningSkill>;
+};
+
+export enum OnboardingStep {
+  CERTIFICATE_TARGET = 'CERTIFICATE_TARGET',
+  COMPLETED = 'COMPLETED',
+  CURRENT_LEVEL = 'CURRENT_LEVEL',
+  LEARNING_GOAL = 'LEARNING_GOAL',
+  LEARNING_PURPOSES = 'LEARNING_PURPOSES',
+  TARGET_SKILLS = 'TARGET_SKILLS'
+}
+
+/** What to do when another attempt at this exam is already open. */
+export enum OpenAttemptChoice {
+  /** Finalize the open attempt from its saved answers, then start the new one. */
+  REPLACE = 'REPLACE',
+  /** Keep the open attempt and return it. */
+  RESUME = 'RESUME'
+}
+
+export type OverviewContentCounts = {
+  __typename?: 'OverviewContentCounts';
+  drafts: Scalars['Int']['output'];
+  kind: OverviewContentKind;
+  pendingReview: Scalars['Int']['output'];
+  published: Scalars['Int']['output'];
+};
+
+/** Everything the overview counts: the four kinds of authored content, and exams. */
+export enum OverviewContentKind {
+  DICTATION_LESSON = 'DICTATION_LESSON',
+  EXAM = 'EXAM',
+  FLASHCARD_SET = 'FLASHCARD_SET',
+  QUIZ = 'QUIZ',
+  SPEAKING_ASSESSMENT = 'SPEAKING_ASSESSMENT',
+  SPEAKING_PROMPT = 'SPEAKING_PROMPT',
+  WRITING_ASSESSMENT = 'WRITING_ASSESSMENT'
+}
+
+/**
+ * What anyone may see of an account on its wall. Deliberately nothing about
+ * level, goals or scores.
+ */
+export type PublicProfile = {
+  __typename?: 'PublicProfile';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  bannerUrl?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  joinedAt: Scalars['DateTime']['output'];
+  /** True for a staff or admin account: it has a wall but no friend actions. */
+  staff: Scalars['Boolean']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  activeExamAttempt?: Maybe<ExamAttempt>;
+  /** Staff and Admin. What moderators did, newest first. */
+  adminBlogActions: BlogModerationActionPage;
+  /**
+   * Staff and Admin. Content with open reports, one entry for each however many
+   * reports it has.
+   */
+  adminBlogQueue: BlogModerationQueuePage;
+  adminBlogTarget: BlogModerationTarget;
+  /**
+   * The authoring list for one kind of content, at every status. Omitting
+   * status asks for all of them, so this serves both the full list and the
+   * review queue. Staff and administrators only - the backend answers 403 to
+   * anyone else.
+   */
+  adminContent: ContentReviewPage;
+  /**
+   * Admin catalogue search - returns drafts and archived papers too, so the
+   * backend restricts it to ADMIN. Sorted newest first by the backend.
+   */
+  adminExams: ExamPage;
+  adminFullTest: FullTest;
+  adminFullTests: Array<FullTest>;
+  /** Staff and administrators only. */
+  adminOverview: AdminOverview;
+  assessmentAssignment: AssessmentAssignment;
+  assessmentAttempt: AssessmentAttempt;
+  assessmentCapabilities: AssessmentCapabilities;
+  assessmentHistory: AssessmentAttemptPage;
+  assessmentNotifications: AssessmentNotificationPage;
+  assessmentReviewers: Array<AssessmentReviewer>;
+  assessmentReviews: Array<AssessmentReview>;
+  assessmentSubmission: AssessmentAttempt;
+  assessmentSubmissions: AssessmentSubmissionPage;
+  assessmentTask: AssessmentTask;
+  assessmentTasks: AssessmentTaskPage;
+  assessmentWorkload: AssessmentWorkload;
+  /**
+   * The paper to sit, reachable only through an open attempt. There is no
+   * lookup by exam id: the answer key is stripped per attempt, and handing out
+   * a paper without one would mean handing it out unscoped.
+   */
+  attemptPaper: ExamPaper;
+  authoringAssessmentTask: AssessmentTask;
+  authoringAssessmentTasks: AssessmentTaskPage;
+  avatarPresets: Array<AvatarPreset>;
+  blockedUsers: BlockedUserPage;
+  /**
+   * Comments of a post, oldest first. The viewer's own hidden or removed ones are
+   * in the list, with their status.
+   */
+  blogComments: BlogCommentPage;
+  /**
+   * One post. A post that does not exist, is hidden from the viewer or is by
+   * someone they have a block with is the same BLOG_POST_NOT_FOUND.
+   */
+  blogPost: BlogPost;
+  /**
+   * Published posts. q searches titles and is refused with extensions.backendCode
+   * SEARCH_TERM_TOO_SHORT below the backend's minimum. skill, level and
+   * certificate are values from blogTagCatalogue and combine with AND. authorId
+   * lists one person's posts - the viewer's own include every status.
+   */
+  blogPosts: BlogPostPage;
+  /**
+   * The best posts for the viewer, best first: the same ones for the same data,
+   * nothing rotates. Fewer than limit (3 unless asked, at most 10) when fewer
+   * qualify, and an empty list when nothing does.
+   */
+  blogRecommendations: Array<BlogRecommendation>;
+  blogTagCatalogue: BlogTagCatalogue;
+  /**
+   * One conversation, with canSend. Fails with extensions.backendCode
+   * CHAT_CONVERSATION_NOT_FOUND when it does not exist or is not the caller's.
+   */
+  chatConversation: ChatConversation;
+  /** The caller's conversations that have a message, newest first. */
+  chatConversations: ChatConversationPage;
+  /**
+   * Messages in ascending seq order, at most 100. afterSeq catches up after a
+   * reconnect, beforeSeq scrolls back, neither gives the newest; giving both is
+   * refused (CHAT_HISTORY_CURSOR_CONFLICT).
+   */
+  chatMessages: Array<ChatMessage>;
+  /**
+   * How many conversations hold something unread - the badge, not a count of
+   * messages.
+   */
+  chatUnreadCount: Scalars['Int']['output'];
+  /**
+   * The learner's own plan for today: streak, points, roadmap and goals. Takes
+   * no argument because the only path anyone can read is their own.
+   */
+  dailyPath: DailyPath;
+  dictationLesson: DictationLessonDetail;
+  dictationLessons: DictationLessonPage;
+  /**
+   * Lines this learner keeps getting wrong, worst first, across every lesson.
+   * Not per lesson: "what do I keep getting wrong" is a question about the
+   * learner, and the worst ten in one lesson are usually not the ten worth
+   * practising.
+   */
+  dictationMistakes: Array<MistakeSentence>;
+  dictationStats: DictationStats;
+  /** Learner exam detail by id */
+  exam?: Maybe<LearnerExamItem>;
+  /**
+   * The scored attempt. Carries the answer key, so it is only worth reading
+   * once the attempt has left IN_PROGRESS.
+   */
+  examAttempt: ExamAttempt;
+  /**
+   * The learner's own sittings, newest first. Rows carry no review - that
+   * structure holds the answer key.
+   */
+  examAttempts: ExamAttemptPage;
+  examDraft: ExamDraft;
+  /**
+   * The paper's skills and parts with how many questions each holds - what a
+   * practice is picked from. No question content.
+   */
+  examOutline: ExamOutline;
+  /** Learner exam catalogue search - returns published exams. */
+  exams: LearnerExamPage;
+  flashcardCatalogueInfo: FlashcardCatalogueInfo;
+  flashcardSet: FlashcardSetDetail;
+  flashcardSetSummary: FlashcardSet;
+  flashcardSets: FlashcardSetPage;
+  /**
+   * Everything the statistics screen shows, in one call. Six round trips to
+   * draw one page is the problem a BFF exists to avoid.
+   */
+  flashcardStats: FlashcardStats;
+  /**
+   * What to study now: cards that are due, then unseen ones to fill the
+   * session. The ordering is the backend's - a card about to be forgotten is
+   * worth more than a new one, and reordering here would undo the schedule.
+   */
+  flashcardStudyQueue: Array<Flashcard>;
+  friends: FriendPage;
+  /** Brought up to date with every part graded so far. */
+  fullTestSitting: FullTestSitting;
+  /** Published full tests, newest first. */
+  fullTests: Array<FullTest>;
+  generationAllowance: GenerationAllowance;
+  generationRequest: GenerationRequest;
+  generationRequests: GenerationRequestPage;
+  health: Scalars['String']['output'];
+  incomingFriendRequestCount: Scalars['Int']['output'];
+  incomingFriendRequests: FriendRequestPage;
+  /** The learner's most recent level check, or null. */
+  latestLevelCheck?: Maybe<LevelCheck>;
+  learningPurposes: Array<LearningPurpose>;
+  /** Reading a check picks up any grade that arrived since the last look. */
+  levelCheck: LevelCheck;
+  /**
+   * How the level check's parts are weighted, by learning purpose.
+   * Administrator only (FORBIDDEN otherwise).
+   */
+  levelCheckWeights: LevelCheckWeights;
+  me: Me;
+  myFullTestSittings: Array<FullTestSitting>;
+  myTourStatus: UserTourStatus;
+  outgoingFriendRequests: FriendRequestPage;
+  /**
+   * The placement paper, for a learner who does not know their level. Errors
+   * with NOT_FOUND when the deployment has no published placement exam, which
+   * is a normal state rather than a fault.
+   */
+  placementExam: LearnerExamItem;
+  /** The scored attempt. Carries the answer key, so only worth reading once scored. */
+  quizAttempt: QuizAttempt;
+  /** The paper to sit, reachable only through an open attempt. */
+  quizPaper: QuizPaper;
+  quizzes: QuizPage;
+  relationship: Relationship;
+  /**
+   * The plan in play, else the newest one (failed or finished), else null.
+   * Reading it can start an automatic replan when the learner is a week behind.
+   */
+  roadmap?: Maybe<Roadmap>;
+  /** The posts the viewer saved and may still read, the latest save first. */
+  savedBlogPosts: BlogPostPage;
+  /**
+   * Learners by display name. Refused with extensions.backendCode
+   * SEARCH_TERM_TOO_SHORT below the backend's minimum length.
+   */
+  searchLearners: LearnerSearchPage;
+  /** What the screen polls while it waits for a score. */
+  speakingAttempt: SpeakingAttempt;
+  /** This learner's own attempts at one prompt, newest first. No word breakdown. */
+  speakingAttempts: Array<SpeakingAttempt>;
+  speakingPrompt: SpeakingPrompt;
+  speakingPrompts: SpeakingPromptPage;
+  /** What the practice screen polls while it waits for a grade. */
+  translationAttempt: TranslationAttempt;
+  /** This learner's own attempts, newest first. */
+  translationAttempts: TranslationAttemptPage;
+  translationSet: TranslationSetDetail;
+  translationSets: TranslationSetPage;
+  tutorConversation: TutorConversation;
+  tutorConversations: Array<TutorConversationSummary>;
+  tutorHistory: TutorHistoryPage;
+  tutorMemory: TutorMemory;
+  tutorMessages: TutorMessagePage;
+  tutorOperations: TutorOperations;
+  tutorPolicy: TutorPolicy;
+  tutorReceipt: TutorConversation;
+  tutorReply: TutorMessage;
+  tutorReplyHistory: TutorReplyHistory;
+  tutorReport: TutorReport;
+  tutorReports: TutorReportPage;
+  tutorResource: TutorResource;
+  tutorResources: TutorResourcePage;
+  tutorStaffMembers: Array<TutorStaffMember>;
+  tutorUsage: TutorUsage;
+  userWall: UserWall;
+};
+
+
+export type QueryActiveExamAttemptArgs = {
+  examId: Scalars['ID']['input'];
+  mode: ExamAttemptMode;
+};
+
+
+export type QueryAdminBlogActionsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdminBlogQueueArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<BlogQueueSort>;
+  type?: InputMaybe<BlogTargetType>;
+};
+
+
+export type QueryAdminBlogTargetArgs = {
+  id: Scalars['ID']['input'];
+  type: BlogTargetType;
+};
+
+
+export type QueryAdminContentArgs = {
+  kind: ContentKind;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<ContentStatus>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAdminExamsArgs = {
+  examType?: InputMaybe<ExamType>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<ExamStatus>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAdminFullTestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentAssignmentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentAttemptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentHistoryArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  skill?: InputMaybe<AssessmentSkill>;
+  status?: InputMaybe<AssessmentAttemptStatus>;
+  taskId?: InputMaybe<Scalars['ID']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAssessmentNotificationsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAssessmentReviewsArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentSubmissionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentSubmissionsArgs = {
+  oldest?: InputMaybe<Scalars['Boolean']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  skill?: InputMaybe<AssessmentSkill>;
+  status?: InputMaybe<AssessmentAttemptStatus>;
+  term?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAssessmentTaskArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssessmentTasksArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  skill?: InputMaybe<AssessmentSkill>;
+};
+
+
+export type QueryAttemptPaperArgs = {
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type QueryAuthoringAssessmentTaskArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAuthoringAssessmentTasksArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  skill?: InputMaybe<AssessmentSkill>;
+  status?: InputMaybe<AssessmentTaskStatus>;
+};
+
+
+export type QueryBlockedUsersArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryBlogCommentsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  postId: Scalars['ID']['input'];
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryBlogPostArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryBlogPostsArgs = {
+  authorId?: InputMaybe<Scalars['ID']['input']>;
+  certificate?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  q?: InputMaybe<Scalars['String']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  skill?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<BlogPostSort>;
+};
+
+
+export type QueryBlogRecommendationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryChatConversationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryChatConversationsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryChatMessagesArgs = {
+  afterSeq?: InputMaybe<Scalars['Float']['input']>;
+  beforeSeq?: InputMaybe<Scalars['Float']['input']>;
+  conversationId: Scalars['ID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryDictationLessonArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryDictationLessonsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryDictationStatsArgs = {
+  periodDays?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryExamAttemptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryExamAttemptsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryExamDraftArgs = {
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type QueryExamOutlineArgs = {
+  examId: Scalars['ID']['input'];
+};
+
+
+export type QueryExamsArgs = {
+  certificateType?: InputMaybe<CertificateType>;
+  certificateVariant?: InputMaybe<CertificateVariant>;
+  examType?: InputMaybe<ExamType>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<ExamSortBy>;
+  targetLevel?: InputMaybe<TargetLevel>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryFlashcardSetArgs = {
+  id: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryFlashcardSetSummaryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryFlashcardSetsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryFlashcardStatsArgs = {
+  periodDays?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryFlashcardStudyQueueArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  setId: Scalars['ID']['input'];
+};
+
+
+export type QueryFriendsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryFullTestSittingArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryGenerationRequestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryGenerationRequestsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryIncomingFriendRequestsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryLevelCheckArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryMyFullTestSittingsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryOutgoingFriendRequestsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryQuizAttemptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryQuizPaperArgs = {
+  attemptId: Scalars['ID']['input'];
+};
+
+
+export type QueryQuizzesArgs = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryRelationshipArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type QuerySavedBlogPostsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySearchLearnersArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  q: Scalars['String']['input'];
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySpeakingAttemptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QuerySpeakingAttemptsArgs = {
+  promptId: Scalars['ID']['input'];
+};
+
+
+export type QuerySpeakingPromptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QuerySpeakingPromptsArgs = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryTranslationAttemptArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTranslationAttemptsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTranslationSetArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTranslationSetsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryTutorConversationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorHistoryArgs = {
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTutorMemoryArgs = {
+  conversationId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorMessagesArgs = {
+  id: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTutorReceiptArgs = {
+  clientMessageId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReplyArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReplyHistoryArgs = {
+  conversationId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReportArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorReportsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryTutorResourceArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTutorResourcesArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryUserWallArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+/**
+ * An option as the learner sees it while sitting: no correctness flag and no
+ * explanation. Both arrive afterwards on AttemptOptionReview.
+ */
+export type QuestionOption = {
+  __typename?: 'QuestionOption';
+  content: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  orderNo: Scalars['Int']['output'];
+};
+
+/**
+ * An entry of the list a question set's MATCHING questions share - a heading
+ * "iv", a person "B", a map label "F". Which question it answers is never sent.
+ */
+export type QuestionSetOption = {
+  __typename?: 'QuestionSetOption';
+  content?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  label: Scalars['String']['output'];
+  orderNo: Scalars['Int']['output'];
+};
+
+export type Quiz = {
+  __typename?: 'Quiz';
+  attemptCount: Scalars['Int']['output'];
+  /** Per learner. Null until they have finished one. */
+  bestScorePercent?: Maybe<Scalars['Float']['output']>;
+  category: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  /** Percentage, so a quiz can gain a question without its pass mark shifting. */
+  passingScorePercent: Scalars['Int']['output'];
+  questionCount: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  targetLevel?: Maybe<Scalars['String']['output']>;
+  timeLimitSeconds: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type QuizAnswerInput = {
+  questionId: Scalars['ID']['input'];
+  /**
+   * What an answer means depends on the type: an option id, a typed phrase, the
+   * chosen words joined by spaces, or the matched halves joined by "|".
+   */
+  response: Scalars['String']['input'];
+};
+
+export type QuizAttempt = {
+  __typename?: 'QuizAttempt';
+  correctAnswerCount?: Maybe<Scalars['Int']['output']>;
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  maxScore: Scalars['Float']['output'];
+  passed?: Maybe<Scalars['Boolean']['output']>;
+  questionCount: Scalars['Int']['output'];
+  quizId: Scalars['ID']['output'];
+  quizTitle: Scalars['String']['output'];
+  /** True when the backend handed back an attempt that was already open. */
+  resumed: Scalars['Boolean']['output'];
+  /** Empty while the attempt is IN_PROGRESS - it carries the answer key. */
+  reviews: Array<QuizQuestionReview>;
+  /** Null until the attempt is scored. */
+  score?: Maybe<Scalars['Float']['output']>;
+  scorePercentage?: Maybe<Scalars['Float']['output']>;
+  startedAt: Scalars['DateTime']['output'];
+  status: QuizAttemptStatus;
+  submittedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export enum QuizAttemptStatus {
+  EXPIRED = 'EXPIRED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  SCORED = 'SCORED'
+}
+
+/**
+ * An option as the learner sees it while sitting. There is no correctness flag
+ * on this type at all - the answer key is a different shape entirely, so there
+ * is no field here to forget to clear.
+ */
+export type QuizOption = {
+  __typename?: 'QuizOption';
+  content: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  label: Scalars['String']['output'];
+  orderNo: Scalars['Int']['output'];
+};
+
+export type QuizPage = {
+  __typename?: 'QuizPage';
+  items: Array<Quiz>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type QuizPaper = {
+  __typename?: 'QuizPaper';
+  attemptId: Scalars['ID']['output'];
+  description: Scalars['String']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  questions: Array<QuizPaperQuestion>;
+  quizId: Scalars['ID']['output'];
+  timeLimitSeconds: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type QuizPaperQuestion = {
+  __typename?: 'QuizPaperQuestion';
+  afterText?: Maybe<Scalars['String']['output']>;
+  /** FILL_BLANK renders as "<before> ___ <after>"; null on every other type. */
+  beforeText?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  leftTexts: Array<Scalars['String']['output']>;
+  options: Array<QuizOption>;
+  orderNo: Scalars['Int']['output'];
+  originalSentence?: Maybe<Scalars['String']['output']>;
+  points: Scalars['Int']['output'];
+  prompt: Scalars['String']['output'];
+  questionType: QuizQuestionType;
+  rewriteKeyword?: Maybe<Scalars['String']['output']>;
+  /**
+   * Shuffled by the backend, seeded from the attempt: the stored order is the
+   * answer, and reloading must not deal a new puzzle.
+   */
+  rightTexts: Array<Scalars['String']['output']>;
+  scrambledWords: Array<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  wordBank: Array<Scalars['String']['output']>;
+};
+
+export type QuizQuestionReview = {
+  __typename?: 'QuizQuestionReview';
+  correct: Scalars['Boolean']['output'];
+  correctAnswerText: Scalars['String']['output'];
+  explanation: Scalars['String']['output'];
+  pointsEarned: Scalars['Float']['output'];
+  pointsPossible: Scalars['Int']['output'];
+  prompt: Scalars['String']['output'];
+  questionId: Scalars['ID']['output'];
+  questionType: QuizQuestionType;
+  userAnswerText: Scalars['String']['output'];
+};
+
+export enum QuizQuestionType {
+  FILL_BLANK = 'FILL_BLANK',
+  MATCHING = 'MATCHING',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  REORDER = 'REORDER',
+  REWRITE = 'REWRITE'
+}
+
+export type Relationship = {
+  __typename?: 'Relationship';
+  /** Set only for REQUEST_RECEIVED: the id to accept or decline. */
+  requestId?: Maybe<Scalars['ID']['output']>;
+  status: RelationshipStatus;
+  userId: Scalars['ID']['output'];
+};
+
+/**
+ * How the viewer stands with one account. Only NONE offers "add friend"; the
+ * last three offer nothing. UNAVAILABLE is the other side having blocked the
+ * viewer - it never says why, so a block is not revealed to the person it was
+ * placed on.
+ */
+export enum RelationshipStatus {
+  BLOCKED_BY_ME = 'BLOCKED_BY_ME',
+  FRIENDS = 'FRIENDS',
+  NONE = 'NONE',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  REQUEST_RECEIVED = 'REQUEST_RECEIVED',
+  REQUEST_SENT = 'REQUEST_SENT',
+  SELF = 'SELF',
+  UNAVAILABLE = 'UNAVAILABLE'
+}
+
+/**
+ * What the learner said about a card. SM-2 grades answers 0-5; these are the
+ * four buttons the interface offers, and the backend maps them onto the
+ * algorithm. Only AGAIN counts as a failure.
+ */
+export enum ReviewRating {
+  AGAIN = 'AGAIN',
+  EASY = 'EASY',
+  GOOD = 'GOOD',
+  HARD = 'HARD'
+}
+
+export type Roadmap = {
+  __typename?: 'Roadmap';
+  /** An adjustment is being worked out; the stages shown stay in force meanwhile. */
+  adjusting: Scalars['Boolean']['output'];
+  adjustments: Array<RoadmapAdjustment>;
+  completedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  dailyMinutes?: Maybe<Scalars['Int']['output']>;
+  failureCode?: Maybe<Scalars['String']['output']>;
+  goalType: RoadmapGoalType;
+  id: Scalars['ID']['output'];
+  pendingReason?: Maybe<AdjustmentReason>;
+  schedule: RoadmapSchedule;
+  stages: Array<RoadmapStage>;
+  startLevel: CefrLevel;
+  startScore?: Maybe<Scalars['Float']['output']>;
+  status: RoadmapStatus;
+  targetCertificate?: Maybe<Scalars['String']['output']>;
+  targetDate?: Maybe<Scalars['Date']['output']>;
+  targetLevel?: Maybe<CefrLevel>;
+  targetScore?: Maybe<Scalars['Float']['output']>;
+};
+
+export type RoadmapAdjustment = {
+  __typename?: 'RoadmapAdjustment';
+  createdAt: Scalars['DateTime']['output'];
+  reason: AdjustmentReason;
+};
+
+export enum RoadmapContentKind {
+  ASSESSMENT_TASK = 'ASSESSMENT_TASK',
+  DICTATION_LESSON = 'DICTATION_LESSON',
+  FLASHCARD_SET = 'FLASHCARD_SET',
+  QUIZ = 'QUIZ',
+  SPEAKING_PROMPT = 'SPEAKING_PROMPT'
+}
+
+export enum RoadmapGoalType {
+  CERTIFICATE = 'CERTIFICATE',
+  LEVEL = 'LEVEL'
+}
+
+export type RoadmapItem = {
+  __typename?: 'RoadmapItem';
+  /**
+   * The set, lesson, quiz, prompt or task to open; the link is built from this
+   * and the kind (and skill, for a writing or speaking task).
+   */
+  contentId: Scalars['ID']['output'];
+  done: Scalars['Boolean']['output'];
+  estimatedMinutes: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  kind: RoadmapContentKind;
+  /** Derived from the learner's activity on every read. */
+  percentDone: Scalars['Int']['output'];
+  plannedWeek: Scalars['Int']['output'];
+  required: Scalars['Boolean']['output'];
+  skill?: Maybe<Scalars['String']['output']>;
+  targetPercent: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type RoadmapMilestone = {
+  __typename?: 'RoadmapMilestone';
+  achievedAt?: Maybe<Scalars['DateTime']['output']>;
+  attemptCount: Scalars['Int']['output'];
+  examId?: Maybe<Scalars['ID']['output']>;
+  /** Set instead of examId on an IELTS mock: the full test to sit, passed on its overall band. */
+  fullTestId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  kind: MilestoneKind;
+  /** Every required item of the stage is done. */
+  ready: Scalars['Boolean']['output'];
+  requiredLevel?: Maybe<CefrLevel>;
+  requiredScore?: Maybe<Scalars['Float']['output']>;
+  resultLevel?: Maybe<CefrLevel>;
+  resultScore?: Maybe<Scalars['Float']['output']>;
+  status: MilestoneStatus;
+};
+
+export enum RoadmapSchedule {
+  /** The current stage ran past its planned end. */
+  BEHIND = 'BEHIND',
+  ON_TRACK = 'ON_TRACK'
+}
+
+export type RoadmapStage = {
+  __typename?: 'RoadmapStage';
+  focusSkills: Array<Scalars['String']['output']>;
+  fromLevel: CefrLevel;
+  id: Scalars['ID']['output'];
+  items: Array<RoadmapItem>;
+  milestone?: Maybe<RoadmapMilestone>;
+  orderNo: Scalars['Int']['output'];
+  /** Mean progress across the stage's required items. */
+  percentDone: Scalars['Int']['output'];
+  plannedEnd: Scalars['Date']['output'];
+  plannedStart: Scalars['Date']['output'];
+  status: RoadmapStageStatus;
+  summary: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  toLevel: CefrLevel;
+};
+
+export enum RoadmapStageStatus {
+  CURRENT = 'CURRENT',
+  LOCKED = 'LOCKED',
+  PASSED = 'PASSED',
+  /** Taken out by an adjustment. Never returned in a roadmap's stages. */
+  REPLACED = 'REPLACED'
+}
+
+export enum RoadmapStatus {
+  /** The learner turned the roadmap off. */
+  ABANDONED = 'ABANDONED',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  /** The first plan could not be made; createRoadmap asks again. */
+  FAILED = 'FAILED',
+  /** Waiting for the first plan from the AI. */
+  GENERATING = 'GENERATING',
+  /** Replaced by a plan for a different goal. */
+  SUPERSEDED = 'SUPERSEDED'
+}
+
+/**
+ * What the account may do. For drawing the interface only - every gate is
+ * enforced on the backend from the verified token, never from this field.
+ */
+export enum Role {
+  ADMIN = 'ADMIN',
+  LEARNER = 'LEARNER',
+  STAFF = 'STAFF'
+}
+
+export type SaveBlogPostInput = {
+  body: Scalars['String']['input'];
+  tags: Array<BlogTagInput>;
+  title: Scalars['String']['input'];
+};
+
+export type SaveFullTestInput = {
+  certificateVariant: CertificateVariant;
+  description?: InputMaybe<Scalars['String']['input']>;
+  examId: Scalars['ID']['input'];
+  speakingPart1Id: Scalars['ID']['input'];
+  speakingPart2Id: Scalars['ID']['input'];
+  speakingPart3Id: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
+  version?: InputMaybe<Scalars['Int']['input']>;
+  writingTask1Id: Scalars['ID']['input'];
+  writingTask2Id: Scalars['ID']['input'];
+};
+
+/**
+ * One recording and its score.
+ *
+ * Every score is nullable and stays that way. The provider omits what it did
+ * not measure - prosody unless asked for, accuracy on a recording of silence -
+ * so a missing measurement is shown as missing. A zero would tell a learner
+ * they scored nothing when nothing was measured.
+ */
+export type SpeakingAttempt = {
+  __typename?: 'SpeakingAttempt';
+  accuracyPercent?: Maybe<Scalars['Float']['output']>;
+  assessedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Pre-signed and short-lived. */
+  audioUrl: Scalars['String']['output'];
+  completenessPercent?: Maybe<Scalars['Float']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  /** Why no score will arrive, when none will. */
+  errorCode?: Maybe<Scalars['String']['output']>;
+  fluencyPercent?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['ID']['output'];
+  promptTitle: Scalars['String']['output'];
+  pronunciationPercent?: Maybe<Scalars['Float']['output']>;
+  prosodyPercent?: Maybe<Scalars['Float']['output']>;
+  /** What the provider heard. Null until assessed. */
+  recognizedText?: Maybe<Scalars['String']['output']>;
+  referenceText: Scalars['String']['output'];
+  speakingPromptId: Scalars['ID']['output'];
+  status: SpeakingAttemptStatus;
+  /** Empty while the assessment is still queued. */
+  words: Array<SpeakingWord>;
+};
+
+/**
+ * Where one recording stands. There is no RUNNING: whether a worker currently
+ * has the job in hand is the queue's business, and QUEUED is all a learner
+ * watching a spinner needs to know.
+ */
+export enum SpeakingAttemptStatus {
+  ASSESSED = 'ASSESSED',
+  AWAITING_UPLOAD = 'AWAITING_UPLOAD',
+  FAILED = 'FAILED',
+  QUEUED = 'QUEUED'
+}
+
+export type SpeakingPhonemeScore = {
+  __typename?: 'SpeakingPhonemeScore';
+  accuracy?: Maybe<Scalars['Float']['output']>;
+  phoneme: Scalars['String']['output'];
+};
+
+export type SpeakingPrompt = {
+  __typename?: 'SpeakingPrompt';
+  /** Per learner. Null until they have finished one. */
+  bestScorePercent?: Maybe<Scalars['Float']['output']>;
+  category: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  ipaTranscript?: Maybe<Scalars['String']['output']>;
+  /** The sound being drilled, e.g. "/iː/ vs /ɪ/". */
+  phonemeTarget?: Maybe<Scalars['String']['output']>;
+  /** What the learner is asked to say. The accuracy score is accuracy against this. */
+  referenceText: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+  targetLevel?: Maybe<Scalars['String']['output']>;
+  tips: Array<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  translationVi?: Maybe<Scalars['String']['output']>;
+};
+
+export type SpeakingPromptPage = {
+  __typename?: 'SpeakingPromptPage';
+  items: Array<SpeakingPrompt>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/** Where to put a recording, and for how long that offer stands. */
+export type SpeakingUploadTicket = {
+  __typename?: 'SpeakingUploadTicket';
+  attemptId: Scalars['ID']['output'];
+  contentType: Scalars['String']['output'];
+  /** Told to the client so it can say "start again" rather than failing on an expired URL. */
+  expiresInSeconds: Scalars['Int']['output'];
+  /**
+   * A presigned PUT straight to object storage. The browser uploads there, not
+   * through this BFF: a minute of audio through a request thread costs a thread
+   * for a minute and lands in the same bucket either way.
+   */
+  uploadUrl: Scalars['String']['output'];
+};
+
+export type SpeakingWord = {
+  __typename?: 'SpeakingWord';
+  accuracyPercent?: Maybe<Scalars['Float']['output']>;
+  durationMs?: Maybe<Scalars['Int']['output']>;
+  /** The provider's own label: Mispronunciation, Omission, Insertion, None. */
+  errorType?: Maybe<Scalars['String']['output']>;
+  offsetMs?: Maybe<Scalars['Int']['output']>;
+  orderNo: Scalars['Int']['output'];
+  phonemes: Array<SpeakingPhonemeScore>;
+  word: Scalars['String']['output'];
+};
+
+export type StartExamAttemptInput = {
+  mode?: InputMaybe<ExamAttemptMode>;
+  /**
+   * Without it, an open attempt that is not the one asked for fails with
+   * extensions.backendCode: ATTEMPT_IN_PROGRESS so the learner can choose.
+   */
+  onOpen?: InputMaybe<OpenAttemptChoice>;
+  /** Parts a practice covers. Ignored for FULL. */
+  partIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** A practice's clock, 1-300 minutes; null for none. Ignored for FULL. */
+  timeLimitMinutes?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type SubmitAnswerInput = {
+  questionId: Scalars['ID']['input'];
+  /**
+   * Empty for a question the learner skipped; several for a multi-select. On a
+   * MATCHING question, the chosen entry of the set's setOptions.
+   */
+  selectedOptionIds: Array<Scalars['ID']['input']>;
+  /**
+   * What was typed on a TEXT_ENTRY question, at most 200 characters; omit it on
+   * a choice question - the backend refuses it there.
+   */
+  textAnswer?: InputMaybe<Scalars['String']['input']>;
+};
+
+/**
+ * The certificate a learner aims at. Deliberately not the exam module's
+ * CertificateType: that one describes a paper, this one describes a learner's
+ * goal, and the backend keeps user.entity.CertificateType apart from
+ * exam.entity.CertificateType for the same reason.
+ */
+export enum TargetCertificate {
+  IELTS = 'IELTS',
+  TOEIC = 'TOEIC'
+}
+
+/**
+ * CEFR band a paper is aimed at. Separate from CefrLevel, which is a learner's
+ * own level - the backend keeps the two enums apart for the same reason.
+ */
+export enum TargetLevel {
+  A1 = 'A1',
+  A2 = 'A2',
+  B1 = 'B1',
+  B2 = 'B2',
+  C1 = 'C1',
+  C2 = 'C2'
+}
+
+export type TranslationAttempt = {
+  __typename?: 'TranslationAttempt';
+  createdAt: Scalars['DateTime']['output'];
+  errorCode?: Maybe<Scalars['String']['output']>;
+  feedback?: Maybe<TranslationFeedback>;
+  gradedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  itemId: Scalars['ID']['output'];
+  notes?: Maybe<Scalars['String']['output']>;
+  /** Null while the attempt is still waiting. */
+  referenceEn?: Maybe<Scalars['String']['output']>;
+  response: Scalars['String']['output'];
+  /** 0 to 100. Null until graded. */
+  score?: Maybe<Scalars['Int']['output']>;
+  setId: Scalars['ID']['output'];
+  sourceVi: Scalars['String']['output'];
+  status: TranslationAttemptStatus;
+};
+
+export type TranslationAttemptPage = {
+  __typename?: 'TranslationAttemptPage';
+  items: Array<TranslationAttempt>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/**
+ * Where one translation stands. There is no RUNNING: QUEUED - "we have it and
+ * there is no grade yet" - is all a learner waiting needs to know.
+ */
+export enum TranslationAttemptStatus {
+  FAILED = 'FAILED',
+  GRADED = 'GRADED',
+  QUEUED = 'QUEUED'
+}
+
+export type TranslationFeedback = {
+  __typename?: 'TranslationFeedback';
+  errors: Array<TranslationMistake>;
+  /** The learner's sentence corrected and made natural. */
+  improved: Scalars['String']['output'];
+  parts: TranslationParts;
+  summary: Scalars['String']['output'];
+  verdict: TranslationVerdict;
+};
+
+/**
+ * One Vietnamese sentence to translate. The reference translation is not here:
+ * it comes with a graded attempt, after the learner has answered.
+ */
+export type TranslationItem = {
+  __typename?: 'TranslationItem';
+  id: Scalars['ID']['output'];
+  latestAttempt?: Maybe<TranslationLatestAttempt>;
+  orderNo: Scalars['Int']['output'];
+  sourceVi: Scalars['String']['output'];
+};
+
+export type TranslationLatestAttempt = {
+  __typename?: 'TranslationLatestAttempt';
+  id: Scalars['ID']['output'];
+  score?: Maybe<Scalars['Int']['output']>;
+  status: TranslationAttemptStatus;
+};
+
+export type TranslationMistake = {
+  __typename?: 'TranslationMistake';
+  correction: Scalars['String']['output'];
+  /** In Vietnamese. */
+  explanation: Scalars['String']['output'];
+  /** The learner's own words. */
+  original: Scalars['String']['output'];
+  type: TranslationMistakeType;
+};
+
+export enum TranslationMistakeType {
+  GRAMMAR = 'GRAMMAR',
+  MEANING = 'MEANING',
+  OTHER = 'OTHER',
+  SPELLING = 'SPELLING',
+  VOCABULARY = 'VOCABULARY',
+  WORD_ORDER = 'WORD_ORDER'
+}
+
+/** Points per part: meaning out of 40, grammar 30, vocabulary 20, naturalness 10. */
+export type TranslationParts = {
+  __typename?: 'TranslationParts';
+  grammar: Scalars['Int']['output'];
+  meaning: Scalars['Int']['output'];
+  naturalness: Scalars['Int']['output'];
+  vocabulary: Scalars['Int']['output'];
+};
+
+export type TranslationSet = {
+  __typename?: 'TranslationSet';
+  description?: Maybe<Scalars['String']['output']>;
+  /** Sentences this learner has a graded attempt at. */
+  gradedCount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  itemCount: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  targetLevel?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  topic: Scalars['String']['output'];
+};
+
+export type TranslationSetDetail = {
+  __typename?: 'TranslationSetDetail';
+  items: Array<TranslationItem>;
+  set: TranslationSet;
+};
+
+export type TranslationSetPage = {
+  __typename?: 'TranslationSetPage';
+  items: Array<TranslationSet>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+/** A band derived on the server from the total, never asked of the model. */
+export enum TranslationVerdict {
+  EXCELLENT = 'EXCELLENT',
+  GOOD = 'GOOD',
+  NEEDS_WORK = 'NEEDS_WORK',
+  PARTIAL = 'PARTIAL'
+}
+
+export type TutorConversation = {
+  __typename?: 'TutorConversation';
+  conversation: TutorConversationSummary;
+  messages: Array<TutorMessage>;
+};
+
+export type TutorConversationSummary = {
+  __typename?: 'TutorConversationSummary';
+  archivedAt?: Maybe<Scalars['DateTime']['output']>;
+  assessmentAttemptId?: Maybe<Scalars['ID']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  examAttemptId?: Maybe<Scalars['ID']['output']>;
+  examQuestionId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  lastMessageAt: Scalars['DateTime']['output'];
+  messageCount: Scalars['Int']['output'];
+  quizAttemptId?: Maybe<Scalars['ID']['output']>;
+  quizQuestionId?: Maybe<Scalars['ID']['output']>;
+  /** Taken from the first thing the learner said, so the list reads as what they asked. */
+  title: Scalars['String']['output'];
+  topic?: Maybe<Scalars['String']['output']>;
+  useLearningContext: Scalars['Boolean']['output'];
+};
+
+export type TutorFailureCount = {
+  __typename?: 'TutorFailureCount';
+  code: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+};
+
+export type TutorHistoryPage = {
+  __typename?: 'TutorHistoryPage';
+  items: Array<TutorConversationSummary>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type TutorMemory = {
+  __typename?: 'TutorMemory';
+  batchSize: Scalars['Int']['output'];
+  content?: Maybe<Scalars['String']['output']>;
+  enabled: Scalars['Boolean']['output'];
+  pendingMessageId?: Maybe<Scalars['ID']['output']>;
+  remainingMessages: Scalars['Int']['output'];
+  throughOrder: Scalars['Int']['output'];
+};
+
+export type TutorMessage = {
+  __typename?: 'TutorMessage';
+  answeredAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * Null while a reply is pending. Nullable on purpose: a screen has to tell
+   * "still thinking" from "answered with nothing", and an empty string for both
+   * would make that impossible.
+   */
+  content?: Maybe<Scalars['String']['output']>;
+  correction?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  /** Why no answer came, when none did. */
+  errorCode?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  model?: Maybe<Scalars['String']['output']>;
+  orderNo: Scalars['Int']['output'];
+  reportStatus?: Maybe<Scalars['String']['output']>;
+  reported: Scalars['Boolean']['output'];
+  restartCount: Scalars['Int']['output'];
+  revision: Scalars['Int']['output'];
+  role: TutorMessageRole;
+  sources: Array<TutorSource>;
+  status: TutorMessageStatus;
+  summary?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type TutorMessagePage = {
+  __typename?: 'TutorMessagePage';
+  conversation: TutorConversationSummary;
+  messages: Array<TutorMessage>;
+  page: Scalars['Int']['output'];
+  totalElements: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export enum TutorMessageRole {
+  ASSISTANT = 'ASSISTANT',
+  USER = 'USER'
+}
+
+/**
+ * Whether a turn has something to show yet. Only the tutor's side is ever
+ * PENDING; the learner's own message is READY the moment it arrives.
+ */
+export enum TutorMessageStatus {
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+  READY = 'READY'
+}
+
+export type TutorOperations = {
+  __typename?: 'TutorOperations';
+  completedToday: Scalars['Int']['output'];
+  failedToday: Scalars['Int']['output'];
+  metrics?: Maybe<TutorQueueMetrics>;
+  oldestPendingAt?: Maybe<Scalars['DateTime']['output']>;
+  pending: Scalars['Int']['output'];
+  running: Scalars['Int']['output'];
+  scope: Scalars['String']['output'];
+};
+
+export type TutorPolicy = {
+  __typename?: 'TutorPolicy';
+  accepting: Scalars['Boolean']['output'];
+  allowedModes: Array<Scalars['String']['output']>;
+  dailyLimit: Scalars['Int']['output'];
+  environmentEnabled: Scalars['Boolean']['output'];
+  model: Scalars['String']['output'];
+  streamingEnabled: Scalars['Boolean']['output'];
+  version: Scalars['Int']['output'];
+  voiceEnabled: Scalars['Boolean']['output'];
+};
+
+export type TutorPolicyInput = {
+  accepting: Scalars['Boolean']['input'];
+  allowedModes: Array<Scalars['String']['input']>;
+  reason: Scalars['String']['input'];
+  version: Scalars['Int']['input'];
+};
+
+export type TutorQueueMetrics = {
+  __typename?: 'TutorQueueMetrics';
+  completionP95Ms?: Maybe<Scalars['Float']['output']>;
+  failures: Array<TutorFailureCount>;
+  knownInputTokens: Scalars['Float']['output'];
+  knownOutputTokens: Scalars['Float']['output'];
+  queueP95Ms?: Maybe<Scalars['Float']['output']>;
+  samples: Scalars['Int']['output'];
+  unknownUsageJobs: Scalars['Int']['output'];
+};
+
+export type TutorReplyHistory = {
+  __typename?: 'TutorReplyHistory';
+  canSelect: Scalars['Boolean']['output'];
+  currentRevision: Scalars['Int']['output'];
+  items: Array<TutorReplyVersion>;
+};
+
+export type TutorReplyVersion = {
+  __typename?: 'TutorReplyVersion';
+  content?: Maybe<Scalars['String']['output']>;
+  correction?: Maybe<Scalars['String']['output']>;
+  model?: Maybe<Scalars['String']['output']>;
+  revision: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
+
+export type TutorReport = {
+  __typename?: 'TutorReport';
+  answer?: Maybe<Scalars['String']['output']>;
+  assignedTo?: Maybe<Scalars['ID']['output']>;
+  correction?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  learnerNote?: Maybe<Scalars['String']['output']>;
+  messageId: Scalars['ID']['output'];
+  question?: Maybe<Scalars['String']['output']>;
+  resolvedAt?: Maybe<Scalars['DateTime']['output']>;
+  reviewerNote?: Maybe<Scalars['String']['output']>;
+  revision: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
+
+export type TutorReportPage = {
+  __typename?: 'TutorReportPage';
+  items: Array<TutorReport>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type TutorResource = {
+  __typename?: 'TutorResource';
+  authorId: Scalars['ID']['output'];
+  body: Scalars['String']['output'];
+  documentId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  reviewNote?: Maybe<Scalars['String']['output']>;
+  rowVersion: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type TutorResourceInput = {
+  body: Scalars['String']['input'];
+  rowVersion?: InputMaybe<Scalars['Int']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type TutorResourcePage = {
+  __typename?: 'TutorResourcePage';
+  items: Array<TutorResource>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalItems: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type TutorReviewInput = {
+  action: Scalars['String']['input'];
+  assignedTo?: InputMaybe<Scalars['ID']['input']>;
+  correction?: InputMaybe<Scalars['String']['input']>;
+  note?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type TutorSource = {
+  __typename?: 'TutorSource';
+  excerpt: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  resourceId: Scalars['ID']['output'];
+  title: Scalars['String']['output'];
+  versionNumber: Scalars['Int']['output'];
+};
+
+export type TutorStaffMember = {
+  __typename?: 'TutorStaffMember';
+  displayName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
+export type TutorUsage = {
+  __typename?: 'TutorUsage';
+  allowedModes: Array<Scalars['String']['output']>;
+  enabled: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  maxMessageLength: Scalars['Int']['output'];
+  memorySupported: Scalars['Boolean']['output'];
+  remaining: Scalars['Int']['output'];
+  resetsAt: Scalars['DateTime']['output'];
+  streaming: Scalars['Boolean']['output'];
+  supportedContexts: Array<Scalars['String']['output']>;
+  used: Scalars['Int']['output'];
+  voice: Scalars['Boolean']['output'];
+};
+
+export type UpdateProfileInput = {
+  birthDate?: InputMaybe<Scalars['Date']['input']>;
+  displayName: Scalars['String']['input'];
+  fullName: Scalars['String']['input'];
+  gender?: InputMaybe<Gender>;
+};
+
+export type UserTourStatus = {
+  __typename?: 'UserTourStatus';
+  completed: Scalars['Boolean']['output'];
+};
+
+/** The wall of one account: composed from user, friendship and (later) blog. */
+export type UserWall = {
+  __typename?: 'UserWall';
+  /**
+   * False when either side blocked the other. userId and relationship stay set
+   * (BLOCKED_BY_ME is what offers the viewer "unblock"); friendCount and profile
+   * are then null, and nothing else is fetched.
+   */
+  available: Scalars['Boolean']['output'];
+  /** Null for staff and when unavailable. */
+  friendCount?: Maybe<Scalars['Int']['output']>;
+  /**
+   * Posts by the wall's owner. Null when the wall is unavailable (blocked either
+   * way) or the call failed. On the viewer's own wall the backend also lists
+   * their hidden and removed posts, with their status.
+   */
+  posts?: Maybe<BlogPostPage>;
+  /**
+   * Null when the wall is unavailable (blocked either way), or when the profile
+   * call failed. An id that names no account fails with extensions.backendCode
+   * USER_NOT_FOUND.
+   */
+  profile?: Maybe<PublicProfile>;
+  relationship: Relationship;
+  userId: Scalars['ID']['output'];
+};
+
+
+/** The wall of one account: composed from user, friendship and (later) blog. */
+export type UserWallPostsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+};

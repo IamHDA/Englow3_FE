@@ -6,6 +6,9 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+  # Pulled in by graphql-codegen and jest for watch mode only, and it ships
+  # prebuilt binaries; nothing here needs it compiled from source.
+  "@parcel/watcher": false
 
 minimumReleaseAgeExclude:
   - node-forge@1.4.1
@@ -14,20 +17,24 @@ minimumReleaseAgeExclude:
 # each kept within the major version that was already resolved.
 overrides:
   "proxy-addr": "^2.0.8"
-  "qs": "^6.16.0"
+  "qs": "^6.16.1"
   "shell-quote": "^1.11.0"
   "nanoid@3": "^3.3.18"
   "js-yaml@4": "^4.3.2"
   "compression": "^1.8.2"
   "source-map-js": "^1.2.2"
+  "brace-expansion@1": "^1.1.22"
   "brace-expansion@5": "^5.0.12"
   "@graphql-tools/utils@12": "^12.0.3"
+  "@fastify/busboy@3": "^3.2.6"
+  "postcss-selector-parser@7": "^7.2.1"
+  "vite@8": "^8.2.6"
   "@xmldom/xmldom@0.8": "^0.8.15"
   "@xmldom/xmldom@0.9": "^0.9.12"
   "body-parser@1": "^1.20.9"
   "body-parser@2": "^2.4.0"
   "ip-address@10": "^10.7.4"
-  "node-forge@1": "^1.4.1"
+  "node-forge@1": "^1.4.3"
   # metro 0.84.5 parses image headers itself; 0.84.4 still pulled in the
   # vulnerable image-size@1, which has no fixed 1.x release.
   "metro@0.84": "^0.84.5"
@@ -40,3 +47,20 @@ overrides:
   # xcode only calls require("uuid").v4().
   "zod@3": "^4.6.6"
   "uuid@7": "^11.1.1"
+  # graphql-codegen's executor still asks for utils@11, which has no fixed
+  # release. Codegen only runs locally and in CI, and its output for all three
+  # apps was compared byte for byte before and after this override.
+  "@graphql-tools/utils@11": "^12.0.3"
+  # Jest's coverage/test discovery, graphql-config and @expo/fingerprint. The
+  # glob and minimatch fixes exist only in the next major; both keep the same
+  # named exports (glob/globSync, minimatch/Minimatch) the callers use.
+  "glob@10": "^14.0.6"
+  "glob@13": "^14.0.6"
+  "minimatch@9": "^11.0.9"
+  "minimatch@10": "^11.0.9"
+  # react-native-markdown-display's last release pins markdown-it 10, which
+  # renders user-written blog posts on the phone. 14.x keeps the
+  # parser/token API the renderer reads and brings a patched linkify-it;
+  # apps/mobile/src/features/blog/__tests__/MarkdownBody.test.tsx renders
+  # through it.
+  "react-native-markdown-display>markdown-it": "^14.3.3"
