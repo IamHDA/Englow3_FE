@@ -48,29 +48,27 @@ export function ExamSittingHeader({
   return (
     <Box className={classes.headerRoot}>
       <Box px={{ base: "md", md: "xl" }} py="xs">
-        <Flex
-          justify="space-between"
-          align="center"
-          direction={{ base: "column", sm: "row" }}
-          gap="sm"
-        >
-          {/* Left: Title and Section */}
-          <Group gap="sm">
+        {/* One row at every width: the bar stays in view while the learner
+            scrolls, so on a phone it must not eat a fifth of the screen. */}
+        <Flex justify="space-between" align="center" wrap="nowrap" gap="sm">
+          {/* Left: Title and Section - the part that gives way on a phone */}
+          <Group gap="sm" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
             <Button
               variant="subtle"
               color="gray"
               size="xs"
               onClick={onExitClick}
               radius="xl"
+              flex="none"
             >
               {t.exam.exitExam}
             </Button>
-            <Divider orientation="vertical" />
-            <Stack gap={1}>
+            <Divider orientation="vertical" visibleFrom="sm" />
+            <Stack gap={1} style={{ minWidth: 0 }}>
               <Text fw={700} size="sm" c="navy.9" lineClamp={1}>
                 {title}
               </Text>
-              <Text size="xs" c="ink.5" fw={600}>
+              <Text size="xs" c="ink.5" fw={600} lineClamp={1}>
                 {sectionTitle}
               </Text>
             </Stack>
@@ -79,8 +77,9 @@ export function ExamSittingHeader({
           {/* Center: Live Timer */}
           <Group
             gap="xs"
-            px="md"
+            px={{ base: "sm", sm: "md" }}
             py={6}
+            wrap="nowrap"
             className={isWarning ? classes.timerWarning : classes.timerNormal}
           >
             {isWarning ? (
@@ -98,9 +97,10 @@ export function ExamSittingHeader({
             </Text>
           </Group>
 
-          {/* Right: Progress and Submit CTA */}
-          <Group gap="md">
-            <Box w={140}>
+          {/* Right: Progress and Submit CTA. On a phone the progress bar gives
+              way: the palette below already counts what is answered. */}
+          <Group gap="md" wrap="nowrap">
+            <Box w={140} visibleFrom="sm">
               <Flex justify="space-between" mb={2}>
                 <Text size="xs" c="ink.5" fw={600}>
                   {t.exam.progress}

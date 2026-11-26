@@ -1,12 +1,12 @@
 /*
  * The chat fills the screen under the header instead of scrolling the page, so
  * the box stays at the bottom and the messages scroll inside it. The header is
- * 60px (76px from md) plus its 1px border; the rest is this page's own padding.
+ * --site-header-height plus its 1px border; the rest is this page's own padding.
  */
 .root {
   width: 100%;
   max-width: var(--page-width-wide);
-  height: calc(100dvh - 61px);
+  height: calc(100dvh - var(--site-header-height) - 1px);
   min-height: 480px;
   margin-inline: auto;
   padding: 12px var(--page-gutter) var(--mantine-spacing-md);
@@ -39,7 +39,6 @@
 
 @media (min-width: $mantine-breakpoint-md) {
   .root {
-    height: calc(100dvh - 77px);
     padding: 24px var(--page-gutter);
   }
 

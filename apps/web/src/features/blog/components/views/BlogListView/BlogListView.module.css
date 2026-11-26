@@ -13,13 +13,16 @@
 /*
  * The column beside the list stays in view under the site header while the
  * list scrolls, and scrolls itself if it is taller than the screen. The header
- * is 60px (SiteHeaderNav's .inner) plus its 1px border.
+ * is --site-header-height (76px from md up, where this applies) plus its 1px
+ * border; a fixed 61px left the top of the search box under it.
  */
 @media (min-width: $mantine-breakpoint-md) {
   .aside {
     position: sticky;
-    top: calc(61px + var(--mantine-spacing-md));
-    max-height: calc(100dvh - 61px - 2 * var(--mantine-spacing-md));
+    top: calc(var(--site-header-height) + 1px + var(--mantine-spacing-md));
+    max-height: calc(
+      100dvh - var(--site-header-height) - 1px - 2 * var(--mantine-spacing-md)
+    );
     overflow-y: auto;
     overscroll-behavior: contain;
   }

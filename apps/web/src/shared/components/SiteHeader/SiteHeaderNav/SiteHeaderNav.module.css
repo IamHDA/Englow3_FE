@@ -1,6 +1,6 @@
 /* Same frame as the page below it - see `--page-width-wide` in globals.css. */
 .inner {
-  height: 60px;
+  height: var(--site-header-height);
   max-width: var(--page-width-wide);
   margin-inline: auto;
   padding-inline: var(--page-gutter);
@@ -24,12 +24,6 @@
 .guestLink:hover {
   color: var(--mantine-color-brand-8);
   background: var(--mantine-color-brand-0);
-}
-
-@media (min-width: $mantine-breakpoint-md) {
-  .inner {
-    height: 76px;
-  }
 }
 
 /*

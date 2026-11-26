@@ -140,7 +140,8 @@ export function OnceOnlyAudio({
 
   return (
     <Stack gap="xs">
-      <Group gap="sm" wrap="nowrap" align="center">
+      {/* Wraps on a phone rather than cutting the button's label short. */}
+      <Group gap="sm" wrap="wrap" align="center">
         {/* Không có `controls`: người thi không có nút tạm dừng, tua hay phát lại. */}
         <audio
           ref={audio}
@@ -209,7 +210,7 @@ export function OnceOnlyAudio({
         <Progress
           value={state === "done" ? 100 : progress}
           size="sm"
-          style={{ flex: 1 }}
+          style={{ flex: 1, minWidth: 120 }}
           aria-label={label}
         />
         {state === "ready" && (

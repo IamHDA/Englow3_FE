@@ -32,11 +32,15 @@
      the gutter on each side, the same as that bar's, so the two line up. */
   --page-width-sitting: none;
   --page-gutter: var(--mantine-spacing-md);
+  /* The site header's row (SiteHeaderNav), without its 1px border. Anything
+     that sticks below the header reads this, so the two cannot drift apart. */
+  --site-header-height: 60px;
 }
 
 @media (min-width: $mantine-breakpoint-md) {
   :root {
     --page-gutter: 32px;
+    --site-header-height: 76px;
   }
 }
 
