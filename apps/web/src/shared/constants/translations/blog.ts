@@ -166,6 +166,7 @@ export interface BlogTranslations {
     /** Why a post is recommended, when it is about the viewer. `{certificate}`, `{skills}` and `{level}` are the words of what matched. */
     reasons: {
       popular: string;
+      latest: string;
       fallback: string;
       certificate: string;
       skills: string;
@@ -538,6 +539,7 @@ export const blogVi: BlogTranslations = {
     read: "Đọc bài",
     reasons: {
       popular: "Được yêu thích tuần này",
+      latest: "Mới đăng gần đây",
       fallback: "Gợi ý cho bạn",
       certificate: "Vì bạn đang luyện {certificate}",
       skills: "Vì bạn muốn cải thiện {skills}",
@@ -969,6 +971,7 @@ export const blogEn: BlogTranslations = {
     read: "Read post",
     reasons: {
       popular: "Liked a lot this week",
+      latest: "Recently posted",
       fallback: "Recommended for you",
       certificate: "Because you are preparing for {certificate}",
       skills: "Because you want to improve {skills}",

@@ -239,9 +239,10 @@ export const RELATIONSHIP_COLOR = {
 
 /**
  * The line that says why a post is recommended, in the interface language.
- * Popular posts are about the week, not the viewer. A post that fits the
- * viewer names what matched - the certificate they aim for, the skills they
- * want to improve, their level - in one sentence worded for that combination.
+ * Popular and latest posts are about the blog, not the viewer. A post that
+ * fits the viewer names what matched - the certificate they aim for, the
+ * skills they want to improve, their level - in one sentence worded for that
+ * combination.
  */
 export function recommendationReason(
   copy: BlogTranslations,
@@ -253,6 +254,8 @@ export function recommendationReason(
   switch (kind) {
     case BlogRecommendationKind.POPULAR_THIS_WEEK:
       return reasons.popular;
+    case BlogRecommendationKind.LATEST:
+      return reasons.latest;
     case BlogRecommendationKind.PROFILE:
       break;
     default: {

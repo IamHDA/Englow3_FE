@@ -47,9 +47,9 @@ Englow3_FE/
   - BFF: `pnpm lint:bff` | `pnpm typecheck:bff`
   - Mobile: `pnpm lint:mobile` | `pnpm typecheck:mobile`
 
-> ⚠️ Hiện chỉ `web` có script `lint`, và **chưa app nào có script `test`**. CI dùng
-> `--if-present` nên các bước đó được bỏ qua chứ không fail — xem mục "Quality gate"
-> trong Job Summary của mỗi lần chạy để biết bước nào thực sự đã chạy.
+> Cả ba app (`web`, `bff`, `mobile`) đều có script `lint` và `test`. CI dùng
+> `--if-present`, nên một app thiếu script sẽ bị bỏ qua chứ không fail — xem mục
+> "Quality gate" trong Job Summary của mỗi lần chạy để biết bước nào thực sự đã chạy.
 
 ### 3. GraphQL types của BFF
 
@@ -59,6 +59,41 @@ vào `apps/bff/src/generated/graphql.ts`. Sau khi sửa SDL, chạy lại rồi 
 ```bash
 pnpm --filter bff codegen
 ```
+
+### 4. Ứng dụng Mobile (Expo)
+
+Expo SDK 58 (React Native 0.88), chạy trên Android và iOS. Học viên có đủ mọi tính năng
+của web: đăng nhập (email, Google, Facebook), onboarding, lộ trình hằng ngày, thẻ từ, trắc
+nghiệm, nghe chép, phát âm, dịch, bài Nói/Viết có chấm AI, đề thi và IELTS Full Test, gia
+sư AI, blog, chat, bạn bè, hồ sơ. Khu quản trị cũng đủ như web: soạn và duyệt nội dung học,
+đề thi (kèm audio/ảnh), đề Nói/Viết, IELTS Full Test, tạo đề bằng AI, gia sư AI (báo cáo,
+kho kiến thức, điều khiển), chấm bài và phân công chấm, blog, người dùng, gói Pro, trọng số
+kiểm tra trình độ, bảng quy đổi điểm TOEIC.
+
+```bash
+cp apps/mobile/.env.local.example apps/mobile/.env.local   # điền Supabase, BFF, web URL
+pnpm dev:mobile                                            # Expo Go hoặc development build
+pnpm --filter mobile test                                  # Jest (jest-expo)
+pnpm --filter mobile codegen                               # sinh lại hooks GraphQL
+```
+
+- Gọi thẳng BFF bằng `Authorization: Bearer` (phiên Supabase lưu mã hoá: khoá trong
+  SecureStore, dữ liệu trong AsyncStorage). Không cần sửa BFF.
+- GraphQL dùng **chung file `.graphql` của web** (`apps/web/src/features/**`), cộng
+  file riêng trong `apps/mobile/src`. Sửa operation của web → chạy lại codegen mobile
+  và commit; CI kiểm tra file sinh ra không bị lệch.
+- Ghi âm tạo WAV 16 kHz mono ngay trên máy (từ luồng PCM của `expo-audio`), vì mọi
+  đường chấm giọng nói ở backend chỉ nhận `audio/wav` và Android không ghi được WAV.
+- Supabase phải cho phép URL chuyển hướng `englow3://auth/callback` và
+  `englow3://auth/reset` (Authentication → URL Configuration) để xác nhận email,
+  đặt lại mật khẩu và OAuth hoạt động trên điện thoại.
+- Nháp soạn nội dung được giữ trên máy (AsyncStorage, 24 giờ) cho tới khi lưu lên máy chủ,
+  giống web giữ trong localStorage. Audio cho đề thi/nghe chép/thẻ từ chọn bằng
+  `expo-document-picker` (MP3/WAV ≤ 12 MB).
+- Kiểu route (`typedRoutes`) do Expo sinh vào `.expo/types` khi chạy `expo start`; chạy
+  một lần sau khi thêm màn mới để `tsc` kiểm tra đường dẫn.
+- Đóng gói bản cài: `eas build --profile preview` (APK nội bộ) hoặc `--profile production`
+  (cần tài khoản Expo; cấu hình trong `apps/mobile/eas.json`).
 
 ---
 
