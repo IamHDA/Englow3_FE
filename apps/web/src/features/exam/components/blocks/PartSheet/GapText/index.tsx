@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@mantine/core";
 import { gapTargets, questionNumberLabel } from "../../../../examAnswers";
-import classes from "../QuestionCard.module.css";
+import classes from "../PartSheet.module.css";
 
 /** A gap is written {{n}}: the set's n-th question, in orderNo order. */
 const GAP = /\{\{(\d+)\}\}/g;
@@ -22,7 +22,7 @@ export interface GapTextProps {
 /**
  * A passage, note or form with its gaps in place: each shows its question's
  * number and what was typed into it, and the one being answered stands out.
- * Read-only - the answer is typed in the field below, one question at a time.
+ * Read-only - each answer is typed in its question's field below.
  */
 export function GapText({
   content,

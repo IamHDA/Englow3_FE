@@ -5,26 +5,22 @@ import { describe, expect, it, vi } from "vitest";
 import { QuestionCard, type QuestionCardProps } from "./index";
 function fixture(type: string): QuestionCardProps {
   return {
-    section: { sectionType: "READING" },
-    part: { title: "Passage", content: "Read this passage before answering." },
-    questionSet: {},
+    questionSet: { setOptions: [], questions: [] },
     question: {
       id: "q",
       questionType: type,
       content: "Choose the answer",
+      numberFrom: 1,
+      numberTo: 1,
+      choiceLimit: 2,
       options: [
         { id: "a", content: "First" },
         { id: "b", content: "Second" },
       ],
     },
-    questionIndex: 0,
-    totalQuestions: 1,
     isFlagged: false,
+    isCurrent: false,
     onToggleFlag: vi.fn(),
-    onPrevQuestion: vi.fn(),
-    onNextQuestion: vi.fn(),
-    hasPrev: false,
-    hasNext: false,
     onSelectOption: vi.fn(),
   } as unknown as QuestionCardProps;
 }
@@ -58,9 +54,6 @@ describe("exam answer selection", () => {
     fireEvent.click(choices[0]);
     expect(choices[0]).toHaveAttribute("aria-checked", "false");
     expect(choices[1]).toHaveAttribute("aria-checked", "true");
-    expect(
-      screen.getByText("Read this passage before answering."),
-    ).toBeInTheDocument();
   });
   it("supports arrow navigation between single-choice answers", () => {
     const props = fixture("SINGLE_CHOICE");
@@ -78,14 +71,10 @@ describe("exam answer selection", () => {
 });
 
 describe("IELTS question shapes", () => {
-  it("types an answer into a gap and shows it in the passage", () => {
+  it("types the answer of a text-entry question", () => {
     const onChangeText = vi.fn();
     const props = {
       ...fixture("TEXT_ENTRY"),
-      questionSet: {
-        content: "Name: Sarah {{1}}",
-        questions: [{ id: "q", orderNo: 1, numberFrom: 14, numberTo: 14 }],
-      },
       question: {
         id: "q",
         questionType: "TEXT_ENTRY",
@@ -102,15 +91,12 @@ describe("IELTS question shapes", () => {
         <QuestionCard
           {...props}
           textAnswer="Mitchel"
-          typedAnswers={{ q: "Mitchel" }}
           onChangeText={onChangeText}
         />
       </MantineProvider>,
     );
 
-    expect(
-      screen.getByText(/Mitchel/, { selector: "span" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("textbox")).toHaveValue("Mitchel");
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "Mitchell" },
     });

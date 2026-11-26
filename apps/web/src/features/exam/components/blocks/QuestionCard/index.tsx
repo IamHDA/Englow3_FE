@@ -4,28 +4,25 @@ import React from "react";
 import {
   Box,
   Button,
-  Card,
-  Divider,
   Flex,
   Group,
-  Image,
+  Paper,
   Stack,
   Text,
   TextInput,
   ThemeIcon,
   UnstyledButton,
 } from "@mantine/core";
-import { ArrowLeft, ArrowRight, Flag, Headphones, Volume2 } from "lucide-react";
+import { Flag } from "lucide-react";
 import type { ExamPaper } from "../../../types";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionCard.module.css";
-import { OnceOnlyAudio } from "./OnceOnlyAudio";
-import { GapText } from "./GapText";
 import { ExamQuestionType } from "@/lib/graphql/generated/schemaTypes";
 import {
   MAX_TEXT_ANSWER_LENGTH,
   questionNumberLabel,
 } from "../../../examAnswers";
+import { questionAnchorId } from "../../../constants/examSitting";
 
 type Section = ExamPaper["sections"][number];
 type Part = Section["parts"][number];
@@ -33,53 +30,36 @@ type QuestionSet = Part["questionSets"][number];
 type Question = QuestionSet["questions"][number];
 
 export interface QuestionCardProps {
-  section: Section;
-  part: Part;
+  /** The set the question belongs to: a matching question chooses from its shared list. */
   questionSet: QuestionSet;
   question: Question;
-  questionIndex: number;
-  totalQuestions: number;
-  selectedOptionId?: string;
   selectedOptionIds?: string[];
-  isFlagged: boolean;
-  onSelectOption: (optionId: string) => void;
-  onToggleFlag: () => void;
-  onPrevQuestion: () => void;
-  onNextQuestion: () => void;
-  hasPrev: boolean;
-  hasNext: boolean;
-  /**
-   * Thi thật: âm thanh nghe một lần, không tua. Truyền mã lượt thi để nhớ đoạn
-   * nào đã nghe; bỏ trống (bài luyện tập) thì dùng trình phát thường.
-   */
-  audioOnceForAttempt?: string;
   /** What was typed on a TEXT_ENTRY question. */
   textAnswer?: string;
+  isFlagged: boolean;
+  /** The question the learner is on: the palette's highlight and the gap that stands out. */
+  isCurrent: boolean;
+  onSelectOption: (optionId: string) => void;
   onChangeText?: (text: string) => void;
-  /** What has been typed into each gap of this question set, by question id. */
-  typedAnswers?: Record<string, string>;
+  onToggleFlag: () => void;
 }
 
+/**
+ * One question of a part: its number, the flag, the prompt and the way to
+ * answer it - options, the set's shared list for matching, or a field to type
+ * in. What the question is about (the passage, the audio) belongs to the part
+ * or the set and is shown once above, by the sheet.
+ */
 export function QuestionCard({
-  section,
-  part,
   questionSet,
   question,
-  questionIndex,
-  totalQuestions,
-  selectedOptionId,
   selectedOptionIds,
-  isFlagged,
-  onSelectOption,
-  onToggleFlag,
-  onPrevQuestion,
-  onNextQuestion,
-  hasPrev,
-  hasNext,
-  audioOnceForAttempt,
   textAnswer,
+  isFlagged,
+  isCurrent,
+  onSelectOption,
   onChangeText,
-  typedAnswers,
+  onToggleFlag,
 }: QuestionCardProps) {
   const { t, isVi } = useLanguage();
   const multiple = question.questionType === ExamQuestionType.MULTIPLE_CHOICE;
@@ -98,152 +78,31 @@ export function QuestionCard({
           letter: String.fromCharCode(65 + index),
           content: option.content,
         }));
-  const numberLabel =
-    question.numberFrom === undefined
-      ? String(questionIndex + 1)
-      : questionNumberLabel(question);
-  const selected =
-    selectedOptionIds ?? (selectedOptionId ? [selectedOptionId] : []);
-  const isListening = section.sectionType.toUpperCase().includes("LISTEN");
+  const numberLabel = questionNumberLabel(question);
+  const selected = selectedOptionIds ?? [];
 
   return (
-    <Card
-      radius="lg"
-      p={{ base: "md", md: "xl" }}
+    <Paper
+      id={questionAnchorId(question.id)}
+      p="md"
+      radius="md"
       withBorder
-      className={classes.cardRoot}
+      className={classes.questionRoot}
+      data-current={isCurrent || undefined}
+      aria-current={isCurrent ? "step" : undefined}
     >
-      <Stack gap="lg">
-        {/* Part Header & Instructions */}
-        <Box p="sm" className={classes.partHeader}>
-          <Group justify="space-between" align="center" mb={4}>
-            <Text fw={700} size="sm" c="navy.9">
-              {part.title}
-            </Text>
-            {isListening && (
-              <Group gap={4}>
-                <Headphones size={14} color="var(--mantine-color-navy-9)" />
-                <Text size="xs" fw={600} c="navy.9">
-                  {t.exam.listeningSection}
-                </Text>
-              </Group>
-            )}
-          </Group>
-          {part.instruction && (
-            <Text size="xs" c="ink.6" style={{ fontStyle: "italic" }}>
-              {part.instruction}
-            </Text>
-          )}
-        </Box>
-
-        {(part.content || part.audioUrl || part.imageUrl) && (
-          <Card withBorder>
-            <Stack>
-              {part.content && (
-                <Text style={{ whiteSpace: "pre-wrap" }}>{part.content}</Text>
-              )}
-              {part.audioUrl &&
-                (audioOnceForAttempt ? (
-                  <OnceOnlyAudio
-                    key={`part-${part.id}`}
-                    src={part.audioUrl}
-                    audioId={`part-${part.id}`}
-                    attemptId={audioOnceForAttempt}
-                    label={t.exam.audioStimulus}
-                  />
-                ) : (
-                  <audio
-                    controls
-                    preload="none"
-                    src={part.audioUrl}
-                    style={{ width: "100%" }}
-                  />
-                ))}
-              {part.imageUrl && (
-                <Image
-                  src={part.imageUrl}
-                  alt={isVi ? "Ảnh trong phần thi" : "Part stimulus"}
-                  fit="contain"
-                  mah={360}
-                />
-              )}
-            </Stack>
-          </Card>
-        )}
-        {/* Question Set Stimulus / Passage / Audio */}
-        {(questionSet.content ||
-          questionSet.audioUrl ||
-          questionSet.imageUrl ||
-          questionSet.instruction) && (
-          <Card p="md" radius="md" className={classes.stimulusCard}>
-            {questionSet.title && (
-              <Text fw={700} size="sm" c="navy.9" mb={4}>
-                {questionSet.title}
-              </Text>
-            )}
-            {questionSet.instruction && (
-              <Text size="xs" c="ink.5" mb="xs" style={{ fontStyle: "italic" }}>
-                {questionSet.instruction}
-              </Text>
-            )}
-            {questionSet.content && (
-              <GapText
-                content={questionSet.content}
-                questions={questionSet.questions ?? []}
-                typedAnswers={typedAnswers ?? {}}
-                currentQuestionId={question.id}
-              />
-            )}
-            {questionSet.imageUrl && (
-              <Image
-                src={questionSet.imageUrl}
-                alt={isVi ? "Ảnh trong nhóm câu" : "Question stimulus"}
-                fit="contain"
-                mah={360}
-              />
-            )}
-            {/* URL đã được backend ký sẵn và tự hết hạn, phát thẳng được. */}
-            {questionSet.audioUrl && (
-              <Box mt="xs" p="xs" className={classes.audioWidget}>
-                <Group gap="xs" mb={6}>
-                  <Volume2 size={18} color="var(--mantine-color-navy-9)" />
-                  <Text size="xs" fw={600} c="navy.9">
-                    {t.exam.audioStimulus}
-                  </Text>
-                </Group>
-                {audioOnceForAttempt ? (
-                  <OnceOnlyAudio
-                    key={`set-${questionSet.id}`}
-                    src={questionSet.audioUrl}
-                    audioId={`set-${questionSet.id}`}
-                    attemptId={audioOnceForAttempt}
-                    label={t.exam.audioStimulus}
-                  />
-                ) : (
-                  <audio controls preload="none" src={questionSet.audioUrl}>
-                    {t.exam.audioStimulus}
-                  </audio>
-                )}
-              </Box>
-            )}
-          </Card>
-        )}
-
-        {/* Question Item Header */}
-        <Group justify="space-between" align="center">
-          <Group gap="xs">
+      <Stack gap="sm">
+        <Group justify="space-between" align="center" wrap="nowrap">
+          <Group gap="xs" wrap="nowrap">
             <ThemeIcon size={26} radius="xl" color="navy.9">
               <Text size="xs" fw={700} c="white">
                 {numberLabel}
               </Text>
             </ThemeIcon>
             <Text size="xs" c="ink.5" fw={600}>
-              {t.exam.questionPrefix} {numberLabel} · {questionIndex + 1} /{" "}
-              {totalQuestions}
+              {t.exam.questionPrefix} {numberLabel}
             </Text>
           </Group>
-
-          {/* Flag Button */}
           <Button
             variant={isFlagged ? "filled" : "subtle"}
             color={isFlagged ? "yellow" : "gray"}
@@ -256,12 +115,9 @@ export function QuestionCard({
           </Button>
         </Group>
 
-        {/* Question Prompt */}
-        <Box>
-          <Text fw={600} size="md" c="navy.9" lh={1.5}>
-            {question.content}
-          </Text>
-        </Box>
+        <Text fw={600} size="md" c="navy.9" lh={1.5}>
+          {question.content}
+        </Text>
 
         {typed && (
           <TextInput
@@ -279,8 +135,7 @@ export function QuestionCard({
           />
         )}
 
-        {/* Answer Options */}
-        <Stack gap="xs" display={typed ? "none" : undefined}>
+        {!typed && (
           <Box
             role={multiple ? "group" : "radiogroup"}
             aria-label={question.content}
@@ -295,8 +150,6 @@ export function QuestionCard({
             <Stack gap="xs">
               {choices.map((option, optIdx) => {
                 const isSelected = selected.includes(option.id);
-                const letter = option.letter;
-
                 return (
                   <UnstyledButton
                     key={option.id}
@@ -344,7 +197,7 @@ export function QuestionCard({
                         c={isSelected ? "white" : "ink.8"}
                       >
                         <Text size="xs" fw={700}>
-                          {letter}
+                          {option.letter}
                         </Text>
                       </ThemeIcon>
                       <Text
@@ -361,34 +214,8 @@ export function QuestionCard({
               })}
             </Stack>
           </Box>
-        </Stack>
-
-        <Divider color="gray.2" />
-
-        {/* Navigation Action Buttons */}
-        <Group justify="space-between">
-          <Button
-            variant="default"
-            radius="xl"
-            size="sm"
-            leftSection={<ArrowLeft size={16} />}
-            onClick={onPrevQuestion}
-            disabled={!hasPrev}
-          >
-            {t.exam.prevQuestion}
-          </Button>
-          <Button
-            radius="xl"
-            size="sm"
-            rightSection={<ArrowRight size={16} />}
-            onClick={onNextQuestion}
-            disabled={!hasNext}
-            className={classes.nextBtn}
-          >
-            {t.exam.nextQuestion}
-          </Button>
-        </Group>
+        )}
       </Stack>
-    </Card>
+    </Paper>
   );
 }

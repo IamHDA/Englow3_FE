@@ -777,8 +777,10 @@ export interface ExamTranslations {
   questionPrefix: string;
   flag: string;
   flagged: string;
-  prevQuestion: string;
-  nextQuestion: string;
+  prevPart: string;
+  nextPart: string;
+  partsLabel: string;
+  partTabAria: string;
   paletteTitle: string;
   paletteCompleted: string;
   legendAnswered: string;
@@ -1544,8 +1546,10 @@ export const translations: Record<Language, AppTranslations> = {
       questionPrefix: "Câu",
       flag: "Gắn cờ",
       flagged: "Đã gắn cờ",
-      prevQuestion: "Câu trước",
-      nextQuestion: "Câu tiếp theo",
+      prevPart: "Part trước",
+      nextPart: "Part tiếp theo",
+      partsLabel: "Các phần của đề",
+      partTabAria: "{part}: đã làm {answered}/{total} câu",
       paletteTitle: "Bảng câu hỏi",
       paletteCompleted: "{answered}/{total} đã làm",
       legendAnswered: "Đã làm",
@@ -2451,8 +2455,10 @@ export const translations: Record<Language, AppTranslations> = {
       questionPrefix: "Question",
       flag: "Flag",
       flagged: "Flagged",
-      prevQuestion: "Previous",
-      nextQuestion: "Next",
+      prevPart: "Previous part",
+      nextPart: "Next part",
+      partsLabel: "Parts of the paper",
+      partTabAria: "{part}: {answered} of {total} answered",
       paletteTitle: "Question Palette",
       paletteCompleted: "{answered}/{total} completed",
       legendAnswered: "Answered",

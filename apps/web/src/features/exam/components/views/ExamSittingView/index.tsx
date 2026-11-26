@@ -50,13 +50,19 @@ import { backendCodeOf } from "@/shared/network/loadError";
 import { FocusMode } from "@/shared/components/SiteHeader/FocusMode";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useExamTimer } from "../../../hooks/useExamTimer";
-import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
+import {
+  EXAM_LOCAL_STORAGE_PREFIX,
+  PART_SHEET_ANCHOR_ID,
+  questionAnchorId,
+} from "../../../constants/examSitting";
+import { partIndexOf, partsOf, type ExamPartEntry } from "../../../examParts";
 
 import { fullTestSittingPath } from "../../../constants/fullTestLink";
 import { ExamOverview } from "../../blocks/ExamOverview";
 import { ExamOverviewSkeleton } from "../../blocks/ExamOverview/ExamOverviewSkeleton";
 import { ExamSittingHeader } from "../../blocks/ExamSittingHeader";
-import { QuestionCard } from "../../blocks/QuestionCard";
+import { PartSheet } from "../../blocks/PartSheet";
+import { PartTabs } from "../../blocks/PartTabs";
 import {
   QuestionPalette,
   type FlatQuestionItem,
@@ -75,23 +81,9 @@ import {
   questionNumberLabel,
   sanitizeExamAnswers,
   toAnswerInputs,
-  type ExamAnswer,
   type ExamAnswers,
 } from "../../../examAnswers";
 import { ExamQuestionType } from "@/lib/graphql/generated/schemaTypes";
-
-/** The options chosen for a question, whatever shape its answer has. */
-function chosenIds(answer: ExamAnswer | undefined): string[] {
-  if (Array.isArray(answer)) return answer;
-  return typeof answer === "string" ? [answer] : [];
-}
-
-/** What was typed for a question; empty for a choice question. */
-function typedText(answer: ExamAnswer | undefined): string {
-  return typeof answer === "object" && !Array.isArray(answer)
-    ? answer.text
-    : "";
-}
 
 interface ExamSittingViewProps {
   examId: string;
@@ -217,6 +209,17 @@ export function ExamSittingView({
   const isPlacement = detailData?.exam?.examType === ExamType.PLACEMENT;
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  /**
+   * How the learner reached the part on screen: going on to it (Next part, or
+   * opening the attempt) starts its first clip; jumping to it with a tab or the
+   * palette does not, so a look ahead does not use up a clip heard once.
+   */
+  const [arrival, setArrival] = useState<"advance" | "jump">("advance");
+  /** Where to scroll once the page shows it: a question, or the part's top. */
+  const [scrollTarget, setScrollTarget] = useState<{
+    anchorId: string;
+    nonce: number;
+  } | null>(null);
   const [answers, setAnswers] = useState<ExamAnswers>({});
   const validAnswers = useMemo(
     () => sanitizeExamAnswers(paperQuestions, answers),
@@ -251,6 +254,26 @@ export function ExamSittingView({
     });
     return list;
   }, [paper]);
+
+  const parts = useMemo(() => partsOf(flatQuestions), [flatQuestions]);
+  const indexByQuestionId = useMemo(
+    () =>
+      new Map(flatQuestions.map((item) => [item.questionId, item.globalIndex])),
+    [flatQuestions],
+  );
+  const questionById = useMemo(
+    () =>
+      new Map(
+        (paper?.sections ?? []).flatMap((section) =>
+          section.parts.flatMap((part) =>
+            part.questionSets.flatMap((set) =>
+              set.questions.map((question) => [question.id, question] as const),
+            ),
+          ),
+        ),
+      ),
+    [paper],
+  );
 
   const autosave = useExamAutosave(result ? null : attemptId, answers);
 
@@ -520,6 +543,7 @@ export function ExamSittingView({
             Math.max(0, questions.length - 1),
           ),
         );
+        setArrival("advance");
         setAttemptId(attempt.id);
         setExpiresAt(attempt.expiresAt);
       } catch {
@@ -560,7 +584,7 @@ export function ExamSittingView({
     }
   }, [attemptId, result, answers, flaggedIds, currentIndex]);
 
-  // Current question references
+  // Current question references: the question the learner is on, and its part.
   const currentItem =
     flatQuestions[
       Math.min(currentIndex, Math.max(0, flatQuestions.length - 1))
@@ -572,23 +596,52 @@ export function ExamSittingView({
     currentItem && currentSection
       ? currentSection.parts[currentItem.partIndex]
       : null;
-  const currentQuestionSet =
-    currentItem && currentPart
-      ? currentPart.questionSets[currentItem.questionSetIndex]
-      : null;
-  const currentQuestion =
-    currentItem && currentQuestionSet
-      ? currentQuestionSet.questions.find(
-          (q) => q.id === currentItem.questionId,
-        )
-      : null;
+  const currentPartPosition = currentItem
+    ? partIndexOf(parts, currentItem.globalIndex)
+    : -1;
+  const currentPartEntry: ExamPartEntry | undefined =
+    parts[currentPartPosition];
 
-  const handleSelectOption = (optionId: string) => {
-    if (!currentItem || pending.current || expired) return;
+  /** Moves to a question, the way the learner asked for it, and scrolls to it. */
+  const navigate = (
+    index: number,
+    how: "advance" | "jump",
+    anchorId: string,
+  ) => {
+    setArrival(how);
+    setCurrentIndex(index);
+    setScrollTarget((previous) => ({
+      anchorId,
+      nonce: (previous?.nonce ?? 0) + 1,
+    }));
+  };
+  const openPart = (part: ExamPartEntry, how: "advance" | "jump") =>
+    navigate(part.firstIndex, how, PART_SHEET_ANCHOR_ID);
+
+  // Scrolling is the browser's: once the page shows what was asked for, bring it
+  // into view under the sticky exam header (scroll-margin-top in the CSS).
+  useEffect(() => {
+    if (!scrollTarget) return;
+    document
+      .getElementById(scrollTarget.anchorId)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [scrollTarget]);
+
+  /** Touching a question makes it the current one, without scrolling. */
+  const focusQuestion = (questionId: string) => {
+    const index = indexByQuestionId.get(questionId);
+    if (index !== undefined) setCurrentIndex(index);
+  };
+
+  const handleSelectOption = (questionId: string, optionId: string) => {
+    if (pending.current || expired) return;
+    const question = questionById.get(questionId);
+    if (!question) return;
+    focusQuestion(questionId);
     setAnswers((prev) => {
-      if (currentQuestion?.questionType !== ExamQuestionType.MULTIPLE_CHOICE)
-        return { ...prev, [currentItem.questionId]: optionId };
-      const old = prev[currentItem.questionId];
+      if (question.questionType !== ExamQuestionType.MULTIPLE_CHOICE)
+        return { ...prev, [questionId]: optionId };
+      const old = prev[questionId];
       const chosen = Array.isArray(old)
         ? old
         : typeof old === "string"
@@ -596,39 +649,37 @@ export function ExamSittingView({
           : [];
       // "Choose TWO": a third tick is refused rather than quietly swapping one,
       // which the backend would also refuse (TOO_MANY_SELECTED_OPTIONS).
-      if (
-        !chosen.includes(optionId) &&
-        chosen.length >= currentQuestion.choiceLimit
-      )
+      if (!chosen.includes(optionId) && chosen.length >= question.choiceLimit)
         return prev;
       const selected = chosen.includes(optionId)
         ? chosen.filter((id) => id !== optionId)
         : [...chosen, optionId];
       const next = { ...prev };
-      if (selected.length) next[currentItem.questionId] = selected;
-      else delete next[currentItem.questionId];
+      if (selected.length) next[questionId] = selected;
+      else delete next[questionId];
       return next;
     });
   };
 
-  const handleChangeText = (text: string) => {
-    if (!currentItem || pending.current || expired) return;
+  const handleChangeText = (questionId: string, text: string) => {
+    if (pending.current || expired) return;
+    focusQuestion(questionId);
     setAnswers((prev) => {
       const next = { ...prev };
-      if (text.length) next[currentItem.questionId] = { text };
-      else delete next[currentItem.questionId];
+      if (text.length) next[questionId] = { text };
+      else delete next[questionId];
       return next;
     });
   };
 
-  const handleToggleFlag = () => {
-    if (!currentItem) return;
+  const handleToggleFlag = (questionId: string) => {
+    focusQuestion(questionId);
     setFlaggedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(currentItem.questionId)) {
-        next.delete(currentItem.questionId);
+      if (next.has(questionId)) {
+        next.delete(questionId);
       } else {
-        next.add(currentItem.questionId);
+        next.add(questionId);
       }
       return next;
     });
@@ -648,6 +699,7 @@ export function ExamSittingView({
     setAnswers({});
     setFlaggedIds(new Set());
     setCurrentIndex(0);
+    setArrival("advance");
   };
 
   const error =
@@ -912,47 +964,46 @@ export function ExamSittingView({
             </Button>
           </Alert>
         )}
+        {parts.length > 1 && (
+          <Box mb="md">
+            <PartTabs
+              parts={parts}
+              currentKey={currentPartEntry?.key ?? null}
+              answers={answers}
+              onSelectPart={(part) => openPart(part, "jump")}
+            />
+          </Box>
+        )}
         <Grid gap="lg">
           <Grid.Col span={{ base: 12, md: 8, lg: 8.5 }}>
-            {currentSection &&
-            currentPart &&
-            currentQuestionSet &&
-            currentQuestion ? (
+            {currentSection && currentPart && currentPartEntry ? (
               <Box
                 component="fieldset"
                 disabled={expired || submitting}
                 style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
               >
-                <QuestionCard
-                  audioOnceForAttempt={!practice ? attemptId : undefined}
+                {/* One sheet per part: a new part is a new sheet, so its clips
+                    start over and "went on to it" is read afresh. */}
+                <PartSheet
+                  key={currentPartEntry.key}
                   section={currentSection}
                   part={currentPart}
-                  questionSet={currentQuestionSet}
-                  question={currentQuestion}
-                  questionIndex={currentIndex}
-                  totalQuestions={flatQuestions.length}
-                  selectedOptionIds={chosenIds(answers[currentQuestion.id])}
-                  textAnswer={typedText(answers[currentQuestion.id])}
-                  onChangeText={handleChangeText}
-                  typedAnswers={Object.fromEntries(
-                    currentQuestionSet.questions.map((question) => [
-                      question.id,
-                      typedText(answers[question.id]),
-                    ]),
-                  )}
-                  isFlagged={flaggedIds.has(currentQuestion.id)}
+                  answers={answers}
+                  flaggedIds={flaggedIds}
+                  currentQuestionId={currentItem?.questionId ?? null}
                   onSelectOption={handleSelectOption}
+                  onChangeText={handleChangeText}
                   onToggleFlag={handleToggleFlag}
-                  onPrevQuestion={() =>
-                    setCurrentIndex((prev) => Math.max(0, prev - 1))
+                  audioOnceForAttempt={!practice ? attemptId : undefined}
+                  autoPlayFirstClip={arrival === "advance"}
+                  onPrevPart={() =>
+                    openPart(parts[currentPartPosition - 1], "jump")
                   }
-                  onNextQuestion={() =>
-                    setCurrentIndex((prev) =>
-                      Math.min(flatQuestions.length - 1, prev + 1),
-                    )
+                  onNextPart={() =>
+                    openPart(parts[currentPartPosition + 1], "advance")
                   }
-                  hasPrev={currentIndex > 0}
-                  hasNext={currentIndex < flatQuestions.length - 1}
+                  hasPrevPart={currentPartPosition > 0}
+                  hasNextPart={currentPartPosition < parts.length - 1}
                 />
               </Box>
             ) : (
@@ -967,10 +1018,17 @@ export function ExamSittingView({
           <Grid.Col span={{ base: 12, md: 4, lg: 3.5 }}>
             <QuestionPalette
               questions={flatQuestions}
+              parts={parts}
               currentIndex={currentIndex}
               answers={answers}
               flaggedQuestionIds={flaggedIds}
-              onSelectQuestion={(idx) => setCurrentIndex(idx)}
+              onSelectQuestion={(index) =>
+                navigate(
+                  index,
+                  "jump",
+                  questionAnchorId(flatQuestions[index].questionId),
+                )
+              }
             />
           </Grid.Col>
         </Grid>

@@ -79,6 +79,19 @@ export function sanitizeExamAnswers(
   return clean;
 }
 
+/** The options chosen for a question, whatever shape its answer has. */
+export function chosenOptionIds(answer: ExamAnswer | undefined): string[] {
+  if (Array.isArray(answer)) return answer;
+  return typeof answer === "string" ? [answer] : [];
+}
+
+/** What was typed for a question; empty for a choice question. */
+export function typedAnswerText(answer: ExamAnswer | undefined): string {
+  return typeof answer === "object" && !Array.isArray(answer)
+    ? answer.text
+    : "";
+}
+
 export function isExamAnswerPresent(answer: ExamAnswer | undefined) {
   if (isTyped(answer)) return answer.text.trim().length > 0;
   return Array.isArray(answer)

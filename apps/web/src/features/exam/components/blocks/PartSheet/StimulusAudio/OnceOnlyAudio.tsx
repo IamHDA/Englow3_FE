@@ -2,7 +2,7 @@
 
 import { Alert, Button, Group, Progress, Stack, Text } from "@mantine/core";
 import { Headphones } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 
 const STORAGE_PREFIX = "englow3_exam_audio_played_";
@@ -68,18 +68,29 @@ function markPlayed(attemptId: string, audioId: string) {
  * kể cả khi tải lại trang giữa chừng; lỗi tải trước đó vẫn được thử lại.
  * Trạng thái "đã nghe" được nhớ theo lượt thi chứ không theo trạng thái trình
  * duyệt. Bài luyện tập dùng trình phát thường.
+ *
+ * `autoPlay` bắt đầu đoạn âm thanh ngay khi nó còn chưa nghe, như khi người thi
+ * đi tiếp sang phần mới. Trình duyệt có thể chặn tự phát (chưa có thao tác nào
+ * trên trang, ví dụ sau khi tải lại): khi đó nút Phát vẫn còn nguyên, lượt nghe
+ * không bị tính.
  */
 export function OnceOnlyAudio({
   src,
   audioId,
   attemptId,
   label,
+  autoPlay = false,
+  onEnded,
 }: {
   src: string;
   /** Định danh ổn định của đoạn âm thanh (URL ký sẵn đổi mỗi lần tải nên không dùng được). */
   audioId: string;
   attemptId: string;
   label: string;
+  /** Start as soon as this is true and the clip has not been heard. */
+  autoPlay?: boolean;
+  /** The clip played to its end. */
+  onEnded?: () => void;
 }) {
   const { isVi } = useLanguage();
   const audio = useRef<HTMLAudioElement>(null);
@@ -98,6 +109,23 @@ export function OnceOnlyAudio({
         : "ready",
   );
   const [progress, setProgress] = useState(0);
+  const autoStarted = useRef(false);
+
+  // Tự phát: đồng bộ phần tử <audio> với yêu cầu tự phát, một lần cho mỗi đoạn.
+  // Trạng thái chỉ đổi trong các callback (onPlaying, hoặc khi bị chặn) chứ
+  // không ngay trong effect.
+  useEffect(() => {
+    const element = audio.current;
+    if (!autoPlay || autoStarted.current || !element || state !== "ready")
+      return;
+    autoStarted.current = true;
+    void element.play().catch((reason: unknown) => {
+      if (reason instanceof DOMException && reason.name === "NotAllowedError")
+        return; // Trình duyệt chặn tự phát: chờ người thi bấm Phát.
+      rememberInterruption(attemptId, audioId, resumeAt.current);
+      setState("error");
+    });
+  }, [autoPlay, state, attemptId, audioId]);
 
   const play = () => {
     const element = audio.current;
@@ -140,6 +168,7 @@ export function OnceOnlyAudio({
           onEnded={() => {
             rememberInterruption(attemptId, audioId, null);
             setState("done");
+            onEnded?.();
           }}
           onError={() => {
             if (state !== "done") {

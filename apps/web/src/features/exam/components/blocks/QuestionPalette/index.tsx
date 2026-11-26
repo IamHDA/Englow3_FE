@@ -14,6 +14,7 @@ import { Flag } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import classes from "./QuestionPalette.module.css";
 import { isExamAnswerPresent, type ExamAnswers } from "../../../examAnswers";
+import { partLabel, type ExamPartEntry } from "../../../examParts";
 
 export interface FlatQuestionItem {
   globalIndex: number;
@@ -29,6 +30,8 @@ export interface FlatQuestionItem {
 
 export interface QuestionPaletteProps {
   questions: FlatQuestionItem[];
+  /** The same questions grouped by part: the palette lists them part by part. */
+  parts: readonly ExamPartEntry[];
   currentIndex: number;
   answers: ExamAnswers;
   flaggedQuestionIds: Set<string>;
@@ -37,6 +40,7 @@ export interface QuestionPaletteProps {
 
 export function QuestionPalette({
   questions,
+  parts,
   currentIndex,
   answers,
   flaggedQuestionIds,
@@ -85,41 +89,48 @@ export function QuestionPalette({
           </Group>
         </Group>
 
-        {/* Palette Grid */}
-        <SimpleGrid cols={5} spacing={6}>
-          {questions.map((q) => {
-            const isAnswered = isExamAnswerPresent(answers[q.questionId]);
-            const isFlagged = flaggedQuestionIds.has(q.questionId);
-            const isCurrent = q.globalIndex === currentIndex;
+        {/* Palette Grid, part by part */}
+        {parts.map((part) => (
+          <Stack key={part.key} gap={6}>
+            <Text size="xs" fw={700} c="ink.6">
+              {partLabel(part, parts)}
+            </Text>
+            <SimpleGrid cols={5} spacing={6}>
+              {part.questions.map((q) => {
+                const isAnswered = isExamAnswerPresent(answers[q.questionId]);
+                const isFlagged = flaggedQuestionIds.has(q.questionId);
+                const isCurrent = q.globalIndex === currentIndex;
 
-            const status = isFlagged
-              ? "flagged"
-              : isAnswered
-                ? "answered"
-                : "unanswered";
+                const status = isFlagged
+                  ? "flagged"
+                  : isAnswered
+                    ? "answered"
+                    : "unanswered";
 
-            return (
-              <UnstyledButton
-                key={q.questionId}
-                onClick={() => onSelectQuestion(q.globalIndex)}
-                className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ""}`}
-                data-status={status}
-                aria-label={t.exam.questionAria.replace("{index}", q.label)}
-              >
-                {q.label}
-                {isFlagged && (
-                  <Box className={classes.flagIconPin}>
-                    <Flag
-                      size={10}
-                      color="var(--mantine-color-orange-5)"
-                      fill="var(--mantine-color-orange-5)"
-                    />
-                  </Box>
-                )}
-              </UnstyledButton>
-            );
-          })}
-        </SimpleGrid>
+                return (
+                  <UnstyledButton
+                    key={q.questionId}
+                    onClick={() => onSelectQuestion(q.globalIndex)}
+                    className={`${classes.paletteBtn} ${isCurrent ? classes.paletteBtnCurrent : ""}`}
+                    data-status={status}
+                    aria-label={t.exam.questionAria.replace("{index}", q.label)}
+                  >
+                    {q.label}
+                    {isFlagged && (
+                      <Box className={classes.flagIconPin}>
+                        <Flag
+                          size={10}
+                          color="var(--mantine-color-orange-5)"
+                          fill="var(--mantine-color-orange-5)"
+                        />
+                      </Box>
+                    )}
+                  </UnstyledButton>
+                );
+              })}
+            </SimpleGrid>
+          </Stack>
+        ))}
       </Stack>
     </Card>
   );
