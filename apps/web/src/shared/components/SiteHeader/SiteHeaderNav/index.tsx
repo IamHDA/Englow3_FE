@@ -133,7 +133,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         <Group gap={16} wrap="nowrap">
           {children}
 
-          <Group gap={4} visibleFrom="md" wrap="nowrap">
+          <Group gap={4} visibleFrom="lg" wrap="nowrap">
             <Menu
               position="bottom-start"
               // The dropdown pads its items by 18px (8px dropdown + 10px item)
@@ -215,7 +215,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
           {session && !isBackOfficeRole(session.role) ? (
             <ChatUnreadIndicator />
           ) : null}
-          <Group visibleFrom="md" gap={12}>
+          <Group visibleFrom="lg" gap={12}>
             <LanguageSwitcher />
             {session ? (
               <>
@@ -233,7 +233,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
           <Burger
             opened={drawerOpened}
             onClick={drawer.toggle}
-            hiddenFrom="md"
+            hiddenFrom="lg"
             aria-label="Chuyển đổi menu điều hướng"
           />
         </Group>
@@ -245,7 +245,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
         position="right"
         size="xs"
         title="Menu"
-        hiddenFrom="md"
+        hiddenFrom="lg"
       >
         <Stack gap={10}>
           <LanguageSwitcher fullWidth />

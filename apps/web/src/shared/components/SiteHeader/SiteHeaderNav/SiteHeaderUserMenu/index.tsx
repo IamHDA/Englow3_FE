@@ -36,9 +36,11 @@ export function SiteHeaderUserMenu({
   return (
     <Menu position="bottom-end" width={220} withinPortal>
       <Menu.Target>
-        <UnstyledButton className={classes.trigger}>
+        <UnstyledButton className={classes.trigger} aria-label={displayName}>
           <Avatar src={avatarUrl} name={displayName} radius="xl" size={32} />
-          <Text span fw={700} size="sm" c="ink.9">
+          {/* The name needs room the bar only has from xl; below that the
+              avatar stands for it, and the button keeps it as its label. */}
+          <Text span fw={700} size="sm" c="ink.9" visibleFrom="xl">
             {displayName}
           </Text>
           <ChevronDown
