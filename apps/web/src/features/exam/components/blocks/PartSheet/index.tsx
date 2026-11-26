@@ -17,6 +17,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { ExamPaper } from "../../../types";
 import {
   chosenOptionIds,
+  questionNumberLabel,
   typedAnswerText,
   type ExamAnswers,
 } from "../../../examAnswers";
@@ -166,6 +167,20 @@ export function PartSheet({
               questionSet.instruction ||
               questionSet.title) && (
               <Card p="md" radius="md" className={classes.stimulusCard}>
+                {/* Which questions this material is for - "Câu 32–34" - so a
+                    recording shared by a set is never read as one question's. A set of
+                    one question already says so on the question itself. */}
+                {questionSet.questions.length > 1 && (
+                  <Text size="xs" fw={700} c="ink.6" mb={4}>
+                    {t.exam.questionsRange.replace(
+                      "{range}",
+                      questionNumberLabel({
+                        numberFrom: questionSet.questions[0].numberFrom,
+                        numberTo: questionSet.questions.at(-1)!.numberTo,
+                      }),
+                    )}
+                  </Text>
+                )}
                 {questionSet.title && (
                   <Text fw={700} size="sm" c="navy.9" mb={4}>
                     {questionSet.title}

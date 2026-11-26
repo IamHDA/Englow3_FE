@@ -103,6 +103,14 @@ describe("PartSheet", () => {
     ).toBeInTheDocument();
   });
 
+  it("says which questions a set's material is for when it is for more than one", () => {
+    renderSheet();
+    // The notes of the first set are for 1–2; the second set's recording is for
+    // question 3 alone, which its question already says.
+    expect(screen.getByText("Câu 1–2")).toBeInTheDocument();
+    expect(screen.getAllByText("Câu 3")).toHaveLength(1);
+  });
+
   it("goes on to the next part from the bottom of the page", () => {
     const { props: given } = renderSheet();
     fireEvent.click(screen.getByRole("button", { name: /Part tiếp theo/ }));

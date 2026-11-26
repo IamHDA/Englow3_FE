@@ -781,6 +781,7 @@ export interface ExamTranslations {
   nextPart: string;
   partsLabel: string;
   partTabAria: string;
+  questionsRange: string;
   paletteTitle: string;
   paletteCompleted: string;
   legendAnswered: string;
@@ -1550,6 +1551,7 @@ export const translations: Record<Language, AppTranslations> = {
       nextPart: "Part tiếp theo",
       partsLabel: "Các phần của đề",
       partTabAria: "{part}: đã làm {answered}/{total} câu",
+      questionsRange: "Câu {range}",
       paletteTitle: "Bảng câu hỏi",
       paletteCompleted: "{answered}/{total} đã làm",
       legendAnswered: "Đã làm",
@@ -2459,6 +2461,7 @@ export const translations: Record<Language, AppTranslations> = {
       nextPart: "Next part",
       partsLabel: "Parts of the paper",
       partTabAria: "{part}: {answered} of {total} answered",
+      questionsRange: "Questions {range}",
       paletteTitle: "Question Palette",
       paletteCompleted: "{answered}/{total} completed",
       legendAnswered: "Answered",

@@ -893,21 +893,10 @@ export function ExamSittingView({
       />
 
       <Page>
-        <Text size="sm" role="status" aria-live="polite" mb="sm">
-          {autosave.status === "saving"
-            ? isVi
-              ? "Đang lưu đáp án…"
-              : "Saving answers…"
-            : autosave.status === "saved"
-              ? isVi
-                ? "Đáp án đã đồng bộ"
-                : "Answers synced"
-              : isVi
-                ? "Có đáp án chưa đồng bộ"
-                : "Some answers are not synced"}
-        </Text>
+        {/* Saving is silent while it works: the learner only hears about it
+            when an answer did not reach the server and something must be done. */}
         {(autosave.status === "error" || autosave.status === "conflict") && (
-          <Alert color="orange" mb="md">
+          <Alert color="orange" mb="md" role="alert">
             {autosave.status === "conflict"
               ? isVi
                 ? "Tab khác đã thay đổi nháp. Tải lại để đọc phiên bản mới trước khi tiếp tục."
@@ -926,13 +915,6 @@ export function ExamSittingView({
               {isVi ? "Thử lại" : "Retry"}
             </Button>
           </Alert>
-        )}
-        {!expired && (
-          <Text size="sm" c="dimmed" mb="sm">
-            {isVi
-              ? "Đáp án được tự lưu lên máy chủ. Hết giờ, hệ thống chấm phần đã đồng bộ trước hạn."
-              : "Answers are saved to the server. At the deadline, only answers synced before expiry are graded."}
-          </Text>
         )}
         {(sendFailed || submitError) && !expired && !result && (
           <Alert color="red" role="alert" mb="md">
