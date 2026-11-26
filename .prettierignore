@@ -1,6 +1,8 @@
 node_modules
 .next
 .expo
+# Written by `expo start`; git-ignored, so only a local check would trip on it.
+apps/mobile/expo-env.d.ts
 .turbo
 dist
 build
@@ -9,3 +11,5 @@ coverage
 pnpm-lock.yaml
 apps/bff/src/generated
 apps/bff/src/modules/**/*.typeDefs.ts
+apps/mobile/src/lib/graphql/generated/graphql.ts
+apps/mobile/src/lib/graphql/generated/schemaTypes.ts

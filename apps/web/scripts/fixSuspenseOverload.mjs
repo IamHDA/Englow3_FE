@@ -14,7 +14,8 @@
 // the placement upstream.
 import { readFileSync, writeFileSync } from "node:fs";
 
-const path = "src/lib/graphql/generated/hooks.ts";
+// The mobile app reuses this for its own single generated file.
+const path = process.argv[2] ?? "src/lib/graphql/generated/hooks.ts";
 const content = readFileSync(path, "utf8");
 
 const fixed = content

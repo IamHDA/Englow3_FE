@@ -64,6 +64,16 @@ jobs:
             echo "::error::apps/bff/src/generated is out of date. Run 'pnpm --filter bff codegen' and commit the result."
             exit 1
           }
+      # Mobile builds its hooks from the BFF's SDL and the web app's shared
+      # operation documents. A change to either that is not regenerated here
+      # would leave mobile typechecking against a contract that no longer exists.
+      - run: pnpm --filter mobile codegen
+      - name: Mobile generated types are up to date
+        run: |
+          git diff --exit-code -- apps/mobile/src/lib/graphql/generated || {
+            echo "::error::apps/mobile/src/lib/graphql/generated is out of date. Run 'pnpm --filter mobile codegen' and commit the result."
+            exit 1
+          }
 
   quality:
     runs-on: ubuntu-latest

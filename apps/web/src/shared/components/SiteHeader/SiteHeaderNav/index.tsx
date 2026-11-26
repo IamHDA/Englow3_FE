@@ -255,7 +255,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               key={link.href}
               href={link.href}
               className={classes.drawerLink}
-              onClick={(event) => {
+              onClick={(event: MouseEvent<HTMLAnchorElement>) => {
                 guardNavigation(event);
                 drawer.close();
               }}
@@ -277,7 +277,7 @@ export function SiteHeaderNav({ children }: SiteHeaderNavProps) {
               key={link.href}
               href={link.href}
               className={classes.drawerLink}
-              onClick={(event) => {
+              onClick={(event: MouseEvent<HTMLAnchorElement>) => {
                 guardNavigation(event);
                 drawer.close();
               }}
