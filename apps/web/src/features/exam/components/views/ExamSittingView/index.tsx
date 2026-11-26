@@ -47,6 +47,7 @@ import {
   type StartExamAttemptInput,
 } from "@/lib/graphql/generated";
 import { backendCodeOf } from "@/shared/network/loadError";
+import { FocusMode } from "@/shared/components/SiteHeader/FocusMode";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useExamTimer } from "../../../hooks/useExamTimer";
 import { EXAM_LOCAL_STORAGE_PREFIX } from "../../../constants/examSitting";
@@ -798,9 +799,10 @@ export function ExamSittingView({
     );
   }
 
-  // 2. Active Sitting Mode
+  // 2. Active Sitting Mode - focus mode: the exam header is the only header.
   return (
     <Box bg="ink.0" mih="100vh" pb={60}>
+      <FocusMode />
       <ExamSittingHeader
         submitDisabled={expired || submitting || autosave.status === "conflict"}
         title={paper.title}

@@ -6,6 +6,12 @@
   border-bottom: 1px solid var(--mantine-color-ink-2);
 }
 
+/* Focus mode (FocusMode.tsx): a page taking the learner's whole attention
+   keeps only its own header. */
+:global(body:has([data-focus-mode])) .header {
+  display: none;
+}
+
 .header:has([data-landing-nav]) {
   position: fixed;
   inset: 0 0 auto;
