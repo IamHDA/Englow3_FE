@@ -892,7 +892,7 @@ export function ExamSittingView({
         }}
       />
 
-      <Page>
+      <Page width="sitting">
         {/* Saving is silent while it works: the learner only hears about it
             when an answer did not reach the server and something must be done. */}
         {(autosave.status === "error" || autosave.status === "conflict") && (
@@ -957,7 +957,7 @@ export function ExamSittingView({
           </Box>
         )}
         <Grid gap="lg">
-          <Grid.Col span={{ base: 12, md: 8, lg: 8.5 }}>
+          <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
             {currentSection && currentPart && currentPartEntry ? (
               <Box
                 component="fieldset"
@@ -997,7 +997,7 @@ export function ExamSittingView({
             )}
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, md: 4, lg: 3.5 }}>
+          <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
             <QuestionPalette
               questions={flatQuestions}
               parts={parts}

@@ -4,15 +4,19 @@ import type { ReactNode } from "react";
 import classes from "./Page.module.css";
 
 /**
- * Two widths for the whole app, and nothing in between.
+ * Two widths for the whole app, and nothing in between - plus the exam sitting.
  *
  * `wide` for libraries, lists, statistics and dashboards; `focus` for the
  * screens where the learner does one thing - a card, a sentence, a paper -
  * and a wide line would only put distance between the eye and the work.
  * Before this, pages were built at five widths (960 to 1360) and each looked a
  * different size from the one before it.
+ *
+ * `sitting` is only for an exam being taken, in focus mode: the site header is
+ * gone and the exam's own bar spans the window, so the paper, its questions
+ * and the palette spread with it instead of sitting in the app's frame.
  */
-export type PageWidth = "wide" | "focus";
+export type PageWidth = "wide" | "focus" | "sitting";
 
 type PageProps = {
   width?: PageWidth;

@@ -27,6 +27,10 @@
 :root {
   --page-width-wide: 1200px;
   --page-width-focus: 880px;
+  /* An exam being taken: no site header above it, only its own full-width
+     bar, so the paper spreads with the window - up to where a line would get
+     too long to read. Same gutter, so it lines up with that bar. */
+  --page-width-sitting: 1920px;
   --page-gutter: var(--mantine-spacing-md);
 }
 
