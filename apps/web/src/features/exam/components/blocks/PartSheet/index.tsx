@@ -23,7 +23,7 @@ import {
 } from "../../../examAnswers";
 import { PART_SHEET_ANCHOR_ID } from "../../../constants/examSitting";
 import { QuestionCard } from "../QuestionCard";
-import { GapText } from "./GapText";
+import { GapText } from "../../parts/GapText";
 import { StimulusAudio } from "./StimulusAudio";
 import classes from "./PartSheet.module.css";
 

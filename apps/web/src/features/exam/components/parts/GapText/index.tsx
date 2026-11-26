@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@mantine/core";
-import { gapTargets, questionNumberLabel } from "../../../../examAnswers";
-import classes from "../PartSheet.module.css";
+import { gapTargets, questionNumberLabel } from "../../../examAnswers";
+import classes from "./GapText.module.css";
 
 /** A gap is written {{n}}: the set's n-th question, in orderNo order. */
 const GAP = /\{\{(\d+)\}\}/g;
@@ -16,6 +16,7 @@ export interface GapTextProps {
   }[];
   /** What has been typed so far, by question id. */
   typedAnswers: Record<string, string>;
+  /** The gap that stands out: the question being answered, or reviewed. */
   currentQuestionId: string;
 }
 

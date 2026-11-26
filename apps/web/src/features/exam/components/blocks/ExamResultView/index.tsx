@@ -39,6 +39,7 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { FlatQuestionItem } from "../QuestionPalette";
 import { PlacementLevelCard, type PartScore } from "../PlacementLevelCard";
 import classes from "./ExamResultView.module.css";
+import { QuestionContext } from "./QuestionContext";
 
 export interface ExamResultViewProps {
   paper: ExamPaper;
@@ -80,6 +81,9 @@ export function ExamResultView({
       sectionType: string;
       /** The list a MATCHING question chose from. */
       setOptions: ExamPaper["sections"][number]["parts"][number]["questionSets"][number]["setOptions"];
+      /** Where the question sat, for the material it was about. */
+      part: ExamPaper["sections"][number]["parts"][number];
+      questionSet: ExamPaper["sections"][number]["parts"][number]["questionSets"][number];
     }
   >();
 
@@ -92,6 +96,8 @@ export function ExamResultView({
             partTitle: part.title,
             sectionType: sec.sectionType,
             setOptions: qs.setOptions,
+            part,
+            questionSet: qs,
           });
         });
       });
@@ -115,6 +121,8 @@ export function ExamResultView({
       partTitle: qData?.partTitle || "",
       sectionType: qData?.sectionType || "",
       setOptions: qData?.setOptions ?? [],
+      part: qData?.part,
+      questionSet: qData?.questionSet,
       isAnswered: !isSkipped(review),
       isCorrect: review?.correct === true,
     };
@@ -420,6 +428,8 @@ export function ExamResultView({
                   isCorrect,
                   isAnswered,
                   setOptions,
+                  part,
+                  questionSet,
                 }) => {
                   if (!question) return null;
                   const typedQuestion =
@@ -505,6 +515,20 @@ export function ExamResultView({
 
                       <Accordion.Panel>
                         <Stack gap="sm" pt="xs">
+                          {part && questionSet && (
+                            <QuestionContext
+                              part={part}
+                              questionSet={questionSet}
+                              questionId={item.questionId}
+                              typedAnswers={Object.fromEntries(
+                                questionSet.questions.map((setQuestion) => [
+                                  setQuestion.id,
+                                  reviewMap.get(setQuestion.id)?.textAnswer ??
+                                    "",
+                                ]),
+                              )}
+                            />
+                          )}
                           {typedQuestion && (
                             <Stack gap={4}>
                               <Text size="sm" c="ink.8">
