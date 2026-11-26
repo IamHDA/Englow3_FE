@@ -14,7 +14,7 @@ import classes from "./Page.module.css";
  *
  * `sitting` is only for an exam being taken, in focus mode: the site header is
  * gone and the exam's own bar spans the window, so the paper, its questions
- * and the palette spread with it instead of sitting in the app's frame.
+ * and the palette take the whole width too, with only the page gutter.
  */
 export type PageWidth = "wide" | "focus" | "sitting";
 
