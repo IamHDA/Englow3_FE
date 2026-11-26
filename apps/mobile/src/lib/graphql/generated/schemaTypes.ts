@@ -606,7 +606,7 @@ export enum BlogQueueSort {
 /**
  * A post and why it is recommended. matchedTags are the post's tags that are
  * what the viewer declared (their certificate, skills and level); empty for
- * POPULAR_THIS_WEEK.
+ * POPULAR_THIS_WEEK and LATEST.
  */
 export type BlogRecommendation = {
   __typename?: 'BlogRecommendation';
@@ -617,10 +617,12 @@ export type BlogRecommendation = {
 
 /**
  * Why a post is recommended. PROFILE: it fits what the viewer declared (see
- * matchedTags). POPULAR_THIS_WEEK: nothing fit enough, or the viewer declared
- * nothing (Staff and Admin), so it is what readers liked in the last week.
+ * matchedTags). POPULAR_THIS_WEEK: fewer posts fit than were asked for, or the
+ * viewer declared nothing (Staff and Admin), so it is what readers liked in the
+ * last week. LATEST: what is still missing after that, the newest posts.
  */
 export enum BlogRecommendationKind {
+  LATEST = 'LATEST',
   POPULAR_THIS_WEEK = 'POPULAR_THIS_WEEK',
   PROFILE = 'PROFILE'
 }
