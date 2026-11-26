@@ -24,6 +24,7 @@ import {
 import { FullTestSlot } from "@/lib/graphql/generated/schemaTypes";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
+import { FocusMode } from "@/shared/components/SiteHeader/FocusMode";
 import { useAssessmentRecorder } from "../hooks/useAssessmentRecorder";
 import { taskTypeLabel, type PracticeTask } from "../types";
 import { MicrophoneCheck } from "./MicrophoneCheck";
@@ -261,6 +262,10 @@ function TaskWorkbench({
   }
   return (
     <Page width="focus">
+      {/* A full test's writing or speaking part is taken here (the recording
+          is made on this page): focus mode, as for its listening and reading,
+          with "Back to full test" as the way out. */}
+      {fullTestSittingId && <FocusMode />}
       <Stack gap="lg">
         <Button
           component={Link}

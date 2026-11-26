@@ -25,6 +25,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { Page } from "@/shared/components/Page";
+import { FocusMode } from "@/shared/components/SiteHeader/FocusMode";
 import { useWritingDraft } from "../hooks/useWritingDraft";
 import { AssessmentReport } from "./AssessmentReport";
 import { AssessmentResultRead } from "./AssessmentResultRead";
@@ -152,6 +153,11 @@ function AttemptContent({
   }
   // Bài đã chấm: kết quả lên đầu, đề và bài làm là tab trong phần kết quả.
   const completed = attempt.status === "COMPLETED";
+  // Writing or speaking a part of a full test is taking the exam, as its
+  // listening and reading are: focus mode, with "Back to full test" as the
+  // way out. Practice on its own, and every result, keep the site header.
+  const takingFullTest =
+    Boolean(fullTestSittingId) && attempt.status === "DRAFT";
   return (
     // A Container, not <Page>: the graded result is a frame exactly one screen
     // tall, which Page's own top and bottom padding would push past the fold.
@@ -164,6 +170,7 @@ function AttemptContent({
       h={completed ? { base: "auto", md: RESULT_FRAME_HEIGHT } : undefined}
       mih={completed ? { md: 600 } : undefined}
     >
+      {takingFullTest && <FocusMode />}
       <Stack
         gap={completed ? "xs" : "lg"}
         h={completed ? { md: "100%" } : undefined}

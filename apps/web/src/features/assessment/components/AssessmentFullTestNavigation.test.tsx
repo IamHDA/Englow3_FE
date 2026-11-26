@@ -164,3 +164,29 @@ it("returns from the graded answer to the same full test instead of starting ord
     screen.queryByRole("link", { name: "Luyện thêm một lần" }),
   ).not.toBeInTheDocument();
 });
+
+it("takes a full test's writing or speaking part in focus mode, without the site header", () => {
+  const { container } = render(
+    <MantineProvider>
+      <AssessmentTaskView id="task" fullTestSittingId={sittingId} />
+    </MantineProvider>,
+  );
+  expect(container.querySelector("[data-focus-mode]")).not.toBeNull();
+});
+
+it("keeps the site header for practice on its own and for a graded answer", () => {
+  const practice = render(
+    <MantineProvider>
+      <AssessmentTaskView id="task" />
+    </MantineProvider>,
+  );
+  expect(practice.container.querySelector("[data-focus-mode]")).toBeNull();
+  practice.unmount();
+
+  const graded = render(
+    <MantineProvider>
+      <AssessmentAttemptView id="answer" fullTestSittingId={sittingId} />
+    </MantineProvider>,
+  );
+  expect(graded.container.querySelector("[data-focus-mode]")).toBeNull();
+});
