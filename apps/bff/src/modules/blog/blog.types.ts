@@ -173,7 +173,9 @@ export type ModerationTargetResponse = Omit<
   targetType: BlogTargetType;
   targetStatus: BlogTargetStatus;
   content:
-    | (Omit<RawTargetResponse["content"], "tags"> & { tags: BlogTagResponse[] })
+    | (Omit<NonNullable<RawTargetResponse["content"]>, "tags"> & {
+        tags: BlogTagResponse[];
+      })
     | null;
   author: BlogAuthorResponse;
   reports: Array<

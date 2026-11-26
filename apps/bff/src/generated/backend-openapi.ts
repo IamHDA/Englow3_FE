@@ -4284,7 +4284,7 @@ export interface components {
             title: string;
             body: string;
             images: components["schemas"]["com.englow3.blog.dto.response.BlogImageResponse"][];
-            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             tags: components["schemas"]["com.englow3.blog.dto.response.BlogTagResponse"][];
             status: string;
             /** Format: int64 */
@@ -4322,7 +4322,7 @@ export interface components {
             id: string;
             /** Format: uuid */
             postId: string;
-            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             body: string;
             status: string;
             canEdit: boolean;
@@ -4841,6 +4841,7 @@ export interface components {
         "com.englow3.exam.dto.request.UpdateExamContentRequest": {
             sections: components["schemas"]["com.englow3.exam.dto.request.UpdateExamContentRequest.SectionRequest"][];
         };
+        /** @description Spellings a TEXT_ENTRY question accepts; omit or leave empty on a choice question */
         "com.englow3.exam.dto.request.UpdateExamContentRequest.AcceptedAnswerRequest": {
             text: string;
             caseSensitive?: boolean;
@@ -4910,6 +4911,7 @@ export interface components {
             timeLimitSeconds?: number;
             parts: components["schemas"]["com.englow3.exam.dto.request.UpdateExamContentRequest.PartRequest"][];
         };
+        /** @description The list every MATCHING question of this set chooses from; omit when it has none */
         "com.englow3.exam.dto.request.UpdateExamContentRequest.SetOptionRequest": {
             label: string;
             content?: string;
@@ -5368,7 +5370,7 @@ export interface components {
             status: "QUEUED" | "GRADED" | "FAILED";
             /** Format: int32 */
             score: number | null;
-            feedback: components["schemas"]["com.englow3.translation.dto.response.TranslationAttemptResponse.Feedback"];
+            feedback: components["schemas"]["com.englow3.translation.dto.response.TranslationAttemptResponse.Feedback"] | null;
             errorCode: string | null;
             referenceEn: string | null;
             notes: string | null;
@@ -5717,6 +5719,7 @@ export interface components {
             /** @description Configured TOEIC Listening + Reading total; absent when no valid conversion applies */
             convertedScore: number | null;
         };
+        /** @description Parts a practice covers; empty for a full attempt */
         "com.englow3.exam.dto.response.ExamAttemptResponse.AttemptPartResponse": {
             /** Format: uuid */
             id: string;
@@ -5746,6 +5749,7 @@ export interface components {
             /** Format: int32 */
             numberTo: number;
         };
+        /** @description Each section's points and band; empty until scored */
         "com.englow3.exam.dto.response.ExamAttemptResponse.SectionScoreResponse": {
             /** @enum {string} */
             sectionType: "LISTENING" | "READING" | "WRITING" | "SPEAKING";
@@ -5796,7 +5800,7 @@ export interface components {
         "com.englow3.exam.dto.request.StartExamAttemptRequest": {
             /** @enum {string|null} */
             mode?: "FULL" | "PRACTICE" | null;
-            partIds?: string[] | null;
+            partIds?: (string | null)[] | null;
             /** Format: int32 */
             timeLimitMinutes?: number | null;
             /** @enum {string|null} */
@@ -5852,14 +5856,14 @@ export interface components {
         "com.englow3.chat.dto.response.ConversationSummaryResponse": {
             /** Format: uuid */
             id: string;
-            otherUser: components["schemas"]["com.englow3.chat.dto.response.ConversationSummaryResponse.OtherUser"];
+            otherUser: components["schemas"]["com.englow3.chat.dto.response.ConversationSummaryResponse.OtherUser"] | null;
             /** Format: int64 */
             lastSeq: number;
             /** Format: int64 */
             lastReadSeq: number;
             /** Format: int64 */
             unreadCount: number;
-            lastMessage: components["schemas"]["com.englow3.chat.dto.response.ConversationSummaryResponse.LastMessage"];
+            lastMessage: components["schemas"]["com.englow3.chat.dto.response.ConversationSummaryResponse.LastMessage"] | null;
             canSend: boolean | null;
         };
         "com.englow3.chat.dto.response.ConversationSummaryResponse.LastMessage": {
@@ -6291,8 +6295,8 @@ export interface components {
             /** Format: uuid */
             targetId: string;
             targetStatus: string;
-            content: components["schemas"]["com.englow3.blog.dto.response.ModerationTargetResponse.Content"];
-            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            content: components["schemas"]["com.englow3.blog.dto.response.ModerationTargetResponse.Content"] | null;
+            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             reports: components["schemas"]["com.englow3.blog.dto.response.ModerationTargetResponse.Report"][];
             actions: components["schemas"]["com.englow3.blog.dto.response.ModerationTargetResponse.Action"][];
         };
@@ -6301,7 +6305,7 @@ export interface components {
             id: string;
             action: string;
             reason: string;
-            moderator: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            moderator: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             /** Format: date-time */
             createdAt: string;
         };
@@ -6318,7 +6322,7 @@ export interface components {
         "com.englow3.blog.dto.response.ModerationTargetResponse.Report": {
             /** Format: uuid */
             id: string;
-            reporter: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            reporter: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             reason: string;
             detail: string | null;
             status: string;
@@ -6428,7 +6432,7 @@ export interface components {
         };
         "org.springframework.web.servlet.mvc.method.annotation.SseEmitter": {
             /** Format: int64 */
-            timeout: number | null;
+            timeout: number;
         };
         "com.englow3.tutor.dto.result.TutorMemoryResult": {
             enabled: boolean;
@@ -6476,7 +6480,7 @@ export interface components {
             /** Format: int32 */
             orderNo: number;
             sourceVi: string;
-            latestAttempt: components["schemas"]["com.englow3.translation.dto.response.TranslationSetDetailResponse.LatestAttempt"];
+            latestAttempt: components["schemas"]["com.englow3.translation.dto.response.TranslationSetDetailResponse.LatestAttempt"] | null;
         };
         "com.englow3.translation.dto.response.TranslationSetDetailResponse.LatestAttempt": {
             /** Format: uuid */
@@ -6946,6 +6950,7 @@ export interface components {
             imageUrl: string | null;
             questionSets: components["schemas"]["com.englow3.exam.dto.response.LearnerExamPaperResponse.QuestionSetResponse"][];
         };
+        /** @description The list this set's MATCHING questions choose from; empty when it has none */
         "com.englow3.exam.dto.response.LearnerExamPaperResponse.SetOptionResponse": {
             /** Format: uuid */
             id: string;
@@ -7137,7 +7142,7 @@ export interface components {
             id: string;
             title: string;
             excerpt: string;
-            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             status: string;
             tags: components["schemas"]["com.englow3.blog.dto.response.BlogTagResponse"][];
             /** Format: int64 */
@@ -7370,12 +7375,14 @@ export interface components {
             /** @description MATCHING: the set's whole list, which a copy needs for its labels; empty otherwise */
             setOptions: components["schemas"]["com.englow3.exam.dto.response.QuestionBankItemResponse.SetOptionResponse"][];
         };
+        /** @description TEXT_ENTRY: every accepted spelling; empty otherwise */
         "com.englow3.exam.dto.response.QuestionBankItemResponse.AcceptedAnswerResponse": {
             text: string;
             caseSensitive: boolean;
             /** Format: int32 */
             orderNo: number;
         };
+        /** @description MATCHING: the set's whole list, which a copy needs for its labels; empty otherwise */
         "com.englow3.exam.dto.response.QuestionBankItemResponse.SetOptionResponse": {
             label: string;
             content: string | null;
@@ -7508,7 +7515,7 @@ export interface components {
             targetId: string;
             title: string | null;
             excerpt: string | null;
-            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            author: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             targetStatus: string;
             /** Format: int64 */
             openReports: number;
@@ -7537,7 +7544,7 @@ export interface components {
             targetId: string;
             action: string;
             reason: string;
-            moderator: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"];
+            moderator: components["schemas"]["com.englow3.blog.dto.response.BlogAuthorResponse"] | null;
             /** Format: date-time */
             createdAt: string;
         };
