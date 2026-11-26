@@ -44,8 +44,13 @@ import { SavedPostsButton } from "../../parts/SavedPostsButton";
 
 import classes from "./BlogListView.module.css";
 
-/** What a save changes the answer of on this screen: the count on the button, and the recommendations, which leave out what is saved. */
-const SAVE_REFETCH = ["BlogSavedCount", "BlogRecommendations"];
+/**
+ * What a save changes the answer of on this screen: the count on the button.
+ * The recommendations leave out what is saved, but are not asked again: the
+ * card the viewer just bookmarked stays where it is, bookmark filled, rather
+ * than vanishing under their finger. It is gone on the next visit.
+ */
+const SAVE_REFETCH = ["BlogSavedCount"];
 
 /**
  * /blog: a grey panel at the top with the search, the saved posts and the

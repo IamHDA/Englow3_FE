@@ -26,6 +26,13 @@ describe("recommendationReason", () => {
     ).toBe("Được yêu thích tuần này");
   });
 
+  it("says a latest post is only new, in both languages", () => {
+    expect(reason([], BlogRecommendationKind.LATEST)).toBe("Mới đăng gần đây");
+    expect(
+      recommendationReason(blogEn, BlogRecommendationKind.LATEST, [], words),
+    ).toBe("Recently posted");
+  });
+
   it("names each thing that matched, worded for that combination", () => {
     expect(reason([certificate("IELTS")])).toBe("Vì bạn đang luyện IELTS");
     expect(reason([skill("SPEAKING")])).toBe("Vì bạn muốn cải thiện Nói");
