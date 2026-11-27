@@ -42,6 +42,13 @@ type AdminExamTableProps = {
   onRestore?: (id: string) => void;
 };
 
+/**
+ * The short columns (type, status, version, dates) keep to one line: the table
+ * squeezed them while the title column took the room, so "Thi thử" broke in two
+ * and the status badge was cut to "Bản …".
+ */
+const NO_WRAP = { whiteSpace: "nowrap" } as const;
+
 function formatDate(value: string | null, isVi = true): string {
   if (value === null) return "—";
   return new Date(value).toLocaleDateString(isVi ? "vi-VN" : "en-GB");
@@ -196,11 +203,11 @@ export function AdminExamTable({
         <Table.Thead>
           <Table.Tr>
             <Table.Th>{tr("Đề thi", "Exam")}</Table.Th>
-            <Table.Th>{tr("Loại", "Type")}</Table.Th>
-            <Table.Th>{tr("Trạng thái", "Status")}</Table.Th>
-            <Table.Th>{tr("Phiên bản", "Version")}</Table.Th>
-            <Table.Th>{tr("Tạo lúc", "Created")}</Table.Th>
-            <Table.Th>{tr("Phát hành", "Published")}</Table.Th>
+            <Table.Th style={NO_WRAP}>{tr("Loại", "Type")}</Table.Th>
+            <Table.Th style={NO_WRAP}>{tr("Trạng thái", "Status")}</Table.Th>
+            <Table.Th style={NO_WRAP}>{tr("Phiên bản", "Version")}</Table.Th>
+            <Table.Th style={NO_WRAP}>{tr("Tạo lúc", "Created")}</Table.Th>
+            <Table.Th style={NO_WRAP}>{tr("Phát hành", "Published")}</Table.Th>
             <Table.Th ta="right">{tr("Thao tác", "Actions")}</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -234,19 +241,22 @@ export function AdminExamTable({
                       )}
                   </Stack>
                 </Table.Td>
-                <Table.Td>
+                <Table.Td style={NO_WRAP}>
                   <Text size="sm" c="ink.7">
                     {isVi
                       ? EXAM_TYPE_LABELS[exam.examType].vi
                       : EXAM_TYPE_LABELS[exam.examType].en}
                   </Text>
                 </Table.Td>
-                <Table.Td>
+                <Table.Td style={NO_WRAP}>
                   <Stack gap={2}>
+                    {/* Never cut short: "Bản …" told nobody which state the
+                        exam is in. The badge keeps the width of its words. */}
                     <Badge
                       color={EXAM_STATUS_COLORS[exam.status]}
                       variant="light"
                       radius="sm"
+                      miw="max-content"
                     >
                       {isVi
                         ? EXAM_STATUS_LABELS[exam.status].vi
@@ -260,17 +270,17 @@ export function AdminExamTable({
                     )}
                   </Stack>
                 </Table.Td>
-                <Table.Td>
+                <Table.Td style={NO_WRAP}>
                   <Text size="sm" c="ink.7">
                     v{exam.versionNumber}
                   </Text>
                 </Table.Td>
-                <Table.Td>
+                <Table.Td style={NO_WRAP}>
                   <Text size="sm" c="ink.7">
                     {formatDate(exam.createdAt, isVi)}
                   </Text>
                 </Table.Td>
-                <Table.Td>
+                <Table.Td style={NO_WRAP}>
                   <Text size="sm" c="ink.7">
                     {formatDate(exam.publishedAt, isVi)}
                   </Text>

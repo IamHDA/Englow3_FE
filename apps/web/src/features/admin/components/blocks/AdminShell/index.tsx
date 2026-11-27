@@ -7,6 +7,7 @@ import {
   Divider,
   Group,
   NavLink,
+  ScrollArea,
   Stack,
   Text,
 } from "@mantine/core";
@@ -34,6 +35,7 @@ import { useAuth } from "@/features/auth";
 import { useUserTour } from "@/features/tour";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useAssessmentWorkloadQuery } from "@/lib/graphql/generated/hooks";
+import { isAdminNavActive } from "../../../adminNav";
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -187,7 +189,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        <AppShell.Section grow>
+        {/* The menu scrolls on its own: on a short screen (a 768px laptop) it
+            is taller than the bar, and without this it pushed the help, learner
+            site and sign-out buttons below the window, out of reach. */}
+        <AppShell.Section
+          grow
+          component={ScrollArea}
+          type="scroll"
+          mx="-md"
+          px="md"
+        >
           <Stack gap="lg">
             <Stack gap={4} px="xs" pt="sm">
               <Text size="xs" fw={700} tt="uppercase" c="dimmed">
@@ -225,7 +236,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                       </Badge>
                     ) : undefined
                   }
-                  active={exact ? pathname === href : pathname.startsWith(href)}
+                  active={isAdminNavActive(pathname, href, exact)}
                   onClick={close}
                   color="navy"
                   variant="light"
@@ -246,7 +257,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </Text>
           </Stack>
         </AppShell.Section>
-        <AppShell.Section>
+        {/* A rule between the menu, which scrolls, and these, which stay. */}
+        <AppShell.Section
+          pt="sm"
+          style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}
+        >
           <Stack gap={4}>
             <Button
               variant="subtle"
