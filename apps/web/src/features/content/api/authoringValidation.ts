@@ -50,8 +50,8 @@ export function validateAuthoring(
     )
       invalid(
         "durationSeconds",
-        "Nhập số giây nguyên dương.",
-        "Enter a positive number of seconds.",
+        "Nhập thời gian làm bài, tính bằng phút.",
+        "Enter the duration in minutes.",
       );
     if ((metadata.title?.length ?? 0) > 100)
       invalid(

@@ -431,6 +431,11 @@ function Editor({
     <EditorFrame
       standalone
       title={`${readonly ? t("Xem trước", "Preview") : initial.id ? t("Sửa", "Edit") : t("Tạo", "Create")} · ${name}`}
+      subtitle={
+        initial.id
+          ? doc.metadata.title || doc.metadata.name || undefined
+          : undefined
+      }
       busy={busy || mediaPending > 0}
       onClose={() => draft.confirmClose(back)}
     >
@@ -636,17 +641,29 @@ function Editor({
                           allowDeselect={false}
                           onChange={(v) => meta("examType", v ?? "MOCK")}
                         />
+                        {/* In minutes, as a paper's time is thought of (92, not
+                            5520); stored in seconds as the backend keeps it. */}
                         <NumberInput
                           label={t(
-                            "Thời gian làm bài (giây)",
-                            "Duration (seconds)",
+                            "Thời gian làm bài (phút)",
+                            "Duration (minutes)",
                           )}
                           min={1}
                           allowDecimal={false}
+                          suffix={t(" phút", " min")}
                           error={errors["metadata.durationSeconds"]}
-                          value={doc.metadata.durationSeconds}
+                          value={
+                            doc.metadata.durationSeconds
+                              ? Math.round(doc.metadata.durationSeconds / 60)
+                              : ""
+                          }
                           disabled={disabled}
-                          onChange={(v) => meta("durationSeconds", Number(v))}
+                          onChange={(v) =>
+                            meta(
+                              "durationSeconds",
+                              v === "" ? 0 : Math.round(Number(v) * 60),
+                            )
+                          }
                         />
                       </Group>
                       <Group grow>
@@ -984,38 +1001,30 @@ function Editor({
             </Stack>
           </Tabs.Panel>
         </Tabs>
-        <Group
-          justify="space-between"
-          style={{
-            position: "sticky",
-            bottom: 0,
-            padding: "12px 0",
-            background: "var(--mantine-color-body)",
-            zIndex: 3,
-          }}
-        >
-          <Text size="sm" aria-live="polite">
-            {readonly
-              ? t("Chỉ xem", "Read-only")
-              : draft.dirty
+        {/* The save bar belongs to editing: on the preview tab, or when the
+            content is read-only, there is nothing to save. Going back is the
+            "Back" at the top of the page. */}
+        {tab === "edit" && !readonly && (
+          <Group
+            justify="space-between"
+            style={{
+              position: "sticky",
+              bottom: 0,
+              padding: "12px 0",
+              background: "var(--mantine-color-body)",
+              zIndex: 3,
+            }}
+          >
+            <Text size="sm" aria-live="polite">
+              {draft.dirty
                 ? t("Có thay đổi chưa lưu lên máy chủ", "Unsaved changes")
                 : t("Không có thay đổi chưa lưu", "No unsaved changes")}
-          </Text>
-          <Group>
-            <Button
-              variant="default"
-              disabled={busy || mediaPending > 0}
-              onClick={() => draft.confirmClose(back)}
-            >
-              {t("Về danh sách", "Back to list")}
+            </Text>
+            <Button loading={busy} disabled={mediaPending > 0} onClick={save}>
+              {t("Lưu nháp", "Save draft")}
             </Button>
-            {!readonly && (
-              <Button loading={busy} disabled={mediaPending > 0} onClick={save}>
-                {t("Lưu nháp", "Save draft")}
-              </Button>
-            )}
           </Group>
-        </Group>
+        )}
       </Stack>
     </EditorFrame>
   );

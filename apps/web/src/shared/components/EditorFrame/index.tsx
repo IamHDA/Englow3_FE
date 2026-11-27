@@ -9,8 +9,11 @@ export function EditorFrame({
   busy,
   onClose,
   standalone = false,
+  subtitle,
 }: {
   title: string;
+  /** What is being edited - its own name, under the title. */
+  subtitle?: string;
   children: ReactNode;
   busy: boolean;
   onClose: () => void;
@@ -40,6 +43,11 @@ export function EditorFrame({
               Englow3 · {isVi ? "Không gian làm việc" : "Workspace"}
             </Text>
             <Title order={1}>{title}</Title>
+            {subtitle && (
+              <Text c="ink.6" fw={600} lineClamp={2}>
+                {subtitle}
+              </Text>
+            )}
           </Stack>
           <Button variant="default" disabled={busy} onClick={onClose}>
             {isVi ? "Quay lại" : "Back"}
