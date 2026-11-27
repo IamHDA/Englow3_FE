@@ -44,6 +44,7 @@ import {
   PROMPT_CATEGORY_OPTIONS,
   QUIZ_CATEGORY_OPTIONS,
 } from "@/shared/constants/contentCategories";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 const names: Record<AuthoringKind, [string, string]> = {
   FLASHCARD_SET: ["Bộ từ vựng", "Vocabulary set"],
@@ -217,6 +218,7 @@ function Editor({
   saved: (d: AuthoringDocument) => void;
 }) {
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const t = (vi: string, en: string) => (isVi ? vi : en);
   const router = useRouter();
   const formInitial = { ...initial, media: undefined };
@@ -432,6 +434,7 @@ function Editor({
       busy={busy || mediaPending > 0}
       onClose={() => draft.confirmClose(back)}
     >
+      {confirmModal}
       <Stack gap="lg">
         {mediaPending > 0 && (
           <Alert color="blue" role="status">
@@ -479,14 +482,20 @@ function Editor({
               </Button>
               <Button
                 variant="light"
-                onClick={() => {
+                onClick={async () => {
                   if (
-                    window.confirm(
-                      t(
-                        "Tải bản mới sẽ thay nội dung đang hiển thị. Hãy tải nháp xuống trước để có thể đối chiếu lại. Tiếp tục?",
-                        "Reload the current version? Download your draft first so you can compare your changes.",
+                    await confirm({
+                      title: t(
+                        "Tải bản hiện hành?",
+                        "Reload the current version?",
                       ),
-                    )
+                      body: t(
+                        "Tải bản mới sẽ thay nội dung đang hiển thị. Hãy tải nháp xuống trước để có thể đối chiếu lại.",
+                        "It replaces what is on screen. Download your draft first so you can compare your changes.",
+                      ),
+                      confirmLabel: t("Tải bản hiện hành", "Reload"),
+                      danger: true,
+                    })
                   )
                     location.reload();
                 }}
@@ -903,11 +912,23 @@ function Editor({
                                   variant="subtle"
                                   color="red"
                                   disabled={disabled || entries.length === 1}
-                                  onClick={() => {
+                                  onClick={async () => {
                                     if (
-                                      window.confirm(
-                                        t("Xóa mục này?", "Remove this item?"),
-                                      )
+                                      await confirm({
+                                        title: t(
+                                          "Xóa mục này?",
+                                          "Remove this item?",
+                                        ),
+                                        body: t(
+                                          "Mục này và nội dung của nó sẽ bị xóa khỏi bản nháp.",
+                                          "The item and its content are removed from the draft.",
+                                        ),
+                                        confirmLabel: t(
+                                          "Xóa mục",
+                                          "Remove item",
+                                        ),
+                                        danger: true,
+                                      })
                                     )
                                       setEntries(
                                         entries.filter((_, j) => i !== j),

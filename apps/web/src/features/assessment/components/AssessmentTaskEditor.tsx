@@ -30,6 +30,7 @@ import { useRecoverableForm } from "@/shared/hooks/useRecoverableForm";
 import { EditorFrame } from "@/shared/components/EditorFrame";
 import { notifications } from "@mantine/notifications";
 import { AssessmentTaskImage } from "./AssessmentTaskImage";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 /** Writing Task 1 - the task type that comes with a chart. */
 const TASK_1 = "TASK_1";
 
@@ -46,6 +47,7 @@ export function AssessmentTaskEditor({
 }) {
   const tx = useAssessmentText();
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const draft = useRecoverableForm<AssessmentTaskInput>(
     `task:${task?.id ?? "new"}:${task?.version ?? 0}`,
     {
@@ -124,6 +126,7 @@ export function AssessmentTaskEditor({
       standalone={standalone}
       title={task ? tx("Chỉnh sửa đề luyện") : tx("Tạo đề Writing / Speaking")}
     >
+      {confirmModal}
       <Stack>
         {draft.restored && (
           <Alert color="blue">
@@ -149,16 +152,21 @@ export function AssessmentTaskEditor({
               label: tx(template.label),
             }))}
             disabled={busy}
-            onChange={(id) => {
+            onChange={async (id) => {
               const template = assessmentTemplates.find(
                 (item) => item.id === id,
               );
               if (
                 template &&
                 (!draft.dirty ||
-                  window.confirm(
-                    tx("Thay đề mẫu sẽ ghi đè nội dung đang nhập. Tiếp tục?"),
-                  ))
+                  (await confirm({
+                    title: tx("Dùng đề mẫu này?"),
+                    body: tx(
+                      "Đề mẫu sẽ thay toàn bộ nội dung bạn đang nhập. Phần chưa lưu sẽ mất.",
+                    ),
+                    confirmLabel: tx("Dùng đề mẫu"),
+                    danger: true,
+                  })))
               )
                 setValue({ ...template.input });
             }}

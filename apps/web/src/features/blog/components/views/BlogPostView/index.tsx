@@ -23,7 +23,7 @@ import { PostArticle } from "../../blocks/PostArticle";
 import { PostArticleSkeleton } from "../../blocks/PostArticle/PostArticleSkeleton";
 import { ReportDialog } from "../../blocks/ReportDialog";
 import { BlogLoadError } from "../../parts/BlogLoadError";
-import { ConfirmModal } from "../../parts/ConfirmModal";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
 
 import { CommentsSection } from "./CommentsSection";
 

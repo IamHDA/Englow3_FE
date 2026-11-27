@@ -2,6 +2,18 @@
 import { useCallback } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 const messages: Record<string, string> = {
+  "Dùng đề mẫu này?": "Use this template?",
+  "Đề mẫu sẽ thay toàn bộ nội dung bạn đang nhập. Phần chưa lưu sẽ mất.":
+    "The template replaces everything you have entered. Unsaved work is lost.",
+  "Dùng đề mẫu": "Use template",
+  "Lưu trữ đề luyện?": "Archive this practice task?",
+  "sẽ ẩn khỏi thư viện của học viên. Các bài đã nộp vẫn được giữ.":
+    "leaves the learners' library. Submissions are kept.",
+  "Tải bản hiện hành?": "Reload the current version?",
+  "Tải bản mới sẽ thay nội dung đang nhập. Hãy tải nháp xuống trước để đối chiếu.":
+    "Reloading replaces your edits. Download the draft first to compare.",
+  "Học viên sẽ thấy điểm và nhận xét này ngay sau khi công bố.":
+    "The learner sees this score and feedback as soon as it is published.",
   "Nhờ Tutor giải thích phản hồi": "Ask Tutor to explain this feedback",
   "Tải nháp xuống máy": "Download draft",
   "Tải bản hiện hành": "Reload current version",

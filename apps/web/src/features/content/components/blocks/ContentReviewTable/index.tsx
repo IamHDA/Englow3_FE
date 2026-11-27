@@ -22,6 +22,7 @@ import {
   CONTENT_STATUS_LABELS,
 } from "../../../constants/adminContent";
 import type { ContentReviewItem } from "../../../types";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 type ContentReviewTableProps = {
   kind: ContentKind;
@@ -60,6 +61,7 @@ export function ContentReviewTable({
   onRestore,
 }: ContentReviewTableProps) {
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const itemLabel = CONTENT_ITEM_LABELS[kind];
 
@@ -146,14 +148,17 @@ export function ContentReviewTable({
             color="gray"
             loading={busy}
             leftSection={<Archive size={14} />}
-            onClick={() => {
+            onClick={async () => {
               if (
-                window.confirm(
-                  tr(
-                    `Lưu trữ “${item.title}”? Nội dung sẽ ẩn khỏi thư viện; lịch sử và bài đã nộp vẫn được giữ.`,
-                    `Archive “${item.title}”? It leaves the library; history and submissions are kept.`,
+                await confirm({
+                  title: tr("Lưu trữ nội dung?", "Archive this content?"),
+                  body: tr(
+                    `“${item.title}” sẽ ẩn khỏi thư viện của học viên. Lịch sử và các bài đã nộp vẫn được giữ.`,
+                    `“${item.title}” leaves the learners' library. History and submissions are kept.`,
                   ),
-                )
+                  confirmLabel: tr("Lưu trữ", "Archive"),
+                  danger: true,
+                })
               )
                 onArchive(item.id);
             }}
@@ -195,6 +200,7 @@ export function ContentReviewTable({
 
   return (
     <Table.ScrollContainer minWidth={900}>
+      {confirmModal}
       <Table verticalSpacing="sm" highlightOnHover>
         <Table.Thead>
           <Table.Tr>

@@ -46,6 +46,7 @@ import {
   type PracticeTask,
 } from "../types";
 import { TaskInstructions } from "./TaskInstructions";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 export function AssessmentManagement({
   initial = {},
 }: {
@@ -53,6 +54,7 @@ export function AssessmentManagement({
 }) {
   const tx = useAssessmentText();
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const { session } = useAuth();
   const admin = session?.role === "ADMIN";
   const [tab, setTab] = useState<string | null>(
@@ -121,9 +123,12 @@ export function AssessmentManagement({
     try {
       if (
         action === "archive" &&
-        !window.confirm(
-          `Lưu trữ “${task.title}”? Đề sẽ ẩn khỏi thư viện; bài đã nộp vẫn được giữ.`,
-        )
+        !(await confirm({
+          title: tx("Lưu trữ đề luyện?"),
+          body: `“${task.title}” ${tx("sẽ ẩn khỏi thư viện của học viên. Các bài đã nộp vẫn được giữ.")}`,
+          confirmLabel: tx("Lưu trữ"),
+          danger: true,
+        }))
       )
         return;
       const result = await transition({
@@ -182,6 +187,7 @@ export function AssessmentManagement({
   }, [refreshQuery]);
   return (
     <Container size="xl" py="xl">
+      {confirmModal}
       <Stack gap="lg">
         <Group justify="space-between">
           <div>

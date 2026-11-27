@@ -16,6 +16,7 @@ import {
 } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { AuthoringKind } from "../../types/authoring";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 export function AuthoringReviewActions({
   kind,
@@ -31,6 +32,7 @@ export function AuthoringReviewActions({
   refresh: () => Promise<void>;
 }) {
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const t = (vi: string, en: string) => (isVi ? vi : en);
   const me = useCurrentUserQuery();
   const admin = me.data?.me.role === Role.ADMIN;
@@ -50,12 +52,15 @@ export function AuthoringReviewActions({
     if (pending.current || dirty) return;
     if (
       action === "archive" &&
-      !window.confirm(
-        t(
-          "Lưu trữ nội dung? Đề sẽ ẩn khỏi thư viện; lịch sử và bài đã nộp được giữ.",
-          "Archive this content? It will leave the library; learner history and submissions are retained.",
+      !(await confirm({
+        title: t("Lưu trữ nội dung?", "Archive this content?"),
+        body: t(
+          "Nội dung sẽ ẩn khỏi thư viện của học viên. Lịch sử và các bài đã nộp vẫn được giữ.",
+          "It leaves the learners' library. Learner history and submissions are kept.",
         ),
-      )
+        confirmLabel: t("Lưu trữ", "Archive"),
+        danger: true,
+      }))
     )
       return;
     pending.current = true;
@@ -108,6 +113,7 @@ export function AuthoringReviewActions({
   }
   return (
     <Stack>
+      {confirmModal}
       {dirty && (
         <Alert color="blue">
           {t(

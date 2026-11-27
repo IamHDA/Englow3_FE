@@ -5,6 +5,7 @@ import {
   screen,
   fireEvent,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import type { PracticeAttempt } from "../types";
@@ -16,7 +17,6 @@ vi.mock("@/lib/graphql/generated/hooks", () => ({
 describe("Manual grading", () => {
   it("keeps feedback and the modal open when publishing a grade fails", async () => {
     mocks.grade.mockRejectedValue(new Error("outage"));
-    vi.spyOn(window, "confirm").mockReturnValue(true);
     const close = vi.fn();
     const attempt = {
       id: "id",
@@ -47,7 +47,15 @@ describe("Manual grading", () => {
     fireEvent.change(screen.getByLabelText(/Ghi chú kiểm duyệt/), {
       target: { value: "Initial assessment" },
     });
-    fireEvent.click(screen.getByText("Lưu và công bố kết quả"));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Lưu và công bố kết quả" }),
+    );
+    // Publishing asks first, in a dialog that says what the learner will see.
+    const ask = await screen.findByRole("dialog", { name: "Công bố kết quả" });
+    expect(within(ask).getByText(/6\.0 \/ 9/)).toBeInTheDocument();
+    fireEvent.click(
+      within(ask).getByRole("button", { name: "Lưu và công bố kết quả" }),
+    );
     await waitFor(() =>
       expect(screen.getByText(/Chưa lưu được kết quả/)).toBeInTheDocument(),
     );

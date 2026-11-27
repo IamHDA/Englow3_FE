@@ -33,6 +33,7 @@ import {
   slugify,
   type AuthoringItem as Item,
 } from "../../../authoring";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 type Metadata = {
   slug: string;
@@ -79,6 +80,7 @@ const ERRORS: Record<string, { vi: string; en: string }> = {
 
 export function TranslationSetEditorView({ id }: { id?: string }) {
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const t = (vi: string, en: string) => (isVi ? vi : en);
   const router = useRouter();
   const back = `/admin/content?kind=${KIND}`;
@@ -253,16 +255,23 @@ export function TranslationSetEditorView({ id }: { id?: string }) {
       standalone
       title={`${!editable ? t("Xem", "View") : doc ? t("Sửa", "Edit") : t("Tạo", "Create")} · ${t("Bộ câu luyện dịch", "Translation set")}`}
       busy={busy}
-      onClose={() => {
+      onClose={async () => {
         if (
           !dirty ||
-          window.confirm(
-            t("Bỏ các thay đổi chưa lưu?", "Discard unsaved changes?"),
-          )
+          (await confirm({
+            title: t("Bỏ các thay đổi chưa lưu?", "Discard unsaved changes?"),
+            body: t(
+              "Những gì bạn vừa sửa mà chưa lưu sẽ mất.",
+              "What you changed and did not save will be lost.",
+            ),
+            confirmLabel: t("Bỏ thay đổi", "Discard changes"),
+            danger: true,
+          }))
         )
           router.push(back);
       }}
     >
+      {confirmModal}
       <Stack gap="lg">
         {doc && (
           <Group gap="xs">

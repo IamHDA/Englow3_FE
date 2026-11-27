@@ -49,7 +49,7 @@ import type {
   BlogTagCatalogueData,
   BlogTagData,
 } from "../../../types";
-import { ConfirmModal } from "../../parts/ConfirmModal";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
 import { MarkdownContent } from "../MarkdownContent";
 
 import { TagPicker } from "./TagPicker";

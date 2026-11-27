@@ -30,6 +30,7 @@ import {
   FullTestForm,
   type FullTestFormValues,
 } from "../../blocks/FullTestForm";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 const EMPTY_FORM: FullTestFormValues = {
   title: "",
@@ -69,6 +70,7 @@ type Editing = {
 
 export function AdminFullTestListView() {
   const { isVi } = useLanguage();
+  const { confirm, confirmModal } = useConfirm();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const { data, loading, error, refetch } = useAdminFullTestsQuery({
     fetchPolicy: "cache-and-network",
@@ -161,19 +163,22 @@ export function AdminFullTestListView() {
         setRejecting(fullTest);
         return;
       case "archive":
-        if (
-          window.confirm(
-            tr(
-              "Lưu trữ full test này? Người học sẽ không bắt đầu được nữa.",
-              "Archive this full test? Learners can no longer start it.",
-            ),
-          )
-        )
-          void run(
-            fullTest.id,
-            () => archive({ variables }),
-            tr("Đã lưu trữ.", "Archived."),
-          );
+        void confirm({
+          title: tr("Lưu trữ full test?", "Archive this full test?"),
+          body: tr(
+            `“${fullTest.title}” sẽ ẩn với học viên: không ai bắt đầu được lượt mới. Các lượt đã làm vẫn được giữ.`,
+            `“${fullTest.title}” is hidden from learners: nobody can start a new sitting. Sittings already taken are kept.`,
+          ),
+          confirmLabel: tr("Lưu trữ", "Archive"),
+          danger: true,
+        }).then((confirmed) => {
+          if (confirmed)
+            void run(
+              fullTest.id,
+              () => archive({ variables }),
+              tr("Đã lưu trữ.", "Archived."),
+            );
+        });
         return;
     }
   }
@@ -206,6 +211,7 @@ export function AdminFullTestListView() {
   const fullTests = data?.adminFullTests ?? [];
   return (
     <Page>
+      {confirmModal}
       <Stack gap="lg">
         <PageHeader
           title={tr("Full test IELTS", "IELTS full tests")}

@@ -25,6 +25,7 @@ import {
   type PracticeAttempt,
 } from "../types";
 import { TaskInstructions } from "./TaskInstructions";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 export function AssessmentGradeEditor({
   attempt,
   close,
@@ -37,6 +38,7 @@ export function AssessmentGradeEditor({
   done: () => Promise<unknown>;
 }) {
   const tx = useAssessmentText();
+  const { confirm, confirmModal } = useConfirm();
   const existing = parseReport(attempt.report);
   const draft = useRecoverableForm(
     `grade:${attempt.id}:${attempt.version}`,
@@ -186,6 +188,7 @@ export function AssessmentGradeEditor({
       standalone={standalone}
       title={tx("Chấm bài · ") + attempt.task.title}
     >
+      {confirmModal}
       <Stack gap="lg">
         {draft.restored && (
           <Alert color="blue">
@@ -454,13 +457,16 @@ export function AssessmentGradeEditor({
                     </Button>
                     <Button
                       variant="light"
-                      onClick={() => {
+                      onClick={async () => {
                         if (
-                          window.confirm(
-                            tx(
-                              "Tải bản mới sẽ thay nội dung đang nhập. Hãy tải nháp xuống trước để đối chiếu. Tiếp tục?",
+                          await confirm({
+                            title: tx("Tải bản hiện hành?"),
+                            body: tx(
+                              "Tải bản mới sẽ thay nội dung đang nhập. Hãy tải nháp xuống trước để đối chiếu.",
                             ),
-                          )
+                            confirmLabel: tx("Tải bản hiện hành"),
+                            danger: true,
+                          })
                         )
                           location.reload();
                       }}
@@ -495,13 +501,17 @@ export function AssessmentGradeEditor({
                         (c.score * 2) % 1 !== 0,
                     )
                   }
-                  onClick={() => {
+                  onClick={async () => {
                     if (
-                      window.confirm(
-                        tx("Công bố kết quả") +
-                          ` ${average.toFixed(1)} / 9 · ` +
-                          tx("Xác nhận nộp"),
-                      )
+                      await confirm({
+                        title: tx("Công bố kết quả"),
+                        body:
+                          `${average.toFixed(1)} / 9 · ` +
+                          tx(
+                            "Học viên sẽ thấy điểm và nhận xét này ngay sau khi công bố.",
+                          ),
+                        confirmLabel: tx("Lưu và công bố kết quả"),
+                      })
                     )
                       void save();
                   }}

@@ -13,6 +13,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useState } from "react";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type {
   ExamSection,
@@ -188,19 +189,27 @@ export function ExamTreeEditor({
     run(next);
     change(normalizeExam(next));
   }
-  const remove = (run: (s: ExamSection[]) => void) => {
-    if (
-      window.confirm(
-        t(
-          "Xóa phần này cùng nội dung bên trong?",
-          "Remove this section and its content?",
-        ),
-      )
-    )
-      mutate(run);
+  const { confirm, confirmModal } = useConfirm();
+  /** Asks before taking out a section, part, set or question with what it holds. */
+  const confirmRemoval = (what: string) =>
+    confirm({
+      title: t(`Xóa ${what}?`, `Remove this ${what}?`),
+      body: t(
+        `${what.charAt(0).toUpperCase()}${what.slice(1)} và toàn bộ nội dung bên trong sẽ bị xóa khỏi bản nháp. Chưa lưu thì vẫn có thể tải lại bản đã lưu.`,
+        `It and everything in it are removed from the draft. Until you save, the saved version can still be reloaded.`,
+      ),
+      confirmLabel: t("Xóa", "Remove"),
+      danger: true,
+    });
+  const remove = async (
+    run: (s: ExamSection[]) => void,
+    what: string = t("mục này", "item"),
+  ) => {
+    if (await confirmRemoval(what)) mutate(run);
   };
   return (
     <Stack>
+      {confirmModal}
       <Text c="dimmed">
         {t(
           "Điểm tối đa được tính từ điểm của từng câu. Lưu nháp rồi xem trước trước khi gửi duyệt.",
@@ -295,14 +304,9 @@ export function ExamTreeEditor({
                               color="red"
                               variant="subtle"
                               disabled={disabled}
-                              onClick={() => {
+                              onClick={async () => {
                                 if (
-                                  !window.confirm(
-                                    t(
-                                      "Xóa phần này cùng nội dung bên trong?",
-                                      "Remove this section and its content?",
-                                    ),
-                                  )
+                                  !(await confirmRemoval(t("phần này", "part")))
                                 )
                                   return;
                                 mutate((a) => {
@@ -407,11 +411,13 @@ export function ExamTreeEditor({
                                     color="red"
                                     disabled={disabled}
                                     onClick={() =>
-                                      remove((a) =>
-                                        a[si].parts[pi].questionSets.splice(
-                                          qi,
-                                          1,
-                                        ),
+                                      void remove(
+                                        (a) =>
+                                          a[si].parts[pi].questionSets.splice(
+                                            qi,
+                                            1,
+                                          ),
+                                        t("nhóm câu hỏi này", "question group"),
                                       )
                                     }
                                   >
@@ -541,10 +547,12 @@ export function ExamTreeEditor({
                                             variant="subtle"
                                             disabled={disabled}
                                             onClick={() =>
-                                              remove((a) =>
-                                                a[si].parts[pi].questionSets[
-                                                  qi
-                                                ].questions.splice(ji, 1),
+                                              void remove(
+                                                (a) =>
+                                                  a[si].parts[pi].questionSets[
+                                                    qi
+                                                  ].questions.splice(ji, 1),
+                                                t("câu hỏi này", "question"),
                                               )
                                             }
                                           >
@@ -870,7 +878,12 @@ export function ExamTreeEditor({
                     color="red"
                     variant="subtle"
                     disabled={disabled}
-                    onClick={() => remove((a) => a.splice(si, 1))}
+                    onClick={() =>
+                      void remove(
+                        (a) => a.splice(si, 1),
+                        t("kỹ năng này", "section"),
+                      )
+                    }
                   >
                     {t("Xóa kỹ năng", "Remove section")}
                   </Button>

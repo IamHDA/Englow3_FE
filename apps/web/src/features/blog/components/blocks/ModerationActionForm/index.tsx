@@ -19,7 +19,7 @@ import {
   createModerationSchema,
   type ModerationFormValues,
 } from "../../../schemas/moderation";
-import { ConfirmModal } from "../../parts/ConfirmModal";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
 
 type ModerationActionFormProps = {
   /** What the screen offers for the content as it stands (`offeredActions`). The backend still decides. */

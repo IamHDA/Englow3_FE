@@ -24,7 +24,7 @@ import { ReportDialog } from "../../../blocks/ReportDialog";
 import { BlogEmptyState } from "../../../parts/BlogEmptyState";
 import { BlogLoadError } from "../../../parts/BlogLoadError";
 import { BlogPagination } from "../../../parts/BlogPagination";
-import { ConfirmModal } from "../../../parts/ConfirmModal";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
 
 type CommentsSectionProps = {
   postId: string;
