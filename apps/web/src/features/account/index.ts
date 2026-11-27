@@ -5,6 +5,6 @@
 // thẳng "@/features/account/server/getAccountProfile" từ phía server.
 export { AccountProvider } from "./provider";
 export { useAccountProfile } from "./hooks/useAccountProfile";
-export { ProfileView } from "./components/views/ProfileView";
-export { ProfileSkeleton } from "./components/blocks/ProfileSkeleton";
+// The profile screen is in "@/features/account/views", for its route:
+// exported here, it rode along on every page that imports this barrel.
 export type { AccountProfile, AccountProfileResult } from "./types";

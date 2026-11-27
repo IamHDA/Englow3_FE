@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { ResetPasswordView } from "@/features/auth";
+import { ResetPasswordView } from "@/features/auth/views";
 import { getServerSession } from "@/features/auth/server/getServerSession";
 
 export default async function ResetPasswordPage() {

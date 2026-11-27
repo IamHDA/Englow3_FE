@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ForgotPasswordView } from "@/features/auth";
+import { ForgotPasswordView } from "@/features/auth/views";
 
 export const metadata: Metadata = {
   title: "Quên mật khẩu | Englow3",

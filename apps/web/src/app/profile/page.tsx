@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ProfileView } from "@/features/account";
+import { ProfileView } from "@/features/account/views";
 import { Page } from "@/shared/components/Page";
 
 export const metadata: Metadata = {

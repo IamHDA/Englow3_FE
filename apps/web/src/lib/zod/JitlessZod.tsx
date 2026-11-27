@@ -1,6 +1,8 @@
 "use client";
 
-import { z } from "zod";
+// The core's `config` alone, not the "zod" namespace: this component is in the
+// root layout, and importing `z` there put all of zod on every page.
+import { config } from "zod/v4/core";
 
 // zod compiles schemas to faster code with `new Function`, after probing
 // whether the page allows it. This site's Content-Security-Policy does not
@@ -11,7 +13,7 @@ import { z } from "zod";
 //
 // At module level rather than in an effect: it has to be in place before the
 // first schema is created, and that happens during the first render.
-z.config({ jitless: true });
+config({ jitless: true });
 
 /** Mounted once in the root layout; renders nothing. */
 export function JitlessZod() {

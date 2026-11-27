@@ -55,7 +55,7 @@ function messageForError(error: unknown, isVi: boolean): string {
 }
 
 /**
- * Sáu hành động ghi của onboarding, gom về một chỗ cho `OnboardingGate` phát
+ * Sáu hành động ghi của onboarding, gom về một chỗ cho `OnboardingDialog` phát
  * xuống từng bước.
  *
  * Bước kế tiếp do backend quyết định (người luyện chứng chỉ đi qua

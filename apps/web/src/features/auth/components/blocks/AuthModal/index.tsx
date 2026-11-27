@@ -25,7 +25,7 @@ import { AuthSocialButtons } from "./AuthSocialButtons";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
-type AuthModalProps = {
+export type AuthModalProps = {
   next?: string | null;
   opened: boolean;
   onClose: () => void;
