@@ -15,6 +15,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Page, PageHeader } from "@/shared/components/Page";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -147,6 +148,8 @@ export function AdminUsersView() {
         <Group align="end">
           <TextInput
             label={tr("Tìm theo tên hoặc email", "Search name or email")}
+            placeholder={tr("Ví dụ: Minh hoặc minh@…", "e.g. Minh or minh@…")}
+            leftSection={<Search size={16} aria-hidden />}
             value={term}
             maxLength={200}
             onChange={(e) => {
@@ -168,18 +171,26 @@ export function AdminUsersView() {
               setPage(0);
             }}
           />
-          <Button variant="default" onClick={() => setRevision((v) => v + 1)}>
-            {tr("Tải lại", "Refresh")}
-          </Button>
+          {/* No standing "Refresh": the list follows the search and the role
+              as they change. Reloading by hand is for a failed load, below. */}
         </Group>
         {loading ? (
           <Skeleton height={240} />
         ) : loaded.error ? (
           <Alert color="orange" role="alert">
-            {tr(
-              "Không tải được danh sách. Bấm Tải lại để thử lại.",
-              "Could not load users. Choose Refresh to retry.",
-            )}
+            <Group justify="space-between">
+              {tr(
+                "Không tải được danh sách. Kiểm tra kết nối rồi thử lại.",
+                "Could not load users. Check your connection and retry.",
+              )}
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() => setRevision((v) => v + 1)}
+              >
+                {tr("Thử lại", "Retry")}
+              </Button>
+            </Group>
           </Alert>
         ) : (
           <>

@@ -142,18 +142,24 @@ export function AdminScoreConversionsView() {
           >
             {tr("Xuất bản bảng quy đổi", "Publish conversion table")}
           </Button>
-          <Button variant="default" onClick={() => setRevision((v) => v + 1)}>
-            {tr("Tải lại", "Refresh")}
-          </Button>
         </Group>
         {state.revision !== revision ? (
           <Skeleton height={120} />
         ) : state.error ? (
           <Alert color="orange" role="alert">
-            {tr(
-              "Không tải được cấu hình. Bấm Tải lại để thử lại.",
-              "Could not load configuration. Choose Refresh to retry.",
-            )}
+            <Group justify="space-between">
+              {tr(
+                "Không tải được cấu hình. Kiểm tra kết nối rồi thử lại.",
+                "Could not load configuration. Check your connection and retry.",
+              )}
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() => setRevision((v) => v + 1)}
+              >
+                {tr("Thử lại", "Retry")}
+              </Button>
+            </Group>
           </Alert>
         ) : state.rows?.length ? (
           <Table.ScrollContainer minWidth={600}>

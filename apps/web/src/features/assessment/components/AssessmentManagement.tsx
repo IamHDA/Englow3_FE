@@ -300,23 +300,28 @@ export function AssessmentManagement({
               />
             </>
           )}
-          <Button
-            variant="light"
-            onClick={() =>
-              void query
-                .refetch()
-                .catch(() => setError(tx("Chưa tải lại được danh sách.")))
-            }
-          >
-            {tx("Tải lại")}
-          </Button>
+          {/* No standing "Reload": the list follows its filters. Reloading
+              by hand is offered when a load fails, below. */}
         </Group>
         {error && <Alert color="red">{error}</Alert>}
         {query.error && query.data && (
           <Alert color="orange">
-            {tx(
-              "Chưa tải được dữ liệu mới. Đang hiển thị danh sách đã tải trước đó; bấm Tải lại để thử lại.",
-            )}
+            <Group justify="space-between">
+              {tx(
+                "Chưa tải được dữ liệu mới. Đang hiển thị danh sách đã tải trước đó.",
+              )}
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() =>
+                  void query
+                    .refetch()
+                    .catch(() => setError(tx("Chưa tải lại được danh sách.")))
+                }
+              >
+                {tx("Thử lại")}
+              </Button>
+            </Group>
           </Alert>
         )}
         {query.loading && !query.data ? (
@@ -522,17 +527,22 @@ export function AssessmentManagement({
             </Text>
           </Card>
         )}
-        <Pagination
-          getControlProps={paginationControlProps(isVi)}
-          value={page}
-          onChange={setPage}
-          total={Math.max(
-            1,
-            (tab === "tasks"
-              ? tasks.data?.authoringAssessmentTasks.totalPages
-              : queue.data?.assessmentSubmissions.totalPages) ?? 1,
-          )}
-        />
+        {/* Only with something to page through: a lone "1" under an empty
+            list offered nothing. */}
+        {((tab === "tasks"
+          ? tasks.data?.authoringAssessmentTasks.totalPages
+          : queue.data?.assessmentSubmissions.totalPages) ?? 0) > 1 && (
+          <Pagination
+            getControlProps={paginationControlProps(isVi)}
+            value={page}
+            onChange={setPage}
+            total={
+              (tab === "tasks"
+                ? tasks.data?.authoringAssessmentTasks.totalPages
+                : queue.data?.assessmentSubmissions.totalPages) ?? 1
+            }
+          />
+        )}
         <Modal
           opened={Boolean(preview)}
           onClose={() => setPreview(null)}

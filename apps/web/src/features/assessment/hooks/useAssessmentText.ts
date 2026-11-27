@@ -2,6 +2,9 @@
 import { useCallback } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 const messages: Record<string, string> = {
+  "Thử lại": "Retry",
+  "Chưa tải được dữ liệu mới. Đang hiển thị danh sách đã tải trước đó.":
+    "Could not load new data. Showing the list loaded before.",
   "Dùng đề mẫu này?": "Use this template?",
   "Đề mẫu sẽ thay toàn bộ nội dung bạn đang nhập. Phần chưa lưu sẽ mất.":
     "The template replaces everything you have entered. Unsaved work is lost.",
