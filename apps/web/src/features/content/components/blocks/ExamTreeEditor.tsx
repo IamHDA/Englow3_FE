@@ -12,6 +12,7 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
+import { useState } from "react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type {
   ExamSection,
@@ -124,6 +125,29 @@ export function normalizeExam(sections: ExamSection[]) {
     };
   });
 }
+/** The accordion value of a part: its section and position. */
+export function partKey(sectionIndex: number, partIndex: number): string {
+  return `${sectionIndex}:${partIndex}`;
+}
+
+/**
+ * The parts holding a validation error, by key. They are kept open whatever
+ * the author chose, so an error is never folded away out of sight.
+ */
+export function partsWithErrors(errors: Record<string, string>): string[] {
+  const keys = new Set<string>();
+  for (const field of Object.keys(errors)) {
+    const match = /^content\.sections\[(\d+)\]\.parts\[(\d+)\]/.exec(field);
+    if (match) keys.add(partKey(Number(match[1]), Number(match[2])));
+  }
+  return [...keys];
+}
+
+/** How many questions a part holds, for its folded header. */
+export function questionCount(part: ExamPart): number {
+  return part.questionSets.reduce((sum, set) => sum + set.questions.length, 0);
+}
+
 export function ExamTreeEditor({
   sections,
   change,
@@ -143,6 +167,22 @@ export function ExamTreeEditor({
 }) {
   const { isVi } = useLanguage();
   const t = (vi: string, en: string) => (isVi ? vi : en);
+  // Parts start folded: a long paper is a list of part headers, and the author
+  // opens the one they work on. A new part opens itself; a part with an error
+  // stays open.
+  const [openParts, setOpenParts] = useState<string[]>([]);
+  const errorParts = partsWithErrors(errors);
+  const openPart = (key: string) =>
+    setOpenParts((open) => (open.includes(key) ? open : [...open, key]));
+  /** After part `pi` of section `si` is removed, the later ones move up one. */
+  const forgetPart = (si: number, pi: number) =>
+    setOpenParts((open) =>
+      open.flatMap((key) => {
+        const [s, p] = key.split(":").map(Number);
+        if (s !== si || p < pi) return [key];
+        return p === pi ? [] : [partKey(s, p - 1)];
+      }),
+    );
   function mutate(run: (s: ExamSection[]) => void) {
     const next = structuredClone(sections);
     run(next);
@@ -220,529 +260,609 @@ export function ExamTreeEditor({
                     }
                   />
                 </Group>
-                {s.parts.map((p, pi) => (
-                  <Card key={pi} withBorder>
-                    <Stack>
-                      <Group justify="space-between">
-                        <Text fw={600}>
+                <Accordion
+                  multiple
+                  variant="separated"
+                  value={[
+                    ...new Set([
+                      ...openParts.filter((key) => key.startsWith(`${si}:`)),
+                      ...errorParts.filter((key) => key.startsWith(`${si}:`)),
+                    ]),
+                  ]}
+                  onChange={(value) =>
+                    setOpenParts((open) => [
+                      ...open.filter((key) => !key.startsWith(`${si}:`)),
+                      ...value,
+                    ])
+                  }
+                >
+                  {s.parts.map((p, pi) => (
+                    <Accordion.Item key={pi} value={partKey(si, pi)}>
+                      <Accordion.Control>
+                        <Text fw={600} span>
                           {t("Phần", "Part")} {pi + 1}
+                          {p.title ? ` · ${p.title}` : ""}
                         </Text>
-                        <Button
-                          color="red"
-                          variant="subtle"
-                          disabled={disabled}
-                          onClick={() =>
-                            remove((a) => a[si].parts.splice(pi, 1))
-                          }
-                        >
-                          {t("Xóa phần", "Remove part")}
-                        </Button>
-                      </Group>
-                      <TextInput
-                        label={t("Tên phần", "Part title")}
-                        required
-                        value={p.title}
-                        disabled={disabled}
-                        error={
-                          errors[`content.sections[${si}].parts[${pi}].title`]
-                        }
-                        onChange={(e) => {
-                          const v = e.currentTarget.value;
-                          mutate((a) => {
-                            a[si].parts[pi].title = v;
-                          });
-                        }}
-                      />
-                      <Textarea
-                        label={t("Hướng dẫn", "Instructions")}
-                        value={p.instruction ?? ""}
-                        disabled={disabled}
-                        onChange={(e) => {
-                          const v = e.currentTarget.value;
-                          mutate((a) => {
-                            a[si].parts[pi].instruction = v;
-                          });
-                        }}
-                      />
-                      <Textarea
-                        label={t(
-                          "Bài đọc / nội dung chung",
-                          "Passage / shared content",
-                        )}
-                        autosize
-                        minRows={3}
-                        value={p.content ?? ""}
-                        disabled={disabled}
-                        onChange={(e) => {
-                          const v = e.currentTarget.value;
-                          mutate((a) => {
-                            a[si].parts[pi].content = v;
-                          });
-                        }}
-                      />
-                      <Group grow>
-                        <AuthoringMedia
-                          onBusyChange={onMediaBusy}
-                          kind="EXAM"
-                          id={id}
-                          url={p.audioUrl ?? media?.[p.audioObjectKey ?? ""]}
-                          disabled={disabled}
-                          onUploaded={(key, url) =>
-                            mutate((a) => {
-                              a[si].parts[pi].audioObjectKey = key;
-                              a[si].parts[pi].audioUrl = url;
-                            })
-                          }
-                        />
-                        <AuthoringMedia
-                          onBusyChange={onMediaBusy}
-                          kind="EXAM"
-                          id={id}
-                          image
-                          url={p.imageUrl ?? media?.[p.imageObjectKey ?? ""]}
-                          disabled={disabled}
-                          onUploaded={(key, url) =>
-                            mutate((a) => {
-                              a[si].parts[pi].imageObjectKey = key;
-                              a[si].parts[pi].imageUrl = url;
-                            })
-                          }
-                        />
-                      </Group>
-                      {p.questionSets.map((set, qi) => (
-                        <Card
-                          key={qi}
-                          withBorder
-                          bg="var(--mantine-color-gray-0)"
-                        >
-                          <Stack>
-                            <Group justify="space-between">
-                              <Text fw={600}>
-                                {t("Nhóm câu", "Question group")} {qi + 1}
-                              </Text>
-                              <Button
-                                variant="subtle"
-                                color="red"
-                                disabled={disabled}
-                                onClick={() =>
-                                  remove((a) =>
-                                    a[si].parts[pi].questionSets.splice(qi, 1),
+                        <Text c="dimmed" size="sm" span>
+                          {" "}
+                          · {questionCount(p)} {t("câu", "questions")}
+                        </Text>
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <Stack>
+                          <Group justify="flex-end">
+                            <Button
+                              color="red"
+                              variant="subtle"
+                              disabled={disabled}
+                              onClick={() => {
+                                if (
+                                  !window.confirm(
+                                    t(
+                                      "Xóa phần này cùng nội dung bên trong?",
+                                      "Remove this section and its content?",
+                                    ),
                                   )
-                                }
-                              >
-                                {t("Xóa nhóm", "Remove group")}
-                              </Button>
-                            </Group>
-                            <TextInput
-                              label={t("Tên nhóm", "Group title")}
-                              value={set.title ?? ""}
-                              disabled={disabled}
-                              onChange={(e) => {
-                                const v = e.currentTarget.value;
+                                )
+                                  return;
                                 mutate((a) => {
-                                  a[si].parts[pi].questionSets[qi].title = v;
+                                  a[si].parts.splice(pi, 1);
                                 });
+                                forgetPart(si, pi);
                               }}
-                            />
-                            <Textarea
-                              label={t("Hướng dẫn nhóm", "Group instructions")}
-                              value={set.instruction ?? ""}
-                              disabled={disabled}
-                              onChange={(e) => {
-                                const v = e.currentTarget.value;
-                                mutate((a) => {
-                                  a[si].parts[pi].questionSets[qi].instruction =
-                                    v;
-                                });
-                              }}
-                            />
-                            <Textarea
-                              label={t("Nội dung nhóm", "Group passage")}
-                              description={t(
-                                "Câu điền từ: đặt ô trống bằng {{n}}, n là số thứ tự của câu trong nhóm (vd. {{1}}, {{2}}).",
-                                "Gap-fill: mark each gap as {{n}}, n being the question's position in this group (e.g. {{1}}, {{2}}).",
-                              )}
-                              value={set.content ?? ""}
-                              disabled={disabled}
-                              onChange={(e) => {
-                                const v = e.currentTarget.value;
-                                mutate((a) => {
-                                  a[si].parts[pi].questionSets[qi].content = v;
-                                });
-                              }}
-                            />
-                            <Group grow>
-                              <AuthoringMedia
-                                onBusyChange={onMediaBusy}
-                                kind="EXAM"
-                                id={id}
-                                disabled={disabled}
-                                url={
-                                  set.audioUrl ??
-                                  media?.[set.audioObjectKey ?? ""]
-                                }
-                                onUploaded={(key, url) =>
-                                  mutate((a) => {
-                                    a[si].parts[pi].questionSets[
-                                      qi
-                                    ].audioObjectKey = key;
-                                    a[si].parts[pi].questionSets[qi].audioUrl =
-                                      url;
-                                  })
-                                }
-                              />
-                              <AuthoringMedia
-                                onBusyChange={onMediaBusy}
-                                kind="EXAM"
-                                id={id}
-                                image
-                                disabled={disabled}
-                                url={
-                                  set.imageUrl ??
-                                  media?.[set.imageObjectKey ?? ""]
-                                }
-                                onUploaded={(key, url) =>
-                                  mutate((a) => {
-                                    a[si].parts[pi].questionSets[
-                                      qi
-                                    ].imageObjectKey = key;
-                                    a[si].parts[pi].questionSets[qi].imageUrl =
-                                      url;
-                                  })
-                                }
-                              />
-                            </Group>
-                            <SetOptionsEditor
-                              entries={set.setOptions ?? []}
-                              disabled={disabled}
-                              error={
-                                errors[
-                                  `content.sections[${si}].parts[${pi}].questionSets[${qi}].setOptions`
-                                ]
+                            >
+                              {t("Xóa phần", "Remove part")}
+                            </Button>
+                          </Group>
+                          <TextInput
+                            label={t("Tên phần", "Part title")}
+                            required
+                            value={p.title}
+                            disabled={disabled}
+                            error={
+                              errors[
+                                `content.sections[${si}].parts[${pi}].title`
+                              ]
+                            }
+                            onChange={(e) => {
+                              const v = e.currentTarget.value;
+                              mutate((a) => {
+                                a[si].parts[pi].title = v;
+                              });
+                            }}
+                          />
+                          <Textarea
+                            label={t("Hướng dẫn", "Instructions")}
+                            value={p.instruction ?? ""}
+                            disabled={disabled}
+                            onChange={(e) => {
+                              const v = e.currentTarget.value;
+                              mutate((a) => {
+                                a[si].parts[pi].instruction = v;
+                              });
+                            }}
+                          />
+                          <Textarea
+                            label={t(
+                              "Bài đọc / nội dung chung",
+                              "Passage / shared content",
+                            )}
+                            autosize
+                            minRows={3}
+                            value={p.content ?? ""}
+                            disabled={disabled}
+                            onChange={(e) => {
+                              const v = e.currentTarget.value;
+                              mutate((a) => {
+                                a[si].parts[pi].content = v;
+                              });
+                            }}
+                          />
+                          <Group grow>
+                            <AuthoringMedia
+                              onBusyChange={onMediaBusy}
+                              kind="EXAM"
+                              id={id}
+                              url={
+                                p.audioUrl ?? media?.[p.audioObjectKey ?? ""]
                               }
-                              change={(entries) =>
+                              disabled={disabled}
+                              onUploaded={(key, url) =>
                                 mutate((a) => {
-                                  a[si].parts[pi].questionSets[qi].setOptions =
-                                    entries;
+                                  a[si].parts[pi].audioObjectKey = key;
+                                  a[si].parts[pi].audioUrl = url;
                                 })
                               }
                             />
-                            {set.questions.map((q, ji) => {
-                              const prefix = `content.sections[${si}].parts[${pi}].questionSets[${qi}].questions[${ji}]`;
-                              const update = (v: ExamQuestion) =>
+                            <AuthoringMedia
+                              onBusyChange={onMediaBusy}
+                              kind="EXAM"
+                              id={id}
+                              image
+                              url={
+                                p.imageUrl ?? media?.[p.imageObjectKey ?? ""]
+                              }
+                              disabled={disabled}
+                              onUploaded={(key, url) =>
                                 mutate((a) => {
-                                  a[si].parts[pi].questionSets[qi].questions[
-                                    ji
-                                  ] = v;
-                                });
-                              return (
-                                <Card key={ji} withBorder>
-                                  <Stack>
-                                    <Group justify="space-between">
-                                      <Text fw={600}>
-                                        {t("Câu", "Question")} {q.orderNo}
-                                      </Text>
-                                      <Button
-                                        color="red"
-                                        variant="subtle"
-                                        disabled={disabled}
-                                        onClick={() =>
-                                          remove((a) =>
-                                            a[si].parts[pi].questionSets[
-                                              qi
-                                            ].questions.splice(ji, 1),
-                                          )
-                                        }
-                                      >
-                                        {t("Xóa câu", "Remove question")}
-                                      </Button>
-                                    </Group>
-                                    <Textarea
-                                      label={t("Nội dung câu hỏi", "Question")}
-                                      required
-                                      value={q.content}
-                                      disabled={disabled}
-                                      error={errors[`${prefix}.content`]}
-                                      onChange={(e) =>
-                                        update({
-                                          ...q,
-                                          content: e.currentTarget.value,
-                                        })
-                                      }
-                                    />
-                                    <Group grow>
-                                      <Select
-                                        label={t("Dạng đáp án", "Answer type")}
-                                        data={[
-                                          {
-                                            value:
-                                              ExamQuestionKind.SINGLE_CHOICE,
-                                            label: t(
-                                              "Một đáp án đúng",
-                                              "One correct answer",
-                                            ),
-                                          },
-                                          {
-                                            value:
-                                              ExamQuestionKind.MULTIPLE_CHOICE,
-                                            label: t(
-                                              "Nhiều đáp án đúng",
-                                              "Multiple correct answers",
-                                            ),
-                                          },
-                                          {
-                                            value: ExamQuestionKind.TEXT_ENTRY,
-                                            label: t(
-                                              "Điền từ",
-                                              "Gap fill (typed)",
-                                            ),
-                                          },
-                                          {
-                                            value: ExamQuestionKind.MATCHING,
-                                            label: t(
-                                              "Ghép với danh sách của nhóm",
-                                              "Match from the group's list",
-                                            ),
-                                          },
-                                        ]}
-                                        allowDeselect={false}
-                                        value={q.questionType}
-                                        disabled={disabled}
-                                        onChange={(v) =>
-                                          update(
-                                            changeQuestionType(
-                                              q,
-                                              v ??
-                                                ExamQuestionKind.SINGLE_CHOICE,
-                                            ),
-                                          )
-                                        }
-                                      />
-                                      <Select
-                                        label={t("Độ khó", "Difficulty")}
-                                        data={["EASY", "MEDIUM", "HARD"]}
-                                        allowDeselect={false}
-                                        value={q.difficultyLevel}
-                                        disabled={disabled}
-                                        onChange={(v) =>
-                                          update({
-                                            ...q,
-                                            difficultyLevel: v ?? "MEDIUM",
-                                          })
-                                        }
-                                      />
-                                      <NumberInput
-                                        label={t("Điểm câu", "Question points")}
-                                        min={0.5}
-                                        step={0.5}
-                                        error={errors[`${prefix}.maxRawScore`]}
-                                        value={q.maxRawScore}
-                                        disabled={disabled}
-                                        onChange={(v) =>
-                                          update({
-                                            ...q,
-                                            maxRawScore: Number(v),
-                                          })
-                                        }
-                                      />
-                                    </Group>
-                                    <Group grow>
-                                      <Select
-                                        label={t(
-                                          "Kỹ năng câu hỏi",
-                                          "Question skill",
-                                        )}
-                                        data={[
-                                          "LISTENING",
-                                          "READING",
-                                          "WRITING",
-                                          "SPEAKING",
-                                        ]}
-                                        allowDeselect={false}
-                                        value={q.skillType}
-                                        disabled={disabled}
-                                        onChange={(v) =>
-                                          update({
-                                            ...q,
-                                            skillType: v ?? s.sectionType,
-                                          })
-                                        }
-                                      />
-                                      <TextInput
-                                        label={t(
-                                          "Nhóm kiến thức (tùy chọn)",
-                                          "Category (optional)",
-                                        )}
-                                        value={q.questionCategory ?? ""}
-                                        disabled={disabled}
-                                        onChange={(e) =>
-                                          update({
-                                            ...q,
-                                            questionCategory:
-                                              e.currentTarget.value,
-                                          })
-                                        }
-                                      />
-                                    </Group>
-                                    {q.questionType ===
-                                      ExamQuestionKind.TEXT_ENTRY && (
-                                      <AcceptedAnswersEditor
-                                        answers={q.acceptedAnswers ?? []}
-                                        disabled={disabled}
-                                        error={
-                                          errors[`${prefix}.acceptedAnswers`]
-                                        }
-                                        change={(acceptedAnswers) =>
-                                          update({ ...q, acceptedAnswers })
-                                        }
-                                      />
-                                    )}
-                                    {q.questionType ===
-                                      ExamQuestionKind.MATCHING && (
-                                      <MultiSelect
-                                        label={t(
-                                          "Đáp án (nhãn trong danh sách của nhóm)",
-                                          "Answer (label from the group's list)",
-                                        )}
-                                        required
-                                        data={[
-                                          ...new Set(
-                                            (set.setOptions ?? [])
-                                              .map((entry) =>
-                                                entry.label.trim(),
-                                              )
-                                              .filter(Boolean),
-                                          ),
-                                        ]}
-                                        value={q.matchingLabels ?? []}
-                                        disabled={disabled}
-                                        error={
-                                          errors[`${prefix}.matchingLabels`]
-                                        }
-                                        onChange={(matchingLabels) =>
-                                          update({ ...q, matchingLabels })
-                                        }
-                                      />
-                                    )}
-                                    {hasOwnOptions(q.questionType) && (
-                                      <>
-                                        <OptionsEditor
-                                          options={q.options}
-                                          disabled={disabled}
-                                          change={(options) =>
-                                            update({ ...q, options })
-                                          }
-                                          error={errors[`${prefix}.options`]}
-                                          single={
-                                            q.questionType ===
-                                            ExamQuestionKind.SINGLE_CHOICE
-                                          }
-                                        />
-                                        <Group>
+                                  a[si].parts[pi].imageObjectKey = key;
+                                  a[si].parts[pi].imageUrl = url;
+                                })
+                              }
+                            />
+                          </Group>
+                          {p.questionSets.map((set, qi) => (
+                            <Card
+                              key={qi}
+                              withBorder
+                              bg="var(--mantine-color-gray-0)"
+                            >
+                              <Stack>
+                                <Group justify="space-between">
+                                  <Text fw={600}>
+                                    {t("Nhóm câu", "Question group")} {qi + 1}
+                                  </Text>
+                                  <Button
+                                    variant="subtle"
+                                    color="red"
+                                    disabled={disabled}
+                                    onClick={() =>
+                                      remove((a) =>
+                                        a[si].parts[pi].questionSets.splice(
+                                          qi,
+                                          1,
+                                        ),
+                                      )
+                                    }
+                                  >
+                                    {t("Xóa nhóm", "Remove group")}
+                                  </Button>
+                                </Group>
+                                <TextInput
+                                  label={t("Tên nhóm", "Group title")}
+                                  value={set.title ?? ""}
+                                  disabled={disabled}
+                                  onChange={(e) => {
+                                    const v = e.currentTarget.value;
+                                    mutate((a) => {
+                                      a[si].parts[pi].questionSets[qi].title =
+                                        v;
+                                    });
+                                  }}
+                                />
+                                <Textarea
+                                  label={t(
+                                    "Hướng dẫn nhóm",
+                                    "Group instructions",
+                                  )}
+                                  value={set.instruction ?? ""}
+                                  disabled={disabled}
+                                  onChange={(e) => {
+                                    const v = e.currentTarget.value;
+                                    mutate((a) => {
+                                      a[si].parts[pi].questionSets[
+                                        qi
+                                      ].instruction = v;
+                                    });
+                                  }}
+                                />
+                                <Textarea
+                                  label={t("Nội dung nhóm", "Group passage")}
+                                  description={t(
+                                    "Câu điền từ: đặt ô trống bằng {{n}}, n là số thứ tự của câu trong nhóm (vd. {{1}}, {{2}}).",
+                                    "Gap-fill: mark each gap as {{n}}, n being the question's position in this group (e.g. {{1}}, {{2}}).",
+                                  )}
+                                  value={set.content ?? ""}
+                                  disabled={disabled}
+                                  onChange={(e) => {
+                                    const v = e.currentTarget.value;
+                                    mutate((a) => {
+                                      a[si].parts[pi].questionSets[qi].content =
+                                        v;
+                                    });
+                                  }}
+                                />
+                                <Group grow>
+                                  <AuthoringMedia
+                                    onBusyChange={onMediaBusy}
+                                    kind="EXAM"
+                                    id={id}
+                                    disabled={disabled}
+                                    url={
+                                      set.audioUrl ??
+                                      media?.[set.audioObjectKey ?? ""]
+                                    }
+                                    onUploaded={(key, url) =>
+                                      mutate((a) => {
+                                        a[si].parts[pi].questionSets[
+                                          qi
+                                        ].audioObjectKey = key;
+                                        a[si].parts[pi].questionSets[
+                                          qi
+                                        ].audioUrl = url;
+                                      })
+                                    }
+                                  />
+                                  <AuthoringMedia
+                                    onBusyChange={onMediaBusy}
+                                    kind="EXAM"
+                                    id={id}
+                                    image
+                                    disabled={disabled}
+                                    url={
+                                      set.imageUrl ??
+                                      media?.[set.imageObjectKey ?? ""]
+                                    }
+                                    onUploaded={(key, url) =>
+                                      mutate((a) => {
+                                        a[si].parts[pi].questionSets[
+                                          qi
+                                        ].imageObjectKey = key;
+                                        a[si].parts[pi].questionSets[
+                                          qi
+                                        ].imageUrl = url;
+                                      })
+                                    }
+                                  />
+                                </Group>
+                                <SetOptionsEditor
+                                  entries={set.setOptions ?? []}
+                                  disabled={disabled}
+                                  error={
+                                    errors[
+                                      `content.sections[${si}].parts[${pi}].questionSets[${qi}].setOptions`
+                                    ]
+                                  }
+                                  change={(entries) =>
+                                    mutate((a) => {
+                                      a[si].parts[pi].questionSets[
+                                        qi
+                                      ].setOptions = entries;
+                                    })
+                                  }
+                                />
+                                {set.questions.map((q, ji) => {
+                                  const prefix = `content.sections[${si}].parts[${pi}].questionSets[${qi}].questions[${ji}]`;
+                                  const update = (v: ExamQuestion) =>
+                                    mutate((a) => {
+                                      a[si].parts[pi].questionSets[
+                                        qi
+                                      ].questions[ji] = v;
+                                    });
+                                  return (
+                                    <Card key={ji} withBorder>
+                                      <Stack>
+                                        <Group justify="space-between">
+                                          <Text fw={600}>
+                                            {t("Câu", "Question")} {q.orderNo}
+                                          </Text>
                                           <Button
-                                            variant="light"
-                                            disabled={
-                                              disabled || q.options.length >= 10
-                                            }
+                                            color="red"
+                                            variant="subtle"
+                                            disabled={disabled}
                                             onClick={() =>
-                                              update({
-                                                ...q,
-                                                options: [
-                                                  ...q.options,
-                                                  {
-                                                    label: String.fromCharCode(
-                                                      65 + q.options.length,
-                                                    ),
-                                                    content: "",
-                                                    correct: false,
-                                                    orderNo:
-                                                      q.options.length + 1,
-                                                  },
-                                                ],
-                                              })
+                                              remove((a) =>
+                                                a[si].parts[pi].questionSets[
+                                                  qi
+                                                ].questions.splice(ji, 1),
+                                              )
                                             }
                                           >
-                                            {t("Thêm đáp án", "Add option")}
+                                            {t("Xóa câu", "Remove question")}
                                           </Button>
-                                          {q.options.length > 2 && (
-                                            <Button
-                                              variant="subtle"
-                                              color="red"
-                                              disabled={disabled}
-                                              onClick={() =>
-                                                update({
-                                                  ...q,
-                                                  options: q.options.slice(
-                                                    0,
-                                                    -1,
-                                                  ),
-                                                })
-                                              }
-                                            >
-                                              {t(
-                                                "Bớt đáp án cuối",
-                                                "Remove last option",
-                                              )}
-                                            </Button>
-                                          )}
                                         </Group>
-                                      </>
-                                    )}
-                                    <Textarea
-                                      label={t(
-                                        "Giải thích đáp án",
-                                        "Answer explanation",
-                                      )}
-                                      value={q.explanation ?? ""}
-                                      disabled={disabled}
-                                      onChange={(e) =>
-                                        update({
-                                          ...q,
-                                          explanation: e.currentTarget.value,
-                                        })
-                                      }
-                                    />
-                                  </Stack>
-                                </Card>
-                              );
-                            })}
-                            <Button
-                              variant="light"
-                              disabled={disabled}
-                              onClick={() =>
-                                mutate((a) =>
-                                  a[si].parts[pi].questionSets[
-                                    qi
-                                  ].questions.push(
-                                    blankQuestion(s.sectionType),
-                                  ),
-                                )
-                              }
-                            >
-                              {t("Thêm câu hỏi", "Add question")}
-                            </Button>
-                          </Stack>
-                        </Card>
-                      ))}
-                      <Button
-                        variant="light"
-                        disabled={disabled}
-                        onClick={() =>
-                          mutate((a) =>
-                            a[si].parts[pi].questionSets.push(blankSet()),
-                          )
-                        }
-                      >
-                        {t("Thêm nhóm câu hỏi", "Add question group")}
-                      </Button>
-                    </Stack>
-                  </Card>
-                ))}
+                                        <Textarea
+                                          label={t(
+                                            "Nội dung câu hỏi",
+                                            "Question",
+                                          )}
+                                          required
+                                          value={q.content}
+                                          disabled={disabled}
+                                          error={errors[`${prefix}.content`]}
+                                          onChange={(e) =>
+                                            update({
+                                              ...q,
+                                              content: e.currentTarget.value,
+                                            })
+                                          }
+                                        />
+                                        <Group grow>
+                                          <Select
+                                            label={t(
+                                              "Dạng đáp án",
+                                              "Answer type",
+                                            )}
+                                            data={[
+                                              {
+                                                value:
+                                                  ExamQuestionKind.SINGLE_CHOICE,
+                                                label: t(
+                                                  "Một đáp án đúng",
+                                                  "One correct answer",
+                                                ),
+                                              },
+                                              {
+                                                value:
+                                                  ExamQuestionKind.MULTIPLE_CHOICE,
+                                                label: t(
+                                                  "Nhiều đáp án đúng",
+                                                  "Multiple correct answers",
+                                                ),
+                                              },
+                                              {
+                                                value:
+                                                  ExamQuestionKind.TEXT_ENTRY,
+                                                label: t(
+                                                  "Điền từ",
+                                                  "Gap fill (typed)",
+                                                ),
+                                              },
+                                              {
+                                                value:
+                                                  ExamQuestionKind.MATCHING,
+                                                label: t(
+                                                  "Ghép với danh sách của nhóm",
+                                                  "Match from the group's list",
+                                                ),
+                                              },
+                                            ]}
+                                            allowDeselect={false}
+                                            value={q.questionType}
+                                            disabled={disabled}
+                                            onChange={(v) =>
+                                              update(
+                                                changeQuestionType(
+                                                  q,
+                                                  v ??
+                                                    ExamQuestionKind.SINGLE_CHOICE,
+                                                ),
+                                              )
+                                            }
+                                          />
+                                          <Select
+                                            label={t("Độ khó", "Difficulty")}
+                                            data={["EASY", "MEDIUM", "HARD"]}
+                                            allowDeselect={false}
+                                            value={q.difficultyLevel}
+                                            disabled={disabled}
+                                            onChange={(v) =>
+                                              update({
+                                                ...q,
+                                                difficultyLevel: v ?? "MEDIUM",
+                                              })
+                                            }
+                                          />
+                                          <NumberInput
+                                            label={t(
+                                              "Điểm câu",
+                                              "Question points",
+                                            )}
+                                            min={0.5}
+                                            step={0.5}
+                                            error={
+                                              errors[`${prefix}.maxRawScore`]
+                                            }
+                                            value={q.maxRawScore}
+                                            disabled={disabled}
+                                            onChange={(v) =>
+                                              update({
+                                                ...q,
+                                                maxRawScore: Number(v),
+                                              })
+                                            }
+                                          />
+                                        </Group>
+                                        <Group grow>
+                                          <Select
+                                            label={t(
+                                              "Kỹ năng câu hỏi",
+                                              "Question skill",
+                                            )}
+                                            data={[
+                                              "LISTENING",
+                                              "READING",
+                                              "WRITING",
+                                              "SPEAKING",
+                                            ]}
+                                            allowDeselect={false}
+                                            value={q.skillType}
+                                            disabled={disabled}
+                                            onChange={(v) =>
+                                              update({
+                                                ...q,
+                                                skillType: v ?? s.sectionType,
+                                              })
+                                            }
+                                          />
+                                          <TextInput
+                                            label={t(
+                                              "Nhóm kiến thức (tùy chọn)",
+                                              "Category (optional)",
+                                            )}
+                                            value={q.questionCategory ?? ""}
+                                            disabled={disabled}
+                                            onChange={(e) =>
+                                              update({
+                                                ...q,
+                                                questionCategory:
+                                                  e.currentTarget.value,
+                                              })
+                                            }
+                                          />
+                                        </Group>
+                                        {q.questionType ===
+                                          ExamQuestionKind.TEXT_ENTRY && (
+                                          <AcceptedAnswersEditor
+                                            answers={q.acceptedAnswers ?? []}
+                                            disabled={disabled}
+                                            error={
+                                              errors[
+                                                `${prefix}.acceptedAnswers`
+                                              ]
+                                            }
+                                            change={(acceptedAnswers) =>
+                                              update({ ...q, acceptedAnswers })
+                                            }
+                                          />
+                                        )}
+                                        {q.questionType ===
+                                          ExamQuestionKind.MATCHING && (
+                                          <MultiSelect
+                                            label={t(
+                                              "Đáp án (nhãn trong danh sách của nhóm)",
+                                              "Answer (label from the group's list)",
+                                            )}
+                                            required
+                                            data={[
+                                              ...new Set(
+                                                (set.setOptions ?? [])
+                                                  .map((entry) =>
+                                                    entry.label.trim(),
+                                                  )
+                                                  .filter(Boolean),
+                                              ),
+                                            ]}
+                                            value={q.matchingLabels ?? []}
+                                            disabled={disabled}
+                                            error={
+                                              errors[`${prefix}.matchingLabels`]
+                                            }
+                                            onChange={(matchingLabels) =>
+                                              update({ ...q, matchingLabels })
+                                            }
+                                          />
+                                        )}
+                                        {hasOwnOptions(q.questionType) && (
+                                          <>
+                                            <OptionsEditor
+                                              options={q.options}
+                                              disabled={disabled}
+                                              change={(options) =>
+                                                update({ ...q, options })
+                                              }
+                                              error={
+                                                errors[`${prefix}.options`]
+                                              }
+                                              single={
+                                                q.questionType ===
+                                                ExamQuestionKind.SINGLE_CHOICE
+                                              }
+                                            />
+                                            <Group>
+                                              <Button
+                                                variant="light"
+                                                disabled={
+                                                  disabled ||
+                                                  q.options.length >= 10
+                                                }
+                                                onClick={() =>
+                                                  update({
+                                                    ...q,
+                                                    options: [
+                                                      ...q.options,
+                                                      {
+                                                        label:
+                                                          String.fromCharCode(
+                                                            65 +
+                                                              q.options.length,
+                                                          ),
+                                                        content: "",
+                                                        correct: false,
+                                                        orderNo:
+                                                          q.options.length + 1,
+                                                      },
+                                                    ],
+                                                  })
+                                                }
+                                              >
+                                                {t("Thêm đáp án", "Add option")}
+                                              </Button>
+                                              {q.options.length > 2 && (
+                                                <Button
+                                                  variant="subtle"
+                                                  color="red"
+                                                  disabled={disabled}
+                                                  onClick={() =>
+                                                    update({
+                                                      ...q,
+                                                      options: q.options.slice(
+                                                        0,
+                                                        -1,
+                                                      ),
+                                                    })
+                                                  }
+                                                >
+                                                  {t(
+                                                    "Bớt đáp án cuối",
+                                                    "Remove last option",
+                                                  )}
+                                                </Button>
+                                              )}
+                                            </Group>
+                                          </>
+                                        )}
+                                        <Textarea
+                                          label={t(
+                                            "Giải thích đáp án",
+                                            "Answer explanation",
+                                          )}
+                                          value={q.explanation ?? ""}
+                                          disabled={disabled}
+                                          onChange={(e) =>
+                                            update({
+                                              ...q,
+                                              explanation:
+                                                e.currentTarget.value,
+                                            })
+                                          }
+                                        />
+                                      </Stack>
+                                    </Card>
+                                  );
+                                })}
+                                <Button
+                                  variant="light"
+                                  disabled={disabled}
+                                  onClick={() =>
+                                    mutate((a) =>
+                                      a[si].parts[pi].questionSets[
+                                        qi
+                                      ].questions.push(
+                                        blankQuestion(s.sectionType),
+                                      ),
+                                    )
+                                  }
+                                >
+                                  {t("Thêm câu hỏi", "Add question")}
+                                </Button>
+                              </Stack>
+                            </Card>
+                          ))}
+                          <Button
+                            variant="light"
+                            disabled={disabled}
+                            onClick={() =>
+                              mutate((a) =>
+                                a[si].parts[pi].questionSets.push(blankSet()),
+                              )
+                            }
+                          >
+                            {t("Thêm nhóm câu hỏi", "Add question group")}
+                          </Button>
+                        </Stack>
+                      </Accordion.Panel>
+                    </Accordion.Item>
+                  ))}
+                </Accordion>
                 <Group>
                   <Button
                     variant="light"
                     disabled={disabled}
-                    onClick={() => mutate((a) => a[si].parts.push(blankPart()))}
+                    onClick={() => {
+                      mutate((a) => a[si].parts.push(blankPart()));
+                      openPart(partKey(si, s.parts.length));
+                    }}
                   >
                     {t("Thêm phần", "Add part")}
                   </Button>

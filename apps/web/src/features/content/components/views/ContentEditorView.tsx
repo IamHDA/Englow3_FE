@@ -1151,38 +1151,63 @@ function ContentPreview({
               <Text fw={700}>
                 {s.sectionType} · {s.maxRawScore} {t("điểm", "points")}
               </Text>
-              {s.parts.map((p, pi) => (
-                <Stack key={pi}>
-                  <Text fw={600}>{p.title}</Text>
-                  {block(p.instruction)}
-                  {block(p.content)}
-                  {media(p)}
-                  {p.questionSets.map((set, qi) => (
-                    <Stack key={qi}>
-                      <Text fw={600}>{set.title}</Text>
-                      {block(set.instruction)}
-                      {block(set.content)}
-                      {media(set)}
-                      {set.questions.map((q) => (
-                        <Card key={q.orderNo} withBorder>
-                          <Stack>
-                            <Text fw={600}>
-                              {q.orderNo}. {q.content}
-                            </Text>
-                            {q.options.map((o, oi) => (
-                              <Text key={oi} c={o.correct ? "teal" : "dimmed"}>
-                                {String.fromCharCode(65 + oi)}. {o.content}{" "}
-                                {o.correct ? "✓" : ""}
-                              </Text>
+              {/* One fold per part: a long paper reads as a list of parts,
+                  and the one opened is the one shown - no scrolling past the
+                  rest. Clicking it again folds it. */}
+              <Accordion multiple variant="separated">
+                {s.parts.map((p, pi) => (
+                  <Accordion.Item key={pi} value={String(pi)}>
+                    <Accordion.Control>
+                      <Text fw={600} span>
+                        {p.title || `${t("Phần", "Part")} ${pi + 1}`}
+                      </Text>
+                      <Text c="dimmed" size="sm" span>
+                        {" "}
+                        ·{" "}
+                        {p.questionSets.reduce(
+                          (sum, set) => sum + set.questions.length,
+                          0,
+                        )}{" "}
+                        {t("câu", "questions")}
+                      </Text>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <Stack>
+                        {block(p.instruction)}
+                        {block(p.content)}
+                        {media(p)}
+                        {p.questionSets.map((set, qi) => (
+                          <Stack key={qi}>
+                            <Text fw={600}>{set.title}</Text>
+                            {block(set.instruction)}
+                            {block(set.content)}
+                            {media(set)}
+                            {set.questions.map((q) => (
+                              <Card key={q.orderNo} withBorder>
+                                <Stack>
+                                  <Text fw={600}>
+                                    {q.orderNo}. {q.content}
+                                  </Text>
+                                  {q.options.map((o, oi) => (
+                                    <Text
+                                      key={oi}
+                                      c={o.correct ? "teal" : "dimmed"}
+                                    >
+                                      {String.fromCharCode(65 + oi)}.{" "}
+                                      {o.content} {o.correct ? "✓" : ""}
+                                    </Text>
+                                  ))}
+                                  {block(q.explanation)}
+                                </Stack>
+                              </Card>
                             ))}
-                            {block(q.explanation)}
                           </Stack>
-                        </Card>
-                      ))}
-                    </Stack>
-                  ))}
-                </Stack>
-              ))}
+                        ))}
+                      </Stack>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
             </Stack>
           </Card>
         ))}
