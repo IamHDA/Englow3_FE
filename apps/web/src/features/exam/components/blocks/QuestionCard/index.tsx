@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import {
   Box,
   Button,
@@ -20,7 +20,10 @@ import classes from "./QuestionCard.module.css";
 import { ExamQuestionType } from "@/lib/graphql/generated/schemaTypes";
 import {
   MAX_TEXT_ANSWER_LENGTH,
+  chosenOptionIds,
   questionNumberLabel,
+  typedAnswerText,
+  type ExamAnswer,
 } from "../../../examAnswers";
 import { questionAnchorId } from "../../../constants/examSitting";
 
@@ -33,15 +36,18 @@ export interface QuestionCardProps {
   /** The set the question belongs to: a matching question chooses from its shared list. */
   questionSet: QuestionSet;
   question: Question;
-  selectedOptionIds?: string[];
-  /** What was typed on a TEXT_ENTRY question. */
-  textAnswer?: string;
+  /**
+   * The learner's answer as stored - the same object until it changes, which
+   * is what lets an untouched question skip rendering while another is typed in.
+   */
+  answer?: ExamAnswer;
   isFlagged: boolean;
   /** The question the learner is on: the palette's highlight and the gap that stands out. */
   isCurrent: boolean;
-  onSelectOption: (optionId: string) => void;
-  onChangeText?: (text: string) => void;
-  onToggleFlag: () => void;
+  /** Called with this question's id, so one handler serves every question. */
+  onSelectOption: (questionId: string, optionId: string) => void;
+  onChangeText?: (questionId: string, text: string) => void;
+  onToggleFlag: (questionId: string) => void;
 }
 
 /**
@@ -50,16 +56,15 @@ export interface QuestionCardProps {
  * in. What the question is about (the passage, the audio) belongs to the part
  * or the set and is shown once above, by the sheet.
  */
-export function QuestionCard({
+export const QuestionCard = memo(function QuestionCard({
   questionSet,
   question,
-  selectedOptionIds,
-  textAnswer,
+  answer,
   isFlagged,
   isCurrent,
-  onSelectOption,
-  onChangeText,
-  onToggleFlag,
+  onSelectOption: selectOption,
+  onChangeText: changeText,
+  onToggleFlag: toggleFlag,
 }: QuestionCardProps) {
   const { t, isVi } = useLanguage();
   const multiple = question.questionType === ExamQuestionType.MULTIPLE_CHOICE;
@@ -79,7 +84,11 @@ export function QuestionCard({
           content: option.content,
         }));
   const numberLabel = questionNumberLabel(question);
-  const selected = selectedOptionIds ?? [];
+  const selected = chosenOptionIds(answer);
+  const textAnswer = typedAnswerText(answer);
+  const onSelectOption = (optionId: string) =>
+    selectOption(question.id, optionId);
+  const onToggleFlag = () => toggleFlag(question.id);
 
   return (
     <Paper
@@ -127,9 +136,11 @@ export function QuestionCard({
                 ? "Gõ đúng chính tả. Không phân biệt chữ hoa, chữ thường."
                 : "Spell it correctly. Capital letters do not matter."
             }
-            value={textAnswer ?? ""}
+            value={textAnswer}
             maxLength={MAX_TEXT_ANSWER_LENGTH}
-            onChange={(event) => onChangeText?.(event.currentTarget.value)}
+            onChange={(event) =>
+              changeText?.(question.id, event.currentTarget.value)
+            }
             autoComplete="off"
             spellCheck={false}
           />
@@ -218,4 +229,4 @@ export function QuestionCard({
       </Stack>
     </Paper>
   );
-}
+});

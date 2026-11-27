@@ -627,63 +627,77 @@ export function ExamSittingView({
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [scrollTarget]);
 
+  // The answer handlers keep their identity across renders: every question of a
+  // part is memoised, and a new handler would render all of them on each key.
   /** Touching a question makes it the current one, without scrolling. */
-  const focusQuestion = (questionId: string) => {
-    const index = indexByQuestionId.get(questionId);
-    if (index !== undefined) setCurrentIndex(index);
-  };
+  const focusQuestion = useCallback(
+    (questionId: string) => {
+      const index = indexByQuestionId.get(questionId);
+      if (index !== undefined) setCurrentIndex(index);
+    },
+    [indexByQuestionId],
+  );
 
-  const handleSelectOption = (questionId: string, optionId: string) => {
-    if (pending.current || expired) return;
-    const question = questionById.get(questionId);
-    if (!question) return;
-    focusQuestion(questionId);
-    setAnswers((prev) => {
-      if (question.questionType !== ExamQuestionType.MULTIPLE_CHOICE)
-        return { ...prev, [questionId]: optionId };
-      const old = prev[questionId];
-      const chosen = Array.isArray(old)
-        ? old
-        : typeof old === "string"
-          ? [old]
-          : [];
-      // "Choose TWO": a third tick is refused rather than quietly swapping one,
-      // which the backend would also refuse (TOO_MANY_SELECTED_OPTIONS).
-      if (!chosen.includes(optionId) && chosen.length >= question.choiceLimit)
-        return prev;
-      const selected = chosen.includes(optionId)
-        ? chosen.filter((id) => id !== optionId)
-        : [...chosen, optionId];
-      const next = { ...prev };
-      if (selected.length) next[questionId] = selected;
-      else delete next[questionId];
-      return next;
-    });
-  };
+  const handleSelectOption = useCallback(
+    (questionId: string, optionId: string) => {
+      if (pending.current || expired) return;
+      const question = questionById.get(questionId);
+      if (!question) return;
+      focusQuestion(questionId);
+      setAnswers((prev) => {
+        if (question.questionType !== ExamQuestionType.MULTIPLE_CHOICE)
+          return { ...prev, [questionId]: optionId };
+        const old = prev[questionId];
+        const chosen = Array.isArray(old)
+          ? old
+          : typeof old === "string"
+            ? [old]
+            : [];
+        // "Choose TWO": a third tick is refused rather than quietly swapping one,
+        // which the backend would also refuse (TOO_MANY_SELECTED_OPTIONS).
+        if (!chosen.includes(optionId) && chosen.length >= question.choiceLimit)
+          return prev;
+        const selected = chosen.includes(optionId)
+          ? chosen.filter((id) => id !== optionId)
+          : [...chosen, optionId];
+        const next = { ...prev };
+        if (selected.length) next[questionId] = selected;
+        else delete next[questionId];
+        return next;
+      });
+    },
+    [expired, questionById, focusQuestion],
+  );
 
-  const handleChangeText = (questionId: string, text: string) => {
-    if (pending.current || expired) return;
-    focusQuestion(questionId);
-    setAnswers((prev) => {
-      const next = { ...prev };
-      if (text.length) next[questionId] = { text };
-      else delete next[questionId];
-      return next;
-    });
-  };
+  const handleChangeText = useCallback(
+    (questionId: string, text: string) => {
+      if (pending.current || expired) return;
+      focusQuestion(questionId);
+      setAnswers((prev) => {
+        const next = { ...prev };
+        if (text.length) next[questionId] = { text };
+        else delete next[questionId];
+        return next;
+      });
+    },
+    [expired, focusQuestion],
+  );
 
-  const handleToggleFlag = (questionId: string) => {
-    focusQuestion(questionId);
-    setFlaggedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(questionId)) {
-        next.delete(questionId);
-      } else {
-        next.add(questionId);
-      }
-      return next;
-    });
-  };
+  const handleToggleFlag = useCallback(
+    (questionId: string) => {
+      focusQuestion(questionId);
+      setFlaggedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(questionId)) {
+          next.delete(questionId);
+        } else {
+          next.add(questionId);
+        }
+        return next;
+      });
+    },
+    [focusQuestion],
+  );
 
   // Làm lại là mở một lượt mới - backend cấp id và hạn nộp mới, không tái dùng
   // lượt đã chấm.

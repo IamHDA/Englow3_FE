@@ -16,7 +16,6 @@ import { ArrowLeft, ArrowRight, Headphones, Volume2 } from "lucide-react";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import type { ExamPaper } from "../../../types";
 import {
-  chosenOptionIds,
   questionNumberLabel,
   typedAnswerText,
   type ExamAnswers,
@@ -37,6 +36,8 @@ export interface PartSheetProps {
   flaggedIds: ReadonlySet<string>;
   /** The question the learner is on, or null before they touch one. */
   currentQuestionId: string | null;
+  /** Stable across renders (the sitting's useCallback): each question is
+   *  memoised, and a new function would render all of them on every keystroke. */
   onSelectOption: (questionId: string, optionId: string) => void;
   onChangeText: (questionId: string, text: string) => void;
   onToggleFlag: (questionId: string) => void;
@@ -237,15 +238,12 @@ export function PartSheet({
                 key={question.id}
                 questionSet={questionSet}
                 question={question}
-                selectedOptionIds={chosenOptionIds(answers[question.id])}
-                textAnswer={typedAnswerText(answers[question.id])}
+                answer={answers[question.id]}
                 isFlagged={flaggedIds.has(question.id)}
                 isCurrent={question.id === currentQuestionId}
-                onSelectOption={(optionId) =>
-                  onSelectOption(question.id, optionId)
-                }
-                onChangeText={(text) => onChangeText(question.id, text)}
-                onToggleFlag={() => onToggleFlag(question.id)}
+                onSelectOption={onSelectOption}
+                onChangeText={onChangeText}
+                onToggleFlag={onToggleFlag}
               />
             ))}
           </Stack>

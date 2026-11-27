@@ -32,8 +32,8 @@ describe("exam answer selection", () => {
       return (
         <QuestionCard
           {...props}
-          selectedOptionIds={selected}
-          onSelectOption={(id) =>
+          answer={selected}
+          onSelectOption={(_question, id) =>
             setSelected((old) =>
               old.includes(id) ? old.filter((o) => o !== id) : [...old, id],
             )
@@ -65,7 +65,7 @@ describe("exam answer selection", () => {
     const choices = screen.getAllByRole("radio");
     choices[0].focus();
     fireEvent.keyDown(choices[0], { key: "ArrowRight" });
-    expect(props.onSelectOption).toHaveBeenCalledWith("b");
+    expect(props.onSelectOption).toHaveBeenCalledWith("q", "b");
     expect(choices[1]).toHaveFocus();
   });
 });
@@ -90,7 +90,7 @@ describe("IELTS question shapes", () => {
       <MantineProvider>
         <QuestionCard
           {...props}
-          textAnswer="Mitchel"
+          answer={{ text: "Mitchel" }}
           onChangeText={onChangeText}
         />
       </MantineProvider>,
@@ -100,7 +100,7 @@ describe("IELTS question shapes", () => {
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "Mitchell" },
     });
-    expect(onChangeText).toHaveBeenCalledWith("Mitchell");
+    expect(onChangeText).toHaveBeenCalledWith("q", "Mitchell");
   });
 
   it("offers a matching question the set's shared list under its own labels", () => {
@@ -126,7 +126,7 @@ describe("IELTS question shapes", () => {
     } as unknown as QuestionCardProps;
     render(
       <MantineProvider>
-        <QuestionCard {...props} selectedOptionIds={[]} />
+        <QuestionCard {...props} />
       </MantineProvider>,
     );
 
@@ -134,6 +134,6 @@ describe("IELTS question shapes", () => {
     expect(choices).toHaveLength(2);
     expect(screen.getByText("ii")).toBeInTheDocument();
     fireEvent.click(choices[1]);
-    expect(props.onSelectOption).toHaveBeenCalledWith("ii");
+    expect(props.onSelectOption).toHaveBeenCalledWith("q", "ii");
   });
 });
