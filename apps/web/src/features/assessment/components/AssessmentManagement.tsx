@@ -7,7 +7,6 @@ import {
   Badge,
   Button,
   Card,
-  Container,
   Group,
   Modal,
   Pagination,
@@ -18,7 +17,6 @@ import {
   Text,
   Textarea,
   TextInput,
-  Title,
 } from "@mantine/core";
 import Link from "next/link";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -36,6 +34,7 @@ import {
   useAssessmentReviewQueueQuery,
   useAssessmentTransitionTaskMutation,
 } from "@/lib/graphql/generated/hooks";
+import { Page, PageHeader } from "@/shared/components/Page";
 import { LoadErrorState } from "@/shared/components/LoadErrorState";
 import { backendCodeOf } from "@/shared/network/loadError";
 import {
@@ -186,24 +185,26 @@ export function AssessmentManagement({
     return () => window.removeEventListener("focus", refresh);
   }, [refreshQuery]);
   return (
-    <Container size="xl" py="xl">
+    // The admin area's page frame and header, like every other admin page:
+    // its own Container put the title and button 16px off the others.
+    <Page>
       {confirmModal}
       <Stack gap="lg">
-        <Group justify="space-between">
-          <div>
-            <Title order={1}>Writing & Speaking</Title>
-            <Text c="dimmed">
-              {admin
-                ? tx("Duyệt đề, theo dõi bài nộp và điều chỉnh kết quả.")
-                : tx("Soạn đề luyện tập và chấm bài của các đề bạn phụ trách.")}
-            </Text>
-          </div>
-          {tab === "tasks" && (
-            <Button component={Link} href="/admin/assessments/new">
-              {tx("Tạo đề luyện")}
-            </Button>
-          )}
-        </Group>
+        <PageHeader
+          title="Writing & Speaking"
+          description={
+            admin
+              ? tx("Duyệt đề, theo dõi bài nộp và điều chỉnh kết quả.")
+              : tx("Soạn đề luyện tập và chấm bài của các đề bạn phụ trách.")
+          }
+          actions={
+            tab === "tasks" && (
+              <Button component={Link} href="/admin/assessments/new">
+                {tx("Tạo đề luyện")}
+              </Button>
+            )
+          }
+        />
         <Tabs
           value={tab}
           onChange={(v) => {
@@ -613,6 +614,6 @@ export function AssessmentManagement({
           {viewResult && <AssessmentSubmissionViewer id={viewResult} />}
         </Modal>
       </Stack>
-    </Container>
+    </Page>
   );
 }

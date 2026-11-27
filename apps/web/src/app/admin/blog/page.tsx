@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AdminBlogPage() {
   return (
-    <Page width="focus">
+    <Page>
       <AdminBlogQueueView />
     </Page>
   );

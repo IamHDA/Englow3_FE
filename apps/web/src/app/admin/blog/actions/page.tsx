@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AdminBlogActionsPage() {
   return (
-    <Page width="focus">
+    <Page>
       <AdminBlogActionsView />
     </Page>
   );

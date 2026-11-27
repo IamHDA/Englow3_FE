@@ -4,17 +4,16 @@ import {
   Badge,
   Button,
   Card,
-  Container,
   Group,
   SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
 import Link from "next/link";
 import { useAssessmentWorkloadQuery } from "@/lib/graphql/generated/hooks";
 import { useLanguage } from "@/shared/hooks/useLanguage";
+import { Page, PageHeader } from "@/shared/components/Page";
 
 export function AssessmentWorkloadPanel({
   staff = false,
@@ -127,19 +126,21 @@ export function AssessmentWorkloadPanel({
 export function StaffHomeView() {
   const { isVi } = useLanguage();
   return (
-    <Container size="xl" py="xl">
+    <Page>
       <Stack gap="xl">
-        <Stack gap="xs">
-          <Badge w="fit-content" color="teal">
-            Staff
-          </Badge>
-          <Title>{isVi ? "Công việc của tôi" : "My work"}</Title>
-          <Text c="dimmed">
-            {isVi
+        <PageHeader
+          above={
+            <Badge w="fit-content" color="teal">
+              Staff
+            </Badge>
+          }
+          title={isVi ? "Công việc của tôi" : "My work"}
+          description={
+            isVi
               ? "Ưu tiên bài đang chờ chấm và đề cần sửa. Tiếp tục từ đúng nơi bạn đã dừng."
-              : "Start with waiting submissions and requested changes. Continue where you left off."}
-          </Text>
-        </Stack>
+              : "Start with waiting submissions and requested changes. Continue where you left off."
+          }
+        />
         <AssessmentWorkloadPanel staff />
         <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Card>
@@ -172,6 +173,6 @@ export function StaffHomeView() {
           </Card>
         </SimpleGrid>
       </Stack>
-    </Container>
+    </Page>
   );
 }

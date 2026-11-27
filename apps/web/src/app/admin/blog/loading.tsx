@@ -5,7 +5,7 @@ import { Page } from "@/shared/components/Page";
 
 export default function AdminBlogLoading() {
   return (
-    <Page width="focus">
+    <Page>
       <AdminBlogQueueViewSkeleton />
     </Page>
   );

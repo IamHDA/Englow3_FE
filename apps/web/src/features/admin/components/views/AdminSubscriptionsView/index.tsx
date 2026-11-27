@@ -109,7 +109,7 @@ export function AdminSubscriptionsView() {
   }
 
   return (
-    <Page width="focus">
+    <Page>
       <PageHeader title={c.title} />
       <Text c="ink.7">{c.intro}</Text>
       <Paper withBorder radius="lg" p="xl">

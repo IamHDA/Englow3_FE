@@ -3,7 +3,7 @@ import { Page } from "@/shared/components/Page";
 
 export default function AdminBlogActionsLoading() {
   return (
-    <Page width="focus">
+    <Page>
       <AdminBlogActionsViewSkeleton />
     </Page>
   );

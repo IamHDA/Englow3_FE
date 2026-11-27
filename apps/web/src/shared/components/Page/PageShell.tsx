@@ -1,4 +1,4 @@
-import { Box, Group, Stack, Title } from "@mantine/core";
+import { Box, Group, Stack, Text, Title } from "@mantine/core";
 import type { ReactNode } from "react";
 
 import classes from "./Page.module.css";
@@ -37,13 +37,20 @@ type PageHeaderProps = {
   actions?: ReactNode;
   /** Above the title, e.g. breadcrumbs. */
   above?: ReactNode;
+  /** One line under the title saying what the page is for. */
+  description?: ReactNode;
 };
 
 /**
  * Every page's heading, the same size in the same place. Actions sit on the
  * right and drop under the title on a phone rather than squeezing it.
  */
-export function PageHeader({ title, actions, above }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  actions,
+  above,
+  description,
+}: PageHeaderProps) {
   return (
     <Stack gap="xs">
       {above}
@@ -58,6 +65,7 @@ export function PageHeader({ title, actions, above }: PageHeaderProps) {
         </Title>
         {actions && <Box className={classes.actions}>{actions}</Box>}
       </Group>
+      {description && <Text c="dimmed">{description}</Text>}
     </Stack>
   );
 }
