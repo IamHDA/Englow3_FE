@@ -45,10 +45,10 @@ vi.mock("@/lib/graphql/generated/hooks", () => ({
   }),
 }));
 vi.mock("@/shared/hooks/useLanguage", async () => {
-  const { translations } = await vi.importActual<
-    typeof import("@/shared/constants/translations")
-  >("@/shared/constants/translations");
-  return { useLanguage: () => ({ isVi: false, t: translations.en }) };
+  const { en } = await vi.importActual<
+    typeof import("@/shared/constants/translations/en")
+  >("@/shared/constants/translations/en");
+  return { useLanguage: () => ({ isVi: false, t: en }) };
 });
 vi.mock("@/shared/components/Page", () => ({
   Page: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,

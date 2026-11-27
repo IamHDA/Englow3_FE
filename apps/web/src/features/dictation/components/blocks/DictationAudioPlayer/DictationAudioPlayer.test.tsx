@@ -2,7 +2,11 @@ import { MantineProvider } from "@mantine/core";
 import { render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import { LanguageProvider } from "@/shared/context/LanguageContext";
-import { translations, type Language } from "@/shared/constants/translations";
+import type { Language } from "@/shared/constants/translations";
+import { en } from "@/shared/constants/translations/en";
+import { vi as viCopy } from "@/shared/constants/translations/vi";
+
+const translations = { vi: viCopy, en };
 import { DictationAudioPlayer } from "./index";
 
 it.each<Language>(["vi", "en"])(

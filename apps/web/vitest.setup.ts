@@ -1,12 +1,18 @@
 import "@testing-library/jest-dom/vitest";
 import { configure } from "@testing-library/react";
 
+import { preloadEnglish } from "@/shared/context/LanguageContext";
+
 // findBy*/waitFor give up after one second by default. With the whole suite
 // running in parallel a Mantine-heavy render can take longer than that on a
 // busy machine, and a test that passes alone fails in the full run - the
 // dictation mistake queue did. Three seconds is slack, not a slower suite: a
 // passing wait still returns the moment the text appears.
 configure({ asyncUtilTimeout: 3000 });
+
+// English is fetched on demand in the app (LanguageContext). Tests that render
+// in English check it on the first frame, so have it here before any test runs.
+await preloadEnglish();
 
 // The files that test server code run under plain Node, which has no window;
 // everything below is about the DOM that component tests render into.

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { BlogRecommendationKind, BlogTagKind } from "@/lib/graphql/generated";
-import { blogEn, blogVi } from "@/shared/constants/translations/blog";
+import { blogVi } from "@/shared/constants/translations/blog";
+import { blogEn } from "@/shared/constants/translations/blog.en";
 
 import { recommendationReason } from "./blogLabels";
 

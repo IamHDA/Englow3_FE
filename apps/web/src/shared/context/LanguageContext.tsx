@@ -5,14 +5,36 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import {
-  translations,
-  type AppTranslations,
-  type Language,
-} from "../constants/translations";
+import type { AppTranslations, Language } from "../constants/translations";
+import { vi } from "../constants/translations/vi";
+
+/*
+ * Vietnamese ships with every page; English is fetched the first time a reader
+ * needs it, so the large majority who read Vietnamese never download it. Until
+ * it has arrived the whole interface stays Vietnamese - `language`, `isVi` and
+ * `t` move to English together - rather than showing a mix of the two.
+ */
+let english: AppTranslations | null = null;
+let englishLoading: Promise<AppTranslations> | null = null;
+
+/**
+ * Fetches English ahead of need, e.g. in tests that render in English from the
+ * first frame. The provider calls the same thing when English is chosen.
+ */
+export function preloadEnglish(): Promise<AppTranslations> {
+  return loadEnglish();
+}
+
+function loadEnglish(): Promise<AppTranslations> {
+  englishLoading ??= import("../constants/translations/en").then(
+    (module) => (english = module.en),
+  );
+  return englishLoading;
+}
 
 const STORAGE_KEY = "englow3_lang";
 
@@ -73,11 +95,33 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const language = useSyncExternalStore(
+  const chosen = useSyncExternalStore(
     subscribe,
     getSnapshot,
     getServerSnapshot,
   );
+  // Set once English has loaded, to render again with it.
+  const [englishReady, setEnglishReady] = useState(english !== null);
+  // Synchronising with the network: fetch English when it is chosen and not
+  // here yet. The state changes in the callback, not in the effect itself.
+  useEffect(() => {
+    if (chosen !== "en" || english) return;
+    let current = true;
+    loadEnglish()
+      .then(() => {
+        if (current) setEnglishReady(true);
+      })
+      .catch(() => {
+        // Offline or the chunk failed: stay in Vietnamese; the next choice of
+        // English tries again.
+        englishLoading = null;
+      });
+    return () => {
+      current = false;
+    };
+  }, [chosen]);
+  const language: Language =
+    chosen === "en" && (englishReady || english) ? "en" : "vi";
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -103,7 +147,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     language,
     setLanguage,
     toggleLanguage,
-    t: translations[language],
+    t: language === "en" && english ? english : vi,
     isEn: language === "en",
     isVi: language === "vi",
   };
@@ -123,7 +167,7 @@ export function useLanguage(): LanguageContextValue {
       language: "vi",
       setLanguage: () => {},
       toggleLanguage: () => {},
-      t: translations.vi,
+      t: vi,
       isEn: false,
       isVi: true,
     };

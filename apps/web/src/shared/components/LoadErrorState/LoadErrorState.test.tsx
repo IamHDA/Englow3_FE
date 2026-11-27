@@ -4,12 +4,12 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { theme } from "@/lib/mantine/theme";
-import { translations } from "@/shared/constants/translations";
+import { vi as viCopy } from "@/shared/constants/translations/vi";
 
 import { LoadErrorState } from "./index";
 
 vi.mock("@/shared/hooks/useLanguage", () => ({
-  useLanguage: () => ({ isVi: true, t: translations.vi }),
+  useLanguage: () => ({ isVi: true, t: viCopy }),
 }));
 
 const BACK = { href: "/study/flashcards", label: "Về thư viện bộ thẻ" };

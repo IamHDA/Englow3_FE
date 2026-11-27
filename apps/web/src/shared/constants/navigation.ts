@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { AppTranslations } from "./translations";
-import { translations } from "./translations";
+import { vi } from "./translations/vi";
 
 export type NavLink = {
   label: string;
@@ -31,7 +31,7 @@ export type StudyLink = NavLink & {
 export const studyIcon: LucideIcon = GraduationCap;
 
 export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
-  const nav = t || translations.vi.nav;
+  const nav = t || vi.nav;
   return [
     {
       label: nav.pronunciation,
@@ -91,7 +91,7 @@ export function getStudyLinks(t?: AppTranslations["nav"]): StudyLink[] {
 }
 
 export function getPrimaryLinks(t?: AppTranslations["nav"]): NavLink[] {
-  const nav = t || translations.vi.nav;
+  const nav = t || vi.nav;
   return [
     { label: nav.exams, href: "/exams", icon: ClipboardCheck },
     { label: nav.aiTutor, href: "/ai-tutor", icon: Bot },
@@ -106,7 +106,7 @@ export function getPrimaryLinks(t?: AppTranslations["nav"]): NavLink[] {
  * the backend refuses every friend action for them.
  */
 export function getFriendsLink(t?: AppTranslations["nav"]): NavLink {
-  const nav = t || translations.vi.nav;
+  const nav = t || vi.nav;
   return {
     label: nav.friends,
     href: "/friends",
