@@ -4,15 +4,29 @@ import { useLanguage } from "@/shared/hooks/useLanguage";
 import Link from "next/link";
 import { useMediaQuery } from "@mantine/hooks";
 
-import { Badge, Button, Card, Group, Stack, Table, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  Group,
+  Menu,
+  Stack,
+  Table,
+  Text,
+} from "@mantine/core";
 import {
   Archive,
   ArchiveRestore,
   Check,
+  Ellipsis,
   Send,
   Undo2,
   Upload,
+  type LucideIcon,
 } from "lucide-react";
+
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 import {
   EXAM_ACTIONS_BY_STATUS,
@@ -68,11 +82,81 @@ export function AdminExamTable({
   const { isVi } = useLanguage();
   const tr = (vi: string, en: string) => (isVi ? vi : en);
   const mobile = useMediaQuery("(max-width: 47.99em)");
+  const { confirm, confirmModal } = useConfirm();
+
+  const archive = async (exam: AdminExamFieldsFragment) => {
+    const confirmed = await confirm({
+      title: tr("Lưu trữ đề thi?", "Archive this exam?"),
+      body: tr(
+        `“${exam.title}” sẽ ẩn khỏi thư viện của học viên. Lịch sử và các bài đã nộp vẫn được giữ, và bạn có thể khôi phục lại sau.`,
+        `“${exam.title}” leaves the learners' library. Its history and submissions are kept, and you can restore it later.`,
+      ),
+      confirmLabel: tr("Lưu trữ", "Archive"),
+      danger: true,
+    });
+    if (confirmed) onArchive(exam.id);
+  };
+
+  /**
+   * One row's actions: open it, the one step its state is waiting for as the
+   * main button (publish a draft, approve what waits for review, resubmit what
+   * came back, restore what is archived), and everything else under "⋯".
+   * Four equal buttons a row made the next step hard to see.
+   */
   const renderActions = (exam: AdminExamFieldsFragment) => {
     const busy = busyExamId === exam.id;
-    const actions = EXAM_ACTIONS_BY_STATUS[exam.status];
+    const allowed = EXAM_ACTIONS_BY_STATUS[exam.status];
+    const actions: Record<
+      "submit" | "approve" | "reject" | "publish" | "restore" | "archive",
+      { show: boolean; label: string; icon: LucideIcon; run: () => void }
+    > = {
+      submit: {
+        show: allowed.submit,
+        label: tr("Gửi duyệt", "Submit for review"),
+        icon: Upload,
+        run: () => onSubmitForReview(exam.id),
+      },
+      approve: {
+        show: canReview && allowed.approve,
+        label: tr("Duyệt", "Approve"),
+        icon: Check,
+        run: () => onApprove(exam.id),
+      },
+      reject: {
+        show: canReview && allowed.reject,
+        label: tr("Trả lại", "Return"),
+        icon: Undo2,
+        run: () => onReject(exam),
+      },
+      publish: {
+        show: canReview && allowed.publish,
+        label: tr("Phát hành", "Publish"),
+        icon: Send,
+        run: () => onPublish(exam.id),
+      },
+      restore: {
+        show: canReview && Boolean(allowed.restore) && Boolean(onRestore),
+        label: tr("Khôi phục", "Restore"),
+        icon: ArchiveRestore,
+        run: () => onRestore?.(exam.id),
+      },
+      archive: {
+        show: canReview && allowed.archive,
+        label: tr("Lưu trữ", "Archive"),
+        icon: Archive,
+        run: () => void archive(exam),
+      },
+    };
+    const primary = (["publish", "approve", "submit", "restore"] as const).find(
+      (key) => actions[key].show,
+    );
+    const more = (["submit", "reject", "archive"] as const).filter(
+      (key) => actions[key].show && key !== primary,
+    );
+    const Main = primary ? actions[primary] : null;
+
     return (
-      <Group gap="xs" justify="flex-end" wrap="wrap">
+      <Group gap="xs" justify="flex-end" wrap="nowrap">
         <Button
           component={Link}
           href={`/admin/content/editor/EXAM/${exam.id}`}
@@ -83,87 +167,50 @@ export function AdminExamTable({
             ? tr("Soạn / xem trước", "Edit / preview")
             : tr("Xem nội dung", "View")}
         </Button>
-        {actions.submit && (
+        {Main && (
           <Button
             size="sm"
             radius="md"
-            variant="light"
+            color={primary === "approve" ? "teal" : undefined}
             loading={busy}
-            leftSection={<Upload size={14} />}
-            onClick={() => onSubmitForReview(exam.id)}
+            leftSection={<Main.icon size={14} aria-hidden />}
+            onClick={Main.run}
           >
-            {tr("Gửi duyệt", "Submit")}
+            {Main.label}
           </Button>
         )}
-        {canReview && actions.approve && (
-          <Button
-            size="sm"
-            radius="md"
-            color="teal"
-            loading={busy}
-            leftSection={<Check size={14} />}
-            onClick={() => onApprove(exam.id)}
-          >
-            {tr("Duyệt", "Approve")}
-          </Button>
-        )}
-        {canReview && actions.reject && (
-          <Button
-            size="sm"
-            radius="md"
-            variant="default"
-            loading={busy}
-            leftSection={<Undo2 size={14} />}
-            onClick={() => onReject(exam)}
-          >
-            {tr("Trả lại", "Return")}
-          </Button>
-        )}
-        {canReview && actions.publish && (
-          <Button
-            size="sm"
-            radius="md"
-            loading={busy}
-            leftSection={<Send size={14} />}
-            onClick={() => onPublish(exam.id)}
-          >
-            {tr("Phát hành", "Publish")}
-          </Button>
-        )}
-        {canReview && actions.restore && onRestore && (
-          <Button
-            size="sm"
-            radius="md"
-            variant="light"
-            loading={busy}
-            leftSection={<ArchiveRestore size={14} />}
-            onClick={() => onRestore(exam.id)}
-          >
-            {tr("Khôi phục", "Restore")}
-          </Button>
-        )}
-        {canReview && actions.archive && (
-          <Button
-            size="sm"
-            radius="md"
-            variant="subtle"
-            color="gray"
-            loading={busy}
-            leftSection={<Archive size={14} />}
-            onClick={() => {
-              if (
-                window.confirm(
-                  tr(
-                    `Lưu trữ “${exam.title}”? Nội dung sẽ ẩn khỏi thư viện; lịch sử và bài đã nộp vẫn được giữ.`,
-                    `Archive “${exam.title}”? It leaves the library; history and submissions are kept.`,
-                  ),
-                )
-              )
-                onArchive(exam.id);
-            }}
-          >
-            {tr("Lưu trữ", "Archive")}
-          </Button>
+        {more.length > 0 && (
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="lg"
+                disabled={busy}
+                aria-label={tr(
+                  `Thao tác khác cho “${exam.title}”`,
+                  `More actions for “${exam.title}”`,
+                )}
+              >
+                <Ellipsis size={18} aria-hidden />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              {more.map((key) => {
+                const { label, icon: Icon, run } = actions[key];
+                return (
+                  <Menu.Item
+                    key={key}
+                    color={key === "archive" ? "red" : undefined}
+                    leftSection={<Icon size={14} aria-hidden />}
+                    onClick={run}
+                  >
+                    {label}
+                  </Menu.Item>
+                );
+              })}
+            </Menu.Dropdown>
+          </Menu>
         )}
       </Group>
     );
@@ -171,6 +218,7 @@ export function AdminExamTable({
   if (mobile)
     return (
       <Stack p="md">
+        {confirmModal}
         {exams.map((exam) => (
           <Card key={exam.id} withBorder>
             <Stack gap="sm">
@@ -199,6 +247,7 @@ export function AdminExamTable({
 
   return (
     <Table.ScrollContainer minWidth={980}>
+      {confirmModal}
       <Table verticalSpacing="sm" highlightOnHover>
         <Table.Thead>
           <Table.Tr>
